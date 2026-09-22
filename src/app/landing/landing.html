@@ -1,0 +1,24 @@
+<main class="landing">
+  <header class="hero">
+    <p class="eyebrow">qits</p>
+    <h1>The qits platform</h1>
+    <p class="lede">
+      qits is the software-delivery platform this estate runs on. It holds the repositories, the
+      tickets and epics that describe the work, the pipelines that gate it, and the deployments that
+      put it in front of people — one catalogue, one release cycle, one place to read what happened.
+    </p>
+  </header>
+
+  <section class="capabilities" aria-label="What the platform does">
+    @for (capability of capabilities; track capability.title) {
+      <article class="capability">
+        <h2>{{ capability.title }}</h2>
+        <p>{{ capability.body }}</p>
+      </article>
+    }
+  </section>
+
+  <footer class="footer">
+    <p>Server-rendered by qits-landing. Nothing on this page waits for JavaScript.</p>
+  </footer>
+</main>

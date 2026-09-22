@@ -1,0 +1,24 @@
+# The build context is the repository root (`buildctl --local context=.`), so everything below is
+# uploaded to the builder unless it is named here.
+
+# A host-built dependency tree is the wrong toolchain's, and it is the single largest thing in the
+# tree. The image build runs its own `npm ci`.
+node_modules
+**/node_modules
+
+# The image build runs its own `npm run build`. A host-built dist/ in the context would be bytes
+# nobody gated, sitting where the build is about to write.
+dist
+.angular
+
+# THE ONE ENTRY THAT IS LOAD-BEARING RATHER THAN TIDY. npm ranks a PROJECT .npmrc above ~/.npmrc,
+# and the Dockerfile writes ~/.npmrc from the two build-args the release step hands the builder.
+# Copied into the context, the committed file — which names the edge vhosts a developer uses, and
+# which the builder resolves not at all — would win and break every install. app.yml's Dockerfile
+# contract names this exact hazard and offers exactly two ways out; this is one of them.
+.npmrc
+
+.git
+.gitignore
+.vscode
+README.md

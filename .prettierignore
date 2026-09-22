@@ -1,0 +1,19 @@
+# Build output.
+dist
+.angular
+
+# npm writes this file, not a person. A regenerated lockfile that prettier happens to disagree with
+# would fail `npm run lint` — the QA gate — for a reason that is not a defect.
+package-lock.json
+
+# THE PLATFORM CONFIG FILES ARE NOT PRETTIER'S, AND THIS ENTRY IS LOAD-BEARING.
+#
+# `.config/qits/release.yml` carries a VERBATIM copy of the wrapper's `app` recipe — see its own
+# header for why it is inlined rather than named — and "verbatim" is a claim about bytes: prettier
+# strips the blank line after `release-request:` and after `release:`, which is a silent divergence
+# from the file it is supposed to be a copy of.
+#
+# `.config/qits/deployments.yml` is read by DeploymentSpecParser, a strict LINE reader with no
+# nesting: an indented line is an error, and reformatting is exactly the class of change that could
+# introduce one.
+.config

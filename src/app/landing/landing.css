@@ -1,0 +1,60 @@
+.landing {
+  margin: 0 auto;
+  max-width: 60rem;
+  padding: 4rem 1.5rem 3rem;
+}
+
+.eyebrow {
+  color: #6b7280;
+  font-size: 0.875rem;
+  letter-spacing: 0.35em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  line-height: 1.1;
+  margin: 0 0 1rem;
+}
+
+.lede {
+  color: #374151;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 48rem;
+}
+
+.capabilities {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin: 3rem 0 0;
+}
+
+.capability {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.capability h2 {
+  font-size: 1.125rem;
+  margin: 0 0 0.5rem;
+}
+
+.capability p {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.footer {
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+}
