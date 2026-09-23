@@ -113,6 +113,25 @@ RUN --mount=type=secret,id=qits-npm-token \
 # deployment rather than a silent one.
 FROM node:24-alpine AS runtime
 
+# CURL IS PART OF THE DEPLOYABLE, NOT A CONVENIENCE. The deployer's swarm health gate is the shell
+# string `curl -fsS http://localhost:8080<health_path> || exit 1` and it runs INSIDE this container,
+# not from outside it — see SwarmDeploymentDriverTest in qits-deployments-platform-service. So
+# `health_path: /landing/health` in `.config/qits/deployments.yml` and this line are one decision
+# spelled twice: the path is only reachable if the binary that dials it is in the image. Without it
+# the probe exits 127 on every interval, `--update-failure-action rollback` fires, and the
+# deployment is killed as unhealthy after the server has come up and logged that it is listening.
+#
+# THIS IS THE FIRST IMAGE ON THE ESTATE THAT HAS TO SAY IT, which is why nobody had hit it before.
+# Every sibling runs `ubi-minimal`, which ships curl, so the gate's assumption has always been paid
+# for by the base image. `node:24-alpine` carries busybox — `wget` is there, `curl` is not at all —
+# and an `-app` is the first role whose base is not the Red Hat one.
+#
+# AND IT IS NOT SOLVED WITH `health_cmd:` + wget. `deployments.yml` already argues that case:
+# `health_cmd:` exists for a deployable with NO HTTP surface at all (postgres, which has neither
+# curl nor anything on 8080). A node server answers a path, so it states a path — and an image that
+# states a path owes the probe its binary.
+RUN apk add --no-cache curl
+
 # NON-ROOT, like every other image on the estate. The node images ship a `node` user (uid 1000)
 # already, so there is nothing to create — and the bundle is read-only to it, which is right: this
 # process writes nothing.
