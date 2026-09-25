@@ -1,17 +1,3 @@
-# How qits-platform-deployments deploys this repository. It reads this file from the git host at the
-# RELEASED TAG, so the answer travels with the version rather than with a branch.
-#
-# CARRYING THE FILE AT ALL is the other thing it says. A repository without one publishes an image
-# and asks for no deployment — a library or a microfrontend carries none. Carrying one makes the
-# release the front half: the deployer opens a Deployment Request for the published coordinate, and
-# `main` is finalized only once that deployment succeeds.
-#
-# ENVIRONMENT, not platform: every tier serves its own landing page, and the wire alias carries the
-# tier (dev-qits-landing). A platform-plane landing page would be one page for every environment,
-# which is the opposite of what a tier's front door is for. It is written out rather than left to
-# the default because it is the first thing a reader of this file will want to check.
-deployment_target: environment
-
 # WHAT THIS REPOSITORY DEPLOYS AS. STATED, not defaulted, and the difference is the whole line.
 #
 # The default is the REPOSITORY's name — `qits-landing-app` — and the `-app` suffix is a statement
