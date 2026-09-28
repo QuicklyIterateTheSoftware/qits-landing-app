@@ -48,7 +48,7 @@ FROM node:24-alpine AS build
 # the edge — so a bare `docker build` on the deployment host works with no flags. CI overrides both
 # with the in-network addresses, which is the only place they resolve from inside the builder.
 ARG QITS_NPM_REGISTRY_URL=http://registry.dev.localhost:8080/artifacts/npm/npm/
-ARG QITS_NPM_PROXY_URL=http://mirror.dev.localhost:8080/artifacts/npm/npmjs/
+ARG QITS_NPM_PROXY_URL=http://mirror.dev.localhost:8080/npm/npmjs/
 ENV QITS_NPM_REGISTRY_URL=$QITS_NPM_REGISTRY_URL
 ENV QITS_NPM_PROXY_URL=$QITS_NPM_PROXY_URL
 
