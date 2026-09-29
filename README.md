@@ -26,8 +26,13 @@ Three things make that true and each is easy to undo:
 - `src/app/app.routes.server.ts` says `RenderMode.Server`, where the Angular scaffold says
   `RenderMode.Prerender`. Prerender writes the html during `ng build` and serves it as a static
   file — the text would be in the response and would prove nothing about the server.
-- every string on the page lives in `landing.html`, not behind a fetch. A page that renders its
-  content from an HTTP call server-renders an empty shell.
+- the page's own text lives in its template, not behind a fetch. Data that needs the visitor's
+  session — the project list — loads in the browser: the server render has no `qits-session`
+  cookie to send, so it renders the heading and a loading state.
+- every backend call goes through a client generated from that service's `docs/openapi.yml`, so a
+  wrong path, parameter or field is a compile error. `npm run generate:api` regenerates
+  `src/app/api/<service>/` from the sibling checkouts in the wrapper; `openapi-ts.config.ts` lists
+  the services. Commit the result: CI builds this repository without its siblings.
 - `app.spec.ts` asserts on the rendered DOM rather than on a string, so the claim fails in CI
   rather than in a deployment.
 
@@ -42,6 +47,14 @@ npm run serve:ssr     # node dist/qits-landing-app/server/server.mjs, on :8080
 ```
 
 `npm ci` is the gate qits-ci runs (`.config/qits/release.yml`'s QA slot runs exactly these four).
+
+**Node 22.22.3 or newer** (or 24.15+): Angular 22 refuses older versions.
+
+`npm start` runs `ng serve` on :4200, with server rendering. The app needs a `qits-session` cookie
+and sends a visitor without one to `/idp/login?redirect=…`. `proxy.conf.json` serves `/idp` and the
+backend APIs from the deployed platform, and rewrites the cookie to `localhost`. So you sign in on
+localhost and come back to it. Only password sign-in works here: passkeys are bound to the idp's own
+origin.
 
 **Generate the lockfile with npm 11 or newer.** npm 10.9.8 — the version on the current workstation
 image — crashes with `Cannot read properties of null (reading 'edgesOut')` while resolving the

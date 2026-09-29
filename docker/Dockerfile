@@ -81,7 +81,9 @@ COPY . .
 # THE `_authToken` KEY MUST MATCH THE REGISTRY URL EXACTLY, TRAILING SLASH INCLUDED. npm looks the
 # token up under the scheme-less form of the registry it is about to dial and does not normalise the
 # two ends together, so a dropped slash is a silent anonymous install (measured on npm 10.9.8;
-# npm-library.yml's header carries it).
+# npm-library.yml's header carries it). `#*:` strips the scheme whether it is http or https.
+#
+# THE MIRROR GETS THE TOKEN TOO: it no longer answers anonymous reads (2026-09-29).
 RUN --mount=type=secret,id=qits-npm-token \
     hosted_origin=$(node -p 'new URL(process.env.QITS_NPM_REGISTRY_URL).origin'); \
     proxy_origin=$(node -p 'new URL(process.env.QITS_NPM_PROXY_URL).origin'); \
@@ -94,8 +96,9 @@ RUN --mount=type=secret,id=qits-npm-token \
     ( umask 077; \
       printf 'registry=%s\n@qits:registry=%s\n' \
         "$QITS_NPM_PROXY_URL" "$QITS_NPM_REGISTRY_URL" > ~/.npmrc; \
-      [ -n "$token" ] && printf '%s:_authToken=%s\n' \
-        "${QITS_NPM_REGISTRY_URL#http:}" "$token" >> ~/.npmrc; ) ; \
+      [ -n "$token" ] && printf '%s:_authToken=%s\n%s:_authToken=%s\n' \
+        "${QITS_NPM_REGISTRY_URL#*:}" "$token" \
+        "${QITS_NPM_PROXY_URL#*:}" "$token" >> ~/.npmrc; ) ; \
     npm ci --no-audit --no-fund && npm run build
 
 # ---------------------------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
-import { Landing } from './landing/landing';
+import { sessionGuard } from './auth/session.guard';
+import { Layout } from './layout/layout';
+import { ProjectPicker } from './projects/project-picker';
 
 /**
  * Two routes, and the second one is load-bearing rather than tidy.
@@ -16,8 +18,18 @@ import { Landing } from './landing/landing';
  *
  * It also makes this application indifferent to whether the edge forwards the prefix verbatim or
  * strips it, which is one fewer thing that has to be true for the front door to work.
+ *
+ * `Layout` is the root route component, so the chrome survives navigation and only the outlet
+ * beneath it changes. `sessionGuard` sends a visitor without a session to the idp's login page.
  */
 export const routes: Routes = [
-  { path: '', component: Landing },
-  { path: '**', component: Landing },
+  {
+    path: '',
+    component: Layout,
+    canActivate: [sessionGuard],
+    children: [
+      { path: '', component: ProjectPicker },
+      { path: '**', component: ProjectPicker },
+    ],
+  },
 ];

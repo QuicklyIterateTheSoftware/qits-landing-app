@@ -1,0 +1,14 @@
+{
+  "/idp": {
+    "target": "https://idp.qits.wohlben.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "cookieDomainRewrite": { "*": "" }
+  },
+  "/projects/api": {
+    "target": "https://projects.qits.wohlben.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "cookieDomainRewrite": { "*": "" }
+  }
+}
