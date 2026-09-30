@@ -1,12 +1,11 @@
 # How this repository releases: the `app` archetype's cycle, inherited WHOLE.
 #
-# `archetype: app` names `.config/qits/release-archetypes/app.yml` on the wrapper (qits-qits), and
-# qits-ci reads it AT THE SHA OF THE NEWEST VERSION THE WRAPPER HAS RELEASED — not at the wrapper's
-# `main` head, which is read only to list its event triggers. That distinction is why this file could
-# not say `archetype: app` on the day it was written: a recipe merged to the wrapper's `main` is
-# still invisible to every run until a wrapper RELEASE carries it, and naming an archetype the
-# released wrapper does not hold composes to ARCHETYPE_UNREADABLE — a settled NO_RUN, which is no CI
-# run at all rather than a red one, and a release request parked behind a gate nobody can satisfy.
+# `archetype: app` names `.config/qits/release-archetypes/app.yml`, which qits-ci ships inside
+# qits-ci-service — or reads from this repository's own copy at that path, at the same revision it
+# reads this file, when one is carried. That is why this file could not say `archetype: app` before
+# qits-ci shipped the recipe: naming an archetype nothing qits-ci carries composes to
+# ARCHETYPE_UNKNOWN — a settled NO_RUN, which is no CI run at all rather than a red one, and a
+# release request parked behind a gate nobody can satisfy.
 # Both slots — phase one's QA step and phase two's image publish — come from there, and the
 # explanation of what those steps do and why lives there too: the Dockerfile contract the image build
 # depends on, the lockfile-origin swap, the build-arg/secret split, and the `curl` the swarm health
