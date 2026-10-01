@@ -32,7 +32,7 @@
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
     "@hey-api/openapi-ts": "0.99.0",
-    "@qits/projects-golden-masters": "0.0.0-local",
+    "@qits/projects-golden-masters": "2026.1001.154547",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
