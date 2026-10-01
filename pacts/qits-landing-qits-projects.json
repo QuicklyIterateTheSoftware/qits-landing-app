@@ -28,13 +28,6 @@
         }
       ],
       "request": {
-        "generators": {
-          "path": {
-            "dataType": "RAW",
-            "expression": "/projects/api/projects",
-            "type": "ProviderState"
-          }
-        },
         "method": "GET",
         "path": "/projects/api/projects"
       },
@@ -648,13 +641,6 @@
         }
       ],
       "request": {
-        "generators": {
-          "path": {
-            "dataType": "RAW",
-            "expression": "/projects/api/projects",
-            "type": "ProviderState"
-          }
-        },
         "method": "GET",
         "path": "/projects/api/projects"
       },

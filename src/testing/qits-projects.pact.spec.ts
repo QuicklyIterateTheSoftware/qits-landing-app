@@ -172,4 +172,21 @@ describe('qits-landing → qits-projects pact', () => {
     expect(body?.textContent?.trim()).toBe(`${repositories.entries.length} components`);
     record('show-project-repositories', 'a project with 3 repositories', 'listProjectRepositories');
   });
+
+  it('interaction: omits the path generator for a parameterless path, keeps it for a parameterised one', () => {
+    const request = (i: PactInteraction) =>
+      (i.json as Record<string, Record<string, unknown>>)['request'];
+
+    const listed = interaction('a project exists', 'listProjects', 'list-projects');
+    expect(request(listed)['generators']).toBeUndefined();
+
+    const fetched = interaction('a project exists', 'getProject', 'open-project');
+    expect(request(fetched)['generators']).toEqual({
+      path: {
+        type: 'ProviderState',
+        expression: expect.stringContaining('${projectId}'),
+        dataType: 'RAW',
+      },
+    });
+  });
 });
