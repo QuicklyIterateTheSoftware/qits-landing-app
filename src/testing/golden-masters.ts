@@ -208,8 +208,9 @@ export function description(operationId: string, trigger: InteractionSlug): stri
 
 /**
  * The Pact V4 interaction for (`state`, `operationId`), triggered by the UI interaction `trigger`:
- * the provider state and its params; the path from the state (`ProviderState` generator); the exact
- * status; the body under matchers (see the file comment); and `comments.references`.
+ * the provider state and its params; the path from the state (`ProviderState` generator, only when
+ * the path has a `{param}` — pact-jvm resolves a parameterless expression to a path that misses the
+ * route); the exact status; the body under matchers (see the file comment); and `comments.references`.
  */
 export function interaction(
   state: string,
@@ -223,6 +224,7 @@ export function interaction(
   }
   const rules: Record<string, Rule> = {};
   const content = build(shapeOf(recorded), '$', op, rules);
+  const parameterised = /\{[A-Za-z0-9_]+}/.test(op.path);
   const json: Json = {
     comments: {
       references: {
@@ -234,13 +236,17 @@ export function interaction(
     pending: false,
     providerStates: [{ name: state, params: { ...op.params } }],
     request: {
-      generators: {
-        path: {
-          type: 'ProviderState',
-          expression: op.path.replace(/\{([A-Za-z0-9_]+)}/g, '$${$1}'),
-          dataType: 'RAW',
-        },
-      },
+      ...(parameterised
+        ? {
+            generators: {
+              path: {
+                type: 'ProviderState',
+                expression: op.path.replace(/\{([A-Za-z0-9_]+)}/g, '$${$1}'),
+                dataType: 'RAW',
+              },
+            },
+          }
+        : {}),
       method: op.method,
       path: examplePath(op),
     },
