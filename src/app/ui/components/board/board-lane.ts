@@ -20,9 +20,9 @@ let nextLaneId = 0;
  * lane.
  *
  * **On a board** it runs the board's full width (gutters and all columns): a title bar across the
- * top (projected `[lane-header]`, right-aligned, on a 40% background, only its top-left corner
- * rounded) ending just before `[lane-tags]` at its top right, the gutter cell below it holding `[lane-gutter]` written vertically at its
- * bottom left, and its children (`ui-board-row`s, cards) in the columns beside it.
+ * top (projected `[lane-header]`, right-aligned, ending just before `[lane-tags]` at its top
+ * right) that continues down the whole left side over the gutter as one ┌ of the same colour,
+ * only its top-left corner rounded, holding `[lane-gutter]` written vertically at its bottom, and its children (`ui-board-row`s, cards) in the columns beside it.
  *
  * With `collapsible`, a round button on its bottom edge switches between the children (expanded)
  * and `[lane-summary]` (collapsed), a single centred line. `collapsed` sets where it starts; a
@@ -46,11 +46,25 @@ let nextLaneId = 0;
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `
+    @if (onBoard) {
+      <!--
+        The left arm of the ┌: the whole left side, the top-left corner included, so the title bar
+        starts beside it and the two never overlap. Before the bar, so the bar's stretched link
+        lies above it.
+      -->
+      <div
+        class="absolute inset-y-0 left-0 flex w-6 items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pb-1 text-white [&_a]:text-inherit [&_a]:no-underline"
+      >
+        <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
+          <ng-content select="[lane-gutter]" />
+        </span>
+      </div>
+    }
     <div
       class="col-span-full flex items-center gap-2 px-2 py-1 text-xs [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
-          ? 'mb-4 justify-end rounded-tl-xl bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
+          ? 'mb-4 ml-6 justify-end bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
           : muted()
             ? 'relative bg-charcoal-brown-100 text-charcoal-brown-600'
             : 'relative bg-charcoal-brown-800 font-semibold text-white'
@@ -61,17 +75,6 @@ let nextLaneId = 0;
         <ng-content select="[lane-tags]" />
       </span>
     </div>
-    @if (onBoard) {
-      <div
-        class="col-start-1 row-start-2 flex items-end justify-start pb-1 [&_a]:text-inherit [&_a]:no-underline"
-      >
-        <span
-          class="text-[0.6875rem] text-charcoal-brown-700 [writing-mode:vertical-rl] rotate-180"
-        >
-          <ng-content select="[lane-gutter]" />
-        </span>
-      </div>
-    }
     <div
       [id]="contentId"
       [class]="
