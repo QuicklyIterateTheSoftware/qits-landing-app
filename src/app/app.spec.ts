@@ -94,9 +94,10 @@ describe('ProjectPicker', () => {
     ]);
     const text = (card: Element, selector: string) =>
       card.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim();
-    expect(cards.map((card) => text(card, '.components'))).toEqual([
-      `${repositories.entries.length} components`,
-      '1 component',
+    const stat = (card: Element) => [text(card, '.components dt'), text(card, '.components dd')];
+    expect(cards.map(stat)).toEqual([
+      ['Components', `${repositories.entries.length}`],
+      ['Components', '1'],
     ]);
     // No grand total: the language rows carry the numbers.
     expect(cards.map((card) => text(card, '.lines'))).toEqual([undefined, undefined]);

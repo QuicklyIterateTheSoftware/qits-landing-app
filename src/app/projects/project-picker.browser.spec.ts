@@ -92,7 +92,7 @@ describe('ProjectPicker (screenshots)', () => {
     http.expectOne('/githost/api/loc').flush(loc);
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);
-    await expect.element(picker).toHaveTextContent('1 component');
+    await expect.element(picker).toHaveTextContent('Components 1');
     await expect.element(picker).toMatchScreenshot('loaded');
   });
 

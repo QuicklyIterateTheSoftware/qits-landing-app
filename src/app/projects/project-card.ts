@@ -14,6 +14,7 @@ import { LocStore, type LanguageLines } from '../core/loc/loc.store';
 import { ProjectsStore, type Project } from '../core/projects/projects.store';
 import { CardBody, CardHeader } from '../ui/components/card/base-card';
 import { CardSilent } from '../ui/components/card/card-silent';
+import { Stat } from '../ui/components/stat/stat';
 
 /** How many languages the card names before it sums the rest as "Other". */
 export const LANGUAGES_SHOWN = 4;
@@ -21,8 +22,8 @@ export const LANGUAGES_SHOWN = 4;
 /**
  * One project in the picker: its name, and facts about it read from its repositories.
  *
- * - Every repository counts as one component. The list answer carries the project's wrapper in a
- *   field of its own, so it is not counted.
+ * - Every repository counts as one component, shown in a `ui-stat` tile. The list answer carries
+ *   the project's wrapper in a field of its own, so it is not counted.
  * - Its lines of code per language, summed over its repositories, main and test lines apart,
  *   largest first: the first {@link LANGUAGES_SHOWN} by name, and the rest summed as "Other"
  *   (`LocStore`, one request for all cards). No grand total: the rows say it.
@@ -32,7 +33,7 @@ export const LANGUAGES_SHOWN = 4;
 @Component({
   selector: 'app-project-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CardSilent, CardHeader, CardBody],
+  imports: [RouterLink, CardSilent, CardHeader, CardBody, Stat],
   host: { class: 'block' },
   template: `
     <a
@@ -43,15 +44,15 @@ export const LANGUAGES_SHOWN = 4;
         <card-header>{{ project().name }}</card-header>
         <card-body>
           <div class="mx-auto w-fit">
-            <span class="components block">
+            <ui-stat class="components" label="Components">
               @if (repositories()?.status === 'error') {
-                <span class="text-gray-500">Components unavailable</span>
+                <span class="text-base font-normal text-gray-500">Unavailable</span>
               } @else if (componentCount() === undefined) {
-                <span class="text-gray-500">Loading…</span>
+                <span class="text-base font-normal text-gray-500">Loading…</span>
               } @else {
-                {{ componentCount() }} {{ componentCount() === 1 ? 'component' : 'components' }}
+                {{ componentCount() }}
               }
-            </span>
+            </ui-stat>
             @if (lines(); as lines) {
               @if (lines === 'error') {
                 <span class="lines block text-[0.8125rem] text-gray-500">Lines unavailable</span>

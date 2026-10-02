@@ -98,7 +98,7 @@ describe('ProjectCard (screenshots)', () => {
 
   it('shows the component count and the lines of counted repositories', async () => {
     const card = await shown('a repository with counted lines');
-    await expect.element(card).toHaveTextContent('4 components');
+    await expect.element(card).toHaveTextContent('Components 4');
     await expect.element(card).toHaveTextContent('Java');
     await expect.element(card).toMatchScreenshot('loaded');
   });
@@ -139,7 +139,7 @@ describe('ProjectCard (screenshots)', () => {
     lines.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const card = page.elementLocator(fixture.nativeElement);
-    await expect.element(card).toHaveTextContent('Components unavailable');
+    await expect.element(card).toHaveTextContent('Components Unavailable');
     await expect.element(card).toHaveTextContent('Lines unavailable');
     await expect.element(card).toMatchScreenshot('unavailable');
   });
