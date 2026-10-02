@@ -23,12 +23,11 @@ export const LANGUAGES_SHOWN = 4;
  *
  * - Every repository counts as one component. The list answer carries the project's wrapper in a
  *   field of its own, so it is not counted.
- * - Its lines of code are the sum over its repositories, main and test lines apart ("8 main · 3
- *   tests": the tests are not part of the 8) (`LocStore`, one request for all cards).
- *   While qits-githost has not counted some of them yet, the card says "at least", or "Counting
+ * - Its lines of code per language, summed over its repositories, main and test lines apart,
+ *   largest first: the first {@link LANGUAGES_SHOWN} by name, and the rest summed as "Other"
+ *   (`LocStore`, one request for all cards). No grand total: the rows say it.
+ * - While qits-githost has not counted some repositories yet, a note says so, or "Counting
  *   lines…" when nothing is counted.
- * - Below the total, the lines per language, largest first: the first {@link LANGUAGES_SHOWN}
- *   by name, and the rest summed as "Other".
  */
 @Component({
   selector: 'app-project-card',
@@ -49,16 +48,15 @@ export const LANGUAGES_SHOWN = 4;
             }
           </span>
           @if (lines(); as lines) {
-            <span class="lines">
-              @if (lines === 'error') {
-                <span class="muted">Lines unavailable</span>
-              } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
-                <span class="muted">Counting lines…</span>
-              } @else {
-                {{ lines.partial ? 'at least ' : '' }}{{ format(lines.main) }} main ·
-                {{ format(lines.test) }} tests
-              }
-            </span>
+            @if (lines === 'error') {
+              <span class="lines muted">Lines unavailable</span>
+            } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
+              <span class="lines muted">Counting lines…</span>
+            } @else if (lines.partial) {
+              <span class="lines muted">Still counting some repositories</span>
+            } @else if (!lines.languages.length) {
+              <span class="lines muted">No lines yet</span>
+            }
             @if (languageRows().length) {
               <table class="languages">
                 <thead>
@@ -108,6 +106,10 @@ export const LANGUAGES_SHOWN = 4;
 
     .muted {
       color: #6b7280;
+    }
+
+    .lines {
+      font-size: 0.8125rem;
     }
 
     .languages {

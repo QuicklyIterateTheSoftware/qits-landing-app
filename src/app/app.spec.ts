@@ -98,11 +98,8 @@ describe('ProjectPicker', () => {
       `${repositories.entries.length} components`,
       '1 component',
     ]);
-    // Java 3/2, TypeScript 4/1, Markdown 1/0.
-    expect(cards.map((card) => text(card, '.lines'))).toEqual([
-      '8 main · 3 tests',
-      '8 main · 3 tests',
-    ]);
+    // No grand total: the language rows carry the numbers.
+    expect(cards.map((card) => text(card, '.lines'))).toEqual([undefined, undefined]);
     // Per language, largest first; Java and TypeScript tie on 5 lines and go by name.
     const rows = (card: Element) =>
       [...card.querySelectorAll('.languages tbody tr')].map((row) =>
