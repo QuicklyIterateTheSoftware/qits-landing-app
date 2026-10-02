@@ -47,10 +47,10 @@ export const LANGUAGES_SHOWN = 4;
         }}</card-header>
         <card-body flush>
           <div class="w-full">
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2">
               <!-- Placeholder until the Work count is wired to qits-projects. -->
               <ui-spinner state="loaded">
-                <ui-stat class="work w-full" label="Work">–</ui-stat>
+                <ui-stat class="work w-full" label="Work" mirrored>–</ui-stat>
               </ui-spinner>
               <ui-spinner [state]="componentsState()">
                 <ui-stat class="components w-full" label="Components">

@@ -10,6 +10,7 @@ import { Stat } from './stat';
   host: { class: 'grid w-[40rem] grid-cols-3 gap-4 p-4' },
   template: `
     <ui-stat label="Components">52</ui-stat>
+    <ui-stat label="Work" mirrored>7</ui-stat>
     <ui-stat label="Repositories with open release requests">3</ui-stat>
     <ui-stat label="Lines">1,319,512</ui-stat>
     <ui-spinner><ui-stat label="Components">–</ui-stat></ui-spinner>
