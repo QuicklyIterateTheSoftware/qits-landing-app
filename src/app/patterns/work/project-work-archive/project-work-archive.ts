@@ -27,7 +27,7 @@ import { WorkGroupNode } from '../work-group-node/work-group-node';
       <ui-spinner [state]="work.state()" class="mt-6 min-h-48">
         <div class="flex-col gap-2" [class]="archived().length ? 'flex' : 'hidden'">
           @for (node of archived(); track node.entry.id) {
-            <app-work-group-node [node]="node" showStatus />
+            <app-work-group-node [node]="node" [base]="workPath()" showStatus />
           }
         </div>
         <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="archived().length">

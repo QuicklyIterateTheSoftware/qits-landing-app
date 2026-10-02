@@ -18,6 +18,11 @@ export const INTERACTIONS = {
   'show-project-repositories': 'A project card shows how many components the project has',
   /** `project-card.ts`: each card counts the project's work from its planning tree. */
   'show-project-work': 'A project card shows how much work the project has',
+  /**
+   * `project-work.ts` (and the archive) via `SelectedWork`: the Work page lays the project's work
+   * out on the board, the backlog and the archive, nested, with each campaign's members.
+   */
+  'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
   'show-project-loc': 'The project cards show how many lines of code each project has',
   /**

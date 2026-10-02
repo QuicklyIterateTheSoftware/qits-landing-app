@@ -5,7 +5,7 @@ import { NotificationsMenu } from '../patterns/events/notifications-menu/notific
 import { ReleaseMenu } from '../patterns/release-requests/release-menu/release-menu';
 
 /** One entry of the sidebar. */
-interface NavLink {
+export interface NavLink {
   readonly label: string;
   readonly path: string;
 }
@@ -154,9 +154,9 @@ export class Layout {
       (link) => within(link.path),
     );
     if (!section) return crumbs;
-    // A section's own subpages, one level deep: Work › Archive.
-    const archive: NavLink = { label: 'Archive', path: `/projects/${slug}/work/archive` };
-    return within(archive.path) ? [...crumbs, section, archive] : [...crumbs, section];
+    // A section's own subpages, one level deep: Work › Archive, Work › <item id>.
+    const sub = workSubpage(url, `/projects/${slug}/work`);
+    return sub ? [...crumbs, section, sub] : [...crumbs, section];
   });
 
   /** The open project's settings page, or undefined while no project is open. */
@@ -174,4 +174,15 @@ export class Layout {
   protected closeNav(): void {
     this.navOpen.set(false);
   }
+}
+
+/**
+ * The crumb of a page below the work section (`<work>/archive`, `<work>/<item id>`), or undefined
+ * for the section itself and anything outside it.
+ */
+export function workSubpage(url: string, work: string): NavLink | undefined {
+  const rest = url.startsWith(`${work}/`) ? url.slice(work.length + 1).split(/[/?#]/)[0] : '';
+  if (!rest) return undefined;
+  const id = decodeURIComponent(rest);
+  return { label: id === 'archive' ? 'Archive' : id, path: `${work}/${rest}` };
 }
