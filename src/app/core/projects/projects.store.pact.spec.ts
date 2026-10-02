@@ -175,6 +175,6 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       const op = masters.operation('a project with no work', 'listProjectEntities');
       const projectId = op.params['projectId'];
       await store.loadWork(projectId);
-      expect(store.work()[projectId]).toEqual({ status: 'loaded', count: 0 });
+      expect(store.work()[projectId]).toEqual({ status: 'loaded', count: 0, entries: [] });
     }));
 });

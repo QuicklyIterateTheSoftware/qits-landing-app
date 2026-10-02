@@ -27,6 +27,7 @@ import {
   type FetchedProject,
   type ListedProject,
   type RepositoryEntry,
+  type WorkEntry,
 } from './projects.consumes';
 
 /**
@@ -37,10 +38,14 @@ export type Project = ListedProject & { readonly id: string };
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
-/** A project's work, as `loadWork(projectId)` left it: how many entities count as work. */
+/**
+ * A project's work, as `loadWork(projectId)` left it: its entities, and how many count as work
+ * (the card's tile).
+ */
 export interface ProjectWork {
   readonly status: Exclude<Status, 'idle'>;
   readonly count: number;
+  readonly entries: readonly WorkEntry[];
 }
 
 /** A project's repositories, as `loadRepositories(projectId)` left them. */
@@ -142,7 +147,7 @@ export const ProjectsStore = signalStore(
       async loadWork(projectId: string): Promise<void> {
         const current = store.work()[projectId];
         if (current && current.status !== 'error') return;
-        setWork(projectId, { status: 'loading', count: 0 });
+        setWork(projectId, { status: 'loading', count: 0, entries: [] });
         const { data, error } = await consume(
           listProjectEntities({ path: { projectId } }),
           LIST_PROJECT_ENTITIES,
@@ -150,8 +155,12 @@ export const ProjectsStore = signalStore(
         setWork(
           projectId,
           error !== undefined || !data
-            ? { status: 'error', count: 0 }
-            : { status: 'loaded', count: (data.entities ?? []).filter(countsAsWork).length },
+            ? { status: 'error', count: 0, entries: [] }
+            : {
+                status: 'loaded',
+                count: (data.entities ?? []).filter(countsAsWork).length,
+                entries: data.entities ?? [],
+              },
         );
       },
       /** False only when the edge answers 401: no valid `qits-session` cookie. */

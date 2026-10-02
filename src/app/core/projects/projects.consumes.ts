@@ -29,12 +29,19 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
 export const LIST_PROJECT_REPOSITORIES = ['entries[].repository.id'] as const;
 
 /**
- * `loadWork(projectId)`: the project's whole planning tree, unfiltered — the same call a work list
- * will use. The card counts entries by status ({@link countsAsWork}), so it reads only that.
+ * `loadWork(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
+ * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
+ * shows each entity as a small card: its qualified id, title and archetype, grouped by status.
  */
-export const LIST_PROJECT_ENTITIES = ['entities[].status'] as const;
+export const LIST_PROJECT_ENTITIES = [
+  'entities[].id',
+  'entities[].qualifiedId',
+  'entities[].title',
+  'entities[].archetype',
+  'entities[].status',
+] as const;
 
-/** One work entity, cut to what the store reads: its status. */
+/** One work entity, cut to what the store reads. */
 export type WorkEntry = NonNullable<
   Consumed<ListProjectEntitiesResponses[200], typeof LIST_PROJECT_ENTITIES>['entities']
 >[number];

@@ -516,19 +516,39 @@
           "content": {
             "entities": [
               {
-                "status": "REFINED"
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "qualifiedId": "contract-00000001-1",
+                "status": "REFINED",
+                "title": "Refined epic"
               },
               {
-                "status": "REFINED"
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "qualifiedId": "contract-00000001-1",
+                "status": "REFINED",
+                "title": "Refined epic"
               },
               {
-                "status": "REFINED"
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "qualifiedId": "contract-00000001-1",
+                "status": "REFINED",
+                "title": "Refined epic"
               },
               {
-                "status": "REFINED"
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "qualifiedId": "contract-00000001-1",
+                "status": "REFINED",
+                "title": "Refined epic"
               },
               {
-                "status": "REFINED"
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "qualifiedId": "contract-00000001-1",
+                "status": "REFINED",
+                "title": "Refined epic"
               }
             ]
           },
@@ -552,7 +572,92 @@
                 }
               ]
             },
+            "$.entities[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entities[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.entities[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].title": {
               "combine": "AND",
               "matchers": [
                 {
