@@ -3,9 +3,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { commands, page, userEvent } from 'vitest/browser';
-import { client as projectsClient } from '../api/projects/client.gen';
-import { provideHeyApiClient } from '../api/projects/client/client.gen';
-import { SelectedProject } from '../core/projects/selected-project';
+import { client as projectsClient } from '../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
+import { SelectedProject } from '../../../core/projects/selected-project';
+import { EMPTY } from 'rxjs';
+import { DomainEvents } from '../../../core/events/domain-events';
 import { ReleaseMenu } from './release-menu';
 
 /**
@@ -28,6 +30,8 @@ describe('ReleaseMenu (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // No live stream in a screenshot.
+        { provide: DomainEvents, useValue: { on: () => EMPTY } },
         {
           provide: SelectedProject,
           useValue: {
@@ -43,12 +47,15 @@ describe('ReleaseMenu (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  /** The menu at the right of a 400px-wide bar, room below it for the panel; nothing opened. */
+  /**
+   * The menu at the right of a 400px-wide bar, room below it for the panel; nothing opened. The
+   * open project's requests are asked for at once; the returned request is that ask, unanswered.
+   */
   async function render() {
     const fixture = TestBed.createComponent(ReleaseMenu);
     const element = fixture.nativeElement as HTMLElement;
     element.parentElement!.style.cssText =
-      'display:flex; width:25rem; height:26rem; padding:0.5rem; align-items:flex-start';
+      'display:flex; justify-content:flex-end; width:25rem; height:26rem; padding:0.5rem; align-items:flex-start';
     fixture.detectChanges();
     await settle();
     // In the browser the store loads the project list on its own; answer it as recorded.
@@ -56,14 +63,16 @@ describe('ReleaseMenu (screenshots)', () => {
       .expectOne('/projects/api/projects')
       .flush(await commands.goldenMaster('a project exists', 'listProjects'));
     await settle();
-    return { fixture, frame: page.elementLocator(element.parentElement!) };
+    fixture.detectChanges();
+    await settle();
+    const requests = http.expectOne(`/projects/api/projects/${projectId}/release-requests`);
+    return { fixture, frame: page.elementLocator(element.parentElement!), requests };
   }
 
-  async function opened(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
+  async function open(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
     await userEvent.click(page.getByRole('button', { name: 'Release requests' }));
     fixture.detectChanges();
     await settle();
-    return http.expectOne(`/projects/api/projects/${projectId}/release-requests`);
   }
 
   async function answered(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
@@ -72,9 +81,15 @@ describe('ReleaseMenu (screenshots)', () => {
     fixture.detectChanges();
   }
 
-  it('is a closed lightning button, and asks for nothing yet', async () => {
-    const { frame } = await render();
-    http.expectNone(`/projects/api/projects/${projectId}/release-requests`);
+  it('is a closed lightning button with the pending count', async () => {
+    const { fixture, frame, requests } = await render();
+    requests.flush(
+      await commands.goldenMaster(
+        'a project with pending release requests',
+        'listProjectReleaseRequests',
+      ),
+    );
+    await answered(fixture);
     await expect
       .element(page.getByRole('button', { name: 'Release requests' }))
       .toHaveAttribute('aria-expanded', 'false');
@@ -82,14 +97,16 @@ describe('ReleaseMenu (screenshots)', () => {
   });
 
   it('lists the pending release requests with their gates', async () => {
-    const { fixture, frame } = await render();
-    (await opened(fixture)).flush(
+    const { fixture, frame, requests } = await render();
+    requests.flush(
       await commands.goldenMaster(
         'a project with pending release requests',
         'listProjectReleaseRequests',
       ),
     );
     await answered(fixture);
+    await open(fixture);
+    http.expectNone(`/projects/api/projects/${projectId}/release-requests`);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     expect(panel.getByRole('listitem').elements()).toHaveLength(5);
     await expect.element(panel).toHaveTextContent('CI · FAILED');
@@ -98,31 +115,38 @@ describe('ReleaseMenu (screenshots)', () => {
   });
 
   it('says so when nothing is pending', async () => {
-    const { fixture, frame } = await render();
-    (await opened(fixture)).flush(
+    const { fixture, frame, requests } = await render();
+    requests.flush(
       await commands.goldenMaster(
         'a project with no release requests',
         'listProjectReleaseRequests',
       ),
     );
     await answered(fixture);
+    await open(fixture);
     await expect.element(frame).toHaveTextContent('No pending release requests');
     await expect.element(frame).toMatchScreenshot('empty');
   });
 
   it('shows the spinner while the requests load', async () => {
-    const { fixture, frame } = await render();
-    const request = await opened(fixture);
+    const { fixture, frame, requests } = await render();
+    await open(fixture);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     await expect.element(panel.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(frame).toMatchScreenshot('loading');
-    request.flush(null, { status: 500, statusText: 'Server Error' });
+    requests.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
   });
 
   it('shows the error icon when the requests fail', async () => {
-    const { fixture, frame } = await render();
-    (await opened(fixture)).flush(null, { status: 500, statusText: 'Server Error' });
+    const { fixture, frame, requests } = await render();
+    requests.flush(null, { status: 500, statusText: 'Server Error' });
+    await answered(fixture);
+    await open(fixture);
+    // Opening after a failure asks again; that ask fails too.
+    http
+      .expectOne(`/projects/api/projects/${projectId}/release-requests`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     await expect.element(panel.getByRole('img', { name: 'Failed to load' })).toBeVisible();

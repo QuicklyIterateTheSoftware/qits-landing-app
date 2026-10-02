@@ -22,5 +22,13 @@
     "cookieDomainRewrite": {
       "*": ""
     }
+  },
+  "/events/api": {
+    "target": "https://events.qits.wohlben.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "cookieDomainRewrite": {
+      "*": ""
+    }
   }
 }
