@@ -4,9 +4,10 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
 /**
  * A container band.
  *
- * A link projected as `[lane-gutter]` stretches over the gutter cell the same way. A link
- * projected as `[lane-header]` stretches over the header strip and casts a shadow while
- * hovered (only that strip: hovering a child does not touch it).
+ * A link projected as `[lane-header]` stretches over the whole lane on a board (over the header
+ * strip only off a board) and casts a shadow while hovered. Rows and cards are positioned and come
+ * later, so they sit above it with their own links: hovering or clicking one does not touch the
+ * lane.
  *
  * **On a board** it runs the board's full width (gutter and all columns): a title bar across the
  * top (projected `[lane-header]`, centred, on a 40% background, square corners) with `[lane-tags]` at its top
@@ -26,18 +27,18 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     // Exactly one display class, chosen by where the lane is (a static one would fight it).
     class: 'ring-1 ring-black/10',
     '[class]':
-      "onBoard ? 'relative mx-1 grid grid-cols-subgrid grid-flow-row-dense gap-y-2 self-start overflow-hidden pb-4 bg-white/25' : 'mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
+      "onBoard ? 'relative mx-1 grid grid-cols-subgrid grid-flow-row-dense gap-y-2 self-start pb-4 bg-white/25' : 'mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `
     <div
-      class="relative col-span-full flex items-center gap-2 px-2 py-1 text-xs [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-span-full flex items-center gap-2 px-2 py-1 text-xs [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
           ? 'mb-2 justify-center bg-charcoal-brown-800/40 text-white'
           : muted()
-            ? 'bg-charcoal-brown-100 text-charcoal-brown-600'
-            : 'bg-charcoal-brown-800 font-semibold text-white'
+            ? 'relative bg-charcoal-brown-100 text-charcoal-brown-600'
+            : 'relative bg-charcoal-brown-800 font-semibold text-white'
       "
     >
       <ng-content select="[lane-header]" />
@@ -47,7 +48,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </div>
     @if (onBoard) {
       <div
-        class="relative col-start-1 flex items-end justify-start pb-1 [&_a]:text-inherit [&_a]:no-underline [&_a]:after:absolute [&_a]:after:inset-0 [&_a]:after:transition-shadow [&_a]:after:duration-150 [&_a]:hover:underline [&_a]:hover:after:shadow-md"
+        class="col-start-1 flex items-end justify-start pb-1 [&_a]:text-inherit [&_a]:no-underline"
         [style.grid-row]="'2 / span ' + rows()"
       >
         <span

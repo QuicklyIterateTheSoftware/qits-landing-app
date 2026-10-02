@@ -14,12 +14,12 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 [&>ui-board-card]:ml-4',
+      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 [&_ui-board-card]:ml-5',
     '[style.grid-column]': 'placement()',
   },
   template: `
     <span
-      class="absolute top-1/2 left-0.5 -translate-y-1/2 text-[0.625rem] leading-none text-charcoal-brown-700 [writing-mode:vertical-rl] rotate-180"
+      class="absolute top-1/2 left-0.5 -translate-y-1/2 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-700 [writing-mode:vertical-rl] rotate-180"
     >
       <ng-content select="[row-id]" />
     </span>
