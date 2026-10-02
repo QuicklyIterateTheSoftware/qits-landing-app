@@ -1,0 +1,15 @@
+playwright=1.63.0
+chromium=Google Chrome for Testing 153.0.8010.12
+chromium-headless-shell=1243
+fontconfig=2.14.1-4
+fonts-dejavu-core=2.37-6
+fonts-freefont-ttf=20120503-10
+fonts-ipafont-gothic=00303-23
+fonts-liberation=1:1.07.4-11
+fonts-noto-color-emoji=2.042-0+deb12u1
+fonts-noto-core=20201225-1
+fonts-tlwg-loma-otf=1:0.7.3-1
+fonts-unifont=1:15.0.01-2
+fonts-wqy-zenhei=0.9.45-8
+libfreetype6=2.12.1+dfsg-5+deb12u4
+libharfbuzz0b=6.0.0+dfsg-3
