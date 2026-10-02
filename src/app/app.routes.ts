@@ -6,6 +6,7 @@ import { ProjectPicker } from './projects/project-picker';
 import { ProjectSetup } from './projects/project-setup';
 import { ProjectWork } from './projects/project-work';
 import { ProjectWorkArchive } from './projects/project-work-archive';
+import { ProjectEditor } from './projects/editor/project-editor';
 import { RootRedirect } from './root-redirect';
 
 /**
@@ -40,6 +41,7 @@ export const routes: Routes = [
       { path: 'projects/:slug', component: ProjectPage },
       { path: 'projects/:slug/work', component: ProjectWork },
       { path: 'projects/:slug/work/archive', component: ProjectWorkArchive },
+      { path: 'projects/:slug/editor', component: ProjectEditor },
       { path: 'projects/:slug/setup', component: ProjectSetup },
       { path: '**', component: ProjectPicker },
     ],
