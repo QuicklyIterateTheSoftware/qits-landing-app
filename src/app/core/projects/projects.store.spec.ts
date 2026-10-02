@@ -186,6 +186,58 @@ describe('ProjectsStore', () => {
     http.expectOne(`/projects/api/projects/${id}/entities`);
   });
 
+  it('keeps a project’s pending release requests, fetched once', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    // Recorded: PENDING, RELEASED, READY, REJECTED, CONFLICTED and one FINALIZED, most recently
+    // moved first. FINALIZED is done, so the five others are pending, in that order.
+    const done = store.loadReleaseRequests(id);
+    expect(store.releaseRequests()[id]?.status).toBe('loading');
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${id}/release-requests`)
+      .flush(goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'));
+    await done;
+    const kept = store.releaseRequests()[id];
+    expect(kept?.status).toBe('loaded');
+    expect(kept?.pending.map((r) => r.state)).toEqual([
+      'PENDING',
+      'RELEASED',
+      'READY',
+      'REJECTED',
+      'CONFLICTED',
+    ]);
+    await store.loadReleaseRequests(id);
+    http.expectNone(`/projects/api/projects/${id}/release-requests`);
+  });
+
+  it('keeps no release requests for a project without any', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const done = store.loadReleaseRequests(id);
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${id}/release-requests`)
+      .flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));
+    await done;
+    expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', pending: [] });
+  });
+
+  it('reports failed release requests, and fetches them again on the next ask', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const done = store.loadReleaseRequests(id);
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${id}/release-requests`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await done;
+    expect(store.releaseRequests()[id]?.status).toBe('error');
+    void store.loadReleaseRequests(id);
+    await settle();
+    http.expectOne(`/projects/api/projects/${id}/release-requests`);
+  });
+
   it('has a session unless the list answers 401', async () => {
     const store = await loadedStore();
     const answered = store.hasSession();
