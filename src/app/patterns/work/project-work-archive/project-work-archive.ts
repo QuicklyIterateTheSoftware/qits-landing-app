@@ -1,19 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Spinner } from '../../../ui/components/spinner/spinner';
 import { SelectedProject } from '../../../core/projects/selected-project';
 import { SelectedWork } from '../../../core/work/selected-work';
-import { WorkList } from '../work-list/work-list';
-import { ARCHIVE_STATUSES, withStatus } from '../../../core/work/work-statuses';
+import { Spinner } from '../../../ui/components/spinner/spinner';
+import { WorkGroupNode } from '../work-group-node/work-group-node';
 
 /**
  * A project's finished work, at `/projects/<slug>/work/archive`: everything in a final state (Done
- * or Dropped), in the same list the Backlog uses.
+ * or Dropped), nested as on the board, in the same groups the Backlog uses.
  */
 @Component({
   selector: 'app-project-work-archive',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Spinner, WorkList],
+  imports: [RouterLink, Spinner, WorkGroupNode],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -26,7 +25,14 @@ import { ARCHIVE_STATUSES, withStatus } from '../../../core/work/work-statuses';
         >
       </div>
       <ui-spinner [state]="work.state()" class="mt-6 min-h-48">
-        <app-work-list [entries]="archived()" showStatus />
+        <div class="flex-col gap-2" [class]="archived().length ? 'flex' : 'hidden'">
+          @for (node of archived(); track node.entry.id) {
+            <app-work-group-node [node]="node" showStatus />
+          }
+        </div>
+        <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="archived().length">
+          Nothing here
+        </p>
       </ui-spinner>
     </div>
   `,
@@ -35,7 +41,7 @@ export class ProjectWorkArchive {
   protected readonly work = inject(SelectedWork);
   private readonly selected = inject(SelectedProject);
 
-  protected readonly archived = computed(() => withStatus(this.work.entries(), ARCHIVE_STATUSES));
+  protected readonly archived = computed(() => this.work.graph().tree('archive'));
 
   protected readonly workPath = computed(() => `/projects/${this.selected.slug() ?? ''}/work`);
 }

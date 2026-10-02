@@ -57,7 +57,12 @@ describe('WorkStore', () => {
       .expectOne(`/projects/api/projects/${ID}/entities`)
       .flush(goldenMaster('a project with no work', 'listProjectEntities'));
     await done;
-    expect(store.byProject()[ID]).toEqual({ status: 'loaded', count: 0, entries: [] });
+    expect(store.byProject()[ID]).toEqual({
+      status: 'loaded',
+      count: 0,
+      entries: [],
+      campaigns: {},
+    });
   });
 
   it('reports failed work, and fetches it again on the next ask', async () => {

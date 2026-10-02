@@ -2178,7 +2178,7 @@ export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses = {
 
 export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse = GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses[keyof GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses];
 
-export type GetProjectsApiCampaignsByIdData = {
+export type GetCampaignData = {
     body?: never;
     path: {
         id: string;
@@ -2187,7 +2187,7 @@ export type GetProjectsApiCampaignsByIdData = {
     url: '/projects/api/campaigns/{id}';
 };
 
-export type GetProjectsApiCampaignsByIdErrors = {
+export type GetCampaignErrors = {
     /**
      * Not Authorized
      */
@@ -2198,14 +2198,14 @@ export type GetProjectsApiCampaignsByIdErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiCampaignsByIdResponses = {
+export type GetCampaignResponses = {
     /**
      * OK
      */
     200: CampaignResponse;
 };
 
-export type GetProjectsApiCampaignsByIdResponse = GetProjectsApiCampaignsByIdResponses[keyof GetProjectsApiCampaignsByIdResponses];
+export type GetCampaignResponse = GetCampaignResponses[keyof GetCampaignResponses];
 
 export type PostProjectsApiCampaignsByIdMembersData = {
     body: AddCampaignMemberRequest;

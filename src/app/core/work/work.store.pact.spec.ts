@@ -86,6 +86,11 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       const store = storeAt(server.url);
       const projectId = projectOf('a project with no work');
       await store.load(projectId);
-      expect(store.byProject()[projectId]).toEqual({ status: 'loaded', count: 0, entries: [] });
+      expect(store.byProject()[projectId]).toEqual({
+        status: 'loaded',
+        count: 0,
+        entries: [],
+        campaigns: {},
+      });
     }));
 });
