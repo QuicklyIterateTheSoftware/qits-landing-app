@@ -16,30 +16,29 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
   imports: [RouterLink, IdStrip],
   host: {
     class:
-      'relative z-10 mx-2 flex self-start overflow-hidden transition-shadow duration-150 has-[a:hover]:shadow-md rounded-md border bg-white text-sm',
+      'relative z-10 mx-2 flex self-start overflow-hidden transition-shadow duration-150 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm',
     '[class]': 'border()',
     '[style.grid-column]': 'placement()',
   },
   template: `
     <ui-id-strip [id]="code()" />
     <div class="min-w-0 flex-1 p-2">
-      <div class="flex items-start justify-between gap-2">
-        <p class="m-0 text-charcoal-brown-900">
-          @if (link(); as link) {
-            <a
-              class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
-              [routerLink]="link"
-              >{{ title() }}</a
-            >
-          } @else {
-            {{ title() }}
-          }
-        </p>
+      <!-- The kind floats flush into the top-right corner; the title flows around it. -->
+      <p class="m-0 text-charcoal-brown-900">
         <span
-          class="shrink-0 rounded-sm bg-ocean-deep-50 px-1.5 text-[0.6875rem] text-ocean-deep-800"
+          class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-ocean-deep-50 px-2 py-0.5 text-[0.6875rem] text-ocean-deep-800"
           >{{ kind() }}</span
         >
-      </div>
+        @if (link(); as link) {
+          <a
+            class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
+            [routerLink]="link"
+            >{{ title() }}</a
+          >
+        } @else {
+          {{ title() }}
+        }
+      </p>
       <ng-content />
     </div>
   `,

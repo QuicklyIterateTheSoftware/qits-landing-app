@@ -13,7 +13,7 @@ import { IdStrip } from '../id-strip/id-strip';
   imports: [RouterLink, IdStrip],
   host: {
     class:
-      'relative mx-1 flex overflow-hidden transition-shadow duration-150 has-[a:hover]:shadow-md rounded-sm bg-white text-sm',
+      'relative mx-1 flex overflow-hidden transition-shadow duration-150 has-[a:hover]:shadow-md rounded-l-sm bg-white text-sm',
   },
   template: `
     <ui-id-strip [id]="code()" />
@@ -29,13 +29,16 @@ import { IdStrip } from '../id-strip/id-strip';
           {{ title() }}
         }
       </span>
+      <!-- Projected tags first, so the kind chip stays in the corner. -->
+      <ng-content />
       @for (chip of chips(); track $index) {
+        <!-- The last chip (the kind) sits flush in the row's top-right corner. -->
         <span
-          class="shrink-0 rounded-sm bg-charcoal-brown-100 px-1.5 text-[0.6875rem] text-charcoal-brown-700"
+          class="shrink-0 bg-charcoal-brown-100 text-[0.6875rem] text-charcoal-brown-700"
+          [class]="$last ? '-mt-2 -mr-3 self-start rounded-bl-md px-2 py-0.5' : 'rounded-sm px-1.5'"
           >{{ chip }}</span
         >
       }
-      <ng-content />
     </div>
   `,
 })
