@@ -1,22 +1,19 @@
 import type { WorkEntry } from './work.consumes';
 
 /**
- * The nesting of a project's work (campaign › epic › story › task), shared by the board, the
- * backlog and the archive so that all three group the same way.
+ * The nesting of a project's work (epic › feature › task; tickets stand alone), shared by the
+ * board, the backlog and the archive so that all three group the same way.
  *
- * - **Parent**: an entity's `parent` (epic › feature › task), else the campaign it is a member of.
+ * - **Parent**: an entity's `parent` (epic › feature › task). Campaigns are not structure: they
+ *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
  * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED /
  *   IMPLEMENTED / VERIFIED the board, DONE / DROPPED the archive. Features and tasks have no status:
  *   they take their nearest ancestor's (their epic's).
  * - **Column** (on the board): REFINED 0, IMPLEMENTED 1, VERIFIED 2. A feature or task: Verified
  *   once its epic is VERIFIED, else Implemented once `implementedAt` is set, else Refined.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
- *   `context` (a quiet header for a parent that lives elsewhere). Children keep the list's order;
- *   a campaign's members keep the campaign's order.
- * - **Span** of a node with children: from the leftmost to the rightmost column of the node itself
- *   (unless it is context) and every descendant. Descendants cannot fall behind their epic (moving
- *   an epic to IMPLEMENTED stamps them all), but they can run ahead of it, and a campaign's members
- *   move on their own: the span covers both.
+ *   `context` (a quiet header for a parent that lives elsewhere). Children keep the list's order.
+ *   Campaigns themselves are not in any tree.
  */
 
 export type Phase = 'backlog' | 'board' | 'archive';
@@ -43,8 +40,8 @@ export interface WorkNode {
   readonly context: boolean;
   /** Its own board column; undefined off the board or when it is context. */
   readonly column?: number;
-  /** The columns it spans with its descendants, [from, to]; undefined off the board. */
-  readonly span?: readonly [number, number];
+  /** The campaigns it is a member of, in the list's order. */
+  readonly campaigns: readonly WorkEntry[];
 }
 
 /** A project's work, indexed for the questions below. */
@@ -52,6 +49,7 @@ export class WorkGraph {
   private readonly byId = new Map<string, WorkEntry>();
   private readonly parentOf = new Map<string, string>();
   private readonly childrenOf = new Map<string, string[]>();
+  private readonly campaignsByMember = new Map<string, WorkEntry[]>();
 
   /**
    * @param entries the project's entities, in qits-projects' tree order
@@ -62,16 +60,24 @@ export class WorkGraph {
     campaignMembers: Readonly<Record<string, readonly string[]>> = {},
   ) {
     for (const entry of entries) if (entry.id) this.byId.set(entry.id, entry);
-    for (const [campaign, members] of Object.entries(campaignMembers)) {
-      for (const member of members) {
-        if (this.byId.has(member) && this.byId.has(campaign)) this.link(campaign, member);
+    for (const entry of entries) {
+      if (entry.archetype !== 'CAMPAIGN' || !entry.id) continue;
+      for (const member of campaignMembers[entry.id] ?? []) {
+        const list = this.campaignsByMember.get(member) ?? [];
+        list.push(entry);
+        this.campaignsByMember.set(member, list);
       }
     }
     for (const entry of entries) {
-      if (entry.id && entry.parent && this.byId.has(entry.parent) && !this.parentOf.has(entry.id)) {
+      if (entry.id && entry.parent && this.byId.has(entry.parent)) {
         this.link(entry.parent, entry.id);
       }
     }
+  }
+
+  /** The campaigns `entry` is a member of. */
+  campaignsOf(entry: WorkEntry): readonly WorkEntry[] {
+    return (entry.id && this.campaignsByMember.get(entry.id)) || [];
   }
 
   /** The entity's phase, from its own status or its nearest ancestor's; undefined if none has one. */
@@ -93,7 +99,7 @@ export class WorkGraph {
   tree(phase: Phase): readonly WorkNode[] {
     const included = new Set<string>();
     for (const entry of this.entries) {
-      if (!entry.id || this.phaseOf(entry) !== phase) continue;
+      if (!entry.id || entry.archetype === 'CAMPAIGN' || this.phaseOf(entry) !== phase) continue;
       for (let id: string | undefined = entry.id; id; id = this.parentOf.get(id)) {
         included.add(id);
       }
@@ -109,16 +115,10 @@ export class WorkGraph {
       .filter((id) => included.has(id))
       .map((id) => this.node(this.byId.get(id)!, phase, included));
     const context = this.phaseOf(entry) !== phase;
-    if (phase !== 'board') return { entry, children, context };
+    const campaigns = this.campaignsOf(entry);
+    if (phase !== 'board') return { entry, children, context, campaigns };
     const column = context ? undefined : this.columnOf(entry);
-    const columns = [
-      ...(column === undefined ? [] : [column]),
-      ...children.flatMap((child) => child.span ?? []),
-    ];
-    const span: readonly [number, number] | undefined = columns.length
-      ? [Math.min(...columns), Math.max(...columns)]
-      : undefined;
-    return { entry, children, context, column, span };
+    return { entry, children, context, column, campaigns };
   }
 
   /** The entity itself if it has a status, else its nearest ancestor that has one. */

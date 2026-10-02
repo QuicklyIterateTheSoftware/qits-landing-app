@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { page } from 'vitest/browser';
 import { ListItem } from '../list-item/list-item';
+import { Tag } from '../tag/tag';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
 import { BoardLane } from './board-lane';
+import { BoardRow } from './board-row';
 
 /** Screenshots of the board pieces, with inline data: they are UI, not API answers. */
 
@@ -30,24 +33,30 @@ const COLUMNS: readonly BoardColumnSpec[] = [
 ];
 
 @Component({
-  imports: [Board, BoardLane, BoardCard],
-  host: { class: 'block w-[46rem] p-4' },
+  imports: [Board, BoardLane, BoardRow, BoardCard, Tag],
+  host: { class: 'block w-[48rem] p-4' },
   template: `
-    <ui-board [columns]="columns">
-      <ui-board-lane [from]="0" [to]="2">
-        <span lane-header>qits-1 · A campaign spanning all three</span>
-        <ui-board-lane [from]="0" [to]="1">
-          <span lane-header>qits-2 · An epic, a feature ahead of it</span>
-          <ui-board-card [column]="0" code="qits-3" title="An open feature" kind="feature" />
-          <ui-board-card [column]="1" code="qits-4" title="A shipped feature" kind="feature" />
-        </ui-board-lane>
-        <ui-board-card [column]="2" code="qits-5" title="A verified epic" kind="epic" />
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane [rows]="2">
+        <span lane-header class="font-semibold">An epic with two features</span>
+        <ui-tag lane-tags label="Ordered campaign" />
+        <ui-tag lane-tags label="Second campaign" />
+        <span lane-gutter class="font-mono">qits-12</span>
+        <ui-board-row>
+          <ui-board-card [column]="1" code="qits-14" title="A shipped task" kind="task" />
+          <ui-board-card [column]="0" code="qits-15" title="An open task" kind="task" />
+          <span row-footer class="font-mono">qits-13</span>
+          <span row-footer>A feature ahead of its epic</span>
+        </ui-board-row>
+        <ui-board-row>
+          <ui-board-card [column]="0" code="qits-17" title="Another open task" kind="task" />
+          <span row-footer class="font-mono">qits-16</span>
+          <span row-footer>An open feature</span>
+        </ui-board-row>
       </ui-board-lane>
-      <ui-board-lane [from]="1" [to]="1" muted>
-        <span lane-header>qits-6 · A muted lane in one column</span>
-        <ui-board-card [column]="1" code="qits-7" title="A task" kind="task" />
-      </ui-board-lane>
-      <ui-board-card [column]="0" code="qits-8" title="A standalone ticket" kind="ticket" />
+      <ui-board-card [column]="1" code="qits-18" title="A standalone ticket" kind="ticket">
+        <div class="mt-1"><ui-tag label="Ordered campaign" /></div>
+      </ui-board-card>
     </ui-board>
   `,
 })
@@ -56,24 +65,29 @@ class Variants {
 }
 
 @Component({
-  imports: [BoardLane, ListItem],
+  imports: [BoardLane, ListItem, Tag],
   host: { class: 'flex w-[36rem] flex-col gap-2 p-4' },
   template: `
     <ui-board-lane>
       <span lane-header>qits-1 · A group</span>
+      <ui-tag lane-tags label="Ordered campaign" />
       <ui-list-item code="qits-2" title="An item" [chips]="['ticket']" />
       <ui-board-lane muted>
         <span lane-header>qits-3 · A muted parent that lives elsewhere</span>
         <ui-list-item code="qits-4" title="A nested item" [chips]="['task', 'done']" />
       </ui-board-lane>
     </ui-board-lane>
-    <ui-list-item code="qits-5" title="An ungrouped item" [chips]="['ticket']" />
+    <ui-list-item code="qits-5" title="An ungrouped item" [chips]="['ticket']">
+      <ui-tag label="Second campaign" />
+    </ui-list-item>
   `,
 })
 class Groups {}
 
 describe('Board (screenshots)', () => {
-  it('draws columns, nested lanes and cards', async () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
+
+  it('draws an epic lane with feature rows, tags and cards', async () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
     await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('board');

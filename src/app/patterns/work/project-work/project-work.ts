@@ -34,9 +34,9 @@ import { WorkGroupNode } from '../work-group-node/work-group-node';
         <section aria-labelledby="work-board">
           <h2 id="work-board" class="mt-0 mb-3 text-lg font-semibold">Board</h2>
           <div class="overflow-x-auto">
-            <ui-board class="min-w-[40rem]" [columns]="columns()">
+            <ui-board class="min-w-[40rem]" [columns]="columns()" gutter>
               @for (node of board(); track node.entry.id) {
-                <app-work-board-node [node]="node" />
+                <app-work-board-node [node]="node" [base]="workPath()" />
               }
             </ui-board>
           </div>
@@ -46,7 +46,7 @@ import { WorkGroupNode } from '../work-group-node/work-group-node';
           <h2 id="work-backlog" class="mt-0 mb-3 text-lg font-semibold">Backlog</h2>
           <div class="flex-col gap-2" [class]="backlog().length ? 'flex' : 'hidden'">
             @for (node of backlog(); track node.entry.id) {
-              <app-work-group-node [node]="node" />
+              <app-work-group-node [node]="node" [base]="workPath()" />
             }
           </div>
           <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="backlog().length">
@@ -75,6 +75,8 @@ export class ProjectWork {
       count: entries.filter((entry) => graph.columnOf(entry) === index).length,
     }));
   });
+
+  protected readonly workPath = computed(() => `/projects/${this.selected.slug() ?? ''}/work`);
 
   protected readonly archivePath = computed(
     () => `/projects/${this.selected.slug() ?? ''}/work/archive`,

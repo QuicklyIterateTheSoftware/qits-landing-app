@@ -1,44 +1,91 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { WorkNode } from '../../../core/work/work-tree';
 import { BOARD_COLUMNS } from '../../../core/work/work-statuses';
 import { BoardCard } from '../../../ui/components/board/board-card';
 import { BoardLane } from '../../../ui/components/board/board-lane';
+import { BoardRow } from '../../../ui/components/board/board-row';
+import { Tag } from '../../../ui/components/tag/tag';
 
 /**
- * One node of the work tree on the board: a lane (`ui-board-lane`, spanning its columns) when it
- * has children, which it renders recursively, else a card (`ui-board-card`) in its column.
+ * One node of the work tree on the board:
  *
- * `display: contents`, so the lane or card is itself the grid item of the board or lane it is in.
+ * - an epic is a lane across the whole board (`ui-board-lane`): its title in the bar at the top,
+ *   its campaigns as tags at the top right, its id written up the gutter;
+ * - a feature is a row of that lane across the status columns (`ui-board-row`), its id and title
+ *   along the bottom;
+ * - anything else (a task, a ticket) is a card (`ui-board-card`) in its column.
+ *
+ * Every one links to the item's page, `<base>/<qualified id>`. `display: contents`, so the lane,
+ * row or card is itself the grid item of the board, lane or row it is in.
  */
 @Component({
   selector: 'app-work-board-node',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardLane, BoardCard, WorkBoardNode],
+  imports: [RouterLink, BoardLane, BoardRow, BoardCard, Tag, WorkBoardNode],
   host: { class: 'contents' },
   template: `
     @let n = node();
-    @if (n.children.length) {
-      <ui-board-lane [from]="n.span?.[0] ?? 0" [to]="n.span?.[1] ?? 0" [muted]="n.context">
-        <span lane-header class="font-mono">{{ n.entry.qualifiedId }}</span>
-        <span lane-header class="min-w-0 flex-1 truncate">{{ n.entry.title }}</span>
-        <span lane-header class="opacity-70">{{ n.entry.archetype?.toLowerCase() }}</span>
-        @for (child of n.children; track child.entry.id) {
-          <app-work-board-node [node]="child" />
-        }
-      </ui-board-lane>
-    } @else {
-      <ui-board-card
-        [column]="n.column ?? 0"
-        [code]="n.entry.qualifiedId ?? ''"
-        [title]="n.entry.title ?? ''"
-        [kind]="n.entry.archetype?.toLowerCase() ?? ''"
-        [border]="border(n.column ?? 0)"
-      />
+    @let link = base() + '/' + n.entry.qualifiedId;
+    @switch (n.entry.archetype) {
+      @case ('EPIC') {
+        <ui-board-lane [rows]="n.children.length || 1">
+          <a
+            lane-header
+            class="font-semibold text-inherit no-underline after:absolute after:inset-0 hover:underline"
+            [routerLink]="link"
+            >{{ n.entry.title }}</a
+          >
+          @for (campaign of n.campaigns; track campaign.id) {
+            <ui-tag lane-tags [label]="campaign.title ?? ''" />
+          }
+          <span lane-gutter class="font-mono">{{ n.entry.qualifiedId }}</span>
+          @for (child of n.children; track child.entry.id) {
+            <app-work-board-node [node]="child" [base]="base()" />
+          }
+        </ui-board-lane>
+      }
+      @case ('FEATURE') {
+        <ui-board-row>
+          @for (child of n.children; track child.entry.id) {
+            <app-work-board-node [node]="child" [base]="base()" />
+          }
+          <span row-footer class="font-mono text-charcoal-brown-600">{{
+            n.entry.qualifiedId
+          }}</span>
+          <a
+            row-footer
+            class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
+            [routerLink]="link"
+            >{{ n.entry.title }}</a
+          >
+        </ui-board-row>
+      }
+      @default {
+        <ui-board-card
+          [column]="n.column ?? 0"
+          [code]="n.entry.qualifiedId ?? ''"
+          [title]="n.entry.title ?? ''"
+          [kind]="n.entry.archetype?.toLowerCase() ?? ''"
+          [border]="border(n.column ?? 0)"
+          [link]="link"
+        >
+          @if (n.campaigns.length) {
+            <div class="mt-1 flex flex-wrap gap-1">
+              @for (campaign of n.campaigns; track campaign.id) {
+                <ui-tag [label]="campaign.title ?? ''" />
+              }
+            </div>
+          }
+        </ui-board-card>
+      }
     }
   `,
 })
 export class WorkBoardNode {
   readonly node = input.required<WorkNode>();
+  /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
+  readonly base = input.required<string>();
 
   protected border(column: number): string {
     return BOARD_COLUMNS[column]?.cardBorder ?? 'border-charcoal-brown-200';

@@ -5,6 +5,7 @@ import { ProjectPage } from './patterns/projects/project-page/project-page';
 import { ProjectPicker } from './patterns/projects/project-picker/project-picker';
 import { ProjectSetup } from './patterns/projects/project-setup/project-setup';
 import { ProjectWork } from './patterns/work/project-work/project-work';
+import { WorkItem } from './patterns/work/work-item/work-item';
 import { ProjectWorkArchive } from './patterns/work/project-work-archive/project-work-archive';
 import { ProjectEvents } from './patterns/events/project-events/project-events';
 import { ProjectObservability } from './patterns/observability/project-observability/project-observability';
@@ -43,6 +44,8 @@ export const routes: Routes = [
       { path: 'projects/:slug', component: ProjectPage },
       { path: 'projects/:slug/work', component: ProjectWork },
       { path: 'projects/:slug/work/archive', component: ProjectWorkArchive },
+      // After `work/archive`, so that one keeps matching; item ids are qualified (`qits-112`).
+      { path: 'projects/:slug/work/:id', component: WorkItem },
       { path: 'projects/:slug/editor', component: ProjectEditor },
       { path: 'projects/:slug/observability', component: ProjectObservability },
       { path: 'projects/:slug/events', component: ProjectEvents },

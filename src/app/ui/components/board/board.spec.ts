@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
 import { BoardLane } from './board-lane';
+import { BoardRow } from './board-row';
 
 const COLUMNS: readonly BoardColumnSpec[] = [
   { label: 'One', count: 1, body: 'bg-ocean-deep-300', header: 'bg-ocean-deep-400' },
@@ -11,18 +13,26 @@ const COLUMNS: readonly BoardColumnSpec[] = [
 ];
 
 @Component({
-  imports: [Board, BoardLane, BoardCard],
+  imports: [Board, BoardLane, BoardRow, BoardCard],
   template: `
-    <ui-board [columns]="columns">
-      <ui-board-lane [from]="1" [to]="2">
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane [rows]="2">
         <span lane-header>Lane</span>
-        <ui-board-card [column]="2" code="c-2" title="In three" kind="task" />
-        <ui-board-lane [from]="1" [to]="1" muted>
-          <span lane-header>Inner</span>
-          <ui-board-card [column]="1" code="c-1" title="In two" kind="task" />
-        </ui-board-lane>
+        <span lane-gutter>L-1</span>
+        <ui-board-row>
+          <ui-board-card
+            id="in-row"
+            [column]="1"
+            code="c-1"
+            title="In two"
+            kind="task"
+            link="/x/c-1"
+          />
+          <span row-footer>Row</span>
+        </ui-board-row>
+        <ui-board-card id="in-lane" [column]="2" code="c-2" title="In three" kind="task" />
       </ui-board-lane>
-      <ui-board-card [column]="0" code="c-0" title="In one" kind="ticket" />
+      <ui-board-card id="on-board" [column]="0" code="c-0" title="In one" kind="ticket" />
     </ui-board>
   `,
 })
@@ -31,9 +41,9 @@ class Host {
 }
 
 @Component({
-  imports: [BoardLane, BoardCard],
+  imports: [BoardLane],
   template: `
-    <ui-board-lane [from]="1" [to]="2">
+    <ui-board-lane>
       <span lane-header>Off</span>
       <ui-board-lane muted><span lane-header>Nested</span></ui-board-lane>
     </ui-board-lane>
@@ -42,48 +52,65 @@ class Host {
 class OffBoard {}
 
 describe('Board', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
+
   function render() {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('draws one heading and one colour stripe per column', () => {
+  it('draws the gutter, then one heading and one colour stripe per column', () => {
     const element = render();
     const headings = [...element.querySelectorAll('ui-board > div:first-child > div')];
     expect(headings.map((h) => h.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
+      '',
       'One 1',
       'Two',
       'Three',
     ]);
     const stripes = [...element.querySelectorAll('ui-board [aria-hidden="true"] > div')];
     expect(stripes.map((s) => s.className)).toEqual([
+      'bg-charcoal-brown-100',
       'bg-ocean-deep-300',
       'bg-sunflower-gold-300',
       'bg-mint-leaf-300',
     ]);
   });
 
-  it('places cards and lanes in their columns, relative to the lane they are in', () => {
+  it('runs a lane across the board, a row across the status columns, cards in their column', () => {
     const element = render();
     const column = (selector: string) =>
       (element.querySelector(selector) as HTMLElement).style.gridColumn;
-    // On the board: absolute column + 1.
-    expect(column('ui-board > div > div > ui-board-card')).toBe('1 / span 1');
-    expect(column('ui-board > div > div > ui-board-lane')).toBe('2 / span 2');
-    // Inside the lane from column 1: column 2 is the lane's second line.
-    expect(column('ui-board-lane > ui-board-card')).toBe('2 / span 1');
-    expect(column('ui-board-lane ui-board-lane')).toBe('1 / span 1');
-    expect(column('ui-board-lane ui-board-lane ui-board-card')).toBe('1 / span 1');
+    expect(column('ui-board-lane')).toBe('1 / -1');
+    expect(column('ui-board-row')).toBe('2 / span 3');
+    // Status column 1, inside a row whose grid starts at status column 0: its second line.
+    expect(column('#in-row')).toBe('2 / span 1');
+    // Status column 2, inside the lane, whose grid starts at the gutter.
+    expect(column('#in-lane')).toBe('4 / span 1');
+    // Status column 0 on the board, after the gutter.
+    expect(column('#on-board')).toBe('2 / span 1');
   });
 
-  it('lays a lane out as a plain group off a board', () => {
+  it('runs the lane’s gutter cell alongside its rows', () => {
+    const gutter = render().querySelector('ui-board-lane > div:nth-child(2)') as HTMLElement;
+    expect(gutter.style.gridRow).toBe('2 / span 2');
+    expect(gutter.textContent?.trim()).toBe('L-1');
+  });
+
+  it('makes a card with a link a link', () => {
+    const link = render().querySelector('#in-row a') as HTMLAnchorElement;
+    expect(link.getAttribute('href')).toBe('/x/c-1');
+    expect(render().querySelector('#on-board a')).toBeNull();
+  });
+
+  it('lays lanes out as plain groups off a board, nested too', () => {
     const fixture = TestBed.createComponent(OffBoard);
     fixture.detectChanges();
-    const lane = (fixture.nativeElement as HTMLElement).querySelector(
-      'ui-board-lane',
-    ) as HTMLElement;
-    expect(lane.style.gridColumn).toBe('');
-    expect(lane.classList.contains('grid')).toBe(false);
+    const lanes = [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll('ui-board-lane'),
+    ] as HTMLElement[];
+    expect(lanes.map((lane) => lane.style.gridColumn)).toEqual(['', '']);
+    expect(lanes.map((lane) => lane.classList.contains('flex'))).toEqual([true, true]);
   });
 });
