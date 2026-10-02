@@ -3,7 +3,7 @@ import type {
   GetProjectsApiProjectsByProjectIdRepositoriesResponses,
   GetProjectsApiProjectsResponses,
 } from '../../api/projects';
-import { NOTHING, type Consumed } from '../consume';
+import { NOTHING, type Consumed } from '@qits/angular';
 
 /**
  * What `ProjectsStore` reads from each qits-projects answer (epic qits-546). The store passes

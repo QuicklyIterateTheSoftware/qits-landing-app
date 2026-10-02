@@ -1,4 +1,4 @@
-import { goldenMasters } from './golden-master-pact';
+import { goldenMasters } from '@qits/angular/testing';
 
 /** qits-projects' golden masters (epic qits-546), from its npm package. */
 export const projectsGoldenMasters = goldenMasters(

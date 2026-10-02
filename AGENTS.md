@@ -19,8 +19,7 @@ qits-projects-service verifies in its own gate.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in
-  `consume(call, LIST)` (`src/app/core/consume.ts`, a copy of `@qits/angular`'s until this app
-  depends on it), so its `data` is typed to those paths only: reading any other field, in the
+  `consume(call, LIST)` (from `@qits/angular`), so its `data` is typed to those paths only: reading any other field, in the
   store or a template, fails the build. The pact spec passes the same lists as `consumes`, so the
   pact holds exactly those fields. To read another field, add it to the list; the pact changes
   with it. An empty list (`SESSION_CHECK`, and every error answer) binds the status only.
@@ -33,10 +32,14 @@ qits-projects-service verifies in its own gate.
   `src/testing/golden-masters.ts` reads it. Plain specs (`projects.store.spec.ts`, `app.spec.ts`,
   `session.guard.spec.ts`) keep `HttpTestingController` and `flush(goldenMaster(...))`. A spec that
   needs a different answer derives it from a golden master and says how in a comment.
-- **`src/testing/golden-master-pact.ts` is the generic part**: the golden-master reader, the
-  matcher wrapper (`addGoldenInteraction`, with its required `consumes`) and the committed-file
-  compare (`assertPactFile`). It is a copy of `@qits/angular/testing`; both copies go once this app
-  depends on `@qits/angular`.
+- **The generic part lives in `@qits/angular`**: `consume` and `Consumed` in the main entry, and
+  the golden-master reader, `addGoldenInteraction` (with its required `consumes`) and
+  `assertPactFile` in `@qits/angular/testing`. `src/testing/golden-masters.ts` only binds them to
+  `@qits/projects-golden-masters`.
+- **ESLint enforces the layout**: `eslint.config.mjs` turns on `@qits/angular/eslint`'s
+  `recommended` rules (generated clients only in stores, every client call wrapped in `consume`,
+  a pact spec beside every store, pact names are repository names). `npm run lint` runs prettier
+  and ESLint, and the release check runs `npm run lint`.
 - **Matchers come from the index's `frozen` lists**, never from a value's shape: `frozen.ids` a uuid
   regex, `frozen.instants` an ISO-8601 regex, every other leaf a type match, a recorded `null` exact
   `null`. `frozen.listFilteredTo` is "at least the recorded count"; every other array is "exactly

@@ -8,9 +8,9 @@ import { join, resolve } from 'node:path';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { addGoldenInteraction, assertPactFile } from '../../../testing/golden-master-pact';
+import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
-import { NOTHING } from '../consume';
+import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
   LIST_PROJECT_REPOSITORIES,

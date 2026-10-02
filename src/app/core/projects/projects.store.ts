@@ -15,7 +15,7 @@ import {
   getProjectsApiProjectsById,
   getProjectsApiProjectsByProjectIdRepositories,
 } from '../../api/projects';
-import { consume } from '../consume';
+import { consume } from '@qits/angular';
 import {
   GET_PROJECT,
   LIST_PROJECT_REPOSITORIES,
