@@ -33,63 +33,71 @@ export type LoadState = 'loading' | 'error' | 'loaded';
   host: { class: 'relative block', '[attr.aria-busy]': "state() === 'loading'" },
   template: `
     <ng-content />
-    @if (state() === 'error') {
-      <div class="absolute inset-0 flex items-center justify-center bg-white/30 p-1 text-red-600">
-        <svg
-          viewBox="0 0 24 24"
-          role="img"
-          [attr.aria-label]="errorLabel()"
-          class="block size-8 max-h-full max-w-full"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 7v6" />
-          <path d="M12 17h.01" />
-        </svg>
-      </div>
-    } @else if (state() === 'loading') {
-      <div class="absolute inset-0 flex items-center justify-center bg-white/30 p-1 text-gray-500">
-        <svg
-          viewBox="0 0 1000 1000"
-          role="img"
-          [attr.aria-label]="label()"
-          class="block size-8 max-h-full max-w-full"
-        >
-          @for (ring of rings; track ring.r) {
-            <circle
-              cx="500"
-              cy="500"
-              [attr.r]="ring.r"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
+    <!--
+      Both overlays are always rendered and hidden by class, never added by @if: a block the
+      server rendered and the browser then drops stays in the page until hydration's clean-up,
+      which waits for every open request.
+    -->
+    <div
+      class="absolute inset-0 flex items-center justify-center bg-white/30 p-1 text-red-600"
+      [class.hidden]="state() !== 'error'"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        role="img"
+        [attr.aria-label]="errorLabel()"
+        class="block size-8 max-h-full max-w-full"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 7v6" />
+        <path d="M12 17h.01" />
+      </svg>
+    </div>
+    <div
+      class="absolute inset-0 flex items-center justify-center bg-white/30 p-1 text-gray-500"
+      [class.hidden]="state() !== 'loading'"
+    >
+      <svg
+        viewBox="0 0 1000 1000"
+        role="img"
+        [attr.aria-label]="label()"
+        class="block size-8 max-h-full max-w-full"
+      >
+        @for (ring of rings; track ring.r) {
+          <circle
+            cx="500"
+            cy="500"
+            [attr.r]="ring.r"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="5"
+          />
+          <circle
+            cx="500"
+            cy="500"
+            [attr.r]="ring.r"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="20"
+            stroke-linecap="square"
+            [attr.stroke-dasharray]="ring.dash"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 500 500"
+              to="-360 500 500"
+              [attr.dur]="ring.seconds + 's'"
+              repeatCount="indefinite"
             />
-            <circle
-              cx="500"
-              cy="500"
-              [attr.r]="ring.r"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="20"
-              stroke-linecap="square"
-              [attr.stroke-dasharray]="ring.dash"
-            >
-              <animateTransform
-                attributeName="transform"
-                type="rotate"
-                from="0 500 500"
-                to="-360 500 500"
-                [attr.dur]="ring.seconds + 's'"
-                repeatCount="indefinite"
-              />
-            </circle>
-          }
-        </svg>
-      </div>
-    }
+          </circle>
+        }
+      </svg>
+    </div>
   `,
 })
 export class Spinner {

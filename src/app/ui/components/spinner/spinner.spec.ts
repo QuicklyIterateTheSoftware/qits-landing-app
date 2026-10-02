@@ -10,6 +10,13 @@ class Host {
   readonly state = signal<LoadState>('loading');
 }
 
+/** The names of the icons not hidden, each an image (`role="img"`). */
+function shown(host: Element): string[] {
+  return [...host.querySelectorAll(':scope > div:not(.hidden) svg[role="img"]')].map(
+    (svg) => svg.getAttribute('aria-label') ?? '',
+  );
+}
+
 describe('Spinner', () => {
   it('overlays "Loading" while loading, "Failed to load" on error, and nothing when loaded', () => {
     const fixture = TestBed.createComponent(Host);
@@ -18,18 +25,17 @@ describe('Spinner', () => {
     const host = element.querySelector('ui-spinner')!;
     expect(element.querySelector('p')?.textContent).toBe('content');
     expect(host.getAttribute('aria-busy')).toBe('true');
-    expect(host.querySelector('svg')?.getAttribute('role')).toBe('img');
-    expect(host.querySelector('svg')?.getAttribute('aria-label')).toBe('Loading');
+    expect(shown(host)).toEqual(['Loading']);
     expect(host.querySelectorAll('animateTransform').length).toBe(5);
 
     fixture.componentInstance.state.set('error');
     fixture.detectChanges();
     expect(host.getAttribute('aria-busy')).toBe('false');
-    expect(host.querySelector('svg')?.getAttribute('aria-label')).toBe('Failed to load');
+    expect(shown(host)).toEqual(['Failed to load']);
 
     fixture.componentInstance.state.set('loaded');
     fixture.detectChanges();
-    expect(host.querySelector('svg')).toBeNull();
+    expect(shown(host)).toEqual([]);
     expect(element.querySelector('p')?.textContent).toBe('content');
   });
 });
