@@ -31,25 +31,26 @@ import { BACKLOG_STATUSES, BOARD_COLUMNS, withStatus } from './work/work-statuse
         <section aria-labelledby="work-board">
           <h2 id="work-board" class="mt-0 mb-3 text-lg font-semibold">Board</h2>
           <div class="overflow-x-auto">
-            <ol class="m-0 grid min-w-[40rem] list-none grid-cols-3 gap-4 p-0">
+            <!-- One continuous band: three columns, no gap, each in its status's colour. -->
+            <ol class="m-0 grid min-w-[40rem] list-none grid-cols-3 p-0">
               @for (column of columns(); track column.status) {
-                <li
-                  class="flex flex-col overflow-hidden rounded-lg border border-charcoal-brown-100 bg-charcoal-brown-50"
-                >
+                <li class="flex flex-col" [class]="column.body">
                   <h3
-                    class="m-0 flex items-baseline justify-between bg-charcoal-brown-100 px-3 py-2 text-sm font-semibold text-charcoal-brown-900"
+                    class="m-0 flex items-baseline justify-between px-3 py-2 text-sm font-semibold"
+                    [class]="column.header"
                   >
                     {{ column.label }}
-                    <span class="text-xs font-normal text-charcoal-brown-600">{{
-                      column.entries.length
-                    }}</span>
+                    <span class="text-xs font-normal opacity-80">{{ column.entries.length }}</span>
                   </h3>
                   <ul
                     class="m-0 list-none flex-col gap-2 p-2"
                     [class]="column.entries.length ? 'flex' : 'hidden'"
                   >
                     @for (entry of column.entries; track entry.id) {
-                      <li class="rounded-md border border-charcoal-brown-100 bg-white p-2 text-sm">
+                      <li
+                        class="rounded-md border bg-white p-2 text-sm"
+                        [class]="column.cardBorder"
+                      >
                         <div class="flex items-center justify-between gap-2">
                           <span class="font-mono text-xs text-charcoal-brown-600">{{
                             entry.qualifiedId
@@ -64,7 +65,7 @@ import { BACKLOG_STATUSES, BOARD_COLUMNS, withStatus } from './work/work-statuse
                     }
                   </ul>
                   <p
-                    class="m-0 px-3 py-2 text-sm text-charcoal-brown-500"
+                    class="m-0 px-3 py-2 text-sm text-charcoal-brown-900/70"
                     [class.hidden]="column.entries.length"
                   >
                     Nothing here
