@@ -122,6 +122,7 @@ class Groups {}
   host: { class: 'block w-[48rem] p-4' },
   template: `
     <ui-board [columns]="columns" gutter>
+      <ui-board-card id="ticket" [column]="1" code="k" title="A ticket" kind="ticket" link="/k" />
       <ui-board-lane>
         <a lane-header id="epic" routerLink="/e">An epic</a>
         <ui-board-row>
@@ -160,22 +161,40 @@ describe('Board (screenshots)', () => {
     await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('groups');
   });
 
+  it('shadows a standalone ticket card', async () => {
+    const fixture = TestBed.createComponent(Linked);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const ticket = element.querySelector('#ticket') as HTMLElement;
+    expect(getComputedStyle(ticket).boxShadow).toBe('none');
+    await userEvent.hover(ticket.querySelector('a') as HTMLElement);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    // Visible: on the card's own box, which nothing clips.
+    expect(getComputedStyle(ticket).boxShadow).toMatch(/rgba\(0, 0, 0, 0\.1\)/);
+    await userEvent.unhover(ticket.querySelector('a') as HTMLElement);
+  });
+
   it('shadows only the innermost hovered item', async () => {
     const fixture = TestBed.createComponent(Linked);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
-    const shadow = (selector: string) =>
-      getComputedStyle(element.querySelector(selector) as Element, '::after').boxShadow;
+    // A card casts its shadow from its own box; a lane or row from its link's stretched ::after.
+    const shadow = (selector: string) => {
+      const target = element.querySelector(selector) as Element;
+      return target.tagName === 'UI-BOARD-CARD'
+        ? getComputedStyle(target).boxShadow
+        : getComputedStyle(target, '::after').boxShadow;
+    };
     const taskLink = element.querySelector('#task a') as HTMLElement;
     await userEvent.hover(taskLink);
     await new Promise((resolve) => setTimeout(resolve, 200));
-    expect(shadow('#task a')).not.toBe('none');
+    expect(shadow('#task')).not.toBe('none');
     expect(shadow('#feature')).toBe('none');
     expect(shadow('#epic')).toBe('none');
     await userEvent.hover(element.querySelector('#feature') as HTMLElement);
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(shadow('#feature')).not.toBe('none');
-    expect(shadow('#task a')).toBe('none');
+    expect(shadow('#task')).toBe('none');
     // The feature's id strip in the right gutter belongs to the feature, not the epic.
     // Over the strip, by position: the feature's stretched link lies on top of it, as meant.
     const idBox = (element.querySelector('#feature-id') as HTMLElement).getBoundingClientRect();

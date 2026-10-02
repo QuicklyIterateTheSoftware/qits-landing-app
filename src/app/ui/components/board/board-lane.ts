@@ -20,8 +20,7 @@ let nextLaneId = 0;
  * lane.
  *
  * **On a board** it runs the board's full width (gutters and all columns): a title bar across the
- * top (projected `[lane-header]`, right-aligned, ending just before `[lane-tags]` at its top
- * right) that continues down the whole left side over the gutter as one ┌ of the same colour,
+ * top (projected `[lane-header]`, right-aligned, with `[lane-tags]` at the bar's left end) that continues down the whole left side over the gutter as one ┌ of the same colour,
  * only its top-left corner rounded, holding `[lane-gutter]` written vertically at its bottom, and its children (`ui-board-row`s, cards) in the columns beside it.
  *
  * With `collapsible`, a round button on its bottom edge switches between the children (expanded)
@@ -72,7 +71,7 @@ let nextLaneId = 0;
       "
     >
       <ng-content select="[lane-header]" />
-      <span class="flex gap-1" [class]="onBoard ? 'shrink-0' : 'ml-auto'">
+      <span class="flex gap-1" [class]="onBoard ? 'order-first mr-auto shrink-0' : 'ml-auto'">
         <ng-content select="[lane-tags]" />
       </span>
     </div>
