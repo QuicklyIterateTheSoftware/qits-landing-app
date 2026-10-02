@@ -20,7 +20,8 @@ export class SelectedProject {
   private readonly router = inject(Router);
   private readonly store = inject(ProjectsStore);
 
-  private readonly url = toSignal(
+  /** The current URL, updated on every navigation. */
+  readonly url = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
