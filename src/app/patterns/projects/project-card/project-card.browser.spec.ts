@@ -70,11 +70,6 @@ describe('ProjectCard (screenshots)', () => {
     (fixture.nativeElement as HTMLElement).style.paddingBottom = '1.25rem';
     fixture.detectChanges();
     await settle();
-    // In the browser the store loads the project list on its own; answer it as recorded.
-    http
-      .expectOne('/projects/api/projects')
-      .flush(await commands.goldenMaster('a project exists', 'listProjects'));
-    await settle();
     TestBed.tick();
     const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
     const repositories = http.expectOne(`/projects/api/projects/${project.id}/repositories`);

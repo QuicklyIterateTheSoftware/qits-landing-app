@@ -15,7 +15,6 @@ import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
   LIST_PROJECT_RELEASE_REQUESTS,
-  LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
   SESSION_CHECK,
 } from './projects.consumes';
@@ -26,7 +25,8 @@ import { ProjectsStore } from './projects.store';
  * repository, so the file is `pacts/qits-landing-app_qits-projects-service.json`.
  *
  * The stores are the only users of the qits-projects client; this spec covers `ProjectsStore`,
- * and `work.store.pact.spec.ts` covers `WorkStore`, in the same pact file. Each test
+ * `work.store.pact.spec.ts` covers `WorkStore` and `repositories.store.pact.spec.ts` covers
+ * `RepositoriesStore`, in the same pact file. Each test
  * drives one store method, as the UI interaction named in `interactions.ts` does, against a pact
  * mock server that answers with qits-projects' golden master, and checks what the store made of it.
  * Each interaction binds only the fields the store reads: the same list from `projects.consumes.ts`
@@ -43,14 +43,10 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 /**
  * The operations this spec owns in that file. `WorkStore`'s pact spec owns `listProjectEntities`
- * in the same file (`src/testing/pact-part.ts`).
+ * and `RepositoriesStore`'s owns `listProjectRepositories`, in the same file
+ * (`src/testing/pact-part.ts`).
  */
-const OPERATIONS = [
-  'listProjects',
-  'getProject',
-  'listProjectRepositories',
-  'listProjectReleaseRequests',
-];
+const OPERATIONS = ['listProjects', 'getProject', 'listProjectReleaseRequests'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -148,23 +144,6 @@ describe('qits-landing-app → qits-projects-service pact', () => {
         expect(store.ids()).toEqual([]);
       },
     ));
-
-  it('show-project-repositories: the store loads a project’s repositories', () =>
-    given(
-      'show-project-repositories',
-      'a project with 3 repositories',
-      'listProjectRepositories',
-      LIST_PROJECT_REPOSITORIES,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const op = masters.operation('a project with 3 repositories', 'listProjectRepositories');
-      const projectId = op.params['projectId'];
-      await store.loadRepositories(projectId);
-      const loaded = store.repositories()[projectId];
-      expect(loaded?.status).toBe('loaded');
-      const recorded = masters.body('a project with 3 repositories', 'listProjectRepositories');
-      expect(loaded?.entries.length).toBe(recorded.entries.length);
-    }));
 
   it('open-release-requests: the store loads a project’s pending release requests', () =>
     given(
