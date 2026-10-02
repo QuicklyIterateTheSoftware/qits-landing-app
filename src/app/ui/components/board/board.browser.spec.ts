@@ -50,7 +50,12 @@ const COLUMNS: readonly BoardColumnSpec[] = [
           <span row-footer>A feature ahead of its epic</span>
         </ui-board-row>
         <ui-board-row>
-          <ui-board-card [column]="0" code="qits-17" title="Another open task" kind="task" />
+          <ui-board-card
+            [column]="0"
+            code="qits-17"
+            title="A long task title that wraps over several lines, flowing around the kind badge"
+            kind="maintenance"
+          />
           <span row-id class="font-mono">qits-16</span>
           <span row-footer>An open feature</span>
         </ui-board-row>
@@ -107,7 +112,7 @@ class Collapsing {
       <ui-list-item code="qits-2" title="An item" [chips]="['ticket']" />
       <ui-board-lane muted>
         <span lane-header>qits-3 · A muted parent that lives elsewhere</span>
-        <ui-list-item code="qits-4" title="A nested item" [chips]="['task', 'done']" />
+        <ui-list-item code="qits-4" title="A nested item" [chips]="['done', 'task']" />
       </ui-board-lane>
     </ui-board-lane>
     <ui-list-item code="qits-5" title="An ungrouped item" [chips]="['ticket']">
