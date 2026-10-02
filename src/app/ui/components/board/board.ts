@@ -64,6 +64,7 @@ export class Board implements BoardContext {
 
   protected readonly template = computed(() => `repeat(${this.columns().length}, minmax(0, 1fr))`);
 
+  readonly onBoard = true;
   readonly offset = () => 0;
   readonly columnCount = computed(() => this.columns().length);
 }

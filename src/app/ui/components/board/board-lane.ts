@@ -23,9 +23,10 @@ import { BOARD_CONTEXT, gridColumn, type BoardContext } from './board-context';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardLane }],
   host: {
-    class: 'mx-1 block self-start rounded-md ring-1 ring-black/10',
+    // Exactly one display class, chosen by where the lane is (a static one would fight it).
+    class: 'mx-1 rounded-md ring-1 ring-black/10',
     '[class]':
-      "onBoard ? 'grid grid-cols-subgrid gap-y-2 pb-2 bg-white/25' : 'flex flex-col gap-1 pb-1 bg-charcoal-brown-50'",
+      "onBoard ? 'grid grid-cols-subgrid grid-flow-row-dense gap-y-2 self-start pb-2 bg-white/25' : 'flex flex-col gap-1 pb-1 bg-charcoal-brown-50'",
     '[style.grid-column]': 'column()',
   },
   template: `
@@ -50,10 +51,10 @@ export class BoardLane implements BoardContext {
   readonly muted = input(false, { transform: booleanAttribute });
 
   private readonly parent = inject(BOARD_CONTEXT, { optional: true, skipSelf: true });
-  protected readonly onBoard = this.parent !== null;
+  readonly onBoard = this.parent?.onBoard ?? false;
 
   protected readonly column = computed(() =>
-    this.parent ? gridColumn(this.parent, this.from(), this.to()) : null,
+    this.onBoard && this.parent ? gridColumn(this.parent, this.from(), this.to()) : null,
   );
 
   readonly offset = () => this.from();
