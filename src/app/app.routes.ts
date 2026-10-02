@@ -4,6 +4,7 @@ import { Layout } from './layout/layout';
 import { ProjectPage } from './projects/project-page';
 import { ProjectPicker } from './projects/project-picker';
 import { ProjectSetup } from './projects/project-setup';
+import { ProjectWork } from './projects/project-work';
 import { RootRedirect } from './root-redirect';
 
 /**
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: '', component: RootRedirect },
       { path: 'projects', component: ProjectPicker },
       { path: 'projects/:slug', component: ProjectPage },
+      { path: 'projects/:slug/work', component: ProjectWork },
       { path: 'projects/:slug/setup', component: ProjectSetup },
       { path: '**', component: ProjectPicker },
     ],

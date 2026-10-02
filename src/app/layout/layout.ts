@@ -86,7 +86,7 @@ interface NavLink {
         aria-label="qits"
       >
         <ul class="m-0 list-none px-2 py-3">
-          @for (link of links; track link.path) {
+          @for (link of links(); track link.path) {
             <li>
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
@@ -112,14 +112,18 @@ export class Layout {
   private readonly selected = inject(SelectedProject);
 
   /**
-   * The sidebar's entries. Empty for now: where you are is the breadcrumb's job, so the sidebar
-   * does not repeat the open project's name. It will list a route's own sections.
+   * The sidebar lists the open project's sections; with no project open it is empty. Where you
+   * are is the breadcrumb's job, so the sidebar does not repeat the project's name.
    */
-  protected readonly links: readonly NavLink[] = [];
+  protected readonly links = computed((): readonly NavLink[] => {
+    const slug = this.selected.slug();
+    return slug === undefined ? [] : [{ label: 'Work', path: `/projects/${slug}/work` }];
+  });
 
   /**
-   * The trail after the "qits" brand: "Projects", then the open project's name, then "Setup" on
-   * its settings page. The last crumb is the current page and is not a link.
+   * The trail after the "qits" brand: "Projects", then the open project's name, then the section
+   * the URL is in ("Work", or "Setup" from the gear). The last crumb is the current page and is
+   * not a link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
     const projects: NavLink = { label: 'Projects', path: '/projects' };
@@ -127,10 +131,12 @@ export class Layout {
     const slug = this.selected.slug();
     if (!project || !slug) return [projects];
     const crumbs = [projects, { label: project.name ?? slug, path: `/projects/${slug}` }];
-    const setup = this.settingsPath();
-    return setup && this.selected.url().startsWith(setup)
-      ? [...crumbs, { label: 'Setup', path: setup }]
-      : crumbs;
+    const url = this.selected.url();
+    const section = [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find(
+      (link) =>
+        url === link.path || url.startsWith(`${link.path}/`) || url.startsWith(`${link.path}?`),
+    );
+    return section ? [...crumbs, section] : crumbs;
   });
 
   /** The open project's settings page, or undefined while no project is open. */
