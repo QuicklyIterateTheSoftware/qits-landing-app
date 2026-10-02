@@ -81,6 +81,12 @@ describe('ProjectPicker (screenshots)', () => {
     http
       .expectOne(`/projects/api/projects/${other.id}/repositories`)
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
+    http
+      .expectOne(`/projects/api/projects/${project.id}/entities`)
+      .flush(await commands.goldenMaster('a project with refined work', 'listProjectEntities'));
+    http
+      .expectOne(`/projects/api/projects/${other.id}/entities`)
+      .flush(await commands.goldenMaster('a project with no work', 'listProjectEntities'));
     // qits-githost's counted recording, under the id of the projects' first repository (the two
     // providers' frozen ids are unrelated).
     const loc = await commands.goldenMaster(
@@ -92,6 +98,7 @@ describe('ProjectPicker (screenshots)', () => {
     http.expectOne('/githost/api/loc').flush(loc);
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);
+    await expect.element(picker).toHaveTextContent('Work 3');
     await expect.element(picker).toHaveTextContent('Components 1');
     await expect.element(picker).toMatchScreenshot('loaded');
   });

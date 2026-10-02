@@ -13,6 +13,7 @@ import { projectsGoldenMasters as masters } from '../../../testing/golden-master
 import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
+  LIST_PROJECT_ENTITIES,
   LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
   SESSION_CHECK,
@@ -21,8 +22,7 @@ import { ProjectsStore } from './projects.store';
 
 /**
  * qits-landing-app's pact with qits-projects-service (epic qits-546). Both sides are named by
- * repository, so the file is `pacts/qits-landing-app_qits-projects-service.json`
- * (one folder per provider, so each provider's pact jar holds only its own pact).
+ * repository, so the file is `pacts/qits-landing-app_qits-projects-service.json`.
  *
  * The store is the only user of the qits-projects client, so this file is the whole pact. Each test
  * drives one store method, as the UI interaction named in `interactions.ts` does, against a pact
@@ -146,5 +146,35 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(loaded?.status).toBe('loaded');
       const recorded = masters.body('a project with 3 repositories', 'listProjectRepositories');
       expect(loaded?.entries.length).toBe(recorded.entries.length);
+    }));
+
+  it('show-project-work: the store loads a project’s work', () =>
+    given(
+      'show-project-work',
+      'a project with refined work',
+      'listProjectEntities',
+      LIST_PROJECT_ENTITIES,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation('a project with refined work', 'listProjectEntities');
+      const projectId = op.params['projectId'];
+      await store.loadWork(projectId);
+      // The pact binds the entities' status by type, not by value, so the mock answers with the
+      // recorded example repeated; which statuses count is the plain spec's business.
+      expect(store.work()[projectId]?.status).toBe('loaded');
+    }));
+
+  it('show-project-work: a project with no work counts zero', () =>
+    given(
+      'show-project-work',
+      'a project with no work',
+      'listProjectEntities',
+      LIST_PROJECT_ENTITIES,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation('a project with no work', 'listProjectEntities');
+      const projectId = op.params['projectId'];
+      await store.loadWork(projectId);
+      expect(store.work()[projectId]).toEqual({ status: 'loaded', count: 0 });
     }));
 });

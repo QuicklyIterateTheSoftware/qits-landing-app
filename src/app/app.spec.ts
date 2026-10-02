@@ -51,7 +51,7 @@ describe('ProjectPicker', () => {
     ).toBe('Loading');
   });
 
-  it('draws one card per project, linking to the project with its component count and lines', async () => {
+  it('draws one card per project, linking to the project with its work, component count and lines', async () => {
     const fixture = TestBed.createComponent(ProjectPicker);
     fixture.detectChanges();
     const http = TestBed.inject(HttpTestingController);
@@ -78,6 +78,13 @@ describe('ProjectPicker', () => {
     http
       .expectOne(`/projects/api/projects/${other.id}/repositories`)
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
+    // Work: the first project's tree has three REFINED entities, the other has none.
+    http
+      .expectOne(`/projects/api/projects/${project.id}/entities`)
+      .flush(goldenMaster('a project with refined work', 'listProjectEntities'));
+    http
+      .expectOne(`/projects/api/projects/${other.id}/entities`)
+      .flush(goldenMaster('a project with no work', 'listProjectEntities'));
     // qits-githost's recording for a counted repository, under the id of the project's first
     // repository (the two providers' frozen ids are unrelated), so both cards sum its lines.
     const loc = githostGoldenMaster('a repository with counted lines', 'listLoc');
@@ -98,8 +105,15 @@ describe('ProjectPicker', () => {
     ]);
     const text = (card: Element, selector: string) =>
       card.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim();
-    const stat = (card: Element) => [text(card, '.components dt'), text(card, '.components dd')];
-    expect(cards.map(stat)).toEqual([
+    const stat = (card: Element, tile: string) => [
+      text(card, `${tile} dt`),
+      text(card, `${tile} dd`),
+    ];
+    expect(cards.map((card) => stat(card, '.work'))).toEqual([
+      ['Work', '3'],
+      ['Work', '0'],
+    ]);
+    expect(cards.map((card) => stat(card, '.components'))).toEqual([
       ['Components', `${repositories.entries.length}`],
       ['Components', '1'],
     ]);
@@ -126,6 +140,9 @@ describe('ProjectPicker', () => {
     TestBed.tick();
     await new Promise((resolve) => setTimeout(resolve));
     http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
+    http
+      .expectOne(`/projects/api/projects/${project.id}/entities`)
+      .flush(goldenMaster('a project with refined work', 'listProjectEntities'));
     // Derived from qits-githost's counted recording (two CODE languages, plus JSON and Markdown,
     // which the card leaves out): the same entry under the project's first three repositories, the
     // second and third copies' languages renamed with a " 2" / " 3" suffix and their lines doubled /

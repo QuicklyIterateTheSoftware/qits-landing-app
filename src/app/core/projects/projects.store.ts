@@ -11,13 +11,16 @@ import {
 } from '@ngrx/signals';
 import { setAllEntities, setEntity, withEntities } from '@ngrx/signals/entities';
 import {
-  getProjectsApiProjects,
-  getProjectsApiProjectsById,
-  getProjectsApiProjectsByProjectIdRepositories,
+  listProjects,
+  getProject,
+  listProjectRepositories,
+  listProjectEntities,
 } from '../../api/projects';
 import { consume } from '@qits/angular';
 import {
+  countsAsWork,
   GET_PROJECT,
+  LIST_PROJECT_ENTITIES,
   LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
   SESSION_CHECK,
@@ -34,6 +37,12 @@ export type Project = ListedProject & { readonly id: string };
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
+/** A project's work, as `loadWork(projectId)` left it: how many entities count as work. */
+export interface ProjectWork {
+  readonly status: Exclude<Status, 'idle'>;
+  readonly count: number;
+}
+
 /** A project's repositories, as `loadRepositories(projectId)` left them. */
 export interface ProjectRepositories {
   readonly status: Exclude<Status, 'idle'>;
@@ -46,6 +55,8 @@ interface ProjectsState {
   readonly selectedId: string | null;
   /** Each project's repositories, by project id. A project not asked for yet has no key. */
   readonly repositories: Readonly<Record<string, ProjectRepositories>>;
+  /** Each project's work count, by project id. A project not asked for yet has no key. */
+  readonly work: Readonly<Record<string, ProjectWork>>;
 }
 
 function withId(project: ListedProject | FetchedProject | undefined): project is Project {
@@ -60,6 +71,8 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * - `refresh()` fetches the list again.
  * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadRepositories(projectId)` fetches a project's repositories once.
+ * - `loadWork(projectId)` fetches a project's work entities once and keeps how many count as work
+ *   (`countsAsWork` in `projects.consumes.ts`).
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
  * The store is the only user of the generated qits-projects client, so its pact
@@ -70,7 +83,7 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
 export const ProjectsStore = signalStore(
   { providedIn: 'root' },
   withEntities({ entity: type<Project>() }),
-  withState<ProjectsState>({ status: 'idle', selectedId: null, repositories: {} }),
+  withState<ProjectsState>({ status: 'idle', selectedId: null, repositories: {}, work: {} }),
   withComputed(({ entityMap, selectedId }) => ({
     selected: computed(() => {
       const id = selectedId();
@@ -80,7 +93,7 @@ export const ProjectsStore = signalStore(
   withMethods((store) => {
     async function refreshList(): Promise<void> {
       patchState(store, { status: 'loading' });
-      const { data, error } = await consume(getProjectsApiProjects(), LIST_PROJECTS);
+      const { data, error } = await consume(listProjects(), LIST_PROJECTS);
       if (error !== undefined || !data) {
         patchState(store, { status: 'error' });
         return;
@@ -92,12 +105,16 @@ export const ProjectsStore = signalStore(
     async function select(id: string): Promise<void> {
       patchState(store, { selectedId: id });
       if (store.entityMap()[id]) return;
-      const { data } = await consume(getProjectsApiProjectsById({ path: { id } }), GET_PROJECT);
+      const { data } = await consume(getProject({ path: { id } }), GET_PROJECT);
       if (withId(data?.project)) patchState(store, setEntity(data.project));
     }
 
     function setRepositories(projectId: string, value: ProjectRepositories): void {
       patchState(store, { repositories: { ...store.repositories(), [projectId]: value } });
+    }
+
+    function setWork(projectId: string, value: ProjectWork): void {
+      patchState(store, { work: { ...store.work(), [projectId]: value } });
     }
 
     return {
@@ -112,7 +129,7 @@ export const ProjectsStore = signalStore(
         if (current && current.status !== 'error') return;
         setRepositories(projectId, { status: 'loading', entries: [] });
         const { data, error } = await consume(
-          getProjectsApiProjectsByProjectIdRepositories({ path: { projectId } }),
+          listProjectRepositories({ path: { projectId } }),
           LIST_PROJECT_REPOSITORIES,
         );
         setRepositories(
@@ -122,9 +139,24 @@ export const ProjectsStore = signalStore(
             : { status: 'loaded', entries: data.entries ?? [] },
         );
       },
+      async loadWork(projectId: string): Promise<void> {
+        const current = store.work()[projectId];
+        if (current && current.status !== 'error') return;
+        setWork(projectId, { status: 'loading', count: 0 });
+        const { data, error } = await consume(
+          listProjectEntities({ path: { projectId } }),
+          LIST_PROJECT_ENTITIES,
+        );
+        setWork(
+          projectId,
+          error !== undefined || !data
+            ? { status: 'error', count: 0 }
+            : { status: 'loaded', count: (data.entities ?? []).filter(countsAsWork).length },
+        );
+      },
       /** False only when the edge answers 401: no valid `qits-session` cookie. */
       async hasSession(): Promise<boolean> {
-        const { response } = await consume(getProjectsApiProjects(), SESSION_CHECK);
+        const { response } = await consume(listProjects(), SESSION_CHECK);
         return response?.status !== 401;
       },
     };

@@ -16,6 +16,8 @@ export const INTERACTIONS = {
   'open-project': 'Opening a project fetches its detail',
   /** `project-card.ts`: each card counts the project's components from its repositories. */
   'show-project-repositories': 'A project card shows how many components the project has',
+  /** `project-card.ts`: each card counts the project's work from its planning tree. */
+  'show-project-work': 'A project card shows how much work the project has',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
   'show-project-loc': 'The project cards show how many lines of code each project has',
 } as const;

@@ -143,6 +143,48 @@ describe('ProjectsStore', () => {
     http.expectOne(`/projects/api/projects/${id}/repositories`);
   });
 
+  it('counts a project’s refined work once, from its whole planning tree', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    // 3 REFINED (an epic, two tickets), 1 REPORTED, 1 DONE: only the REFINED ones count.
+    const work = goldenMaster('a project with refined work', 'listProjectEntities');
+    const done = store.loadWork(id);
+    expect(store.work()[id]?.status).toBe('loading');
+    await settle();
+    http.expectOne(`/projects/api/projects/${id}/entities`).flush(work);
+    await done;
+    expect(store.work()[id]).toEqual({ status: 'loaded', count: 3 });
+    await store.loadWork(id);
+    http.expectNone(`/projects/api/projects/${id}/entities`);
+  });
+
+  it('counts zero for a project with no work', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const done = store.loadWork(id);
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${id}/entities`)
+      .flush(goldenMaster('a project with no work', 'listProjectEntities'));
+    await done;
+    expect(store.work()[id]).toEqual({ status: 'loaded', count: 0 });
+  });
+
+  it('reports failed work, and fetches it again on the next ask', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const done = store.loadWork(id);
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${id}/entities`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await done;
+    expect(store.work()[id]?.status).toBe('error');
+    void store.loadWork(id);
+    await settle();
+    http.expectOne(`/projects/api/projects/${id}/entities`);
+  });
+
   it('has a session unless the list answers 401', async () => {
     const store = await loadedStore();
     const answered = store.hasSession();

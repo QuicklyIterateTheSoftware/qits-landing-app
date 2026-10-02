@@ -1,7 +1,8 @@
 import type {
-  GetProjectsApiProjectsByIdResponses,
-  GetProjectsApiProjectsByProjectIdRepositoriesResponses,
-  GetProjectsApiProjectsResponses,
+  ListProjectEntitiesResponses,
+  GetProjectResponses,
+  ListProjectRepositoriesResponses,
+  ListProjectsResponses,
 } from '../../api/projects';
 import { NOTHING, type Consumed } from '@qits/angular';
 
@@ -27,25 +28,42 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  */
 export const LIST_PROJECT_REPOSITORIES = ['entries[].repository.id'] as const;
 
+/**
+ * `loadWork(projectId)`: the project's whole planning tree, unfiltered — the same call a work list
+ * will use. The card counts entries by status ({@link countsAsWork}), so it reads only that.
+ */
+export const LIST_PROJECT_ENTITIES = ['entities[].status'] as const;
+
+/** One work entity, cut to what the store reads: its status. */
+export type WorkEntry = NonNullable<
+  Consumed<ListProjectEntitiesResponses[200], typeof LIST_PROJECT_ENTITIES>['entities']
+>[number];
+
+/**
+ * Which work entities the card's "Work" tile counts. FOR NOW: every archetype whose status is
+ * REFINED. Features and tasks have no status, so they do not count yet. This is a stand-in the
+ * user will replace with a better representation; change it here and nowhere else.
+ */
+export function countsAsWork(entry: WorkEntry): boolean {
+  return entry.status === 'REFINED';
+}
+
 /** `hasSession()`: the status only. */
 export const SESSION_CHECK = NOTHING;
 
 /** A project as the list answer gives it, cut to what the store reads. */
 export type ListedProject = NonNullable<
   NonNullable<
-    Consumed<GetProjectsApiProjectsResponses[200], typeof LIST_PROJECTS>['entries']
+    Consumed<ListProjectsResponses[200], typeof LIST_PROJECTS>['entries']
   >[number]['project']
 >;
 
 /** A project as the detail answer gives it, cut to what the store reads. */
 export type FetchedProject = NonNullable<
-  Consumed<GetProjectsApiProjectsByIdResponses[200], typeof GET_PROJECT>['project']
+  Consumed<GetProjectResponses[200], typeof GET_PROJECT>['project']
 >;
 
 /** One repository entry, cut to what the store reads: its repository's id. */
 export type RepositoryEntry = NonNullable<
-  Consumed<
-    GetProjectsApiProjectsByProjectIdRepositoriesResponses[200],
-    typeof LIST_PROJECT_REPOSITORIES
-  >['entries']
+  Consumed<ListProjectRepositoriesResponses[200], typeof LIST_PROJECT_REPOSITORIES>['entries']
 >[number];

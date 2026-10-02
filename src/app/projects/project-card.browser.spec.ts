@@ -74,9 +74,10 @@ describe('ProjectCard (screenshots)', () => {
       .flush(await commands.goldenMaster('a project exists', 'listProjects'));
     await settle();
     TestBed.tick();
+    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
     const repositories = http.expectOne(`/projects/api/projects/${project.id}/repositories`);
     const lines = http.expectOne('/githost/api/loc');
-    return { fixture, repositories, lines };
+    return { fixture, work, repositories, lines };
   }
 
   async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
@@ -85,9 +86,13 @@ describe('ProjectCard (screenshots)', () => {
     fixture.detectChanges();
   }
 
-  /** The card with its repositories as recorded and its lines answered by `state`'s recording. */
-  async function shown(state: string) {
-    const { fixture, repositories, lines } = await render();
+  /**
+   * The card with its work and repositories as recorded and its lines answered by `state`'s
+   * recording. Work is "a project with refined work" (3 REFINED) unless `workState` says otherwise.
+   */
+  async function shown(state: string, workState = 'a project with refined work') {
+    const { fixture, work, repositories, lines } = await render();
+    work.flush(await commands.goldenMaster(workState, 'listProjectEntities'));
     repositories.flush(
       await commands.goldenMaster('a project with 3 repositories', 'listProjectRepositories'),
     );
@@ -98,6 +103,7 @@ describe('ProjectCard (screenshots)', () => {
 
   it('shows the component count and the lines of counted repositories', async () => {
     const card = await shown('a repository with counted lines');
+    await expect.element(card).toHaveTextContent('Work 3');
     await expect.element(card).toHaveTextContent('Components 4');
     await expect.element(card).toHaveTextContent('Java');
     await expect.element(card).toMatchScreenshot('loaded');
@@ -122,31 +128,35 @@ describe('ProjectCard (screenshots)', () => {
     await expect.element(card).toMatchScreenshot('lines-counting');
   });
 
-  it('shows no lines for repositories without a commit', async () => {
-    const card = await shown('a repository with no commit');
+  it('shows no lines for repositories without a commit, and no work', async () => {
+    const card = await shown('a repository with no commit', 'a project with no work');
+    await expect.element(card).toHaveTextContent('Work 0');
     await expect.element(card).toHaveTextContent('No lines yet');
     await expect.element(card).toMatchScreenshot('lines-empty');
   });
 
   it('shows that it is loading', async () => {
-    const { fixture, repositories, lines } = await render();
+    const { fixture, work, repositories, lines } = await render();
     const card = page.elementLocator(fixture.nativeElement);
-    // One spinner on the components tile, one on the languages table.
-    expect(card.getByRole('img', { name: 'Loading' }).elements()).toHaveLength(2);
+    // One spinner each on the work tile, the components tile and the languages table.
+    expect(card.getByRole('img', { name: 'Loading' }).elements()).toHaveLength(3);
     await expect.element(card).toMatchScreenshot('loading');
+    work.flush(null, { status: 500, statusText: 'Server Error' });
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
   });
 
-  it('marks the components and lines as failed to load', async () => {
-    const { fixture, repositories, lines } = await render();
+  it('marks the work, components and lines as failed to load', async () => {
+    const { fixture, work, repositories, lines } = await render();
     // Error answers: the stores read no body from them (they consume nothing), only the status.
+    work.flush(null, { status: 500, statusText: 'Server Error' });
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const card = page.elementLocator(fixture.nativeElement);
-    expect(card.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(2);
+    // One error icon each on the work tile, the components tile and the languages table.
+    expect(card.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(3);
     await expect.element(card).not.toHaveTextContent(/unavailable/i);
     await expect.element(card).toMatchScreenshot('unavailable');
   });
