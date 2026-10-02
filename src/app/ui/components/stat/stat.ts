@@ -9,31 +9,20 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  * ```
  *
  * The value is projected content, so it can be a number, a loading text or something richer.
- * Label and value are a `<dt>`/`<dd>` pair. The tab's sloped edge is an inline SVG next to the
- * label, hidden from assistive technology: it scales with the label's height and needs no CSS of
- * its own, which a clip-path or a pseudo-element could not offer as simply.
+ * Label and value are a `<dt>`/`<dd>` pair. The tile is square; only the tab's bottom-right
+ * corner is rounded.
  */
 @Component({
   selector: 'ui-stat',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
   template: `
-    <dl class="rounded-md bg-gray-200">
+    <dl class="bg-gray-200">
       <div>
-        <dt class="flex items-stretch">
-          <span
-            class="rounded-tl-md bg-gray-300 py-0.5 pl-2 text-xs leading-4 font-semibold text-gray-800"
-          >
-            {{ label() }}
-          </span>
-          <svg
-            aria-hidden="true"
-            class="w-5 shrink-0 text-gray-300"
-            viewBox="0 0 20 20"
-            preserveAspectRatio="none"
-          >
-            <path d="M0 0 H6 C13 0 9 20 20 20 H0 Z" fill="currentColor" />
-          </svg>
+        <dt
+          class="w-fit rounded-br-lg bg-gray-300 py-0.5 pr-3 pl-2 text-xs leading-4 font-semibold text-gray-800"
+        >
+          {{ label() }}
         </dt>
         <dd class="px-3 pt-1 pb-2 text-right text-2xl leading-8 font-semibold tabular-nums">
           <ng-content />
