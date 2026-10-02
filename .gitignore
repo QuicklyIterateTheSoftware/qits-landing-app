@@ -37,7 +37,9 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
-__screenshots__/
+# Browser test output. The reference screenshots in __screenshots__/ are committed; failure
+# screenshots and mismatch diffs go here instead.
+/.vitest-attachments/
 
 # System files
 .DS_Store

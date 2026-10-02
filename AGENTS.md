@@ -78,3 +78,30 @@ names), packages `pacts/` as the
 jar and publishes it itself, only when the tree differs from the newest published jar's. There is no
 repository-side gate, jar builder or PUT sequence left to maintain: `.config/qits/pacts.sh`,
 `.config/qits/pacts-jar.mjs` and `.config/qits/published-tree-changed.sh` are gone.
+
+## Screenshot tests (`*.browser.spec.ts`)
+
+Components are also tested in a real browser (Chromium, through Playwright and Vitest browser mode),
+and each test compares a screenshot with a committed reference. `npm run test:browser` runs them;
+`npm test` (jsdom) leaves them out. The release check runs `npm run --if-present test:browser` in a
+step image that has Chromium, so a changed pixel fails the release request.
+
+- **The backend answers are qits-projects' golden masters**, as everywhere else. The reader uses
+  `node:fs`, so it runs on the Node side: `vitest-browser.config.ts` gives the browser a
+  `goldenMaster` command, and a spec calls `await commands.goldenMaster(state, operationId)` (from
+  `vitest/browser`) and `flush(...)`es the result. An error answer is only a status; the store reads
+  no body from it.
+- **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
+  system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is
+  800x600 (`angular.json`, target `test-browser`).
+- **References** are in `__screenshots__/` beside the spec, named `<name>-chromium-linux.png`, and
+  are committed. They are only valid when made in the CI step image: a reference made on another
+  machine may differ by a few pixels. A mismatch fails the run and writes the actual image and the
+  diff to `.vitest-attachments/` (ignored). A missing reference is written and fails the run; with
+  `CI` set it only fails. To accept a change, regenerate the references in the step image with
+  `UPDATE_SNAPSHOT=all npm run test:browser` (Vitest reads it from the environment; the Angular
+  builder does not pass `--update` through) and commit them with the change.
+- **The browser**: Playwright's own Chromium by default, from `PLAYWRIGHT_BROWSERS_PATH` (default
+  `~/.cache/ms-playwright`; `npx playwright install chromium` fills it). `CHROME_BIN` names an exact
+  Chromium executable instead, which is how a step image with its own Chromium is used. Nothing is
+  downloaded while the tests run.
