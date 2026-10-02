@@ -55,7 +55,7 @@ export const LANGUAGES_SHOWN = 4;
                   {{ workCount() ?? '–' }}
                 </ui-stat>
               </ui-spinner>
-              <ui-spinner [state]="componentsState()">
+              <ui-spinner [state]="componentsState()" class="border-l-[0.5px] border-black/80">
                 <ui-stat class="components w-full" label="Components">
                   {{ componentCount() ?? '–' }}
                 </ui-stat>
