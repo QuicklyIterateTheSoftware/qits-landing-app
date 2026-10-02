@@ -1,6 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { inject, PLATFORM_ID } from '@angular/core';
-import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { listLoc } from '../../api/githost';
 import { consume } from '@qits/angular';
 import { LIST_LOC, type LocEntry } from './loc.consumes';
@@ -33,7 +31,8 @@ interface LocState {
  * `listLoc` without a filter answers every repository qits-githost holds. Filtering by the ids the
  * cards know would mean waiting for every project's repositories first, and 52 ids in a URL.
  *
- * - `load()` fetches once. The `onInit` hook calls it, in the browser only.
+ * - `load()` fetches once. Nothing calls it on its own: a project card does, the first time its
+ *   languages section opens.
  * - A repository whose tip qits-githost has not counted yet comes back `STALE`, with the count of
  *   an older commit: the store uses it like `COUNTED`. Rough and slightly outdated beats nothing.
  *   A repository never counted at all (`PENDING`) adds nothing; the store does not ask again.
@@ -94,14 +93,6 @@ export const LocStore = signalStore(
             (a, b) => b.main + b.test - (a.main + a.test) || a.language.localeCompare(b.language),
           );
         return { main, test, uncounted, languages };
-      },
-    };
-  }),
-  withHooks((store) => {
-    const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    return {
-      onInit(): void {
-        if (browser) void store.load();
       },
     };
   }),

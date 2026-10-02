@@ -1,4 +1,11 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 
 /** The card's title row. Optional: a card without one draws no header. */
 @Component({
@@ -77,6 +84,9 @@ let nextExpandableId = 0;
   `,
 })
 export class CardExpandable {
+  /** Emits each time the content opens: load what it shows on the first one. */
+  readonly opened = output<void>();
+
   protected readonly open = signal(false);
   protected readonly contentId = `card-expandable-${nextExpandableId++}`;
 
@@ -85,6 +95,7 @@ export class CardExpandable {
     event.preventDefault();
     event.stopPropagation();
     this.open.update((open) => !open);
+    if (this.open()) this.opened.emit();
   }
 }
 

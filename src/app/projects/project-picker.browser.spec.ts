@@ -87,15 +87,8 @@ describe('ProjectPicker (screenshots)', () => {
     http
       .expectOne(`/projects/api/projects/${other.id}/entities`)
       .flush(await commands.goldenMaster('a project with no work', 'listProjectEntities'));
-    // qits-githost's counted recording, under the id of the projects' first repository (the two
-    // providers' frozen ids are unrelated).
-    const loc = await commands.goldenMaster(
-      'a repository with counted lines',
-      'listLoc',
-      'qits-githost',
-    );
-    loc.entries[0].repositoryId = repositories.entries[0].repository.id;
-    http.expectOne('/githost/api/loc').flush(loc);
+    // The cards stay collapsed, so no lines are requested.
+    http.expectNone('/githost/api/loc');
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);
     await expect.element(picker).toHaveTextContent('Work 3');
