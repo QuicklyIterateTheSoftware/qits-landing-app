@@ -112,7 +112,7 @@ describe('ProjectCard (screenshots)', () => {
 
   it('shows that lines are being counted when none is counted yet', async () => {
     const card = await shown('a repository not counted yet');
-    await expect.element(card).toHaveTextContent('Counting lines…');
+    await expect.element(card.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(card).toMatchScreenshot('lines-counting');
   });
 
@@ -125,22 +125,23 @@ describe('ProjectCard (screenshots)', () => {
   it('shows that it is loading', async () => {
     const { fixture, repositories, lines } = await render();
     const card = page.elementLocator(fixture.nativeElement);
-    await expect.element(card.getByRole('img', { name: 'Loading' })).toBeVisible();
+    // One spinner on the components tile, one on the languages table.
+    expect(card.getByRole('img', { name: 'Loading' }).elements()).toHaveLength(2);
     await expect.element(card).toMatchScreenshot('loading');
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
   });
 
-  it('shows that the components and lines are unavailable', async () => {
+  it('marks the components and lines as failed to load', async () => {
     const { fixture, repositories, lines } = await render();
     // Error answers: the stores read no body from them (they consume nothing), only the status.
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const card = page.elementLocator(fixture.nativeElement);
-    await expect.element(card).toHaveTextContent('Components Unavailable');
-    await expect.element(card).toHaveTextContent('Lines unavailable');
+    expect(card.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(2);
+    await expect.element(card).not.toHaveTextContent(/unavailable/i);
     await expect.element(card).toMatchScreenshot('unavailable');
   });
 });

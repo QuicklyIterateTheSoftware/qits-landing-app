@@ -14,7 +14,7 @@ import { LocStore, type LanguageLines } from '../core/loc/loc.store';
 import { ProjectsStore, type Project } from '../core/projects/projects.store';
 import { CardBody, CardHeader } from '../ui/components/card/base-card';
 import { CardSilent } from '../ui/components/card/card-silent';
-import { Spinner } from '../ui/components/spinner/spinner';
+import { Spinner, type LoadState } from '../ui/components/spinner/spinner';
 import { Stat } from '../ui/components/stat/stat';
 
 /** How many languages the card names before it sums the rest as "Other". */
@@ -48,23 +48,19 @@ export const LANGUAGES_SHOWN = 4;
             <!-- 50/50: the left slot is for the "Work" tile. -->
             <div class="grid grid-cols-2 gap-2">
               <div></div>
-              <ui-spinner [loading]="componentsLoading()">
+              <ui-spinner [state]="componentsState()">
                 <ui-stat class="components w-full" label="Components">
-                  @if (repositories()?.status === 'error') {
-                    <span class="text-base font-normal text-gray-500">Unavailable</span>
-                  } @else {
-                    {{ componentCount() ?? '–' }}
-                  }
+                  {{ componentCount() ?? '–' }}
                 </ui-stat>
               </ui-spinner>
             </div>
-            @if (lines(); as lines) {
-              @if (lines !== 'error' && lines.partial && languageRows().length) {
-                <span class="lines block text-[0.8125rem] text-gray-500"
-                  >Still counting some repositories</span
-                >
-              }
-              <table class="languages mt-2 w-full border-collapse text-[0.8125rem] tabular-nums">
+            @if (partial()) {
+              <span class="lines block text-[0.8125rem] text-gray-500"
+                >Still counting some repositories</span
+              >
+            }
+            <ui-spinner [state]="linesState()" class="mt-2">
+              <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
                 <thead class="bg-gray-200/70 text-gray-500">
                   <tr>
                     <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
@@ -73,14 +69,14 @@ export const LANGUAGES_SHOWN = 4;
                   </tr>
                 </thead>
                 <tbody>
-                  @if (linesMessage(); as message) {
-                    <!-- No rows to show: one cell four rows tall, the message in its middle. -->
+                  @if (!languageRows().length) {
+                    <!-- No rows to show: one cell four rows tall, any message in its middle. -->
                     <tr>
                       <td
                         colspan="3"
                         class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-gray-500"
                       >
-                        {{ message }}
+                        {{ linesState() === 'loaded' ? 'No lines yet' : '' }}
                       </td>
                     </tr>
                   } @else {
@@ -96,7 +92,7 @@ export const LANGUAGES_SHOWN = 4;
                   }
                 </tbody>
               </table>
-            }
+            </ui-spinner>
           </div>
         </card-body>
       </ui-card-silent>
@@ -115,9 +111,9 @@ export class ProjectCard {
   });
 
   /** True until the repositories answer (or fail). */
-  protected readonly componentsLoading = computed(() => {
+  protected readonly componentsState = computed((): LoadState => {
     const status = this.repositories()?.status;
-    return status !== 'loaded' && status !== 'error';
+    return status === 'loaded' || status === 'error' ? status : 'loading';
   });
 
   protected readonly componentCount = computed(() => {
@@ -134,12 +130,18 @@ export class ProjectCard {
     return this.loc.totals(ids);
   });
 
-  /** What the table says instead of rows: unavailable, still counting, or nothing to count. */
-  protected readonly linesMessage = computed((): string | undefined => {
+  /** Loading until something is counted; an error when qits-githost failed. */
+  protected readonly linesState = computed((): LoadState => {
     const lines = this.lines();
-    if (lines === 'error') return 'Lines unavailable';
-    if (!lines || lines.languages.length) return undefined;
-    return lines.partial ? 'Counting lines…' : 'No lines yet';
+    if (lines === 'error') return 'error';
+    if (!lines || (lines.partial && !lines.languages.length)) return 'loading';
+    return 'loaded';
+  });
+
+  /** Some repositories are counted and some are not yet. */
+  protected readonly partial = computed(() => {
+    const lines = this.lines();
+    return !!lines && lines !== 'error' && lines.partial && lines.languages.length > 0;
   });
 
   /** The lines per language: the largest {@link LANGUAGES_SHOWN}, then the rest as "Other". */
