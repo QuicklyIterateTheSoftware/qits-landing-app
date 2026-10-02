@@ -46,12 +46,15 @@ let nextExpandableId = 0;
       [class]="open() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
       [attr.inert]="open() ? null : ''"
     >
-      <div class="min-h-0 overflow-hidden"><ng-content /></div>
+      <div class="min-h-0 overflow-hidden">
+        <!-- When open, a chin below the content keeps the button off its last line. -->
+        <div class="pb-4"><ng-content /></div>
+      </div>
     </div>
     <!-- No room of its own: the button straddles the card's bottom edge, half outside. -->
     <button
       type="button"
-      class="absolute bottom-0 left-1/2 z-10 flex size-9 -translate-x-1/2 translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
+      class="absolute bottom-0 left-1/2 z-10 flex size-6.5 -translate-x-1/2 translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
       [attr.aria-expanded]="open()"
       [attr.aria-controls]="contentId"
       [attr.aria-label]="open() ? 'Show less' : 'Show more'"
@@ -60,7 +63,7 @@ let nextExpandableId = 0;
       <svg
         viewBox="0 0 16 16"
         aria-hidden="true"
-        class="size-5 transition-transform duration-200"
+        class="size-3.5 transition-transform duration-200"
         [class.rotate-180]="open()"
         fill="none"
         stroke="currentColor"
