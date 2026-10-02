@@ -1,6 +1,6 @@
 {
   "name": "qits-landing-app",
-  "version": "2026.1002.115157",
+  "version": "2026.1002.161025",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -33,7 +33,7 @@
     "@angular/compiler-cli": "^22.1.0",
     "@hey-api/openapi-ts": "0.99.0",
     "@pact-foundation/pact": "17.1.4",
-    "@qits/projects-golden-masters": "2026.1001.154547",
+    "@qits/projects-golden-masters": "2026.1002.74001",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
