@@ -7,6 +7,7 @@ import {
   inject,
   input,
   PLATFORM_ID,
+  untracked,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProjectsStore, type Project } from '../core/projects/projects.store';
@@ -77,11 +78,13 @@ export class ProjectCard {
   });
 
   constructor() {
-    // In the browser only: the server render has no `qits-session` cookie to send.
+    // In the browser only: the server render has no `qits-session` cookie to send. Only the
+    // project id is tracked: `loadRepositories` reads the store's state, and tracking that would
+    // fetch again every time an answer lands, without end after an error.
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
       const projectId = this.project().id;
-      if (browser && projectId) void this.store.loadRepositories(projectId);
+      if (browser && projectId) untracked(() => void this.store.loadRepositories(projectId));
     });
   }
 }
