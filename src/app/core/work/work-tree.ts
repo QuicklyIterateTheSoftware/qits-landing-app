@@ -138,3 +138,26 @@ export class WorkGraph {
     this.childrenOf.set(parent, list);
   }
 }
+
+/** How many of a node's tasks (its descendants that are tasks) are verified, of how many. */
+export function taskProgress(node: WorkNode): { verified: number; total: number } {
+  let verified = 0;
+  let total = 0;
+  const walk = (n: WorkNode) => {
+    for (const child of n.children) {
+      if (child.entry.archetype === 'TASK') {
+        total++;
+        if (child.column === 2) verified++;
+      }
+      walk(child);
+    }
+  };
+  walk(node);
+  return { verified, total };
+}
+
+/** Whether an epic's lane starts collapsed: it has tasks and every one is verified. */
+export function startsCollapsed(node: WorkNode): boolean {
+  const { verified, total } = taskProgress(node);
+  return total > 0 && verified === total;
+}

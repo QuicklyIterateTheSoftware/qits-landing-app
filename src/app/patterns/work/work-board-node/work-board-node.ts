@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { WorkNode } from '../../../core/work/work-tree';
+import { startsCollapsed, taskProgress, type WorkNode } from '../../../core/work/work-tree';
 import { BOARD_COLUMNS } from '../../../core/work/work-statuses';
 import { BoardCard } from '../../../ui/components/board/board-card';
 import { BoardLane } from '../../../ui/components/board/board-lane';
@@ -29,7 +29,8 @@ import { Tag } from '../../../ui/components/tag/tag';
     @let link = base() + '/' + n.entry.qualifiedId;
     @switch (n.entry.archetype) {
       @case ('EPIC') {
-        <ui-board-lane [rows]="n.children.length || 1">
+        <ui-board-lane collapsible [collapsed]="collapsed(n)">
+          <span lane-summary>{{ summary(n) }}</span>
           <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
           @for (campaign of n.campaigns; track campaign.id) {
             <ui-tag lane-tags [label]="campaign.title ?? ''" />
@@ -74,6 +75,15 @@ export class WorkBoardNode {
   readonly node = input.required<WorkNode>();
   /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
   readonly base = input.required<string>();
+
+  protected collapsed(n: WorkNode): boolean {
+    return startsCollapsed(n);
+  }
+
+  protected summary(n: WorkNode): string {
+    const { verified, total } = taskProgress(n);
+    return `${verified} / ${total} ✅`;
+  }
 
   protected border(column: number): string {
     return BOARD_COLUMNS[column]?.cardBorder ?? 'border-charcoal-brown-200';

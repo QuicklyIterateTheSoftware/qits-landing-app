@@ -1,5 +1,5 @@
 import type { WorkEntry } from './work.consumes';
-import { WorkGraph, type WorkNode } from './work-tree';
+import { startsCollapsed, taskProgress, WorkGraph, type WorkNode } from './work-tree';
 
 /**
  * The tree, its columns and its campaign tags, on inline entries: this is a pure function of entries and campaign
@@ -121,5 +121,18 @@ describe('WorkGraph', () => {
       entry('f', 'FEATURE', undefined, 'x'),
     ];
     expect(new WorkGraph(done).tree('archive').map(shape)).toEqual(['d', 'x(f)']);
+  });
+
+  it('counts an epic’s verified tasks, and starts its lane collapsed only when all are', () => {
+    const [refined] = new WorkGraph(epic).tree('board');
+    expect(taskProgress(refined)).toEqual({ verified: 0, total: 3 });
+    expect(startsCollapsed(refined)).toBe(false);
+    const verified = epic.map((e) => (e.id === 'epic' ? { ...e, status: 'VERIFIED' as const } : e));
+    const [done] = new WorkGraph(verified).tree('board');
+    expect(taskProgress(done)).toEqual({ verified: 3, total: 3 });
+    expect(startsCollapsed(done)).toBe(true);
+    // An epic with no tasks has nothing to fold away.
+    const [bare] = new WorkGraph([entry('e', 'EPIC', 'VERIFIED')]).tree('board');
+    expect(startsCollapsed(bare)).toBe(false);
   });
 });

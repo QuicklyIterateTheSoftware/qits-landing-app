@@ -38,7 +38,7 @@ const COLUMNS: readonly BoardColumnSpec[] = [
   host: { class: 'block w-[48rem] p-4' },
   template: `
     <ui-board [columns]="columns" gutter>
-      <ui-board-lane [rows]="2">
+      <ui-board-lane>
         <span lane-header class="font-semibold">An epic with two features</span>
         <ui-tag lane-tags label="Ordered campaign" />
         <ui-tag lane-tags label="Second campaign" />
@@ -62,6 +62,38 @@ const COLUMNS: readonly BoardColumnSpec[] = [
   `,
 })
 class Variants {
+  readonly columns = COLUMNS;
+}
+
+@Component({
+  imports: [Board, BoardLane, BoardRow, BoardCard, Tag],
+  host: { class: 'block w-[48rem] p-4' },
+  template: `
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane collapsible collapsed>
+        <span lane-header class="font-semibold">A finished epic, collapsed</span>
+        <ui-tag lane-tags label="Ordered campaign" />
+        <span lane-gutter class="font-mono">qits-20</span>
+        <span lane-summary>2 / 2 ✅</span>
+        <ui-board-row>
+          <ui-board-card [column]="2" code="qits-22" title="Hidden while collapsed" kind="task" />
+          <span row-footer>A feature</span>
+        </ui-board-row>
+      </ui-board-lane>
+      <ui-board-lane collapsible>
+        <span lane-header class="font-semibold">An epic in progress, expanded</span>
+        <span lane-gutter class="font-mono">qits-30</span>
+        <span lane-summary>0 / 1 ✅</span>
+        <ui-board-row>
+          <ui-board-card [column]="0" code="qits-32" title="An open task" kind="task" />
+          <span row-id class="font-mono">qits-31</span>
+          <span row-footer>A feature</span>
+        </ui-board-row>
+      </ui-board-lane>
+    </ui-board>
+  `,
+})
+class Collapsing {
   readonly columns = COLUMNS;
 }
 
@@ -111,6 +143,14 @@ describe('Board (screenshots)', () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
     await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('board');
+  });
+
+  it('draws a collapsed and an expanded lane', async () => {
+    const fixture = TestBed.createComponent(Collapsing);
+    fixture.detectChanges();
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('lanes-collapsing');
   });
 
   it('draws lanes as nested groups off a board', async () => {
