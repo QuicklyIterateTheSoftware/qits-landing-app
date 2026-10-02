@@ -48,7 +48,7 @@ describe('Layout (screenshots)', () => {
     const { fixture, layout } = await render();
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
-    await expect.element(page.getByRole('link', { name: 'Home' })).toBeVisible();
+    await expect.element(page.getByRole('link', { name: 'Projects' })).toBeVisible();
     await expect.element(layout).toMatchScreenshot('narrow-open');
   });
 });
