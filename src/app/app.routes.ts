@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 import { sessionGuard } from './auth/session.guard';
 import { Layout } from './layout/layout';
-import { ProjectPage } from './projects/project-page';
-import { ProjectPicker } from './projects/project-picker';
-import { ProjectSetup } from './projects/project-setup';
-import { ProjectWork } from './projects/project-work';
-import { ProjectWorkArchive } from './projects/project-work-archive';
-import { ProjectEditor } from './projects/editor/project-editor';
+import { ProjectPage } from './patterns/projects/project-page/project-page';
+import { ProjectPicker } from './patterns/projects/project-picker/project-picker';
+import { ProjectSetup } from './patterns/projects/project-setup/project-setup';
+import { ProjectWork } from './patterns/work/project-work/project-work';
+import { ProjectWorkArchive } from './patterns/work/project-work-archive/project-work-archive';
+import { ProjectEditor } from './patterns/projects/project-editor/project-editor';
 import { RootRedirect } from './root-redirect';
 
 /**

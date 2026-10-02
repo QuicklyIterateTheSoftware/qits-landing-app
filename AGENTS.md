@@ -3,6 +3,18 @@
 Notes for agents working in this repository. `README.md` covers what the app is and how to run it.
 This file covers the rules that are easy to break.
 
+## Where code lives
+
+- `src/app/ui/components/<component>/`: dumb, presentational components (`stat`, `spinner`,
+  `card`, …). Inputs and projected content only; they know nothing about projects, statuses or
+  stores. Each has its own plain spec and a screenshot spec with inline data.
+- `src/app/patterns/<domain>/<component>/`: smart components (pages and their parts, such as
+  `patterns/projects/project-card/`, `patterns/work/project-work/`). They read stores and map the
+  data onto `ui/components`. Specs sit beside each component.
+- `src/app/core/<domain>/`: state, services and pure functions (stores and their `*.consumes.ts`
+  and pact specs, `selected-project.ts`, `work-statuses.ts`).
+- `src/app/layout/`, `src/app/auth/` and `src/app/root-redirect.ts`: the shell, for now.
+
 ## Styling
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in

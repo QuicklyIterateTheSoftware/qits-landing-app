@@ -2,7 +2,7 @@ import { computed, inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { ProjectsStore } from '../core/projects/projects.store';
+import { ProjectsStore } from './projects.store';
 
 /** The slug in a `/projects/<slug>` URL, or undefined for any other URL. */
 export function projectSlugOf(url: string): string | undefined {

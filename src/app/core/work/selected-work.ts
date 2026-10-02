@@ -1,8 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { computed, effect, inject, Injectable, PLATFORM_ID, untracked } from '@angular/core';
-import { ProjectsStore } from '../../core/projects/projects.store';
+import { ProjectsStore } from '../projects/projects.store';
 import type { LoadState } from '../../ui/components/spinner/spinner';
-import { SelectedProject } from '../selected-project';
+import { SelectedProject } from '../projects/selected-project';
 
 /**
  * The open project's work, for the Work and Archive pages: the same `loadWork` answer the project

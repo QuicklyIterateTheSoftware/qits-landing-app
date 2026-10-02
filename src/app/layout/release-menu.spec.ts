@@ -4,7 +4,7 @@ import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { client as projectsClient } from '../api/projects/client.gen';
 import { provideHeyApiClient } from '../api/projects/client/client.gen';
-import { SelectedProject } from '../projects/selected-project';
+import { SelectedProject } from '../core/projects/selected-project';
 import { goldenMaster } from '../../testing/golden-masters';
 import { gateTone, ReleaseMenu, requestTone } from './release-menu';
 

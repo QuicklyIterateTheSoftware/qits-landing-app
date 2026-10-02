@@ -3,9 +3,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { commands, page } from 'vitest/browser';
-import { client as githostClient } from '../api/githost/client.gen';
-import { client as projectsClient } from '../api/projects/client.gen';
-import { provideHeyApiClient } from '../api/projects/client/client.gen';
+import { client as githostClient } from '../../../api/githost/client.gen';
+import { client as projectsClient } from '../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { ProjectPicker } from './project-picker';
 
 /**
