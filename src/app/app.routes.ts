@@ -3,9 +3,11 @@ import { sessionGuard } from './auth/session.guard';
 import { Layout } from './layout/layout';
 import { ProjectPage } from './projects/project-page';
 import { ProjectPicker } from './projects/project-picker';
+import { RootRedirect } from './root-redirect';
 
 /**
- * The project list at the root, one project's page at `projects/<slug>`, and a catch-all that is
+ * The root hands on to `projects` (`RootRedirect`, see there why not `redirectTo`), the project
+ * list is at `projects`, one project's page at `projects/<slug>`, and a catch-all that is
  * load-bearing rather than tidy.
  *
  * `.config/qits/deployments.yml` declares `routes: /landing`, which is the prefix the edge
@@ -30,7 +32,8 @@ export const routes: Routes = [
     component: Layout,
     canActivate: [sessionGuard],
     children: [
-      { path: '', component: ProjectPicker },
+      { path: '', component: RootRedirect },
+      { path: 'projects', component: ProjectPicker },
       { path: 'projects/:slug', component: ProjectPage },
       { path: '**', component: ProjectPicker },
     ],

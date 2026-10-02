@@ -101,7 +101,7 @@ export class Layout {
    * is the current page and is not a link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
-    const projects: NavLink = { label: 'Projects', path: '/' };
+    const projects: NavLink = { label: 'Projects', path: '/projects' };
     const project = this.selected.project();
     const slug = this.selected.slug();
     return project && slug
