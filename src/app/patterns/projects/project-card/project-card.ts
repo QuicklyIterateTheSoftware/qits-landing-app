@@ -12,6 +12,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { LocStore, type LanguageLines } from '../../../core/loc/loc.store';
 import { ProjectsStore, type Project } from '../../../core/projects/projects.store';
+import { WorkStore } from '../../../core/work/work.store';
 import { CardBody, CardExpandable, CardHeader } from '../../../ui/components/card/base-card';
 import { CardSilent } from '../../../ui/components/card/card-silent';
 import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
@@ -24,7 +25,7 @@ export const LANGUAGES_SHOWN = 4;
  * One project in the picker: its name, and facts about it read from its repositories.
  *
  * - Two `ui-stat` tiles side by side: "Work", the project's work entities that count as work
- *   (`countsAsWork` in `projects.consumes.ts`, REFINED for now), and "Components".
+ *   (`countsAsWork` in `core/work/work.consumes.ts`, REFINED for now), and "Components".
  * - Every repository counts as one component. The list answer carries
  *   the project's wrapper in a field of its own, so it is not counted.
  * - Its lines of code per language, summed over its repositories, main and test lines apart,
@@ -135,6 +136,7 @@ export class ProjectCard {
   readonly project = input.required<Project>();
 
   private readonly store = inject(ProjectsStore);
+  private readonly workStore = inject(WorkStore);
   private readonly loc = inject(LocStore);
 
   protected readonly repositories = computed(() => {
@@ -144,7 +146,7 @@ export class ProjectCard {
 
   protected readonly work = computed(() => {
     const projectId = this.project().id;
-    return projectId ? this.store.work()[projectId] : undefined;
+    return projectId ? this.workStore.byProject()[projectId] : undefined;
   });
 
   protected readonly workState = computed((): LoadState => {
@@ -222,7 +224,7 @@ export class ProjectCard {
       const projectId = this.project().id;
       if (!browser || !projectId) return;
       untracked(() => {
-        void this.store.loadWork(projectId);
+        void this.workStore.load(projectId);
         void this.store.loadRepositories(projectId);
       });
     });

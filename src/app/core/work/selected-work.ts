@@ -1,17 +1,19 @@
 import { isPlatformBrowser } from '@angular/common';
 import { computed, effect, inject, Injectable, PLATFORM_ID, untracked } from '@angular/core';
 import { ProjectsStore } from '../projects/projects.store';
+import { WorkStore } from './work.store';
 import type { LoadState } from '../../ui/components/spinner/spinner';
 import { SelectedProject } from '../projects/selected-project';
 
 /**
- * The open project's work, for the Work and Archive pages: the same `loadWork` answer the project
+ * The open project's work, for the Work and Archive pages: the same `WorkStore` answer the project
  * card counts from (one request per project, shared), loaded here if nothing asked for it yet.
  */
 @Injectable({ providedIn: 'root' })
 export class SelectedWork {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(ProjectsStore);
+  private readonly workStore = inject(WorkStore);
 
   /** The open project's work entities; empty until they are loaded. */
   readonly entries = computed(() => this.work()?.entries ?? []);
@@ -27,7 +29,7 @@ export class SelectedWork {
 
   private readonly work = computed(() => {
     const id = this.selected.project()?.id;
-    return id ? this.store.work()[id] : undefined;
+    return id ? this.workStore.byProject()[id] : undefined;
   });
 
   constructor() {
@@ -36,7 +38,7 @@ export class SelectedWork {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
       const id = this.selected.project()?.id;
-      if (browser && id) untracked(() => void this.store.loadWork(id));
+      if (browser && id) untracked(() => void this.workStore.load(id));
     });
   }
 }

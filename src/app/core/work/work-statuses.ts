@@ -1,4 +1,4 @@
-import type { WorkEntry } from '../projects/projects.consumes';
+import type { WorkEntry } from './work.consumes';
 
 /**
  * One column of the Work board: a status, its heading, and its colours. The classes are written
