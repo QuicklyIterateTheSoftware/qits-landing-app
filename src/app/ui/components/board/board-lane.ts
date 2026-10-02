@@ -20,8 +20,11 @@ let nextLaneId = 0;
  * lane.
  *
  * **On a board** it runs the board's full width (gutters and all columns): a title bar across the
- * top (projected `[lane-header]`, right-aligned, with `[lane-tags]` at the bar's left end) that continues down the whole left side over the gutter as one ┌ of the same colour,
- * only its top-left corner rounded, holding `[lane-gutter]` written vertically at its bottom, and its children (`ui-board-row`s, cards) in the columns beside it.
+ * top (projected `[lane-header]`, right-aligned) that continues down the whole left side over the gutter as one ┌ of the same colour,
+ * only its top-left corner rounded, holding `[lane-gutter]` written vertically at its bottom.
+ * Below the bar, `[lane-tags]` sit in a row of their own across the status columns, wrapping,
+ * that row no taller than the usual 1rem unless they need it; then its children
+ * (`ui-board-row`s, cards) in the columns beside the strip.
  *
  * With `collapsible`, a round button on its bottom edge switches between the children (expanded)
  * and `[lane-summary]` (collapsed), a single centred line. `collapsed` sets where it starts; a
@@ -42,7 +45,7 @@ let nextLaneId = 0;
     // The chin below the last row; the id at the bottom of the left strip keeps the same distance.
     class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
     '[class]':
-      "onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' : 'mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
+      "onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `
@@ -64,16 +67,28 @@ let nextLaneId = 0;
       class="col-span-full flex items-center gap-2 px-2 py-1 text-xs [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
-          ? 'mb-4 ml-6 justify-end bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
+          ? 'ml-6 justify-end bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
           : muted()
             ? 'relative bg-charcoal-brown-100 text-charcoal-brown-600'
             : 'relative bg-charcoal-brown-800 font-semibold text-white'
       "
     >
       <ng-content select="[lane-header]" />
-      <span class="flex gap-1" [class]="onBoard ? 'order-first mr-auto shrink-0' : 'ml-auto'">
-        <ng-content select="[lane-tags]" />
-      </span>
+    </div>
+    <!--
+      The tags. On a board: their own row between the title bar and the rows, across the status
+      columns, at least the 1rem that separates bar and rows and taller only when they wrap. Off a
+      board: at the right of the header strip.
+    -->
+    <div
+      class="flex flex-wrap items-center gap-1"
+      [class]="
+        onBoard
+          ? 'col-start-2 col-end-[-2] row-start-2 min-h-4'
+          : 'absolute top-0 right-1 h-6 flex-nowrap'
+      "
+    >
+      <ng-content select="[lane-tags]" />
     </div>
     <!--
       The rows. On a board their height animates through grid-template-rows (0fr to 1fr), as on the
@@ -85,7 +100,7 @@ let nextLaneId = 0;
       [class]="
         !onBoard
           ? 'contents'
-          : 'col-span-full row-start-2 grid grid-cols-subgrid transition-[grid-template-rows] duration-200 ease-out ' +
+          : 'col-span-full row-start-3 grid grid-cols-subgrid transition-[grid-template-rows] duration-200 ease-out ' +
             (isCollapsed() ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]')
       "
       [attr.inert]="onBoard && isCollapsed() ? '' : null"
@@ -104,7 +119,7 @@ let nextLaneId = 0;
     @if (onBoard) {
       <!-- The summary shares the rows' grid cell and cross-fades with them. -->
       <div
-        class="col-span-full row-start-2 flex items-center justify-center self-start py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out"
+        class="col-span-full row-start-3 flex items-center justify-center self-start py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out"
         [class]="isCollapsed() ? 'opacity-100' : 'pointer-events-none opacity-0'"
         [attr.inert]="isCollapsed() ? null : ''"
         [attr.aria-hidden]="isCollapsed() ? null : 'true'"

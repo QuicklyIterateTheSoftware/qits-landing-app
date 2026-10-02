@@ -35,7 +35,11 @@ import { IdStrip } from '../id-strip/id-strip';
         <!-- The last chip (the kind) sits flush in the row's top-right corner. -->
         <span
           class="shrink-0 bg-charcoal-brown-100 text-[0.6875rem] text-charcoal-brown-700"
-          [class]="$last ? '-mt-2 -mr-3 self-start rounded-bl-md px-2 py-0.5' : 'rounded-sm px-1.5'"
+          [class]="
+            $last
+              ? '-mt-2 -mr-3 self-start rounded-bl-md px-[0.65rem] py-[0.1625rem]'
+              : 'rounded-sm px-1.5'
+          "
           >{{ chip }}</span
         >
       }
