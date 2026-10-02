@@ -11,6 +11,7 @@ import { BaseCard } from './base-card';
     <ui-base-card class="[--card-background:var(--color-gray-50)]">
       <ng-content select="card-header" ngProjectAs="card-header" />
       <ng-content select="card-body" ngProjectAs="card-body" />
+      <ng-content select="card-expandable" ngProjectAs="card-expandable" />
     </ui-base-card>
   `,
 })
