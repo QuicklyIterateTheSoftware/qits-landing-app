@@ -58,11 +58,26 @@ export const LANGUAGES_SHOWN = 4;
             </div>
             <ui-spinner [state]="linesState()">
               <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
-                <thead class="text-[0.5417rem] leading-[1.21875rem] text-gray-500">
+                <thead class="text-[0.5417rem] text-gray-500">
                   <tr>
-                    <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
-                    <th scope="col" class="px-2 py-px text-right font-normal">Main</th>
-                    <th scope="col" class="py-px pr-2 pl-4 text-right font-normal">Tests</th>
+                    <th
+                      scope="col"
+                      class="pt-[calc(0.40625rem+1px)] pb-px pr-6 pl-2 text-left font-normal"
+                    >
+                      Language
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-2 pt-[calc(0.40625rem+1px)] pb-px text-right font-normal"
+                    >
+                      Main
+                    </th>
+                    <th
+                      scope="col"
+                      class="pt-[calc(0.40625rem+1px)] pb-px pr-2 pl-4 text-right font-normal"
+                    >
+                      Tests
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
