@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { BOARD_CONTEXT, type BoardContext } from './board-context';
 
 /**
- * A row inside a board lane, exactly across the status columns (not the gutters, no inset): its
+ * A row inside a board lane, a lighter shade of the lane (a white layer over it), exactly across the status columns (not the gutters, no inset): its
  * children (cards) sit in their own columns, `[row-id]` is written up its left edge, vertically
  * centred, and `[row-footer]` (a title, say) runs centred along its bottom. A link in the footer
  * stretches over the row and casts a shadow while hovered: the row is the positioning box, and cards
@@ -14,7 +14,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/30 pt-2 ring-1 ring-black/5 [&>ui-board-card]:ml-4',
+      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 [&>ui-board-card]:ml-4',
     '[style.grid-column]': 'placement()',
   },
   template: `

@@ -1,41 +1,45 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IdStrip } from '../id-strip/id-strip';
 import { BOARD_CONTEXT, gridColumn } from './board-context';
 
 /**
- * One item on a board: a small white card in its column, with a short code, a kind chip and a
- * title. `border` is the card's border colour (a full Tailwind class, e.g. `border-ocean-deep-400`).
+ * One item on a board: a small white card in its column, its code down the left edge
+ * (`ui-id-strip`), then its title and a kind chip. `border` is the card's border colour (a full Tailwind class, e.g. `border-ocean-deep-400`).
  * With `link`, the title is a link stretched over the whole card. Projected content (tags, say)
  * goes under the title.
  */
 @Component({
   selector: 'ui-board-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, IdStrip],
   host: {
-    class: 'relative z-10 mx-2 block self-start rounded-md border bg-white p-2 text-sm',
+    class: 'relative z-10 mx-2 flex self-start overflow-hidden rounded-md border bg-white text-sm',
     '[class]': 'border()',
     '[style.grid-column]': 'placement()',
   },
   template: `
-    <div class="flex items-center justify-between gap-2">
-      <span class="font-mono text-xs text-charcoal-brown-600">{{ code() }}</span>
-      <span class="rounded-sm bg-ocean-deep-50 px-1.5 text-[0.6875rem] text-ocean-deep-800">{{
-        kind()
-      }}</span>
-    </div>
-    <p class="mt-1 mb-0 text-charcoal-brown-900">
-      @if (link(); as link) {
-        <a
-          class="text-inherit no-underline after:absolute after:inset-0 after:rounded-md after:transition-shadow after:duration-150 hover:after:shadow-md hover:underline"
-          [routerLink]="link"
-          >{{ title() }}</a
+    <ui-id-strip [id]="code()" />
+    <div class="min-w-0 flex-1 p-2">
+      <div class="flex items-start justify-between gap-2">
+        <p class="m-0 text-charcoal-brown-900">
+          @if (link(); as link) {
+            <a
+              class="text-inherit no-underline after:absolute after:inset-0 after:rounded-md after:transition-shadow after:duration-150 hover:after:shadow-md hover:underline"
+              [routerLink]="link"
+              >{{ title() }}</a
+            >
+          } @else {
+            {{ title() }}
+          }
+        </p>
+        <span
+          class="shrink-0 rounded-sm bg-ocean-deep-50 px-1.5 text-[0.6875rem] text-ocean-deep-800"
+          >{{ kind() }}</span
         >
-      } @else {
-        {{ title() }}
-      }
-    </p>
-    <ng-content />
+      </div>
+      <ng-content />
+    </div>
   `,
 })
 export class BoardCard {

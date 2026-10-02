@@ -34,7 +34,7 @@ import { Tag } from '../../../ui/components/tag/tag';
           @for (campaign of n.campaigns; track campaign.id) {
             <ui-tag lane-tags [label]="campaign.title ?? ''" />
           }
-          <span lane-gutter class="font-mono">{{ n.entry.qualifiedId }}</span>
+          <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
           @for (child of n.children; track child.entry.id) {
             <app-work-board-node [node]="child" [base]="base()" />
           }
