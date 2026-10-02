@@ -125,7 +125,7 @@ describe('ProjectCard (screenshots)', () => {
   it('shows that it is loading', async () => {
     const { fixture, repositories, lines } = await render();
     const card = page.elementLocator(fixture.nativeElement);
-    await expect.element(card).toHaveTextContent('Loading…');
+    await expect.element(card.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(card).toMatchScreenshot('loading');
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });

@@ -3,7 +3,8 @@
  *
  * - The font is Inter from this repository (`fonts/`), never a system font: system fonts differ
  *   between machines and would change every screenshot.
- * - Animations and transitions are off, and the caret does not blink.
+ * - Animations and transitions are off, and the caret does not blink. SVG animations (SMIL, as in
+ *   `ui-spinner`) are not CSS, so every `<svg>` is paused at its first frame as it is added.
  */
 import { beforeAll } from 'vitest';
 
@@ -35,7 +36,20 @@ const CSS = `
   }
 `;
 
+/** Pauses an SVG's own animations at time 0, and those of every `<svg>` inside a node. */
+function freeze(node: Node): void {
+  if (!(node instanceof Element)) return;
+  const svgs = node instanceof SVGSVGElement ? [node] : [...node.querySelectorAll('svg')];
+  for (const svg of svgs) {
+    svg.pauseAnimations();
+    svg.setCurrentTime(0);
+  }
+}
+
 beforeAll(async () => {
+  new MutationObserver((records) => {
+    for (const record of records) record.addedNodes.forEach(freeze);
+  }).observe(document.documentElement, { childList: true, subtree: true });
   const style = document.createElement('style');
   style.textContent = CSS;
   document.head.append(style);

@@ -1,19 +1,18 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
+import { Spinner } from '../spinner/spinner';
 import { Stat } from './stat';
 
-/** Screenshots of the stat tile: label lengths, value sizes and a loading text. */
+/** Screenshots of the stat tile: label lengths, value sizes and the loading spinner. */
 @Component({
-  imports: [Stat],
+  imports: [Spinner, Stat],
   host: { class: 'grid w-[40rem] grid-cols-3 gap-4 p-4' },
   template: `
     <ui-stat label="Components">52</ui-stat>
     <ui-stat label="Repositories with open release requests">3</ui-stat>
     <ui-stat label="Lines">1,319,512</ui-stat>
-    <ui-stat label="Components"
-      ><span class="text-base font-normal text-gray-500">Loading…</span></ui-stat
-    >
+    <ui-stat label="Components"><ui-spinner class="size-8 align-top text-gray-500" /></ui-stat>
   `,
 })
 class Variants {}

@@ -14,6 +14,7 @@ import { LocStore, type LanguageLines } from '../core/loc/loc.store';
 import { ProjectsStore, type Project } from '../core/projects/projects.store';
 import { CardBody, CardHeader } from '../ui/components/card/base-card';
 import { CardSilent } from '../ui/components/card/card-silent';
+import { Spinner } from '../ui/components/spinner/spinner';
 import { Stat } from '../ui/components/stat/stat';
 
 /** How many languages the card names before it sums the rest as "Other". */
@@ -33,7 +34,7 @@ export const LANGUAGES_SHOWN = 4;
 @Component({
   selector: 'app-project-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CardSilent, CardHeader, CardBody, Stat],
+  imports: [RouterLink, CardSilent, CardHeader, CardBody, Spinner, Stat],
   host: { class: 'block' },
   template: `
     <a
@@ -51,7 +52,7 @@ export const LANGUAGES_SHOWN = 4;
                 @if (repositories()?.status === 'error') {
                   <span class="text-base font-normal text-gray-500">Unavailable</span>
                 } @else if (componentCount() === undefined) {
-                  <span class="text-base font-normal text-gray-500">Loading…</span>
+                  <ui-spinner class="size-8 align-top text-gray-500" />
                 } @else {
                   {{ componentCount() }}
                 }
