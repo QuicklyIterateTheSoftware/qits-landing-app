@@ -35,7 +35,23 @@ interface NavLink {
           <span class="block h-0.5 bg-gray-700"></span>
           <span class="block h-0.5 bg-gray-700"></span>
         </button>
-        <a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a>
+        <nav aria-label="Breadcrumb">
+          <ol class="m-0 flex list-none items-center gap-2 p-0">
+            <li><a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a></li>
+            @for (crumb of crumbs(); track crumb.path; let last = $last) {
+              <li class="flex items-center gap-2">
+                <span aria-hidden="true" class="text-gray-400">›</span>
+                <!-- One element for both cases (no @if): the last crumb is the current page. -->
+                <a
+                  class="text-gray-600 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
+                  [routerLink]="crumb.path"
+                  [attr.aria-current]="last ? 'page' : null"
+                  >{{ crumb.label }}</a
+                >
+              </li>
+            }
+          </ol>
+        </nav>
       </header>
 
       <nav
@@ -78,6 +94,19 @@ export class Layout {
     const project = this.selected.project();
     const slug = this.selected.slug();
     return project && slug ? [{ label: project.name ?? slug, path: `/projects/${slug}` }] : [];
+  });
+
+  /**
+   * The trail after the "qits" brand: "Projects", then the open project's name. The last crumb
+   * is the current page and is not a link.
+   */
+  protected readonly crumbs = computed((): readonly NavLink[] => {
+    const projects: NavLink = { label: 'Projects', path: '/' };
+    const project = this.selected.project();
+    const slug = this.selected.slug();
+    return project && slug
+      ? [projects, { label: project.name ?? slug, path: `/projects/${slug}` }]
+      : [projects];
   });
 
   protected readonly navOpen = signal(false);
