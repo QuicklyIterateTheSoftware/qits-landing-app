@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { page } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
+import { RouterLink } from '@angular/router';
 import { ListItem } from '../list-item/list-item';
 import { Tag } from '../tag/tag';
 import { Board, type BoardColumnSpec } from './board';
@@ -84,6 +85,25 @@ class Variants {
 })
 class Groups {}
 
+@Component({
+  imports: [Board, BoardLane, BoardRow, BoardCard, RouterLink],
+  host: { class: 'block w-[48rem] p-4' },
+  template: `
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane>
+        <a lane-header id="epic" routerLink="/e">An epic</a>
+        <ui-board-row>
+          <ui-board-card id="task" [column]="0" code="t" title="A task" kind="task" link="/t" />
+          <a row-footer id="feature" routerLink="/f">A feature</a>
+        </ui-board-row>
+      </ui-board-lane>
+    </ui-board>
+  `,
+})
+class Linked {
+  readonly columns = COLUMNS;
+}
+
 describe('Board (screenshots)', () => {
   beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
 
@@ -97,5 +117,24 @@ describe('Board (screenshots)', () => {
     const fixture = TestBed.createComponent(Groups);
     fixture.detectChanges();
     await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('groups');
+  });
+
+  it('shadows only the innermost hovered item', async () => {
+    const fixture = TestBed.createComponent(Linked);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const shadow = (selector: string) =>
+      getComputedStyle(element.querySelector(selector) as Element, '::after').boxShadow;
+    const taskLink = element.querySelector('#task a') as HTMLElement;
+    await userEvent.hover(taskLink);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(shadow('#task a')).not.toBe('none');
+    expect(shadow('#feature')).toBe('none');
+    expect(shadow('#epic')).toBe('none');
+    await userEvent.hover(element.querySelector('#feature') as HTMLElement);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(shadow('#feature')).not.toBe('none');
+    expect(shadow('#task a')).toBe('none');
+    await userEvent.unhover(element.querySelector('#feature') as HTMLElement);
   });
 });

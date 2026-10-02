@@ -30,12 +30,7 @@ import { Tag } from '../../../ui/components/tag/tag';
     @switch (n.entry.archetype) {
       @case ('EPIC') {
         <ui-board-lane [rows]="n.children.length || 1">
-          <a
-            lane-header
-            class="font-semibold text-inherit no-underline after:absolute after:inset-0 hover:underline"
-            [routerLink]="link"
-            >{{ n.entry.title }}</a
-          >
+          <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
           @for (campaign of n.campaigns; track campaign.id) {
             <ui-tag lane-tags [label]="campaign.title ?? ''" />
           }
@@ -51,12 +46,7 @@ import { Tag } from '../../../ui/components/tag/tag';
             <app-work-board-node [node]="child" [base]="base()" />
           }
           <span row-id class="font-mono">{{ n.entry.qualifiedId }}</span>
-          <a
-            row-footer
-            class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
-            [routerLink]="link"
-            >{{ n.entry.title }}</a
-          >
+          <a row-footer [routerLink]="link">{{ n.entry.title }}</a>
         </ui-board-row>
       }
       @default {

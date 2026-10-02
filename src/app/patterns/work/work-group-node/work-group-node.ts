@@ -24,7 +24,7 @@ import { RouterLink } from '@angular/router';
         <span lane-header class="font-mono">{{ n.entry.qualifiedId }}</span>
         <a
           lane-header
-          class="min-w-0 flex-1 truncate text-inherit no-underline hover:underline"
+          class="min-w-0 flex-1 truncate"
           [routerLink]="base() + '/' + n.entry.qualifiedId"
           >{{ n.entry.title }}</a
         >

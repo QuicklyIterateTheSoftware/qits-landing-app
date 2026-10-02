@@ -4,6 +4,9 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
 /**
  * A container band.
  *
+ * A link projected as `[lane-header]` stretches over the header strip and casts a shadow while
+ * hovered (only that strip: hovering a child does not touch it).
+ *
  * **On a board** it runs the board's full width (gutter and all columns): a title bar across the
  * top (projected `[lane-header]`, centred, on a 40% background, square corners) with `[lane-tags]` at its top
  * right, the gutter cell below it holding `[lane-gutter]` written vertically at its bottom left,
@@ -27,7 +30,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   },
   template: `
     <div
-      class="relative col-span-full flex items-center gap-2 px-2 py-1 text-xs"
+      class="relative col-span-full flex items-center gap-2 px-2 py-1 text-xs [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
           ? 'justify-center bg-charcoal-brown-800/40 text-white'
