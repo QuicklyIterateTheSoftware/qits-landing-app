@@ -16,8 +16,8 @@ import { tagColour } from './tag-colour';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class:
-      'inline-block rounded-sm text-[0.6875rem] leading-4 font-medium whitespace-nowrap text-charcoal-brown-950',
-    '[class]': "vertical() ? '[writing-mode:vertical-rl] rotate-180 py-1.5' : 'px-1.5'",
+      'inline-block text-[0.6875rem] leading-4 font-medium whitespace-nowrap text-charcoal-brown-950',
+    '[class]': "vertical() ? '[writing-mode:vertical-rl] rotate-180 py-2.5' : 'px-2.5'",
     '[style.background-color]': 'colour()',
   },
   template: `{{ label() }}`,

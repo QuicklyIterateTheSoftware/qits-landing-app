@@ -1,7 +1,22 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import { getCampaign, listProjectEntities } from '../../api/projects';
-import { countsAsWork, GET_CAMPAIGN, LIST_PROJECT_ENTITIES, type WorkEntry } from './work.consumes';
+import {
+  getCampaign,
+  listProjectEntities,
+  transitionEpic,
+  transitionTicket,
+} from '../../api/projects';
+import {
+  countsAsWork,
+  GET_CAMPAIGN,
+  LIST_PROJECT_ENTITIES,
+  TRANSITION_EPIC,
+  TRANSITION_TICKET,
+  type WorkEntry,
+} from './work.consumes';
+
+/** How a finish (a move to DONE) is going: running, or failed. Absent when none is. */
+export type FinishState = 'running' | 'error';
 
 type Status = 'loading' | 'loaded' | 'error';
 
@@ -20,6 +35,8 @@ export interface ProjectWork {
 interface WorkState {
   /** Each project's work, by project id. A project not asked for yet has no key. */
   readonly byProject: Readonly<Record<string, ProjectWork>>;
+  /** Each entity's running or failed finish, by entity id. */
+  readonly finishing: Readonly<Record<string, FinishState>>;
 }
 
 /**
@@ -32,13 +49,47 @@ interface WorkState {
  * - Each campaign in the tree is then asked for its members (`getCampaign`), one request per
  *   campaign: membership lives on the campaign, not on the entity. A failed campaign read fails the
  *   project's work, as a partial tree would group wrongly.
+ * - `refresh(projectId)` fetches again and keeps showing the old work until the answer is in.
+ * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`transitionEpic`,
+ *   `transitionTicket`) and writes the answered status into the entry: it leaves the board for the
+ *   archive. DONE is final in qits-projects; nothing moves it back.
  */
 export const WorkStore = signalStore(
   { providedIn: 'root' },
-  withState<WorkState>({ byProject: {} }),
+  withState<WorkState>({ byProject: {}, finishing: {} }),
   withMethods((store) => {
     function set(projectId: string, value: ProjectWork): void {
       patchState(store, { byProject: { ...store.byProject(), [projectId]: value } });
+    }
+
+    function setFinishing(entityId: string, value: FinishState | undefined): void {
+      const { [entityId]: _, ...rest } = store.finishing();
+      patchState(store, { finishing: value ? { ...rest, [entityId]: value } : rest });
+    }
+
+    async function fetch(projectId: string): Promise<ProjectWork> {
+      const { data, error } = await consume(
+        listProjectEntities({ path: { projectId } }),
+        LIST_PROJECT_ENTITIES,
+      );
+      const entries = data?.entities ?? [];
+      const campaignIds = entries.flatMap((e) =>
+        e.archetype === 'CAMPAIGN' && e.id ? [e.id] : [],
+      );
+      const answers = await Promise.all(
+        campaignIds.map((id) => consume(getCampaign({ path: { id } }), GET_CAMPAIGN)),
+      );
+      const failed =
+        error !== undefined || !data || answers.some((a) => a.error !== undefined || !a.data);
+      const campaigns = Object.fromEntries(
+        answers.map((a, i) => [
+          campaignIds[i],
+          (a.data?.campaign?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
+        ]),
+      );
+      return failed
+        ? { status: 'error', count: 0, entries: [], campaigns: {} }
+        : { status: 'loaded', count: entries.filter(countsAsWork).length, entries, campaigns };
     }
 
     return {
@@ -46,31 +97,37 @@ export const WorkStore = signalStore(
         const current = store.byProject()[projectId];
         if (current && current.status !== 'error') return;
         set(projectId, { status: 'loading', count: 0, entries: [], campaigns: {} });
-        const { data, error } = await consume(
-          listProjectEntities({ path: { projectId } }),
-          LIST_PROJECT_ENTITIES,
+        set(projectId, await fetch(projectId));
+      },
+      /** Fetches again; the old work stays until the answer is in, and stays if it fails. */
+      async refresh(projectId: string): Promise<void> {
+        const next = await fetch(projectId);
+        if (next.status === 'loaded' || !store.byProject()[projectId]) set(projectId, next);
+      },
+      async finish(projectId: string, entry: WorkEntry): Promise<void> {
+        const id = entry.id;
+        if (!id || store.finishing()[id] === 'running') return;
+        setFinishing(id, 'running');
+        const body = { target: 'DONE' };
+        const status =
+          entry.archetype === 'EPIC'
+            ? await consume(transitionEpic({ path: { id }, body }), TRANSITION_EPIC).then(
+                ({ data, error }) => (error === undefined ? data?.epic?.status : undefined),
+              )
+            : await consume(transitionTicket({ path: { id }, body }), TRANSITION_TICKET).then(
+                ({ data, error }) => (error === undefined ? data?.ticket?.status : undefined),
+              );
+        if (!status) {
+          setFinishing(id, 'error');
+          return;
+        }
+        setFinishing(id, undefined);
+        const work = store.byProject()[projectId];
+        if (!work) return;
+        const entries = work.entries.map((e) =>
+          e.id === id ? { ...e, status: status as WorkEntry['status'] } : e,
         );
-        const entries = data?.entities ?? [];
-        const campaignIds = entries.flatMap((e) =>
-          e.archetype === 'CAMPAIGN' && e.id ? [e.id] : [],
-        );
-        const answers = await Promise.all(
-          campaignIds.map((id) => consume(getCampaign({ path: { id } }), GET_CAMPAIGN)),
-        );
-        const failed =
-          error !== undefined || !data || answers.some((a) => a.error !== undefined || !a.data);
-        const campaigns = Object.fromEntries(
-          answers.map((a, i) => [
-            campaignIds[i],
-            (a.data?.campaign?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
-          ]),
-        );
-        set(
-          projectId,
-          failed
-            ? { status: 'error', count: 0, entries: [], campaigns: {} }
-            : { status: 'loaded', count: entries.filter(countsAsWork).length, entries, campaigns },
-        );
+        set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
       },
     };
   }),

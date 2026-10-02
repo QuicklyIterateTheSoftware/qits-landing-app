@@ -1,4 +1,9 @@
-import type { GetCampaignResponses, ListProjectEntitiesResponses } from '../../api/projects';
+import type {
+  GetCampaignResponses,
+  ListProjectEntitiesResponses,
+  TransitionEpicResponses,
+  TransitionTicketResponses,
+} from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -47,3 +52,24 @@ export const GET_CAMPAIGN = ['campaign.id', 'campaign.members[].entity.id'] as c
 export type CampaignEntry = NonNullable<
   Consumed<GetCampaignResponses[200], typeof GET_CAMPAIGN>['campaign']
 >;
+
+/**
+ * `WorkStore.finish(projectId, entry)` for an epic: the epic's new status, which the store writes
+ * into its entry so the epic leaves the board at once.
+ */
+export const TRANSITION_EPIC = ['epic.status'] as const;
+
+/** `WorkStore.finish(projectId, entry)` for a ticket: the same, from the ticket door. */
+export const TRANSITION_TICKET = ['ticket.status'] as const;
+
+/** Whether an entry can be finished (moved to DONE) from the board: a VERIFIED epic or ticket. */
+export function finishable(entry: WorkEntry): boolean {
+  return (
+    entry.status === 'VERIFIED' && (entry.archetype === 'EPIC' || entry.archetype === 'TICKET')
+  );
+}
+
+/** The epic answer, cut to what the store reads. */
+export type TransitionedEpic = Consumed<TransitionEpicResponses[200], typeof TRANSITION_EPIC>;
+/** The ticket answer, cut to what the store reads. */
+export type TransitionedTicket = Consumed<TransitionTicketResponses[200], typeof TRANSITION_TICKET>;

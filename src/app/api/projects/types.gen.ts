@@ -3389,7 +3389,7 @@ export type GetProjectsApiEpicsByIdAuditResponses = {
 
 export type GetProjectsApiEpicsByIdAuditResponse = GetProjectsApiEpicsByIdAuditResponses[keyof GetProjectsApiEpicsByIdAuditResponses];
 
-export type PostProjectsApiEpicsByIdTransitionData = {
+export type TransitionEpicData = {
     body: TransitionEpicRequest;
     path: {
         id: string;
@@ -3398,7 +3398,7 @@ export type PostProjectsApiEpicsByIdTransitionData = {
     url: '/projects/api/epics/{id}/transition';
 };
 
-export type PostProjectsApiEpicsByIdTransitionErrors = {
+export type TransitionEpicErrors = {
     /**
      * Bad Request
      */
@@ -3413,14 +3413,14 @@ export type PostProjectsApiEpicsByIdTransitionErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiEpicsByIdTransitionResponses = {
+export type TransitionEpicResponses = {
     /**
      * OK
      */
     200: Response;
 };
 
-export type PostProjectsApiEpicsByIdTransitionResponse = PostProjectsApiEpicsByIdTransitionResponses[keyof PostProjectsApiEpicsByIdTransitionResponses];
+export type TransitionEpicResponse = TransitionEpicResponses[keyof TransitionEpicResponses];
 
 export type GetProjectsApiFeaturesByFeatureIdTasksData = {
     body?: never;
@@ -6365,7 +6365,7 @@ export type PostProjectsApiTicketsByIdBlockedResponses = {
 
 export type PostProjectsApiTicketsByIdBlockedResponse = PostProjectsApiTicketsByIdBlockedResponses[keyof PostProjectsApiTicketsByIdBlockedResponses];
 
-export type PostProjectsApiTicketsByIdTransitionData = {
+export type TransitionTicketData = {
     body: TransitionTicketRequest;
     path: {
         id: string;
@@ -6374,7 +6374,7 @@ export type PostProjectsApiTicketsByIdTransitionData = {
     url: '/projects/api/tickets/{id}/transition';
 };
 
-export type PostProjectsApiTicketsByIdTransitionErrors = {
+export type TransitionTicketErrors = {
     /**
      * Bad Request
      */
@@ -6389,14 +6389,14 @@ export type PostProjectsApiTicketsByIdTransitionErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiTicketsByIdTransitionResponses = {
+export type TransitionTicketResponses = {
     /**
      * OK
      */
     200: Response20;
 };
 
-export type PostProjectsApiTicketsByIdTransitionResponse = PostProjectsApiTicketsByIdTransitionResponses[keyof PostProjectsApiTicketsByIdTransitionResponses];
+export type TransitionTicketResponse = TransitionTicketResponses[keyof TransitionTicketResponses];
 
 export type GetProjectsApiTicketsByTicketIdCommentsData = {
     body?: never;

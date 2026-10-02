@@ -7,7 +7,7 @@ import {
   linkedSignal,
 } from '@angular/core';
 import { ExpandButton } from '../expand-button/expand-button';
-import { BOARD_CONTEXT, type BoardContext } from './board-context';
+import { BOARD_CONTEXT, ROOT_ITEM_SPACING, type BoardContext } from './board-context';
 
 let nextLaneId = 0;
 
@@ -45,7 +45,7 @@ let nextLaneId = 0;
     // The chin below the last row; the id at the bottom of the left strip keeps the same distance.
     class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
     '[class]':
-      "onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
+      "(onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `
@@ -81,7 +81,7 @@ let nextLaneId = 0;
       board: at the right of the header strip.
     -->
     <div
-      class="flex flex-wrap items-center gap-1"
+      class="flex flex-wrap items-center gap-1.5"
       [class]="
         onBoard
           ? 'col-start-2 col-end-[-2] row-start-2 min-h-4'
@@ -126,6 +126,8 @@ let nextLaneId = 0;
       >
         <ng-content select="[lane-summary]" />
       </div>
+      <!-- An action button straddling the lane's edge (ui-finish-button), outside every clip. -->
+      <ng-content select="[lane-action]" />
       @if (collapsible()) {
         <ui-expand-button
           [open]="!isCollapsed()"
@@ -148,6 +150,8 @@ export class BoardLane implements BoardContext {
 
   private readonly parent = inject(BOARD_CONTEXT, { optional: true, skipSelf: true });
   readonly onBoard = this.parent?.onBoard ?? false;
+  protected readonly atRoot = this.parent?.root === true;
+  protected readonly spacing = ROOT_ITEM_SPACING;
 
   readonly lead = () => this.parent?.lead() ?? 0;
   readonly offset = () => 0;

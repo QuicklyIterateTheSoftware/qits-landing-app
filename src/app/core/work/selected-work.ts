@@ -1,5 +1,16 @@
 import { isPlatformBrowser } from '@angular/common';
-import { computed, effect, inject, Injectable, PLATFORM_ID, untracked } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  PLATFORM_ID,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
+import { DomainEvents } from '../events/domain-events';
 import { ProjectsStore } from '../projects/projects.store';
 import { WorkGraph } from './work-tree';
 import { WorkStore } from './work.store';
@@ -10,11 +21,18 @@ import { SelectedProject } from '../projects/selected-project';
  * The open project's work, for the Work and Archive pages: the same `WorkStore` answer the project
  * card counts from (one request per project, shared), loaded here if nothing asked for it yet.
  */
+/** The event qits-projects announces for every status or shape change of work entities. */
+export const WORK_EVENTS = ['EntityTransitioned'];
+
+/** How long a burst of transitions waits before the work is fetched again. */
+export const WORK_REFRESH_DEBOUNCE_MS = 1_000;
+
 @Injectable({ providedIn: 'root' })
 export class SelectedWork {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(ProjectsStore);
   private readonly workStore = inject(WorkStore);
+  private readonly events = inject(DomainEvents);
 
   /** The open project's work entities; empty until they are loaded. */
   readonly entries = computed(() => this.work()?.entries ?? []);
@@ -44,5 +62,21 @@ export class SelectedWork {
       const id = this.selected.project()?.id;
       if (browser && id) untracked(() => void this.workStore.load(id));
     });
+  }
+
+  /**
+   * Keeps the open project's work current while `destroy` lives: on `EntityTransitioned` (a finish
+   * here or in another tab, or any agent's move), the work is fetched again, at most once a second.
+   * Only the event's name is read, so nothing of its payload is relied on: the refetch is what
+   * tells which items moved, and those leave the board with their animation.
+   */
+  followTransitions(destroy: DestroyRef): void {
+    this.events
+      .on(WORK_EVENTS)
+      .pipe(debounceTime(WORK_REFRESH_DEBOUNCE_MS), takeUntilDestroyed(destroy))
+      .subscribe(() => {
+        const id = this.selected.project()?.id;
+        if (id) void this.workStore.refresh(id);
+      });
   }
 }
