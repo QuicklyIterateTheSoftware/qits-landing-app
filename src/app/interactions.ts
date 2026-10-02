@@ -35,6 +35,8 @@ export const INTERACTIONS = {
   'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
   /** `notifications-menu.ts`: the top bar's notifications menu, on its first opening. */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
+  /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */
+  'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
