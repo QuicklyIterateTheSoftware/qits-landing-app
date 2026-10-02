@@ -92,6 +92,8 @@ describe('ProjectCard (screenshots)', () => {
   /** Opens the card's expandable section (the languages table), which requests the lines. */
   async function expand(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
     await page.getByRole('button', { name: 'Show more' }).click();
+    // The click leaves the pointer on the card, whose hover ring would land in the screenshot.
+    await commands.parkPointer();
     await answered(fixture);
     return http.expectOne('/githost/api/loc');
   }
