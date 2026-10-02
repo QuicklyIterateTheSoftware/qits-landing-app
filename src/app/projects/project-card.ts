@@ -43,23 +43,27 @@ export const LANGUAGES_SHOWN = 4;
       <ui-card-silent>
         <card-header>{{ project().name }}</card-header>
         <card-body>
-          <div class="mx-auto w-fit">
-            <ui-stat class="components" label="Components">
-              @if (repositories()?.status === 'error') {
-                <span class="text-base font-normal text-gray-500">Unavailable</span>
-              } @else if (componentCount() === undefined) {
-                <span class="text-base font-normal text-gray-500">Loading…</span>
-              } @else {
-                {{ componentCount() }}
-              }
-            </ui-stat>
+          <div class="w-full">
+            <!-- 50/50: the left slot is for the "Work" tile. -->
+            <div class="grid grid-cols-2 gap-2">
+              <div></div>
+              <ui-stat class="components w-full" label="Components">
+                @if (repositories()?.status === 'error') {
+                  <span class="text-base font-normal text-gray-500">Unavailable</span>
+                } @else if (componentCount() === undefined) {
+                  <span class="text-base font-normal text-gray-500">Loading…</span>
+                } @else {
+                  {{ componentCount() }}
+                }
+              </ui-stat>
+            </div>
             @if (lines(); as lines) {
               @if (lines !== 'error' && lines.partial && languageRows().length) {
                 <span class="lines block text-[0.8125rem] text-gray-500"
                   >Still counting some repositories</span
                 >
               }
-              <table class="languages mt-2 border-collapse text-[0.8125rem] tabular-nums">
+              <table class="languages mt-2 w-full border-collapse text-[0.8125rem] tabular-nums">
                 <thead class="bg-gray-200/70 text-gray-500">
                   <tr>
                     <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
