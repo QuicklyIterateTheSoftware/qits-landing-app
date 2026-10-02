@@ -40,9 +40,10 @@ let nextLaneId = 0;
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardLane }],
   host: {
     // Exactly one display class, chosen by where the lane is (a static one would fight it).
-    class: 'ring-1 ring-black/10',
+    // The chin below the last row; the id at the bottom of the left strip keeps the same distance.
+    class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
     '[class]':
-      "onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-4 bg-white/25' : 'mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
+      "onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' : 'mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50'",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `
@@ -53,7 +54,7 @@ let nextLaneId = 0;
         lies above it.
       -->
       <div
-        class="absolute inset-y-0 left-0 flex w-6 items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pb-1 text-white [&_a]:text-inherit [&_a]:no-underline"
+        class="absolute inset-y-0 left-0 flex w-6 items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
       >
         <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
           <ng-content select="[lane-gutter]" />

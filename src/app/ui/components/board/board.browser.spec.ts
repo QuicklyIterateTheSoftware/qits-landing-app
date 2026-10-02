@@ -126,6 +126,7 @@ class Groups {}
         <a lane-header id="epic" routerLink="/e">An epic</a>
         <ui-board-row>
           <ui-board-card id="task" [column]="0" code="t" title="A task" kind="task" link="/t" />
+          <span row-id id="feature-id">f-1</span>
           <a row-footer id="feature" routerLink="/f">A feature</a>
         </ui-board-row>
       </ui-board-lane>
@@ -175,6 +176,23 @@ describe('Board (screenshots)', () => {
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(shadow('#feature')).not.toBe('none');
     expect(shadow('#task a')).toBe('none');
+    // The feature's id strip in the right gutter belongs to the feature, not the epic.
+    // Over the strip, by position: the feature's stretched link lies on top of it, as meant.
+    const idBox = (element.querySelector('#feature-id') as HTMLElement).getBoundingClientRect();
+    const rowEl = element.querySelector('ui-board-row') as HTMLElement;
+    const rowBox = rowEl.getBoundingClientRect();
+    await userEvent.hover(rowEl, {
+      position: {
+        x: idBox.x + idBox.width / 2 - rowBox.x,
+        y: idBox.y + idBox.height / 2 - rowBox.y,
+      },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(shadow('#feature')).not.toBe('none');
+    expect(shadow('#epic')).toBe('none');
+    const strip = (element.querySelector('#feature-id') as HTMLElement).getBoundingClientRect();
+    const hit = document.elementFromPoint(strip.x + strip.width / 2, strip.y + strip.height / 2);
+    expect(hit?.closest('a')?.id).toBe('feature');
     // Empty lane space (the gutter, below the rows) belongs to the epic.
     const lane = (element.querySelector('ui-board-lane') as HTMLElement).getBoundingClientRect();
     await userEvent.hover(element.querySelector('ui-board-lane') as HTMLElement, {
