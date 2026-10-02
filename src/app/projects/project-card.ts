@@ -75,7 +75,7 @@ export const LANGUAGES_SHOWN = 4;
             </div>
           </div>
         </card-body>
-        <card-expandable>
+        <card-expandable (opened)="loadLines()">
           <ui-spinner [state]="linesState()">
             <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
               <thead class="text-[0.5417rem] text-gray-500">
@@ -201,6 +201,11 @@ export class ProjectCard {
       },
     ];
   });
+
+  /** The lines are loaded on first opening only (one request for every card, then shared). */
+  protected loadLines(): void {
+    void this.loc.load();
+  }
 
   /** Thousands separated with commas, the same on every machine. */
   protected format(value: number): string {

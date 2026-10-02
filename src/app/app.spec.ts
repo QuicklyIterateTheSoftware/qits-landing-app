@@ -89,6 +89,11 @@ describe('ProjectPicker', () => {
     // repository (the two providers' frozen ids are unrelated), so both cards sum its lines.
     const loc = githostGoldenMaster('a repository with counted lines', 'listLoc');
     loc.entries[0].repositoryId = repositories.entries[0].repository.id;
+    // The lines are loaded when a card's languages section first opens.
+    (fixture.nativeElement as HTMLElement)
+      .querySelectorAll<HTMLButtonElement>('card-expandable button')
+      .forEach((button) => button.click());
+    await new Promise((resolve) => setTimeout(resolve));
     http.expectOne('/githost/api/loc').flush(loc);
     // The store sets the answers after its own awaits; then the cards render them.
     await new Promise((resolve) => setTimeout(resolve));
@@ -163,6 +168,11 @@ describe('ProjectPicker', () => {
     const first = { ...recorded, repositoryId: repositories.entries[0].repository.id };
     const second = copy(1, 2);
     const third = copy(2, 3);
+    // The lines are loaded when a card's languages section first opens.
+    (fixture.nativeElement as HTMLElement)
+      .querySelectorAll<HTMLButtonElement>('card-expandable button')
+      .forEach((button) => button.click());
+    await new Promise((resolve) => setTimeout(resolve));
     http.expectOne('/githost/api/loc').flush({ entries: [first, second, third] });
     await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();

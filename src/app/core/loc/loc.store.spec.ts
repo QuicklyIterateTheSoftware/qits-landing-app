@@ -53,8 +53,10 @@ describe('LocStore', () => {
   /** A store whose one load is answered with qits-githost's golden master for `state`. */
   async function loadedWith(state: string) {
     const store = TestBed.inject(LocStore);
+    const loading = store.load();
     await settle();
     http.expectOne('/githost/api/loc').flush(githostGoldenMaster(state, 'listLoc'));
+    await loading;
     await settle();
     return store;
   }
@@ -73,6 +75,7 @@ describe('LocStore', () => {
   it('leaves out a repository never counted, and does not ask again', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout'] });
     const store = TestBed.inject(LocStore);
+    void store.load();
     await vi.advanceTimersByTimeAsync(0);
     http.expectOne('/githost/api/loc').flush(githostGoldenMaster(PENDING, 'listLoc'));
     await vi.advanceTimersByTimeAsync(0);
@@ -138,6 +141,7 @@ describe('LocStore', () => {
     // Derived from the counted recording: the same entry once more under a second id, so every
     // language counts twice. qits-githost records no state with two counted repositories.
     const store = TestBed.inject(LocStore);
+    void store.load();
     await settle();
     const body = githostGoldenMaster(COUNTED, 'listLoc');
     const second = { ...structuredClone(body.entries[0]), repositoryId: OTHER_ID };
@@ -151,8 +155,15 @@ describe('LocStore', () => {
     });
   });
 
+  it('requests nothing until asked to load', async () => {
+    TestBed.inject(LocStore);
+    await settle();
+    http.expectNone('/githost/api/loc');
+  });
+
   it('reports a failed list', async () => {
     const store = TestBed.inject(LocStore);
+    void store.load();
     await settle();
     http.expectOne('/githost/api/loc').flush(null, { status: 500, statusText: 'Server Error' });
     await settle();
