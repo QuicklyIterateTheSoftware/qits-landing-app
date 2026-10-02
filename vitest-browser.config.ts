@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 import {
   eventsGoldenMasters,
   githostGoldenMasters,
+  maintenanceGoldenMasters,
   projectsGoldenMasters,
 } from './src/testing/golden-masters';
 
@@ -21,6 +22,7 @@ const goldenMaster: BrowserCommand<
     'qits-projects': projectsGoldenMasters,
     'qits-githost': githostGoldenMasters,
     'qits-events': eventsGoldenMasters,
+    'qits-maintenance': maintenanceGoldenMasters,
   })[provider].body(state, operationId);
 
 /**

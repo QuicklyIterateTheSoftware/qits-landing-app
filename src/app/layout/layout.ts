@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SelectedProject } from '../core/projects/selected-project';
 import { NotificationsMenu } from '../patterns/events/notifications-menu/notifications-menu';
+import { BumpsMenu } from '../patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '../patterns/release-requests/release-menu/release-menu';
 
 /** One entry of the sidebar. */
@@ -20,7 +21,7 @@ export interface NavLink {
 @Component({
   selector: 'app-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, NotificationsMenu, ReleaseMenu],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, BumpsMenu, NotificationsMenu, ReleaseMenu],
   host: { class: 'block' },
   template: `
     <div class="grid min-h-screen grid-rows-[3.5rem_1fr] md:grid-cols-[15rem_1fr]">
@@ -54,10 +55,11 @@ export interface NavLink {
             }
           </ol>
         </nav>
-        <!-- The menus at the right end: the platform's notifications (always), then the open
+        <!-- The menus at the right end: the platform's version bumps and notifications (always), then the open
              project's release requests and its settings (both hidden, not removed, while no
              project is open). -->
         <div class="ml-auto flex items-center gap-1">
+          <app-bumps-menu />
           <app-notifications-menu />
           <app-release-menu />
           <a

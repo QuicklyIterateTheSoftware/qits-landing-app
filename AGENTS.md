@@ -30,7 +30,9 @@ Users today: the lightning menu fetches the open project's release requests when
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
 (`core/projects/release-request-events.ts`; deployment events name no project, and count only while
 a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
-notifications menu puts every new event at the top of its list once it is loaded.
+notifications menu puts every new event at the top of its list once it is loaded. The bumps menu
+(the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
+(`listPendingBumps`) on its first opening and again after `BUMP_EVENTS`, at most once a second.
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.

@@ -17,6 +17,7 @@ const services = [
   'qits-projects/qits-projects-service',
   'qits-githost/qits-githost-service',
   'qits-events/qits-events-service',
+  'qits-maintenance/qits-maintenance-service',
 ];
 
 export default defineConfig(

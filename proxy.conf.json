@@ -30,5 +30,13 @@
     "cookieDomainRewrite": {
       "*": ""
     }
+  },
+  "/maintenance/api": {
+    "target": "https://maintenance.qits.wohlben.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "cookieDomainRewrite": {
+      "*": ""
+    }
   }
 }

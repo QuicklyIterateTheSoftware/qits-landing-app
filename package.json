@@ -37,6 +37,7 @@
     "@pact-foundation/pact": "17.1.4",
     "@qits/events-golden-masters": "2026.1002.210125",
     "@qits/githost-golden-masters": "2026.1002.190746",
+    "@qits/maintenance-golden-masters": "2026.1002.215821",
     "@qits/projects-golden-masters": "2026.1002.215433",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",

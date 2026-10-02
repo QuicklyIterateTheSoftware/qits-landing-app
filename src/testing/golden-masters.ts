@@ -9,6 +9,12 @@ export const projectsGoldenMasters = goldenMasters(
 /** qits-githost's golden masters (epic qits-112), from its npm package. */
 export const githostGoldenMasters = goldenMasters('@qits/githost-golden-masters', 'qits-githost');
 
+/** qits-maintenance's golden masters (epic qits-112), from its npm package. */
+export const maintenanceGoldenMasters = goldenMasters(
+  '@qits/maintenance-golden-masters',
+  'qits-maintenance',
+);
+
 /** qits-events' golden masters (epic qits-112), from its npm package. */
 export const eventsGoldenMasters = goldenMasters('@qits/events-golden-masters', 'qits-events');
 
@@ -23,3 +29,7 @@ export const githostGoldenMaster = <T = any>(state: string, operationId: string)
 /** The body qits-events recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const eventsGoldenMaster = <T = any>(state: string, operationId: string): T =>
   eventsGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-maintenance recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const maintenanceGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  maintenanceGoldenMasters.body<T>(state, operationId);
