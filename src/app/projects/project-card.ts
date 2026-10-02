@@ -23,7 +23,9 @@ export const LANGUAGES_SHOWN = 4;
 /**
  * One project in the picker: its name, and facts about it read from its repositories.
  *
- * - Every repository counts as one component, shown in a `ui-stat` tile. The list answer carries
+ * - Two `ui-stat` tiles side by side: "Work", the project's work entities that count as work
+ *   (`countsAsWork` in `projects.consumes.ts`, REFINED for now), and "Components".
+ * - Every repository counts as one component. The list answer carries
  *   the project's wrapper in a field of its own, so it is not counted.
  * - Its lines of code per language, summed over its repositories, main and test lines apart,
  *   largest first: the first {@link LANGUAGES_SHOWN} by name, and the rest summed as "Other"
@@ -48,9 +50,10 @@ export const LANGUAGES_SHOWN = 4;
         <card-body flush>
           <div class="w-full">
             <div class="grid grid-cols-2">
-              <!-- Placeholder until the Work count is wired to qits-projects. -->
-              <ui-spinner state="loaded">
-                <ui-stat class="work w-full" label="Work" mirrored>–</ui-stat>
+              <ui-spinner [state]="workState()">
+                <ui-stat class="work w-full" label="Work" mirrored>
+                  {{ workCount() ?? '–' }}
+                </ui-stat>
               </ui-spinner>
               <ui-spinner [state]="componentsState()">
                 <ui-stat class="components w-full" label="Components">
@@ -124,6 +127,22 @@ export class ProjectCard {
     return projectId ? this.store.repositories()[projectId] : undefined;
   });
 
+  protected readonly work = computed(() => {
+    const projectId = this.project().id;
+    return projectId ? this.store.work()[projectId] : undefined;
+  });
+
+  protected readonly workState = computed((): LoadState => {
+    const status = this.work()?.status;
+    return status === 'loaded' || status === 'error' ? status : 'loading';
+  });
+
+  /** How many of the project's work entities count as work (`countsAsWork`), once loaded. */
+  protected readonly workCount = computed(() => {
+    const work = this.work();
+    return work?.status === 'loaded' ? work.count : undefined;
+  });
+
   /** True until the repositories answer (or fail). */
   protected readonly componentsState = computed((): LoadState => {
     const status = this.repositories()?.status;
@@ -176,12 +195,16 @@ export class ProjectCard {
 
   constructor() {
     // In the browser only: the server render has no `qits-session` cookie to send. Only the
-    // project id is tracked: `loadRepositories` reads the store's state, and tracking that would
+    // project id is tracked: the loads read the store's state, and tracking that would
     // fetch again every time an answer lands, without end after an error.
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
       const projectId = this.project().id;
-      if (browser && projectId) untracked(() => void this.store.loadRepositories(projectId));
+      if (!browser || !projectId) return;
+      untracked(() => {
+        void this.store.loadWork(projectId);
+        void this.store.loadRepositories(projectId);
+      });
     });
   }
 }
