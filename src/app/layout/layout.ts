@@ -70,14 +70,14 @@ interface NavLink {
 export class Layout {
   private readonly selected = inject(SelectedProject);
 
-  /** "Projects" at the root; once a project is open, its name below it. */
+  /**
+   * The navigation follows the route: empty at the root (the "qits" brand leads there), and the
+   * open project's name, alone, while a project is open.
+   */
   protected readonly links = computed((): readonly NavLink[] => {
-    const projects: NavLink = { label: 'Projects', path: '/' };
     const project = this.selected.project();
     const slug = this.selected.slug();
-    return project && slug
-      ? [projects, { label: project.name ?? slug, path: `/projects/${slug}` }]
-      : [projects];
+    return project && slug ? [{ label: project.name ?? slug, path: `/projects/${slug}` }] : [];
   });
 
   protected readonly navOpen = signal(false);

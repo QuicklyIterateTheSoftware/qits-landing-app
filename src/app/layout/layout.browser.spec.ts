@@ -48,7 +48,11 @@ describe('Layout (screenshots)', () => {
     const { fixture, layout } = await render();
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
-    await expect.element(page.getByRole('link', { name: 'Projects' })).toBeVisible();
+    await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
+    // At the root the navigation is empty: the "qits" brand leads home.
+    expect(
+      page.getByRole('navigation', { name: 'qits' }).getByRole('link').elements(),
+    ).toHaveLength(0);
     await expect.element(layout).toMatchScreenshot('narrow-open');
   });
 });
