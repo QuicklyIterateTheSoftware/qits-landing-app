@@ -42,8 +42,10 @@ export const LANGUAGES_SHOWN = 4;
       [routerLink]="['/projects', project().slug]"
     >
       <ui-card-silent>
-        <card-header>{{ project().name }}</card-header>
-        <card-body>
+        <card-header class="bg-charcoal-brown-100 text-charcoal-brown-900">{{
+          project().name
+        }}</card-header>
+        <card-body flush>
           <div class="w-full">
             <!-- 50/50: the left slot is for the "Work" tile. -->
             <div class="grid grid-cols-2 gap-2">
@@ -54,7 +56,7 @@ export const LANGUAGES_SHOWN = 4;
                 </ui-stat>
               </ui-spinner>
             </div>
-            <ui-spinner [state]="linesState()" class="mt-2">
+            <ui-spinner [state]="linesState()">
               <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
                 <thead class="bg-gray-200/70 text-gray-500">
                   <tr>
