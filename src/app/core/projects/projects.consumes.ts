@@ -1,5 +1,4 @@
 import type {
-  ListProjectEntitiesResponses,
   ListProjectReleaseRequestsResponses,
   GetProjectResponses,
   ListProjectRepositoriesResponses,
@@ -28,33 +27,6 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * repository id (`LocStore`).
  */
 export const LIST_PROJECT_REPOSITORIES = ['entries[].repository.id'] as const;
-
-/**
- * `loadWork(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
- * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
- * shows each entity as a small card: its qualified id, title and archetype, grouped by status.
- */
-export const LIST_PROJECT_ENTITIES = [
-  'entities[].id',
-  'entities[].qualifiedId',
-  'entities[].title',
-  'entities[].archetype',
-  'entities[].status',
-] as const;
-
-/** One work entity, cut to what the store reads. */
-export type WorkEntry = NonNullable<
-  Consumed<ListProjectEntitiesResponses[200], typeof LIST_PROJECT_ENTITIES>['entities']
->[number];
-
-/**
- * Which work entities the card's "Work" tile counts. FOR NOW: every archetype whose status is
- * REFINED. Features and tasks have no status, so they do not count yet. This is a stand-in the
- * user will replace with a better representation; change it here and nowhere else.
- */
-export function countsAsWork(entry: WorkEntry): boolean {
-  return entry.status === 'REFINED';
-}
 
 /**
  * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request with its

@@ -1,5 +1,5 @@
 import { goldenMaster } from '../../../testing/golden-masters';
-import type { WorkEntry } from '../projects/projects.consumes';
+import type { WorkEntry } from './work.consumes';
 import { ARCHIVE_STATUSES, BACKLOG_STATUSES, BOARD_COLUMNS, withStatus } from './work-statuses';
 
 /** qits-projects' recording: 3 REFINED (an epic, two tickets), 1 REPORTED, 1 DONE. */

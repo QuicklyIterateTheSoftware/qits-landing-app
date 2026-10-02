@@ -14,16 +14,13 @@ import {
   listProjects,
   getProject,
   listProjectRepositories,
-  listProjectEntities,
   listProjectReleaseRequests,
 } from '../../api/projects';
 import { consume } from '@qits/angular';
 import {
-  countsAsWork,
   GET_PROJECT,
   isPendingRelease,
   LIST_PROJECT_RELEASE_REQUESTS,
-  LIST_PROJECT_ENTITIES,
   LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
   SESSION_CHECK,
@@ -31,7 +28,6 @@ import {
   type ListedProject,
   type ReleaseRequestEntry,
   type RepositoryEntry,
-  type WorkEntry,
 } from './projects.consumes';
 
 /**
@@ -41,16 +37,6 @@ import {
 export type Project = ListedProject & { readonly id: string };
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
-
-/**
- * A project's work, as `loadWork(projectId)` left it: its entities, and how many count as work
- * (the card's tile).
- */
-export interface ProjectWork {
-  readonly status: Exclude<Status, 'idle'>;
-  readonly count: number;
-  readonly entries: readonly WorkEntry[];
-}
 
 /** A project's pending release requests, as `loadReleaseRequests(projectId)` left them. */
 export interface ProjectReleaseRequests {
@@ -70,8 +56,6 @@ interface ProjectsState {
   readonly selectedId: string | null;
   /** Each project's repositories, by project id. A project not asked for yet has no key. */
   readonly repositories: Readonly<Record<string, ProjectRepositories>>;
-  /** Each project's work count, by project id. A project not asked for yet has no key. */
-  readonly work: Readonly<Record<string, ProjectWork>>;
   /** Each project's pending release requests, by project id. Not asked for yet: no key. */
   readonly releaseRequests: Readonly<Record<string, ProjectReleaseRequests>>;
 }
@@ -88,8 +72,6 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * - `refresh()` fetches the list again.
  * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadRepositories(projectId)` fetches a project's repositories once.
- * - `loadWork(projectId)` fetches a project's work entities once and keeps how many count as work
- *   (`countsAsWork` in `projects.consumes.ts`).
  * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when the top bar's
  *   release menu first opens, and keeps the pending ones (`isPendingRelease`).
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
@@ -106,7 +88,6 @@ export const ProjectsStore = signalStore(
     status: 'idle',
     selectedId: null,
     repositories: {},
-    work: {},
     releaseRequests: {},
   }),
   withComputed(({ entityMap, selectedId }) => ({
@@ -138,10 +119,6 @@ export const ProjectsStore = signalStore(
       patchState(store, { repositories: { ...store.repositories(), [projectId]: value } });
     }
 
-    function setWork(projectId: string, value: ProjectWork): void {
-      patchState(store, { work: { ...store.work(), [projectId]: value } });
-    }
-
     function setReleaseRequests(projectId: string, value: ProjectReleaseRequests): void {
       patchState(store, { releaseRequests: { ...store.releaseRequests(), [projectId]: value } });
     }
@@ -166,25 +143,6 @@ export const ProjectsStore = signalStore(
           error !== undefined || !data
             ? { status: 'error', entries: [] }
             : { status: 'loaded', entries: data.entries ?? [] },
-        );
-      },
-      async loadWork(projectId: string): Promise<void> {
-        const current = store.work()[projectId];
-        if (current && current.status !== 'error') return;
-        setWork(projectId, { status: 'loading', count: 0, entries: [] });
-        const { data, error } = await consume(
-          listProjectEntities({ path: { projectId } }),
-          LIST_PROJECT_ENTITIES,
-        );
-        setWork(
-          projectId,
-          error !== undefined || !data
-            ? { status: 'error', count: 0, entries: [] }
-            : {
-                status: 'loaded',
-                count: (data.entities ?? []).filter(countsAsWork).length,
-                entries: data.entities ?? [],
-              },
         );
       },
       async loadReleaseRequests(projectId: string): Promise<void> {

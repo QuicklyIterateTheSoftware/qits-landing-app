@@ -8,12 +8,12 @@ import { join, resolve } from 'node:path';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction } from '@qits/angular/testing';
+import { assertPactPart } from '../../../testing/pact-part';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
-  LIST_PROJECT_ENTITIES,
   LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
@@ -25,7 +25,8 @@ import { ProjectsStore } from './projects.store';
  * qits-landing-app's pact with qits-projects-service (epic qits-546). Both sides are named by
  * repository, so the file is `pacts/qits-landing-app_qits-projects-service.json`.
  *
- * The store is the only user of the qits-projects client, so this file is the whole pact. Each test
+ * The stores are the only users of the qits-projects client; this spec covers `ProjectsStore`,
+ * and `work.store.pact.spec.ts` covers `WorkStore`, in the same pact file. Each test
  * drives one store method, as the UI interaction named in `interactions.ts` does, against a pact
  * mock server that answers with qits-projects' golden master, and checks what the store made of it.
  * Each interaction binds only the fields the store reads: the same list from `projects.consumes.ts`
@@ -39,6 +40,17 @@ import { ProjectsStore } from './projects.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+
+/**
+ * The operations this spec owns in that file. `WorkStore`'s pact spec owns `listProjectEntities`
+ * in the same file (`src/testing/pact-part.ts`).
+ */
+const OPERATIONS = [
+  'listProjects',
+  'getProject',
+  'listProjectRepositories',
+  'listProjectReleaseRequests',
+];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -81,7 +93,12 @@ describe('qits-landing-app → qits-projects-service pact', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
-      assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        OPERATIONS,
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -147,36 +164,6 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(loaded?.status).toBe('loaded');
       const recorded = masters.body('a project with 3 repositories', 'listProjectRepositories');
       expect(loaded?.entries.length).toBe(recorded.entries.length);
-    }));
-
-  it('show-project-work: the store loads a project’s work', () =>
-    given(
-      'show-project-work',
-      'a project with refined work',
-      'listProjectEntities',
-      LIST_PROJECT_ENTITIES,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const op = masters.operation('a project with refined work', 'listProjectEntities');
-      const projectId = op.params['projectId'];
-      await store.loadWork(projectId);
-      // The pact binds the entities' status by type, not by value, so the mock answers with the
-      // recorded example repeated; which statuses count is the plain spec's business.
-      expect(store.work()[projectId]?.status).toBe('loaded');
-    }));
-
-  it('show-project-work: a project with no work counts zero', () =>
-    given(
-      'show-project-work',
-      'a project with no work',
-      'listProjectEntities',
-      LIST_PROJECT_ENTITIES,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const op = masters.operation('a project with no work', 'listProjectEntities');
-      const projectId = op.params['projectId'];
-      await store.loadWork(projectId);
-      expect(store.work()[projectId]).toEqual({ status: 'loaded', count: 0, entries: [] });
     }));
 
   it('open-release-requests: the store loads a project’s pending release requests', () =>
