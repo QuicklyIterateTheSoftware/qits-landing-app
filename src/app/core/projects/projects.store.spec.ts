@@ -153,7 +153,8 @@ describe('ProjectsStore', () => {
     await settle();
     http.expectOne(`/projects/api/projects/${id}/entities`).flush(work);
     await done;
-    expect(store.work()[id]).toEqual({ status: 'loaded', count: 3 });
+    expect(store.work()[id]).toMatchObject({ status: 'loaded', count: 3 });
+    expect(store.work()[id]?.entries).toHaveLength(work.entities.length);
     await store.loadWork(id);
     http.expectNone(`/projects/api/projects/${id}/entities`);
   });
@@ -167,7 +168,7 @@ describe('ProjectsStore', () => {
       .expectOne(`/projects/api/projects/${id}/entities`)
       .flush(goldenMaster('a project with no work', 'listProjectEntities'));
     await done;
-    expect(store.work()[id]).toEqual({ status: 'loaded', count: 0 });
+    expect(store.work()[id]).toMatchObject({ status: 'loaded', count: 0 });
   });
 
   it('reports failed work, and fetches it again on the next ask', async () => {

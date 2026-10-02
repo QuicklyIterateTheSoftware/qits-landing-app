@@ -92,7 +92,7 @@ interface NavLink {
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
                 [routerLink]="link.path"
                 routerLinkActive=""
-                [routerLinkActiveOptions]="{ exact: true }"
+                [routerLinkActiveOptions]="{ exact: false }"
                 ariaCurrentWhenActive="page"
                 (click)="closeNav()"
                 >{{ link.label }}</a
@@ -122,7 +122,8 @@ export class Layout {
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
-   * the URL is in ("Work", or "Setup" from the gear). The last crumb is the current page and is
+   * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive). The
+   * last crumb is the current page and is
    * not a link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
@@ -132,11 +133,15 @@ export class Layout {
     if (!project || !slug) return [projects];
     const crumbs = [projects, { label: project.name ?? slug, path: `/projects/${slug}` }];
     const url = this.selected.url();
+    const within = (path: string) =>
+      url === path || url.startsWith(`${path}/`) || url.startsWith(`${path}?`);
     const section = [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find(
-      (link) =>
-        url === link.path || url.startsWith(`${link.path}/`) || url.startsWith(`${link.path}?`),
+      (link) => within(link.path),
     );
-    return section ? [...crumbs, section] : crumbs;
+    if (!section) return crumbs;
+    // A section's own subpages, one level deep: Work › Archive.
+    const archive: NavLink = { label: 'Archive', path: `/projects/${slug}/work/archive` };
+    return within(archive.path) ? [...crumbs, section, archive] : [...crumbs, section];
   });
 
   /** The open project's settings page, or undefined while no project is open. */
