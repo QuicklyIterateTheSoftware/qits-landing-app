@@ -1,19 +1,11 @@
-# How this repository releases: the `app` archetype's cycle. The QA slot (`release-request:`) is
-# inherited WHOLE; the release slot is overridden, see "THE RELEASE SLOT" below.
-#
-# `archetype: app` names `.config/qits/release-archetypes/app.yml`, which qits-ci ships inside
-# qits-ci-service — or reads from this repository's own copy at that path, at the same revision it
-# reads this file, when one is carried. That is why this file could not say `archetype: app` before
-# qits-ci shipped the recipe: naming an archetype nothing qits-ci carries composes to
-# ARCHETYPE_UNKNOWN — a settled NO_RUN, which is no CI run at all rather than a red one, and a
-# release request parked behind a gate nobody can satisfy.
-# The QA slot comes from there, and so does phase two's image publish, copied (see below). The
-# explanation of what those steps do and why lives there too: the Dockerfile contract the image build
-# depends on, the lockfile-origin swap, the build-arg/secret split, and the `curl` the swarm health
-# gate needs in the runtime stage. That text is deliberately NOT copied back here. A
-# repository-declared slot is a whole-slot override with no per-step merging, so a copy kept here
-# would not annotate the recipe, it would REPLACE it — and would go on replacing it, silently, with
-# whatever it said the day it was written.
+# How this repository releases: the `app` archetype's cycle, whole — no `release:` override. The
+# QA slot (`release-request:`) and the release slot (`release:`, the image build) both come from
+# `.config/qits/release-archetypes/app.yml`, which qits-ci ships inside qits-ci-service — or reads
+# from this repository's own copy at that path, at the same revision it reads this file, when one is
+# carried. That is why this file could not say `archetype: app` before qits-ci shipped the recipe:
+# naming an archetype nothing qits-ci carries composes to ARCHETYPE_UNKNOWN — a settled NO_RUN,
+# which is no CI run at all rather than a red one, and a release request parked behind a gate nobody
+# can satisfy.
 #
 # `artifacts:` IS THE ONE THING THIS FILE MUST STILL STATE, and it cannot be defaulted from the
 # archetype. qits-projects reads this block out of THIS repository at `refs/tags/<version>`; it never
@@ -34,136 +26,18 @@
 # repository has no IT stories, and `userflows: false` is refused outright, so omitting the key is the
 # only way to say "none".
 #
-# THE PACT JAR (epic qits-546) is the second artifact: `pacts/qits-landing-qits-projects.json`,
-# qits-landing's consumer pact with qits-projects, as the maven jar below with `pacts/` on the
-# classpath. qits-projects pins it as a test dependency and verifies it. It is published only when
-# the pact changed since the newest published jar (`.config/qits/pacts.sh decide`, around
-# `.config/qits/published-tree-changed.sh`), so the entry says `announce: if-published`: a release
-# that skips it announces no version nobody published. Keep it a one-line flow mapping like the
-# docker line.
+# THE PACT (epic qits-546) is now declared as a contract rather than a second artifact:
+# `pacts/qits-landing-qits-projects.json`, qits-landing's consumer pact with qits-projects. qits-ci
+# derives the coordinate from `contracts.application` and `contracts.pacts.qits-projects`, packages
+# `from:` as the maven jar and publishes it itself, only when the tree changed since the newest
+# published jar — so the repository carries no gate, no jar module and no `release:` override
+# anymore.
 archetype: app
 
 artifacts:
   - { type: docker, name: qits/qits-landing }
-  - { type: maven, name: "eu.wohlben.qits:qits-landing-pacts-qits-projects", announce: if-published }
 
-# THE RELEASE SLOT IS OVERRIDDEN because the `app` archetype pushes one image and publishes nothing
-# else, and this release also publishes the pact jar. A declared slot replaces the archetype's
-# whole, with no per-step merging.
-#
-# STEP ONE IS THE ARCHETYPE'S RELEASE STEP, VERBATIM. It is copied from qits-ci-service's packaged
-# `.config/qits/release-archetypes/app.yml` (at 370b14a), comments and guards included: the
-# coordinate read from the docker line above, the @qits credential handed to the builder as a
-# secret, and the image build. When the archetype's step changes, re-copy it here. Nothing else
-# will tell you this copy went stale.
-#
-# STEP TWO IS THE PACT JAR, on node-base: the change gate, then the jar and its pom built with node
-# and PUT to the maven store with the run's publish credential. node-base has no zip, no JDK and no
-# maven, hence `.config/qits/pacts-jar.mjs`; see `.config/qits/pacts.sh` for the rest. It runs after
-# the image is pushed. A recipe change cannot gate itself: the first release carrying an edit to
-# this step is the one that proves it, so read that release's step-two output for the decision line.
-
-release:
-
-  # --- phase two (Publish): java-service.yml's release step, image half only ---------------------
-  # node-docker-base rather than node-base, and `build: true`: this step needs a BUILDER. `build:`
-  # is the diff-visible declaration that gets it the platform builder and the run's commissioned
-  # credential — and, unlike the `docker: true` it replaced, no docker socket at all. The longer
-  # timeout comes with it: an image build is not an `npm ci`.
-  #
-  # The composer has already fetched the release tag and detached at it before this script runs, and
-  # it has already written /tmp/qits-client-id and /tmp/qits-client-secret under `umask 077`.
-  - image: qits/build-images/node-docker-base:latest
-    build: true
-    timeout-seconds: 3600
-    script: |
-      # THE COORDINATE, OUT OF THE DECLARATION THAT ANNOUNCES IT — java-service.yml's block verbatim,
-      # and see its header for why this is read rather than derived from $QITS_CI_REPO_NAME: the
-      # repository name is not the application name, and no rule maps one onto the other. One
-      # spelling means the coordinate pushed and the coordinate announced cannot drift.
-      declared=$(sed -n \
-        's/^[[:space:]]*-[[:space:]]*{[[:space:]]*type:[[:space:]]*docker[[:space:]]*,[[:space:]]*name:[[:space:]]*\([^,}[:space:]]*\).*/\1/p' \
-        .config/qits/release.yml)
-      count=$(printf '%s' "$declared" | grep -c . || true)
-      if [ "$count" != 1 ]; then
-        echo "release.yml declares $count docker artifacts and app pushes exactly one." >&2
-        echo "Spell it as one flow line — '- { type: docker, name: qits/x, sbom: .sbom/sbom.json }'" >&2
-        echo "— or declare this repository's own 'release:' steps." >&2
-        exit 1
-      fi
-      case "$declared" in
-        *[!A-Za-z0-9._:/@+-]*)
-          echo "release.yml's docker artifact name is not a coordinate: $declared" >&2
-          exit 1 ;;
-      esac
-      # The first segment is the platform namespace and is re-supplied from the environment, which
-      # is how every hand-written file spelled it: a deployment may re-point the namespace and the
-      # declaration may not have to move.
-      image=${declared#*/}
-      ref="$QITS_BUILD_REGISTRY/$QITS_IMAGE_REPOSITORY/$image:$QITS_VERSION"
-      echo "releasing $ref"
-
-      # --- the @qits CREDENTIAL, ON ITS WAY TO THE BUILDER ------------------------------------------
-      # `npm ci` runs inside the image build now (see the header's Dockerfile contract), and the
-      # builder has none of this container's environment — so the credential has to be handed over
-      # explicitly, and a SECRET is the only form that does not end up in a layer.
-      #
-      # MINTED AT THE CALL SITE, NOT READ FROM $QITS_PUBLISH_TOKEN. qits-ci hands a step both: the
-      # variable, minted when the container started, and $QITS_PUBLISH_TOKEN_COMMAND, which prints a
-      # FRESH raw token — no `Bearer ` prefix — on every call. A mint's TTL and this step's timeout
-      # are the same number (3600s), so the variable can already be expired by the time the builder
-      # dials the registry; the command cannot be.
-      #
-      # IT DEGRADES TO ANONYMOUS, NEVER TO A BROKEN HEADER, and the FILE IS ALWAYS WRITTEN. This
-      # file is read at main and runs against a tag on whatever qits-ci the estate is running, so the
-      # command may be absent entirely and a mint may fail — and `--secret src=` on a path that does
-      # not exist is a refusal, so the empty file is what keeps a commission-less run building at
-      # all. An empty secret means the Dockerfile writes no `_authToken` line, which is the
-      # anonymous read qits-artifacts still accepts.
-      #
-      # /tmp, beside the two files the composer wrote, and NEVER a path in the clone: anything under
-      # the checkout is inside the `--local context=.` the builder uploads.
-      npm_publish_token=""
-      if [ -n "${QITS_PUBLISH_TOKEN_COMMAND:-}" ] \
-        && command -v "$QITS_PUBLISH_TOKEN_COMMAND" >/dev/null 2>&1; then
-        npm_publish_token=$("$QITS_PUBLISH_TOKEN_COMMAND" 2>/dev/null) || npm_publish_token=""
-      fi
-      ( umask 077
-        printf '%s' "$npm_publish_token" > /tmp/qits-npm-token )
-
-      # --- the image --------------------------------------------------------------------------------
-      # `push=true` IS THE PUBLISH: the image goes from the builder straight to the registry and
-      # never enters any local image store. $QITS_BUILD_REGISTRY is the registry as the BUILDER
-      # resolves it; $QITS_REGISTRY stays the host daemon's view and is not dialled here.
-      #
-      # NO --network host, AND NOTHING REPLACES IT. Every `RUN` executes in the builder's own
-      # namespace — the runner's buildkitd — so the two npm addresses below are the RUN's, the
-      # platform's public names, which the builder reaches exactly as the step does.
-      #
-      # THE TWO ORIGINS ARE BUILD ARGS AND THE TOKEN IS A SECRET, and that split is the contract the
-      # header states: an origin is not a credential and the build needs it in an `ARG`; a credential
-      # in a build arg is written into the image history, where anyone who pulls the image reads it.
-      #
-      # The Maven pair java-service passes is DROPPED — there is no Maven in an `-app` — and so is
-      # the .gitmodules walk and the per-webui npm build: an `-app` has no webui submodule and builds
-      # its own tree, inside the Dockerfile.
-      buildctl build --frontend dockerfile.v0 \
-        --local context=. --local dockerfile=docker \
-        --opt build-arg:QITS_NPM_REGISTRY_URL="$QITS_NPM_REGISTRY_URL" \
-        --opt build-arg:QITS_NPM_PROXY_URL="$QITS_NPM_PROXY_URL" \
-        --secret id=qits-npm-token,src=/tmp/qits-npm-token \
-        --output "type=image,name=$ref,push=true"
-
-  # --- the pact jar (epic qits-546): published only when the pact changed -----------------------
-  - image: qits/build-images/node-base:latest
-    timeout-seconds: 600
-    script: |
-      decision=$(sh .config/qits/pacts.sh decide)
-      case "$decision" in
-        "publish "*) echo "publishing the pact jar at $QITS_VERSION: ${decision#publish }" ;;
-        "skip "*)
-          echo "the pact jar: ${decision#skip } — not publishing it at $QITS_VERSION"
-          exit 0 ;;
-        *) echo "the pact gate answered '$decision'" >&2; exit 1 ;;
-      esac
-      sh .config/qits/pacts.sh publish
+contracts:
+  application: qits-landing
+  pacts:
+    qits-projects: { from: pacts/, packages: [maven] }

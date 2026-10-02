@@ -69,21 +69,9 @@ optional, and its provider modules never read it.
 ### Publishing: only when the pact changed
 
 `release.yml` declares
-`{ type: maven, name: "eu.wohlben.qits:qits-landing-pacts-qits-projects", announce: if-published }`
-and overrides `release:`. Step one is the `app` archetype's release step, verbatim (re-copy it when
-qits-ci's `release-archetypes/app.yml` changes). Step two (node-base) runs `.config/qits/pacts.sh`:
-
-- `decide` asks `.config/qits/published-tree-changed.sh` whether `pacts/` differs from the newest
-  published jar. That script is copied from qits-projects-service, with a node unpack fallback added;
-  keep the two in step. The answer is `publish` on `first`, on `changed`, or on a re-run whose
-  version has a jar but no pom. Otherwise it is `skip`. A registry error fails the step and never
-  decides.
-- `publish` builds the jar with `.config/qits/pacts-jar.mjs`, because node-base has no zip, JDK or
-  maven. The jar is deterministic: stored entries, fixed timestamps, explicit directory entries,
-  since a class loader only finds `pacts/` in a jar that has that entry. The step PUTs the jar and
-  then the pom with the run's publish credential, and asserts the pom is there. The maven store
-  derives `maven-metadata.xml` and the checksums itself, so neither is PUT.
-
-There is no in-repo harness for `.config/qits/*.sh`. After editing them, re-run them by hand against
-a fake registry (a python `http.server` in `/tmp`). Cover first, unchanged, a re-run, changed, a 500,
-and the node unpack (a `PATH` without unzip, jar and python3).
+`contracts: { application: qits-landing, pacts: { qits-projects: { from: pacts/, packages: [maven] } } }`
+and carries no `release:` override anymore — the `app` archetype's release step runs as is. qits-ci
+derives the coordinate (`eu.wohlben.qits:qits-landing-pacts-qits-projects`), packages `pacts/` as the
+jar and publishes it itself, only when the tree differs from the newest published jar's. There is no
+repository-side gate, jar builder or PUT sequence left to maintain: `.config/qits/pacts.sh`,
+`.config/qits/pacts-jar.mjs` and `.config/qits/published-tree-changed.sh` are gone.
