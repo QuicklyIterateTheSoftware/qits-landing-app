@@ -27,9 +27,10 @@ export default defineConfig({
       screenshotFailures: false,
       expect: {
         toMatchScreenshot: {
-          // A changed pixel is a failure; anti-aliasing noise is not.
+          // Any changed pixel is a failure. The renderer is pinned (CI image), so there is no noise to
+          // forgive; a tolerance would let small colour changes pass unnoticed.
           comparatorName: 'pixelmatch',
-          comparatorOptions: { threshold: 0.1, allowedMismatchedPixelRatio: 0 },
+          comparatorOptions: { threshold: 0, allowedMismatchedPixelRatio: 0 },
         },
       },
     },
