@@ -51,7 +51,7 @@ describe('ProjectPicker (screenshots)', () => {
   it('shows that the projects are loading', async () => {
     const { fixture, list } = await render();
     const picker = page.elementLocator(fixture.nativeElement);
-    await expect.element(picker).toHaveTextContent('Loading projects…');
+    await expect.element(picker.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(picker).toMatchScreenshot('loading');
     list.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
@@ -107,12 +107,12 @@ describe('ProjectPicker (screenshots)', () => {
     await expect.element(picker).toMatchScreenshot('empty');
   });
 
-  it('says so when the projects could not be loaded', async () => {
+  it('marks the list as failed to load when the projects could not be loaded', async () => {
     const { fixture, list } = await render();
     list.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);
-    await expect.element(picker).toHaveTextContent('The projects could not be loaded.');
+    await expect.element(picker.getByRole('img', { name: 'Failed to load' })).toBeVisible();
     await expect.element(picker).toMatchScreenshot('error');
   });
 });

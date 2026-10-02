@@ -44,7 +44,7 @@ describe('ProjectPicker', () => {
     fixture.detectChanges();
     const rendered = fixture.nativeElement as HTMLElement;
     expect(rendered.querySelector('h1')?.textContent).toContain('Projects');
-    expect(rendered.textContent).toContain('Loading projects');
+    expect(rendered.querySelector('svg[role="img"]')?.getAttribute('aria-label')).toBe('Loading');
   });
 
   it('draws one card per project, linking to the project with its component count and lines', async () => {
