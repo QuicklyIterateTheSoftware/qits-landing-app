@@ -6,7 +6,8 @@
  * - Animations and transitions are off, and the caret does not blink. SVG animations (SMIL, as in
  *   `ui-spinner`) are not CSS, so every `<svg>` is paused at its first frame as it is added.
  */
-import { beforeAll } from 'vitest';
+import { beforeAll, beforeEach } from 'vitest';
+import { commands } from 'vitest/browser';
 
 const FONTS = '/src/testing/browser/fonts';
 
@@ -60,4 +61,10 @@ beforeAll(async () => {
   if (!document.fonts.check("600 16px 'Inter Test'")) {
     throw new Error(`the test font did not load from ${FONTS}`);
   }
+});
+
+// The pointer stays where the previous test clicked: over a card it would draw a hover ring into
+// the next screenshot. Park it in the top-left corner before every test.
+beforeEach(async () => {
+  await commands.parkPointer();
 });
