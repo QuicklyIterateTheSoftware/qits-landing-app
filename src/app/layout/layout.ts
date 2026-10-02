@@ -61,7 +61,7 @@ interface NavLink {
         aria-label="qits"
       >
         <ul class="m-0 list-none px-2 py-3">
-          @for (link of links(); track link.path) {
+          @for (link of links; track link.path) {
             <li>
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
@@ -87,14 +87,10 @@ export class Layout {
   private readonly selected = inject(SelectedProject);
 
   /**
-   * The navigation follows the route: empty at the root (the "qits" brand leads there), and the
-   * open project's name, alone, while a project is open.
+   * The sidebar's entries. Empty for now: where you are is the breadcrumb's job, so the sidebar
+   * does not repeat the open project's name. It will list a route's own sections.
    */
-  protected readonly links = computed((): readonly NavLink[] => {
-    const project = this.selected.project();
-    const slug = this.selected.slug();
-    return project && slug ? [{ label: project.name ?? slug, path: `/projects/${slug}` }] : [];
-  });
+  protected readonly links: readonly NavLink[] = [];
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name. The last crumb
