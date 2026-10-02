@@ -1,4 +1,4 @@
-import type { ListProjectEntitiesResponses } from '../../api/projects';
+import type { GetCampaignResponses, ListProjectEntitiesResponses } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -10,7 +10,8 @@ import type { Consumed } from '@qits/angular';
 /**
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
  * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
- * shows each entity as a small card: its qualified id, title and archetype, grouped by status.
+ * shows each entity as a small card (qualified id, title, archetype), placed by its status — or,
+ * for a feature or task, by its `implementedAt` — and nested under its `parent`.
  */
 export const LIST_PROJECT_ENTITIES = [
   'entities[].id',
@@ -18,6 +19,8 @@ export const LIST_PROJECT_ENTITIES = [
   'entities[].title',
   'entities[].archetype',
   'entities[].status',
+  'entities[].parent',
+  'entities[].implementedAt',
 ] as const;
 
 /** One work entity, cut to what the store reads. */
@@ -33,3 +36,14 @@ export type WorkEntry = NonNullable<
 export function countsAsWork(entry: WorkEntry): boolean {
   return entry.status === 'REFINED';
 }
+
+/**
+ * `WorkStore.load(projectId)`, for each campaign in the tree: its members, in campaign order.
+ * Campaign membership is not on the entity; the campaign answer holds it.
+ */
+export const GET_CAMPAIGN = ['campaign.id', 'campaign.members[].entity.id'] as const;
+
+/** A campaign answer, cut to what the store reads. */
+export type CampaignEntry = NonNullable<
+  Consumed<GetCampaignResponses[200], typeof GET_CAMPAIGN>['campaign']
+>;

@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { computed, effect, inject, Injectable, PLATFORM_ID, untracked } from '@angular/core';
 import { ProjectsStore } from '../projects/projects.store';
+import { WorkGraph } from './work-tree';
 import { WorkStore } from './work.store';
 import type { LoadState } from '../../ui/components/spinner/spinner';
 import { SelectedProject } from '../projects/selected-project';
@@ -17,6 +18,9 @@ export class SelectedWork {
 
   /** The open project's work entities; empty until they are loaded. */
   readonly entries = computed(() => this.work()?.entries ?? []);
+
+  /** The open project's work as a tree: phases, columns and spans (`work-tree.ts`). */
+  readonly graph = computed(() => new WorkGraph(this.entries(), this.work()?.campaigns ?? {}));
 
   /** Loading until the project is known and its work answered; an error if either failed. */
   readonly state = computed((): LoadState => {

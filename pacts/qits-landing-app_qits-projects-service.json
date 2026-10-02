@@ -930,6 +930,8 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
+                "implementedAt": null,
+                "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -937,6 +939,8 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
+                "implementedAt": null,
+                "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -944,6 +948,8 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
+                "implementedAt": null,
+                "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -951,6 +957,8 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
+                "implementedAt": null,
+                "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -958,6 +966,8 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
+                "implementedAt": null,
+                "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
