@@ -9,5 +9,7 @@ declare module 'vitest/browser' {
       operationId: string,
       provider?: 'qits-projects' | 'qits-githost',
     ) => Promise<T>;
+    /** Moves the mouse to the page's top-left corner, so no element is hovered. */
+    parkPointer: () => Promise<void>;
   }
 }

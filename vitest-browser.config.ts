@@ -18,10 +18,22 @@ const goldenMaster: BrowserCommand<
     operationId,
   );
 
+/**
+ * `parkPointer`: moves the mouse to the page's top-left corner. The pointer otherwise stays where
+ * the previous test clicked, and over a card it draws a hover ring into the next screenshot.
+ */
+const parkPointer: BrowserCommand<[]> = async (context) => {
+  if (context.provider.name !== 'playwright') return;
+  // The Playwright provider gives the command the test's page.
+  await (
+    context as unknown as { page: { mouse: { move(x: number, y: number): Promise<void> } } }
+  ).page.mouse.move(0, 0);
+};
+
 export default defineConfig({
   test: {
     browser: {
-      commands: { goldenMaster },
+      commands: { goldenMaster, parkPointer },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A
       // reference that does not match writes its actual and diff images to .vitest-attachments/.
       screenshotFailures: false,
