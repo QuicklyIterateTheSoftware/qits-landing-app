@@ -6,6 +6,7 @@ import { ProjectPicker } from './patterns/projects/project-picker/project-picker
 import { ProjectSetup } from './patterns/projects/project-setup/project-setup';
 import { ProjectWork } from './patterns/work/project-work/project-work';
 import { ProjectWorkArchive } from './patterns/work/project-work-archive/project-work-archive';
+import { ProjectEvents } from './patterns/events/project-events/project-events';
 import { ProjectObservability } from './patterns/observability/project-observability/project-observability';
 import { ProjectEditor } from './patterns/projects/project-editor/project-editor';
 import { RootRedirect } from './root-redirect';
@@ -44,6 +45,7 @@ export const routes: Routes = [
       { path: 'projects/:slug/work/archive', component: ProjectWorkArchive },
       { path: 'projects/:slug/editor', component: ProjectEditor },
       { path: 'projects/:slug/observability', component: ProjectObservability },
+      { path: 'projects/:slug/events', component: ProjectEvents },
       { path: 'projects/:slug/setup', component: ProjectSetup },
       { path: '**', component: ProjectPicker },
     ],
