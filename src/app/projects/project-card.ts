@@ -47,9 +47,11 @@ export const LANGUAGES_SHOWN = 4;
         }}</card-header>
         <card-body flush>
           <div class="w-full">
-            <!-- 50/50: the left slot is for the "Work" tile. -->
             <div class="grid grid-cols-2 gap-2">
-              <div></div>
+              <!-- Placeholder until the Work count is wired to qits-projects. -->
+              <ui-spinner state="loaded">
+                <ui-stat class="work w-full" label="Work">–</ui-stat>
+              </ui-spinner>
               <ui-spinner [state]="componentsState()">
                 <ui-stat class="components w-full" label="Components">
                   {{ componentCount() ?? '–' }}
