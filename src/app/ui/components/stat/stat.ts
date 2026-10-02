@@ -28,7 +28,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
           {{ label() }}
         </dt>
         <dd
-          class="px-3 pt-1 pb-2 text-2xl leading-8 font-semibold tabular-nums"
+          class="px-3 pt-1 pb-2 text-base leading-6 font-semibold tabular-nums"
           [class]="mirrored() ? 'text-left' : 'text-right'"
         >
           <ng-content />
