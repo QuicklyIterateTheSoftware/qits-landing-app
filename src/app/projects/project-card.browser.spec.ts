@@ -86,11 +86,17 @@ describe('ProjectCard (screenshots)', () => {
     fixture.detectChanges();
   }
 
+  /** Opens the card's expandable section (the languages table). */
+  async function expand(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
+    await page.getByRole('button', { name: 'Show more' }).click();
+    await answered(fixture);
+  }
+
   /**
-   * The card with its work and repositories as recorded and its lines answered by `state`'s
+   * The card, opened, with its work and repositories as recorded and its lines answered by `state`'s
    * recording. Work is "a project with refined work" (3 REFINED) unless `workState` says otherwise.
    */
-  async function shown(state: string, workState = 'a project with refined work') {
+  async function shown(state: string, workState = 'a project with refined work', open = true) {
     const { fixture, work, repositories, lines } = await render();
     work.flush(await commands.goldenMaster(workState, 'listProjectEntities'));
     repositories.flush(
@@ -98,8 +104,18 @@ describe('ProjectCard (screenshots)', () => {
     );
     lines.flush(await locFor(state));
     await answered(fixture);
+    if (open) await expand(fixture);
     return page.elementLocator(fixture.nativeElement);
   }
+
+  it('starts collapsed, with a button to show the languages', async () => {
+    const card = await shown('a repository with counted lines', undefined, false);
+    await expect.element(card.getByRole('button', { name: 'Show more' })).toBeVisible();
+    await expect
+      .element(card.getByRole('button', { name: 'Show more' }))
+      .toHaveAttribute('aria-expanded', 'false');
+    await expect.element(card).toMatchScreenshot('collapsed');
+  });
 
   it('shows the component count and the lines of counted repositories', async () => {
     const card = await shown('a repository with counted lines');
@@ -137,6 +153,7 @@ describe('ProjectCard (screenshots)', () => {
 
   it('shows that it is loading', async () => {
     const { fixture, work, repositories, lines } = await render();
+    await expand(fixture);
     const card = page.elementLocator(fixture.nativeElement);
     // One spinner each on the work tile, the components tile and the languages table.
     expect(card.getByRole('img', { name: 'Loading' }).elements()).toHaveLength(3);
@@ -154,6 +171,7 @@ describe('ProjectCard (screenshots)', () => {
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
+    await expand(fixture);
     const card = page.elementLocator(fixture.nativeElement);
     // One error icon each on the work tile, the components tile and the languages table.
     expect(card.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(3);

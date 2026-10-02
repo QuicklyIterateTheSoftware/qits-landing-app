@@ -94,12 +94,12 @@ describe('ProjectPicker', () => {
     await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();
 
-    const cards = [...(fixture.nativeElement as HTMLElement).querySelectorAll('a.card-link')];
-    expect(cards.map((card) => card.getAttribute('href'))).toEqual([
+    const cards = [...(fixture.nativeElement as HTMLElement).querySelectorAll('app-project-card')];
+    expect(cards.map((card) => card.querySelector('a.card-link')?.getAttribute('href'))).toEqual([
       `/projects/${project.slug}`,
       '/projects/other',
     ]);
-    expect(cards.map((card) => card.querySelector('card-header')?.textContent)).toEqual([
+    expect(cards.map((card) => card.querySelector('card-header')?.textContent?.trim())).toEqual([
       project.name,
       'Other',
     ]);
@@ -167,7 +167,7 @@ describe('ProjectPicker', () => {
     await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();
 
-    const card = (fixture.nativeElement as HTMLElement).querySelector('a.card-link')!;
+    const card = (fixture.nativeElement as HTMLElement).querySelector('app-project-card')!;
     const rows = [...card.querySelectorAll('.languages tbody tr')].map((row) =>
       [...row.children].map((cell) => cell.textContent?.trim()).join(' '),
     );

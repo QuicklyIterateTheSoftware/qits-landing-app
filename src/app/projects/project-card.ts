@@ -12,7 +12,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { LocStore, type LanguageLines } from '../core/loc/loc.store';
 import { ProjectsStore, type Project } from '../core/projects/projects.store';
-import { CardBody, CardHeader } from '../ui/components/card/base-card';
+import { CardBody, CardExpandable, CardHeader } from '../ui/components/card/base-card';
 import { CardSilent } from '../ui/components/card/card-silent';
 import { Spinner, type LoadState } from '../ui/components/spinner/spinner';
 import { Stat } from '../ui/components/stat/stat';
@@ -36,18 +36,26 @@ export const LANGUAGES_SHOWN = 4;
 @Component({
   selector: 'app-project-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CardSilent, CardHeader, CardBody, Spinner, Stat],
+  imports: [RouterLink, CardSilent, CardHeader, CardBody, CardExpandable, Spinner, Stat],
   host: { class: 'block' },
   template: `
-    <a
-      class="card-link block rounded-xl text-inherit no-underline hover:ring-1 hover:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400"
-      [routerLink]="['/projects', project().slug]"
+    <!--
+      The whole card opens the project: the title's link stretches over the card (after:inset-0),
+      and the expand button sits above it (z-10), so no button is nested in a link.
+    -->
+    <div
+      class="relative rounded-xl has-[a.card-link:focus-visible]:ring-1 has-[a.card-link:focus-visible]:ring-gray-400 has-[a.card-link:hover]:ring-1 has-[a.card-link:hover]:ring-gray-400"
     >
       <ui-card-silent>
         <card-header
           class="bg-charcoal-brown-100 text-center text-[1.35rem] text-charcoal-brown-900"
-          >{{ project().name }}</card-header
         >
+          <a
+            class="card-link text-inherit no-underline outline-none after:absolute after:inset-0 after:rounded-xl"
+            [routerLink]="['/projects', project().slug]"
+            >{{ project().name }}</a
+          >
+        </card-header>
         <card-body flush>
           <div class="w-full">
             <div class="grid grid-cols-2">
@@ -65,59 +73,61 @@ export const LANGUAGES_SHOWN = 4;
                 </ui-stat>
               </ui-spinner>
             </div>
-            <ui-spinner [state]="linesState()">
-              <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
-                <thead class="text-[0.5417rem] text-gray-500">
-                  <tr>
-                    <th
-                      scope="col"
-                      class="pt-[calc(0.40625rem+1px)] pb-px pr-6 pl-2 text-left font-normal"
-                    >
-                      Language
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-2 pt-[calc(0.40625rem+1px)] pb-px text-right font-normal"
-                    >
-                      Main
-                    </th>
-                    <th
-                      scope="col"
-                      class="pt-[calc(0.40625rem+1px)] pb-px pr-2 pl-4 text-right font-normal"
-                    >
-                      Tests
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @if (!languageRows().length) {
-                    <!-- No rows to show: one cell four rows tall, any message in its middle. -->
-                    <tr>
-                      <td
-                        colspan="3"
-                        class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-gray-500"
-                      >
-                        {{ linesState() === 'loaded' ? 'No lines yet' : '' }}
-                      </td>
-                    </tr>
-                  } @else {
-                    @for (row of languageRows(); track row.language) {
-                      <tr class="even:bg-gray-100">
-                        <th scope="row" class="py-px pr-6 pl-2 text-left font-normal">
-                          {{ row.language }}
-                        </th>
-                        <td class="px-2 py-px text-right">{{ format(row.main) }}</td>
-                        <td class="py-px pr-2 pl-4 text-right">{{ format(row.test) }}</td>
-                      </tr>
-                    }
-                  }
-                </tbody>
-              </table>
-            </ui-spinner>
           </div>
         </card-body>
+        <card-expandable>
+          <ui-spinner [state]="linesState()">
+            <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
+              <thead class="text-[0.5417rem] text-gray-500">
+                <tr>
+                  <th
+                    scope="col"
+                    class="pt-[calc(0.40625rem+1px)] pb-px pr-6 pl-2 text-left font-normal"
+                  >
+                    Language
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-2 pt-[calc(0.40625rem+1px)] pb-px text-right font-normal"
+                  >
+                    Main
+                  </th>
+                  <th
+                    scope="col"
+                    class="pt-[calc(0.40625rem+1px)] pb-px pr-2 pl-4 text-right font-normal"
+                  >
+                    Tests
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (!languageRows().length) {
+                  <!-- No rows to show: one cell four rows tall, any message in its middle. -->
+                  <tr>
+                    <td
+                      colspan="3"
+                      class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-gray-500"
+                    >
+                      {{ linesState() === 'loaded' ? 'No lines yet' : '' }}
+                    </td>
+                  </tr>
+                } @else {
+                  @for (row of languageRows(); track row.language) {
+                    <tr class="even:bg-gray-100">
+                      <th scope="row" class="py-px pr-6 pl-2 text-left font-normal">
+                        {{ row.language }}
+                      </th>
+                      <td class="px-2 py-px text-right">{{ format(row.main) }}</td>
+                      <td class="py-px pr-2 pl-4 text-right">{{ format(row.test) }}</td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </ui-spinner>
+        </card-expandable>
       </ui-card-silent>
-    </a>
+    </div>
   `,
 })
 export class ProjectCard {

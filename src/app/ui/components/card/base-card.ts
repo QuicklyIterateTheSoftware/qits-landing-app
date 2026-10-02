@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 
 /** The card's title row. Optional: a card without one draws no header. */
 @Component({
@@ -24,8 +24,70 @@ export class CardBody {
   readonly flush = input(false, { transform: booleanAttribute });
 }
 
+let nextExpandableId = 0;
+
 /**
- * A bordered, rounded box with two slots: `<card-header>` and `<card-body>`.
+ * More content, hidden until asked for. Collapsed, it shows only a round button with a caret,
+ * centred; the button opens the content downwards with a short animation, and closes it again.
+ *
+ * Both states are always rendered and switched by class, never by `@if`, so a server-rendered
+ * page hydrates without leftovers. The content's height animates through `grid-template-rows`
+ * (0fr to 1fr), which needs no measured height.
+ */
+@Component({
+  selector: 'card-expandable',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block' },
+  template: `
+    <div
+      [id]="contentId"
+      class="grid transition-[grid-template-rows] duration-200 ease-out"
+      [class]="open() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
+      [attr.inert]="open() ? null : ''"
+    >
+      <div class="min-h-0 overflow-hidden"><ng-content /></div>
+    </div>
+    <div class="flex justify-center py-1">
+      <button
+        type="button"
+        class="relative z-10 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
+        [attr.aria-expanded]="open()"
+        [attr.aria-controls]="contentId"
+        [attr.aria-label]="open() ? 'Show less' : 'Show more'"
+        (click)="toggle($event)"
+      >
+        <svg
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+          class="size-3.5 transition-transform duration-200"
+          [class.rotate-180]="open()"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </button>
+    </div>
+  `,
+})
+export class CardExpandable {
+  protected readonly open = signal(false);
+  protected readonly contentId = `card-expandable-${nextExpandableId++}`;
+
+  protected toggle(event: Event): void {
+    // A card may sit inside a link; the button must not follow it.
+    event.preventDefault();
+    event.stopPropagation();
+    this.open.update((open) => !open);
+  }
+}
+
+/**
+ * A bordered, rounded box with three slots: `<card-header>`, `<card-body>` and, optionally,
+ * `<card-expandable>`.
  *
  * ```html
  * <ui-base-card>
@@ -48,9 +110,10 @@ export class CardBody {
   template: `
     <ng-content select="card-header" />
     <ng-content select="card-body" />
+    <ng-content select="card-expandable" />
   `,
 })
 export class BaseCard {}
 
 /** Everything a template needs to use a card. */
-export const CARD = [BaseCard, CardHeader, CardBody] as const;
+export const CARD = [BaseCard, CardHeader, CardBody, CardExpandable] as const;
