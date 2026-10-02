@@ -45,12 +45,12 @@ const COLUMNS: readonly BoardColumnSpec[] = [
         <ui-board-row>
           <ui-board-card [column]="1" code="qits-14" title="A shipped task" kind="task" />
           <ui-board-card [column]="0" code="qits-15" title="An open task" kind="task" />
-          <span row-footer class="font-mono">qits-13</span>
+          <span row-id class="font-mono">qits-13</span>
           <span row-footer>A feature ahead of its epic</span>
         </ui-board-row>
         <ui-board-row>
           <ui-board-card [column]="0" code="qits-17" title="Another open task" kind="task" />
-          <span row-footer class="font-mono">qits-16</span>
+          <span row-id class="font-mono">qits-16</span>
           <span row-footer>An open feature</span>
         </ui-board-row>
       </ui-board-lane>

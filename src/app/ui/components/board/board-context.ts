@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
 /**
- * Where a board child sits. The board's grid is its optional gutter (one narrow leading column)
- * followed by its `columnCount` status columns. Children name status columns (0-based); the
+ * Where a board child sits. The board's grid is its optional gutters (a narrow column on each
+ * side) around its `columnCount` status columns. Children name status columns (0-based); the
  * context turns them into lines of the grid the child is in:
  *
  * - `lead`: how many gutter columns precede the status columns (0 or 1), the same everywhere;

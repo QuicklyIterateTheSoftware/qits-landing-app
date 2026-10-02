@@ -11,8 +11,8 @@ import { ProjectWorkArchive } from '../project-work-archive/project-work-archive
 
 /**
  * Screenshots of a project's Work page (board and backlog) and its Archive, answered with
- * qits-projects' golden masters: the project list as recorded, and "a project with refined work"
- * (3 REFINED, 1 REPORTED, 1 DONE) for its work.
+ * qits-projects' golden masters: the project list as recorded, and "a project with work in every
+ * status" (one epic and one ticket per status, DROPPED included) for its work.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -54,7 +54,9 @@ describe('Project work (screenshots)', () => {
     await settle();
     const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
     if (answerWork) {
-      work.flush(await commands.goldenMaster('a project with refined work', 'listProjectEntities'));
+      work.flush(
+        await commands.goldenMaster('a project with work in every status', 'listProjectEntities'),
+      );
       await settle();
       await harness.fixture.whenStable();
       harness.fixture.detectChanges();
@@ -67,7 +69,9 @@ describe('Project work (screenshots)', () => {
   it('shows the board and the backlog', async () => {
     const { element } = await shown('work');
     await expect.element(element.getByRole('heading', { name: 'Board' })).toBeVisible();
-    await expect.element(element).toHaveTextContent('Second refined ticket');
+    await expect.element(element).toHaveTextContent('Refined ticket');
+    await expect.element(element).toHaveTextContent('Implemented epic');
+    await expect.element(element).toHaveTextContent('Verified ticket');
     await expect.element(element).toHaveTextContent('Reported ticket');
     await expect.element(element).not.toHaveTextContent('Done ticket');
     await expect.element(element).toMatchScreenshot('work');
@@ -76,6 +80,7 @@ describe('Project work (screenshots)', () => {
   it('shows the archive: the work in a final state', async () => {
     const { element } = await shown('work/archive');
     await expect.element(element).toHaveTextContent('Done ticket');
+    await expect.element(element).toHaveTextContent('Dropped epic');
     await expect.element(element).not.toHaveTextContent('Reported ticket');
     await expect.element(element).toMatchScreenshot('archive');
   });
