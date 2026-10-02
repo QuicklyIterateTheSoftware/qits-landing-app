@@ -38,46 +38,48 @@ export const LANGUAGES_SHOWN = 4;
       <ui-card-silent>
         <card-header>{{ project().name }}</card-header>
         <card-body>
-          <span class="components">
-            @if (repositories()?.status === 'error') {
-              <span class="muted">Components unavailable</span>
-            } @else if (componentCount() === undefined) {
-              <span class="muted">Loading…</span>
-            } @else {
-              {{ componentCount() }} {{ componentCount() === 1 ? 'component' : 'components' }}
-            }
-          </span>
-          @if (lines(); as lines) {
-            @if (lines === 'error') {
-              <span class="lines muted">Lines unavailable</span>
-            } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
-              <span class="lines muted">Counting lines…</span>
-            } @else if (lines.partial) {
-              <span class="lines muted">Still counting some repositories</span>
-            } @else if (!lines.languages.length) {
-              <span class="lines muted">No lines yet</span>
-            }
-            @if (languageRows().length) {
-              <table class="languages">
-                <thead>
-                  <tr>
-                    <th scope="col">Language</th>
-                    <th scope="col">Main</th>
-                    <th scope="col">Tests</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (row of languageRows(); track row.language) {
+          <div class="facts">
+            <span class="components">
+              @if (repositories()?.status === 'error') {
+                <span class="muted">Components unavailable</span>
+              } @else if (componentCount() === undefined) {
+                <span class="muted">Loading…</span>
+              } @else {
+                {{ componentCount() }} {{ componentCount() === 1 ? 'component' : 'components' }}
+              }
+            </span>
+            @if (lines(); as lines) {
+              @if (lines === 'error') {
+                <span class="lines muted">Lines unavailable</span>
+              } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
+                <span class="lines muted">Counting lines…</span>
+              } @else if (lines.partial) {
+                <span class="lines muted">Still counting some repositories</span>
+              } @else if (!lines.languages.length) {
+                <span class="lines muted">No lines yet</span>
+              }
+              @if (languageRows().length) {
+                <table class="languages">
+                  <thead>
                     <tr>
-                      <th scope="row">{{ row.language }}</th>
-                      <td>{{ format(row.main) }}</td>
-                      <td>{{ format(row.test) }}</td>
+                      <th scope="col">Language</th>
+                      <th scope="col">Main</th>
+                      <th scope="col">Tests</th>
                     </tr>
-                  }
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    @for (row of languageRows(); track row.language) {
+                      <tr>
+                        <th scope="row">{{ row.language }}</th>
+                        <td>{{ format(row.main) }}</td>
+                        <td>{{ format(row.test) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
             }
-          }
+          </div>
         </card-body>
       </ui-card-silent>
     </a>
@@ -97,6 +99,11 @@ export const LANGUAGES_SHOWN = 4;
     .card-link:hover,
     .card-link:focus-visible {
       box-shadow: 0 0 0 1px #9ca3af;
+    }
+
+    .facts {
+      width: fit-content;
+      margin-inline: auto;
     }
 
     .components,
