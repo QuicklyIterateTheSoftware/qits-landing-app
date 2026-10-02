@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { SelectedProject } from '../projects/selected-project';
 
 /** One entry of the sidebar. */
 interface NavLink {
@@ -44,7 +45,7 @@ interface NavLink {
         aria-label="qits"
       >
         <ul class="m-0 list-none px-2 py-3">
-          @for (link of links; track link.path) {
+          @for (link of links(); track link.path) {
             <li>
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
@@ -67,7 +68,17 @@ interface NavLink {
   `,
 })
 export class Layout {
-  protected readonly links: readonly NavLink[] = [{ label: 'Home', path: '/' }];
+  private readonly selected = inject(SelectedProject);
+
+  /** "Projects" at the root; once a project is open, its name below it. */
+  protected readonly links = computed((): readonly NavLink[] => {
+    const projects: NavLink = { label: 'Projects', path: '/' };
+    const project = this.selected.project();
+    const slug = this.selected.slug();
+    return project && slug
+      ? [projects, { label: project.name ?? slug, path: `/projects/${slug}` }]
+      : [projects];
+  });
 
   protected readonly navOpen = signal(false);
 

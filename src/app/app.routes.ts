@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { sessionGuard } from './auth/session.guard';
 import { Layout } from './layout/layout';
+import { ProjectPage } from './projects/project-page';
 import { ProjectPicker } from './projects/project-picker';
 
 /**
- * Two routes, and the second one is load-bearing rather than tidy.
+ * The project list at the root, one project's page at `projects/<slug>`, and a catch-all that is
+ * load-bearing rather than tidy.
  *
  * `.config/qits/deployments.yml` declares `routes: /landing`, which is the prefix the edge
  * path-routes on EVERY vhost — so this application is asked for `/landing` as well as for `/` on
@@ -29,6 +31,7 @@ export const routes: Routes = [
     canActivate: [sessionGuard],
     children: [
       { path: '', component: ProjectPicker },
+      { path: 'projects/:slug', component: ProjectPage },
       { path: '**', component: ProjectPicker },
     ],
   },
