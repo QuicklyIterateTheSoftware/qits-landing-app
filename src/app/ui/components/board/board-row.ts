@@ -4,7 +4,8 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
 /**
  * A row inside a board lane, a lighter shade of the lane (a white layer over it), exactly across the status columns (not the gutters, no inset): its
  * children (cards) sit in their own columns, `[row-id]` is written up its left edge, vertically
- * centred, and `[row-footer]` (a title, say) runs centred along its bottom. A link in the footer
+ * centred, and `[row-footer]` (a title, say) sits left-aligned in a bar along its bottom: the epic bar's
+ * hue one step lighter, only the bottom-right corner rounded, like the row's. A link in the footer
  * stretches over the row and casts a shadow while hovered: the row is the positioning box, and cards
  * sit above it, so hovering a card shadows the card, not the row.
  */
@@ -14,7 +15,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 [&_ui-board-card]:ml-5',
+      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 rounded-br-xl bg-white/50 pt-2 ring-1 ring-black/5 [&_ui-board-card]:ml-5',
     '[style.grid-column]': 'placement()',
   },
   template: `
@@ -25,7 +26,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </span>
     <ng-content />
     <div
-      class="col-span-full flex items-baseline justify-center gap-2 px-2 pb-1 text-xs text-charcoal-brown-800 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-span-full flex items-baseline justify-start gap-2 rounded-br-xl bg-charcoal-brown-600/40 py-1 pr-2 pl-5 text-xs text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[row-footer]" />
     </div>
