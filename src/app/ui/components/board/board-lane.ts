@@ -76,22 +76,39 @@ let nextLaneId = 0;
         <ng-content select="[lane-tags]" />
       </span>
     </div>
+    <!--
+      The rows. On a board their height animates through grid-template-rows (0fr to 1fr), as on the
+      card's expandable; both views are always rendered and switched by class. Collapsed, the rows
+      clip fully and are inert; open, they clip with a margin, so hover shadows still show.
+    -->
     <div
       [id]="contentId"
       [class]="
         !onBoard
           ? 'contents'
-          : isCollapsed()
-            ? 'hidden'
-            : 'col-span-full row-start-2 grid grid-cols-subgrid grid-flow-row-dense gap-y-2'
+          : 'col-span-full row-start-2 grid grid-cols-subgrid transition-[grid-template-rows] duration-200 ease-out ' +
+            (isCollapsed() ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]')
       "
+      [attr.inert]="onBoard && isCollapsed() ? '' : null"
     >
-      <ng-content />
+      <div
+        [class]="
+          !onBoard
+            ? 'contents'
+            : 'col-span-full grid min-h-0 grid-cols-subgrid grid-flow-row-dense gap-y-4 ' +
+              (isCollapsed() ? 'overflow-hidden' : 'overflow-clip [overflow-clip-margin:0.5rem]')
+        "
+      >
+        <ng-content />
+      </div>
     </div>
     @if (onBoard) {
+      <!-- The summary shares the rows' grid cell and cross-fades with them. -->
       <div
-        class="col-span-full row-start-2 items-center justify-center py-2 text-sm text-charcoal-brown-900"
-        [class]="isCollapsed() ? 'flex' : 'hidden'"
+        class="col-span-full row-start-2 flex items-center justify-center self-start py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out"
+        [class]="isCollapsed() ? 'opacity-100' : 'pointer-events-none opacity-0'"
+        [attr.inert]="isCollapsed() ? null : ''"
+        [attr.aria-hidden]="isCollapsed() ? null : 'true'"
       >
         <ng-content select="[lane-summary]" />
       </div>

@@ -151,7 +151,9 @@ describe('Board', () => {
       fixture.componentInstance.collapsed = collapsed;
       fixture.detectChanges();
       const element = fixture.nativeElement as HTMLElement;
-      const rows = () => element.querySelector('ui-board-row')!.parentElement as HTMLElement;
+      // The animated wrapper around the rows (the element the button controls).
+      const rows = () =>
+        element.querySelector('ui-board-row')!.parentElement!.parentElement as HTMLElement;
       const summary = () => element.querySelector('[lane-summary]')!.parentElement as HTMLElement;
       const button = () => element.querySelector('ui-board-lane button') as HTMLButtonElement;
       return { fixture, rows, summary, button };
@@ -159,16 +161,19 @@ describe('Board', () => {
 
     it('starts collapsed when told: the summary shows, the rows do not', () => {
       const { rows, summary, button } = lane(true);
-      expect(rows().classList).toContain('hidden');
-      expect(summary().classList).toContain('flex');
+      expect(rows().classList).toContain('grid-rows-[0fr]');
+      expect(rows().hasAttribute('inert')).toBe(true);
+      expect(summary().classList).toContain('opacity-100');
       expect(button().getAttribute('aria-expanded')).toBe('false');
       expect(button().getAttribute('aria-controls')).toBe(rows().id);
     });
 
     it('starts expanded otherwise', () => {
       const { rows, summary, button } = lane(false);
-      expect(rows().classList).toContain('grid');
-      expect(summary().classList).toContain('hidden');
+      expect(rows().classList).toContain('grid-rows-[1fr]');
+      expect(rows().hasAttribute('inert')).toBe(false);
+      expect(summary().classList).toContain('opacity-0');
+      expect(summary().hasAttribute('inert')).toBe(true);
       expect(button().getAttribute('aria-expanded')).toBe('true');
     });
 
@@ -176,11 +181,11 @@ describe('Board', () => {
       const { fixture, rows, summary, button } = lane(true);
       button().click();
       fixture.detectChanges();
-      expect(rows().classList).toContain('grid');
-      expect(summary().classList).toContain('hidden');
+      expect(rows().classList).toContain('grid-rows-[1fr]');
+      expect(summary().classList).toContain('opacity-0');
       button().click();
       fixture.detectChanges();
-      expect(rows().classList).toContain('hidden');
+      expect(rows().classList).toContain('grid-rows-[0fr]');
     });
   });
 });
