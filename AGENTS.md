@@ -16,10 +16,10 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of two providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider              | Store and pact spec                | Pact file                                                                 | Golden masters                  |
-| --------------------- | ---------------------------------- | ------------------------------------------------------------------------- | ------------------------------- |
-| qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-projects-service/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
-| qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-githost-service/qits-landing-app_qits-githost-service.json`   | `@qits/githost-golden-masters`  |
+| Provider              | Store and pact spec                | Pact file                                           | Golden masters                  |
+| --------------------- | ---------------------------------- | --------------------------------------------------- | ------------------------------- |
+| qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
+| qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-landing-app_qits-githost-service.json`  | `@qits/githost-golden-masters`  |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: every repository counted (the card shows "8 lines, 3 in tests"), one not counted yet
@@ -88,13 +88,14 @@ image). Keep both when you update `@pact-foundation/pact`.
 
 ### Publishing: only when the pact changed
 
-`release.yml` declares one `contracts.pacts` entry per provider, `from:` its folder
-(`pacts/qits-projects-service/`, `pacts/qits-githost-service/`), and carries no `release:` override —
-the `app` archetype's release step runs as is. qits-ci derives each coordinate
-(`eu.wohlben.qits:qits-landing-pacts-qits-projects`, `…-qits-githost`; it still uses application
-names), packages the folder as a jar (its files land at `pacts/<file>` on the classpath) and
-publishes it itself, only when the folder differs from that provider's newest published jar. One
-folder per provider, so a change to one pact does not republish, and bump, the other's jar. There is no
+Every pact sits flat in `pacts/`, named `<consumer>_<provider>.json` by repository name.
+`release.yml` declares one `contracts.pacts` entry per provider, keyed by the provider's repository
+name (`qits-projects-service: { packages: [maven] }`), and carries no `release:` override — the `app`
+archetype's release step runs as is. qits-ci packs only `pacts/*_<provider>.json` into that
+provider's jar (at `pacts/<file>` on the classpath), names it by the two repository names
+(`eu.wohlben.qits:qits-landing-app-pacts-qits-projects-service`, `…-pacts-qits-githost-service`) and
+publishes it only when those files changed. So a change to one pact does not republish, and bump,
+the other provider's jar. There is no
 repository-side gate, jar builder or PUT sequence left to maintain: `.config/qits/pacts.sh`,
 `.config/qits/pacts-jar.mjs` and `.config/qits/published-tree-changed.sh` are gone.
 

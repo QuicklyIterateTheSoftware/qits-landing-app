@@ -14,7 +14,7 @@ import { LocStore } from './loc.store';
 
 /**
  * qits-landing-app's pact with qits-githost-service (epic qits-112), in
- * `pacts/qits-githost-service/qits-landing-app_qits-githost-service.json`.
+ * `pacts/qits-landing-app_qits-githost-service.json`.
  *
  * The store is the only user of the qits-githost client, so this file is the whole pact. It has one
  * interaction per kind of list the cards meet, each from its own provider state: every repository
@@ -28,7 +28,7 @@ import { LocStore } from './loc.store';
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-githost-service';
-const COMMITTED = resolve(process.cwd(), `pacts/${PROVIDER}/${CONSUMER}_${PROVIDER}.json`);
+const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });

@@ -21,7 +21,7 @@ import { ProjectsStore } from './projects.store';
 
 /**
  * qits-landing-app's pact with qits-projects-service (epic qits-546). Both sides are named by
- * repository, so the file is `pacts/qits-projects-service/qits-landing-app_qits-projects-service.json`
+ * repository, so the file is `pacts/qits-landing-app_qits-projects-service.json`
  * (one folder per provider, so each provider's pact jar holds only its own pact).
  *
  * The store is the only user of the qits-projects client, so this file is the whole pact. Each test
@@ -37,7 +37,7 @@ import { ProjectsStore } from './projects.store';
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
-const COMMITTED = resolve(process.cwd(), `pacts/${PROVIDER}/${CONSUMER}_${PROVIDER}.json`);
+const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
