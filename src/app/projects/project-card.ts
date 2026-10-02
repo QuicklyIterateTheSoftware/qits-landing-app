@@ -55,7 +55,26 @@ export const LANGUAGES_SHOWN = 4;
             </ui-stat>
             @if (lines(); as lines) {
               @if (lines === 'error') {
-                <span class="lines block text-[0.8125rem] text-gray-500">Lines unavailable</span>
+                <!-- The table's frame, four rows tall, with the message in the middle. -->
+                <table class="languages mt-2 border-collapse text-[0.8125rem] tabular-nums">
+                  <thead class="bg-gray-200/70 text-gray-500">
+                    <tr>
+                      <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
+                      <th scope="col" class="px-2 py-px text-right font-normal">Main</th>
+                      <th scope="col" class="py-px pr-2 pl-4 text-right font-normal">Tests</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td
+                        colspan="3"
+                        class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-gray-500"
+                      >
+                        Lines unavailable
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
                 <span class="lines block text-[0.8125rem] text-gray-500">Counting lines…</span>
               } @else if (lines.partial) {
