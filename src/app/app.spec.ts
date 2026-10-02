@@ -7,7 +7,7 @@ import { client as projectsClient } from './api/projects/client.gen';
 import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { App } from './app';
 import { routes } from './app.routes';
-import { ProjectPicker } from './projects/project-picker';
+import { ProjectPicker } from './patterns/projects/project-picker/project-picker';
 import { githostGoldenMaster, goldenMaster } from '../testing/golden-masters';
 
 describe('App', () => {

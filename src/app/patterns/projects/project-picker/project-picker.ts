@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ProjectCard } from './project-card';
-import { ProjectsStore } from '../core/projects/projects.store';
-import { Spinner, type LoadState } from '../ui/components/spinner/spinner';
+import { ProjectCard } from '../project-card/project-card';
+import { ProjectsStore } from '../../../core/projects/projects.store';
+import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
 
 /**
  * The start page: every project, one card each.

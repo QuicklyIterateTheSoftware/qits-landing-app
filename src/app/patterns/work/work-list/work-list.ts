@@ -1,5 +1,5 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
-import type { WorkEntry } from '../../core/projects/projects.consumes';
+import type { WorkEntry } from '../../../core/projects/projects.consumes';
 
 /**
  * A plain list of work entities: qualified id, title, archetype, and (with `showStatus`) the

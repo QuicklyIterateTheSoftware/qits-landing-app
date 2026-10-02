@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SelectedProject } from '../projects/selected-project';
+import { SelectedProject } from '../core/projects/selected-project';
 import { ReleaseMenu } from './release-menu';
 
 /** One entry of the sidebar. */

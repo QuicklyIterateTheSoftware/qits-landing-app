@@ -8,7 +8,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { ProjectsStore } from '../core/projects/projects.store';
-import { SelectedProject } from '../projects/selected-project';
+import { SelectedProject } from '../core/projects/selected-project';
 import { Spinner, type LoadState } from '../ui/components/spinner/spinner';
 
 /** A chip's Tailwind classes, written out in full so Tailwind finds them. */

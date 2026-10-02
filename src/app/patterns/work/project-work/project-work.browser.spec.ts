@@ -4,10 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { commands, page } from 'vitest/browser';
-import { client as projectsClient } from '../api/projects/client.gen';
-import { provideHeyApiClient } from '../api/projects/client/client.gen';
+import { client as projectsClient } from '../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { ProjectWork } from './project-work';
-import { ProjectWorkArchive } from './project-work-archive';
+import { ProjectWorkArchive } from '../project-work-archive/project-work-archive';
 
 /**
  * Screenshots of a project's Work page (board and backlog) and its Archive, answered with

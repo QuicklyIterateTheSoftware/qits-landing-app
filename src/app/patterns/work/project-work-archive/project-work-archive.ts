@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Spinner } from '../ui/components/spinner/spinner';
-import { SelectedProject } from './selected-project';
-import { SelectedWork } from './work/selected-work';
-import { WorkList } from './work/work-list';
-import { ARCHIVE_STATUSES, withStatus } from './work/work-statuses';
+import { Spinner } from '../../../ui/components/spinner/spinner';
+import { SelectedProject } from '../../../core/projects/selected-project';
+import { SelectedWork } from '../../../core/work/selected-work';
+import { WorkList } from '../work-list/work-list';
+import { ARCHIVE_STATUSES, withStatus } from '../../../core/work/work-statuses';
 
 /**
  * A project's finished work, at `/projects/<slug>/work/archive`: everything in a final state (Done
