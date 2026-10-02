@@ -21,7 +21,9 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
       <div>
         <dt
           class="w-fit min-w-1/2 bg-gray-300 py-0.5 text-xs leading-4 font-semibold text-gray-800"
-          [class]="mirrored() ? 'ml-auto rounded-bl-lg pr-2 pl-3' : 'rounded-br-lg pr-3 pl-2'"
+          [class]="
+            mirrored() ? 'ml-auto rounded-bl-lg pr-2 pl-3 text-right' : 'rounded-br-lg pr-3 pl-2'
+          "
         >
           {{ label() }}
         </dt>
@@ -38,6 +40,6 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
 export class Stat {
   readonly label = input.required<string>();
 
-  /** Mirrors the tile: the tab at the top right, rounded at its bottom left, the value on the left. */
+  /** Mirrors the tile: the tab at the top right, rounded at its bottom left, its label right-aligned, the value on the left. */
   readonly mirrored = input(false, { transform: booleanAttribute });
 }
