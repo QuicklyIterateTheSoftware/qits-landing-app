@@ -6,20 +6,12 @@ import { BaseCard } from './base-card';
   selector: 'ui-card-silent',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [BaseCard],
+  host: { class: 'block' },
   template: `
-    <ui-base-card>
+    <ui-base-card class="[--card-background:var(--color-gray-50)]">
       <ng-content select="card-header" ngProjectAs="card-header" />
       <ng-content select="card-body" ngProjectAs="card-body" />
     </ui-base-card>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-
-    ui-base-card {
-      --card-background: #f9fafb;
-    }
   `,
 })
 export class CardSilent {}

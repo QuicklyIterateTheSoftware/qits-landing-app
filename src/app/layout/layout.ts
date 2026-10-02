@@ -18,29 +18,38 @@ interface NavLink {
   selector: 'app-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  host: { class: 'block' },
   template: `
-    <div class="layout" [class.nav-open]="navOpen()">
-      <header class="bar">
+    <div class="grid min-h-screen grid-rows-[3.5rem_1fr] md:grid-cols-[15rem_1fr]">
+      <header class="col-span-full flex items-center gap-3 border-b border-gray-200 bg-white px-4">
         <button
           type="button"
-          class="burger"
+          class="inline-flex size-9 cursor-pointer flex-col justify-center gap-1 rounded-md border-0 bg-transparent p-2 md:hidden"
           aria-controls="layout-nav"
           [attr.aria-expanded]="navOpen()"
           aria-label="Navigation"
           (click)="toggleNav()"
         >
-          <span></span><span></span><span></span>
+          <span class="block h-0.5 bg-gray-700"></span>
+          <span class="block h-0.5 bg-gray-700"></span>
+          <span class="block h-0.5 bg-gray-700"></span>
         </button>
-        <a class="brand" routerLink="/">qits</a>
+        <a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a>
       </header>
 
-      <nav id="layout-nav" class="nav" aria-label="qits">
-        <ul>
+      <nav
+        id="layout-nav"
+        class="z-1 col-start-1 row-start-2 border-r border-gray-200 bg-gray-50 md:block"
+        [class.hidden]="!navOpen()"
+        aria-label="qits"
+      >
+        <ul class="m-0 list-none px-2 py-3">
           @for (link of links; track link.path) {
             <li>
               <a
+                class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
                 [routerLink]="link.path"
-                routerLinkActive="current"
+                routerLinkActive=""
                 [routerLinkActiveOptions]="{ exact: true }"
                 ariaCurrentWhenActive="page"
                 (click)="closeNav()"
@@ -51,119 +60,10 @@ interface NavLink {
         </ul>
       </nav>
 
-      <main class="content">
+      <main class="col-start-1 row-start-2 min-w-0 md:col-start-2">
         <router-outlet />
       </main>
     </div>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-areas:
-        'bar'
-        'content';
-      grid-template-rows: 3.5rem 1fr;
-      min-height: 100vh;
-    }
-
-    .bar {
-      grid-area: bar;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0 1rem;
-      border-bottom: 1px solid #e5e7eb;
-      background: #ffffff;
-    }
-
-    .brand {
-      color: #111827;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .burger {
-      display: inline-flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 4px;
-      width: 2.25rem;
-      height: 2.25rem;
-      padding: 0.5rem;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
-      cursor: pointer;
-    }
-
-    .burger span {
-      display: block;
-      height: 2px;
-      background: #374151;
-    }
-
-    .nav {
-      display: none;
-      grid-area: content;
-      z-index: 1;
-      background: #f9fafb;
-      border-right: 1px solid #e5e7eb;
-    }
-
-    .nav-open .nav {
-      display: block;
-    }
-
-    .nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0.75rem 0.5rem;
-    }
-
-    .nav a {
-      display: block;
-      padding: 0.4rem 0.75rem;
-      border-radius: 6px;
-      color: #374151;
-      text-decoration: none;
-    }
-
-    .nav a:hover {
-      background: #f3f4f6;
-    }
-
-    .nav a.current {
-      background: #e5e7eb;
-      color: #111827;
-      font-weight: 600;
-    }
-
-    .content {
-      grid-area: content;
-      min-width: 0;
-    }
-
-    @media (min-width: 768px) {
-      .layout {
-        grid-template-areas:
-          'bar bar'
-          'nav content';
-        grid-template-columns: 15rem 1fr;
-      }
-
-      .burger {
-        display: none;
-      }
-
-      .nav {
-        display: block;
-        grid-area: nav;
-      }
-    }
   `,
 })
 export class Layout {

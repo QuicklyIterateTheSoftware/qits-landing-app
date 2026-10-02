@@ -3,6 +3,14 @@
 Notes for agents working in this repository. `README.md` covers what the app is and how to run it.
 This file covers the rules that are easy to break.
 
+## Styling
+
+Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in
+the templates, and no component `styles:` or `styleUrl` blocks. A component's own host styling goes
+in `host: { class: '…' }`. Colours come from Tailwind's theme (`text-gray-500`, `bg-gray-50`), not
+hex literals. Tailwind finds the classes in the inline templates by itself; a class written as a
+string built at run time is not found, so write every class out in full.
+
 ## Pact contracts (epics qits-546, qits-112)
 
 This app is a consumer of two providers. What it relies on from each is written down as a Pact V4

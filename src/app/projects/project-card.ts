@@ -33,46 +33,54 @@ export const LANGUAGES_SHOWN = 4;
   selector: 'app-project-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, CardSilent, CardHeader, CardBody],
+  host: { class: 'block' },
   template: `
-    <a class="card-link" [routerLink]="['/projects', project().slug]">
+    <a
+      class="card-link block rounded-xl text-inherit no-underline hover:ring-1 hover:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400"
+      [routerLink]="['/projects', project().slug]"
+    >
       <ui-card-silent>
         <card-header>{{ project().name }}</card-header>
         <card-body>
-          <div class="facts">
-            <span class="components">
+          <div class="mx-auto w-fit">
+            <span class="components block">
               @if (repositories()?.status === 'error') {
-                <span class="muted">Components unavailable</span>
+                <span class="text-gray-500">Components unavailable</span>
               } @else if (componentCount() === undefined) {
-                <span class="muted">Loading…</span>
+                <span class="text-gray-500">Loading…</span>
               } @else {
                 {{ componentCount() }} {{ componentCount() === 1 ? 'component' : 'components' }}
               }
             </span>
             @if (lines(); as lines) {
               @if (lines === 'error') {
-                <span class="lines muted">Lines unavailable</span>
+                <span class="lines block text-[0.8125rem] text-gray-500">Lines unavailable</span>
               } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
-                <span class="lines muted">Counting lines…</span>
+                <span class="lines block text-[0.8125rem] text-gray-500">Counting lines…</span>
               } @else if (lines.partial) {
-                <span class="lines muted">Still counting some repositories</span>
+                <span class="lines block text-[0.8125rem] text-gray-500"
+                  >Still counting some repositories</span
+                >
               } @else if (!lines.languages.length) {
-                <span class="lines muted">No lines yet</span>
+                <span class="lines block text-[0.8125rem] text-gray-500">No lines yet</span>
               }
               @if (languageRows().length) {
-                <table class="languages">
-                  <thead>
+                <table class="languages mt-2 border-collapse text-[0.8125rem] tabular-nums">
+                  <thead class="bg-gray-200/70 text-gray-500">
                     <tr>
-                      <th scope="col">Language</th>
-                      <th scope="col">Main</th>
-                      <th scope="col">Tests</th>
+                      <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
+                      <th scope="col" class="px-2 py-px text-right font-normal">Main</th>
+                      <th scope="col" class="py-px pr-2 pl-4 text-right font-normal">Tests</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (row of languageRows(); track row.language) {
-                      <tr>
-                        <th scope="row">{{ row.language }}</th>
-                        <td>{{ format(row.main) }}</td>
-                        <td>{{ format(row.test) }}</td>
+                      <tr class="even:bg-gray-100">
+                        <th scope="row" class="py-px pr-6 pl-2 text-left font-normal">
+                          {{ row.language }}
+                        </th>
+                        <td class="px-2 py-px text-right">{{ format(row.main) }}</td>
+                        <td class="py-px pr-2 pl-4 text-right">{{ format(row.test) }}</td>
                       </tr>
                     }
                   </tbody>
@@ -83,70 +91,6 @@ export const LANGUAGES_SHOWN = 4;
         </card-body>
       </ui-card-silent>
     </a>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-
-    .card-link {
-      display: block;
-      border-radius: 0.75rem;
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .card-link:hover,
-    .card-link:focus-visible {
-      box-shadow: 0 0 0 1px #9ca3af;
-    }
-
-    .facts {
-      width: fit-content;
-      margin-inline: auto;
-    }
-
-    .components,
-    .lines {
-      display: block;
-    }
-
-    .muted {
-      color: #6b7280;
-    }
-
-    .lines {
-      font-size: 0.8125rem;
-    }
-
-    .languages {
-      margin-top: 0.5rem;
-      border-collapse: collapse;
-      font-size: 0.8125rem;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .languages th,
-    .languages td {
-      padding: 0.0625rem 0;
-      font-weight: 400;
-      text-align: right;
-    }
-
-    .languages th[scope='row'],
-    .languages thead th:first-child {
-      padding-right: 1.5rem;
-      text-align: left;
-    }
-
-    .languages td:last-child,
-    .languages thead th:last-child {
-      padding-left: 1rem;
-    }
-
-    .languages thead th {
-      color: #6b7280;
-    }
   `,
 })
 export class ProjectCard {

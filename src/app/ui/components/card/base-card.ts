@@ -4,19 +4,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'card-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Only a header with content below it draws the dividing line.
+  host: {
+    class:
+      'block px-6 py-3 font-semibold not-last:border-b not-last:border-[var(--card-border,var(--color-gray-200))]',
+  },
   template: `<ng-content />`,
-  styles: `
-    :host {
-      display: block;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-    }
-
-    /* Only a header with content below it needs the dividing line. */
-    :host(:not(:last-child)) {
-      border-bottom: 1px solid var(--card-border);
-    }
-  `,
 })
 export class CardHeader {}
 
@@ -24,13 +17,8 @@ export class CardHeader {}
 @Component({
   selector: 'card-body',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block p-6' },
   template: `<ng-content />`,
-  styles: `
-    :host {
-      display: block;
-      padding: 1.5rem;
-    }
-  `,
 })
 export class CardBody {}
 
@@ -44,25 +32,19 @@ export class CardBody {}
  * </ui-base-card>
  * ```
  *
- * `--card-background` and `--card-border` set its colours; variants such as `CardSilent` change
- * only those.
+ * `--card-background` and `--card-border` set its colours (white and Tailwind's gray-200 when
+ * unset); variants such as `CardSilent` change only those.
  */
 @Component({
   selector: 'ui-base-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class:
+      'block rounded-xl border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))]',
+  },
   template: `
     <ng-content select="card-header" />
     <ng-content select="card-body" />
-  `,
-  styles: `
-    :host {
-      --card-background: #ffffff;
-      --card-border: #e5e7eb;
-      display: block;
-      background: var(--card-background);
-      border: 1px solid var(--card-border);
-      border-radius: 0.75rem;
-    }
   `,
 })
 export class BaseCard {}
