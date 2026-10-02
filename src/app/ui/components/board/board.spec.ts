@@ -32,7 +32,12 @@ class Host {
 
 @Component({
   imports: [BoardLane, BoardCard],
-  template: `<ui-board-lane [from]="1" [to]="2"><span lane-header>Off</span></ui-board-lane>`,
+  template: `
+    <ui-board-lane [from]="1" [to]="2">
+      <span lane-header>Off</span>
+      <ui-board-lane muted><span lane-header>Nested</span></ui-board-lane>
+    </ui-board-lane>
+  `,
 })
 class OffBoard {}
 

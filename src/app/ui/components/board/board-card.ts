@@ -34,6 +34,6 @@ export class BoardCard {
   private readonly context = inject(BOARD_CONTEXT, { optional: true });
 
   protected readonly placement = computed(() =>
-    this.context ? gridColumn(this.context, this.column(), this.column()) : null,
+    this.context?.onBoard ? gridColumn(this.context, this.column(), this.column()) : null,
   );
 }

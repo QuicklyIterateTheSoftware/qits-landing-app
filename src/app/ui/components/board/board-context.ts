@@ -6,6 +6,8 @@ import { InjectionToken } from '@angular/core';
  * lines of the grid it is in. Absent outside a board: lanes then lay out as plain groups.
  */
 export interface BoardContext {
+  /** False for a lane laid out off a board: its children are off the board too. */
+  readonly onBoard: boolean;
   readonly columnCount: () => number;
   readonly offset: () => number;
 }
