@@ -103,11 +103,17 @@ describe('ProjectCard (screenshots)', () => {
     await expect.element(card).toMatchScreenshot('loaded');
   });
 
-  it('says so while some repositories are not counted yet', async () => {
+  it('shows the counted repositories of a list where some were never counted', async () => {
     const card = await shown('two repositories, one counted');
-    await expect.element(card).toHaveTextContent('Still counting some repositories');
     await expect.element(card).toHaveTextContent('Java');
+    await expect.element(card).not.toHaveTextContent('Counting lines');
     await expect.element(card).toMatchScreenshot('lines-partial');
+  });
+
+  it('shows the older count of a repository whose tip is not counted yet', async () => {
+    const card = await shown('a repository counted at an older commit');
+    await expect.element(card).toHaveTextContent('Java');
+    await expect.element(card).toMatchScreenshot('lines-stale');
   });
 
   it('shows that lines are being counted when none is counted yet', async () => {

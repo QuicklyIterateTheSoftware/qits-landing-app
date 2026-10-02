@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHeyApiClient } from '../../api/githost/client/client.gen';
 import { client as githostClient } from '../../api/githost/client.gen';
 import { githostGoldenMaster, githostGoldenMasters } from '../../../testing/golden-masters';
-import { LocStore, RECOUNT_AFTER_MS } from './loc.store';
+import { LocStore } from './loc.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -13,12 +13,15 @@ const COUNTED = 'a repository with counted lines';
 const PENDING = 'a repository not counted yet';
 const EMPTY = 'a repository with no commit';
 const MIXED = 'two repositories, one counted';
+const STALE = 'a repository counted at an older commit';
 
-/** The counted recording's languages, summed: Java 3/2 and TypeScript 4/1 tie on 5, by name. */
+/**
+ * The counted recording's CODE languages, summed: Java 3/2 and TypeScript 4/1 tie on 5, by name.
+ * Its JSON (DATA) and Markdown (DOCS) rows are left out.
+ */
 const COUNTED_LANGUAGES = [
   { language: 'Java', main: 3, test: 2 },
   { language: 'TypeScript', main: 4, test: 1 },
-  { language: 'Markdown', main: 1, test: 0 },
 ];
 
 /** An id qits-githost's golden masters do not hold. */
@@ -56,18 +59,18 @@ describe('LocStore', () => {
     return store;
   }
 
-  it('sums a counted repository: Java 3/2, TypeScript 4/1, Markdown 1/0', async () => {
+  it('sums the code of a counted repository: Java 3/2, TypeScript 4/1, not JSON or Markdown', async () => {
     const store = await loadedWith(COUNTED);
     expect(store.status()).toBe('loaded');
     expect(store.totals([param(COUNTED)])).toEqual({
-      main: 8,
+      main: 7,
       test: 3,
-      partial: false,
+      uncounted: false,
       languages: COUNTED_LANGUAGES,
     });
   });
 
-  it('marks a repository not counted yet as partial, and asks once more later', async () => {
+  it('leaves out a repository never counted, and does not ask again', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout'] });
     const store = TestBed.inject(LocStore);
     await vi.advanceTimersByTimeAsync(0);
@@ -76,25 +79,21 @@ describe('LocStore', () => {
     expect(store.totals([param(PENDING)])).toEqual({
       main: 0,
       test: 0,
-      partial: true,
+      uncounted: true,
       languages: [],
     });
+    await vi.advanceTimersByTimeAsync(60_000);
+    http.expectNone('/githost/api/loc');
+  });
 
-    await vi.advanceTimersByTimeAsync(RECOUNT_AFTER_MS);
-    // Counted by now: the second answer is the counted state's recording under the same id.
-    const counted = githostGoldenMaster(COUNTED, 'listLoc');
-    http.expectOne('/githost/api/loc').flush(counted);
-    await vi.advanceTimersByTimeAsync(0);
-    expect(store.totals([param(COUNTED)])).toEqual({
-      main: 8,
+  it('uses the older count of a repository whose tip is not counted yet', async () => {
+    const store = await loadedWith(STALE);
+    expect(store.totals([param(STALE)])).toEqual({
+      main: 7,
       test: 3,
-      partial: false,
+      uncounted: false,
       languages: COUNTED_LANGUAGES,
     });
-
-    // It asks once more, never again.
-    await vi.advanceTimersByTimeAsync(RECOUNT_AFTER_MS * 2);
-    http.expectNone('/githost/api/loc');
   });
 
   it('adds nothing for a repository without a commit', async () => {
@@ -102,29 +101,25 @@ describe('LocStore', () => {
     expect(store.totals([param(EMPTY)])).toEqual({
       main: 0,
       test: 0,
-      partial: false,
+      uncounted: false,
       languages: [],
     });
   });
 
-  it('sums a mixed list as a partial total', async () => {
-    vi.useFakeTimers({ toFake: ['setTimeout'] });
-    const store = TestBed.inject(LocStore);
-    await vi.advanceTimersByTimeAsync(0);
-    http.expectOne('/githost/api/loc').flush(githostGoldenMaster(MIXED, 'listLoc'));
-    await vi.advanceTimersByTimeAsync(0);
+  it('sums a mixed list from its counted repository alone', async () => {
+    const store = await loadedWith(MIXED);
     const counted = param(MIXED, 'countedRepositoryId');
     const pending = param(MIXED, 'pendingRepositoryId');
     expect(store.totals([counted, pending])).toEqual({
-      main: 8,
+      main: 7,
       test: 3,
-      partial: true,
+      uncounted: true,
       languages: COUNTED_LANGUAGES,
     });
     expect(store.totals([counted])).toEqual({
-      main: 8,
+      main: 7,
       test: 3,
-      partial: false,
+      uncounted: false,
       languages: COUNTED_LANGUAGES,
     });
   });
@@ -134,7 +129,7 @@ describe('LocStore', () => {
     expect(store.totals([OTHER_ID])).toEqual({
       main: 0,
       test: 0,
-      partial: false,
+      uncounted: false,
       languages: [],
     });
   });
@@ -149,9 +144,9 @@ describe('LocStore', () => {
     http.expectOne('/githost/api/loc').flush({ ...body, entries: [...body.entries, second] });
     await settle();
     expect(store.totals([param(COUNTED), OTHER_ID])).toEqual({
-      main: 16,
+      main: 14,
       test: 6,
-      partial: false,
+      uncounted: false,
       languages: COUNTED_LANGUAGES.map((l) => ({ ...l, main: l.main * 2, test: l.test * 2 })),
     });
   });

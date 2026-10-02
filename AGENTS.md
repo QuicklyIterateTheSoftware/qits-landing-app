@@ -22,10 +22,11 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-landing-app_qits-githost-service.json`  | `@qits/githost-golden-masters`  |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
-state: every repository counted (the card shows "8 lines, 3 in tests"), one not counted yet
-("Counting lines…"), one without a commit ("0 lines"), and a mix of counted and not counted
-("at least 8 lines…"). The plain and screenshot specs cover the same cases from the same golden
-masters.
+state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
+shown like a counted one), one never counted (`PENDING`, left out; "Counting lines…" when nothing
+is counted), one without a commit ("No lines yet"), and a mix of counted and never counted. The
+card shows CODE languages only; data (JSON, YAML, …) and docs (Markdown) are left out. The plain and
+screenshot specs cover the same cases from the same golden masters.
 
 - **Pacts name both sides by repository name**, never by application name, so a component's
   frontend and backend stay distinct: consumer `qits-landing-app`, provider

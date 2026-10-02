@@ -28,8 +28,8 @@ export const LANGUAGES_SHOWN = 4;
  * - Its lines of code per language, summed over its repositories, main and test lines apart,
  *   largest first: the first {@link LANGUAGES_SHOWN} by name, and the rest summed as "Other"
  *   (`LocStore`, one request for all cards). No grand total: the rows say it.
- * - While qits-githost has not counted some repositories yet, a note says so, or "Counting
- *   lines…" when nothing is counted.
+ * - A repository qits-githost counts only at an older commit (`STALE`) shows that count; one never
+ *   counted is left out. The table shows its loading spinner only while nothing at all is counted.
  */
 @Component({
   selector: 'app-project-card',
@@ -54,11 +54,6 @@ export const LANGUAGES_SHOWN = 4;
                 </ui-stat>
               </ui-spinner>
             </div>
-            @if (partial()) {
-              <span class="lines block text-[0.8125rem] text-gray-500"
-                >Still counting some repositories</span
-              >
-            }
             <ui-spinner [state]="linesState()" class="mt-2">
               <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
                 <thead class="bg-gray-200/70 text-gray-500">
@@ -134,14 +129,8 @@ export class ProjectCard {
   protected readonly linesState = computed((): LoadState => {
     const lines = this.lines();
     if (lines === 'error') return 'error';
-    if (!lines || (lines.partial && !lines.languages.length)) return 'loading';
+    if (!lines || (lines.uncounted && !lines.languages.length)) return 'loading';
     return 'loaded';
-  });
-
-  /** Some repositories are counted and some are not yet. */
-  protected readonly partial = computed(() => {
-    const lines = this.lines();
-    return !!lines && lines !== 'error' && lines.partial && lines.languages.length > 0;
   });
 
   /** The lines per language: the largest {@link LANGUAGES_SHOWN}, then the rest as "Other". */

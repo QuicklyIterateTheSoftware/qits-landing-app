@@ -1,12 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
-import { DestroyRef, inject, PLATFORM_ID } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { listLoc } from '../../api/githost';
 import { consume } from '@qits/angular';
 import { LIST_LOC, type LocEntry } from './loc.consumes';
-
-/** How long after an answer with uncounted repositories the store asks once more. */
-export const RECOUNT_AFTER_MS = 15_000;
 
 /** One language's lines, summed over some repositories. */
 export interface LanguageLines {
@@ -19,8 +16,8 @@ export interface LanguageLines {
 export interface LineTotals {
   readonly main: number;
   readonly test: number;
-  /** Some of the repositories are not counted yet: the sums are a lower bound. */
-  readonly partial: boolean;
+  /** Some of the repositories were never counted (`PENDING`): they are left out of the sums. */
+  readonly uncounted: boolean;
   /** The same sums per language, largest (main + test) first, then by name. */
   readonly languages: readonly LanguageLines[];
 }
@@ -37,10 +34,13 @@ interface LocState {
  * cards know would mean waiting for every project's repositories first, and 52 ids in a URL.
  *
  * - `load()` fetches once. The `onInit` hook calls it, in the browser only.
- * - When the answer has repositories qits-githost has not counted yet (`PENDING`; that very request
- *   queued their count), the store asks once more after {@link RECOUNT_AFTER_MS}, and not again.
- * - `totals(repositoryIds)` sums the lines of those repositories, in all and per language. A
- *   repository qits-githost does not hold, or holds without a commit (`EMPTY`), adds nothing.
+ * - A repository whose tip qits-githost has not counted yet comes back `STALE`, with the count of
+ *   an older commit: the store uses it like `COUNTED`. Rough and slightly outdated beats nothing.
+ *   A repository never counted at all (`PENDING`) adds nothing; the store does not ask again.
+ * - `totals(repositoryIds)` sums the lines of those repositories, in all and per language. Only
+ *   CODE languages count: data (JSON, YAML, XML, …) and docs (Markdown) are left out, so the
+ *   numbers are lines people wrote as code. A repository qits-githost does not hold, or holds
+ *   without a commit (`EMPTY`), adds nothing.
  *
  * The store is the only user of the generated qits-githost client, so its pact
  * (`loc.store.pact.spec.ts`) is the whole of what this app relies on from qits-githost.
@@ -49,11 +49,6 @@ export const LocStore = signalStore(
   { providedIn: 'root' },
   withState<LocState>({ status: 'idle', byRepository: {} }),
   withMethods((store) => {
-    const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    let recounted = false;
-    let recount: ReturnType<typeof setTimeout> | undefined;
-    inject(DestroyRef).onDestroy(() => clearTimeout(recount));
-
     async function fetchAll(): Promise<void> {
       patchState(store, { status: 'loading' });
       const { data, error } = await consume(listLoc(), LIST_LOC);
@@ -66,11 +61,6 @@ export const LocStore = signalStore(
         if (entry.repositoryId) byRepository[entry.repositoryId] = entry;
       }
       patchState(store, { status: 'loaded', byRepository });
-      const pending = Object.values(byRepository).some((entry) => entry.status === 'PENDING');
-      if (browser && pending && !recounted) {
-        recounted = true;
-        recount = setTimeout(() => void fetchAll(), RECOUNT_AFTER_MS);
-      }
     }
 
     return {
@@ -82,12 +72,13 @@ export const LocStore = signalStore(
         if (store.status() !== 'loaded') return undefined;
         let main = 0;
         let test = 0;
-        let partial = false;
+        let uncounted = false;
         const perLanguage = new Map<string, { main: number; test: number }>();
         for (const id of repositoryIds) {
           const entry = store.byRepository()[id];
-          if (entry?.status === 'PENDING') partial = true;
+          if (entry?.status === 'PENDING') uncounted = true;
           for (const lines of entry?.languages ?? []) {
+            if (lines.category !== 'CODE') continue;
             const name = lines.language ?? 'Unknown';
             const sum = perLanguage.get(name) ?? { main: 0, test: 0 };
             sum.main += lines.mainLines ?? 0;
@@ -102,7 +93,7 @@ export const LocStore = signalStore(
           .sort(
             (a, b) => b.main + b.test - (a.main + a.test) || a.language.localeCompare(b.language),
           );
-        return { main, test, partial, languages };
+        return { main, test, uncounted, languages };
       },
     };
   }),

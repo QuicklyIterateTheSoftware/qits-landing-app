@@ -23,6 +23,8 @@ export type BypassesResponse = {
     bypasses?: Array<BypassRecord>;
 };
 
+export type Category = 'CODE' | 'DATA' | 'DOCS';
+
 export type CommitRequest = {
     ref?: string;
     message?: string;
@@ -44,6 +46,7 @@ export type Instant = string;
 
 export type LanguageLoc = {
     language?: string;
+    category?: Category;
     mainLines?: number;
     testLines?: number;
 };
@@ -64,7 +67,7 @@ export type LocResponse = {
     languages?: Array<LanguageLoc>;
 };
 
-export type LocStatus = 'COUNTED' | 'PENDING' | 'EMPTY';
+export type LocStatus = 'COUNTED' | 'STALE' | 'PENDING' | 'EMPTY';
 
 export type MergeRequest = {
     target?: string;

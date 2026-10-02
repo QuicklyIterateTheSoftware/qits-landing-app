@@ -9,7 +9,7 @@ import type { DeleteGithostApiRepositoriesByRepoIdBranchesByNameData, GetGithost
 /**
  * Lines of code of every repository's default branch
  *
- * One row per repository this host holds, or per named repositoryId it holds. COUNTED rows carry the numbers; PENDING rows are queued for counting by this call; EMPTY rows have no commit yet.
+ * One row per repository this host holds, or per named repositoryId it holds. COUNTED rows carry the default branch's numbers; STALE rows carry the newest stored numbers of an older commit while the tip is counted; PENDING rows were never counted; EMPTY rows have no commit yet. This call queues every tip that is not counted.
  */
 export const listLocRequest = <ThrowOnError extends boolean = false>(options?: Options<ListLocData, ThrowOnError>): HttpRequest<ListLocResponse> => (options?.client ?? client).requestOptions<ListLocResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -151,7 +151,7 @@ export const getGithostApiRepositoriesByRepoIdTreeRequest = <ThrowOnError extend
 /**
  * Lines of code of every repository's default branch
  *
- * One row per repository this host holds, or per named repositoryId it holds. COUNTED rows carry the numbers; PENDING rows are queued for counting by this call; EMPTY rows have no commit yet.
+ * One row per repository this host holds, or per named repositoryId it holds. COUNTED rows carry the default branch's numbers; STALE rows carry the newest stored numbers of an older commit while the tip is counted; PENDING rows were never counted; EMPTY rows have no commit yet. This call queues every tip that is not counted.
  */
 export const listLocResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListLocData, ThrowOnError> | undefined) => httpResource<ListLocResponse>(() => {
     const opts = options ? options() : undefined;

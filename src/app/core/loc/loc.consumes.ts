@@ -7,11 +7,15 @@ import type { Consumed } from '@qits/angular';
  * `consumes`, so the pact binds exactly these fields. To read another field, add it here.
  */
 
-/** `load()`: per repository, whether it is counted, and its main and test lines per language. */
+/**
+ * `load()`: per repository, whether it is counted, and its main and test lines per language, with
+ * the language's category (only CODE is shown).
+ */
 export const LIST_LOC = [
   'entries[].repositoryId',
   'entries[].status',
   'entries[].languages[].language',
+  'entries[].languages[].category',
   'entries[].languages[].mainLines',
   'entries[].languages[].testLines',
 ] as const;

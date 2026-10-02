@@ -21,7 +21,7 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * Lines of code of every repository's default branch
  *
- * One row per repository this host holds, or per named repositoryId it holds. COUNTED rows carry the numbers; PENDING rows are queued for counting by this call; EMPTY rows have no commit yet.
+ * One row per repository this host holds, or per named repositoryId it holds. COUNTED rows carry the default branch's numbers; STALE rows carry the newest stored numbers of an older commit while the tip is counted; PENDING rows were never counted; EMPTY rows have no commit yet. This call queues every tip that is not counted.
  */
 export const listLoc = <ThrowOnError extends boolean = false>(options?: Options<ListLocData, ThrowOnError>): RequestResult<ListLocResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListLocResponses, unknown, ThrowOnError>({ url: '/githost/api/loc', ...options });
 
