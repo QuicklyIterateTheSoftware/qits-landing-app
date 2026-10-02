@@ -17,8 +17,7 @@ import { Spinner, type LoadState } from '../ui/components/spinner/spinner';
   template: `
     <div class="mx-auto max-w-[60rem] px-6 pt-16 pb-12">
       <header>
-        <p class="mt-0 mb-3 text-[0.875rem] tracking-[0.35em] text-gray-500 uppercase">qits</p>
-        <h1 class="m-0 text-[clamp(2.25rem,6vw,3.5rem)] leading-[1.1] font-bold">Projects</h1>
+        <h1 class="m-0 text-3xl leading-[1.1] font-bold">Projects</h1>
       </header>
 
       <ui-spinner [state]="state()" class="mt-12 min-h-48">
