@@ -11,7 +11,8 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LocStore, type LanguageLines } from '../../../core/loc/loc.store';
-import { ProjectsStore, type Project } from '../../../core/projects/projects.store';
+import type { Project } from '../../../core/projects/projects.store';
+import { RepositoriesStore } from '../../../core/repositories/repositories.store';
 import { WorkStore } from '../../../core/work/work.store';
 import { CardBody, CardExpandable, CardHeader } from '../../../ui/components/card/base-card';
 import { CardSilent } from '../../../ui/components/card/card-silent';
@@ -135,13 +136,13 @@ export const LANGUAGES_SHOWN = 4;
 export class ProjectCard {
   readonly project = input.required<Project>();
 
-  private readonly store = inject(ProjectsStore);
+  private readonly repositoriesStore = inject(RepositoriesStore);
   private readonly workStore = inject(WorkStore);
   private readonly loc = inject(LocStore);
 
   protected readonly repositories = computed(() => {
     const projectId = this.project().id;
-    return projectId ? this.store.repositories()[projectId] : undefined;
+    return projectId ? this.repositoriesStore.byProject()[projectId] : undefined;
   });
 
   protected readonly work = computed(() => {
@@ -225,7 +226,7 @@ export class ProjectCard {
       if (!browser || !projectId) return;
       untracked(() => {
         void this.workStore.load(projectId);
-        void this.store.loadRepositories(projectId);
+        void this.repositoriesStore.load(projectId);
       });
     });
   }

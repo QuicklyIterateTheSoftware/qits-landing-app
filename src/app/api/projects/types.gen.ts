@@ -1289,6 +1289,7 @@ export type RepositoryDto = {
     component?: string;
     projectId?: string;
     lastBackup?: LastBackupDto;
+    cloneUrl?: string;
 };
 
 export type Response = {

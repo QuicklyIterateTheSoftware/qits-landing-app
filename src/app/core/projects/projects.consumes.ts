@@ -1,7 +1,6 @@
 import type {
   ListProjectReleaseRequestsResponses,
   GetProjectResponses,
-  ListProjectRepositoriesResponses,
   ListProjectsResponses,
 } from '../../api/projects';
 import { NOTHING, type Consumed } from '@qits/angular';
@@ -21,12 +20,6 @@ export const LIST_PROJECTS = [
 
 /** `refresh(id)`: the fetched project joins the list, so it needs the same fields. */
 export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as const;
-
-/**
- * `loadRepositories(projectId)`: the card counts the entries, and sums their lines of code by
- * repository id (`LocStore`).
- */
-export const LIST_PROJECT_REPOSITORIES = ['entries[].repository.id'] as const;
 
 /**
  * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request with its
@@ -83,8 +76,3 @@ export type ListedProject = NonNullable<
 export type FetchedProject = NonNullable<
   Consumed<GetProjectResponses[200], typeof GET_PROJECT>['project']
 >;
-
-/** One repository entry, cut to what the store reads: its repository's id. */
-export type RepositoryEntry = NonNullable<
-  Consumed<ListProjectRepositoriesResponses[200], typeof LIST_PROJECT_REPOSITORIES>['entries']
->[number];

@@ -11,6 +11,7 @@ import { ProjectEvents } from './patterns/events/project-events/project-events';
 import { ProjectObservability } from './patterns/observability/project-observability/project-observability';
 import { ProjectEditor } from './patterns/projects/project-editor/project-editor';
 import { RootRedirect } from './root-redirect';
+import { ProjectRepositories } from './patterns/repositories/project-repositories/project-repositories';
 
 /**
  * The root hands on to `projects` (`RootRedirect`, see there why not `redirectTo`), the project
@@ -47,6 +48,7 @@ export const routes: Routes = [
       // After `work/archive`, so that one keeps matching; item ids are qualified (`qits-112`).
       { path: 'projects/:slug/work/:id', component: WorkItem },
       { path: 'projects/:slug/editor', component: ProjectEditor },
+      { path: 'projects/:slug/repositories', component: ProjectRepositories },
       { path: 'projects/:slug/observability', component: ProjectObservability },
       { path: 'projects/:slug/events', component: ProjectEvents },
       { path: 'projects/:slug/setup', component: ProjectSetup },

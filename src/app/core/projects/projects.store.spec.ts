@@ -114,35 +114,6 @@ describe('ProjectsStore', () => {
     expect(store.ids()).toEqual([OTHER_ID]);
   });
 
-  it('loads a project’s repositories once', async () => {
-    const store = await loadedStore();
-    const id = project().id;
-    const repositories = goldenMaster('a project with 3 repositories', 'listProjectRepositories');
-    const done = store.loadRepositories(id);
-    expect(store.repositories()[id]?.status).toBe('loading');
-    await settle();
-    http.expectOne(`/projects/api/projects/${id}/repositories`).flush(repositories);
-    await done;
-    expect(store.repositories()[id]).toEqual({ status: 'loaded', entries: repositories.entries });
-    await store.loadRepositories(id);
-    http.expectNone(`/projects/api/projects/${id}/repositories`);
-  });
-
-  it('reports failed repositories, and fetches them again on the next ask', async () => {
-    const store = await loadedStore();
-    const id = project().id;
-    const done = store.loadRepositories(id);
-    await settle();
-    http
-      .expectOne(`/projects/api/projects/${id}/repositories`)
-      .flush(null, { status: 500, statusText: 'Server Error' });
-    await done;
-    expect(store.repositories()[id]?.status).toBe('error');
-    void store.loadRepositories(id);
-    await settle();
-    http.expectOne(`/projects/api/projects/${id}/repositories`);
-  });
-
   it('keeps a project’s pending release requests, fetched once', async () => {
     const store = await loadedStore();
     const id = project().id;

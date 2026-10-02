@@ -16,6 +16,9 @@ export const INTERACTIONS = {
   'open-project': 'Opening a project fetches its detail',
   /** `project-card.ts`: each card counts the project's components from its repositories. */
   'show-project-repositories': 'A project card shows how many components the project has',
+  /** `project-repositories.ts`: the Repositories page lists the open project's repositories. */
+  'show-project-repositories-tree':
+    'The Repositories page shows the project’s repositories in the wrapper’s directory tree',
   /** `project-card.ts`: each card counts the project's work from its planning tree. */
   'show-project-work': 'A project card shows how much work the project has',
   /**
