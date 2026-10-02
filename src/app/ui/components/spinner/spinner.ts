@@ -39,7 +39,7 @@ export type LoadState = 'loading' | 'error' | 'loaded';
           viewBox="0 0 24 24"
           role="img"
           [attr.aria-label]="errorLabel()"
-          class="block size-12 max-h-full max-w-full"
+          class="block size-8 max-h-full max-w-full"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -56,7 +56,7 @@ export type LoadState = 'loading' | 'error' | 'loaded';
           viewBox="0 0 1000 1000"
           role="img"
           [attr.aria-label]="label()"
-          class="block size-12 max-h-full max-w-full"
+          class="block size-8 max-h-full max-w-full"
         >
           @for (ring of rings; track ring.r) {
             <circle
