@@ -27,7 +27,7 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
     <p class="mt-1 mb-0 text-charcoal-brown-900">
       @if (link(); as link) {
         <a
-          class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
+          class="text-inherit no-underline after:absolute after:inset-0 after:rounded-md after:transition-shadow after:duration-150 hover:after:shadow-md hover:underline"
           [routerLink]="link"
           >{{ title() }}</a
         >

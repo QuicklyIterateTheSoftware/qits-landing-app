@@ -16,7 +16,7 @@ import { RouterLink } from '@angular/router';
     <span class="min-w-0 flex-1 truncate text-charcoal-brown-900">
       @if (link(); as link) {
         <a
-          class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
+          class="text-inherit no-underline after:absolute after:inset-0 after:rounded-sm after:transition-shadow after:duration-150 hover:after:shadow-md hover:underline"
           [routerLink]="link"
           >{{ title() }}</a
         >

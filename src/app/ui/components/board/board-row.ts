@@ -5,7 +5,8 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
  * A row inside a board lane, exactly across the status columns (not the gutters, no inset): its
  * children (cards) sit in their own columns, `[row-id]` is written up its left edge, vertically
  * centred, and `[row-footer]` (a title, say) runs centred along its bottom. A link in the footer
- * may stretch over the row: the row is the positioning box, and cards sit above it.
+ * stretches over the row and casts a shadow while hovered: the row is the positioning box, and cards
+ * sit above it, so hovering a card shadows the card, not the row.
  */
 @Component({
   selector: 'ui-board-row',
@@ -24,7 +25,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </span>
     <ng-content />
     <div
-      class="col-span-full flex items-baseline justify-center gap-2 px-2 pb-1 text-xs text-charcoal-brown-800"
+      class="col-span-full flex items-baseline justify-center gap-2 px-2 pb-1 text-xs text-charcoal-brown-800 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[row-footer]" />
     </div>
