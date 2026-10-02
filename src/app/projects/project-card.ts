@@ -54,46 +54,31 @@ export const LANGUAGES_SHOWN = 4;
               }
             </ui-stat>
             @if (lines(); as lines) {
-              @if (lines === 'error') {
-                <!-- The table's frame, four rows tall, with the message in the middle. -->
-                <table class="languages mt-2 border-collapse text-[0.8125rem] tabular-nums">
-                  <thead class="bg-gray-200/70 text-gray-500">
-                    <tr>
-                      <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
-                      <th scope="col" class="px-2 py-px text-right font-normal">Main</th>
-                      <th scope="col" class="py-px pr-2 pl-4 text-right font-normal">Tests</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              @if (lines !== 'error' && lines.partial && languageRows().length) {
+                <span class="lines block text-[0.8125rem] text-gray-500"
+                  >Still counting some repositories</span
+                >
+              }
+              <table class="languages mt-2 border-collapse text-[0.8125rem] tabular-nums">
+                <thead class="bg-gray-200/70 text-gray-500">
+                  <tr>
+                    <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
+                    <th scope="col" class="px-2 py-px text-right font-normal">Main</th>
+                    <th scope="col" class="py-px pr-2 pl-4 text-right font-normal">Tests</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (linesMessage(); as message) {
+                    <!-- No rows to show: one cell four rows tall, the message in its middle. -->
                     <tr>
                       <td
                         colspan="3"
                         class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-gray-500"
                       >
-                        Lines unavailable
+                        {{ message }}
                       </td>
                     </tr>
-                  </tbody>
-                </table>
-              } @else if (lines.partial && lines.main === 0 && lines.test === 0) {
-                <span class="lines block text-[0.8125rem] text-gray-500">Counting lines…</span>
-              } @else if (lines.partial) {
-                <span class="lines block text-[0.8125rem] text-gray-500"
-                  >Still counting some repositories</span
-                >
-              } @else if (!lines.languages.length) {
-                <span class="lines block text-[0.8125rem] text-gray-500">No lines yet</span>
-              }
-              @if (languageRows().length) {
-                <table class="languages mt-2 border-collapse text-[0.8125rem] tabular-nums">
-                  <thead class="bg-gray-200/70 text-gray-500">
-                    <tr>
-                      <th scope="col" class="py-px pr-6 pl-2 text-left font-normal">Language</th>
-                      <th scope="col" class="px-2 py-px text-right font-normal">Main</th>
-                      <th scope="col" class="py-px pr-2 pl-4 text-right font-normal">Tests</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                  } @else {
                     @for (row of languageRows(); track row.language) {
                       <tr class="even:bg-gray-100">
                         <th scope="row" class="py-px pr-6 pl-2 text-left font-normal">
@@ -103,9 +88,9 @@ export const LANGUAGES_SHOWN = 4;
                         <td class="py-px pr-2 pl-4 text-right">{{ format(row.test) }}</td>
                       </tr>
                     }
-                  </tbody>
-                </table>
-              }
+                  }
+                </tbody>
+              </table>
             }
           </div>
         </card-body>
@@ -136,6 +121,14 @@ export class ProjectCard {
     if (repositories?.status !== 'loaded') return undefined;
     const ids = repositories.entries.flatMap((entry) => entry.repository?.id ?? []);
     return this.loc.totals(ids);
+  });
+
+  /** What the table says instead of rows: unavailable, still counting, or nothing to count. */
+  protected readonly linesMessage = computed((): string | undefined => {
+    const lines = this.lines();
+    if (lines === 'error') return 'Lines unavailable';
+    if (!lines || lines.languages.length) return undefined;
+    return lines.partial ? 'Counting lines…' : 'No lines yet';
   });
 
   /** The lines per language: the largest {@link LANGUAGES_SHOWN}, then the rest as "Other". */
