@@ -40,18 +40,19 @@ export const LANGUAGES_SHOWN = 4;
   host: { class: 'block' },
   template: `
     <!--
-      The whole card opens the project: the title's link stretches over the card (after:inset-0),
-      and the expand button sits above it (z-10), so no button is nested in a link.
+      The whole card opens the project: the title's link stretches over the card (after:inset-0,
+      above the positioned tiles and table with after:z-[1]), and the expand button sits above it
+      (z-10), so no button is nested in a link. The hover ring is on the card itself.
     -->
     <div
-      class="relative rounded-xl has-[a.card-link:focus-visible]:ring-1 has-[a.card-link:focus-visible]:ring-gray-400 has-[a.card-link:hover]:ring-1 has-[a.card-link:hover]:ring-gray-400"
+      class="relative rounded-xl has-[a.card-link:focus-visible]:ring-1 has-[a.card-link:focus-visible]:ring-gray-400 hover:ring-1 hover:ring-gray-400"
     >
       <ui-card-silent>
         <card-header
           class="bg-charcoal-brown-100 text-center text-[1.35rem] text-charcoal-brown-900"
         >
           <a
-            class="card-link text-inherit no-underline outline-none after:absolute after:inset-0 after:rounded-xl"
+            class="card-link text-inherit no-underline outline-none after:absolute after:inset-0 after:z-[1] after:rounded-xl"
             [routerLink]="['/projects', project().slug]"
             >{{ project().name }}</a
           >
