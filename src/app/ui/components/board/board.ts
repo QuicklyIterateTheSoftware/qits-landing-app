@@ -18,8 +18,9 @@ export interface BoardColumnSpec {
 }
 
 /**
- * A board: flush columns side by side, each in its own colour, with no gaps, and with `gutter` a
- * narrow neutral column before them (for lane labels). The colours are a background layer; the
+ * A board: flush columns side by side, each in its own colour, with no gaps, and with `gutter` two
+ * equal narrow columns around them (the left one for lane labels), with no background of their
+ * own, so the status columns sit centred. The colours are a background layer; the
  * projected content (`ui-board-lane`, `ui-board-row`, `ui-board-card`) is laid out on a grid of
  * the same columns above it, each child placing itself.
  *
@@ -37,7 +38,7 @@ export interface BoardColumnSpec {
   template: `
     <div class="grid" [style.grid-template-columns]="template()">
       @if (gutter()) {
-        <div class="bg-charcoal-brown-200"></div>
+        <div></div>
       }
       @for (column of columns(); track column.label) {
         <div
@@ -48,6 +49,9 @@ export interface BoardColumnSpec {
           <span class="text-xs font-normal opacity-80">{{ column.count ?? '' }}</span>
         </div>
       }
+      @if (gutter()) {
+        <div></div>
+      }
     </div>
     <div class="relative">
       <div
@@ -56,10 +60,13 @@ export interface BoardColumnSpec {
         [style.grid-template-columns]="template()"
       >
         @if (gutter()) {
-          <div class="bg-charcoal-brown-100"></div>
+          <div></div>
         }
         @for (column of columns(); track column.label) {
           <div [class]="column.body"></div>
+        }
+        @if (gutter()) {
+          <div></div>
         }
       </div>
       <div
@@ -76,8 +83,10 @@ export class Board implements BoardContext {
   /** A narrow neutral column before the status columns. */
   readonly gutter = input(false, { transform: booleanAttribute });
 
-  protected readonly template = computed(
-    () => `${this.gutter() ? '1.75rem ' : ''}repeat(${this.columns().length}, minmax(0, 1fr))`,
+  protected readonly template = computed(() =>
+    this.gutter()
+      ? `1.75rem repeat(${this.columns().length}, minmax(0, 1fr)) 1.75rem`
+      : `repeat(${this.columns().length}, minmax(0, 1fr))`,
   );
 
   readonly onBoard = true;

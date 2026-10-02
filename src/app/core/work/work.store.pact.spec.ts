@@ -81,6 +81,16 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       expect(store.byProject()[projectId]?.status).toBe('loaded');
     }));
 
+  it('show-project-work-board: the Work page lays out work in every status', () =>
+    given('show-project-work-board', 'a project with work in every status').executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const projectId = projectOf('a project with work in every status');
+        await store.load(projectId);
+        expect(store.byProject()[projectId]?.status).toBe('loaded');
+      },
+    ));
+
   it('show-project-work: a project with no work counts zero', () =>
     given('show-project-work', 'a project with no work').executeTest(async (server) => {
       const store = storeAt(server.url);

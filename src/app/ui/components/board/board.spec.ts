@@ -60,7 +60,7 @@ describe('Board', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('draws the gutter, then one heading and one colour stripe per column', () => {
+  it('draws a gutter on each side, one heading and one colour stripe per column', () => {
     const element = render();
     const headings = [...element.querySelectorAll('ui-board > div:first-child > div')];
     expect(headings.map((h) => h.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
@@ -68,13 +68,15 @@ describe('Board', () => {
       'One 1',
       'Two',
       'Three',
+      '',
     ]);
     const stripes = [...element.querySelectorAll('ui-board [aria-hidden="true"] > div')];
     expect(stripes.map((s) => s.className)).toEqual([
-      'bg-charcoal-brown-100',
+      '',
       'bg-ocean-deep-300',
       'bg-sunflower-gold-300',
       'bg-mint-leaf-300',
+      '',
     ]);
   });
 
@@ -90,6 +92,11 @@ describe('Board', () => {
     expect(column('#in-lane')).toBe('4 / span 1');
     // Status column 0 on the board, after the gutter.
     expect(column('#on-board')).toBe('2 / span 1');
+  });
+
+  it('puts the status columns between two equal gutters', () => {
+    const grid = render().querySelector('ui-board > div:first-child') as HTMLElement;
+    expect(grid.style.gridTemplateColumns).toBe('1.75rem repeat(3, minmax(0, 1fr)) 1.75rem');
   });
 
   it('runs the lane’s gutter cell alongside its rows', () => {

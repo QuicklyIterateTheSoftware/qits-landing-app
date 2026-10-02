@@ -12,8 +12,8 @@ import { Tag } from '../../../ui/components/tag/tag';
  *
  * - an epic is a lane across the whole board (`ui-board-lane`): its title in the bar at the top,
  *   its campaigns as tags at the top right, its id written up the gutter;
- * - a feature is a row of that lane across the status columns (`ui-board-row`), its id and title
- *   along the bottom;
+ * - a feature is a row of that lane across the status columns (`ui-board-row`), its id up the
+ *   row's left edge and its title along the bottom;
  * - anything else (a task, a ticket) is a card (`ui-board-card`) in its column.
  *
  * Every one links to the item's page, `<base>/<qualified id>`. `display: contents`, so the lane,
@@ -50,9 +50,7 @@ import { Tag } from '../../../ui/components/tag/tag';
           @for (child of n.children; track child.entry.id) {
             <app-work-board-node [node]="child" [base]="base()" />
           }
-          <span row-footer class="font-mono text-charcoal-brown-600">{{
-            n.entry.qualifiedId
-          }}</span>
+          <span row-id class="font-mono">{{ n.entry.qualifiedId }}</span>
           <a
             row-footer
             class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
