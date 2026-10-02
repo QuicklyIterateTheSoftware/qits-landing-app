@@ -44,7 +44,7 @@ export const LANGUAGES_SHOWN = 4;
       [routerLink]="['/projects', project().slug]"
     >
       <ui-card-silent>
-        <card-header class="bg-charcoal-brown-100 text-charcoal-brown-900">{{
+        <card-header class="bg-charcoal-brown-100 text-center text-charcoal-brown-900">{{
           project().name
         }}</card-header>
         <card-body flush>
