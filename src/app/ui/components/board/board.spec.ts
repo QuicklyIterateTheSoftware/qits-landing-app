@@ -116,10 +116,17 @@ describe('Board', () => {
     expect(grid.style.gridTemplateColumns).toBe('1.75rem repeat(3, minmax(0, 1fr)) 1.75rem');
   });
 
-  it('runs the lane’s gutter cell alongside its rows', () => {
-    const gutter = render().querySelector('ui-board-lane > div:nth-child(2)') as HTMLElement;
-    expect(gutter.classList).toContain('row-start-2');
-    expect(gutter.textContent?.trim()).toBe('L-1');
+  it('runs the title bar on down the lane’s left side, as one ┌ without overlap', () => {
+    const lane = render().querySelector('ui-board-lane') as HTMLElement;
+    const strip = lane.firstElementChild as HTMLElement;
+    const bar = strip.nextElementSibling as HTMLElement;
+    expect(strip.classList).toContain('inset-y-0');
+    expect(strip.classList).toContain('w-6');
+    expect(strip.textContent?.trim()).toBe('L-1');
+    // The bar starts where the strip ends, in the same colour.
+    expect(bar.classList).toContain('ml-6');
+    expect(bar.classList).toContain('bg-charcoal-brown-800/40');
+    expect(strip.classList).toContain('bg-charcoal-brown-800/40');
   });
 
   it('makes a card with a link a link', () => {
