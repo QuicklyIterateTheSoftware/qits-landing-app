@@ -16,7 +16,7 @@ const COLUMNS: readonly BoardColumnSpec[] = [
   imports: [Board, BoardLane, BoardRow, BoardCard],
   template: `
     <ui-board [columns]="columns" gutter>
-      <ui-board-lane [rows]="2">
+      <ui-board-lane>
         <span lane-header>Lane</span>
         <span lane-gutter>L-1</span>
         <ui-board-row>
@@ -50,6 +50,23 @@ class Host {
   `,
 })
 class OffBoard {}
+
+@Component({
+  imports: [Board, BoardLane, BoardRow],
+  template: `
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane collapsible [collapsed]="collapsed">
+        <span lane-header>Lane</span>
+        <span lane-summary>3 / 3 ✅</span>
+        <ui-board-row><span row-footer>Row</span></ui-board-row>
+      </ui-board-lane>
+    </ui-board>
+  `,
+})
+class Collapsible {
+  readonly columns = COLUMNS;
+  collapsed = false;
+}
 
 describe('Board', () => {
   beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
@@ -101,7 +118,7 @@ describe('Board', () => {
 
   it('runs the lane’s gutter cell alongside its rows', () => {
     const gutter = render().querySelector('ui-board-lane > div:nth-child(2)') as HTMLElement;
-    expect(gutter.style.gridRow).toBe('2 / span 2');
+    expect(gutter.classList).toContain('row-start-2');
     expect(gutter.textContent?.trim()).toBe('L-1');
   });
 
@@ -119,5 +136,44 @@ describe('Board', () => {
     ] as HTMLElement[];
     expect(lanes.map((lane) => lane.style.gridColumn)).toEqual(['', '']);
     expect(lanes.map((lane) => lane.classList.contains('flex'))).toEqual([true, true]);
+  });
+
+  describe('a collapsible lane', () => {
+    function lane(collapsed: boolean) {
+      const fixture = TestBed.createComponent(Collapsible);
+      fixture.componentInstance.collapsed = collapsed;
+      fixture.detectChanges();
+      const element = fixture.nativeElement as HTMLElement;
+      const rows = () => element.querySelector('ui-board-row')!.parentElement as HTMLElement;
+      const summary = () => element.querySelector('[lane-summary]')!.parentElement as HTMLElement;
+      const button = () => element.querySelector('ui-board-lane button') as HTMLButtonElement;
+      return { fixture, rows, summary, button };
+    }
+
+    it('starts collapsed when told: the summary shows, the rows do not', () => {
+      const { rows, summary, button } = lane(true);
+      expect(rows().classList).toContain('hidden');
+      expect(summary().classList).toContain('flex');
+      expect(button().getAttribute('aria-expanded')).toBe('false');
+      expect(button().getAttribute('aria-controls')).toBe(rows().id);
+    });
+
+    it('starts expanded otherwise', () => {
+      const { rows, summary, button } = lane(false);
+      expect(rows().classList).toContain('grid');
+      expect(summary().classList).toContain('hidden');
+      expect(button().getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('toggles on a click, both ways', () => {
+      const { fixture, rows, summary, button } = lane(true);
+      button().click();
+      fixture.detectChanges();
+      expect(rows().classList).toContain('grid');
+      expect(summary().classList).toContain('hidden');
+      button().click();
+      fixture.detectChanges();
+      expect(rows().classList).toContain('hidden');
+    });
   });
 });

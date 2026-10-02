@@ -70,7 +70,7 @@ export interface BoardColumnSpec {
         }
       </div>
       <div
-        class="relative grid min-h-24 grid-flow-row-dense gap-y-4 py-2"
+        class="relative grid min-h-24 grid-flow-row-dense gap-y-8 py-2"
         [style.grid-template-columns]="template()"
       >
         <ng-content />

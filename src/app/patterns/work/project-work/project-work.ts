@@ -44,7 +44,7 @@ import { WorkGroupNode } from '../work-group-node/work-group-node';
 
         <section aria-labelledby="work-backlog" class="mt-8">
           <h2 id="work-backlog" class="mt-0 mb-3 text-lg font-semibold">Backlog</h2>
-          <div class="flex-col gap-4" [class]="backlog().length ? 'flex' : 'hidden'">
+          <div class="flex-col gap-8" [class]="backlog().length ? 'flex' : 'hidden'">
             @for (node of backlog(); track node.entry.id) {
               <app-work-group-node [node]="node" [base]="workPath()" />
             }
