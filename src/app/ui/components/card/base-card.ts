@@ -27,8 +27,9 @@ export class CardBody {
 let nextExpandableId = 0;
 
 /**
- * More content, hidden until asked for. Collapsed, it shows only a round button with a caret,
- * centred; the button opens the content downwards with a short animation, and closes it again.
+ * More content, hidden until asked for. Collapsed, the card ends right below its body; a round
+ * button with a caret straddles the card's bottom edge, centred and half outside. The button opens
+ * the content downwards with a short animation, and closes it again.
  *
  * Both states are always rendered and switched by class, never by `@if`, so a server-rendered
  * page hydrates without leftovers. The content's height animates through `grid-template-rows`
@@ -47,30 +48,29 @@ let nextExpandableId = 0;
     >
       <div class="min-h-0 overflow-hidden"><ng-content /></div>
     </div>
-    <div class="flex justify-center py-1">
-      <button
-        type="button"
-        class="relative z-10 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
-        [attr.aria-expanded]="open()"
-        [attr.aria-controls]="contentId"
-        [attr.aria-label]="open() ? 'Show less' : 'Show more'"
-        (click)="toggle($event)"
+    <!-- No room of its own: the button straddles the card's bottom edge, half outside. -->
+    <button
+      type="button"
+      class="absolute bottom-0 left-1/2 z-10 flex size-9 -translate-x-1/2 translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
+      [attr.aria-expanded]="open()"
+      [attr.aria-controls]="contentId"
+      [attr.aria-label]="open() ? 'Show less' : 'Show more'"
+      (click)="toggle($event)"
+    >
+      <svg
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        class="size-5 transition-transform duration-200"
+        [class.rotate-180]="open()"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       >
-        <svg
-          viewBox="0 0 16 16"
-          aria-hidden="true"
-          class="size-3.5 transition-transform duration-200"
-          [class.rotate-180]="open()"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M4 6l4 4 4-4" />
-        </svg>
-      </button>
-    </div>
+        <path d="M4 6l4 4 4-4" />
+      </svg>
+    </button>
   `,
 })
 export class CardExpandable {
@@ -103,14 +103,17 @@ export class CardExpandable {
 @Component({
   selector: 'ui-base-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    class:
-      'block overflow-hidden rounded-xl border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))]',
-  },
+  // The host is the positioned box; the frame inside it clips to the rounded corners. An
+  // expandable's button is positioned against the host, so it can sit half outside the frame.
+  host: { class: 'relative block' },
   template: `
-    <ng-content select="card-header" />
-    <ng-content select="card-body" />
-    <ng-content select="card-expandable" />
+    <div
+      class="overflow-hidden rounded-xl border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))]"
+    >
+      <ng-content select="card-header" />
+      <ng-content select="card-body" />
+      <ng-content select="card-expandable" />
+    </div>
   `,
 })
 export class BaseCard {}

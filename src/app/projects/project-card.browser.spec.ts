@@ -66,6 +66,8 @@ describe('ProjectCard (screenshots)', () => {
     const fixture = TestBed.createComponent(ProjectCard);
     fixture.componentRef.setInput('project', project);
     (fixture.nativeElement as HTMLElement).style.width = '320px';
+    // Room below the card for the expand button, which sits half outside it.
+    (fixture.nativeElement as HTMLElement).style.paddingBottom = '1.25rem';
     fixture.detectChanges();
     await settle();
     // In the browser the store loads the project list on its own; answer it as recorded.
