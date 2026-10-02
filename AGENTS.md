@@ -94,14 +94,15 @@ step image that has Chromium, so a changed pixel fails the release request.
 - **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
   system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is
   800x600 (`angular.json`, target `test-browser`).
+- **The renderer** is the image `qits/build-images/node-browser-base`: Node 24, Playwright's Chromium
+  and a pinned font stack. CI's release check runs on it, and the workspace image is built FROM it,
+  so both render the same pixels. `scripts/check-renderer.mjs` runs first and refuses a machine
+  without `/etc/qits-renderer-provenance` (a workstation), a renderer that differs from
+  `src/testing/browser/renderer.txt` (the one the references were made with), and a `playwright`
+  package that is not the image's version. `playwright` is pinned exactly to that version.
 - **References** are in `__screenshots__/` beside the spec, named `<name>-chromium-linux.png`, and
-  are committed. They are only valid when made in the CI step image: a reference made on another
-  machine may differ by a few pixels. A mismatch fails the run and writes the actual image and the
-  diff to `.vitest-attachments/` (ignored). A missing reference is written and fails the run; with
-  `CI` set it only fails. To accept a change, regenerate the references in the step image with
-  `UPDATE_SNAPSHOT=all npm run test:browser` (Vitest reads it from the environment; the Angular
-  builder does not pass `--update` through) and commit them with the change.
-- **The browser**: Playwright's own Chromium by default, from `PLAYWRIGHT_BROWSERS_PATH` (default
-  `~/.cache/ms-playwright`; `npx playwright install chromium` fills it). `CHROME_BIN` names an exact
-  Chromium executable instead, which is how a step image with its own Chromium is used. Nothing is
-  downloaded while the tests run.
+  are committed. CI only compares (`CI=true`): a mismatch or a missing reference fails, and nothing
+  is written. A mismatch writes the actual image and the diff to `.vitest-attachments/` (ignored).
+- **References are made by the platform, never by hand.** A qits-maintenance task, which an agent
+  triggers for its release request, regenerates them (with `renderer.txt`) in the renderer image and
+  joins the commit to that release request. Do not commit reference screenshots made anywhere else.
