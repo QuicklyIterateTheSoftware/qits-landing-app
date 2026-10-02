@@ -8,57 +8,68 @@ interface Ring {
 }
 
 /**
- * The loading indicator: five rings, each with an arc turning at its own speed.
+ * Shows that what it wraps is still loading: while `loading` is true, the spinner icon sits
+ * centred over the content, on a 30% white veil, and the content is marked busy.
  *
  * ```html
- * <ui-spinner class="size-8 text-gray-500" />
+ * <ui-spinner [loading]="count() === undefined">
+ *   <ui-stat label="Components">{{ count() ?? '–' }}</ui-stat>
+ * </ui-spinner>
  * ```
  *
- * Size and colour come from the host's classes (the rings draw in `currentColor`). It is an image
- * named "Loading" (`role="img"`, `aria-label`), the alt text of an `<img>`. Drawn from
- * `spinner-multiple-2.svg`, inline rather than as an `<img>` so that it takes the text colour, and
- * so that a screenshot test can stop its animation (the browser test setup pauses every SVG).
+ * The content keeps its size, so nothing moves when the answer arrives. The icon is drawn from
+ * `spinner-multiple-2.svg` (five rings turning at their own speeds), inline rather than as an
+ * `<img>` so that it takes the text colour and a screenshot test can stop it (the browser test
+ * setup pauses every SVG). It is an image named "Loading", the alt text of an `<img>`.
  */
 @Component({
   selector: 'ui-spinner',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'inline-block' },
+  host: { class: 'relative block', '[attr.aria-busy]': 'loading()' },
   template: `
-    <svg viewBox="0 0 1000 1000" role="img" [attr.aria-label]="label()" class="block size-full">
-      @for (ring of rings; track ring.r) {
-        <circle
-          cx="500"
-          cy="500"
-          [attr.r]="ring.r"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="5"
-        />
-        <circle
-          cx="500"
-          cy="500"
-          [attr.r]="ring.r"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="20"
-          stroke-linecap="square"
-          [attr.stroke-dasharray]="ring.dash"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from="0 500 500"
-            to="-360 500 500"
-            [attr.dur]="ring.seconds + 's'"
-            repeatCount="indefinite"
-          />
-        </circle>
-      }
-    </svg>
+    <ng-content />
+    @if (loading()) {
+      <div class="absolute inset-0 flex items-center justify-center bg-white/30 text-gray-500">
+        <svg viewBox="0 0 1000 1000" role="img" [attr.aria-label]="label()" class="block size-8">
+          @for (ring of rings; track ring.r) {
+            <circle
+              cx="500"
+              cy="500"
+              [attr.r]="ring.r"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="5"
+            />
+            <circle
+              cx="500"
+              cy="500"
+              [attr.r]="ring.r"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="20"
+              stroke-linecap="square"
+              [attr.stroke-dasharray]="ring.dash"
+            >
+              <animateTransform
+                attributeName="transform"
+                type="rotate"
+                from="0 500 500"
+                to="-360 500 500"
+                [attr.dur]="ring.seconds + 's'"
+                repeatCount="indefinite"
+              />
+            </circle>
+          }
+        </svg>
+      </div>
+    }
   `,
 })
 export class Spinner {
-  /** What the image says to assistive technology. */
+  /** Whether the content is still loading. */
+  readonly loading = input(true);
+
+  /** What the icon says to assistive technology. */
   readonly label = input('Loading');
 
   protected readonly rings: readonly Ring[] = [

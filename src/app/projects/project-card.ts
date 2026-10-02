@@ -48,15 +48,15 @@ export const LANGUAGES_SHOWN = 4;
             <!-- 50/50: the left slot is for the "Work" tile. -->
             <div class="grid grid-cols-2 gap-2">
               <div></div>
-              <ui-stat class="components w-full" label="Components">
-                @if (repositories()?.status === 'error') {
-                  <span class="text-base font-normal text-gray-500">Unavailable</span>
-                } @else if (componentCount() === undefined) {
-                  <ui-spinner class="size-8 align-top text-gray-500" />
-                } @else {
-                  {{ componentCount() }}
-                }
-              </ui-stat>
+              <ui-spinner [loading]="componentsLoading()">
+                <ui-stat class="components w-full" label="Components">
+                  @if (repositories()?.status === 'error') {
+                    <span class="text-base font-normal text-gray-500">Unavailable</span>
+                  } @else {
+                    {{ componentCount() ?? '–' }}
+                  }
+                </ui-stat>
+              </ui-spinner>
             </div>
             @if (lines(); as lines) {
               @if (lines !== 'error' && lines.partial && languageRows().length) {
@@ -112,6 +112,12 @@ export class ProjectCard {
   protected readonly repositories = computed(() => {
     const projectId = this.project().id;
     return projectId ? this.store.repositories()[projectId] : undefined;
+  });
+
+  /** True until the repositories answer (or fail). */
+  protected readonly componentsLoading = computed(() => {
+    const status = this.repositories()?.status;
+    return status !== 'loaded' && status !== 'error';
   });
 
   protected readonly componentCount = computed(() => {
