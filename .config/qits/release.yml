@@ -21,8 +21,8 @@
 # `qits/<application>:<version>` and the release step pushes exactly what this line names, so the two
 # files spell one decision and drift between them is a deployment that pulls an image nobody pushed.
 #
-# No `sbom:` path, because this build has no sbom target to produce one — the composed postlude
-# submits an SBOM only for an artifact that declares a path. No `userflows:` key either: this
+# `sbom: .sbom/sbom.json` names where the `app` archetype's release step writes the document after
+# the image push, for the composed postlude to submit. No `userflows:` key either: this
 # repository has no IT stories, and `userflows: false` is refused outright, so omitting the key is the
 # only way to say "none".
 #
@@ -35,7 +35,7 @@
 archetype: app
 
 artifacts:
-  - { type: docker, name: qits/qits-landing }
+  - { type: docker, name: qits/qits-landing, sbom: .sbom/sbom.json }
 
 contracts:
   application: qits-landing
