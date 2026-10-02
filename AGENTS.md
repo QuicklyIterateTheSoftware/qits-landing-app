@@ -7,8 +7,10 @@ This file covers the rules that are easy to break.
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in
 the templates, and no component `styles:` or `styleUrl` blocks. A component's own host styling goes
-in `host: { class: '…' }`. Colours come from Tailwind's theme (`text-gray-500`, `bg-gray-50`), not
-hex literals. Tailwind finds the classes in the inline templates by itself; a class written as a
+in `host: { class: '…' }`. Colours come from Tailwind's theme, not hex literals. The app's own
+palettes are in `src/theme.css` (Tailwind v4's `@theme`, imported by `src/styles.css`):
+`charcoal-brown`, `sunflower-gold`, `cinnabar`, `mint-leaf` and `ocean-deep`, each 50–950
+(`bg-ocean-deep-100`, `text-cinnabar-600`). Tailwind's default palette stays available. Tailwind finds the classes in the inline templates by itself; a class written as a
 string built at run time is not found, so write every class out in full.
 
 ## Pact contracts (epics qits-546, qits-112)
