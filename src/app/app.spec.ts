@@ -63,13 +63,17 @@ describe('ProjectPicker', () => {
     };
     const repositories = goldenMaster('a project with 3 repositories', 'listProjectRepositories');
     http.expectOne('/projects/api/projects').flush({ entries: [{ project }, { project: other }] });
-    // Render the cards, which start their own requests; whenStable() would wait for those.
+    // Render the cards, which ask the store for their repositories. The store's client builds each
+    // request after a few awaits.
     await new Promise((resolve) => setTimeout(resolve));
     TestBed.tick();
+    await new Promise((resolve) => setTimeout(resolve));
     http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
     http
       .expectOne(`/projects/api/projects/${other.id}/repositories`)
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
+    // The store sets the answers after its own awaits; then the cards render them.
+    await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();
 
     const cards = [...(fixture.nativeElement as HTMLElement).querySelectorAll('a.card-link')];

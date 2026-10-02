@@ -32,6 +32,7 @@
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
     "@hey-api/openapi-ts": "0.99.0",
+    "@pact-foundation/pact": "17.1.4",
     "@qits/projects-golden-masters": "2026.1001.154547",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",

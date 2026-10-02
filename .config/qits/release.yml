@@ -27,7 +27,7 @@
 # only way to say "none".
 #
 # THE PACT (epic qits-546) is now declared as a contract rather than a second artifact:
-# `pacts/qits-landing-qits-projects.json`, qits-landing's consumer pact with qits-projects. qits-ci
+# `pacts/qits-landing-app_qits-projects-service.json`, this app's consumer pact with qits-projects. qits-ci
 # derives the coordinate from `contracts.application` and `contracts.pacts.qits-projects`, packages
 # `from:` as the maven jar and publishes it itself, only when the tree changed since the newest
 # published jar — so the repository carries no gate, no jar module and no `release:` override

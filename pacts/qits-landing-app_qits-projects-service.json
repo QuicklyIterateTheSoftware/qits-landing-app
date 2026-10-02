@@ -1,17 +1,17 @@
 {
   "consumer": {
-    "name": "qits-landing"
+    "name": "qits-landing-app"
   },
   "interactions": [
     {
       "comments": {
         "references": {
           "qits-call": {
-            "app": "qits-projects",
+            "app": "qits-projects-service",
             "operationId": "listProjects"
           },
           "qits-trigger": {
-            "app": "qits-landing",
+            "app": "qits-landing-app",
             "interaction": "list-projects",
             "kind": "ui"
           }
@@ -106,7 +106,7 @@
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -147,11 +147,11 @@
       "comments": {
         "references": {
           "qits-call": {
-            "app": "qits-projects",
+            "app": "qits-projects-service",
             "operationId": "getProject"
           },
           "qits-trigger": {
-            "app": "qits-landing",
+            "app": "qits-landing-app",
             "interaction": "open-project",
             "kind": "ui"
           }
@@ -170,9 +170,18 @@
       "request": {
         "generators": {
           "path": {
-            "dataType": "RAW",
             "expression": "/projects/api/projects/${projectId}",
             "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
           }
         },
         "method": "GET",
@@ -240,7 +249,7 @@
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -281,11 +290,11 @@
       "comments": {
         "references": {
           "qits-call": {
-            "app": "qits-projects",
+            "app": "qits-projects-service",
             "operationId": "getProject"
           },
           "qits-trigger": {
-            "app": "qits-landing",
+            "app": "qits-landing-app",
             "interaction": "open-project",
             "kind": "ui"
           }
@@ -304,9 +313,18 @@
       "request": {
         "generators": {
           "path": {
-            "dataType": "RAW",
             "expression": "/projects/api/projects/${projectId}",
             "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
           }
         },
         "method": "GET",
@@ -356,11 +374,11 @@
       "comments": {
         "references": {
           "qits-call": {
-            "app": "qits-projects",
+            "app": "qits-projects-service",
             "operationId": "listProjectRepositories"
           },
           "qits-trigger": {
-            "app": "qits-landing",
+            "app": "qits-landing-app",
             "interaction": "show-project-repositories",
             "kind": "ui"
           }
@@ -379,9 +397,18 @@
       "request": {
         "generators": {
           "path": {
-            "dataType": "RAW",
             "expression": "/projects/api/projects/${projectId}/repositories",
             "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
           }
         },
         "method": "GET",
@@ -396,7 +423,7 @@
                 "repository": {
                   "archetype": "PROJECT",
                   "backupUrl": null,
-                  "component": "contract-daemon",
+                  "component": null,
                   "id": "00000000-0000-4000-8000-000000000002",
                   "lastBackup": null,
                   "mainBranch": "main",
@@ -407,39 +434,13 @@
               {
                 "declared": true,
                 "repository": {
-                  "archetype": "PROJECT",
+                  "archetype": "DAEMON",
                   "backupUrl": null,
                   "component": "contract-daemon",
-                  "id": "00000000-0000-4000-8000-000000000002",
+                  "id": "00000000-0000-4000-8000-000000000003",
                   "lastBackup": null,
                   "mainBranch": "main",
-                  "name": "contract-00000001-contract-00000001",
-                  "projectId": "00000000-0000-4000-8000-000000000001"
-                }
-              },
-              {
-                "declared": true,
-                "repository": {
-                  "archetype": "PROJECT",
-                  "backupUrl": null,
-                  "component": "contract-daemon",
-                  "id": "00000000-0000-4000-8000-000000000002",
-                  "lastBackup": null,
-                  "mainBranch": "main",
-                  "name": "contract-00000001-contract-00000001",
-                  "projectId": "00000000-0000-4000-8000-000000000001"
-                }
-              },
-              {
-                "declared": true,
-                "repository": {
-                  "archetype": "PROJECT",
-                  "backupUrl": null,
-                  "component": "contract-daemon",
-                  "id": "00000000-0000-4000-8000-000000000002",
-                  "lastBackup": null,
-                  "mainBranch": "main",
-                  "name": "contract-00000001-contract-00000001",
+                  "name": "contract-daemon",
                   "projectId": "00000000-0000-4000-8000-000000000001"
                 }
               }
@@ -480,70 +481,127 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "max": 4,
-                  "min": 4
-                }
-              ]
-            },
-            "$.entries[*].declared": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.entries[*].repository.archetype": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.entries[*].repository.component": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "null"
-                }
-              ]
-            },
-            "$.entries[*].repository.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-                }
-              ]
-            },
-            "$.entries[*].repository.mainBranch": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.entries[*].repository.name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.entries[*].repository.projectId": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.declared": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.repository.mainBranch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.projectId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.declared": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.component": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.repository.mainBranch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.projectId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -570,12 +628,24 @@
               "matchers": [
                 {
                   "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
             "$.wrapper.entries[*].path": {
               "combine": "AND",
               "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
                 {
                   "match": "type"
                 }
@@ -586,7 +656,15 @@
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -595,7 +673,7 @@
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -620,11 +698,11 @@
       "comments": {
         "references": {
           "qits-call": {
-            "app": "qits-projects",
+            "app": "qits-projects-service",
             "operationId": "listProjects"
           },
           "qits-trigger": {
-            "app": "qits-landing",
+            "app": "qits-landing-app",
             "interaction": "sign-in-landing",
             "kind": "ui"
           }
@@ -719,7 +797,7 @@
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -758,12 +836,18 @@
     }
   ],
   "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
     "pactSpecification": {
       "version": "4.0"
-    },
-    "plugins": []
+    }
   },
   "provider": {
-    "name": "qits-projects"
+    "name": "qits-projects-service"
   }
 }

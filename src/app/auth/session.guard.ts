@@ -1,7 +1,7 @@
 import { DOCUMENT, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import type { CanActivateFn } from '@angular/router';
-import { getProjectsApiProjects } from '../api/projects';
+import { ProjectsStore } from '../core/projects/projects.store';
 
 /**
  * Sends a visitor without a session to the idp's login page, which sends them back here.
@@ -19,8 +19,8 @@ export const sessionGuard: CanActivateFn = async (_route, state) => {
   if (isPlatformServer(inject(PLATFORM_ID))) return true;
   // Every inject() before the first await: after it, the injection context is gone.
   const location = inject(DOCUMENT).location;
-  const { response } = await getProjectsApiProjects();
-  if (response?.status === 401) {
+  const projects = inject(ProjectsStore);
+  if (!(await projects.hasSession())) {
     location.assign(`/idp/login?redirect=${encodeURIComponent(returnPath(state.url))}`);
     return false;
   }

@@ -3,13 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { getProjectsApiProjectsByProjectIdRepositoriesResource } from '../api/projects/@angular/common.gen';
 import type { ProjectDto } from '../api/projects';
+import { ProjectsStore } from '../core/projects/projects.store';
 import { CardBody, CardHeader } from '../ui/components/card/base-card';
 import { CardSilent } from '../ui/components/card/card-silent';
 
@@ -28,7 +29,7 @@ import { CardSilent } from '../ui/components/card/card-silent';
       <ui-card-silent>
         <card-header>{{ project().name }}</card-header>
         <card-body>
-          @if (repositories.error()) {
+          @if (repositories()?.status === 'error') {
             <span class="muted">Components unavailable</span>
           } @else if (componentCount() === undefined) {
             <span class="muted">Loading…</span>
@@ -64,14 +65,24 @@ import { CardSilent } from '../ui/components/card/card-silent';
 export class ProjectCard {
   readonly project = input.required<ProjectDto>();
 
-  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly store = inject(ProjectsStore);
 
-  protected readonly repositories = getProjectsApiProjectsByProjectIdRepositoriesResource(() => {
+  protected readonly repositories = computed(() => {
     const projectId = this.project().id;
-    return this.browser && projectId ? { path: { projectId } } : undefined;
+    return projectId ? this.store.repositories()[projectId] : undefined;
   });
 
-  protected readonly componentCount = computed(() =>
-    this.repositories.hasValue() ? (this.repositories.value().entries ?? []).length : undefined,
-  );
+  protected readonly componentCount = computed(() => {
+    const repositories = this.repositories();
+    return repositories?.status === 'loaded' ? repositories.entries.length : undefined;
+  });
+
+  constructor() {
+    // In the browser only: the server render has no `qits-session` cookie to send.
+    const browser = isPlatformBrowser(inject(PLATFORM_ID));
+    effect(() => {
+      const projectId = this.project().id;
+      if (browser && projectId) void this.store.loadRepositories(projectId);
+    });
+  }
 }
