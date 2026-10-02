@@ -20,7 +20,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
     <dl class="bg-gray-200">
       <div>
         <dt
-          class="w-fit bg-gray-300 py-0.5 text-xs leading-4 font-semibold text-gray-800"
+          class="w-fit min-w-1/2 bg-gray-300 py-0.5 text-xs leading-4 font-semibold text-gray-800"
           [class]="mirrored() ? 'ml-auto rounded-bl-lg pr-2 pl-3' : 'rounded-br-lg pr-3 pl-2'"
         >
           {{ label() }}
