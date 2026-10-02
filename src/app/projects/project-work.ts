@@ -45,8 +45,8 @@ import { BACKLOG_STATUSES, BOARD_COLUMNS, withStatus } from './work/work-statuse
                     }}</span>
                   </h3>
                   <ul
-                    class="m-0 flex list-none flex-col gap-2 p-2"
-                    [class.hidden]="!column.entries.length"
+                    class="m-0 list-none flex-col gap-2 p-2"
+                    [class]="column.entries.length ? 'flex' : 'hidden'"
                   >
                     @for (entry of column.entries; track entry.id) {
                       <li class="rounded-md border border-charcoal-brown-100 bg-white p-2 text-sm">
