@@ -9,8 +9,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { ProjectDto } from '../api/projects';
-import { ProjectsStore } from '../core/projects/projects.store';
+import { ProjectsStore, type Project } from '../core/projects/projects.store';
 import { CardBody, CardHeader } from '../ui/components/card/base-card';
 import { CardSilent } from '../ui/components/card/card-silent';
 
@@ -63,7 +62,7 @@ import { CardSilent } from '../ui/components/card/card-silent';
   `,
 })
 export class ProjectCard {
-  readonly project = input.required<ProjectDto>();
+  readonly project = input.required<Project>();
 
   private readonly store = inject(ProjectsStore);
 

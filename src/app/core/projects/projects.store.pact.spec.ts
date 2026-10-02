@@ -10,6 +10,13 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { addGoldenInteraction, assertPactFile } from '../../../testing/golden-master-pact';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import { NOTHING } from '../consume';
+import {
+  GET_PROJECT,
+  LIST_PROJECT_REPOSITORIES,
+  LIST_PROJECTS,
+  SESSION_CHECK,
+} from './projects.consumes';
 import { ProjectsStore } from './projects.store';
 
 /**
@@ -19,6 +26,8 @@ import { ProjectsStore } from './projects.store';
  * The store is the only user of the qits-projects client, so this file is the whole pact. Each test
  * drives one store method, as the UI interaction named in `interactions.ts` does, against a pact
  * mock server that answers with qits-projects' golden master, and checks what the store made of it.
+ * Each interaction binds only the fields the store reads: the same list from `projects.consumes.ts`
+ * that the store passes to `consume(...)`.
  *
  * The run writes the pact to a fresh directory (pact-js names it `<consumer>-<provider>.json`);
  * `afterAll` compares it with the committed file and fails on a difference
@@ -32,13 +41,22 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
 
-/** Adds the interaction for (state, operation), triggered by the UI interaction `slug`. */
-const given = (slug: InteractionSlug, state: string, operationId: string) =>
+/**
+ * Adds the interaction for (state, operation), triggered by the UI interaction `slug`, binding the
+ * body paths in `consumes`.
+ */
+const given = (
+  slug: InteractionSlug,
+  state: string,
+  operationId: string,
+  consumes: readonly string[],
+) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
+    consumes,
   });
 
 /**
@@ -68,31 +86,38 @@ describe('qits-landing-app → qits-projects-service pact', () => {
   });
 
   it('sign-in-landing: a visitor whose list call is answered has a session', () =>
-    given('sign-in-landing', 'a project exists', 'listProjects').executeTest(async (server) => {
-      expect(await storeAt(server.url).hasSession()).toBe(true);
-    }));
+    given('sign-in-landing', 'a project exists', 'listProjects', SESSION_CHECK).executeTest(
+      async (server) => {
+        expect(await storeAt(server.url).hasSession()).toBe(true);
+      },
+    ));
 
   it('list-projects: the store loads the list', () =>
-    given('list-projects', 'a project exists', 'listProjects').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      await store.load();
-      const recorded = masters.body('a project exists', 'listProjects').entries[0].project;
-      expect(store.status()).toBe('loaded');
-      expect(store.ids()).toContain(recorded.id);
-    }));
+    given('list-projects', 'a project exists', 'listProjects', LIST_PROJECTS).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        await store.load();
+        const recorded = masters.body('a project exists', 'listProjects').entries[0].project;
+        expect(store.status()).toBe('loaded');
+        expect(store.ids()).toContain(recorded.id);
+      },
+    ));
 
   it('open-project: the store fetches a project it does not hold', () =>
-    given('open-project', 'a project exists', 'getProject').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const id = masters.operation('a project exists', 'getProject').params['projectId'];
-      await store.refresh(id);
-      const recorded = masters.body('a project exists', 'getProject').project;
-      expect(store.selected()?.id).toBe(id);
-      expect(store.selected()?.name).toBe(recorded.name);
-    }));
+    given('open-project', 'a project exists', 'getProject', GET_PROJECT).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const id = masters.operation('a project exists', 'getProject').params['projectId'];
+        await store.refresh(id);
+        const recorded = masters.body('a project exists', 'getProject').project;
+        expect(store.selected()?.id).toBe(id);
+        expect(store.selected()?.name).toBe(recorded.name);
+      },
+    ));
 
   it('open-project: a project qits-projects does not know stays selected and unloaded', () =>
-    given('open-project', 'no project with the given id', 'getProject').executeTest(
+    // On an error the store reads nothing from the body: `consume`'s default for `error`.
+    given('open-project', 'no project with the given id', 'getProject', NOTHING).executeTest(
       async (server) => {
         const store = storeAt(server.url);
         const id = masters.operation('no project with the given id', 'getProject').params[
@@ -110,6 +135,7 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       'show-project-repositories',
       'a project with 3 repositories',
       'listProjectRepositories',
+      LIST_PROJECT_REPOSITORIES,
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
       const op = masters.operation('a project with 3 repositories', 'listProjectRepositories');
@@ -117,7 +143,7 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       await store.loadRepositories(projectId);
       const loaded = store.repositories()[projectId];
       expect(loaded?.status).toBe('loaded');
-      // `arrayContaining` puts one example per element shape on the wire, not the recorded count.
-      expect(loaded?.entries.length).toBeGreaterThan(0);
+      const recorded = masters.body('a project with 3 repositories', 'listProjectRepositories');
+      expect(loaded?.entries.length).toBe(recorded.entries.length);
     }));
 });

@@ -14,19 +14,30 @@ import {
   getProjectsApiProjects,
   getProjectsApiProjectsById,
   getProjectsApiProjectsByProjectIdRepositories,
-  type Entry5,
-  type ProjectDto,
 } from '../../api/projects';
+import { consume } from '../consume';
+import {
+  GET_PROJECT,
+  LIST_PROJECT_REPOSITORIES,
+  LIST_PROJECTS,
+  SESSION_CHECK,
+  type FetchedProject,
+  type ListedProject,
+  type RepositoryEntry,
+} from './projects.consumes';
 
-/** A project as the store keeps it: the spec leaves `id` optional, the store needs one. */
-export type Project = ProjectDto & { readonly id: string };
+/**
+ * A project as the store keeps it: only the fields it reads (`projects.consumes.ts`), and an `id`,
+ * which the spec leaves optional.
+ */
+export type Project = ListedProject & { readonly id: string };
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
 /** A project's repositories, as `loadRepositories(projectId)` left them. */
 export interface ProjectRepositories {
   readonly status: Exclude<Status, 'idle'>;
-  readonly entries: readonly Entry5[];
+  readonly entries: readonly RepositoryEntry[];
 }
 
 interface ProjectsState {
@@ -37,7 +48,7 @@ interface ProjectsState {
   readonly repositories: Readonly<Record<string, ProjectRepositories>>;
 }
 
-function withId(project: ProjectDto | undefined): project is Project {
+function withId(project: ListedProject | FetchedProject | undefined): project is Project {
   return !!project?.id;
 }
 
@@ -52,7 +63,9 @@ function withId(project: ProjectDto | undefined): project is Project {
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
  * The store is the only user of the generated qits-projects client, so its pact
- * (`projects.store.pact.spec.ts`) is the whole of what this app relies on from qits-projects.
+ * (`projects.store.pact.spec.ts`) is the whole of what this app relies on from qits-projects. Every
+ * call goes through `consume(...)` with its list from `projects.consumes.ts`: the store can read
+ * only those fields, and the pact binds exactly them.
  */
 export const ProjectsStore = signalStore(
   { providedIn: 'root' },
@@ -67,7 +80,7 @@ export const ProjectsStore = signalStore(
   withMethods((store) => {
     async function refreshList(): Promise<void> {
       patchState(store, { status: 'loading' });
-      const { data, error } = await getProjectsApiProjects();
+      const { data, error } = await consume(getProjectsApiProjects(), LIST_PROJECTS);
       if (error !== undefined || !data) {
         patchState(store, { status: 'error' });
         return;
@@ -79,7 +92,7 @@ export const ProjectsStore = signalStore(
     async function select(id: string): Promise<void> {
       patchState(store, { selectedId: id });
       if (store.entityMap()[id]) return;
-      const { data } = await getProjectsApiProjectsById({ path: { id } });
+      const { data } = await consume(getProjectsApiProjectsById({ path: { id } }), GET_PROJECT);
       if (withId(data?.project)) patchState(store, setEntity(data.project));
     }
 
@@ -98,9 +111,10 @@ export const ProjectsStore = signalStore(
         const current = store.repositories()[projectId];
         if (current && current.status !== 'error') return;
         setRepositories(projectId, { status: 'loading', entries: [] });
-        const { data, error } = await getProjectsApiProjectsByProjectIdRepositories({
-          path: { projectId },
-        });
+        const { data, error } = await consume(
+          getProjectsApiProjectsByProjectIdRepositories({ path: { projectId } }),
+          LIST_PROJECT_REPOSITORIES,
+        );
         setRepositories(
           projectId,
           error !== undefined || !data
@@ -110,7 +124,7 @@ export const ProjectsStore = signalStore(
       },
       /** False only when the edge answers 401: no valid `qits-session` cookie. */
       async hasSession(): Promise<boolean> {
-        const { response } = await getProjectsApiProjects();
+        const { response } = await consume(getProjectsApiProjects(), SESSION_CHECK);
         return response?.status !== 401;
       },
     };

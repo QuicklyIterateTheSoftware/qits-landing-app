@@ -16,6 +16,14 @@ qits-projects-service verifies in its own gate.
 - **Stores are the only users of a generated client.** A guard or component asks a store; it never
   calls `src/app/api/` itself. So the pact spec next to the store is the whole of what this app
   relies on from that provider: `src/app/core/projects/projects.store.pact.spec.ts`.
+- **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
+  holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
+  the body paths the store reads (`as const`). The store wraps every client call in
+  `consume(call, LIST)` (`src/app/core/consume.ts`, a copy of `@qits/angular`'s until this app
+  depends on it), so its `data` is typed to those paths only: reading any other field, in the
+  store or a template, fails the build. The pact spec passes the same lists as `consumes`, so the
+  pact holds exactly those fields. To read another field, add it to the list; the pact changes
+  with it. An empty list (`SESSION_CHECK`, and every error answer) binds the status only.
 - **The pact spec uses `@pact-foundation/pact` (PactV4).** Each test drives one store method against
   the pact mock server, through a real `HttpClient` (`withFetch()`), and checks what the store made
   of the answer. The mock server answers with qits-projects' golden master and fails the test when
@@ -26,9 +34,9 @@ qits-projects-service verifies in its own gate.
   `session.guard.spec.ts`) keep `HttpTestingController` and `flush(goldenMaster(...))`. A spec that
   needs a different answer derives it from a golden master and says how in a comment.
 - **`src/testing/golden-master-pact.ts` is the generic part**: the golden-master reader, the
-  matcher wrapper (`addGoldenInteraction`) and the committed-file compare (`assertPactFile`). It
-  knows no provider, consumer or package by name and imports nothing from `src/app`, so it can move
-  into a shared library as it is.
+  matcher wrapper (`addGoldenInteraction`, with its required `consumes`) and the committed-file
+  compare (`assertPactFile`). It is a copy of `@qits/angular/testing`; both copies go once this app
+  depends on `@qits/angular`.
 - **Matchers come from the index's `frozen` lists**, never from a value's shape: `frozen.ids` a uuid
   regex, `frozen.instants` an ISO-8601 regex, every other leaf a type match, a recorded `null` exact
   `null`. `frozen.listFilteredTo` is "at least the recorded count"; every other array is "exactly
