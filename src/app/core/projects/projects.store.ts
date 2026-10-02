@@ -15,17 +15,21 @@ import {
   getProject,
   listProjectRepositories,
   listProjectEntities,
+  listProjectReleaseRequests,
 } from '../../api/projects';
 import { consume } from '@qits/angular';
 import {
   countsAsWork,
   GET_PROJECT,
+  isPendingRelease,
+  LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECT_ENTITIES,
   LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
   SESSION_CHECK,
   type FetchedProject,
   type ListedProject,
+  type ReleaseRequestEntry,
   type RepositoryEntry,
   type WorkEntry,
 } from './projects.consumes';
@@ -48,6 +52,12 @@ export interface ProjectWork {
   readonly entries: readonly WorkEntry[];
 }
 
+/** A project's pending release requests, as `loadReleaseRequests(projectId)` left them. */
+export interface ProjectReleaseRequests {
+  readonly status: Exclude<Status, 'idle'>;
+  readonly pending: readonly ReleaseRequestEntry[];
+}
+
 /** A project's repositories, as `loadRepositories(projectId)` left them. */
 export interface ProjectRepositories {
   readonly status: Exclude<Status, 'idle'>;
@@ -62,6 +72,8 @@ interface ProjectsState {
   readonly repositories: Readonly<Record<string, ProjectRepositories>>;
   /** Each project's work count, by project id. A project not asked for yet has no key. */
   readonly work: Readonly<Record<string, ProjectWork>>;
+  /** Each project's pending release requests, by project id. Not asked for yet: no key. */
+  readonly releaseRequests: Readonly<Record<string, ProjectReleaseRequests>>;
 }
 
 function withId(project: ListedProject | FetchedProject | undefined): project is Project {
@@ -78,6 +90,8 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * - `loadRepositories(projectId)` fetches a project's repositories once.
  * - `loadWork(projectId)` fetches a project's work entities once and keeps how many count as work
  *   (`countsAsWork` in `projects.consumes.ts`).
+ * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when the top bar's
+ *   release menu first opens, and keeps the pending ones (`isPendingRelease`).
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
  * The store is the only user of the generated qits-projects client, so its pact
@@ -88,7 +102,13 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
 export const ProjectsStore = signalStore(
   { providedIn: 'root' },
   withEntities({ entity: type<Project>() }),
-  withState<ProjectsState>({ status: 'idle', selectedId: null, repositories: {}, work: {} }),
+  withState<ProjectsState>({
+    status: 'idle',
+    selectedId: null,
+    repositories: {},
+    work: {},
+    releaseRequests: {},
+  }),
   withComputed(({ entityMap, selectedId }) => ({
     selected: computed(() => {
       const id = selectedId();
@@ -120,6 +140,10 @@ export const ProjectsStore = signalStore(
 
     function setWork(projectId: string, value: ProjectWork): void {
       patchState(store, { work: { ...store.work(), [projectId]: value } });
+    }
+
+    function setReleaseRequests(projectId: string, value: ProjectReleaseRequests): void {
+      patchState(store, { releaseRequests: { ...store.releaseRequests(), [projectId]: value } });
     }
 
     return {
@@ -161,6 +185,21 @@ export const ProjectsStore = signalStore(
                 count: (data.entities ?? []).filter(countsAsWork).length,
                 entries: data.entities ?? [],
               },
+        );
+      },
+      async loadReleaseRequests(projectId: string): Promise<void> {
+        const current = store.releaseRequests()[projectId];
+        if (current && current.status !== 'error') return;
+        setReleaseRequests(projectId, { status: 'loading', pending: [] });
+        const { data, error } = await consume(
+          listProjectReleaseRequests({ path: { projectId } }),
+          LIST_PROJECT_RELEASE_REQUESTS,
+        );
+        setReleaseRequests(
+          projectId,
+          error !== undefined || !data
+            ? { status: 'error', pending: [] }
+            : { status: 'loaded', pending: (data.requests ?? []).filter(isPendingRelease) },
         );
       },
       /** False only when the edge answers 401: no valid `qits-session` cookie. */

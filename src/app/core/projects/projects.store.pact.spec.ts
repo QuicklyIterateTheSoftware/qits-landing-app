@@ -14,6 +14,7 @@ import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
   LIST_PROJECT_ENTITIES,
+  LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECT_REPOSITORIES,
   LIST_PROJECTS,
   SESSION_CHECK,
@@ -176,5 +177,41 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       const projectId = op.params['projectId'];
       await store.loadWork(projectId);
       expect(store.work()[projectId]).toEqual({ status: 'loaded', count: 0, entries: [] });
+    }));
+
+  it('open-release-requests: the store loads a project’s pending release requests', () =>
+    given(
+      'open-release-requests',
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with pending release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      // The pact binds the fields by type, so the mock repeats the recorded example; which states
+      // are pending is the plain spec's business.
+      expect(store.releaseRequests()[projectId]?.status).toBe('loaded');
+    }));
+
+  it('open-release-requests: a project without any lists none', () =>
+    given(
+      'open-release-requests',
+      'a project with no release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with no release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      expect(store.releaseRequests()[projectId]).toEqual({ status: 'loaded', pending: [] });
     }));
 });

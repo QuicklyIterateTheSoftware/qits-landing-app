@@ -4130,7 +4130,7 @@ export type GetProjectsApiProjectsByProjectIdRefinementsResponses = {
 
 export type GetProjectsApiProjectsByProjectIdRefinementsResponse = GetProjectsApiProjectsByProjectIdRefinementsResponses[keyof GetProjectsApiProjectsByProjectIdRefinementsResponses];
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsData = {
+export type ListProjectReleaseRequestsData = {
     body?: never;
     path: {
         projectId: string;
@@ -4141,7 +4141,7 @@ export type GetProjectsApiProjectsByProjectIdReleaseRequestsData = {
     url: '/projects/api/projects/{projectId}/release-requests';
 };
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsErrors = {
+export type ListProjectReleaseRequestsErrors = {
     /**
      * Not Authorized
      */
@@ -4152,14 +4152,14 @@ export type GetProjectsApiProjectsByProjectIdReleaseRequestsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsResponses = {
+export type ListProjectReleaseRequestsResponses = {
     /**
      * OK
      */
     200: Response40;
 };
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsResponse = GetProjectsApiProjectsByProjectIdReleaseRequestsResponses[keyof GetProjectsApiProjectsByProjectIdReleaseRequestsResponses];
+export type ListProjectReleaseRequestsResponse = ListProjectReleaseRequestsResponses[keyof ListProjectReleaseRequestsResponses];
 
 export type ListProjectRepositoriesData = {
     body?: never;

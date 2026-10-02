@@ -20,6 +20,8 @@ export const INTERACTIONS = {
   'show-project-work': 'A project card shows how much work the project has',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
   'show-project-loc': 'The project cards show how many lines of code each project has',
+  /** `release-menu.ts`: the top bar's lightning menu, on its first opening, for the open project. */
+  'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

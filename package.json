@@ -36,7 +36,7 @@
     "@hey-api/openapi-ts": "0.99.0",
     "@pact-foundation/pact": "17.1.4",
     "@qits/githost-golden-masters": "2026.1002.190746",
-    "@qits/projects-golden-masters": "2026.1002.191915",
+    "@qits/projects-golden-masters": "2026.1002.202243",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",

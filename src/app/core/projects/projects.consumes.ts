@@ -1,5 +1,6 @@
 import type {
   ListProjectEntitiesResponses,
+  ListProjectReleaseRequestsResponses,
   GetProjectResponses,
   ListProjectRepositoriesResponses,
   ListProjectsResponses,
@@ -53,6 +54,47 @@ export type WorkEntry = NonNullable<
  */
 export function countsAsWork(entry: WorkEntry): boolean {
   return entry.status === 'REFINED';
+}
+
+/**
+ * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request with its
+ * repository, summary, state and gates. qits-projects answers the open requests plus the last few
+ * FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
+ */
+export const LIST_PROJECT_RELEASE_REQUESTS = [
+  'requests[].id',
+  'requests[].repoName',
+  'requests[].summary',
+  'requests[].state',
+  'requests[].gates[].kind',
+  'requests[].gates[].state',
+] as const;
+
+/** One release request, cut to what the menu reads. */
+export type ReleaseRequestEntry = NonNullable<
+  Consumed<
+    ListProjectReleaseRequestsResponses[200],
+    typeof LIST_PROJECT_RELEASE_REQUESTS
+  >['requests']
+>[number];
+
+/**
+ * The states in which a release request is still open work: qits-projects' own open set
+ * (`ReleaseRequestRepository.OPEN`). RELEASED is in it — the tag is cut but the release has still to
+ * publish, deploy and reach `main` — and FINALIZED, WITHDRAWN and OBSOLETE are not.
+ */
+const PENDING_RELEASE_STATES: ReadonlySet<string> = new Set([
+  'PENDING',
+  'READY',
+  'RELEASED',
+  'FAILED',
+  'REJECTED',
+  'CONFLICTED',
+]);
+
+/** Whether the release menu lists this request: it is still open work. */
+export function isPendingRelease(entry: ReleaseRequestEntry): boolean {
+  return entry.state !== undefined && PENDING_RELEASE_STATES.has(entry.state);
 }
 
 /** `hasSession()`: the status only. */

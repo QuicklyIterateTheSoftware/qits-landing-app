@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SelectedProject } from '../projects/selected-project';
+import { ReleaseMenu } from './release-menu';
 
 /** One entry of the sidebar. */
 interface NavLink {
@@ -18,7 +19,7 @@ interface NavLink {
 @Component({
   selector: 'app-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, ReleaseMenu],
   host: { class: 'block' },
   template: `
     <div class="grid min-h-screen grid-rows-[3.5rem_1fr] md:grid-cols-[15rem_1fr]">
@@ -52,9 +53,11 @@ interface NavLink {
             }
           </ol>
         </nav>
-        <!-- The open project's settings; hidden (not removed) while no project is open. -->
+        <!-- The open project's release requests, then its settings; both hidden (not removed) while
+             no project is open. -->
+        <app-release-menu />
         <a
-          class="ml-auto size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"
+          class="size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"
           [class]="settingsPath() ? 'inline-flex' : 'hidden'"
           [routerLink]="settingsPath() ?? '/projects'"
           routerLinkActive=""
