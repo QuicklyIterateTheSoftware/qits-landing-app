@@ -135,6 +135,14 @@ describe('Board (screenshots)', () => {
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(shadow('#feature')).not.toBe('none');
     expect(shadow('#task a')).toBe('none');
+    // Empty lane space (the gutter, below the rows) belongs to the epic.
+    const lane = (element.querySelector('ui-board-lane') as HTMLElement).getBoundingClientRect();
+    await userEvent.hover(element.querySelector('ui-board-lane') as HTMLElement, {
+      position: { x: 6, y: lane.height - 4 },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(shadow('#epic')).not.toBe('none');
+    expect(shadow('#feature')).toBe('none');
     await userEvent.unhover(element.querySelector('#feature') as HTMLElement);
   });
 });

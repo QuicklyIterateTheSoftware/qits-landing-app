@@ -39,7 +39,11 @@ describe('Project work (screenshots)', () => {
   afterEach(() => http.verify());
 
   /** The page at `section` of the recorded project, with the list and its work answered. */
-  async function shown(section: 'work' | 'work/archive', answerWork = true) {
+  async function shown(
+    section: 'work' | 'work/archive',
+    answerWork = true,
+    workState = 'a project with work in every status',
+  ) {
     const list = await commands.goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
@@ -54,9 +58,7 @@ describe('Project work (screenshots)', () => {
     await settle();
     const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
     if (answerWork) {
-      work.flush(
-        await commands.goldenMaster('a project with work in every status', 'listProjectEntities'),
-      );
+      work.flush(await commands.goldenMaster(workState, 'listProjectEntities'));
       await settle();
       await harness.fixture.whenStable();
       harness.fixture.detectChanges();
@@ -75,6 +77,14 @@ describe('Project work (screenshots)', () => {
     await expect.element(element).toHaveTextContent('Reported ticket');
     await expect.element(element).not.toHaveTextContent('Done ticket');
     await expect.element(element).toMatchScreenshot('work');
+  });
+
+  it('nests an epic’s features and tasks in its lane', async () => {
+    const { element } = await shown('work', true, 'an epic with features and tasks');
+    await expect.element(element).toHaveTextContent('Nested epic');
+    await expect.element(element).toHaveTextContent('Shipped feature');
+    await expect.element(element).toHaveTextContent('Open task');
+    await expect.element(element).toMatchScreenshot('work-nested');
   });
 
   it('shows the archive: the work in a final state', async () => {
