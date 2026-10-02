@@ -72,8 +72,9 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * - `refresh()` fetches the list again.
  * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadRepositories(projectId)` fetches a project's repositories once.
- * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when the top bar's
- *   release menu first opens, and keeps the pending ones (`isPendingRelease`).
+ * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when a project
+ *   opens, and keeps the pending ones (`isPendingRelease`); `refreshReleaseRequests(projectId)`
+ *   fetches them again when a domain event says they changed.
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
  * The store is the only user of the generated qits-projects client, so its pact
@@ -123,6 +124,24 @@ export const ProjectsStore = signalStore(
       patchState(store, { releaseRequests: { ...store.releaseRequests(), [projectId]: value } });
     }
 
+    async function fetchReleaseRequests(projectId: string): Promise<void> {
+      const { data, error } = await consume(
+        listProjectReleaseRequests({ path: { projectId } }),
+        LIST_PROJECT_RELEASE_REQUESTS,
+      );
+      const previous = store.releaseRequests()[projectId];
+      if (error !== undefined || !data) {
+        if (previous?.status !== 'loaded') {
+          setReleaseRequests(projectId, { status: 'error', pending: [] });
+        }
+        return;
+      }
+      setReleaseRequests(projectId, {
+        status: 'loaded',
+        pending: (data.requests ?? []).filter(isPendingRelease),
+      });
+    }
+
     return {
       async load(): Promise<void> {
         if (store.status() === 'idle' || store.status() === 'error') await refreshList();
@@ -149,16 +168,15 @@ export const ProjectsStore = signalStore(
         const current = store.releaseRequests()[projectId];
         if (current && current.status !== 'error') return;
         setReleaseRequests(projectId, { status: 'loading', pending: [] });
-        const { data, error } = await consume(
-          listProjectReleaseRequests({ path: { projectId } }),
-          LIST_PROJECT_RELEASE_REQUESTS,
-        );
-        setReleaseRequests(
-          projectId,
-          error !== undefined || !data
-            ? { status: 'error', pending: [] }
-            : { status: 'loaded', pending: (data.requests ?? []).filter(isPendingRelease) },
-        );
+        await fetchReleaseRequests(projectId);
+      },
+      /**
+       * Fetches a project's release requests again, keeping the ones shown until the answer
+       * arrives. A failed refresh keeps the last good list rather than emptying the menu.
+       */
+      async refreshReleaseRequests(projectId: string): Promise<void> {
+        if (store.releaseRequests()[projectId]?.status === 'loading') return;
+        await fetchReleaseRequests(projectId);
       },
       /** False only when the edge answers 401: no valid `qits-session` cookie. */
       async hasSession(): Promise<boolean> {

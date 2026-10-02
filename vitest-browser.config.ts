@@ -1,6 +1,10 @@
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
-import { githostGoldenMasters, projectsGoldenMasters } from './src/testing/golden-masters';
+import {
+  eventsGoldenMasters,
+  githostGoldenMasters,
+  projectsGoldenMasters,
+} from './src/testing/golden-masters';
 
 /**
  * The browser screenshot tests' Vitest config, merged by the `test-browser` target (angular.json).
@@ -11,12 +15,13 @@ import { githostGoldenMasters, projectsGoldenMasters } from './src/testing/golde
  * `vitest/browser`). The provider is `qits-projects` unless named.
  */
 const goldenMaster: BrowserCommand<
-  [state: string, operationId: string, provider?: 'qits-projects' | 'qits-githost']
+  [state: string, operationId: string, provider?: 'qits-projects' | 'qits-githost' | 'qits-events']
 > = (_context, state, operationId, provider = 'qits-projects') =>
-  (provider === 'qits-githost' ? githostGoldenMasters : projectsGoldenMasters).body(
-    state,
-    operationId,
-  );
+  ({
+    'qits-projects': projectsGoldenMasters,
+    'qits-githost': githostGoldenMasters,
+    'qits-events': eventsGoldenMasters,
+  })[provider].body(state, operationId);
 
 /**
  * `parkPointer`: moves the mouse to the page's top-left corner. The pointer otherwise stays where

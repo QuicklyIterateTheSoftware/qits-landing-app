@@ -15,6 +15,26 @@ This file covers the rules that are easy to break.
   and pact specs, `selected-project.ts`, `work-statuses.ts`).
 - `src/app/layout/`, `src/app/auth/` and `src/app/root-redirect.ts`: the shell, for now.
 
+## Live domain events
+
+`core/events/domain-events.ts` (`DomainEvents`) is the app's ONE live connection to qits-events:
+an `EventSource` on `/events/api/stream?names=…` (`*` is every event). Stores and menus call
+`on(names)` instead of opening a stream of their own; the service keeps the union of the names its
+subscribers want, reopens the stream when that changes (debounced), reopens a stream the browser
+gave up on with a doubling wait (1–30 s), closes it when nobody listens, and never connects on the
+server. The stream is live only: no replay. An event is the same envelope as the list's entries, so
+its shape is bound by the list's pact (`LIST_EVENTS`, which reads `payload` for that reason;
+`payloadProjectId` reads the `projectId` most project-scoped events carry).
+
+Users today: the lightning menu fetches the open project's release requests when the project opens
+and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
+(`core/projects/release-request-events.ts`; deployment events name no project, and count only while
+a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
+notifications menu puts every new event at the top of its list once it is loaded.
+
+The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
+panel are projected, `opened` fires on each opening.
+
 ## Styling
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in

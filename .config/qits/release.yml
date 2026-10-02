@@ -41,3 +41,4 @@ contracts:
   pacts:
     qits-projects-service: { packages: [maven] }
     qits-githost-service: { packages: [maven] }
+    qits-events-service: { packages: [maven] }

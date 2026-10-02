@@ -13,7 +13,11 @@ import { defineConfig } from '@hey-api/openapi-ts';
  * repository sits in).
  */
 const siblings = process.env['QITS_SIBLINGS'] ?? '../..';
-const services = ['qits-projects/qits-projects-service', 'qits-githost/qits-githost-service'];
+const services = [
+  'qits-projects/qits-projects-service',
+  'qits-githost/qits-githost-service',
+  'qits-events/qits-events-service',
+];
 
 export default defineConfig(
   services.map((service) => ({

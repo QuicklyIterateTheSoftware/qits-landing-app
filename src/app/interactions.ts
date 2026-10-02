@@ -20,8 +20,13 @@ export const INTERACTIONS = {
   'show-project-work': 'A project card shows how much work the project has',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
   'show-project-loc': 'The project cards show how many lines of code each project has',
-  /** `release-menu.ts`: the top bar's lightning menu, on its first opening, for the open project. */
+  /**
+   * `release-menu.ts`: the top bar's lightning menu, for the open project — fetched when the
+   * project opens, and again when domain events say its requests changed.
+   */
   'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
+  /** `notifications-menu.ts`: the top bar's notifications menu, on its first opening. */
+  'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

@@ -1,8 +1,26 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, filter } from 'rxjs';
+import { DomainEvents } from '../../../core/events/domain-events';
+import {
+  affectsReleaseRequests,
+  RELEASE_REQUEST_EVENTS,
+} from '../../../core/projects/release-request-events';
 import { ProjectsStore } from '../../../core/projects/projects.store';
 import { SelectedProject } from '../../../core/projects/selected-project';
 import { Dropdown } from '../../../ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
+
+/** How long a burst of domain events waits before the requests are fetched again. */
+export const REFRESH_DEBOUNCE_MS = 1_000;
 
 /** A chip's Tailwind classes, written out in full so Tailwind finds them. */
 const CHIP = {
@@ -47,9 +65,11 @@ export function requestTone(state: string | undefined): keyof typeof CHIP {
  * The top bar's lightning menu: the open project's pending release requests, each with its state
  * and its gates. Shown only while a project is open, like the settings gear beside it.
  *
- * The requests are fetched the first time the menu opens, never before (`loadReleaseRequests`),
- * and once fetched the button carries their count (none when nothing is pending). The button and
- * the panel are `ui-dropdown`'s.
+ * The requests are fetched as soon as a project opens (`loadReleaseRequests`), so the button
+ * carries their count right away (none when nothing is pending). They are fetched again when a
+ * domain event says they may have changed ({@link RELEASE_REQUEST_EVENTS}, filtered to the open
+ * project by `affectsReleaseRequests`), at most once a second, since one release sends several.
+ * The button and the panel are `ui-dropdown`'s.
  */
 @Component({
   selector: 'app-release-menu',
@@ -154,7 +174,28 @@ export class ReleaseMenu {
     return CHIP[tone];
   }
 
-  /** Fetches the open project's requests; the store fetches once and again after an error. */
+  constructor() {
+    effect(() => {
+      const id = this.projectId();
+      if (id !== undefined) untracked(() => void this.store.loadReleaseRequests(id));
+    });
+    inject(DomainEvents)
+      .on(RELEASE_REQUEST_EVENTS)
+      .pipe(
+        filter((event) => {
+          const id = this.projectId();
+          return id !== undefined && affectsReleaseRequests(event, id, this.pending());
+        }),
+        debounceTime(REFRESH_DEBOUNCE_MS),
+        takeUntilDestroyed(inject(DestroyRef)),
+      )
+      .subscribe(() => {
+        const id = this.projectId();
+        if (id !== undefined) void this.store.refreshReleaseRequests(id);
+      });
+  }
+
+  /** Fetches the open project's requests if nothing has yet (opening the menu after a failure). */
   protected load(): void {
     const id = this.projectId();
     if (id !== undefined) void this.store.loadReleaseRequests(id);
