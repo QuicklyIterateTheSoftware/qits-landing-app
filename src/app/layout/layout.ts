@@ -125,6 +125,7 @@ export class Layout {
       : [
           { label: 'Work', path: `/projects/${slug}/work` },
           { label: 'Editor', path: `/projects/${slug}/editor` },
+          { label: 'Observability', path: `/projects/${slug}/observability` },
         ];
   });
 
