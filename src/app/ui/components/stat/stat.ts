@@ -17,10 +17,10 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
   template: `
-    <dl class="bg-gray-200">
+    <dl class="bg-charcoal-brown-100">
       <div>
         <dt
-          class="w-fit min-w-1/2 bg-gray-300 py-0.5 text-xs leading-4 font-semibold text-gray-800"
+          class="w-fit min-w-1/2 bg-charcoal-brown-200 py-0.5 text-xs leading-4 font-semibold text-charcoal-brown-900"
           [class]="
             mirrored() ? 'ml-auto rounded-bl-lg pr-2 pl-3 text-right' : 'rounded-br-lg pr-3 pl-2'
           "
