@@ -1,19 +1,22 @@
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
-import { projectsGoldenMasters } from './src/testing/golden-masters';
+import { githostGoldenMasters, projectsGoldenMasters } from './src/testing/golden-masters';
 
 /**
  * The browser screenshot tests' Vitest config, merged by the `test-browser` target (angular.json).
  *
  * The golden masters live in `node_modules` and are read with `node:fs`, which the browser cannot
  * use. So the reader runs here, on the Node side, and a spec asks for a body through the
- * `goldenMaster` command (`commands.goldenMaster(state, operationId)` from `vitest/browser`).
+ * `goldenMaster` command (`commands.goldenMaster(state, operationId, provider?)` from
+ * `vitest/browser`). The provider is `qits-projects` unless named.
  */
-const goldenMaster: BrowserCommand<[state: string, operationId: string]> = (
-  _context,
-  state,
-  operationId,
-) => projectsGoldenMasters.body(state, operationId);
+const goldenMaster: BrowserCommand<
+  [state: string, operationId: string, provider?: 'qits-projects' | 'qits-githost']
+> = (_context, state, operationId, provider = 'qits-projects') =>
+  (provider === 'qits-githost' ? githostGoldenMasters : projectsGoldenMasters).body(
+    state,
+    operationId,
+  );
 
 export default defineConfig({
   test: {

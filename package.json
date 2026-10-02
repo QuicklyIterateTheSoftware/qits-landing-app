@@ -24,7 +24,7 @@
     "@angular/router": "^22.1.0",
     "@angular/ssr": "^22.1.8",
     "@ngrx/signals": "^22.0.1",
-    "@qits/angular": "2026.1002.165447",
+    "@qits/angular": "2026.1002.173703",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -35,6 +35,7 @@
     "@angular/compiler-cli": "^22.1.0",
     "@hey-api/openapi-ts": "0.99.0",
     "@pact-foundation/pact": "17.1.4",
+    "@qits/githost-golden-masters": "2026.1002.174606",
     "@qits/projects-golden-masters": "2026.1002.74001",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",

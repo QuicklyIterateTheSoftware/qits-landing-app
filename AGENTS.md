@@ -3,11 +3,21 @@
 Notes for agents working in this repository. `README.md` covers what the app is and how to run it.
 This file covers the rules that are easy to break.
 
-## Pact contracts with qits-projects-service (epic qits-546)
+## Pact contracts (epics qits-546, qits-112)
 
-This app is a consumer of qits-projects-service. What it relies on is written down as a Pact V4
-file, `pacts/qits-landing-app_qits-projects-service.json`, and published as a jar that
-qits-projects-service verifies in its own gate.
+This app is a consumer of two providers. What it relies on from each is written down as a Pact V4
+file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
+
+| Provider              | Store and pact spec                | Pact file                                                                 | Golden masters                  |
+| --------------------- | ---------------------------------- | ------------------------------------------------------------------------- | ------------------------------- |
+| qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-projects-service/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
+| qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-githost-service/qits-landing-app_qits-githost-service.json`   | `@qits/githost-golden-masters`  |
+
+The githost pact has one interaction per kind of list a card meets, each from its own provider
+state: every repository counted (the card shows "8 lines, 3 in tests"), one not counted yet
+("Counting lines…"), one without a commit ("0 lines"), and a mix of counted and not counted
+("at least 8 lines…"). The plain and screenshot specs cover the same cases from the same golden
+masters.
 
 - **Pacts name both sides by repository name**, never by application name, so a component's
   frontend and backend stay distinct: consumer `qits-landing-app`, provider
@@ -70,12 +80,13 @@ image). Keep both when you update `@pact-foundation/pact`.
 
 ### Publishing: only when the pact changed
 
-`release.yml` declares
-`contracts: { application: qits-landing, pacts: { qits-projects: { from: pacts/, packages: [maven] } } }`
-and carries no `release:` override anymore — the `app` archetype's release step runs as is. qits-ci
-derives the coordinate (`eu.wohlben.qits:qits-landing-pacts-qits-projects`; it still uses application
-names), packages `pacts/` as the
-jar and publishes it itself, only when the tree differs from the newest published jar's. There is no
+`release.yml` declares one `contracts.pacts` entry per provider, `from:` its folder
+(`pacts/qits-projects-service/`, `pacts/qits-githost-service/`), and carries no `release:` override —
+the `app` archetype's release step runs as is. qits-ci derives each coordinate
+(`eu.wohlben.qits:qits-landing-pacts-qits-projects`, `…-qits-githost`; it still uses application
+names), packages the folder as a jar (its files land at `pacts/<file>` on the classpath) and
+publishes it itself, only when the folder differs from that provider's newest published jar. One
+folder per provider, so a change to one pact does not republish, and bump, the other's jar. There is no
 repository-side gate, jar builder or PUT sequence left to maintain: `.config/qits/pacts.sh`,
 `.config/qits/pacts-jar.mjs` and `.config/qits/published-tree-changed.sh` are gone.
 
@@ -86,10 +97,12 @@ and each test compares a screenshot with a committed reference. `npm run test:br
 `npm test` (jsdom) leaves them out. The release check runs `npm run --if-present test:browser` in a
 step image that has Chromium, so a changed pixel fails the release request.
 
-- **The backend answers are qits-projects' golden masters**, as everywhere else. The reader uses
+- **The backend answers are the providers' golden masters**, as everywhere else. The reader uses
   `node:fs`, so it runs on the Node side: `vitest-browser.config.ts` gives the browser a
-  `goldenMaster` command, and a spec calls `await commands.goldenMaster(state, operationId)` (from
-  `vitest/browser`) and `flush(...)`es the result. An error answer is only a status; the store reads
+  `goldenMaster` command, and a spec calls `await commands.goldenMaster(state, operationId)`, or
+  `(state, operationId, 'qits-githost')` for qits-githost (from `vitest/browser`), and
+  `flush(...)`es the result. The two providers' frozen ids are unrelated, so the card spec puts
+  qits-githost's recorded entries under the project's recorded repository ids and says so. An error answer is only a status; the store reads
   no body from it.
 - **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
   system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is

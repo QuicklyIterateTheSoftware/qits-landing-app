@@ -3,12 +3,24 @@
     "target": "https://idp.qits.wohlben.eu",
     "secure": true,
     "changeOrigin": true,
-    "cookieDomainRewrite": { "*": "" }
+    "cookieDomainRewrite": {
+      "*": ""
+    }
   },
   "/projects/api": {
     "target": "https://projects.qits.wohlben.eu",
     "secure": true,
     "changeOrigin": true,
-    "cookieDomainRewrite": { "*": "" }
+    "cookieDomainRewrite": {
+      "*": ""
+    }
+  },
+  "/githost/api": {
+    "target": "https://githost.qits.wohlben.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "cookieDomainRewrite": {
+      "*": ""
+    }
   }
 }

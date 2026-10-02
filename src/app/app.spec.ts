@@ -2,12 +2,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { client as githostClient } from './api/githost/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { App } from './app';
 import { routes } from './app.routes';
 import { ProjectPicker } from './projects/project-picker';
-import { goldenMaster } from '../testing/golden-masters';
+import { githostGoldenMaster, goldenMaster } from '../testing/golden-masters';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -32,6 +33,7 @@ describe('ProjectPicker', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(githostClient),
       ],
     }).compileComponents();
   });
@@ -45,7 +47,7 @@ describe('ProjectPicker', () => {
     expect(rendered.textContent).toContain('Loading projects');
   });
 
-  it('draws one card per project, linking to the project with its component count', async () => {
+  it('draws one card per project, linking to the project with its component count and lines', async () => {
     const fixture = TestBed.createComponent(ProjectPicker);
     fixture.detectChanges();
     const http = TestBed.inject(HttpTestingController);
@@ -72,6 +74,11 @@ describe('ProjectPicker', () => {
     http
       .expectOne(`/projects/api/projects/${other.id}/repositories`)
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
+    // qits-githost's recording for a counted repository, under the id of the project's first
+    // repository (the two providers' frozen ids are unrelated), so both cards sum its lines.
+    const loc = githostGoldenMaster('a repository with counted lines', 'listLoc');
+    loc.entries[0].repositoryId = repositories.entries[0].repository.id;
+    http.expectOne('/githost/api/loc').flush(loc);
     // The store sets the answers after its own awaits; then the cards render them.
     await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();
@@ -85,9 +92,16 @@ describe('ProjectPicker', () => {
       project.name,
       'Other',
     ]);
-    expect(cards.map((card) => card.querySelector('card-body')?.textContent?.trim())).toEqual([
+    const text = (card: Element, selector: string) =>
+      card.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim();
+    expect(cards.map((card) => text(card, '.components'))).toEqual([
       `${repositories.entries.length} components`,
       '1 component',
+    ]);
+    // Java 3/2, TypeScript 4/1, Markdown 1/0.
+    expect(cards.map((card) => text(card, '.lines'))).toEqual([
+      '8 lines, 3 in tests',
+      '8 lines, 3 in tests',
     ]);
   });
 });

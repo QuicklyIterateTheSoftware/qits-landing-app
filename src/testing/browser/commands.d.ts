@@ -3,7 +3,11 @@ import 'vitest/browser';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
-    /** The body qits-projects recorded for `operationId` in `state` (its golden masters). */
-    goldenMaster: <T = any>(state: string, operationId: string) => Promise<T>;
+    /** The body `provider` (default qits-projects) recorded for `operationId` in `state`. */
+    goldenMaster: <T = any>(
+      state: string,
+      operationId: string,
+      provider?: 'qits-projects' | 'qits-githost',
+    ) => Promise<T>;
   }
 }

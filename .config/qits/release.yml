@@ -26,12 +26,12 @@
 # repository has no IT stories, and `userflows: false` is refused outright, so omitting the key is the
 # only way to say "none".
 #
-# THE PACT (epic qits-546) is now declared as a contract rather than a second artifact:
-# `pacts/qits-landing-app_qits-projects-service.json`, this app's consumer pact with qits-projects. qits-ci
-# derives the coordinate from `contracts.application` and `contracts.pacts.qits-projects`, packages
-# `from:` as the maven jar and publishes it itself, only when the tree changed since the newest
-# published jar — so the repository carries no gate, no jar module and no `release:` override
-# anymore.
+# THE PACTS (epics qits-546, qits-112) are declared as contracts, one folder per provider:
+# `pacts/qits-projects-service/` and `pacts/qits-githost-service/` hold this app's consumer pact with
+# each. qits-ci derives each coordinate from `contracts.application` and the provider key, packages
+# `from:` as a maven jar (the files land at `pacts/<file>` on the classpath) and publishes it itself,
+# only when that folder changed since the provider's newest published jar. One folder per provider,
+# so a change to one pact does not republish, and bump, the other provider's jar.
 archetype: app
 
 artifacts:
@@ -40,4 +40,5 @@ artifacts:
 contracts:
   application: qits-landing
   pacts:
-    qits-projects: { from: pacts/, packages: [maven] }
+    qits-projects: { from: pacts/qits-projects-service/, packages: [maven] }
+    qits-githost: { from: pacts/qits-githost-service/, packages: [maven] }

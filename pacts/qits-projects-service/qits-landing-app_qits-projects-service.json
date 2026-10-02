@@ -58,33 +58,39 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "min": 1
-                }
-              ]
-            },
-            "$.entries[*].project.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.entries[*].project.name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.entries[*].project.slug": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.project.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.project.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.project.slug": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -307,10 +313,26 @@
         "body": {
           "content": {
             "entries": [
-              {},
-              {},
-              {},
-              {}
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002"
+                }
+              }
             ]
           },
           "contentType": "application/json",
@@ -330,6 +352,27 @@
                   "match": "type",
                   "max": 4,
                   "min": 4
+                }
+              ]
+            },
+            "$.entries[*].repository.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }

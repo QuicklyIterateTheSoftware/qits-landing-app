@@ -21,8 +21,11 @@ export const LIST_PROJECTS = [
 /** `refresh(id)`: the fetched project joins the list, so it needs the same fields. */
 export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as const;
 
-/** `loadRepositories(projectId)`: the card counts the entries and reads none of their fields. */
-export const LIST_PROJECT_REPOSITORIES = ['entries[]'] as const;
+/**
+ * `loadRepositories(projectId)`: the card counts the entries, and sums their lines of code by
+ * repository id (`LocStore`).
+ */
+export const LIST_PROJECT_REPOSITORIES = ['entries[].repository.id'] as const;
 
 /** `hasSession()`: the status only. */
 export const SESSION_CHECK = NOTHING;
@@ -39,7 +42,7 @@ export type FetchedProject = NonNullable<
   Consumed<GetProjectsApiProjectsByIdResponses[200], typeof GET_PROJECT>['project']
 >;
 
-/** One repository entry, cut to what the store reads: nothing but its existence. */
+/** One repository entry, cut to what the store reads: its repository's id. */
 export type RepositoryEntry = NonNullable<
   Consumed<
     GetProjectsApiProjectsByProjectIdRepositoriesResponses[200],
