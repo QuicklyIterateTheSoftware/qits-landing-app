@@ -26,7 +26,7 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
       <!-- The kind floats flush into the top-right corner; the title flows around it. -->
       <p class="m-0 text-charcoal-brown-900">
         <span
-          class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-ocean-deep-50 px-2 py-0.5 text-[0.6875rem] text-ocean-deep-800"
+          class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] text-[0.6875rem] text-ocean-deep-800"
           >{{ kind() }}</span
         >
         @if (link(); as link) {

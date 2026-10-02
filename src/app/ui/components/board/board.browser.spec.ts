@@ -42,6 +42,9 @@ const COLUMNS: readonly BoardColumnSpec[] = [
         <span lane-header class="font-semibold">An epic with two features</span>
         <ui-tag lane-tags label="Ordered campaign" />
         <ui-tag lane-tags label="Second campaign" />
+        <ui-tag lane-tags label="A third campaign with a long name" />
+        <ui-tag lane-tags label="Fourth campaign" />
+        <ui-tag lane-tags label="The fifth and last campaign, which wraps" />
         <span lane-gutter class="font-mono">qits-12</span>
         <ui-board-row>
           <ui-board-card [column]="1" code="qits-14" title="A shipped task" kind="task" />
