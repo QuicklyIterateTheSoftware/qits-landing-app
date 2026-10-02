@@ -117,7 +117,12 @@ export class Layout {
    */
   protected readonly links = computed((): readonly NavLink[] => {
     const slug = this.selected.slug();
-    return slug === undefined ? [] : [{ label: 'Work', path: `/projects/${slug}/work` }];
+    return slug === undefined
+      ? []
+      : [
+          { label: 'Work', path: `/projects/${slug}/work` },
+          { label: 'Editor', path: `/projects/${slug}/editor` },
+        ];
   });
 
   /**
