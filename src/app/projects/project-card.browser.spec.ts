@@ -99,13 +99,14 @@ describe('ProjectCard (screenshots)', () => {
   it('shows the component count and the lines of counted repositories', async () => {
     const card = await shown('a repository with counted lines');
     await expect.element(card).toHaveTextContent('4 components');
-    await expect.element(card).toHaveTextContent('8 lines, 3 in tests');
+    await expect.element(card).toHaveTextContent('8 main · 3 tests');
+    await expect.element(card).toHaveTextContent('Java');
     await expect.element(card).toMatchScreenshot('loaded');
   });
 
   it('shows a partial total while some repositories are not counted yet', async () => {
     const card = await shown('two repositories, one counted');
-    await expect.element(card).toHaveTextContent('at least 8 lines, 3 in tests');
+    await expect.element(card).toHaveTextContent('at least 8 main · 3 tests');
     await expect.element(card).toMatchScreenshot('lines-partial');
   });
 
@@ -117,7 +118,7 @@ describe('ProjectCard (screenshots)', () => {
 
   it('shows no lines for repositories without a commit', async () => {
     const card = await shown('a repository with no commit');
-    await expect.element(card).toHaveTextContent('0 lines, 0 in tests');
+    await expect.element(card).toHaveTextContent('0 main · 0 tests');
     await expect.element(card).toMatchScreenshot('lines-empty');
   });
 

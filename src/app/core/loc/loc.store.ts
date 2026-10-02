@@ -8,12 +8,21 @@ import { LIST_LOC, type LocEntry } from './loc.consumes';
 /** How long after an answer with uncounted repositories the store asks once more. */
 export const RECOUNT_AFTER_MS = 15_000;
 
+/** One language's lines, summed over some repositories. */
+export interface LanguageLines {
+  readonly language: string;
+  readonly main: number;
+  readonly test: number;
+}
+
 /** A sum of lines over some repositories. */
 export interface LineTotals {
   readonly main: number;
   readonly test: number;
   /** Some of the repositories are not counted yet: the sums are a lower bound. */
   readonly partial: boolean;
+  /** The same sums per language, largest (main + test) first, then by name. */
+  readonly languages: readonly LanguageLines[];
 }
 
 interface LocState {
@@ -30,8 +39,8 @@ interface LocState {
  * - `load()` fetches once. The `onInit` hook calls it, in the browser only.
  * - When the answer has repositories qits-githost has not counted yet (`PENDING`; that very request
  *   queued their count), the store asks once more after {@link RECOUNT_AFTER_MS}, and not again.
- * - `totals(repositoryIds)` sums the lines of those repositories. A repository qits-githost does
- *   not hold, or holds without a commit (`EMPTY`), adds nothing.
+ * - `totals(repositoryIds)` sums the lines of those repositories, in all and per language. A
+ *   repository qits-githost does not hold, or holds without a commit (`EMPTY`), adds nothing.
  *
  * The store is the only user of the generated qits-githost client, so its pact
  * (`loc.store.pact.spec.ts`) is the whole of what this app relies on from qits-githost.
@@ -74,15 +83,26 @@ export const LocStore = signalStore(
         let main = 0;
         let test = 0;
         let partial = false;
+        const perLanguage = new Map<string, { main: number; test: number }>();
         for (const id of repositoryIds) {
           const entry = store.byRepository()[id];
           if (entry?.status === 'PENDING') partial = true;
-          for (const language of entry?.languages ?? []) {
-            main += language.mainLines ?? 0;
-            test += language.testLines ?? 0;
+          for (const lines of entry?.languages ?? []) {
+            const name = lines.language ?? 'Unknown';
+            const sum = perLanguage.get(name) ?? { main: 0, test: 0 };
+            sum.main += lines.mainLines ?? 0;
+            sum.test += lines.testLines ?? 0;
+            perLanguage.set(name, sum);
+            main += lines.mainLines ?? 0;
+            test += lines.testLines ?? 0;
           }
         }
-        return { main, test, partial };
+        const languages = [...perLanguage]
+          .map(([language, sum]) => ({ language, ...sum }))
+          .sort(
+            (a, b) => b.main + b.test - (a.main + a.test) || a.language.localeCompare(b.language),
+          );
+        return { main, test, partial, languages };
       },
     };
   }),

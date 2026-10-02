@@ -136,14 +136,17 @@
               {
                 "languages": [
                   {
+                    "language": "Java",
                     "mainLines": 3,
                     "testLines": 2
                   },
                   {
+                    "language": "Java",
                     "mainLines": 3,
                     "testLines": 2
                   },
                   {
+                    "language": "Java",
                     "mainLines": 3,
                     "testLines": 2
                   }
@@ -179,6 +182,20 @@
                               "match": "type",
                               "max": 3,
                               "min": 3
+                            }
+                          ]
+                        },
+                        "$.languages[*].language": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -384,14 +401,17 @@
               {
                 "languages": [
                   {
+                    "language": "Java",
                     "mainLines": 3,
                     "testLines": 2
                   },
                   {
+                    "language": "Java",
                     "mainLines": 3,
                     "testLines": 2
                   },
                   {
+                    "language": "Java",
                     "mainLines": 3,
                     "testLines": 2
                   }
@@ -432,6 +452,20 @@
                               "match": "type",
                               "max": 3,
                               "min": 3
+                            }
+                          ]
+                        },
+                        "$.languages[*].language": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             }
                           ]
                         },

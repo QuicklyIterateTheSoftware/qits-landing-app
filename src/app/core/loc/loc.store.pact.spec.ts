@@ -76,6 +76,8 @@ describe('qits-landing-app → qits-githost-service pact', () => {
       expect(totals?.partial).toBe(false);
       expect(totals?.main).toBeGreaterThan(0);
       expect(totals?.test).toBeGreaterThan(0);
+      expect(totals?.languages.length).toBeGreaterThan(0);
+      expect(totals?.languages.every((l) => l.language.length > 0)).toBe(true);
     }));
 
   it('show-project-loc: a repository not counted yet makes the total partial', () =>
@@ -83,7 +85,7 @@ describe('qits-landing-app → qits-githost-service pact', () => {
       const store = storeAt(server.url);
       await store.load();
       const id = param('a repository not counted yet', 'repositoryId');
-      expect(store.totals([id])).toEqual({ main: 0, test: 0, partial: true });
+      expect(store.totals([id])).toEqual({ main: 0, test: 0, partial: true, languages: [] });
     }));
 
   it('show-project-loc: a repository without a commit adds nothing', () =>
@@ -91,7 +93,7 @@ describe('qits-landing-app → qits-githost-service pact', () => {
       const store = storeAt(server.url);
       await store.load();
       const id = param('a repository with no commit', 'repositoryId');
-      expect(store.totals([id])).toEqual({ main: 0, test: 0, partial: false });
+      expect(store.totals([id])).toEqual({ main: 0, test: 0, partial: false, languages: [] });
     }));
 
   it('show-project-loc: a list mixing counted and not counted gives a partial sum', () =>

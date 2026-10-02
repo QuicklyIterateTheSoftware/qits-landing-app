@@ -100,8 +100,61 @@ describe('ProjectPicker', () => {
     ]);
     // Java 3/2, TypeScript 4/1, Markdown 1/0.
     expect(cards.map((card) => text(card, '.lines'))).toEqual([
-      '8 lines, 3 in tests',
-      '8 lines, 3 in tests',
+      '8 main · 3 tests',
+      '8 main · 3 tests',
+    ]);
+    // Per language, largest first; Java and TypeScript tie on 5 lines and go by name.
+    const rows = (card: Element) =>
+      [...card.querySelectorAll('.languages tbody tr')].map((row) =>
+        [...row.children].map((cell) => cell.textContent?.trim()).join(' '),
+      );
+    expect(rows(cards[0])).toEqual(['Java 3 2', 'TypeScript 4 1', 'Markdown 1 0']);
+  });
+
+  it('names the four largest languages and sums the rest as Other', async () => {
+    const fixture = TestBed.createComponent(ProjectPicker);
+    fixture.detectChanges();
+    const http = TestBed.inject(HttpTestingController);
+    await new Promise((resolve) => setTimeout(resolve));
+    const project = goldenMaster('a project exists', 'listProjects').entries[0].project;
+    const repositories = goldenMaster('a project with 3 repositories', 'listProjectRepositories');
+    http.expectOne('/projects/api/projects').flush({ entries: [{ project }] });
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+    await new Promise((resolve) => setTimeout(resolve));
+    http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
+    // Derived from qits-githost's counted recording (three languages): the same entry under the
+    // project's first two repositories, the second copy's languages renamed with a " 2" suffix and
+    // its lines doubled, so the card has six languages to fold. No recording holds that many.
+    const recorded = githostGoldenMaster('a repository with counted lines', 'listLoc').entries[0];
+    const first = { ...recorded, repositoryId: repositories.entries[0].repository.id };
+    const second = {
+      ...recorded,
+      repositoryId: repositories.entries[1].repository.id,
+      languages: recorded.languages.map(
+        (l: { language: string; mainLines: number; testLines: number }) => ({
+          language: `${l.language} 2`,
+          mainLines: l.mainLines * 2,
+          testLines: l.testLines * 2,
+        }),
+      ),
+    };
+    http.expectOne('/githost/api/loc').flush({ entries: [first, second] });
+    await new Promise((resolve) => setTimeout(resolve));
+    await fixture.whenStable();
+
+    const card = (fixture.nativeElement as HTMLElement).querySelector('a.card-link')!;
+    const rows = [...card.querySelectorAll('.languages tbody tr')].map((row) =>
+      [...row.children].map((cell) => cell.textContent?.trim()).join(' '),
+    );
+    // Java 2 6/4 and TypeScript 2 8/2 tie on 10; Java 3/2 and TypeScript 4/1 tie on 5;
+    // Markdown 2 (2/0) and Markdown (1/0) are the rest.
+    expect(rows).toEqual([
+      'Java 2 6 4',
+      'TypeScript 2 8 2',
+      'Java 3 2',
+      'TypeScript 4 1',
+      'Other 3 0',
     ]);
   });
 });
