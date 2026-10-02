@@ -6,7 +6,8 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
 /**
  * One item on a board: a small white card in its column, its code down the left edge
  * (`ui-id-strip`), then its title and a kind chip. `border` is the card's border colour (a full Tailwind class, e.g. `border-ocean-deep-400`).
- * With `link`, the title is a link stretched over the whole card. Projected content (tags, say)
+ * With `link`, the title is a link stretched over the whole card; hovering it shadows the card
+ * itself (the card clips its content, so a shadow inside it would not show). Projected content (tags, say)
  * goes under the title.
  */
 @Component({
@@ -14,7 +15,8 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, IdStrip],
   host: {
-    class: 'relative z-10 mx-2 flex self-start overflow-hidden rounded-md border bg-white text-sm',
+    class:
+      'relative z-10 mx-2 flex self-start overflow-hidden transition-shadow duration-150 has-[a:hover]:shadow-md rounded-md border bg-white text-sm',
     '[class]': 'border()',
     '[style.grid-column]': 'placement()',
   },
@@ -25,7 +27,7 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
         <p class="m-0 text-charcoal-brown-900">
           @if (link(); as link) {
             <a
-              class="text-inherit no-underline after:absolute after:inset-0 after:rounded-md after:transition-shadow after:duration-150 hover:after:shadow-md hover:underline"
+              class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
               [routerLink]="link"
               >{{ title() }}</a
             >
