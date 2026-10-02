@@ -70,7 +70,7 @@ export interface BoardColumnSpec {
         }
       </div>
       <div
-        class="relative grid min-h-24 grid-flow-row-dense gap-y-8 py-2"
+        class="relative -mb-6 grid min-h-24 grid-flow-row-dense pt-2"
         [style.grid-template-columns]="template()"
       >
         <ng-content />
@@ -90,6 +90,7 @@ export class Board implements BoardContext {
   );
 
   readonly onBoard = true;
+  readonly root = true;
   readonly lead = () => (this.gutter() ? 1 : 0);
   readonly offset = () => 0;
   readonly columnCount = () => this.columns().length;

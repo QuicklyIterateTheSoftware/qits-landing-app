@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IdStrip } from '../id-strip/id-strip';
-import { BOARD_CONTEXT, gridColumn } from './board-context';
+import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
 
 /**
  * One item on a board: a small white card in its column, its code down the left edge
@@ -16,12 +16,12 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
   imports: [RouterLink, IdStrip],
   host: {
     class:
-      'relative z-10 mx-2 flex self-start overflow-hidden transition-shadow duration-150 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm',
-    '[class]': 'border()',
+      'relative z-10 mx-2 flex self-start transition-shadow duration-150 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm',
+    '[class]': "border() + (atRoot ? ' ' + spacing : '')",
     '[style.grid-column]': 'placement()',
   },
   template: `
-    <ui-id-strip [id]="code()" />
+    <ui-id-strip class="rounded-l-[5px]" [id]="code()" />
     <div class="min-w-0 flex-1 p-2">
       <!-- The kind floats flush into the top-right corner; the title flows around it. -->
       <p class="m-0 text-charcoal-brown-900">
@@ -41,6 +41,8 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
       </p>
       <ng-content />
     </div>
+    <!-- An action button straddling the card's edge (ui-finish-button). -->
+    <ng-content select="[card-action]" />
   `,
 })
 export class BoardCard {
@@ -54,6 +56,8 @@ export class BoardCard {
   readonly link = input<string | undefined>(undefined);
 
   private readonly context = inject(BOARD_CONTEXT, { optional: true });
+  protected readonly atRoot = this.context?.root === true;
+  protected readonly spacing = ROOT_ITEM_SPACING;
 
   protected readonly placement = computed(() =>
     this.context?.onBoard ? gridColumn(this.context, this.column(), this.column()) : null,

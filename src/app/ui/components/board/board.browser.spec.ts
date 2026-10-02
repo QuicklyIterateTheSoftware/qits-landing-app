@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
 import { RouterLink } from '@angular/router';
-import { ListItem } from '../list-item/list-item';
+import { FinishButton } from '../finish-button/finish-button';
 import { Tag } from '../tag/tag';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
@@ -106,24 +106,31 @@ class Collapsing {
 }
 
 @Component({
-  imports: [BoardLane, ListItem, Tag],
-  host: { class: 'flex w-[36rem] flex-col gap-2 p-4' },
+  imports: [Board, BoardLane, BoardCard, FinishButton],
+  host: { class: 'block w-[48rem] p-4' },
   template: `
-    <ui-board-lane>
-      <span lane-header>qits-1 · A group</span>
-      <ui-tag lane-tags label="Ordered campaign" />
-      <ui-list-item code="qits-2" title="An item" [chips]="['ticket']" />
-      <ui-board-lane muted>
-        <span lane-header>qits-3 · A muted parent that lives elsewhere</span>
-        <ui-list-item code="qits-4" title="A nested item" [chips]="['done', 'task']" />
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane collapsible collapsed>
+        <span lane-header class="font-semibold">A verified epic</span>
+        <span lane-gutter class="font-mono">qits-40</span>
+        <span lane-summary>2 / 2 ✅</span>
+        <ui-finish-button lane-action label="Mark qits-40 done" />
       </ui-board-lane>
-    </ui-board-lane>
-    <ui-list-item code="qits-5" title="An ungrouped item" [chips]="['ticket']">
-      <ui-tag label="Second campaign" />
-    </ui-list-item>
+      <ui-board-card [column]="2" code="qits-41" title="A verified ticket" kind="ticket">
+        <ui-finish-button card-action label="Mark qits-41 done" />
+      </ui-board-card>
+      <ui-board-card [column]="2" code="qits-42" title="Finishing…" kind="ticket">
+        <ui-finish-button card-action label="Mark qits-42 done" state="running" />
+      </ui-board-card>
+      <ui-board-card [column]="2" code="qits-43" title="Failed to finish" kind="ticket">
+        <ui-finish-button card-action label="Mark qits-43 done" state="error" />
+      </ui-board-card>
+    </ui-board>
   `,
 })
-class Groups {}
+class Finishing {
+  readonly columns = COLUMNS;
+}
 
 @Component({
   imports: [Board, BoardLane, BoardRow, BoardCard, RouterLink],
@@ -163,10 +170,10 @@ describe('Board (screenshots)', () => {
       .toMatchScreenshot('lanes-collapsing');
   });
 
-  it('draws lanes as nested groups off a board', async () => {
-    const fixture = TestBed.createComponent(Groups);
+  it('draws the finish button on verified items, idle, running and failed', async () => {
+    const fixture = TestBed.createComponent(Finishing);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('groups');
+    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('finishing');
   });
 
   it('shadows a standalone ticket card', async () => {
