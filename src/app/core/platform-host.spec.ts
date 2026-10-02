@@ -1,7 +1,13 @@
 import { platformOrigin } from './platform-host';
 
 describe('platformOrigin', () => {
-  it('swaps the first label of this host for the application', () => {
+  it('keeps the domain of the platform apex this app is served at', () => {
+    expect(platformOrigin('workspaces', { protocol: 'https:', hostname: 'qits.wohlben.eu' })).toBe(
+      'https://workspaces.qits.wohlben.eu',
+    );
+  });
+
+  it("drops this app's own host label", () => {
     expect(
       platformOrigin('workspaces', { protocol: 'https:', hostname: 'landing.qits.wohlben.eu' }),
     ).toBe('https://workspaces.qits.wohlben.eu');
