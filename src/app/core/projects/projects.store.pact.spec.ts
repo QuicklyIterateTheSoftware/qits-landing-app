@@ -8,12 +8,13 @@ import { join, resolve } from 'node:path';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction } from '@qits/angular/testing';
+import { assertPactPart } from '../../../testing/pact-part';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
-  LIST_PROJECT_REPOSITORIES,
+  LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECTS,
   SESSION_CHECK,
 } from './projects.consumes';
@@ -23,7 +24,9 @@ import { ProjectsStore } from './projects.store';
  * qits-landing-app's pact with qits-projects-service (epic qits-546). Both sides are named by
  * repository, so the file is `pacts/qits-landing-app_qits-projects-service.json`.
  *
- * The store is the only user of the qits-projects client, so this file is the whole pact. Each test
+ * The stores are the only users of the qits-projects client; this spec covers `ProjectsStore`,
+ * `work.store.pact.spec.ts` covers `WorkStore` and `repositories.store.pact.spec.ts` covers
+ * `RepositoriesStore`, in the same pact file. Each test
  * drives one store method, as the UI interaction named in `interactions.ts` does, against a pact
  * mock server that answers with qits-projects' golden master, and checks what the store made of it.
  * Each interaction binds only the fields the store reads: the same list from `projects.consumes.ts`
@@ -37,6 +40,13 @@ import { ProjectsStore } from './projects.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+
+/**
+ * The operations this spec owns in that file. `WorkStore`'s pact spec owns `listProjectEntities`
+ * and `RepositoriesStore`'s owns `listProjectRepositories`, in the same file
+ * (`src/testing/pact-part.ts`).
+ */
+const OPERATIONS = ['listProjects', 'getProject', 'listProjectReleaseRequests'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -79,7 +89,12 @@ describe('qits-landing-app → qits-projects-service pact', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
-      assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        OPERATIONS,
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -130,20 +145,39 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       },
     ));
 
-  it('show-project-repositories: the store loads a project’s repositories', () =>
+  it('open-release-requests: the store loads a project’s pending release requests', () =>
     given(
-      'show-project-repositories',
-      'a project with 3 repositories',
-      'listProjectRepositories',
-      LIST_PROJECT_REPOSITORIES,
+      'open-release-requests',
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
-      const op = masters.operation('a project with 3 repositories', 'listProjectRepositories');
+      const op = masters.operation(
+        'a project with pending release requests',
+        'listProjectReleaseRequests',
+      );
       const projectId = op.params['projectId'];
-      await store.loadRepositories(projectId);
-      const loaded = store.repositories()[projectId];
-      expect(loaded?.status).toBe('loaded');
-      const recorded = masters.body('a project with 3 repositories', 'listProjectRepositories');
-      expect(loaded?.entries.length).toBe(recorded.entries.length);
+      await store.loadReleaseRequests(projectId);
+      // The pact binds the fields by type, so the mock repeats the recorded example; which states
+      // are pending is the plain spec's business.
+      expect(store.releaseRequests()[projectId]?.status).toBe('loaded');
+    }));
+
+  it('open-release-requests: a project without any lists none', () =>
+    given(
+      'open-release-requests',
+      'a project with no release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with no release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      expect(store.releaseRequests()[projectId]).toEqual({ status: 'loaded', pending: [] });
     }));
 });

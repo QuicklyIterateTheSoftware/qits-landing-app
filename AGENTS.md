@@ -3,11 +3,66 @@
 Notes for agents working in this repository. `README.md` covers what the app is and how to run it.
 This file covers the rules that are easy to break.
 
-## Pact contracts with qits-projects-service (epic qits-546)
+## Where code lives
 
-This app is a consumer of qits-projects-service. What it relies on is written down as a Pact V4
-file, `pacts/qits-landing-app_qits-projects-service.json`, and published as a jar that
-qits-projects-service verifies in its own gate.
+- `src/app/ui/components/<component>/`: dumb, presentational components (`stat`, `spinner`,
+  `card`, …). Inputs and projected content only; they know nothing about projects, statuses or
+  stores. Each has its own plain spec and a screenshot spec with inline data.
+- `src/app/patterns/<domain>/<component>/`: smart components (pages and their parts, such as
+  `patterns/projects/project-card/`, `patterns/work/project-work/`). They read stores and map the
+  data onto `ui/components`. Specs sit beside each component.
+- `src/app/core/<domain>/`: state, services and pure functions (stores and their `*.consumes.ts`
+  and pact specs, `selected-project.ts`, `work-statuses.ts`).
+- `src/app/layout/`, `src/app/auth/` and `src/app/root-redirect.ts`: the shell, for now.
+
+## Live domain events
+
+`core/events/domain-events.ts` (`DomainEvents`) is the app's ONE live connection to qits-events:
+an `EventSource` on `/events/api/stream?names=…` (`*` is every event). Stores and menus call
+`on(names)` instead of opening a stream of their own; the service keeps the union of the names its
+subscribers want, reopens the stream when that changes (debounced), reopens a stream the browser
+gave up on with a doubling wait (1–30 s), closes it when nobody listens, and never connects on the
+server. The stream is live only: no replay. An event is the same envelope as the list's entries, so
+its shape is bound by the list's pact (`LIST_EVENTS`, which reads `payload` for that reason;
+`payloadProjectId` reads the `projectId` most project-scoped events carry).
+
+Users today: the lightning menu fetches the open project's release requests when the project opens
+and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
+(`core/projects/release-request-events.ts`; deployment events name no project, and count only while
+a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
+notifications menu puts every new event at the top of its list once it is loaded. The bumps menu
+(the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
+(`listPendingBumps`) on its first opening and again after `BUMP_EVENTS`, at most once a second.
+
+The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
+panel are projected, `opened` fires on each opening.
+
+## Styling
+
+Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in
+the templates, and no component `styles:` or `styleUrl` blocks. A component's own host styling goes
+in `host: { class: '…' }`. Colours come from Tailwind's theme, not hex literals. The app's own
+palettes are in `src/theme.css` (Tailwind v4's `@theme`, imported by `src/styles.css`):
+`charcoal-brown`, `sunflower-gold`, `cinnabar`, `mint-leaf` and `ocean-deep`, each 50–950
+(`bg-ocean-deep-100`, `text-cinnabar-600`). Tailwind's default palette stays available. Tailwind finds the classes in the inline templates by itself; a class written as a
+string built at run time is not found, so write every class out in full.
+
+## Pact contracts (epics qits-546, qits-112)
+
+This app is a consumer of two providers. What it relies on from each is written down as a Pact V4
+file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
+
+| Provider              | Store and pact spec                | Pact file                                           | Golden masters                  |
+| --------------------- | ---------------------------------- | --------------------------------------------------- | ------------------------------- |
+| qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
+| qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-landing-app_qits-githost-service.json`  | `@qits/githost-golden-masters`  |
+
+The githost pact has one interaction per kind of list a card meets, each from its own provider
+state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
+shown like a counted one), one never counted (`PENDING`, left out; "Counting lines…" when nothing
+is counted), one without a commit ("No lines yet"), and a mix of counted and never counted. The
+card shows CODE languages only; data (JSON, YAML, …) and docs (Markdown) are left out. The plain and
+screenshot specs cover the same cases from the same golden masters.
 
 - **Pacts name both sides by repository name**, never by application name, so a component's
   frontend and backend stay distinct: consumer `qits-landing-app`, provider
@@ -70,11 +125,43 @@ image). Keep both when you update `@pact-foundation/pact`.
 
 ### Publishing: only when the pact changed
 
-`release.yml` declares
-`contracts: { application: qits-landing, pacts: { qits-projects: { from: pacts/, packages: [maven] } } }`
-and carries no `release:` override anymore — the `app` archetype's release step runs as is. qits-ci
-derives the coordinate (`eu.wohlben.qits:qits-landing-pacts-qits-projects`; it still uses application
-names), packages `pacts/` as the
-jar and publishes it itself, only when the tree differs from the newest published jar's. There is no
+Every pact sits flat in `pacts/`, named `<consumer>_<provider>.json` by repository name.
+`release.yml` declares one `contracts.pacts` entry per provider, keyed by the provider's repository
+name (`qits-projects-service: { packages: [maven] }`), and carries no `release:` override — the `app`
+archetype's release step runs as is. qits-ci packs only `pacts/*_<provider>.json` into that
+provider's jar (at `pacts/<file>` on the classpath), names it by the two repository names
+(`eu.wohlben.qits:qits-landing-app-pacts-qits-projects-service`, `…-pacts-qits-githost-service`) and
+publishes it only when those files changed. So a change to one pact does not republish, and bump,
+the other provider's jar. There is no
 repository-side gate, jar builder or PUT sequence left to maintain: `.config/qits/pacts.sh`,
 `.config/qits/pacts-jar.mjs` and `.config/qits/published-tree-changed.sh` are gone.
+
+## Screenshot tests (`*.browser.spec.ts`)
+
+Components are also tested in a real browser (Chromium, through Playwright and Vitest browser mode),
+and each test compares a screenshot with a committed reference. `npm run test:browser` runs them;
+`npm test` (jsdom) leaves them out. The release check runs `npm run --if-present test:browser` in a
+step image that has Chromium, so a changed pixel fails the release request.
+
+- **The backend answers are the providers' golden masters**, as everywhere else. The reader uses
+  `node:fs`, so it runs on the Node side: `vitest-browser.config.ts` gives the browser a
+  `goldenMaster` command, and a spec calls `await commands.goldenMaster(state, operationId)`, or
+  `(state, operationId, 'qits-githost')` for qits-githost (from `vitest/browser`), and
+  `flush(...)`es the result. The two providers' frozen ids are unrelated, so the card spec puts
+  qits-githost's recorded entries under the project's recorded repository ids and says so. An error answer is only a status; the store reads
+  no body from it.
+- **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
+  system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is
+  800x600 (`angular.json`, target `test-browser`).
+- **The renderer** is the image `qits/build-images/node-browser-base`: Node 24, Playwright's Chromium
+  and a pinned font stack. CI's release check runs on it, and the workspace image is built FROM it,
+  so both render the same pixels. `scripts/check-renderer.mjs` runs first and refuses a machine
+  without `/etc/qits-renderer-provenance` (a workstation), a renderer that differs from
+  `src/testing/browser/renderer.txt` (the one the references were made with), and a `playwright`
+  package that is not the image's version. `playwright` is pinned exactly to that version.
+- **References** are in `__screenshots__/` beside the spec, named `<name>-chromium-linux.png`, and
+  are committed. CI only compares (`CI=true`): a mismatch or a missing reference fails, and nothing
+  is written. A mismatch writes the actual image and the diff to `.vitest-attachments/` (ignored).
+- **References are made by the platform, never by hand.** A qits-maintenance task, which an agent
+  triggers for its release request, regenerates them (with `renderer.txt`) in the renderer image and
+  joins the commit to that release request. Do not commit reference screenshots made anywhere else.

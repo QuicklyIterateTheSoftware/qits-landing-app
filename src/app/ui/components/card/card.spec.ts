@@ -26,7 +26,9 @@ describe('cards', () => {
 
   it('projects the header before the body', () => {
     const card = render().querySelector('#both')!;
-    expect([...card.children].map((child) => child.tagName.toLowerCase())).toEqual([
+    // The slots sit in the card's frame, the host's one child.
+    const frame = card.firstElementChild!;
+    expect([...frame.children].map((child) => child.tagName.toLowerCase())).toEqual([
       'card-header',
       'card-body',
     ]);

@@ -8,12 +8,21 @@ import { defineConfig } from '@hey-api/openapi-ts';
  * Each client runs on Angular's `HttpClient` and gives every operation a typed function and a
  * typed `httpResource`. A call to a path, parameter or field the spec does not have is a compile
  * error.
+ *
+ * `QITS_SIBLINGS` points at another wrapper checkout's `components/` (default: the one this
+ * repository sits in).
  */
-const services = ['qits-projects/qits-projects-service'];
+const siblings = process.env['QITS_SIBLINGS'] ?? '../..';
+const services = [
+  'qits-projects/qits-projects-service',
+  'qits-githost/qits-githost-service',
+  'qits-events/qits-events-service',
+  'qits-maintenance/qits-maintenance-service',
+];
 
 export default defineConfig(
   services.map((service) => ({
-    input: `../../${service}/docs/openapi.yml`,
+    input: `${siblings}/${service}/docs/openapi.yml`,
     output: `src/app/api/${service.split('/')[0].replace(/^qits-/, '')}`,
     plugins: ['@hey-api/client-angular', '@hey-api/typescript', '@hey-api/sdk', '@angular/common'],
   })),

@@ -1,0 +1,87 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { EMPTY } from 'rxjs';
+import { commands, page } from 'vitest/browser';
+import { client as eventsClient } from '../../../api/events/client.gen';
+import { provideHeyApiClient } from '../../../api/events/client/client.gen';
+import { DomainEvents } from '../../../core/events/domain-events';
+import { RECENT_EVENTS } from '../../../core/events/events.consumes';
+import { NotificationsMenu } from './notifications-menu';
+
+/** Screenshots of the top bar's notifications menu, its answers qits-events' golden masters. */
+
+/** The generated client builds its request after a few awaits; let them run. */
+const settle = () => new Promise((resolve) => setTimeout(resolve));
+
+describe('NotificationsMenu (screenshots)', () => {
+  let http: HttpTestingController;
+  const LIST = `/events/api/events?limit=${RECENT_EVENTS}`;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideHeyApiClient(eventsClient),
+        // No live stream in a screenshot.
+        { provide: DomainEvents, useValue: { on: () => EMPTY } },
+      ],
+    });
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => http.verify());
+
+  /** The menu at the right of a 400px-wide bar, room below it for the panel; nothing opened. */
+  async function render() {
+    const fixture = TestBed.createComponent(NotificationsMenu);
+    const element = fixture.nativeElement as HTMLElement;
+    element.parentElement!.style.cssText =
+      'display:flex; justify-content:flex-end; width:25rem; height:18rem; padding:0.5rem; align-items:flex-start';
+    fixture.detectChanges();
+    await settle();
+    return { fixture, frame: page.elementLocator(element.parentElement!) };
+  }
+
+  async function opened() {
+    const rendered = await render();
+    await page.getByRole('button', { name: 'Notifications' }).click();
+    rendered.fixture.detectChanges();
+    await settle();
+    return { ...rendered, list: http.expectOne(LIST) };
+  }
+
+  async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
+    await settle();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  it('is a speech bubble, closed', async () => {
+    const { frame } = await render();
+    await expect.element(frame).toMatchScreenshot('closed');
+  });
+
+  it('lists the newest events', async () => {
+    const { fixture, frame, list } = await opened();
+    list.flush(await commands.goldenMaster('a few recent events', 'listEvents', 'qits-events'));
+    await answered(fixture);
+    await expect.element(frame).toMatchScreenshot('open');
+  });
+
+  it('says so when there are none', async () => {
+    const { fixture, frame, list } = await opened();
+    list.flush(await commands.goldenMaster('no events', 'listEvents', 'qits-events'));
+    await answered(fixture);
+    await expect.element(frame).toMatchScreenshot('empty');
+  });
+
+  it('shows the spinner while loading, and the error icon when the list fails', async () => {
+    const { fixture, frame, list } = await opened();
+    await expect.element(frame).toMatchScreenshot('loading');
+    list.flush(null, { status: 500, statusText: 'Server Error' });
+    await answered(fixture);
+    await expect.element(frame).toMatchScreenshot('error');
+  });
+});

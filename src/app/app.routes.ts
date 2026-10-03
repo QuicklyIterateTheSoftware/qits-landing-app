@@ -1,10 +1,22 @@
 import { Routes } from '@angular/router';
 import { sessionGuard } from './auth/session.guard';
 import { Layout } from './layout/layout';
-import { ProjectPicker } from './projects/project-picker';
+import { ProjectPage } from './patterns/projects/project-page/project-page';
+import { ProjectPicker } from './patterns/projects/project-picker/project-picker';
+import { ProjectSetup } from './patterns/projects/project-setup/project-setup';
+import { ProjectWork } from './patterns/work/project-work/project-work';
+import { WorkItem } from './patterns/work/work-item/work-item';
+import { ProjectWorkArchive } from './patterns/work/project-work-archive/project-work-archive';
+import { ProjectEvents } from './patterns/events/project-events/project-events';
+import { ProjectObservability } from './patterns/observability/project-observability/project-observability';
+import { ProjectEditor } from './patterns/projects/project-editor/project-editor';
+import { RootRedirect } from './root-redirect';
+import { ProjectRepositories } from './patterns/repositories/project-repositories/project-repositories';
 
 /**
- * Two routes, and the second one is load-bearing rather than tidy.
+ * The root hands on to `projects` (`RootRedirect`, see there why not `redirectTo`), the project
+ * list is at `projects`, one project's page at `projects/<slug>`, and a catch-all that is
+ * load-bearing rather than tidy.
  *
  * `.config/qits/deployments.yml` declares `routes: /landing`, which is the prefix the edge
  * path-routes on EVERY vhost — so this application is asked for `/landing` as well as for `/` on
@@ -28,7 +40,18 @@ export const routes: Routes = [
     component: Layout,
     canActivate: [sessionGuard],
     children: [
-      { path: '', component: ProjectPicker },
+      { path: '', component: RootRedirect },
+      { path: 'projects', component: ProjectPicker },
+      { path: 'projects/:slug', component: ProjectPage },
+      { path: 'projects/:slug/work', component: ProjectWork },
+      { path: 'projects/:slug/work/archive', component: ProjectWorkArchive },
+      // After `work/archive`, so that one keeps matching; item ids are qualified (`qits-112`).
+      { path: 'projects/:slug/work/:id', component: WorkItem },
+      { path: 'projects/:slug/editor', component: ProjectEditor },
+      { path: 'projects/:slug/repositories', component: ProjectRepositories },
+      { path: 'projects/:slug/observability', component: ProjectObservability },
+      { path: 'projects/:slug/events', component: ProjectEvents },
+      { path: 'projects/:slug/setup', component: ProjectSetup },
       { path: '**', component: ProjectPicker },
     ],
   },

@@ -147,7 +147,7 @@ export type AttachmentDto = {
     dataBase64?: string;
 };
 
-export type AuditEntityType = 'EPIC' | 'FEATURE' | 'TASK' | 'TICKET' | 'CAMPAIGN' | 'TICKET_COMMENT' | 'DOSSIER_PAGE';
+export type AuditEntityType = 'EPIC' | 'FEATURE' | 'TASK' | 'TICKET' | 'CAMPAIGN' | 'COMMENT' | 'DOSSIER_PAGE';
 
 export type AuditEntryDto = {
     id?: string;
@@ -200,6 +200,7 @@ export type CampaignDto = {
     title?: string;
     description?: string;
     status?: string;
+    blocked?: boolean;
     start?: CampaignStartDto;
     members?: Array<CampaignMemberDto>;
 };
@@ -269,6 +270,7 @@ export type CampaignProgressCampaignDto = {
     qualifiedId?: string;
     title?: string;
     status?: string;
+    blocked?: boolean;
     start?: CampaignStartDto;
 };
 
@@ -300,6 +302,7 @@ export type CampaignSummaryDto = {
     projectId?: string;
     title?: string;
     status?: string;
+    blocked?: boolean;
     started?: boolean;
     active?: boolean;
     members?: number;
@@ -363,6 +366,52 @@ export type CatalogListResponse = {
     credentialApplication?: string;
 };
 
+export type CollectTagsRequest = {
+    dryRun?: boolean;
+    pins: TagCollectionPinSources;
+};
+
+/**
+ * One comment on an entity's thread.
+ */
+export type CommentAnswer = {
+    comment?: CommentDto;
+};
+
+export type CommentDeleted = {
+    success?: boolean;
+};
+
+export type CommentDto = {
+    id?: string;
+    entityId?: string;
+    author?: string;
+    body?: string;
+    createdAt?: Instant;
+    updatedAt?: Instant;
+};
+
+/**
+ * An entity's thread, oldest first.
+ */
+export type CommentList = {
+    entries?: Array<CommentListEntry>;
+};
+
+export type CommentListEntry = {
+    comment?: CommentDto;
+};
+
+/**
+ * A JSON merge patch (RFC 7396) of one comment. body is the only property and is required: it replaces the text, and may not be null or blank. id, entityId, author, createdAt and updatedAt are server-owned; any other property is refused as unknown.
+ */
+export type CommentPatch = {
+    /**
+     * The remark as it should now read, Markdown.
+     */
+    body: string;
+};
+
 export type CommitBuildStatusDto = {
     runId?: string;
     status?: string;
@@ -409,6 +458,25 @@ export type CommitLogDto = {
     commits?: Array<CommitDto>;
 };
 
+export type CommitSubjectCounts = {
+    total?: number;
+    complying?: number;
+    nonComplying?: number;
+    exempt?: number;
+    exemptMerge?: number;
+    exemptMachine?: number;
+};
+
+export type CommitSubjectsDto = {
+    repositoryId?: string;
+    branch?: string;
+    limit?: number;
+    guardEnabled?: boolean;
+    counts?: CommitSubjectCounts;
+    nonComplying?: Array<NonComplyingCommit>;
+    qualifiedIds?: Array<string>;
+};
+
 export type ConditionCriterion = {
     id?: string;
     kind?: string;
@@ -444,6 +512,10 @@ export type ContainerView = {
 export type CreateCampaignRequest = {
     title: string;
     description?: string;
+};
+
+export type CreateEntityCommentRequest = {
+    body: string;
 };
 
 export type CreateEpicRequest = {
@@ -555,6 +627,13 @@ export type DeletePageResponse = {
     success?: boolean;
 };
 
+export type DeletedTag = {
+    repository?: string;
+    tag?: string;
+    host?: boolean;
+    twin?: boolean;
+};
+
 export type DesignDto = {
     id?: string;
     title?: string;
@@ -614,6 +693,83 @@ export type DraftResponse = {
     draft?: DraftDto;
 };
 
+/**
+ * An entity's block flag as the write left it, with its archetype and status.
+ */
+export type EntityBlock = {
+    entityId?: string;
+    archetype?: Archetype;
+    status?: string;
+    blocked?: boolean;
+};
+
+/**
+ * An entity's block flag as the write left it.
+ */
+export type EntityBlockAnswer = {
+    block?: EntityBlock;
+};
+
+/**
+ * What the block flag should become, and why.
+ */
+export type EntityBlockRequest = {
+    /**
+     * true to block, false to unblock
+     */
+    blocked: boolean;
+    /**
+     * what is in the way — required when blocking; lands on the entity's thread
+     */
+    reason?: string;
+};
+
+/**
+ * A new entity of any archetype: the archetype, plus exactly the body GET /projects/api/entities/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, CAMPAIGN) names its project, a node (FEATURE, TASK) its parent.
+ */
+export type EntityCreate = {
+    /**
+     * EPIC, TICKET, FEATURE, TASK or CAMPAIGN
+     */
+    archetype: Archetype;
+    /**
+     * A root's project: its id or its slug.
+     */
+    project?: string;
+    /**
+     * A node's parent — an EPIC for a FEATURE, a FEATURE for a TASK — by UUID or qualified id.
+     */
+    parent?: string;
+    /**
+     * The label.
+     */
+    title?: string;
+    /**
+     * The long-form Markdown body.
+     */
+    description?: string;
+    /**
+     * A ticket's kind, BUG or IMPROVEMENT. MAINTENANCE is reserved for the tickets the platform files about its own stuck release requests, and it closes those itself.
+     */
+    ticketType?: string;
+    /**
+     * Why a ticket came about. Required for a ticket.
+     */
+    impetus?: string;
+    /**
+     * A ticket's assignee.
+     */
+    assignee?: string;
+    /**
+     * A task's repository, in the task's project.
+     */
+    repositoryId?: string;
+    /**
+     * A feature's or task's sibling dependency.
+     */
+    dependsOn?: string;
+};
+
 export type EntityDispatchDto = {
     entityId?: string;
     archetype?: string;
@@ -636,10 +792,65 @@ export type EntityDispatchStateDto = {
     mode?: DispatchMode;
 };
 
+/**
+ * A project's entities, in tree order.
+ */
+export type EntityList = {
+    entities?: Array<TransitionedEntity>;
+};
+
+/**
+ * A JSON merge patch (RFC 7396) of one entity. An absent property is left as it is; an explicit null clears it. At least one property must be named. status, archetype, membership, supersededBy and blocked are refused with the door that moves them; slug and createdBy are server-owned; any other property is refused as unknown. A property the entity's archetype has no slot for is refused (impetus on an epic).
+ */
+export type EntityPatch = {
+    /**
+     * The label. Cannot be cleared.
+     */
+    title?: string;
+    /**
+     * The long-form Markdown body; null clears it.
+     */
+    description?: string | null;
+    /**
+     * A ticket's impetus; null clears it.
+     */
+    impetus?: string | null;
+    /**
+     * A ticket's type, BUG or IMPROVEMENT; MAINTENANCE marks a ticket the platform filed and will close itself, and retyping one away from it takes it over. Cannot be cleared.
+     */
+    ticketType?: string;
+    /**
+     * A ticket's assignee; null clears it.
+     */
+    assignee?: string | null;
+    /**
+     * A task's repository, in the task's project. Cannot be cleared.
+     */
+    repositoryId?: string;
+    /**
+     * A feature's or task's sibling dependency; null clears it.
+     */
+    dependsOn?: string | null;
+    /**
+     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED.
+     */
+    implementedAt?: Instant | null;
+};
+
 export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'DEPENDS_ON';
 
 export type EntityRefinementResponse = {
     refinement?: RefinementDto;
+};
+
+/**
+ * A lifecycle move: the status to move to.
+ */
+export type EntityStatusMove = {
+    /**
+     * REPORTED, REFINED, IMPLEMENTED, VERIFIED, DONE or DROPPED — one the entity's current status may move to
+     */
+    target: string;
 };
 
 export type EntityTransition = {
@@ -713,6 +924,7 @@ export type EpicDto = {
     title?: string;
     slug?: string;
     status?: string;
+    blocked?: boolean;
     supersededByEpicId?: string;
     description?: string;
     createdAt?: Instant;
@@ -793,6 +1005,14 @@ export type InlinedFigure = {
 };
 
 export type Instant = string;
+
+export type KeptTags = {
+    newest?: number;
+    pinnedVersion?: number;
+    gitlink?: number;
+    inFlight?: number;
+    young?: number;
+};
 
 export type LastBackupDto = {
     outcome?: BackupOutcome;
@@ -881,6 +1101,15 @@ export type NewDesign = {
 export type NewPage = {
     title: string;
     body?: string;
+};
+
+export type NonComplyingCommit = {
+    hash?: string;
+    shortHash?: string;
+    subject?: string;
+    authorName?: string;
+    authorEmail?: string;
+    date?: string;
 };
 
 export type Outcome = 'CREATED' | 'ADOPTED' | 'KEPT' | 'COMPONENT_UPDATED' | 'SYNC_TARGET_UPDATED' | 'UNDECLARED' | 'SKIPPED';
@@ -1060,6 +1289,7 @@ export type RepositoryDto = {
     component?: string;
     projectId?: string;
     lastBackup?: LastBackupDto;
+    cloneUrl?: string;
 };
 
 export type Response = {
@@ -1438,6 +1668,42 @@ export type SyncStatusDto = {
     behind?: number;
 };
 
+export type TagCollectionPinSources = {
+    /**
+     * GET /deployments/api/pins
+     */
+    deployments: unknown;
+    /**
+     * GET /ci/api/daemon
+     */
+    ciDaemon: unknown;
+    /**
+     * GET /maintenance/api/pins
+     */
+    dependencies: unknown;
+    /**
+     * GET /configuration/api/pins
+     */
+    configuredImages: unknown;
+    /**
+     * GET /workspaces/api/pins
+     */
+    workspaceLaunches: unknown;
+    /**
+     * GET /projects/api/pins
+     */
+    projectLaunches: unknown;
+};
+
+export type TagCollectionReportDto = {
+    dryRun?: boolean;
+    repositories?: number;
+    examined?: number;
+    deleted?: Array<DeletedTag>;
+    kept?: KeptTags;
+    errors?: Array<string>;
+};
+
 export type TaskDto = {
     id?: string;
     featureId?: string;
@@ -1492,7 +1758,7 @@ export type TicketDto = {
     workspaces?: Array<WorkspaceReferenceDto>;
 };
 
-export type TicketType = 'BUG' | 'IMPROVEMENT';
+export type TicketType = 'BUG' | 'IMPROVEMENT' | 'MAINTENANCE';
 
 export type TransitionCampaignRequest = {
     target: string;
@@ -1533,6 +1799,7 @@ export type TransitionedEntity = {
     createdAt?: Instant;
     updatedAt?: Instant;
     changedBy?: string;
+    blocked?: boolean;
 };
 
 export type UpdateDesign = {
@@ -1912,7 +2179,7 @@ export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses = {
 
 export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse = GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses[keyof GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses];
 
-export type GetProjectsApiCampaignsByIdData = {
+export type GetCampaignData = {
     body?: never;
     path: {
         id: string;
@@ -1921,7 +2188,7 @@ export type GetProjectsApiCampaignsByIdData = {
     url: '/projects/api/campaigns/{id}';
 };
 
-export type GetProjectsApiCampaignsByIdErrors = {
+export type GetCampaignErrors = {
     /**
      * Not Authorized
      */
@@ -1932,14 +2199,14 @@ export type GetProjectsApiCampaignsByIdErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiCampaignsByIdResponses = {
+export type GetCampaignResponses = {
     /**
      * OK
      */
     200: CampaignResponse;
 };
 
-export type GetProjectsApiCampaignsByIdResponse = GetProjectsApiCampaignsByIdResponses[keyof GetProjectsApiCampaignsByIdResponses];
+export type GetCampaignResponse = GetCampaignResponses[keyof GetCampaignResponses];
 
 export type PostProjectsApiCampaignsByIdMembersData = {
     body: AddCampaignMemberRequest;
@@ -2169,6 +2436,115 @@ export type PostProjectsApiCampaignsByIdTransitionResponses = {
 
 export type PostProjectsApiCampaignsByIdTransitionResponse = PostProjectsApiCampaignsByIdTransitionResponses[keyof PostProjectsApiCampaignsByIdTransitionResponses];
 
+export type DeleteProjectsApiCommentsByCommentIdData = {
+    body?: never;
+    path: {
+        commentId: string;
+    };
+    query?: never;
+    url: '/projects/api/comments/{commentId}';
+};
+
+export type DeleteProjectsApiCommentsByCommentIdErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No comment with this id
+     */
+    404: unknown;
+};
+
+export type DeleteProjectsApiCommentsByCommentIdResponses = {
+    /**
+     * The comment is gone
+     */
+    200: CommentDeleted;
+};
+
+export type DeleteProjectsApiCommentsByCommentIdResponse = DeleteProjectsApiCommentsByCommentIdResponses[keyof DeleteProjectsApiCommentsByCommentIdResponses];
+
+export type PatchProjectsApiCommentsByCommentIdData = {
+    body: CommentPatch;
+    path: {
+        commentId: string;
+    };
+    query?: never;
+    url: '/projects/api/comments/{commentId}';
+};
+
+export type PatchProjectsApiCommentsByCommentIdErrors = {
+    /**
+     * Every complaint about the body in one message: not an object, empty, body null or blank or not a string, a server-owned or unknown property
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent editing a comment outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No comment with this id
+     */
+    404: unknown;
+};
+
+export type PatchProjectsApiCommentsByCommentIdResponses = {
+    /**
+     * The comment as it stands after the edit
+     */
+    200: CommentAnswer;
+};
+
+export type PatchProjectsApiCommentsByCommentIdResponse = PatchProjectsApiCommentsByCommentIdResponses[keyof PatchProjectsApiCommentsByCommentIdResponses];
+
+export type PostProjectsApiEntitiesData = {
+    body: EntityCreate;
+    path?: never;
+    query?: never;
+    url: '/projects/api/entities';
+};
+
+export type PostProjectsApiEntitiesErrors = {
+    /**
+     * Every complaint about the body in one message: not an object, no or an unknown archetype, a property the create schema does not list, a missing required one, a value of the wrong shape, a parent of the wrong kind, or a repository outside the project
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent creating in a project other than its own; nothing is written
+     */
+    403: unknown;
+    /**
+     * The project, the parent or the repository names nothing
+     */
+    404: unknown;
+    /**
+     * The owning epic's status freezes its scope: a node needs the epic REPORTED
+     */
+    409: unknown;
+};
+
+export type PostProjectsApiEntitiesResponses = {
+    /**
+     * The entity as written
+     */
+    201: TransitionedEntity;
+};
+
+export type PostProjectsApiEntitiesResponse = PostProjectsApiEntitiesResponses[keyof PostProjectsApiEntitiesResponses];
+
 export type GetProjectsApiEntitiesArchetypesData = {
     body?: never;
     path?: never;
@@ -2195,6 +2571,42 @@ export type GetProjectsApiEntitiesArchetypesResponses = {
 };
 
 export type GetProjectsApiEntitiesArchetypesResponse = GetProjectsApiEntitiesArchetypesResponses[keyof GetProjectsApiEntitiesArchetypesResponses];
+
+export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorData = {
+    body?: never;
+    path: {
+        archetype: string;
+        door: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/archetypes/{archetype}/schemas/{door}';
+};
+
+export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such archetype, or no such door
+     */
+    404: unknown;
+};
+
+export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponses = {
+    /**
+     * The schema
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponse = GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponses[keyof GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponses];
 
 export type PostProjectsApiEntitiesTransitionData = {
     body: {
@@ -2230,6 +2642,191 @@ export type PostProjectsApiEntitiesTransitionResponses = {
 };
 
 export type PostProjectsApiEntitiesTransitionResponse = PostProjectsApiEntitiesTransitionResponses[keyof PostProjectsApiEntitiesTransitionResponses];
+
+export type GetEntityData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/{id}';
+};
+
+export type GetEntityErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type GetEntityResponses = {
+    /**
+     * The entity
+     */
+    200: TransitionedEntity;
+};
+
+export type GetEntityResponse = GetEntityResponses[keyof GetEntityResponses];
+
+export type PatchProjectsApiEntitiesByIdData = {
+    body: EntityPatch;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/{id}';
+};
+
+export type PatchProjectsApiEntitiesByIdErrors = {
+    /**
+     * Every complaint about the body in one message: not an object, empty, a property that is a move or server-owned or unknown, one the archetype has no slot for, a null where the property cannot be cleared, or a value of the wrong shape
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent writing an entity outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * The owning epic's status freezes what the patch touches
+     */
+    409: unknown;
+};
+
+export type PatchProjectsApiEntitiesByIdResponses = {
+    /**
+     * The entity as it stands after the edit
+     */
+    200: TransitionedEntity;
+};
+
+export type PatchProjectsApiEntitiesByIdResponse = PatchProjectsApiEntitiesByIdResponses[keyof PatchProjectsApiEntitiesByIdResponses];
+
+export type PostProjectsApiEntitiesByIdBlockedData = {
+    body: EntityBlockRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/{id}/blocked';
+};
+
+export type PostProjectsApiEntitiesByIdBlockedErrors = {
+    /**
+     * Blocking with no reason
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent blocking outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A feature or a task (no lifecycle), or a status that starts no phase (VERIFIED, DONE, DROPPED)
+     */
+    409: unknown;
+};
+
+export type PostProjectsApiEntitiesByIdBlockedResponses = {
+    /**
+     * The flag as the write left it
+     */
+    200: EntityBlockAnswer;
+};
+
+export type PostProjectsApiEntitiesByIdBlockedResponse = PostProjectsApiEntitiesByIdBlockedResponses[keyof PostProjectsApiEntitiesByIdBlockedResponses];
+
+export type ListEntityCommentsData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/{id}/comments';
+};
+
+export type ListEntityCommentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type ListEntityCommentsResponses = {
+    /**
+     * The thread, oldest first
+     */
+    200: CommentList;
+};
+
+export type ListEntityCommentsResponse = ListEntityCommentsResponses[keyof ListEntityCommentsResponses];
+
+export type PostProjectsApiEntitiesByIdCommentsData = {
+    body: CreateEntityCommentRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/{id}/comments';
+};
+
+export type PostProjectsApiEntitiesByIdCommentsErrors = {
+    /**
+     * A blank body
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent commenting outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type PostProjectsApiEntitiesByIdCommentsResponses = {
+    /**
+     * The comment as written
+     */
+    200: CommentAnswer;
+};
+
+export type PostProjectsApiEntitiesByIdCommentsResponse = PostProjectsApiEntitiesByIdCommentsResponses[keyof PostProjectsApiEntitiesByIdCommentsResponses];
 
 export type GetProjectsApiEntitiesByIdDispatchData = {
     body?: never;
@@ -2350,6 +2947,47 @@ export type PostProjectsApiEntitiesByIdRefinementResponses = {
 };
 
 export type PostProjectsApiEntitiesByIdRefinementResponse = PostProjectsApiEntitiesByIdRefinementResponses[keyof PostProjectsApiEntitiesByIdRefinementResponses];
+
+export type PostProjectsApiEntitiesByIdStatusData = {
+    body: EntityStatusMove;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/entities/{id}/status';
+};
+
+export type PostProjectsApiEntitiesByIdStatusErrors = {
+    /**
+     * No target, or an archetype with no lifecycle (a feature or a task)
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent moving an epic, or an entity outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A move the lifecycle does not allow, or a target naming no status
+     */
+    409: unknown;
+};
+
+export type PostProjectsApiEntitiesByIdStatusResponses = {
+    /**
+     * The entity as the move left it
+     */
+    200: TransitionedEntity;
+};
+
+export type PostProjectsApiEntitiesByIdStatusResponse = PostProjectsApiEntitiesByIdStatusResponses[keyof PostProjectsApiEntitiesByIdStatusResponses];
 
 export type GetProjectsApiEpicsByEpicIdDossierData = {
     body?: never;
@@ -2751,7 +3389,7 @@ export type GetProjectsApiEpicsByIdAuditResponses = {
 
 export type GetProjectsApiEpicsByIdAuditResponse = GetProjectsApiEpicsByIdAuditResponses[keyof GetProjectsApiEpicsByIdAuditResponses];
 
-export type PostProjectsApiEpicsByIdTransitionData = {
+export type TransitionEpicData = {
     body: TransitionEpicRequest;
     path: {
         id: string;
@@ -2760,7 +3398,7 @@ export type PostProjectsApiEpicsByIdTransitionData = {
     url: '/projects/api/epics/{id}/transition';
 };
 
-export type PostProjectsApiEpicsByIdTransitionErrors = {
+export type TransitionEpicErrors = {
     /**
      * Bad Request
      */
@@ -2775,14 +3413,14 @@ export type PostProjectsApiEpicsByIdTransitionErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiEpicsByIdTransitionResponses = {
+export type TransitionEpicResponses = {
     /**
      * OK
      */
     200: Response;
 };
 
-export type PostProjectsApiEpicsByIdTransitionResponse = PostProjectsApiEpicsByIdTransitionResponses[keyof PostProjectsApiEpicsByIdTransitionResponses];
+export type TransitionEpicResponse = TransitionEpicResponses[keyof TransitionEpicResponses];
 
 export type GetProjectsApiFeaturesByFeatureIdTasksData = {
     body?: never;
@@ -2937,6 +3575,37 @@ export type PutProjectsApiFeaturesByIdResponses = {
 
 export type PutProjectsApiFeaturesByIdResponse = PutProjectsApiFeaturesByIdResponses[keyof PutProjectsApiFeaturesByIdResponses];
 
+export type PostProjectsApiGcTagsData = {
+    body: CollectTagsRequest;
+    path?: never;
+    query?: never;
+    url: '/projects/api/gc/tags';
+};
+
+export type PostProjectsApiGcTagsErrors = {
+    /**
+     * A pin source is missing or malformed
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type PostProjectsApiGcTagsResponses = {
+    /**
+     * What was judged, deleted, kept and failed
+     */
+    200: TagCollectionReportDto;
+};
+
+export type PostProjectsApiGcTagsResponse = PostProjectsApiGcTagsResponses[keyof PostProjectsApiGcTagsResponses];
+
 export type GetProjectsApiPinsData = {
     body?: never;
     path?: never;
@@ -2964,14 +3633,14 @@ export type GetProjectsApiPinsResponses = {
 
 export type GetProjectsApiPinsResponse = GetProjectsApiPinsResponses[keyof GetProjectsApiPinsResponses];
 
-export type GetProjectsApiProjectsData = {
+export type ListProjectsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/projects/api/projects';
 };
 
-export type GetProjectsApiProjectsErrors = {
+export type ListProjectsErrors = {
     /**
      * Not Authorized
      */
@@ -2982,14 +3651,14 @@ export type GetProjectsApiProjectsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsResponses = {
+export type ListProjectsResponses = {
     /**
      * OK
      */
     200: Response33;
 };
 
-export type GetProjectsApiProjectsResponse = GetProjectsApiProjectsResponses[keyof GetProjectsApiProjectsResponses];
+export type ListProjectsResponse = ListProjectsResponses[keyof ListProjectsResponses];
 
 export type PostProjectsApiProjectsData = {
     body: CreateProjectRequest;
@@ -3055,7 +3724,7 @@ export type DeleteProjectsApiProjectsByIdResponses = {
 
 export type DeleteProjectsApiProjectsByIdResponse = DeleteProjectsApiProjectsByIdResponses[keyof DeleteProjectsApiProjectsByIdResponses];
 
-export type GetProjectsApiProjectsByIdData = {
+export type GetProjectData = {
     body?: never;
     path: {
         id: string;
@@ -3064,7 +3733,7 @@ export type GetProjectsApiProjectsByIdData = {
     url: '/projects/api/projects/{id}';
 };
 
-export type GetProjectsApiProjectsByIdErrors = {
+export type GetProjectErrors = {
     /**
      * Not Authorized
      */
@@ -3075,14 +3744,14 @@ export type GetProjectsApiProjectsByIdErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByIdResponses = {
+export type GetProjectResponses = {
     /**
      * OK
      */
     200: Response34;
 };
 
-export type GetProjectsApiProjectsByIdResponse = GetProjectsApiProjectsByIdResponses[keyof GetProjectsApiProjectsByIdResponses];
+export type GetProjectResponse = GetProjectResponses[keyof GetProjectResponses];
 
 export type PutProjectsApiProjectsByIdData = {
     body: UpdateProjectRequest;
@@ -3204,7 +3873,7 @@ export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponses = {
 
 export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponse = PostProjectsApiProjectsByProjectIdAgentContainerStopResponses[keyof PostProjectsApiProjectsByProjectIdAgentContainerStopResponses];
 
-export type GetProjectsApiProjectsByProjectIdCampaignsData = {
+export type ListProjectCampaignsData = {
     body?: never;
     path: {
         projectId: string;
@@ -3213,7 +3882,7 @@ export type GetProjectsApiProjectsByProjectIdCampaignsData = {
     url: '/projects/api/projects/{projectId}/campaigns';
 };
 
-export type GetProjectsApiProjectsByProjectIdCampaignsErrors = {
+export type ListProjectCampaignsErrors = {
     /**
      * Not Authorized
      */
@@ -3224,14 +3893,14 @@ export type GetProjectsApiProjectsByProjectIdCampaignsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdCampaignsResponses = {
+export type ListProjectCampaignsResponses = {
     /**
      * OK
      */
     200: CampaignsResponse;
 };
 
-export type GetProjectsApiProjectsByProjectIdCampaignsResponse = GetProjectsApiProjectsByProjectIdCampaignsResponses[keyof GetProjectsApiProjectsByProjectIdCampaignsResponses];
+export type ListProjectCampaignsResponse = ListProjectCampaignsResponses[keyof ListProjectCampaignsResponses];
 
 export type PostProjectsApiProjectsByProjectIdCampaignsData = {
     body: CreateCampaignRequest;
@@ -3266,7 +3935,48 @@ export type PostProjectsApiProjectsByProjectIdCampaignsResponses = {
 
 export type PostProjectsApiProjectsByProjectIdCampaignsResponse = PostProjectsApiProjectsByProjectIdCampaignsResponses[keyof PostProjectsApiProjectsByProjectIdCampaignsResponses];
 
-export type GetProjectsApiProjectsByProjectIdEpicsData = {
+export type ListProjectEntitiesData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: {
+        archetype?: string;
+        parent?: string;
+        status?: string;
+    };
+    url: '/projects/api/projects/{projectId}/entities';
+};
+
+export type ListProjectEntitiesErrors = {
+    /**
+     * An archetype or a status naming none
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project, or no such parent
+     */
+    404: unknown;
+};
+
+export type ListProjectEntitiesResponses = {
+    /**
+     * The entities
+     */
+    200: EntityList;
+};
+
+export type ListProjectEntitiesResponse = ListProjectEntitiesResponses[keyof ListProjectEntitiesResponses];
+
+export type ListProjectEpicsData = {
     body?: never;
     path: {
         projectId: string;
@@ -3277,7 +3987,7 @@ export type GetProjectsApiProjectsByProjectIdEpicsData = {
     url: '/projects/api/projects/{projectId}/epics';
 };
 
-export type GetProjectsApiProjectsByProjectIdEpicsErrors = {
+export type ListProjectEpicsErrors = {
     /**
      * Not Authorized
      */
@@ -3288,14 +3998,14 @@ export type GetProjectsApiProjectsByProjectIdEpicsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdEpicsResponses = {
+export type ListProjectEpicsResponses = {
     /**
      * OK
      */
     200: Response11;
 };
 
-export type GetProjectsApiProjectsByProjectIdEpicsResponse = GetProjectsApiProjectsByProjectIdEpicsResponses[keyof GetProjectsApiProjectsByProjectIdEpicsResponses];
+export type ListProjectEpicsResponse = ListProjectEpicsResponses[keyof ListProjectEpicsResponses];
 
 export type PostProjectsApiProjectsByProjectIdEpicsData = {
     body: CreateEpicRequest;
@@ -3421,7 +4131,7 @@ export type GetProjectsApiProjectsByProjectIdRefinementsResponses = {
 
 export type GetProjectsApiProjectsByProjectIdRefinementsResponse = GetProjectsApiProjectsByProjectIdRefinementsResponses[keyof GetProjectsApiProjectsByProjectIdRefinementsResponses];
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsData = {
+export type ListProjectReleaseRequestsData = {
     body?: never;
     path: {
         projectId: string;
@@ -3432,7 +4142,7 @@ export type GetProjectsApiProjectsByProjectIdReleaseRequestsData = {
     url: '/projects/api/projects/{projectId}/release-requests';
 };
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsErrors = {
+export type ListProjectReleaseRequestsErrors = {
     /**
      * Not Authorized
      */
@@ -3443,16 +4153,16 @@ export type GetProjectsApiProjectsByProjectIdReleaseRequestsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsResponses = {
+export type ListProjectReleaseRequestsResponses = {
     /**
      * OK
      */
     200: Response40;
 };
 
-export type GetProjectsApiProjectsByProjectIdReleaseRequestsResponse = GetProjectsApiProjectsByProjectIdReleaseRequestsResponses[keyof GetProjectsApiProjectsByProjectIdReleaseRequestsResponses];
+export type ListProjectReleaseRequestsResponse = ListProjectReleaseRequestsResponses[keyof ListProjectReleaseRequestsResponses];
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesData = {
+export type ListProjectRepositoriesData = {
     body?: never;
     path: {
         projectId: string;
@@ -3461,7 +4171,7 @@ export type GetProjectsApiProjectsByProjectIdRepositoriesData = {
     url: '/projects/api/projects/{projectId}/repositories';
 };
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesErrors = {
+export type ListProjectRepositoriesErrors = {
     /**
      * Not Authorized
      */
@@ -3472,14 +4182,14 @@ export type GetProjectsApiProjectsByProjectIdRepositoriesErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesResponses = {
+export type ListProjectRepositoriesResponses = {
     /**
      * OK
      */
     200: Response32;
 };
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesResponse = GetProjectsApiProjectsByProjectIdRepositoriesResponses[keyof GetProjectsApiProjectsByProjectIdRepositoriesResponses];
+export type ListProjectRepositoriesResponse = ListProjectRepositoriesResponses[keyof ListProjectRepositoriesResponses];
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesData = {
     body: CreateProjectRepositoryRequest;
@@ -3655,7 +4365,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses = {
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse = PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses];
 
-export type GetProjectsApiProjectsByProjectIdTicketsData = {
+export type ListProjectTicketsData = {
     body?: never;
     path: {
         projectId: string;
@@ -3666,7 +4376,7 @@ export type GetProjectsApiProjectsByProjectIdTicketsData = {
     url: '/projects/api/projects/{projectId}/tickets';
 };
 
-export type GetProjectsApiProjectsByProjectIdTicketsErrors = {
+export type ListProjectTicketsErrors = {
     /**
      * Not Authorized
      */
@@ -3677,14 +4387,14 @@ export type GetProjectsApiProjectsByProjectIdTicketsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdTicketsResponses = {
+export type ListProjectTicketsResponses = {
     /**
      * OK
      */
     200: Response13;
 };
 
-export type GetProjectsApiProjectsByProjectIdTicketsResponse = GetProjectsApiProjectsByProjectIdTicketsResponses[keyof GetProjectsApiProjectsByProjectIdTicketsResponses];
+export type ListProjectTicketsResponse = ListProjectTicketsResponses[keyof ListProjectTicketsResponses];
 
 export type PostProjectsApiProjectsByProjectIdTicketsData = {
     body: CreateTicketRequest;
@@ -4375,7 +5085,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdResponses = {
 
 export type DeleteProjectsApiRepositoriesByRepoIdResponse = DeleteProjectsApiRepositoriesByRepoIdResponses[keyof DeleteProjectsApiRepositoriesByRepoIdResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdData = {
+export type GetRepositoryData = {
     body?: never;
     path: {
         repoId: string;
@@ -4384,7 +5094,7 @@ export type GetProjectsApiRepositoriesByRepoIdData = {
     url: '/projects/api/repositories/{repoId}';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdErrors = {
+export type GetRepositoryErrors = {
     /**
      * Not Authorized
      */
@@ -4395,14 +5105,14 @@ export type GetProjectsApiRepositoriesByRepoIdErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdResponses = {
+export type GetRepositoryResponses = {
     /**
      * OK
      */
     200: Response57;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdResponse = GetProjectsApiRepositoriesByRepoIdResponses[keyof GetProjectsApiRepositoriesByRepoIdResponses];
+export type GetRepositoryResponse = GetRepositoryResponses[keyof GetRepositoryResponses];
 
 export type PatchProjectsApiRepositoriesByRepoIdData = {
     body: RenameRepositoryRequest;
@@ -4562,6 +5272,38 @@ export type GetProjectsApiRepositoriesByRepoIdBranchesResponses = {
 };
 
 export type GetProjectsApiRepositoriesByRepoIdBranchesResponse = GetProjectsApiRepositoriesByRepoIdBranchesResponses[keyof GetProjectsApiRepositoriesByRepoIdBranchesResponses];
+
+export type MeasureCommitSubjectsData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: {
+        branch?: string;
+        limit?: number;
+    };
+    url: '/projects/api/repositories/{repoId}/commit-subjects';
+};
+
+export type MeasureCommitSubjectsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type MeasureCommitSubjectsResponses = {
+    /**
+     * OK
+     */
+    200: CommitSubjectsDto;
+};
+
+export type MeasureCommitSubjectsResponse = MeasureCommitSubjectsResponses[keyof MeasureCommitSubjectsResponses];
 
 export type GetProjectsApiRepositoriesByRepoIdCommitsData = {
     body?: never;
@@ -5623,7 +6365,7 @@ export type PostProjectsApiTicketsByIdBlockedResponses = {
 
 export type PostProjectsApiTicketsByIdBlockedResponse = PostProjectsApiTicketsByIdBlockedResponses[keyof PostProjectsApiTicketsByIdBlockedResponses];
 
-export type PostProjectsApiTicketsByIdTransitionData = {
+export type TransitionTicketData = {
     body: TransitionTicketRequest;
     path: {
         id: string;
@@ -5632,7 +6374,7 @@ export type PostProjectsApiTicketsByIdTransitionData = {
     url: '/projects/api/tickets/{id}/transition';
 };
 
-export type PostProjectsApiTicketsByIdTransitionErrors = {
+export type TransitionTicketErrors = {
     /**
      * Bad Request
      */
@@ -5647,14 +6389,14 @@ export type PostProjectsApiTicketsByIdTransitionErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiTicketsByIdTransitionResponses = {
+export type TransitionTicketResponses = {
     /**
      * OK
      */
     200: Response20;
 };
 
-export type PostProjectsApiTicketsByIdTransitionResponse = PostProjectsApiTicketsByIdTransitionResponses[keyof PostProjectsApiTicketsByIdTransitionResponses];
+export type TransitionTicketResponse = TransitionTicketResponses[keyof TransitionTicketResponses];
 
 export type GetProjectsApiTicketsByTicketIdCommentsData = {
     body?: never;

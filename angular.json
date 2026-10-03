@@ -80,7 +80,21 @@
           }
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "exclude": ["src/**/*.browser.spec.ts"]
+          }
+        },
+        "test-browser": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "include": ["src/**/*.browser.spec.ts"],
+            "browsers": ["chromium"],
+            "headless": true,
+            "browserViewport": "800x600",
+            "runnerConfig": "vitest-browser.config.ts",
+            "setupFiles": ["src/testing/browser/setup.ts"]
+          }
         }
       }
     }
