@@ -24,26 +24,23 @@ export function hostOrigin(app: PlatformApp, domain: string): string {
 }
 
 /**
- * Where each platform application answers. Two questions, because `ng serve` answers them
- * differently:
+ * Where each platform application answers. Two questions:
  *
- * - `api(app)`: the prefix for `app`'s paths that this page reaches as itself: calls, the event
- *   stream, and the idp's login page, which must set the session cookie for this page's host. An
- *   origin with no trailing slash, or `''` for same-origin.
- * - `page(app)`: the origin of `app` opened as a page of its own (a frame, a link). Always the
- *   real host, never this page's origin; `''` while it is not known.
+ * - `api(app)`: the origin of `app`'s calls, its event stream and (for the idp) its sign-in pages.
+ *   An origin with no trailing slash, or `''` for same-origin.
+ * - `page(app)`: the origin of `app` opened as a page of its own (a frame, a link). `''` while it
+ *   is not known.
  *
- * Deployed, both are `https://<label>.<domain>`. Under `ng serve`, `proxy.conf.json` serves every
- * api path on localhost, so `api` is `''`; a page is never proxied, so `page` stays the real host.
- *
- * Provided by {@link HostPlatformOrigins} (deployed) or {@link ProxiedPlatformOrigins}
- * (`ng serve`), from the build's environment file. A spec provides its own.
+ * Both are `https://<label>.<domain>`: deployed, the domain is this page's hostname
+ * ({@link HostPlatformOrigins}); under `ng serve`, it is `platformDomain` from
+ * `environment.development.ts` ({@link DomainPlatformOrigins}), and the calls carry a bearer
+ * (`core/auth/dev-bearer.ts`). A spec provides its own.
  */
 @Injectable({
   providedIn: 'root',
   useFactory: () =>
     environment.platformDomain
-      ? new ProxiedPlatformOrigins(environment.platformDomain)
+      ? new DomainPlatformOrigins(environment.platformDomain)
       : new HostPlatformOrigins(),
 })
 export abstract class PlatformOrigins {
@@ -71,17 +68,14 @@ export class HostPlatformOrigins extends PlatformOrigins {
   }
 }
 
-/**
- * `ng serve`: api paths stay on this page's origin, where `proxy.conf.json` forwards them; pages
- * open on `domain`, the platform the proxy points at.
- */
-export class ProxiedPlatformOrigins extends PlatformOrigins {
+/** `ng serve`: every application under the stated platform domain, for calls and pages alike. */
+export class DomainPlatformOrigins extends PlatformOrigins {
   constructor(private readonly domain: string) {
     super();
   }
 
-  api(): string {
-    return '';
+  api(app: PlatformApp): string {
+    return this.page(app);
   }
 
   page(app: PlatformApp): string {

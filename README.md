@@ -50,11 +50,8 @@ npm run serve:ssr     # node dist/qits-landing-app/server/server.mjs, on :8080
 
 **Node 22.22.3 or newer** (or 24.15+): Angular 22 refuses older versions.
 
-`npm start` runs `ng serve` on :4200, with server rendering. The app needs a `qits-session` cookie
-and sends a visitor without one to `/idp/login?redirect=…`. `proxy.conf.json` serves `/idp` and the
-backend APIs from the deployed platform, and rewrites the cookie to `localhost`. So you sign in on
-localhost and come back to it. Only password sign-in works here: passkeys are bound to the idp's own
-origin.
+`npm start` runs `ng serve` on :4200, with server rendering. See "Signing in under `ng serve`"
+below.
 
 **Where the backends are called.** Deployed, every backend is called at its own application's
 origin (`https://projects.<domain>/projects/api/…`), with the session cookie
@@ -66,12 +63,36 @@ qits-528). The origins come from code: `https://<label>.<this page's hostname>`
 `https://workspaces.<domain>`; under `ng serve` that domain is `platformDomain` in
 `environment.development.ts`.
 
-Under `ng serve` the backend calls stay on localhost instead: the `development` configuration swaps
-`src/environments/environment.ts` for `environment.development.ts` (`sameOriginApis: true`), so every
-backend origin is `''` and `proxy.conf.json` forwards the paths. The navigation is still read, through
-the proxy, for the applications the app only opens (the Editor frame); there an origin is checked
-against the domain the navigation states in its own `origin` field, since localhost has none. The server render
-calls no backend at all (it has no session cookie), so it reads no navigation either.
+### Signing in under `ng serve`
+
+The `qits-session` cookie never reaches localhost, so under `ng serve` the app signs in with a
+bearer token instead and calls the platform's applications directly, at
+`https://<label>.<platformDomain>` (`environment.development.ts`). There is no dev proxy.
+
+1. Open http://localhost:4200 (or `127.0.0.1`, any port). Without a token, the app sends you to the
+   idp's authorize page (`https://idp.<platformDomain>/idp/authorize`, client `qits-landing-dev`,
+   PKCE S256). Sign in there as usual.
+2. The idp sends you back to `http://localhost:<port>/auth/callback`. That page swaps the code for
+   tokens and goes on to the page you asked for.
+3. Every call to a platform host carries `Authorization: Bearer`. The access token lasts 15
+   minutes and is refreshed a minute before it ends, one refresh at a time (the idp rotates the
+   refresh token and revokes the family when one is reused). A 401 gets one refresh and one retry;
+   after that you go back to sign in. The event stream is read with `fetch()`, since `EventSource`
+   cannot send a header.
+4. The tokens live in memory and in this tab's `sessionStorage`: a reload keeps you signed in, a
+   new tab signs in again. To sign out, clear the tab's session storage (or close the tab).
+
+A sign-in that fails stays on `/auth/callback` with the reason in the browser console; open `/` to
+try again.
+
+This needs the idp's public client `qits-landing-dev` (qits-idp `external/spa-dev-client`) and the
+edge's CORS for localhost origins with the `authorization` header and no credentials (qits-edge
+`external/localhost-cors`). Until both are released, sign-in under `ng serve` fails.
+
+None of this is in the deployed bundle: only `environment.development.ts` imports
+`core/auth/dev-bearer.ts`, and `fileReplacements` puts that file in the `development` build only.
+The deployed app keeps the cookie. Check with `npm run build` and
+`grep -r qits-landing-dev dist/qits-landing-app/browser`, which must find nothing.
 
 **Generate the lockfile with npm 11 or newer.** npm 10.9.8 — the version on the current workstation
 image — crashes with `Cannot read properties of null (reading 'edgesOut')` while resolving the

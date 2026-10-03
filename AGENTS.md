@@ -49,18 +49,43 @@ panel are projected, `opened` fires on each opening.
 Where each platform application answers comes from code, not from the network: inject
 `PlatformOrigins` (`core/platform/platform-origins.ts`). The app does not read `/main-navigation`.
 
-- `api(app)`: the prefix for paths this page reaches as itself: calls, the event stream, the idp
-  login. `app.config.ts` gives each generated client its `baseUrl` from it, synchronously, and
+- `api(app)`: the origin of calls, the event stream and the idp's sign-in pages. `app.config.ts`
+  gives each generated client its `baseUrl` from it, synchronously, and, deployed,
   `credentials: 'include'` when it is cross-origin.
 - `page(app)`: the origin of an application opened as its own page (the Editor frame, a link).
 
 Deployed, both are `https://<label>.<this page's hostname>` (the app lives at the apex); on the
-server both are `''`, and the server calls nothing. Under `ng serve`
-(`environment.development.ts`, `platformDomain`) `api` is `''`, because `proxy.conf.json` serves
-those paths, and `page` is `https://<label>.<platformDomain>`. The labels are `HOST_LABELS`, the
-one place a hostname is composed; a new application gets an entry there (and in `CLIENTS` when it
-has a generated client). Specs provide `provideTestPlatformOrigins` (`src/testing/`); pact specs
-keep setting each client's `baseUrl` to their mock server.
+server both are `''`, and the server calls nothing. Under `ng serve` (`environment.development.ts`,
+`platformDomain`) both are `https://<label>.<platformDomain>`: there is no dev proxy. The labels
+are `HOST_LABELS`, the one place a hostname is composed; a new application gets an entry there
+(and in `CLIENTS` when it has a generated client). Specs provide `provideTestPlatformOrigins`
+(`src/testing/`); pact specs keep setting each client's `baseUrl` to their mock server.
+
+## Signing in: cookie deployed, bearer under `ng serve`
+
+`sessionGuard` asks `Session` (`core/auth/session.ts`). Deployed it is `CookieSession`: a cheap
+qits-projects read, and on 401 the idp's login page. The clients send the cookie
+(`credentials: 'include'`, `EventSource` `withCredentials`).
+
+Under `ng serve` the cookie never reaches localhost, so `environment.development.ts` adds
+`provideDevBearer()` and `devBearerInterceptor` (`core/auth/dev-bearer.ts`):
+
+- `DevTokens` (`dev-tokens.ts`): the idp's public PKCE client `qits-landing-dev`. Login sends the tab
+  to `/idp/authorize` with the verifier in `sessionStorage` under the `state`; the idp comes back to
+  `/auth/callback` (`routes/auth/callback/auth-callback.page.ts`), which checks the `state` and
+  swaps the code at `/idp/token` (a form POST, no credentials, no `audience`). Tokens live in
+  memory and `sessionStorage`; a refresh runs ahead of expiry and only one at a time (the idp
+  rotates refresh tokens and revokes the family on reuse).
+- `devBearerInterceptor`: `Authorization: Bearer` on calls to a platform host only; a 401 gets one
+  refresh and one retry, then the visitor goes to sign in.
+- `EVENT_SOURCE` becomes `FetchEventSource` (`core/events/fetch-event-source.ts`): `fetch()` plus
+  a small SSE parser, because `EventSource` cannot send a header and the edge reads no query token.
+  Specs keep faking `EVENT_SOURCE` as before.
+
+The environment file is the ONLY importer of this code, so the deployed bundle holds none of it.
+Keep it that way: never import `dev-bearer.ts`, `dev-tokens.ts` or `fetch-event-source.ts` from
+anywhere else. `npm run build` then `grep -r qits-landing-dev dist/qits-landing-app/browser` must
+find nothing.
 
 ## Telemetry
 

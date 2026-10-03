@@ -17,7 +17,8 @@ export interface EventSourceLike {
 
 /**
  * Opens an event source on a URL; the browser's `EventSource`, with the session cookie, which a
- * stream on qits-events' own origin needs.
+ * stream on qits-events' own origin needs. Under `ng serve`, `provideDevBearer` swaps in a
+ * `fetch()` reader that sends the bearer instead.
  */
 export const EVENT_SOURCE = new InjectionToken<(url: string) => EventSourceLike>('EVENT_SOURCE', {
   providedIn: 'root',

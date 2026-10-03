@@ -1,11 +1,11 @@
 import { DOCUMENT, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
+  DomainPlatformOrigins,
   HOST_LABELS,
   HostPlatformOrigins,
   type PlatformApp,
   type PlatformOrigins,
-  ProxiedPlatformOrigins,
 } from './platform-origins';
 
 const APPS = Object.keys(HOST_LABELS) as PlatformApp[];
@@ -39,15 +39,12 @@ describe('HostPlatformOrigins', () => {
   });
 });
 
-describe('ProxiedPlatformOrigins', () => {
-  const proxied: PlatformOrigins = new ProxiedPlatformOrigins('qits.wohlben.eu');
+describe('DomainPlatformOrigins', () => {
+  const origins: PlatformOrigins = new DomainPlatformOrigins('qits.wohlben.eu');
 
-  it("keeps every call on this page's origin, for the proxy", () => {
-    for (const app of APPS) expect(proxied.api(app)).toBe('');
-  });
-
-  it('opens pages on the stated platform domain', () => {
-    expect(proxied.page('workspaces')).toBe('https://workspaces.qits.wohlben.eu');
-    expect(proxied.page('githost')).toBe('https://githost.qits.wohlben.eu');
+  it('answers every application under the stated domain, for calls and pages alike', () => {
+    expect(origins.api('projects')).toBe('https://projects.qits.wohlben.eu');
+    expect(origins.page('workspaces')).toBe('https://workspaces.qits.wohlben.eu');
+    for (const app of APPS) expect(origins.api(app)).toBe(origins.page(app));
   });
 });

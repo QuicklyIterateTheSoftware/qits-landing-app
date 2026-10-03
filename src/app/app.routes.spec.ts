@@ -8,7 +8,7 @@ import { ProjectWorkArchivePage } from './routes/projects/[slug]/work-archive/pr
 import { WorkItemPage } from './routes/projects/[slug]/work/[id]/work-item.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
-const work = routes[0].children ?? [];
+const work = routes.find((route) => route.path === '')?.children ?? [];
 
 describe('work routes', () => {
   beforeEach(() =>

@@ -16,8 +16,7 @@ describe('sessionGuard', () => {
   const assign = vi.fn();
   let http: HttpTestingController;
 
-  /** The idp's api origin: same-origin (`ng serve`) unless a spec names one. */
-  function setUp(idpOrigin = '') {
+  function setUp(idpOrigin = 'https://idp.qits.example') {
     TestBed.configureTestingModule({
       providers: [
         { provide: DOCUMENT, useValue: { location: { assign, host: 'qits.example' } } },
@@ -59,17 +58,8 @@ describe('sessionGuard', () => {
     expect(assign).not.toHaveBeenCalled();
   });
 
-  it('sends a visitor without a session to the login page, and back to `/?`', async () => {
-    setUp();
-    const passed = guard('/');
-    await settle();
-    answer(null, { status: 401, statusText: 'Unauthorized' });
-    expect(await passed).toBe(false);
-    expect(assign).toHaveBeenCalledWith(`/idp/login?redirect=${encodeURIComponent('/?')}`);
-  });
-
   it("sends a visitor without a session to the idp's own origin, back to this host", async () => {
-    setUp('https://idp.qits.example');
+    setUp();
     const passed = guard('/qits/work?view=board');
     await settle();
     answer(null, { status: 401, statusText: 'Unauthorized' });

@@ -32,8 +32,16 @@ import { sessionGuard } from '$core/auth/session.guard';
  *
  * `ShellLayout` is the root route component, so the chrome survives navigation and only the outlet
  * beneath it changes. `sessionGuard` sends a visitor without a session to the idp's login page.
+ *
+ * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
+ * outside the shell, so the guard does not run on it.
  */
 export const routes: Routes = [
+  {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./routes/auth/callback/auth-callback.page').then((m) => m.AuthCallbackPage),
+  },
   {
     path: '',
     loadComponent: () => import('./routes/shell.layout').then((m) => m.ShellLayout),
