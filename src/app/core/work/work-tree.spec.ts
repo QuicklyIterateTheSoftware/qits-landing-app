@@ -1,10 +1,12 @@
 import type { WorkEntry } from './work.consumes';
-import { startsCollapsed, taskProgress, WorkGraph, type WorkNode } from './work-tree';
+import { byNumber, startsCollapsed, taskProgress, WorkGraph, type WorkNode } from './work-tree';
 
 /**
  * The tree, its columns and its campaign tags, on inline entries: this is a pure function of entries and campaign
  * membership. (The pages' specs use qits-projects' golden masters.)
  */
+/** Each entry's qualified id is numbered in the order the entries are made: the list's order. */
+let made = 0;
 const entry = (
   id: string,
   archetype: string,
@@ -13,7 +15,7 @@ const entry = (
   implemented = false,
 ): WorkEntry => ({
   id,
-  qualifiedId: id,
+  qualifiedId: `qits-${++made}`,
   title: id,
   archetype: archetype as WorkEntry['archetype'],
   status: status as WorkEntry['status'],
@@ -134,5 +136,61 @@ describe('WorkGraph', () => {
     // An epic with no tasks has nothing to fold away.
     const [bare] = new WorkGraph([entry('e', 'EPIC', 'VERIFIED')]).tree('board');
     expect(startsCollapsed(bare)).toBe(false);
+  });
+
+  describe('order', () => {
+    const numbered = (
+      id: string,
+      qualifiedId: string | undefined,
+      archetype: string,
+      parent?: string,
+    ) =>
+      ({
+        ...entry(id, archetype, parent ? undefined : 'REFINED', parent),
+        qualifiedId,
+      }) as WorkEntry;
+
+    it('sorts by the number of the qualified id, numerically, not lexically', () => {
+      const list = [numbered('a', 'qits-10', 'TICKET'), numbered('b', 'qits-9', 'TICKET')];
+      expect(new WorkGraph(list).tree('board').map(shape)).toEqual(['b@0', 'a@0']);
+    });
+
+    it('puts epics and tickets in one order, and each parent’s children in it too', () => {
+      const list = [
+        numbered('t12', 'qits-12', 'TICKET'),
+        numbered('e3', 'qits-3', 'EPIC'),
+        numbered('f20', 'qits-20', 'FEATURE', 'e3'),
+        numbered('f4', 'qits-4', 'FEATURE', 'e3'),
+        numbered('k11', 'qits-11', 'TASK', 'f4'),
+        numbered('k5', 'qits-5', 'TASK', 'f4'),
+        numbered('t7', 'qits-7', 'TICKET'),
+      ];
+      expect(new WorkGraph(list).tree('board').map(shape)).toEqual([
+        'e3@0(f4@0(k5@0 k11@0) f20@0)',
+        't7@0',
+        't12@0',
+      ]);
+    });
+
+    it('keeps the others in place when one goes', () => {
+      const list = [
+        numbered('t2', 'qits-2', 'TICKET'),
+        numbered('e1', 'qits-1', 'EPIC'),
+        numbered('t3', 'qits-3', 'TICKET'),
+      ];
+      const ids = (entries: WorkEntry[]) =>
+        new WorkGraph(entries).tree('board').map((node) => node.entry.id);
+      expect(ids(list)).toEqual(['e1', 't2', 't3']);
+      expect(ids(list.filter((e) => e.id !== 't2'))).toEqual(['e1', 't3']);
+    });
+
+    it('falls back to the raw id, after the numbered ones, without a qualified id', () => {
+      const sorted = [
+        numbered('z', undefined, 'TICKET'),
+        numbered('y', undefined, 'TICKET'),
+        numbered('a', 'qits-2', 'TICKET'),
+      ].sort(byNumber);
+      expect(sorted.map((e) => e.id)).toEqual(['a', 'y', 'z']);
+    });
   });
 });

@@ -12,8 +12,11 @@ import type { WorkEntry } from './work.consumes';
  * - **Column** (on the board): REFINED 0, IMPLEMENTED 1, VERIFIED 2. A feature or task: Verified
  *   once its epic is VERIFIED, else Implemented once `implementedAt` is set, else Refined.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
- *   `context` (a quiet header for a parent that lives elsewhere). Children keep the list's order.
- *   Campaigns themselves are not in any tree.
+ *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
+ *   any tree.
+ * - **Order**: one order everywhere, independent of status, column and update time
+ *   (`byNumber`): the roots (epics and tickets together) by the number of their qualified id, and
+ *   inside each parent its children the same way. Removing an item leaves the rest in place.
  */
 
 export type Phase = 'backlog' | 'board' | 'archive';
@@ -104,16 +107,18 @@ export class WorkGraph {
         included.add(id);
       }
     }
-    const roots = this.entries.filter(
-      (entry) => entry.id && included.has(entry.id) && !this.parentOf.has(entry.id),
-    );
+    const roots = this.entries
+      .filter((entry) => entry.id && included.has(entry.id) && !this.parentOf.has(entry.id))
+      .sort(byNumber);
     return roots.map((root) => this.node(root, phase, included));
   }
 
   private node(entry: WorkEntry, phase: Phase, included: ReadonlySet<string>): WorkNode {
     const children = (this.childrenOf.get(entry.id!) ?? [])
       .filter((id) => included.has(id))
-      .map((id) => this.node(this.byId.get(id)!, phase, included));
+      .map((id) => this.byId.get(id)!)
+      .sort(byNumber)
+      .map((child) => this.node(child, phase, included));
     const context = this.phaseOf(entry) !== phase;
     const campaigns = this.campaignsOf(entry);
     if (phase !== 'board') return { entry, children, context, campaigns };
@@ -137,6 +142,25 @@ export class WorkGraph {
     list.push(child);
     this.childrenOf.set(parent, list);
   }
+}
+
+/** The number at the end of a qualified id (`qits-112` → 112), or undefined without one. */
+export function numberOf(entry: WorkEntry): number | undefined {
+  const match = entry.qualifiedId ? /(\d+)$/.exec(entry.qualifiedId) : null;
+  return match ? Number(match[1]) : undefined;
+}
+
+/**
+ * The board's order: by the number of the qualified id, numerically (`qits-9` before `qits-10`);
+ * an entry without one after those with one, by its raw id.
+ */
+export function byNumber(a: WorkEntry, b: WorkEntry): number {
+  const x = numberOf(a);
+  const y = numberOf(b);
+  if (x !== undefined && y !== undefined && x !== y) return x - y;
+  if (x !== undefined && y === undefined) return -1;
+  if (x === undefined && y !== undefined) return 1;
+  return (a.id ?? '').localeCompare(b.id ?? '');
 }
 
 /** How many of a node's tasks (its descendants that are tasks) are verified, of how many. */

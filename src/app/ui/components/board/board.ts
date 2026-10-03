@@ -22,7 +22,9 @@ export interface BoardColumnSpec {
  * equal narrow columns around them (the left one for lane labels), with no background of their
  * own, so the status columns sit centred. The colours are a background layer; the
  * projected content (`ui-board-lane`, `ui-board-row`, `ui-board-card`) is laid out on a grid of
- * the same columns above it, each child placing itself.
+ * the same columns above it, each child placing itself. The grid fills forward only (no dense
+ * packing): an item never moves up into a gap above an earlier one, so the items keep the order
+ * they are given, and removing one does not lift a later one past another.
  *
  * ```html
  * <ui-board [columns]="columns" gutter>
@@ -70,7 +72,7 @@ export interface BoardColumnSpec {
         }
       </div>
       <div
-        class="relative -mb-6 grid min-h-24 grid-flow-row-dense pt-2"
+        class="relative -mb-6 grid min-h-24 grid-flow-row pt-2"
         [style.grid-template-columns]="template()"
       >
         <ng-content />
