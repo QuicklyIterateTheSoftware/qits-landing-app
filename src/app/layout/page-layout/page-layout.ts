@@ -28,7 +28,7 @@ interface ShownGroup {
  * - Header: `title` as an `<h1>`, or projected `[slot=header]` / `[uiPageHeader]` content, which wins.
  * - Actions: `actions` (single actions and groups), or projected `[slot=actions]` /
  *   `[uiPageActions]` content, which wins. A group is joined buttons in a `role="group"` named by
- *   its title, which is also its visible caption.
+ *   its title, which is also its visible caption below the buttons.
  * - Content: everything else.
  *
  * The page scrolls as a whole (the document scrolls, not the shell), and the actions stay pinned
@@ -53,19 +53,19 @@ interface ShownGroup {
       </ng-content>
     </div>
     <div
-      class="sticky top-0 z-10 float-right flex min-h-10 max-w-full flex-wrap items-center justify-end gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
+      class="sticky top-0 z-10 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
       data-page-actions
     >
       <ng-content select="[slot=actions], [uiPageActions]">
         @for (group of groups(); track $index) {
           <div
-            class="flex items-center gap-2"
+            class="flex flex-col-reverse items-start gap-0.5"
             [attr.role]="group.group ? 'group' : null"
             [attr.aria-label]="group.group ? (group.title ?? null) : null"
           >
             <span
-              class="text-xs font-semibold tracking-wide text-charcoal-brown-600 uppercase"
-              [class]="group.title ? 'inline' : 'hidden'"
+              class="text-[0.525rem] leading-none font-semibold tracking-wide text-charcoal-brown-600 uppercase"
+              [class]="group.title ? 'block' : 'hidden'"
               aria-hidden="true"
               >{{ group.title }}</span
             >
