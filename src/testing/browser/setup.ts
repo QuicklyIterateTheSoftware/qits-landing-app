@@ -6,7 +6,7 @@
  * - Animations and transitions are off, and the caret does not blink. SVG animations (SMIL, as in
  *   `ui-spinner`) are not CSS, so every `<svg>` is paused at its first frame as it is added.
  */
-import { beforeAll, beforeEach } from 'vitest';
+import { afterEach, beforeAll, beforeEach } from 'vitest';
 import { commands } from 'vitest/browser';
 
 const FONTS = '/src/testing/browser/fonts';
@@ -67,4 +67,12 @@ beforeAll(async () => {
 // the next screenshot. Park it in the top-left corner before every test.
 beforeEach(async () => {
   await commands.parkPointer();
+});
+
+// Every spec file runs in one shared page, and TestBed's root element sits directly in <body>: a
+// spec that styles `fixture.nativeElement.parentElement` (the menus make <body> a 25rem flex row)
+// styles <body> for every file after it. Which files come after it changes from run to run, so a
+// leaked style turns into screenshots of a different size. Clear it after every test.
+afterEach(() => {
+  document.body.removeAttribute('style');
 });
