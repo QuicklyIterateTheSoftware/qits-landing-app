@@ -159,6 +159,15 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 0',
     ]);
     await expect.element(locator.getByText('No features')).toBeVisible();
+    // Its id up the grey left strip, whole, from the bar's top to the board's end.
+    const board = element.querySelector('app-epic-board article')!.getBoundingClientRect();
+    const id = locator.getByRole('link', { name: qualifiedId, exact: true }).element();
+    const strip = id.parentElement!;
+    expect(getComputedStyle(strip).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    expect(Math.round(strip.getBoundingClientRect().top)).toBe(Math.round(board.top));
+    expect(Math.round(strip.getBoundingClientRect().bottom)).toBe(Math.round(board.bottom));
+    expect(id.getBoundingClientRect().top).toBeGreaterThan(board.top);
+    expect(id.getBoundingClientRect().bottom).toBeLessThan(board.bottom);
     await shoot(element, name);
   });
 
