@@ -166,7 +166,7 @@ class Linked {
   template: `
     <ui-board [columns]="columns" gutter>
       @if (kind === 'folded') {
-        <ui-board-lane id="folded" collapsible collapsed>
+        <ui-board-lane id="folded" collapsible collapsed [gutterLength]="20">
           <span lane-header class="font-semibold">A collapsed epic with a long id</span>
           <span lane-gutter class="font-mono">contract-00000001-17</span>
           <ui-board-count lane-summary [column]="0" [count]="2" label="refined" />
@@ -176,7 +176,7 @@ class Linked {
         <ui-board-lane>
           <span lane-header class="font-semibold">An epic</span>
           <span lane-gutter class="font-mono">contract-00000001-10</span>
-          <ui-board-row id="row">
+          <ui-board-row id="row" [idLength]="20">
             @if (kind === 'mixed') {
               <ui-board-card [column]="1" code="qits-14" title="A shipped task" kind="task" />
             }
@@ -319,8 +319,10 @@ describe('Board (screenshots)', () => {
     const tile = row.querySelector('ui-board-count');
     expect(tile?.querySelector('.sr-only')?.textContent?.trim()).toBe(srText);
     if (tile) {
-      // At the top of the strip, inside it, above the id.
-      expect(box(tile).bottom).toBeLessThanOrEqual(box(label).top);
+      // At the bottom of the strip, below the id, on the bar's line.
+      expect(box(tile).top).toBeGreaterThanOrEqual(box(label).bottom);
+      expect(Math.round(box(tile).top)).toBe(Math.round(box(bar).top));
+      expect(Math.round(box(tile).bottom)).toBe(Math.round(box(bar).bottom));
       expect(box(tile).left).toBeGreaterThanOrEqual(box(strip).left);
       expect(box(tile).right).toBeLessThanOrEqual(box(strip).right);
     }
@@ -330,7 +332,7 @@ describe('Board (screenshots)', () => {
   it('draws a collapsed lane with its long id whole', async () => {
     const element = gutterCase('folded');
     const lane = element.querySelector('#folded') as HTMLElement;
-    expect(box(lane.querySelector('[lane-gutter]')!).top).toBeGreaterThanOrEqual(box(lane).top);
+    expect(box(lane.querySelector('[lane-gutter]')!).top).toBeGreaterThan(box(lane).top);
     await expect.element(page.elementLocator(element)).toMatchScreenshot('lane-long-id');
   });
 

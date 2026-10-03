@@ -179,7 +179,7 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('verifying-collapsed');
   });
 
-  it('a feature with tasks past the board: a tile in its row’s gutter, above its id', async () => {
+  it('a feature with tasks past the board: a tile at the bottom of its row’s gutter, on the title bar’s line', async () => {
     const { element, locator } = await shown(
       EVERY_TASK_STATUS,
       'contract-00000001-1',
@@ -192,7 +192,9 @@ describe('EpicCard (screenshots)', () => {
     const tile = row.querySelector('ui-board-count')!;
     expect(tile.querySelector('.sr-only')?.textContent?.trim()).toBe('2 verified');
     const id = row.querySelector('[row-id]')!.getBoundingClientRect();
-    expect(tile.getBoundingClientRect().bottom).toBeLessThanOrEqual(id.top);
+    const bar = row.querySelector('[row-footer]')!.parentElement!.getBoundingClientRect();
+    expect(tile.getBoundingClientRect().top).toBeGreaterThanOrEqual(id.bottom);
+    expect(Math.round(tile.getBoundingClientRect().bottom)).toBe(Math.round(bar.bottom));
     await expect.element(locator).toMatchScreenshot('feature-verified-tasks');
   });
 

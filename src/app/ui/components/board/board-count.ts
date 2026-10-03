@@ -3,8 +3,8 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
 
 /**
  * A count on a board: a small square tile, as translucent as a board row, its number centred,
- * sitting in its column. In the gutter, which has no colour of its own, the tile takes the
- * feature id strip's hue instead, as translucent. `column` is a status column (0-based) or `'gutter'`, the right gutter
+ * sitting in its column. In the gutter, where it counts what is verified, the tile is green
+ * (40% opaque). `column` is a status column (0-based) or `'gutter'`, the right gutter
  * (the board needs `gutter` for that). `label` is what a screen reader reads after the number
  * ("refined"); the tile itself shows the number only.
  *
@@ -16,7 +16,7 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
   host: {
     class:
       'flex size-6 items-center justify-center justify-self-center rounded-sm text-xs font-semibold text-charcoal-brown-950 tabular-nums ring-1 ring-black/5',
-    '[class]': "column() === 'gutter' ? 'bg-charcoal-brown-600/20' : 'bg-white/50'",
+    '[class]': "column() === 'gutter' ? 'bg-mint-leaf-500/40' : 'bg-white/50'",
     '[style.grid-column]': 'placement()',
   },
   template: `<span aria-hidden="true">{{ count() }}</span

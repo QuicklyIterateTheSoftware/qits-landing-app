@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { BOARD_CONTEXT, type BoardContext } from './board-context';
 
 /**
@@ -13,11 +13,11 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
  * row and its strip, so the id opens the feature too: the row is the positioning box, and cards sit above it, so hovering a card shadows the
  * card, not the row.
  *
- * `[row-gutter]` (a `ui-board-count`, say) sits at the top of the strip, level with the cards'
- * tops; the id then starts below it. The row is at least 9.5rem tall (11rem with a
- * `[row-gutter]`), so an id of 20 characters (`contract-00000001-17`, about 7.5rem) fits up the
- * strip with about the chin to spare. The first line of cards takes the extra height, so the bar
- * stays at the bottom.
+ * `[row-gutter]` (a `ui-board-count`, say) sits at the bottom of the strip, level with the bar, as
+ * if the bar went on into the gutter. The row is at least 6.75rem tall (7.75rem with a
+ * `[row-gutter]`), and taller when `idLength` (the id's characters, 10px mono: 0.375rem each)
+ * needs it, so the id fits up the strip with the chin to spare. The first line of cards takes the
+ * extra height, so the bar stays at the bottom.
  */
 @Component({
   selector: 'ui-board-row',
@@ -25,19 +25,21 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid min-h-38 grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 has-[[row-gutter]]:min-h-44',
+      'relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))]',
+    '[style.--row-id-chars]': 'idLength()',
     '[style.grid-column]': 'placement()',
     'data-highlight-target': '',
   },
   template: `
     <span
-      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 bg-charcoal-brown-600/40 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 *:shrink-0"
+      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 bg-charcoal-brown-600/40 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 *:shrink-0 [&>[row-gutter]]:mt-auto [&>[row-gutter]]:rounded-br-xl"
     >
-      <ng-content select="[row-gutter]" />
-      <!-- Alone, the id starts the chin (pt-2 + mt-2) below the top; after a tile, the gap below it. -->
-      <span class="rotate-180 [writing-mode:vertical-rl] first:mt-2">
+      <!-- The id starts the chin (pt-2 + mt-2) below the top; the tile sits at the bottom, on the
+           bar's line (both 1.5rem tall). -->
+      <span class="mt-2 rotate-180 [writing-mode:vertical-rl]">
         <ng-content select="[row-id]" />
       </span>
+      <ng-content select="[row-gutter]" />
     </span>
     <ng-content />
     <div
@@ -49,6 +51,9 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   `,
 })
 export class BoardRow implements BoardContext {
+  /** The length of the `[row-id]` text, so the row is tall enough for it. */
+  readonly idLength = input(0);
+
   private readonly parent = inject(BOARD_CONTEXT, { skipSelf: true });
 
   readonly onBoard = true;

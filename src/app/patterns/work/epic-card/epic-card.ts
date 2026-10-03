@@ -18,7 +18,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
  *   its tasks whose own status is VERIFIED or DONE (they are off the board, in Acceptance or the
  *   Archive); none for a column without tasks; "No tasks" when it has none. Expanded at first;
  * - each feature is a row of that lane (`ui-board-row`), its title along the bottom and its id up
- *   the right gutter, above the id a count tile for its tasks past the board (VERIFIED or DONE),
+ *   the right gutter, below the id a count tile for its tasks past the board (VERIFIED or DONE),
  *   when it has any: so a feature whose tasks are all verified does not look empty;
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns.
  *
@@ -35,7 +35,12 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
-    <ui-board-lane collapsible [uiLeave]="leaving()" (left)="left.emit()">
+    <ui-board-lane
+      collapsible
+      [gutterLength]="n.entry.qualifiedId?.length ?? 0"
+      [uiLeave]="leaving()"
+      (left)="left.emit()"
+    >
       @for (tile of tiles(); track tile.column) {
         <ui-board-count
           lane-summary
@@ -52,7 +57,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
       }
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
       @for (feature of n.children; track feature.entry.id) {
-        <ui-board-row>
+        <ui-board-row [idLength]="feature.entry.qualifiedId?.length ?? 0">
           @for (task of feature.children; track task.entry.id) {
             <ui-board-card
               [column]="task.column ?? 0"
