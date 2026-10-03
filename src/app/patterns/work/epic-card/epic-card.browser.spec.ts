@@ -92,6 +92,24 @@ describe('EpicCard (screenshots)', () => {
     await commands.parkPointer();
   }
 
+  /**
+   * The collapsed lane's tiles, each as what a screen reader reads and the header of the column it
+   * sits under (`gutter` for the right gutter).
+   */
+  function tiles(element: HTMLElement): [string, string][] {
+    const headers = [...element.querySelectorAll('ui-board > div:first-child > div')];
+    return [...element.querySelectorAll('ui-board-count')].map((tile) => {
+      const box = tile.getBoundingClientRect();
+      const middle = box.left + box.width / 2;
+      const header = headers.find((h) => {
+        const column = h.getBoundingClientRect();
+        return middle > column.left && middle < column.right;
+      });
+      const name = header?.textContent?.replace(/\d+/g, '').trim() || 'gutter';
+      return [tile.querySelector('.sr-only')!.textContent!.trim(), name];
+    });
+  }
+
   it.each<Case>([
     ['refined', EVERY_STATUS, 'contract-00000001-3', 'Refined epic'],
     ['implementing', EVERY_STATUS, 'contract-00000001-5', 'Implementing epic'],
@@ -128,7 +146,35 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toHaveTextContent('First shipped task');
     await expect.element(locator).toMatchScreenshot('features-mixed-expanded');
     await toggle(element, harness);
+    // Two open tasks in Refined, one implemented: a tile in each of those columns, none elsewhere.
+    expect(tiles(element)).toEqual([
+      ['2 refined', 'Refined'],
+      ['1 implemented', 'Implemented'],
+    ]);
     await expect.element(locator).toMatchScreenshot('features-mixed-collapsed');
+  });
+
+  it('collapsed with one started task: a single tile, in Implementing', async () => {
+    const { element, locator, harness } = await shown(
+      EVERY_STATUS,
+      'contract-00000001-17',
+      'Started epic',
+    );
+    await toggle(element, harness);
+    expect(tiles(element)).toEqual([['1 implementing', 'Implementing']]);
+    await expect.element(locator).toMatchScreenshot('implementing-collapsed');
+  });
+
+  it('collapsed without tasks: "No tasks", no tiles', async () => {
+    const { element, locator, harness } = await shown(
+      EVERY_STATUS,
+      'contract-00000001-9',
+      'Verifying epic',
+    );
+    await toggle(element, harness);
+    expect(tiles(element)).toEqual([]);
+    await expect.element(locator).toHaveTextContent('No tasks');
+    await expect.element(locator).toMatchScreenshot('verifying-collapsed');
   });
 
   it('in a campaign', async () => {

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finishControl } from '$core/work/finish-control';
-import { taskProgress, type WorkNode } from '$core/work/work-tree';
+import { taskDistribution, type WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
@@ -97,7 +97,7 @@ export class EpicListItem {
   protected readonly collapsed = computed(() => this.view() === 'archive');
 
   protected readonly summary = computed(() => {
-    const { total } = taskProgress(this.node());
+    const { total } = taskDistribution(this.node());
     const tasks = `${total} ${total === 1 ? 'task' : 'tasks'}`;
     // A verified or done epic's tasks are all done.
     const done =

@@ -7,6 +7,7 @@ import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Tag } from '$ui/components/tag/tag';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
+import { BoardCount } from './board-count';
 import { BoardLane } from './board-lane';
 import { BoardRow } from './board-row';
 
@@ -74,15 +75,16 @@ class Variants {
 }
 
 @Component({
-  imports: [Board, BoardLane, BoardRow, BoardCard, Tag],
+  imports: [Board, BoardLane, BoardRow, BoardCard, BoardCount, Tag],
   host: { class: 'block w-[48rem] p-4' },
   template: `
     <ui-board [columns]="columns" gutter>
       <ui-board-lane collapsible collapsed>
-        <span lane-header class="font-semibold">A finished epic, collapsed</span>
+        <span lane-header class="font-semibold">An epic, collapsed to its counts</span>
         <ui-tag lane-tags label="Ordered campaign" />
         <span lane-gutter class="font-mono">qits-20</span>
-        <span lane-summary>2 / 2 ✅</span>
+        <ui-board-count lane-summary [column]="0" [count]="16" label="refined" />
+        <ui-board-count lane-summary column="gutter" [count]="1" label="verified" />
         <ui-board-row>
           <ui-board-card [column]="2" code="qits-22" title="Hidden while collapsed" kind="task" />
           <span row-footer>A feature</span>

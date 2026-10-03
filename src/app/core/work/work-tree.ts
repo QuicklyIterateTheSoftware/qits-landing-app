@@ -40,9 +40,6 @@ const COLUMN_BY_STATUS: Readonly<Record<string, number>> = Object.fromEntries(
   BOARD_COLUMNS.map((column, index) => [column.status, index]),
 );
 
-/** The board's last column (Verifying): a task there is done. */
-export const LAST_COLUMN = BOARD_COLUMNS.length - 1;
-
 export interface WorkNode {
   readonly entry: WorkEntry;
   readonly children: readonly WorkNode[];
@@ -171,23 +168,40 @@ export function byNumber(a: WorkEntry, b: WorkEntry): number {
   return (a.id ?? '').localeCompare(b.id ?? '');
 }
 
+/** Statuses past the board: work there is verified. */
+const PAST_BOARD: ReadonlySet<string> = new Set(['VERIFIED', 'DONE']);
+
+/** Where a node's tasks (its descendants that are tasks) are. */
+export interface TaskDistribution {
+  /** Tasks per board column, by column index (`BOARD_COLUMNS`), zeros included. */
+  readonly columns: readonly number[];
+  /**
+   * Tasks past the board: their own status is VERIFIED or DONE. Today a task has no status of its
+   * own and takes its epic's, so a board tree never holds one and this is 0 there.
+   */
+  readonly verified: number;
+  /** Every task, wherever it is. */
+  readonly total: number;
+}
+
 /**
- * How many of a node's tasks (its descendants that are tasks) are done, of how many: on the board,
- * a task is done in the last column (its epic is VERIFYING). Off the board (no columns) it counts
- * none: the lists say what their own phase means.
+ * Where a node's tasks are: how many in each board column, how many past the board, and how many
+ * in all. Off the board (no columns) only `total` counts.
  */
-export function taskProgress(node: WorkNode): { verified: number; total: number } {
+export function taskDistribution(node: WorkNode): TaskDistribution {
+  const columns: number[] = BOARD_COLUMNS.map(() => 0);
   let verified = 0;
   let total = 0;
   const walk = (n: WorkNode) => {
     for (const child of n.children) {
       if (child.entry.archetype === 'TASK') {
         total++;
-        if (child.column === LAST_COLUMN) verified++;
+        if (child.column !== undefined) columns[child.column]++;
+        else if (child.entry.status && PAST_BOARD.has(child.entry.status)) verified++;
       }
       walk(child);
     }
   };
   walk(node);
-  return { verified, total };
+  return { columns, verified, total };
 }

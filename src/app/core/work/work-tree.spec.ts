@@ -1,5 +1,5 @@
 import type { WorkEntry } from './work.consumes';
-import { byNumber, taskProgress, WorkGraph, type WorkNode } from './work-tree';
+import { byNumber, taskDistribution, WorkGraph, type WorkNode } from './work-tree';
 
 /**
  * The tree, its columns and its campaign tags, on inline entries: this is a pure function of entries and campaign
@@ -147,11 +147,47 @@ describe('WorkGraph', () => {
     expect(new WorkGraph(done).tree('archive').map(shape)).toEqual(['d', 'x(f)']);
   });
 
-  it('counts an epic’s done tasks', () => {
+  it('counts an epic’s tasks per board column, zero columns included', () => {
     const [implementing] = new WorkGraph(epic).tree('board');
-    expect(taskProgress(implementing)).toEqual({ verified: 0, total: 3 });
-    const [done] = new WorkGraph(withEpic('VERIFYING')).tree('board');
-    expect(taskProgress(done)).toEqual({ verified: 3, total: 3 });
+    expect(taskDistribution(implementing)).toEqual({
+      columns: [1, 1, 1, 0],
+      verified: 0,
+      total: 3,
+    });
+    const [verifying] = new WorkGraph(withEpic('VERIFYING')).tree('board');
+    expect(taskDistribution(verifying)).toEqual({ columns: [0, 0, 0, 3], verified: 0, total: 3 });
+  });
+
+  it('counts tasks past the board as verified', () => {
+    // No recorded tree holds a task with its own status yet: a node built by hand, one task
+    // REFINED (column 0), one VERIFIED and one DONE (past the board).
+    const task = (id: string, status?: string, column?: number): WorkNode => ({
+      entry: entry(id, 'TASK', status),
+      children: [],
+      context: false,
+      column,
+      campaigns: [],
+    });
+    const feature: WorkNode = {
+      entry: entry('f', 'FEATURE'),
+      children: [task('open', undefined, 0), task('checked', 'VERIFIED'), task('closed', 'DONE')],
+      context: false,
+      column: 0,
+      campaigns: [],
+    };
+    const root: WorkNode = {
+      entry: entry('e', 'EPIC', 'REFINED'),
+      children: [feature],
+      context: false,
+      column: 0,
+      campaigns: [],
+    };
+    expect(taskDistribution(root)).toEqual({ columns: [1, 0, 0, 0], verified: 2, total: 3 });
+  });
+
+  it('counts only the total off the board', () => {
+    const [backlog] = new WorkGraph(withEpic('REPORTED')).tree('backlog');
+    expect(taskDistribution(backlog)).toEqual({ columns: [0, 0, 0, 0], verified: 0, total: 3 });
   });
 
   describe('order', () => {

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
-import { taskProgress, type WorkNode } from '$core/work/work-tree';
+import { taskDistribution, type WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
+import { BoardCount } from '$ui/components/board/board-count';
 import { BoardLane } from '$ui/components/board/board-lane';
 import { BoardRow } from '$ui/components/board/board-row';
 import { Leave } from '$ui/components/leave/leave';
@@ -12,8 +13,10 @@ import { Tag } from '$ui/components/tag/tag';
  * An epic on the board, with its features and their tasks:
  *
  * - the epic is a lane (`ui-board-lane`): its title in the bar at the top and its id up the gutter,
- *   both linking to it, its campaigns as tags below the bar. It collapses to "<done> / <total> ✅"
- *   for its tasks, expanded at first;
+ *   both linking to it, its campaigns as tags below the bar. It collapses to where its tasks are:
+ *   a count tile (`ui-board-count`) in each column that holds any, and one in the right gutter for
+ *   the verified ones (none for a column without tasks); "No tasks" when it has none. Expanded at
+ *   first;
  * - each feature is a row of that lane (`ui-board-row`), its title along the bottom and its id up
  *   the right gutter;
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns.
@@ -26,13 +29,22 @@ import { Tag } from '$ui/components/tag/tag';
 @Component({
   selector: 'app-epic-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, BoardLane, BoardRow, BoardCard, Leave, Tag],
+  imports: [RouterLink, BoardLane, BoardRow, BoardCard, BoardCount, Leave, Tag],
   host: { class: 'contents' },
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
     <ui-board-lane collapsible [uiLeave]="leaving()" (left)="left.emit()">
-      <span lane-summary>{{ summary() }}</span>
+      @for (tile of tiles(); track tile.column) {
+        <ui-board-count
+          lane-summary
+          [column]="tile.column"
+          [count]="tile.count"
+          [label]="tile.label"
+        />
+      } @empty {
+        <span lane-summary>No tasks</span>
+      }
       <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
       @for (campaign of n.campaigns; track campaign.id) {
         <ui-tag lane-tags [label]="campaign.title ?? ''" />
@@ -76,9 +88,14 @@ export class EpicCard {
   readonly leaving = input(false);
   readonly left = output<void>();
 
-  protected readonly summary = computed(() => {
-    const { verified, total } = taskProgress(this.node());
-    return `${verified} / ${total} ✅`;
+  /** The collapsed lane's tiles: one per column with tasks, then the verified ones' in the gutter. */
+  protected readonly tiles = computed(() => {
+    const { columns, verified } = taskDistribution(this.node());
+    const tiles: { column: number | 'gutter'; count: number; label: string }[] = columns.map(
+      (count, column) => ({ column, count, label: BOARD_COLUMNS[column].label.toLowerCase() }),
+    );
+    tiles.push({ column: 'gutter', count: verified, label: 'verified' });
+    return tiles.filter((tile) => tile.count > 0);
   });
 
   protected border(task: WorkNode): string {

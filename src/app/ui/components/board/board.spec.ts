@@ -4,6 +4,7 @@ import { Highlighter } from '$ui/components/highlight/highlight';
 import { provideRouter } from '@angular/router';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
+import { BoardCount } from './board-count';
 import { BoardLane } from './board-lane';
 import { BoardRow } from './board-row';
 
@@ -14,11 +15,13 @@ const COLUMNS: readonly BoardColumnSpec[] = [
 ];
 
 @Component({
-  imports: [Board, BoardLane, BoardRow, BoardCard],
+  imports: [Board, BoardLane, BoardRow, BoardCard, BoardCount],
   template: `
     <ui-board [columns]="columns" gutter>
       <ui-board-lane>
         <span lane-header>Lane</span>
+        <ui-board-count lane-summary id="count-1" [column]="1" [count]="16" label="in two" />
+        <ui-board-count lane-summary id="count-gutter" column="gutter" [count]="1" label="past" />
         <span lane-gutter>L-1</span>
         <ui-board-row>
           <ui-board-card
@@ -110,6 +113,16 @@ describe('Board', () => {
     expect(column('#in-lane')).toBe('4 / span 1');
     // Status column 0 on the board, after the gutter.
     expect(column('#on-board')).toBe('2 / span 1');
+  });
+
+  it('puts a count in its status column or the right gutter, its label for screen readers', () => {
+    const element = render();
+    const count = (id: string) => element.querySelector(id) as HTMLElement;
+    // Inside the lane, whose grid starts at the left gutter.
+    expect(count('#count-1').style.gridColumn).toBe('3 / span 1');
+    expect(count('#count-gutter').style.gridColumn).toBe('5 / span 1');
+    expect(count('#count-1').querySelector('[aria-hidden="true"]')?.textContent).toBe('16');
+    expect(count('#count-1').querySelector('.sr-only')?.textContent).toBe('16 in two');
   });
 
   it('puts the status columns between two equal gutters', () => {

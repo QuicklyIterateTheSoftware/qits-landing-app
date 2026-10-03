@@ -30,7 +30,9 @@ let nextLaneId = 0;
  * (`ui-board-row`s, cards) in the columns beside the strip.
  *
  * With `collapsible`, a round button on its bottom edge switches between the children (expanded)
- * and `[lane-summary]` (collapsed), a single centred line. `collapsed` sets where it starts; a
+ * and `[lane-summary]` (collapsed), a single line on the board's columns: a child that places
+ * itself in a column (`ui-board-count`, in a status column or the right gutter) sits there, any
+ * other is centred across the lane. `collapsed` sets where it starts; a
  * click wins after that. Both views are always rendered and switched by class, so a server render
  * hydrates as is.
  *
@@ -123,9 +125,13 @@ let nextLaneId = 0;
       </div>
     </div>
     @if (onBoard) {
-      <!-- The summary shares the rows' grid cell and cross-fades with them. -->
+      <!--
+        The summary shares the rows' grid cell and cross-fades with them. It lays its children on
+        the lane's columns: one that places itself (ui-board-count) sits in its column, any other
+        spans the lane, centred.
+      -->
       <div
-        class="col-span-full row-start-3 flex items-center justify-center self-start py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out"
+        class="col-span-full row-start-3 grid grid-cols-subgrid items-center self-start py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out *:col-span-full *:justify-self-center"
         [class]="isCollapsed() ? 'opacity-100' : 'pointer-events-none opacity-0'"
         [attr.inert]="isCollapsed() ? null : ''"
         [attr.aria-hidden]="isCollapsed() ? null : 'true'"
