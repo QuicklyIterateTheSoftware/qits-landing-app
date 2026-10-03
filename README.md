@@ -56,6 +56,20 @@ backend APIs from the deployed platform, and rewrites the cookie to `localhost`.
 localhost and come back to it. Only password sign-in works here: passkeys are bound to the idp's own
 origin.
 
+**Where the backends are called.** Deployed, every backend is called at its own application's
+origin (`https://projects.<domain>/projects/api/…`), with the session cookie
+(`credentials: 'include'`, `EventSource` `withCredentials`). The edge routes an application's paths
+on its own host only and answers credentialed CORS for every host under the platform's domain (epic
+qits-528). The origins come from `GET /main-navigation` (`applications.<app>.origin`), read once by
+an app initializer before the first call (`core/platform/app-origins.ts`, wired in `app.config.ts`).
+If it fails, or names no origin for a backend, the layout shows an alert. A visitor without a session
+goes to `<idp origin>/idp/login?return_host=<this host>&return_path=<path>`.
+
+Under `ng serve` everything stays on localhost instead: the `development` configuration swaps
+`src/environments/environment.ts` for `environment.development.ts` (`sameOriginApis: true`), so no
+navigation is read, every origin is `''`, and `proxy.conf.json` forwards the paths. The server render
+calls no backend at all (it has no session cookie), so it reads no navigation either.
+
 **Generate the lockfile with npm 11 or newer.** npm 10.9.8 — the version on the current workstation
 image — crashes with `Cannot read properties of null (reading 'edgesOut')` while resolving the
 vitest peer graph (`@vitest/browser-playwright` → `jsdom` → the optional `canvas` peer); it is an

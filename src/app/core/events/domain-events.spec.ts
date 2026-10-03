@@ -10,6 +10,7 @@ import {
   type DomainEvent,
   type EventSourceLike,
 } from './domain-events';
+import { AppOrigins } from '../platform/app-origins';
 
 /** A stand-in for the browser's `EventSource`: records its URL, and lets a spec push frames. */
 class FakeSource implements EventSourceLike {
@@ -34,11 +35,12 @@ class FakeSource implements EventSourceLike {
 describe('DomainEvents', () => {
   let sources: FakeSource[];
 
-  function service(platform = 'browser'): DomainEvents {
+  function service(platform = 'browser', eventsOrigin = ''): DomainEvents {
     sources = [];
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: platform },
+        { provide: AppOrigins, useValue: { origin: () => eventsOrigin } },
         {
           provide: EVENT_SOURCE,
           useValue: (url: string) => {
@@ -71,6 +73,14 @@ describe('DomainEvents', () => {
     expect(names(live()[0])).toBe('BuildFailed,DeploymentActive,SCMRelease');
     a.unsubscribe();
     b.unsubscribe();
+  });
+
+  it("opens the stream on qits-events' own origin when the navigation names one", () => {
+    const events = service('browser', 'https://events.qits.example');
+    const subscription = events.on([ALL]).subscribe();
+    vi.advanceTimersByTime(REOPEN_DEBOUNCE_MS);
+    expect(live()[0].url).toBe('https://events.qits.example/events/api/stream?names=*');
+    subscription.unsubscribe();
   });
 
   it('reopens when the union changes, and closes when nobody listens', () => {

@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { EMPTY, Observable, Subject, filter, share } from 'rxjs';
+import { AppOrigins } from '../platform/app-origins';
 import type { EventEntry } from './events.consumes';
 
 /** One domain event as the live stream delivers it: the same envelope as the list's entries. */
@@ -14,13 +15,19 @@ export interface EventSourceLike {
   close(): void;
 }
 
-/** Opens an event source on a URL; the browser's `EventSource`, with the session cookie. */
+/**
+ * Opens an event source on a URL; the browser's `EventSource`, with the session cookie, which a
+ * stream on qits-events' own origin needs.
+ */
 export const EVENT_SOURCE = new InjectionToken<(url: string) => EventSourceLike>('EVENT_SOURCE', {
   providedIn: 'root',
   factory: () => (url) => new EventSource(url, { withCredentials: true }),
 });
 
-/** qits-events' Server-Sent Events route; `?names=` is the subscription (`*` is everything). */
+/**
+ * qits-events' Server-Sent Events route, on qits-events' origin (`AppOrigins`); `?names=` is the
+ * subscription (`*` is everything).
+ */
 export const STREAM_PATH = '/events/api/stream';
 
 /** The name that subscribes to every event (`?names=*`). */
@@ -58,6 +65,7 @@ const CLOSED = 2;
 export class DomainEvents {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly open = inject(EVENT_SOURCE);
+  private readonly origins = inject(AppOrigins);
 
   /** Each live subscription's names. */
   private readonly subscriptions = new Map<symbol, readonly string[]>();
@@ -113,7 +121,9 @@ export class DomainEvents {
     this.close();
     if (names === '') return;
     this.openNames = names;
-    const source = this.open(`${STREAM_PATH}?names=${encodeURIComponent(names)}`);
+    const source = this.open(
+      `${this.origins.origin('events')}${STREAM_PATH}?names=${encodeURIComponent(names)}`,
+    );
     source.onmessage = (message) => {
       this.backoff = RECONNECT_MIN_MS;
       const event = parse(message.data);

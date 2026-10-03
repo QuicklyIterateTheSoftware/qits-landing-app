@@ -18,7 +18,7 @@ This file covers the rules that are easy to break.
 ## Live domain events
 
 `core/events/domain-events.ts` (`DomainEvents`) is the app's ONE live connection to qits-events:
-an `EventSource` on `/events/api/stream?names=…` (`*` is every event). Stores and menus call
+an `EventSource` on qits-events' origin, `/events/api/stream?names=…` (`*` is every event). Stores and menus call
 `on(names)` instead of opening a stream of their own; the service keeps the union of the names its
 subscribers want, reopens the stream when that changes (debounced), reopens a stream the browser
 gave up on with a doubling wait (1–30 s), closes it when nobody listens, and never connects on the
@@ -36,6 +36,15 @@ notifications menu puts every new event at the top of its list once it is loaded
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
+
+## Backend origins
+
+Every backend path is called at its owner's origin, never relative: `AppOrigins`
+(`core/platform/app-origins.ts`) reads `/main-navigation` once in an app initializer, and
+`app.config.ts` gives each generated client its `baseUrl` and `credentials: 'include'`. A new
+backend gets an entry in `BACKEND_APPS` and in `app.config.ts`'s `CLIENTS`. Never compose a
+hostname. `ng serve` stays same-origin through `src/environments/environment.development.ts`. Pact
+specs keep setting each client's `baseUrl` to their mock server.
 
 ## Styling
 
