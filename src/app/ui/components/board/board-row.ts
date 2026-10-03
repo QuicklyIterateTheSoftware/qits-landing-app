@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { BOARD_CONTEXT, type BoardContext } from './board-context';
 
 /**
@@ -32,7 +39,8 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   },
   template: `
     <span
-      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 bg-charcoal-brown-600/40 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 *:shrink-0 [&>[row-gutter]]:mt-auto [&>[row-gutter]]:rounded-br-xl"
+      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 *:shrink-0 [&>[row-gutter]]:mt-auto [&>[row-gutter]]:rounded-br-xl"
+      [class]="fill()"
     >
       <!-- The id starts the chin (pt-2 + mt-2) below the top; the tile sits at the bottom, on the
            bar's line (both 1.5rem tall). -->
@@ -43,7 +51,8 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </span>
     <ng-content />
     <div
-      class="col-span-full flex self-end items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
+      class="col-span-full flex self-end items-baseline justify-start gap-2 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
+      [class]="fill()"
     >
       <ng-content select="[row-footer]" />
       <ng-content select="[row-footer-end]" />
@@ -53,6 +62,15 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
 export class BoardRow implements BoardContext {
   /** The length of the `[row-id]` text, so the row is tall enough for it. */
   readonly idLength = input(0);
+  /**
+   * Draws bar and strip in a solid colour, the same over every column, instead of translucent
+   * over each column's own.
+   */
+  readonly solid = input(false, { transform: booleanAttribute });
+
+  protected readonly fill = computed(() =>
+    this.solid() ? 'bg-charcoal-brown-300' : 'bg-charcoal-brown-600/40',
+  );
 
   private readonly parent = inject(BOARD_CONTEXT, { skipSelf: true });
 

@@ -215,6 +215,12 @@ describe('EpicBoard (screenshots)', () => {
     const last = rows[rows.length - 1].getBoundingClientRect();
     const columns = element.querySelector('ui-board > div:nth-child(2)')!.getBoundingClientRect();
     expect(Math.round(columns.bottom)).toBe(Math.round(last.bottom));
+    // The feature's title bar and id strip are solid, not translucent.
+    const bar = rows[0].querySelector('[row-footer]')!.parentElement!;
+    const strip = rows[0].querySelector('[row-id]')!.parentElement!.parentElement!;
+    for (const part of [bar, strip]) {
+      expect(getComputedStyle(part).backgroundColor).not.toMatch(/\/ 0\.|, 0\.\d+\)$/);
+    }
     await shoot(element, 'every-task-status');
   });
 

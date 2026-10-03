@@ -30,8 +30,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  *   the whole taller;
  * - below it a board (`ui-board`) of five columns (`EPIC_BOARD_COLUMNS`): the In Progress board's
  *   four, then Verified, each headed with how many cards it holds;
- * - each feature is a row (`ui-board-row`), as on the In Progress board: its title along the
- *   bottom, its id up the right gutter, a Workspace tag at the title line's end;
+ * - each feature is a row (`ui-board-row`), as on the In Progress board but with its bar and
+ *   strip solid (`solid`), not translucent: its title along the bottom, its id up the right gutter, a Workspace tag at the title line's end;
  * - each task is a card (`ui-board-card`) in its column (`epicBoardRows`: a DONE task muted in
  *   Verified, REPORTED and DROPPED ones left out), with its campaigns and its Workspace bubble.
  *
@@ -88,7 +88,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         gutter
       >
         @for (row of rows(); track row.node.entry.id) {
-          <ui-board-row class="mb-4" [idLength]="row.node.entry.qualifiedId?.length ?? 0">
+          <ui-board-row class="mb-4" solid [idLength]="row.node.entry.qualifiedId?.length ?? 0">
             @for (card of row.cards; track card.node.entry.id) {
               <ui-board-card
                 class="self-start!"
