@@ -5,8 +5,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 export type FinishButtonState = 'idle' | 'running' | 'error';
 
 /**
- * A round button with a check, the expand button's twin: it straddles the right edge of its
- * positioned container, vertically centred and half outside. While `state` is `running` it shows
+ * A round button with a check, the expand button's twin: it sits on the bottom-right corner of its
+ * positioned container, centred on the corner, so three quarters of it are outside. The same place
+ * on a card and on a lane; a clipping ancestor would cut it, so it must have none. While `state` is `running` it shows
  * the spinner and is disabled; on `error` the error icon, and a click tries again. `shown` is
  * switched by class, never by `@if`, so a server render hydrates as is.
  */
@@ -18,7 +19,7 @@ export type FinishButtonState = 'idle' | 'running' | 'error';
   template: `
     <button
       type="button"
-      class="absolute top-[calc(50%-0.8125rem)] -right-[0.8125rem] z-20 size-6.5 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-mint-leaf-700 hover:text-mint-leaf-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-wait"
+      class="absolute -right-[0.8125rem] -bottom-[0.8125rem] z-20 size-6.5 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-mint-leaf-700 hover:text-mint-leaf-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-wait"
       [class]="shown() ? 'flex' : 'hidden'"
       [disabled]="state() === 'running'"
       [attr.aria-label]="label()"

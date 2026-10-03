@@ -12,46 +12,39 @@ import {
   openRecordedWork,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
-import { WorkListNode, type WorkListView } from './work-list-node';
+import type { WorkListView } from '$patterns/work/work-list/work-list-view';
+import { EpicListItem } from './epic-list-item';
 
 /**
- * Screenshots of one work node in a list, per case: one epic (with its features and tasks) or one
- * ticket, in the Backlog (REPORTED work) or the Archive (DONE and DROPPED work), 40rem wide. The
- * node is the one the app builds from qits-projects' golden masters (`recorded-work.ts`); each
- * case names its view, its state and the entity's qualified id in the recorded answer.
+ * Screenshots of one epic in a list, per case: in the Backlog (REPORTED) or the Archive (DONE and
+ * DROPPED), 40rem wide. The epic is the node the app builds from qits-projects' golden masters
+ * (`recorded-work.ts`); each case names its view, its state and the epic's qualified id.
  */
 @Component({
-  imports: [WorkListNode],
+  imports: [EpicListItem],
   host: { class: 'flex w-[40rem] flex-col gap-12 p-4 pb-8 [&_ui-board-card]:self-stretch' },
   template: `
     @if (node(); as node) {
-      <app-work-list-node [node]="node" base="/projects/contract/work" [view]="view" />
+      <app-epic-list-item [node]="node" base="/projects/contract/work" [view]="view" />
     }
   `,
 })
-class OneListNode {
+class OneEpic {
   readonly view = inject(ActivatedRoute).snapshot.paramMap.get('view') as WorkListView;
   private readonly work = inject(SelectedWork);
   private readonly qualifiedId = routedQualifiedId();
-  readonly node = computed(() =>
-    nodeOf(
-      this.work.graph().tree(this.view === 'archive' ? 'archive' : 'backlog'),
-      this.qualifiedId,
-    ),
-  );
+  readonly node = computed(() => nodeOf(this.work.graph().tree(this.view), this.qualifiedId));
 }
 
 const EVERY_STATUS = 'a project with work in every status';
 
 /**
- * States recorded on qits-projects-service `external/card-states` (8c13d17e), not yet in the
- * installed `@qits/projects-golden-masters`. Their cases are skipped until the pin bump; then
- * drop the `.skip`.
+ * Recorded on qits-projects-service `external/card-states` (8c13d17e), not yet in the installed
+ * `@qits/projects-golden-masters`. Its case is skipped until the pin bump; then drop the `.skip`.
  */
 const DONE_COMPLETE = 'a done epic with every task implemented';
-const CAMPAIGN = 'a campaign with work in every phase';
 
-/** One case: the screenshot's name, the view, the state, the entity's qualified id and title. */
+/** One case: the screenshot's name, the view, the state, the epic's qualified id and title. */
 type Case = readonly [
   name: string,
   view: WorkListView,
@@ -60,13 +53,13 @@ type Case = readonly [
   title: string,
 ];
 
-describe('WorkListNode (screenshots)', () => {
+describe('EpicListItem (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneListNode }]),
+        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneEpic }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -85,28 +78,16 @@ describe('WorkListNode (screenshots)', () => {
   }
 
   it.each<Case>([
-    ['epic-reported', 'backlog', EVERY_STATUS, 'contract-00000001-1', 'Reported epic'],
-    ['ticket-reported', 'backlog', EVERY_STATUS, 'contract-00000001-2', 'Reported ticket'],
-    ['epic-done', 'archive', EVERY_STATUS, 'contract-00000001-9', 'Done epic'],
-    ['ticket-done', 'archive', EVERY_STATUS, 'contract-00000001-10', 'Done ticket'],
-    ['epic-dropped', 'archive', EVERY_STATUS, 'contract-00000001-11', 'Dropped epic'],
-    ['ticket-dropped', 'archive', EVERY_STATUS, 'contract-00000001-12', 'Dropped ticket'],
+    ['reported', 'backlog', EVERY_STATUS, 'contract-00000001-1', 'Reported epic'],
+    ['done', 'archive', EVERY_STATUS, 'contract-00000001-9', 'Done epic'],
+    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-11', 'Dropped epic'],
   ])('%s', async (name, view, state, qualifiedId, title) => {
     const { locator } = await shown(view, state, qualifiedId, title);
     await expect.element(locator).toMatchScreenshot(name);
   });
 
   // Waiting on the pin bump of @qits/projects-golden-masters (qits-projects 8c13d17e).
-  it.skip.each<Case>([
-    ['ticket-reported-campaign', 'backlog', CAMPAIGN, 'contract-00000001-4', 'Reported ticket'],
-    ['ticket-done-campaign', 'archive', CAMPAIGN, 'contract-00000001-5', 'Done ticket'],
-  ])('%s', async (name, view, state, qualifiedId, title) => {
-    const { locator } = await shown(view, state, qualifiedId, title);
-    await expect.element(locator).toMatchScreenshot(name);
-  });
-
-  // Waiting on the pin bump of @qits/projects-golden-masters (qits-projects 8c13d17e).
-  it.skip('done epic with every task implemented: collapsed, then expanded', async () => {
+  it.skip('every task done (DONE): collapsed, then expanded', async () => {
     const { element, locator, harness } = await shown(
       'archive',
       DONE_COMPLETE,
@@ -115,12 +96,12 @@ describe('WorkListNode (screenshots)', () => {
     );
     // The Archive starts every epic collapsed; a done one sums up its tasks.
     await expect.element(locator).toHaveTextContent('2 / 2 ✅');
-    await expect.element(locator).toMatchScreenshot('epic-done-complete-collapsed');
+    await expect.element(locator).toMatchScreenshot('all-done-collapsed');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
     await expect.element(locator).toHaveTextContent('Second shipped task');
-    await expect.element(locator).toMatchScreenshot('epic-done-complete-expanded');
+    await expect.element(locator).toMatchScreenshot('all-done-expanded');
   });
 });

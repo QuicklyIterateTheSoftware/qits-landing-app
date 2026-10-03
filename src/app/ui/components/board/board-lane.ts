@@ -126,7 +126,7 @@ let nextLaneId = 0;
       >
         <ng-content select="[lane-summary]" />
       </div>
-      <!-- An action button straddling the lane's edge (ui-finish-button), outside every clip. -->
+      <!-- An action button on the lane's bottom-right corner (ui-finish-button), outside every clip. -->
       <ng-content select="[lane-action]" />
       @if (collapsible()) {
         <ui-expand-button

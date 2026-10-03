@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
-import { WorkListNode } from '$patterns/work/work-list-node/work-list-node';
+import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
  * A project's finished work, at `/projects/<slug>/work-archive`: everything in a final state (Done
@@ -12,7 +12,7 @@ import { WorkListNode } from '$patterns/work/work-list-node/work-list-node';
 @Component({
   selector: 'app-project-work-archive-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Spinner, WorkListNode],
+  imports: [RouterLink, Spinner, WorkList],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -25,17 +25,7 @@ import { WorkListNode } from '$patterns/work/work-list-node/work-list-node';
         >
       </div>
       <ui-spinner [state]="work.state()" class="mt-6 min-h-48">
-        <div
-          class="flex-col gap-12 [&_ui-board-card]:self-stretch"
-          [class]="archived().length ? 'flex' : 'hidden'"
-        >
-          @for (node of archived(); track node.entry.id) {
-            <app-work-list-node [node]="node" [base]="workPath()" view="archive" />
-          }
-        </div>
-        <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="archived().length">
-          Nothing here
-        </p>
+        <app-work-list [tree]="archived()" [base]="workPath()" view="archive" />
       </ui-spinner>
     </div>
   `,

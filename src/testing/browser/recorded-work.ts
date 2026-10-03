@@ -7,12 +7,13 @@ import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
 
 /**
- * Helpers for the screenshot tests of one work node (`work-board-node`, `work-list-node`): the
- * node is a real one, built by the app from qits-projects' golden masters.
+ * Helpers for the screenshot tests of the work patterns (`kanban-board`, `epic-card`,
+ * `ticket-card`, `work-list` and its items): the work is real, built by the app from
+ * qits-projects' golden masters.
  *
  * The spec routes `projects/:slug/:view/:qualifiedId` to a small host component. The host reads
  * the open project's work through `SelectedWork`, as the Work and Archive pages do, and draws the
- * one top-level node whose qualified id the URL names ({@link nodeOf}). {@link openRecordedWork}
+ * one top-level node whose qualified id the URL names ({@link nodeOf}), or the whole tree. {@link openRecordedWork}
  * navigates there and answers every request with a recording: the project list from "a project
  * exists", the work (and each campaign in it) from the case's state.
  */
@@ -35,14 +36,17 @@ export function routedQualifiedId(): string | null {
 
 /**
  * Opens `/projects/<recorded slug>/<view>/<qualifiedId>` and answers the project list, then the
- * project's work from `state` and each campaign read from the same state. Returns the host's
- * element, its width fixed by the host.
+ * project's work from `state`. Each campaign read gets the `getCampaign` recording of the one state
+ * in `campaignStates` (by default `state` alone) whose campaign has the id asked for: a state
+ * records one answer per operation, so a second campaign is recorded as a state of its own over
+ * the same seed, with the same frozen ids. Returns the host's element, its width fixed by the host.
  */
 export async function openRecordedWork(
   http: HttpTestingController,
   view: string,
   qualifiedId: string,
   state: string,
+  campaignStates: readonly string[] = [state],
 ): Promise<{ element: HTMLElement; harness: RouterTestingHarness }> {
   const list = await goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
@@ -61,11 +65,17 @@ export async function openRecordedWork(
     .flush(await goldenMaster(state, 'listProjectEntities'));
   await settle();
   await settle();
-  // The store then reads each campaign in the tree; a state records one campaign at most.
+  // The store then reads each campaign in the tree.
   const campaigns = http.match((request) => request.url.startsWith('/projects/api/campaigns/'));
   if (campaigns.length) {
-    const campaign = await goldenMaster(state, 'getCampaign');
-    for (const request of campaigns) request.flush(campaign);
+    const recorded = await Promise.all(campaignStates.map((s) => goldenMaster(s, 'getCampaign')));
+    for (const request of campaigns) {
+      const id = request.request.url.split('/').pop();
+      const answer = recorded.find((body) => body.campaign.id === id);
+      if (!answer)
+        throw new Error(`no state in [${campaignStates.join(', ')}] records campaign ${id}`);
+      request.flush(answer);
+    }
     await settle();
   }
   await harness.fixture.whenStable();

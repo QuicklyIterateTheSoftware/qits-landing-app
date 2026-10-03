@@ -41,7 +41,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
       </p>
       <ng-content />
     </div>
-    <!-- An action button straddling the card's edge (ui-finish-button). -->
+    <!-- An action button on the card's bottom-right corner (ui-finish-button). -->
     <ng-content select="[card-action]" />
   `,
 })

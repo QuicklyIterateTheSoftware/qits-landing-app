@@ -145,7 +145,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
-  // The card screenshots' states (`work-board-node`, `work-list-node`), recorded on
+  // The card screenshots' states (`epic-card`, `ticket-card`, the list items), recorded on
   // qits-projects-service `external/card-states` (8c13d17e) and not yet in the installed
   // @qits/projects-golden-masters. Skipped until the pin bump; then drop the `.skip` and run with
   // QITS_GOLDEN_UPDATE=true to write them into the committed pact.
@@ -187,6 +187,35 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
         expect(data?.campaign?.members?.length).toBeGreaterThan(0);
       },
     ));
+
+  // The epic card with two campaign tags: recorded on qits-projects-service
+  // `external/epic-campaigns-state` (eb00bb7c, on top of 8c13d17e), not yet in the installed
+  // @qits/projects-golden-masters. A state records one answer per operation, so the second
+  // campaign is a state of its own over the same seed. Skipped until the pin bump, as above.
+  it.skip('show-project-work-board: an epic in two campaigns', () =>
+    given('show-project-work-board', 'an epic in two campaigns').executeTest(async (server) => {
+      // The entities read on its own: `load` would go on to read both campaigns.
+      storeAt(server.url);
+      const projectId = projectOf('an epic in two campaigns');
+      const { data } = await TestBed.runInInjectionContext(() =>
+        listProjectEntities({ path: { projectId } }),
+      );
+      expect(data?.entities?.length).toBeGreaterThan(0);
+    }));
+
+  it.skip.each([
+    ['an epic in two campaigns', 'firstCampaignId'],
+    ['the second campaign of an epic in two campaigns', 'secondCampaignId'],
+  ])('show-project-work-board: the members of %s', (state, param) =>
+    givenCampaign('show-project-work-board', state).executeTest(async (server) => {
+      storeAt(server.url);
+      const op = masters.operation(state, 'getCampaign');
+      const { data } = await TestBed.runInInjectionContext(() =>
+        getCampaign({ path: { id: op.params[param] } }),
+      );
+      expect(data?.campaign?.members?.length).toBe(1);
+    }),
+  );
 
   it('show-project-work: a project with no work counts zero', () =>
     given('show-project-work', 'a project with no work').executeTest(async (server) => {
