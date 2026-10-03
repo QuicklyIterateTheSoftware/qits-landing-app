@@ -14,6 +14,7 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   children: [],
   context,
   campaigns: [],
+  tasks: { verified: 0, total: 0 },
 });
 
 /** The item in a list (by default Acceptance), as the work list draws it. */
@@ -75,15 +76,17 @@ describe('EpicListItem', () => {
     expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
   });
 
-  it('sums up a VERIFIED epic’s tasks as all done, and starts expanded', () => {
+  it('sums up a VERIFIED epic’s verified tasks, and starts expanded', () => {
     const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
     const feature = { ...node({ id: 'f', qualifiedId: 'qits-2', archetype: 'FEATURE' }) };
+    // One of its two tasks is VERIFIED; the other is still on the board, in no child here.
     const epic = {
       ...node({ status: 'VERIFIED' }),
-      children: [{ ...feature, children: [task('qits-3'), task('qits-4')] }],
+      children: [{ ...feature, children: [task('qits-3')] }],
+      tasks: { verified: 1, total: 2 },
     };
     const element = render(epic);
-    expect(element.querySelector('[lane-summary]')?.textContent).toBe('2 / 2 ✅');
+    expect(element.querySelector('[lane-summary]')?.textContent).toBe('1 / 2 ✅');
     expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(
       'true',
     );
@@ -101,9 +104,13 @@ describe('EpicListItem', () => {
     expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([]);
   });
 
-  it('in a campaign, sums up a DONE epic’s tasks as all done, and starts collapsed', () => {
+  it('in a campaign, sums up a DONE epic’s verified tasks, and starts collapsed', () => {
     const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
-    const epic = { ...node({ status: 'DONE' }), children: [task('qits-3')] };
+    const epic = {
+      ...node({ status: 'DONE' }),
+      children: [task('qits-3')],
+      tasks: { verified: 1, total: 1 },
+    };
     const element = render(epic, 'campaign');
     expect(element.querySelector('[lane-summary]')?.textContent).toBe('1 / 1 ✅');
     expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(

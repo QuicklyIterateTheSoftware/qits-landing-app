@@ -14,6 +14,7 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   children: [],
   context,
   campaigns: [],
+  tasks: { verified: 0, total: 0 },
 });
 
 /** The item in a list (by default Acceptance), as the work list draws it. */

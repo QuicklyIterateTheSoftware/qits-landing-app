@@ -144,14 +144,14 @@ describe('WorkStore', () => {
 
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS - 1);
       await drain();
-      http.expectNone('/projects/api/tickets/t-1/transition');
+      http.expectNone('/projects/api/entities/t-1/status');
 
       await vi.advanceTimersByTimeAsync(1);
       await drain();
       expect(store.pendingFinishes()['t-1']?.phase).toBe('sending');
-      const request = http.expectOne('/projects/api/tickets/t-1/transition');
+      const request = http.expectOne('/projects/api/entities/t-1/status');
       expect(request.request.body).toEqual({ target: 'DONE' });
-      request.flush({ ticket: { status: 'DONE' } });
+      request.flush({ status: 'DONE' });
       await drain();
 
       expect(statusOf(store, 't-1')).toBe('DONE');
@@ -168,7 +168,7 @@ describe('WorkStore', () => {
 
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS * 2);
       await drain();
-      http.expectNone('/projects/api/tickets/t-1/transition');
+      http.expectNone('/projects/api/entities/t-1/status');
       expect(statusOf(store, 't-1')).toBe('VERIFIED');
     });
 
@@ -178,7 +178,7 @@ describe('WorkStore', () => {
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
       http
-        .expectOne('/projects/api/tickets/t-1/transition')
+        .expectOne('/projects/api/entities/t-1/status')
         .flush(null, { status: 409, statusText: 'Conflict' });
       await drain();
 
@@ -203,13 +203,13 @@ describe('WorkStore', () => {
 
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS - 2_000);
       await drain();
-      http.expectOne('/projects/api/tickets/t-1/transition').flush({ ticket: { status: 'DONE' } });
-      http.expectNone('/projects/api/epics/e-1/transition');
+      http.expectOne('/projects/api/entities/t-1/status').flush({ status: 'DONE' });
+      http.expectNone('/projects/api/entities/e-1/status');
 
       store.undoFinish('e-1');
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
-      http.expectNone('/projects/api/epics/e-1/transition');
+      http.expectNone('/projects/api/entities/e-1/status');
       expect(statusOf(store, 't-1')).toBe('DONE');
       expect(statusOf(store, 'e-1')).toBe('VERIFIED');
     });
@@ -220,16 +220,16 @@ describe('WorkStore', () => {
       store.finishLater(ID, epic);
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
-      const ticketMove = http.expectOne('/projects/api/tickets/t-1/transition');
-      const epicMove = http.expectOne('/projects/api/epics/e-1/transition');
+      const ticketMove = http.expectOne('/projects/api/entities/t-1/status');
+      const epicMove = http.expectOne('/projects/api/entities/e-1/status');
 
       // The ticket's event starts a fetch while the epic's move is still on its way.
-      ticketMove.flush({ ticket: { status: 'DONE' } });
+      ticketMove.flush({ status: 'DONE' });
       await drain();
       const refreshed = store.refresh(ID);
       await drain();
       const stale = http.expectOne(`/projects/api/projects/${ID}/entities`);
-      epicMove.flush({ epic: { status: 'DONE' } });
+      epicMove.flush({ status: 'DONE' });
       await drain();
       expect(statusOf(store, 'e-1')).toBe('DONE');
 
@@ -257,7 +257,7 @@ describe('WorkStore', () => {
       store.finishLater(ID, ticket);
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
-      http.expectOne('/projects/api/tickets/t-1/transition').flush({ ticket: { status: 'DONE' } });
+      http.expectOne('/projects/api/entities/t-1/status').flush({ status: 'DONE' });
       await drain();
     });
 
@@ -268,12 +268,12 @@ describe('WorkStore', () => {
       globalThis.dispatchEvent(new Event('pagehide'));
       await drain();
       const sent = [
-        http.expectOne('/projects/api/tickets/t-1/transition'),
-        http.expectOne('/projects/api/epics/e-1/transition'),
+        http.expectOne('/projects/api/entities/t-1/status'),
+        http.expectOne('/projects/api/entities/e-1/status'),
       ];
       expect(sent.map((r) => r.request.keepalive)).toEqual([true, true]);
-      sent[0].flush({ ticket: { status: 'DONE' } });
-      sent[1].flush({ epic: { status: 'DONE' } });
+      sent[0].flush({ status: 'DONE' });
+      sent[1].flush({ status: 'DONE' });
       await drain();
       expect(store.pendingFinishes()).toEqual({});
     });
@@ -295,27 +295,27 @@ describe('WorkStore', () => {
     const statusOf = (store: InstanceType<typeof WorkStore>, id: string) =>
       store.byProject()[ID]?.entries.find((e) => e.id === id)?.status;
 
-    it('marks a reported ticket refined through the ticket door', async () => {
+    it('marks a reported ticket refined through the status door', async () => {
       const store = await loaded();
       const moved = store.transition(ID, ticket, 'REFINED');
       expect(store.transitioning()['t-1']).toBe('running');
       await settle();
-      const request = http.expectOne('/projects/api/tickets/t-1/transition');
+      const request = http.expectOne('/projects/api/entities/t-1/status');
       expect(request.request.method).toBe('POST');
       expect(request.request.body).toEqual({ target: 'REFINED' });
-      request.flush({ ticket: { status: 'REFINED' } });
+      request.flush({ status: 'REFINED' });
       await moved;
       expect(statusOf(store, 't-1')).toBe('REFINED');
       expect(store.transitioning()).toEqual({});
     });
 
-    it('drops an epic through the epic door', async () => {
+    it('drops an epic through the same door', async () => {
       const store = await loaded();
       const moved = store.transition(ID, epic, 'DROPPED');
       await settle();
-      const request = http.expectOne('/projects/api/epics/e-1/transition');
+      const request = http.expectOne('/projects/api/entities/e-1/status');
       expect(request.request.body).toEqual({ target: 'DROPPED' });
-      request.flush({ epic: { status: 'DROPPED' } });
+      request.flush({ status: 'DROPPED' });
       await moved;
       expect(statusOf(store, 'e-1')).toBe('DROPPED');
     });
@@ -325,7 +325,7 @@ describe('WorkStore', () => {
       const moved = store.transition(ID, ticket, 'REFINED');
       await settle();
       http
-        .expectOne('/projects/api/tickets/t-1/transition')
+        .expectOne('/projects/api/entities/t-1/status')
         .flush(null, { status: 409, statusText: 'Conflict' });
       await moved;
       expect(statusOf(store, 't-1')).toBe('REPORTED');
@@ -337,10 +337,46 @@ describe('WorkStore', () => {
       const moved = store.transition(ID, ticket, 'REFINED');
       await store.transition(ID, ticket, 'REFINED');
       await settle();
-      http
-        .expectOne('/projects/api/tickets/t-1/transition')
-        .flush({ ticket: { status: 'REFINED' } });
+      http.expectOne('/projects/api/entities/t-1/status').flush({ status: 'REFINED' });
       await moved;
+    });
+  });
+
+  describe('dispatch', () => {
+    const epic = { id: 'e-1', archetype: 'EPIC', status: 'REFINED' } as WorkEntry;
+
+    it.each([
+      ['FLOW', 'a refined epic'],
+      ['PHASE', 'a reported epic'],
+    ] as const)(
+      'presses dispatch with mode %s and keeps the phase it started',
+      async (mode, state) => {
+        const store = TestBed.inject(WorkStore);
+        const pressed = store.dispatch(epic, mode);
+        expect(store.dispatching()['e-1']).toBe('running');
+        await settle();
+        const request = http.expectOne('/projects/api/entities/e-1/dispatch');
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({ mode });
+        const answer = goldenMaster(state, 'dispatchEntity');
+        request.flush(answer);
+        await pressed;
+        expect(store.dispatching()).toEqual({});
+        expect(store.dispatched()['e-1']).toBe(answer.dispatch.phase);
+      },
+    );
+
+    it('marks the press failed when it is refused, and sends one press at a time', async () => {
+      const store = TestBed.inject(WorkStore);
+      const pressed = store.dispatch(epic, 'FLOW');
+      await store.dispatch(epic, 'FLOW');
+      await settle();
+      http
+        .expectOne('/projects/api/entities/e-1/dispatch')
+        .flush(null, { status: 409, statusText: 'Conflict' });
+      await pressed;
+      expect(store.dispatching()['e-1']).toBe('error');
+      expect(store.dispatched()).toEqual({});
     });
   });
 });

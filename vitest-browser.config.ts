@@ -79,6 +79,31 @@ const stubOrigin: BrowserCommand<[origin: string]> = async (context, origin) => 
 };
 
 /**
+ * `stubFigure`: answers every request matching `pattern` (a Playwright URL glob) with a plain grey
+ * 480x160 SVG, from Playwright, without touching the network. An image a page loads from a backend
+ * (an epic's dossier figure, whose bytes no golden master records) then shows the same pixels on
+ * every run. Asking again for the same pattern replaces the earlier stub.
+ */
+const FIGURE =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="480" height="160"><rect width="480" height="160" fill="#d1d5db"/></svg>';
+const stubFigure: BrowserCommand<[pattern: string]> = async (context, pattern) => {
+  if (context.provider.name !== 'playwright') return;
+  type Route = { fulfill(response: { contentType: string; body: string }): Promise<void> };
+  const playwrightPage = (
+    context as unknown as {
+      page: {
+        unroute(url: string): Promise<void>;
+        route(url: string, handler: (route: Route) => Promise<void>): Promise<void>;
+      };
+    }
+  ).page;
+  await playwrightPage.unroute(pattern);
+  await playwrightPage.route(pattern, (route) =>
+    route.fulfill({ contentType: 'image/svg+xml', body: FIGURE }),
+  );
+};
+
+/**
  * Chromium's flags for the screenshot tests: `--disable-partial-raster`. By default Chromium
  * re-rasters only the invalidated part of a tile, and the antialiased edge of a rounded corner
  * drawn that way can come out one colour step off the whole-tile result (seen on the cards: 2 to
@@ -108,7 +133,7 @@ export default defineConfig({
   plugins: [chromiumFlags, screenshotReferences()],
   test: {
     browser: {
-      commands: { goldenMaster, parkPointer, stubOrigin },
+      commands: { goldenMaster, parkPointer, stubOrigin, stubFigure },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A
       // reference that does not match writes its actual and diff images to .vitest-attachments/.
       screenshotFailures: false,

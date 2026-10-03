@@ -15,8 +15,8 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
  * - the epic is a lane (`ui-board-lane`): its title in the bar at the top and its id up the gutter,
  *   both linking to it, its campaigns as tags below the bar. It collapses to where its tasks are:
  *   a count tile (`ui-board-count`) in each column that holds any, and one in the right gutter for
- *   the verified ones (none for a column without tasks); "No tasks" when it has none. Expanded at
- *   first;
+ *   its tasks whose own status is VERIFIED or DONE (they are off the board, in Acceptance or the
+ *   Archive); none for a column without tasks; "No tasks" when it has none. Expanded at first;
  * - each feature is a row of that lane (`ui-board-row`), its title along the bottom and its id up
  *   the right gutter;
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns.

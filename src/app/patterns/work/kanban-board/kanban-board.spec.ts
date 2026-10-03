@@ -7,6 +7,7 @@ const node = (id: string): WorkNode => ({
   children: [],
   context: false,
   campaigns: [],
+  tasks: { verified: 0, total: 0 },
 });
 
 describe('columnCounts', () => {

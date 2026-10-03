@@ -31,6 +31,20 @@ export const INTERACTIONS = {
   'finish-epic': 'The finish button marks a verified epic done',
   /** `ticket-list-item.ts`: the finish button on a VERIFIED ticket in Acceptance moves it to DONE. */
   'finish-ticket': 'The finish button marks a verified ticket done',
+  /**
+   * `work-item.page.ts`: the work item page reads the archetype registry, which says the moves and
+   * the dispatch phases its actions offer.
+   */
+  'show-work-item-actions': 'The work item page offers the moves and phases the registry serves',
+  /**
+   * `work-item.page.ts` via `WorkDetailStore`: the work item page reads the item, its comments and
+   * its dossier (an epic's pages and figures, a ticket's pages).
+   */
+  'show-work-item': 'The work item page shows the item’s description, dossier and comments',
+  /** `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). */
+  'move-work-item': 'A status action on the work item page moves the item',
+  /** `work-item.page.ts`: Dispatch (the whole flow) or the next phase's button. */
+  'dispatch-work-item': 'Dispatch or the next phase on the work item page starts an agent',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
   'show-project-loc': 'The project cards show how many lines of code each project has',
   /**
