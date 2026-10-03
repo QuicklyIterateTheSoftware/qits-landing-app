@@ -249,6 +249,45 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
+  // The detail states: the work item page's screenshots, one per archetype and ticket type. Each
+  // read on its own: `load` would go on to read the campaign in the tree.
+  it.each([
+    'an epic in detail',
+    'a feature in detail',
+    'a task in detail',
+    'a bug ticket in detail',
+    'an improvement ticket in detail',
+    'a maintenance ticket in detail',
+    'a campaign in detail',
+  ])('show-project-work-board: the work of %s', (state) =>
+    given('show-project-work-board', state).executeTest(async (server) => {
+      storeAt(server.url);
+      const projectId = projectOf(state);
+      const { data } = await TestBed.runInInjectionContext(() =>
+        listProjectEntities({ path: { projectId } }),
+      );
+      expect(data?.entities?.length).toBeGreaterThan(0);
+    }),
+  );
+
+  // Their campaign's read, where the state recorded it. The other detail states share the seed and
+  // its frozen ids, so their page answers the campaign from "a campaign in detail".
+  it.each([
+    'an epic in detail',
+    'a bug ticket in detail',
+    'an improvement ticket in detail',
+    'a campaign in detail',
+  ])('show-project-work-board: the campaign of %s', (state) =>
+    givenCampaign('show-project-work-board', state).executeTest(async (server) => {
+      storeAt(server.url);
+      const op = masters.operation(state, 'getCampaign');
+      const { data } = await TestBed.runInInjectionContext(() =>
+        getCampaign({ path: { id: op.params['campaignId'] } }),
+      );
+      expect(data?.campaign?.members?.length).toBeGreaterThan(0);
+    }),
+  );
+
   it.each([
     ['finish-epic', 'a verified epic', 'EPIC'],
     ['finish-ticket', 'a verified ticket', 'TICKET'],

@@ -13,15 +13,17 @@ import { WorkItemPage } from './work-item.page';
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const WORK = 'a project with work in every status';
-const CAMPAIGN = 'a campaign with work in every phase';
 const EPIC = 'an epic with features and tasks';
 const REGISTRY = '/projects/api/entities/archetypes';
+const DETAIL = 'a campaign in detail';
+/** The links in the region of an item's children: features, tasks or members. */
+const CHILDREN = ['Features', 'Tasks', 'Members'].map((n) => `section[aria-label=${n}] a`).join();
 
 /**
  * The work item page's actions and what they send, and the children it shows, on qits-projects'
  * golden masters: the project list and "a project with work in every status" (one epic and one
- * ticket per status), "a campaign with work in every phase" and "an epic with features and tasks",
- * and the archetype registry. Which actions show for which status is `work-actions.spec.ts`; this
+ * ticket per status), "an epic with features and tasks" and "a campaign in detail" (with the
+ * campaign's own reads), and the archetype registry. Which actions show for which status is `work-actions.spec.ts`; this
  * checks the page wires them.
  */
 describe('WorkItemPage', () => {
@@ -46,10 +48,42 @@ describe('WorkItemPage', () => {
   afterEach(() => http.verify());
 
   /**
-   * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
-   * a campaign's read too, from the same state.
+   * Answers the item's own reads (`WorkDetailStore`): from `state`'s recordings when it is a detail
+   * state, else with 404 (an error answer is a status only), which leaves the page's body without
+   * its description, dossier and comments but with its children.
    */
-  async function shown(title: string, state = WORK) {
+  async function answerDetail(state: string, ref: string, recorded: boolean) {
+    const item = http.expectOne(`/projects/api/entities/${ref}`);
+    const thread = http.expectOne(`/projects/api/entities/${ref}/comments`);
+    if (!recorded) {
+      item.flush(null, { status: 404, statusText: 'Not Found' });
+      thread.flush(null, { status: 404, statusText: 'Not Found' });
+      return;
+    }
+    const entity = goldenMaster(state, 'getEntity');
+    item.flush(entity);
+    thread.flush(goldenMaster(state, 'listEntityComments'));
+    await settle();
+    if (entity.archetype === 'EPIC') {
+      http
+        .expectOne(`/projects/api/epics/${entity.id}/dossier`)
+        .flush(goldenMaster(state, 'listEpicDossierPages'));
+      http
+        .expectOne(`/projects/api/epics/${entity.id}/dossier-assets`)
+        .flush(goldenMaster(state, 'listEpicDossierAssets'));
+    }
+    if (entity.archetype === 'TICKET') {
+      http
+        .expectOne(`/projects/api/tickets/${entity.id}/dossier`)
+        .flush(goldenMaster(state, 'listTicketDossierPages'));
+    }
+  }
+
+  /**
+   * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
+   * a campaign's read too, from `campaignState`, and the item's own reads (`answerDetail`).
+   */
+  async function shown(title: string, state = WORK, detail = false, campaignState = state) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const work = goldenMaster(state, 'listProjectEntities');
@@ -69,15 +103,16 @@ describe('WorkItemPage', () => {
     await settle();
     await settle();
     for (const read of http.match((r) => r.url.startsWith('/projects/api/campaigns/'))) {
-      read.flush(goldenMaster(state, 'getCampaign'));
+      read.flush(goldenMaster(campaignState, 'getCampaign'));
     }
     http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
+    await answerDetail(state, entity.qualifiedId, detail);
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
-    /** Each link below the header: its text and where it leads. */
+    /** Each link in the children's region: its text and where it leads. */
     const children = () =>
-      [...element.querySelectorAll('section a')].map((a) => [
+      [...element.querySelectorAll(CHILDREN)].map((a) => [
         a.textContent?.trim(),
         a.getAttribute('href')?.split('/').pop(),
       ]);
@@ -102,24 +137,35 @@ describe('WorkItemPage', () => {
   });
 
   it('shows a campaign with its description, its start and its members in campaign order', async () => {
-    const { element, groups, children } = await shown('Card campaign', CAMPAIGN);
-    expect(element.textContent).toContain('Seeded work.');
+    const { element, groups, children } = await shown('Invoicing for the Q4 close', DETAIL, true);
+    expect(element.textContent).toContain('Everything accounting needs');
     // REFINED: the start, the served moves; no plan for a campaign.
     expect(groups()).toEqual([
       { title: 'Agent', actions: ['Start campaign'] },
       { title: 'Status', actions: ['Mark implemented', 'Back to reported', 'Drop', 'Block'] },
     ]);
-    expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Members');
     const titles = children()
       .map(([text]) => text)
       .filter((text) => !text?.startsWith('contract-'));
-    expect(titles).toEqual(['Refined epic', 'Refined ticket', 'Reported ticket', 'Done ticket']);
-    expect(children()).toContainEqual(['Reported ticket', 'contract-00000001-4']);
+    // Each member with its subtree: the export epic's features and their tasks.
+    expect(titles).toEqual([
+      'Tax rates per country',
+      'Export invoices for the accountants',
+      'Stream invoices as CSV',
+      'Download button on the invoice list',
+      'CSV export',
+      'Render one invoice as PDF',
+      'Preview the PDF before download',
+      'PDF export',
+      'Invoice totals are off by one cent',
+      'Credit notes show the wrong sign',
+      'Remember the last export format',
+    ]);
+    expect(children()).toContainEqual(['Remember the last export format', 'contract-00000001-11']);
   });
 
   it('shows an epic’s features, each with its tasks', async () => {
-    const { element, children } = await shown('Nested epic', EPIC);
-    expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Features');
+    const { children } = await shown('Nested epic', EPIC);
     expect(children()).toEqual([
       ['First shipped task', 'contract-00000001-3'],
       ['Second shipped task', 'contract-00000001-4'],
@@ -130,8 +176,7 @@ describe('WorkItemPage', () => {
   });
 
   it('shows a feature’s tasks', async () => {
-    const { element, children } = await shown('Shipped feature', EPIC);
-    expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Tasks');
+    const { children } = await shown('Shipped feature', EPIC);
     expect(children()).toEqual([
       ['First shipped task', 'contract-00000001-3'],
       ['Second shipped task', 'contract-00000001-4'],
@@ -144,7 +189,7 @@ describe('WorkItemPage', () => {
     ['task', 'Open task', EPIC],
   ])('shows no children for a %s', async (_, title, state) => {
     const { element, children } = await shown(title, state);
-    expect(element.querySelector('section')?.className).toContain('hidden');
+    expect(element.querySelector(CHILDREN.replaceAll(' a', ''))).toBeNull();
     expect(children()).toEqual([]);
   });
 
@@ -222,6 +267,7 @@ describe('WorkItemPage', () => {
       .expectOne(`/projects/api/projects/${project.id}/entities`)
       .flush(goldenMaster(WORK, 'listProjectEntities'));
     http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
+    await answerDetail(WORK, 'nothing-1', false);
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;

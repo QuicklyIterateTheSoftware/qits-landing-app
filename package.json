@@ -39,6 +39,7 @@
     "@opentelemetry/semantic-conventions": "^1.43.0",
     "@qits/angular": "2026.1003.131134",
     "express": "^5.1.0",
+    "marked": "^18.0.14",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

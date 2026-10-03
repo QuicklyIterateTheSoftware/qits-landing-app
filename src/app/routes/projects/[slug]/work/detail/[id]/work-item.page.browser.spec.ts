@@ -13,11 +13,15 @@ import { openRecordedWork } from '../../../../../../../testing/browser/recorded-
 
 /**
  * Screenshots of one work item's page and its actions, answered with qits-projects' golden masters:
- * the project list as recorded, and the work of "a project with work in every status" (one epic and
+ * the project list as recorded, the work of "a project with work in every status" (one epic and
  * one ticket per status), "an epic with features and tasks" or "a campaign with work in every
- * phase" (with the campaign's read), and the archetype registry. The page follows transitions
- * through the event stream; the stream here never connects.
+ * phase" (with the campaign's read), and the archetype registry. Those states record no item reads
+ * (`getEntity`, comments, dossier): they answer 404, so the body shows the children only. The page
+ * follows transitions through the event stream; the stream here never connects.
  */
+
+/** The generated client builds its request after a few awaits; let them run. */
+const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 describe('WorkItemPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -41,10 +45,47 @@ describe('WorkItemPage (screenshots)', () => {
   afterEach(() => http.verify());
 
   /**
-   * The page of the entity titled `title` in `state`'s recorded work, every request answered from
-   * a recording (`openRecordedWork`: a campaign's read too).
+   * Answers the item's own reads (`WorkDetailStore`): from `state`'s recordings when `recorded`,
+   * else with 404 (an error answer is a status only): the body then shows its children only.
    */
-  async function render(state: string, title: string) {
+  async function answerDetail(state: string, ref: string, recorded: boolean) {
+    const item = http.expectOne(`/projects/api/entities/${ref}`);
+    const thread = http.expectOne(`/projects/api/entities/${ref}/comments`);
+    if (!recorded) {
+      item.flush(null, { status: 404, statusText: 'Not Found' });
+      thread.flush(null, { status: 404, statusText: 'Not Found' });
+      return;
+    }
+    const entity = await goldenMaster(state, 'getEntity');
+    item.flush(entity);
+    thread.flush(await goldenMaster(state, 'listEntityComments'));
+    await settle();
+    if (entity.archetype === 'EPIC') {
+      http
+        .expectOne(`/projects/api/epics/${entity.id}/dossier`)
+        .flush(await goldenMaster(state, 'listEpicDossierPages'));
+      http
+        .expectOne(`/projects/api/epics/${entity.id}/dossier-assets`)
+        .flush(await goldenMaster(state, 'listEpicDossierAssets'));
+    }
+    if (entity.archetype === 'TICKET') {
+      http
+        .expectOne(`/projects/api/tickets/${entity.id}/dossier`)
+        .flush(await goldenMaster(state, 'listTicketDossierPages'));
+    }
+  }
+
+  /**
+   * The page of the entity titled `title` in `state`'s recorded work, every request answered from
+   * a recording (`openRecordedWork`: a campaign's read too, from `campaignStates`), the item's own
+   * reads from `state` when `detail` (`answerDetail`).
+   */
+  async function render(
+    state: string,
+    title: string,
+    detail = false,
+    campaignStates: readonly string[] = [state],
+  ) {
     const work = await goldenMaster(state, 'listProjectEntities');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const { element, harness } = await openRecordedWork(
@@ -52,12 +93,15 @@ describe('WorkItemPage (screenshots)', () => {
       'work/detail',
       entity.qualifiedId,
       state,
+      campaignStates,
     );
     // The page's actions come from the archetype registry.
     http
       .expectOne('/projects/api/entities/archetypes')
       .flush(await goldenMaster('the archetype registry', 'listArchetypes'));
-    await new Promise((resolve) => setTimeout(resolve));
+    await answerDetail(state, entity.qualifiedId, detail);
+    await settle();
+    await settle();
     await harness.fixture.whenStable();
     harness.fixture.detectChanges();
     element.style.width = '760px';
@@ -113,12 +157,11 @@ describe('WorkItemPage (screenshots)', () => {
     await expect.element(element).toMatchScreenshot('feature');
   });
 
-  it('shows a campaign’s description and its members, and offers its start', async () => {
+  it('shows a campaign’s members, and offers its start', async () => {
     const element = await render('a campaign with work in every phase', 'Card campaign');
     await expect
       .element(element.getByRole('group', { name: 'Agent' }))
       .toHaveTextContent('Start campaign');
-    await expect.element(element).toHaveTextContent('Seeded work.');
     const members = element.getByRole('region', { name: 'Members' });
     await expect.element(members.getByRole('link', { name: 'Done ticket' })).toBeVisible();
     await expect.element(members).not.toHaveTextContent('Ticket outside the campaign');
