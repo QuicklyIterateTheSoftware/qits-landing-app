@@ -15,8 +15,9 @@ import type { Consumed } from '@qits/angular';
 /**
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
  * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
- * shows each entity as a small card (qualified id, title, archetype), placed by its status — or,
- * for a feature or task, by its `implementingAt` and `implementedAt` — and nested under its `parent`.
+ * shows each entity as a small card (qualified id, title, archetype), placed by its status and
+ * nested under its `parent`. `implementingAt` and `implementedAt` place a feature or task that has no
+ * status, which only an older qits-projects serves (`WorkGraph.columnOf`).
  */
 export const LIST_PROJECT_ENTITIES = [
   'entities[].id',
@@ -35,12 +36,14 @@ export type WorkEntry = NonNullable<
 >[number];
 
 /**
- * Which work entities the card's "Work" tile counts. FOR NOW: every archetype whose status is
- * REFINED. Features and tasks have no status, so they do not count yet. This is a stand-in the
- * user will replace with a better representation; change it here and nowhere else.
+ * Which work entities the card's "Work" tile counts. FOR NOW: every entity whose status is
+ * REFINED, except features and tasks. They have a status of their own too (qits-763), but they
+ * are parts of an epic, not work of their own, and counting them would change the card's number.
+ * This is a stand-in the user will replace with a better representation; change it here and
+ * nowhere else.
  */
 export function countsAsWork(entry: WorkEntry): boolean {
-  return entry.status === 'REFINED';
+  return entry.status === 'REFINED' && entry.archetype !== 'FEATURE' && entry.archetype !== 'TASK';
 }
 
 /**

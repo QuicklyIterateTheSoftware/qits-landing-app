@@ -832,11 +832,11 @@ export type EntityPatch = {
      */
     dependsOn?: string | null;
     /**
-     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED or IMPLEMENTING.
+     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or REFINED when it was never marked implementing).
      */
     implementedAt?: Instant | null;
     /**
-     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is REFINED or IMPLEMENTING.
+     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is REFINED or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
      */
     implementingAt?: Instant;
 };
@@ -945,6 +945,7 @@ export type FeatureDto = {
     title?: string;
     slug?: string;
     description?: string;
+    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     dependsOnFeatureId?: string;
     implementedOn?: Instant;
     implementingOn?: Instant;
@@ -1719,6 +1720,7 @@ export type TaskDto = {
     title?: string;
     slug?: string;
     description?: string;
+    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     dependsOnTaskId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
@@ -2751,7 +2753,7 @@ export type PostProjectsApiEntitiesByIdBlockedErrors = {
      */
     404: unknown;
     /**
-     * A feature or a task (no lifecycle), or a status that starts no phase (VERIFIED, DONE, DROPPED)
+     * A feature or a task (which runs no phase of its own), or a status that starts no phase (VERIFIED, DONE, DROPPED)
      */
     409: unknown;
 };
@@ -2966,7 +2968,7 @@ export type PostProjectsApiEntitiesByIdStatusData = {
 
 export type PostProjectsApiEntitiesByIdStatusErrors = {
     /**
-     * No target, or an archetype with no lifecycle (a feature or a task)
+     * No target
      */
     400: unknown;
     /**
@@ -2982,7 +2984,7 @@ export type PostProjectsApiEntitiesByIdStatusErrors = {
      */
     404: unknown;
     /**
-     * A move the lifecycle does not allow, or a target naming no status
+     * A move the lifecycle does not allow, a target naming no status, or a feature or a task whose epic is still REPORTED
      */
     409: unknown;
 };

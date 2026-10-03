@@ -13,6 +13,7 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   children: [],
   context,
   campaigns: [],
+  tasks: { columns: [0, 0, 0, 0], verified: 0, total: 0 },
 });
 
 /** The item in the Acceptance list, as the work list draws it. */
@@ -53,7 +54,7 @@ describe('TicketListItem', () => {
     ['TICKET', 'VERIFYING', false, false],
     ['TICKET', 'DONE', false, false],
     ['TICKET', 'VERIFIED', true, false],
-    ['TASK', undefined, false, false],
+    ['TASK', 'VERIFIED', false, false],
   ] as const)(
     'shows the finish button on a %s in %s (context: %s): %s',
     (archetype, status, context, shown) => {

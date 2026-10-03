@@ -9,11 +9,19 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
  * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED /
  *   IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED
- *   the archive. Features and tasks have no status: they take their nearest ancestor's (their
- *   epic's), so the children of a VERIFIED epic go to the acceptance list with it.
- * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3. A feature or
- *   task: Verifying once its epic is VERIFYING, else Implemented once `implementedAt` is set, else
- *   Implementing once `implementingAt` is set, else Refined.
+ *   the archive. Every archetype has a status of its own, features and tasks included (ticket
+ *   qits-763), and one item moves without its siblings: a task can be VERIFIED while its epic is
+ *   still IMPLEMENTING. One exception: an item whose ancestor has left the board ahead of it, to the
+ *   acceptance list or the archive, goes there with it, so a verified epic takes its unverified
+ *   tasks along and a done or dropped one archives its whole tree (qits-projects moves no child
+ *   when an epic goes to VERIFIED or DONE).
+ * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, from the
+ *   item's own status.
+ * - **No status** (an older qits-projects, whose features and tasks carry none): the item takes its
+ *   nearest ancestor's status, and on the board its column is Verifying once that ancestor is
+ *   VERIFYING, else Implemented once `implementedAt` is set, else Implementing once
+ *   `implementingAt` is set, else Refined. This goes once the recorded golden masters carry a
+ *   status for every item.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
@@ -40,6 +48,33 @@ const COLUMN_BY_STATUS: Readonly<Record<string, number>> = Object.fromEntries(
   BOARD_COLUMNS.map((column, index) => [column.status, index]),
 );
 
+/** The phases in walk order; an ancestor further on than its item in these takes the item along. */
+const PHASE_RANK: Readonly<Record<Phase, number>> = {
+  backlog: 0,
+  board: 1,
+  acceptance: 2,
+  archive: 3,
+};
+
+/** The phases an ancestor takes its items to when it reaches them first. */
+const TAKES_ALONG: ReadonlySet<Phase> = new Set<Phase>(['acceptance', 'archive']);
+
+/** Statuses past the board: work there is verified. */
+const PAST_BOARD: ReadonlySet<string> = new Set(['VERIFIED', 'DONE']);
+
+/** Where a node's tasks (its descendants that are tasks) are. */
+export interface TaskDistribution {
+  /** Tasks per board column, by column index (`BOARD_COLUMNS`), zeros included. */
+  readonly columns: readonly number[];
+  /**
+   * Tasks whose own status is VERIFIED or DONE. They are in no board column (a verified task is in
+   * the acceptance list, its board epic there as context), so the board shows them as a count.
+   */
+  readonly verified: number;
+  /** Every task, wherever it is. */
+  readonly total: number;
+}
+
 export interface WorkNode {
   readonly entry: WorkEntry;
   readonly children: readonly WorkNode[];
@@ -49,6 +84,11 @@ export interface WorkNode {
   readonly column?: number;
   /** The campaigns it is a member of, in the list's order. */
   readonly campaigns: readonly WorkEntry[];
+  /**
+   * Where all its tasks are, in whichever phase each one is: the tree holds only the tasks of its
+   * own phase, so this is counted on the whole project's work, not on `children`.
+   */
+  readonly tasks: TaskDistribution;
 }
 
 /** A project's work, indexed for the questions below. */
@@ -87,20 +127,56 @@ export class WorkGraph {
     return (entry.id && this.campaignsByMember.get(entry.id)) || [];
   }
 
-  /** The entity's phase, from its own status or its nearest ancestor's; undefined if none has one. */
+  /**
+   * The entity's phase: its own status's, unless an ancestor is further on in the acceptance list
+   * or the archive, which takes it along. Undefined if neither it nor an ancestor has a status.
+   */
   phaseOf(entry: WorkEntry): Phase | undefined {
-    const owner = this.statusOwner(entry);
-    return owner?.status ? PHASE_BY_STATUS[owner.status] : undefined;
+    const status = this.statusOwner(entry)?.status;
+    const own = status ? PHASE_BY_STATUS[status] : undefined;
+    const parent = this.parentEntry(entry);
+    const above = parent ? this.phaseOf(parent) : undefined;
+    if (above && TAKES_ALONG.has(above) && (!own || PHASE_RANK[above] > PHASE_RANK[own])) {
+      return above;
+    }
+    return own;
   }
 
   /** The entity's board column, or undefined when it is not on the board. */
   columnOf(entry: WorkEntry): number | undefined {
     if (this.phaseOf(entry) !== 'board') return undefined;
     if (entry.status) return COLUMN_BY_STATUS[entry.status];
+    // No status of its own: an older qits-projects (see "No status" above).
     if (this.statusOwner(entry)?.status === 'VERIFYING') return COLUMN_BY_STATUS['VERIFYING'];
     if (entry.implementedAt) return COLUMN_BY_STATUS['IMPLEMENTED'];
     if (entry.implementingAt) return COLUMN_BY_STATUS['IMPLEMENTING'];
     return COLUMN_BY_STATUS['REFINED'];
+  }
+
+  /**
+   * Where `entry`'s tasks (its descendants that are tasks) are: how many in each board column, how
+   * many verified (their own status, or with none their nearest ancestor's, is VERIFIED or DONE),
+   * and how many in all, whatever phase each is in.
+   */
+  tasksOf(entry: WorkEntry): TaskDistribution {
+    const columns: number[] = BOARD_COLUMNS.map(() => 0);
+    let verified = 0;
+    let total = 0;
+    const walk = (id: string) => {
+      for (const childId of this.childrenOf.get(id) ?? []) {
+        const child = this.byId.get(childId)!;
+        if (child.archetype === 'TASK') {
+          total++;
+          const column = this.columnOf(child);
+          const status = this.statusOwner(child)?.status;
+          if (column !== undefined) columns[column]++;
+          else if (status && PAST_BOARD.has(status)) verified++;
+        }
+        walk(childId);
+      }
+    };
+    if (entry.id) walk(entry.id);
+    return { columns, verified, total };
   }
 
   /** The tree of every entity in `phase`, with their ancestors as context, in tree order. */
@@ -126,19 +202,26 @@ export class WorkGraph {
       .map((child) => this.node(child, phase, included));
     const context = this.phaseOf(entry) !== phase;
     const campaigns = this.campaignsOf(entry);
-    if (phase !== 'board') return { entry, children, context, campaigns };
+    const tasks = this.tasksOf(entry);
+    if (phase !== 'board') return { entry, children, context, campaigns, tasks };
     const column = context ? undefined : this.columnOf(entry);
-    return { entry, children, context, column, campaigns };
+    return { entry, children, context, column, campaigns, tasks };
   }
 
-  /** The entity itself if it has a status, else its nearest ancestor that has one. */
+  /**
+   * The entity itself if it has a status, else its nearest ancestor that has one: only an older
+   * qits-projects serves an entity without a status.
+   */
   private statusOwner(entry: WorkEntry): WorkEntry | undefined {
-    for (let current: WorkEntry | undefined = entry; current;) {
+    for (let current: WorkEntry | undefined = entry; current; current = this.parentEntry(current)) {
       if (current.status) return current;
-      const parent: string | undefined = current.id ? this.parentOf.get(current.id) : undefined;
-      current = parent ? this.byId.get(parent) : undefined;
     }
     return undefined;
+  }
+
+  private parentEntry(entry: WorkEntry): WorkEntry | undefined {
+    const parent = entry.id ? this.parentOf.get(entry.id) : undefined;
+    return parent ? this.byId.get(parent) : undefined;
   }
 
   private link(parent: string, child: string): void {
@@ -166,42 +249,4 @@ export function byNumber(a: WorkEntry, b: WorkEntry): number {
   if (x !== undefined && y === undefined) return -1;
   if (x === undefined && y !== undefined) return 1;
   return (a.id ?? '').localeCompare(b.id ?? '');
-}
-
-/** Statuses past the board: work there is verified. */
-const PAST_BOARD: ReadonlySet<string> = new Set(['VERIFIED', 'DONE']);
-
-/** Where a node's tasks (its descendants that are tasks) are. */
-export interface TaskDistribution {
-  /** Tasks per board column, by column index (`BOARD_COLUMNS`), zeros included. */
-  readonly columns: readonly number[];
-  /**
-   * Tasks past the board: their own status is VERIFIED or DONE. Today a task has no status of its
-   * own and takes its epic's, so a board tree never holds one and this is 0 there.
-   */
-  readonly verified: number;
-  /** Every task, wherever it is. */
-  readonly total: number;
-}
-
-/**
- * Where a node's tasks are: how many in each board column, how many past the board, and how many
- * in all. Off the board (no columns) only `total` counts.
- */
-export function taskDistribution(node: WorkNode): TaskDistribution {
-  const columns: number[] = BOARD_COLUMNS.map(() => 0);
-  let verified = 0;
-  let total = 0;
-  const walk = (n: WorkNode) => {
-    for (const child of n.children) {
-      if (child.entry.archetype === 'TASK') {
-        total++;
-        if (child.column !== undefined) columns[child.column]++;
-        else if (child.entry.status && PAST_BOARD.has(child.entry.status)) verified++;
-      }
-      walk(child);
-    }
-  };
-  walk(node);
-  return { columns, verified, total };
 }

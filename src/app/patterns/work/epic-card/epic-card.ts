@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
-import { taskDistribution, type WorkNode } from '$core/work/work-tree';
+import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { BoardCount } from '$ui/components/board/board-count';
 import { BoardLane } from '$ui/components/board/board-lane';
@@ -90,7 +90,7 @@ export class EpicCard {
 
   /** The collapsed lane's tiles: one per column with tasks, then the verified ones' in the gutter. */
   protected readonly tiles = computed(() => {
-    const { columns, verified } = taskDistribution(this.node());
+    const { columns, verified } = this.node().tasks;
     const tiles: { column: number | 'gutter'; count: number; label: string }[] = columns.map(
       (count, column) => ({ column, count, label: BOARD_COLUMNS[column].label.toLowerCase() }),
     );

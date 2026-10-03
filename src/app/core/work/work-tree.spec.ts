@@ -1,5 +1,5 @@
 import type { WorkEntry } from './work.consumes';
-import { byNumber, taskDistribution, WorkGraph, type WorkNode } from './work-tree';
+import { byNumber, WorkGraph, type WorkNode } from './work-tree';
 
 /**
  * The tree, its columns and its campaign tags, on inline entries: this is a pure function of entries and campaign
@@ -37,19 +37,22 @@ function shape(node: WorkNode): string {
 
 describe('WorkGraph', () => {
   // An IMPLEMENTING epic: one implemented feature (one of its tasks implemented, one started), one
-  // open feature.
+  // open feature. Each item carries its own status, as qits-projects serves it since qits-763.
   const epic = [
     entry('epic', 'EPIC', 'IMPLEMENTING'),
-    entry('shipped', 'FEATURE', undefined, 'epic', true),
-    entry('t1', 'TASK', undefined, 'shipped', true),
-    entry('t2', 'TASK', undefined, 'shipped', false, true),
-    entry('open', 'FEATURE', undefined, 'epic'),
-    entry('t3', 'TASK', undefined, 'open'),
+    entry('shipped', 'FEATURE', 'IMPLEMENTED', 'epic', true),
+    entry('t1', 'TASK', 'IMPLEMENTED', 'shipped', true),
+    entry('t2', 'TASK', 'IMPLEMENTING', 'shipped', false, true),
+    entry('open', 'FEATURE', 'REFINED', 'epic'),
+    entry('t3', 'TASK', 'REFINED', 'open'),
   ];
-  const withEpic = (status: string) =>
-    epic.map((e) => (e.id === 'epic' ? { ...e, status: status as WorkEntry['status'] } : e));
+  const withStatus = (entries: readonly WorkEntry[], statuses: Record<string, string>) =>
+    entries.map((e) =>
+      e.id && statuses[e.id] ? { ...e, status: statuses[e.id] as WorkEntry['status'] } : e,
+    );
+  const withEpic = (status: string) => withStatus(epic, { epic: status });
 
-  it('places features and tasks by their epic, implementingAt and implementedAt', () => {
+  it('places every item by its own status', () => {
     const graph = new WorkGraph(epic);
     expect(epic.map((e) => graph.columnOf(e))).toEqual([1, 2, 2, 1, 0, 0]);
   });
@@ -71,16 +74,49 @@ describe('WorkGraph', () => {
     expect(tree.map(shape)).toEqual(['epic@1(shipped@2(t1@2 t2@1) open@0(t3@0))']);
   });
 
-  it('moves everything to Verifying once the epic is', () => {
+  it('moves only the epic to Verifying: its features and tasks stay where they are', () => {
     const tree = new WorkGraph(withEpic('VERIFYING')).tree('board');
-    expect(tree.map(shape)).toEqual(['epic@3(shipped@3(t1@3 t2@3) open@3(t3@3))']);
+    expect(tree.map(shape)).toEqual(['epic@3(shipped@2(t1@2 t2@1) open@0(t3@0))']);
   });
 
-  it('takes a VERIFIED epic off the board into acceptance, its children with it', () => {
+  it('verifies one task on its own: it goes to acceptance, its epic and feature there as context', () => {
+    const graph = new WorkGraph(withStatus(epic, { t1: 'VERIFIED' }));
+    expect(graph.tree('board').map(shape)).toEqual(['epic@1(shipped@2(t2@1) open@0(t3@0))']);
+    expect(graph.tree('acceptance').map(shape)).toEqual(['~epic(~shipped(t1))']);
+  });
+
+  it('takes a VERIFIED epic off the board into acceptance, its unverified items with it', () => {
     const graph = new WorkGraph(withEpic('VERIFIED'));
     expect(graph.tree('board')).toEqual([]);
     expect(graph.tree('acceptance').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
     expect(graph.columnOf(epic[2])).toBeUndefined();
+  });
+
+  it('archives a DONE epic with its whole tree, verified items included', () => {
+    const graph = new WorkGraph(withStatus(epic, { epic: 'DONE', t1: 'VERIFIED' }));
+    expect(graph.tree('acceptance')).toEqual([]);
+    expect(graph.tree('archive').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
+  });
+
+  describe('from an older qits-projects, whose features and tasks carry no status', () => {
+    const legacy = epic.map((e) => (e.archetype === 'EPIC' ? e : { ...e, status: undefined }));
+    const legacyWithEpic = (status: string) => withStatus(legacy, { epic: status });
+
+    it('places them by their epic, implementingAt and implementedAt', () => {
+      const graph = new WorkGraph(legacy);
+      expect(legacy.map((e) => graph.columnOf(e))).toEqual([1, 2, 2, 1, 0, 0]);
+    });
+
+    it('moves them to Verifying with their epic', () => {
+      const tree = new WorkGraph(legacyWithEpic('VERIFYING')).tree('board');
+      expect(tree.map(shape)).toEqual(['epic@3(shipped@3(t1@3 t2@3) open@3(t3@3))']);
+    });
+
+    it('takes them into acceptance with a VERIFIED epic, counted as verified', () => {
+      const graph = new WorkGraph(legacyWithEpic('VERIFIED'));
+      expect(graph.tree('acceptance').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
+      expect(graph.tasksOf(legacy[0])).toEqual({ columns: [0, 0, 0, 0], verified: 3, total: 3 });
+    });
   });
 
   // A REFINED campaign ordering a VERIFIED epic, a REFINED epic with a feature, a REPORTED ticket;
@@ -89,7 +125,7 @@ describe('WorkGraph', () => {
     entry('campaign', 'CAMPAIGN', 'REFINED'),
     entry('verified', 'EPIC', 'VERIFIED'),
     entry('running', 'EPIC', 'REFINED'),
-    entry('feature', 'FEATURE', undefined, 'running'),
+    entry('feature', 'FEATURE', 'REFINED', 'running'),
     entry('waiting', 'TICKET', 'REPORTED'),
     entry('standalone', 'TICKET', 'IMPLEMENTED'),
   ];
@@ -115,14 +151,13 @@ describe('WorkGraph', () => {
   it('keeps a reported epic with its feature in the backlog', () => {
     const reportedEpic = [
       entry('epic', 'EPIC', 'REPORTED'),
-      entry('f', 'FEATURE', undefined, 'epic'),
+      entry('f', 'FEATURE', 'REPORTED', 'epic'),
     ];
     expect(new WorkGraph(reportedEpic).tree('backlog').map(shape)).toEqual(['epic(f)']);
   });
 
   it('shows an ancestor from another phase as context', () => {
-    // A child whose phase differs from its parent's: a feature carrying a status of its own
-    // stands in for that case, which the tree must handle whatever the lifecycle allows today.
+    // A child behind its parent: the backlog does not follow the parent onto the board.
     const mixed = [entry('epic', 'EPIC', 'REFINED'), entry('odd', 'FEATURE', 'REPORTED', 'epic')];
     expect(new WorkGraph(mixed).tree('backlog').map(shape)).toEqual(['~epic(odd)']);
   });
@@ -142,52 +177,38 @@ describe('WorkGraph', () => {
     const done = [
       entry('d', 'TICKET', 'DONE'),
       entry('x', 'EPIC', 'DROPPED'),
-      entry('f', 'FEATURE', undefined, 'x'),
+      entry('f', 'FEATURE', 'REFINED', 'x'),
     ];
     expect(new WorkGraph(done).tree('archive').map(shape)).toEqual(['d', 'x(f)']);
   });
 
   it('counts an epic’s tasks per board column, zero columns included', () => {
     const [implementing] = new WorkGraph(epic).tree('board');
-    expect(taskDistribution(implementing)).toEqual({
-      columns: [1, 1, 1, 0],
-      verified: 0,
-      total: 3,
-    });
-    const [verifying] = new WorkGraph(withEpic('VERIFYING')).tree('board');
-    expect(taskDistribution(verifying)).toEqual({ columns: [0, 0, 0, 3], verified: 0, total: 3 });
+    expect(implementing.tasks).toEqual({ columns: [1, 1, 1, 0], verified: 0, total: 3 });
+    const [verifying] = new WorkGraph(withStatus(epic, { t1: 'VERIFYING' })).tree('board');
+    expect(verifying.tasks).toEqual({ columns: [1, 1, 0, 1], verified: 0, total: 3 });
   });
 
-  it('counts tasks past the board as verified', () => {
-    // No recorded tree holds a task with its own status yet: a node built by hand, one task
-    // REFINED (column 0), one VERIFIED and one DONE (past the board).
-    const task = (id: string, status?: string, column?: number): WorkNode => ({
-      entry: entry(id, 'TASK', status),
-      children: [],
-      context: false,
-      column,
-      campaigns: [],
-    });
-    const feature: WorkNode = {
-      entry: entry('f', 'FEATURE'),
-      children: [task('open', undefined, 0), task('checked', 'VERIFIED'), task('closed', 'DONE')],
-      context: false,
-      column: 0,
-      campaigns: [],
-    };
-    const root: WorkNode = {
-      entry: entry('e', 'EPIC', 'REFINED'),
-      children: [feature],
-      context: false,
-      column: 0,
-      campaigns: [],
-    };
-    expect(taskDistribution(root)).toEqual({ columns: [1, 0, 0, 0], verified: 2, total: 3 });
+  it('counts verified and done tasks on a board epic, though the board tree does not hold them', () => {
+    const graph = new WorkGraph(withStatus(epic, { t1: 'VERIFIED', t3: 'DONE' }));
+    const [board] = graph.tree('board');
+    expect(board.tasks).toEqual({ columns: [0, 1, 0, 0], verified: 2, total: 3 });
+    // The epic in acceptance, there only as context to t1, counts the same tasks.
+    const [acceptance] = graph.tree('acceptance');
+    expect(acceptance.tasks).toEqual(board.tasks);
   });
 
   it('counts only the total off the board', () => {
-    const [backlog] = new WorkGraph(withEpic('REPORTED')).tree('backlog');
-    expect(taskDistribution(backlog)).toEqual({ columns: [0, 0, 0, 0], verified: 0, total: 3 });
+    const reported = withStatus(epic, {
+      epic: 'REPORTED',
+      shipped: 'REPORTED',
+      t1: 'REPORTED',
+      t2: 'REPORTED',
+      open: 'REPORTED',
+      t3: 'REPORTED',
+    });
+    const [backlog] = new WorkGraph(reported).tree('backlog');
+    expect(backlog.tasks).toEqual({ columns: [0, 0, 0, 0], verified: 0, total: 3 });
   });
 
   describe('order', () => {
@@ -198,7 +219,7 @@ describe('WorkGraph', () => {
       parent?: string,
     ) =>
       ({
-        ...entry(id, archetype, parent ? undefined : 'REFINED', parent),
+        ...entry(id, archetype, 'REFINED', parent),
         qualifiedId,
       }) as WorkEntry;
 

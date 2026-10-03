@@ -13,6 +13,7 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   children: [],
   context,
   campaigns: [],
+  tasks: { columns: [0, 0, 0, 0], verified: 0, total: 0 },
 });
 
 /** The item in the Acceptance list, as the work list draws it. */
@@ -68,15 +69,20 @@ describe('EpicListItem', () => {
     expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
   });
 
-  it('sums up a VERIFIED epic’s tasks as all done, and starts expanded', () => {
-    const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
+  it('sums up a VERIFIED epic’s tasks by their own status, and starts expanded', () => {
+    // Verifying the epic moves none of its tasks: one of the two is verified.
+    const task = (id: string, status: WorkEntry['status']) =>
+      node({ id, qualifiedId: id, archetype: 'TASK', status });
     const feature = { ...node({ id: 'f', qualifiedId: 'qits-2', archetype: 'FEATURE' }) };
     const epic = {
       ...node({ status: 'VERIFIED' }),
-      children: [{ ...feature, children: [task('qits-3'), task('qits-4')] }],
+      children: [
+        { ...feature, children: [task('qits-3', 'VERIFIED'), task('qits-4', 'IMPLEMENTED')] },
+      ],
+      tasks: { columns: [0, 0, 0, 0], verified: 1, total: 2 },
     };
     const element = render(epic);
-    expect(element.querySelector('[lane-summary]')?.textContent).toBe('2 / 2 ✅');
+    expect(element.querySelector('[lane-summary]')?.textContent).toBe('1 / 2 ✅');
     expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(
       'true',
     );

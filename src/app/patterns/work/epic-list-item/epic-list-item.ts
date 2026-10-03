@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finishControl } from '$core/work/finish-control';
-import { taskDistribution, type WorkNode } from '$core/work/work-tree';
+import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
@@ -16,9 +16,10 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  *
  * - the epic is a lane (`ui-list-lane`): its title in the bar at the top and its id up the left
  *   gutter, both linking to it, its campaigns as tags below the bar. It collapses to one line: in
- *   the Backlog "<n> tasks" and in Acceptance "<n> / <n> ✅" (a VERIFIED epic's tasks are all
- *   done), expanded at first; in the Archive "<n> / <n> ✅" for a
- *   done epic, or "<n> tasks" for a dropped one, collapsed at first;
+ *   the Backlog "<n> tasks" and in Acceptance "<verified> / <n> ✅" (how many of its tasks are
+ *   VERIFIED or DONE by their own status: verifying the epic moves none of them), expanded at
+ *   first; in the Archive the same for a done epic, or "<n> tasks" for a dropped one, collapsed at
+ *   first;
  * - each feature is a row (`ui-list-row`): its title along the bottom, its id up the right gutter;
  * - each task is the board's small card (`ui-board-card`), with its campaigns.
  *
@@ -97,13 +98,13 @@ export class EpicListItem {
   protected readonly collapsed = computed(() => this.view() === 'archive');
 
   protected readonly summary = computed(() => {
-    const { total } = taskDistribution(this.node());
+    const { verified, total } = this.node().tasks;
     const tasks = `${total} ${total === 1 ? 'task' : 'tasks'}`;
-    // A verified or done epic's tasks are all done.
-    const done =
+    // Each task's own status says whether it is verified, not its epic's.
+    const counted =
       (this.view() === 'acceptance' && this.node().entry.status === 'VERIFIED') ||
       (this.view() === 'archive' && this.node().entry.status === 'DONE');
-    return done ? `${total} / ${total} ✅` : tasks;
+    return counted ? `${verified} / ${total} ✅` : tasks;
   });
 
   /** In the Archive, which final state the epic is in. */

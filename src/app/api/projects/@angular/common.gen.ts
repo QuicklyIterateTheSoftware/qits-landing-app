@@ -281,7 +281,7 @@ export const getEntityRequest = <ThrowOnError extends boolean = false>(options: 
 /**
  * Edit an entity's fields (JSON merge patch)
  *
- * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through the archetype's /{id}/transition, and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the implemented marker needs it REFINED. Answers the entity in the merged shape.
+ * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/entities/{id}/status (or the archetype's own /{id}/transition), and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it REFINED or IMPLEMENTING, and a marker moves the item's status with it. Answers the entity in the merged shape.
  */
 export const patchProjectsApiEntitiesByIdRequest = <ThrowOnError extends boolean = false>(options: Options<PatchProjectsApiEntitiesByIdData, ThrowOnError>): HttpRequest<PatchProjectsApiEntitiesByIdResponse> => (options?.client ?? client).requestOptions<PatchProjectsApiEntitiesByIdResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -369,7 +369,7 @@ export const postProjectsApiEntitiesByIdRefinementRequest = <ThrowOnError extend
 /**
  * Move an entity through its lifecycle
  *
- * Moves an epic, ticket or campaign to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task has no status. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves under a ticket's roles, and only once its epic is past REPORTED; the epic's moves to REFINED, back to REPORTED and to IMPLEMENTED carry it, no other does. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
  */
 export const postProjectsApiEntitiesByIdStatusRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiEntitiesByIdStatusData, ThrowOnError>): HttpRequest<PostProjectsApiEntitiesByIdStatusResponse> => (options?.client ?? client).requestOptions<PostProjectsApiEntitiesByIdStatusResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -511,7 +511,7 @@ export const getProjectsApiEpicsByIdAuditRequest = <ThrowOnError extends boolean
 /**
  * Transition
  *
- * Moves the epic to the target status; its features and tasks follow it, having no status of their own.
+ * Moves the epic to the target status. Its features and tasks hold statuses of their own and follow it on three moves only: REPORTED to REFINED (each REPORTED piece is refined), REFINED back to REPORTED (each REFINED piece returns) and the move to IMPLEMENTED (each piece still before IMPLEMENTED is carried there). No other move touches them: a task is verified on its own.
  */
 export const transitionEpicRequest = <ThrowOnError extends boolean = false>(options: Options<TransitionEpicData, ThrowOnError>): HttpRequest<TransitionEpicResponse> => (options?.client ?? client).requestOptions<TransitionEpicResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1239,7 +1239,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsRequest = <ThrowOn
 /**
  * Ask for a branch to be released once its builds are green
  *
- * Creates (or converges on) the open release request the branch participates in. The request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. A branch that already participates in an open request answers that request rather than opening a second. On the project's WRAPPER repository convergence is per repository rather than per branch: a branch nothing has asked about JOINS the estate's one open request as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary — the words of the ask that opened the request stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
+ * Creates (or converges on) the repository's one open release request. A fresh request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. A repository has at most one unreleased request, whatever its archetype: a branch that already participates answers that request, and a branch nothing has asked about JOINS it as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary. Only when your branch is the request's sole asked-for source do your summary and requester replace the request's; otherwise the words of the ask that opened it stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
  */
 export const postProjectsApiRepositoriesByRepoIdReleaseRequestsRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1839,7 +1839,7 @@ export const getEntityResource = <ThrowOnError extends boolean = false>(options:
 /**
  * Edit an entity's fields (JSON merge patch)
  *
- * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through the archetype's /{id}/transition, and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the implemented marker needs it REFINED. Answers the entity in the merged shape.
+ * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/entities/{id}/status (or the archetype's own /{id}/transition), and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it REFINED or IMPLEMENTING, and a marker moves the item's status with it. Answers the entity in the merged shape.
  */
 export const patchProjectsApiEntitiesByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchProjectsApiEntitiesByIdData, ThrowOnError> | undefined) => httpResource<PatchProjectsApiEntitiesByIdResponse>(() => {
     const opts = options ? options() : undefined;
@@ -1911,7 +1911,7 @@ export const postProjectsApiEntitiesByIdRefinementResource = <ThrowOnError exten
 /**
  * Move an entity through its lifecycle
  *
- * Moves an epic, ticket or campaign to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task has no status. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves under a ticket's roles, and only once its epic is past REPORTED; the epic's moves to REFINED, back to REPORTED and to IMPLEMENTED carry it, no other does. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
  */
 export const postProjectsApiEntitiesByIdStatusResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiEntitiesByIdStatusData, ThrowOnError> | undefined) => httpResource<PostProjectsApiEntitiesByIdStatusResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2025,7 +2025,7 @@ export const getProjectsApiEpicsByIdAuditResource = <ThrowOnError extends boolea
 /**
  * Transition
  *
- * Moves the epic to the target status; its features and tasks follow it, having no status of their own.
+ * Moves the epic to the target status. Its features and tasks hold statuses of their own and follow it on three moves only: REPORTED to REFINED (each REPORTED piece is refined), REFINED back to REPORTED (each REFINED piece returns) and the move to IMPLEMENTED (each piece still before IMPLEMENTED is carried there). No other move touches them: a task is verified on its own.
  */
 export const transitionEpicResource = <ThrowOnError extends boolean = false>(options: () => Options<TransitionEpicData, ThrowOnError> | undefined) => httpResource<TransitionEpicResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2613,7 +2613,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsResource = <ThrowO
 /**
  * Ask for a branch to be released once its builds are green
  *
- * Creates (or converges on) the open release request the branch participates in. The request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. A branch that already participates in an open request answers that request rather than opening a second. On the project's WRAPPER repository convergence is per repository rather than per branch: a branch nothing has asked about JOINS the estate's one open request as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary — the words of the ask that opened the request stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
+ * Creates (or converges on) the repository's one open release request. A fresh request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. A repository has at most one unreleased request, whatever its archetype: a branch that already participates answers that request, and a branch nothing has asked about JOINS it as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary. Only when your branch is the request's sole asked-for source do your summary and requester replace the request's; otherwise the words of the ask that opened it stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
  */
 export const postProjectsApiRepositoriesByRepoIdReleaseRequestsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse>(() => {
     const opts = options ? options() : undefined;
