@@ -192,6 +192,43 @@ describe('WorkStore', () => {
       expect(statusOf(store, 'e-1')).toBe('VERIFIED');
     });
 
+    it('keeps a finished item gone when an older fetch answers after it', async () => {
+      const store = await loaded();
+      store.finishLater(ID, ticket);
+      store.finishLater(ID, epic);
+      await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
+      await drain();
+      const ticketMove = http.expectOne('/projects/api/tickets/t-1/transition');
+      const epicMove = http.expectOne('/projects/api/epics/e-1/transition');
+
+      // The ticket's event starts a fetch while the epic's move is still on its way.
+      ticketMove.flush({ ticket: { status: 'DONE' } });
+      await drain();
+      const refreshed = store.refresh(ID);
+      await drain();
+      const stale = http.expectOne(`/projects/api/projects/${ID}/entities`);
+      epicMove.flush({ epic: { status: 'DONE' } });
+      await drain();
+      expect(statusOf(store, 'e-1')).toBe('DONE');
+
+      stale.flush({ entities: [{ ...ticket, status: 'DONE' }, epic] });
+      await refreshed;
+      expect(statusOf(store, 'e-1')).toBe('DONE');
+      expect(statusOf(store, 't-1')).toBe('DONE');
+
+      // A fetch that started after the finish is believed again.
+      const later = store.refresh(ID);
+      await drain();
+      http.expectOne(`/projects/api/projects/${ID}/entities`).flush({
+        entities: [
+          { ...ticket, status: 'DONE' },
+          { ...epic, status: 'DONE' },
+        ],
+      });
+      await later;
+      expect(statusOf(store, 'e-1')).toBe('DONE');
+    });
+
     it('asks once for an item already waiting', async () => {
       const store = await loaded();
       store.finishLater(ID, ticket);

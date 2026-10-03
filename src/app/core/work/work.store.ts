@@ -104,6 +104,29 @@ export const WorkStore = signalStore(
     /** The timer of each waiting finish, by entity id. */
     const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
+    /**
+     * Statuses this tab wrote after a finish, and when: a step of `clock`, which also counts every
+     * fetch. A fetch that started before a finish went through can answer with the old status (a
+     * finish's own event starts one while the next finish is still on its way), so its answer must
+     * not undo the finish. An entry goes once a fetch that started later answers with it.
+     */
+    let clock = 0;
+    const settled = new Map<
+      string,
+      { readonly status: WorkEntry['status']; readonly at: number }
+    >();
+
+    /** `entries` with every status this tab settled after `startedAt` laid over them. */
+    function withSettled(entries: readonly WorkEntry[], startedAt: number): WorkEntry[] {
+      return entries.map((e) => {
+        const local = e.id ? settled.get(e.id) : undefined;
+        if (!local || !e.id) return e;
+        if (local.at > startedAt) return { ...e, status: local.status };
+        if (e.status === local.status) settled.delete(e.id);
+        return e;
+      });
+    }
+
     function set(projectId: string, value: ProjectWork): void {
       patchState(store, { byProject: { ...store.byProject(), [projectId]: value } });
     }
@@ -145,6 +168,7 @@ export const WorkStore = signalStore(
         return;
       }
       setFinishing(id, undefined);
+      settled.set(id, { status: status as WorkEntry['status'], at: ++clock });
       const work = store.byProject()[projectId];
       if (!work) return;
       const entries = work.entries.map((e) =>
@@ -168,11 +192,12 @@ export const WorkStore = signalStore(
     }
 
     async function fetch(projectId: string): Promise<ProjectWork> {
+      const startedAt = ++clock;
       const { data, error } = await consume(
         listProjectEntities({ path: { projectId } }),
         LIST_PROJECT_ENTITIES,
       );
-      const entries = data?.entities ?? [];
+      const entries = withSettled(data?.entities ?? [], startedAt);
       const campaignIds = entries.flatMap((e) =>
         e.archetype === 'CAMPAIGN' && e.id ? [e.id] : [],
       );
