@@ -32,10 +32,12 @@ interface ShownGroup {
  * - Content: everything else.
  *
  * The page scrolls as a whole (the document scrolls, not the shell), and the actions stay pinned
- * to the top of the window while any of the page is in view. Header and actions are two floats,
- * so they share one row while both fit and the actions drop below the header when they do not;
- * the content clears both. A float's sticky box is bound by this component's whole box, not by a
- * row, which is why it is not a flex or grid row. Pinned, the actions keep a white background.
+ * to the top of the window while any of the page is in view. The actions float right and come
+ * first; the header after them is a box of its own (flex) beside the float, so a long title wraps
+ * there first. Once less than 12rem is left beside the actions, the header moves below them: the
+ * actions keep line 1. The content clears both. A float's sticky box is bound by this component's
+ * whole box, not by a row, which is why it is not a flex or grid row. Pinned, the actions keep a
+ * white background.
  * Fallback content (`<ng-content>`'s own children) shows the inputs only when nothing is
  * projected, so the server and the browser render the same markup.
  *
@@ -47,11 +49,6 @@ interface ShownGroup {
   imports: [ActionButton],
   host: { class: 'flow-root' },
   template: `
-    <div class="float-left flex min-h-10 max-w-full items-center pr-4">
-      <ng-content select="[slot=header], [uiPageHeader]">
-        <h1 class="m-0 text-3xl leading-[1.1] font-bold">{{ title() }}</h1>
-      </ng-content>
-    </div>
     <div
       class="sticky top-0 z-10 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
       data-page-actions
@@ -76,6 +73,11 @@ interface ShownGroup {
             </div>
           </div>
         }
+      </ng-content>
+    </div>
+    <div class="flex min-h-10 min-w-[min(12rem,100%)] items-center">
+      <ng-content select="[slot=header], [uiPageHeader]">
+        <h1 class="m-0 text-3xl leading-[1.1] font-bold">{{ title() }}</h1>
       </ng-content>
     </div>
     <div class="clear-both pt-6">

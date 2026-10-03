@@ -82,6 +82,19 @@ class Narrow {
   readonly actions = ACTIONS;
 }
 
+@Component({
+  imports: [PageLayoutComponent],
+  host: { class: 'block w-[34rem] p-4' },
+  template: `
+    <app-page-layout title="Repositories of the project" [actions]="actions">
+      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+    </app-page-layout>
+  `,
+})
+class Wrapping {
+  readonly actions = ACTIONS;
+}
+
 function shown<T>(type: new () => T) {
   const fixture = TestBed.createComponent(type);
   fixture.detectChanges();
@@ -131,8 +144,22 @@ describe('PageLayoutComponent (screenshots)', () => {
     }
   });
 
-  it('drops the actions below the title when the row is too narrow', async () => {
+  it('wraps a long title beside the actions before it moves', async () => {
+    const { element } = shown(Wrapping);
+    const title = element.querySelector('h1')!.getBoundingClientRect();
+    const actions = element.querySelector('[data-page-actions]')!.getBoundingClientRect();
+    // Beside the actions, on more than one line.
+    expect(title.right).toBeLessThanOrEqual(actions.left + 1);
+    expect(title.top).toBeLessThan(actions.bottom);
+    expect(title.height).toBeGreaterThan(40);
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('wrapping');
+  });
+
+  it('puts the actions on the first line and the title below them when no room is left', async () => {
     const { element } = shown(Narrow);
+    const title = element.querySelector('h1')!.getBoundingClientRect();
+    const actions = element.querySelector('[data-page-actions]')!.getBoundingClientRect();
+    expect(title.top).toBeGreaterThanOrEqual(actions.bottom - 1);
     await expect.element(page.elementLocator(element)).toMatchScreenshot('narrow');
   });
 });
