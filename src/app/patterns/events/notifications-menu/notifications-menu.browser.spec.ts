@@ -1,13 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { EMPTY } from 'rxjs';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { client as eventsClient } from '../../../api/events/client.gen';
 import { provideHeyApiClient } from '../../../api/events/client/client.gen';
-import { DomainEvents } from '$core/events/domain-events';
+import { EVENT_SOURCE } from '$core/events/domain-events';
 import { RECENT_EVENTS } from '$core/events/events.consumes';
 import { NotificationsMenu } from './notifications-menu';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 
 /** Screenshots of the top bar's notifications menu, its answers qits-events' golden masters. */
 
@@ -24,8 +24,11 @@ describe('NotificationsMenu (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(eventsClient),
-        // No live stream in a screenshot.
-        { provide: DomainEvents, useValue: { on: () => EMPTY } },
+        // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
+        {
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -65,14 +68,14 @@ describe('NotificationsMenu (screenshots)', () => {
 
   it('lists the newest events', async () => {
     const { fixture, frame, list } = await opened();
-    list.flush(await commands.goldenMaster('a few recent events', 'listEvents', 'qits-events'));
+    list.flush(await goldenMaster('a few recent events', 'listEvents', 'qits-events'));
     await answered(fixture);
     await expect.element(frame).toMatchScreenshot('open');
   });
 
   it('says so when there are none', async () => {
     const { fixture, frame, list } = await opened();
-    list.flush(await commands.goldenMaster('no events', 'listEvents', 'qits-events'));
+    list.flush(await goldenMaster('no events', 'listEvents', 'qits-events'));
     await answered(fixture);
     await expect.element(frame).toMatchScreenshot('empty');
   });

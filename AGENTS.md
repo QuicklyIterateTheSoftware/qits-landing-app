@@ -183,7 +183,8 @@ and each test compares a screenshot with a committed reference. `npm run test:br
 `npm test` (jsdom) leaves them out. The release check runs `npm run --if-present test:browser` in a
 step image that has Chromium, so a changed pixel fails the release request.
 
-- **The backend answers are the providers' golden masters, and nothing else.** The reader uses
+- **The backend answers are the providers' golden masters, and nothing else**, in every
+  screenshot spec except the dumb components' (`src/app/ui/`, synthetic inputs). The reader uses
   `node:fs`, so it runs on the Node side: `vitest-browser.config.ts` gives the browser a
   `goldenMaster` command, which reads only a (state, operation) the committed pact uses
   (`pactedGoldenMasters`), so the provider verifies every body a screenshot shows. A spec calls

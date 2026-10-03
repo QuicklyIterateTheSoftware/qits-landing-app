@@ -1,13 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { EMPTY } from 'rxjs';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
-import { DomainEvents } from '$core/events/domain-events';
+import { EVENT_SOURCE } from '$core/events/domain-events';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { BumpsMenu } from './bumps-menu';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 
 /** Screenshots of the top bar's bumps menu, its answers qits-maintenance' golden masters. */
 
@@ -24,8 +24,11 @@ describe('BumpsMenu (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(maintenanceClient),
-        // No live stream in a screenshot.
-        { provide: DomainEvents, useValue: { on: () => EMPTY } },
+        // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
+        {
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -65,18 +68,14 @@ describe('BumpsMenu (screenshots)', () => {
 
   it('lists the pending version bumps', async () => {
     const { fixture, frame, list } = await opened();
-    list.flush(
-      await commands.goldenMaster('pending bumps', 'listPendingBumps', 'qits-maintenance'),
-    );
+    list.flush(await goldenMaster('pending bumps', 'listPendingBumps', 'qits-maintenance'));
     await answered(fixture);
     await expect.element(frame).toMatchScreenshot('open');
   });
 
   it('says so when there are none', async () => {
     const { fixture, frame, list } = await opened();
-    list.flush(
-      await commands.goldenMaster('no pending bumps', 'listPendingBumps', 'qits-maintenance'),
-    );
+    list.flush(await goldenMaster('no pending bumps', 'listPendingBumps', 'qits-maintenance'));
     await answered(fixture);
     await expect.element(frame).toMatchScreenshot('empty');
   });
