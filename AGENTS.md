@@ -12,10 +12,14 @@ This file covers the rules that are easy to break.
   directory `[param]`). A route's full path (parents joined, `''` skipped) is the directory of its
   component: `projects/:slug/work` is `routes/projects/[slug]/work/project-work.page.ts`. A routed
   component is a page, `<name>.page.ts` with class `<Name>Page`; one with child routes is a layout,
-  `<name>.layout.ts` with class `<Name>Layout` (the shell: `routes/shell.layout.ts`). Nothing else
+  `<name>.layout.ts` with class `<Name>Layout`. Nothing else
   that is a component lives here. `app.routes.ts` loads every page lazily (`loadComponent`). The
   `@qits/angular` lint rules `qits/page-location`, `qits/page-suffix` and
   `qits/route-matches-directory` check this.
+- `src/app/layout/` (`$layout/…`): the page frame. A layout shared by many routes lives here
+  instead of under `routes/` (the shell: `layout/shell/shell.layout.ts`); the lint rules allow it
+  only because `tsconfig.json` defines the `$layout` alias. Also the non-routed page structure
+  (`layout/page-layout/`: header, pinned actions, content).
 - `src/app/patterns/<domain>/<component>/`: smart components that are not routed (menus, cards,
   board nodes, toasts, such as `patterns/projects/project-card/`). They read stores and map the
   data onto `ui/components`. Specs sit beside each component.
