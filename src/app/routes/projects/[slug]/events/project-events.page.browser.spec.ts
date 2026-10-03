@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { ProjectEventsPage } from './project-events.page';
+import { goldenMaster } from '../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of a project's Events page, at the recorded project's slug (qits-projects' "a project
@@ -17,7 +18,7 @@ describe('ProjectEventsPage (screenshots)', () => {
   });
 
   it('shows the blank page', async () => {
-    const list = await commands.goldenMaster('a project exists', 'listProjects');
+    const list = await goldenMaster('a project exists', 'listProjects');
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl(`/projects/${list.entries[0].project.slug}/events`);
     await harness.fixture.whenStable();

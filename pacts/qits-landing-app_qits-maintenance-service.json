@@ -21,6 +21,66 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "no pending bumps"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/bumps/pending",
+        "query": {
+          "limit": [
+            "20"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "bumps": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listPendingBumps"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-version-bumps",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-version-bumps: listPendingBumps",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "pending bumps",
           "params": {
             "awaitingReleaseBumpId": "00000000-0000-4000-8000-000000000001",

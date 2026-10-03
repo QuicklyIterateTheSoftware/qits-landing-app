@@ -5,9 +5,19 @@
  *   between machines and would change every screenshot.
  * - Animations and transitions are off, and the caret does not blink. SVG animations (SMIL, as in
  *   `ui-spinner`) are not CSS, so every `<svg>` is paused at its first frame as it is added.
+ * - Backend data in every screenshot but a dumb component's (`src/app/ui/`) comes from golden
+ *   masters only: a 2xx `flush` must carry a recording (`golden-master.ts`), or the test fails
+ *   (`guardGoldenMasters`).
  */
-import { afterEach, beforeAll, beforeEach } from 'vitest';
+import { guardGoldenMasters } from '@qits/angular/testing/browser';
+import { afterEach, beforeAll, beforeEach, expect } from 'vitest';
 import { commands } from 'vitest/browser';
+
+// Every browser spec but the dumb components' (src/app/ui/, which take synthetic inputs). The
+// library's default checks page and layout specs only.
+guardGoldenMasters({
+  when: () => !/[\\/]src[\\/]app[\\/]ui[\\/]/.test(expect.getState().testPath ?? ''),
+});
 
 const FONTS = '/src/testing/browser/fonts';
 

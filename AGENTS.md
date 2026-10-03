@@ -88,13 +88,14 @@ string built at run time is not found, so write every class out in full.
 
 ## Pact contracts (epics qits-546, qits-112)
 
-This app is a consumer of two providers. What it relies on from each is written down as a Pact V4
+This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
 | Provider              | Store and pact spec                | Pact file                                           | Golden masters                  |
 | --------------------- | ---------------------------------- | --------------------------------------------------- | ------------------------------- |
 | qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
 | qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-landing-app_qits-githost-service.json`  | `@qits/githost-golden-masters`  |
+| qits-edge-service     | `core/platform/app-origins*.ts`    | `pacts/qits-landing-app_qits-edge-service.json`     | `@qits/edge-golden-masters`     |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -182,13 +183,20 @@ and each test compares a screenshot with a committed reference. `npm run test:br
 `npm test` (jsdom) leaves them out. The release check runs `npm run --if-present test:browser` in a
 step image that has Chromium, so a changed pixel fails the release request.
 
-- **The backend answers are the providers' golden masters**, as everywhere else. The reader uses
+- **The backend answers are the providers' golden masters, and nothing else**, in every
+  screenshot spec except the dumb components' (`src/app/ui/`, synthetic inputs). The reader uses
   `node:fs`, so it runs on the Node side: `vitest-browser.config.ts` gives the browser a
-  `goldenMaster` command, and a spec calls `await commands.goldenMaster(state, operationId)`, or
-  `(state, operationId, 'qits-githost')` for qits-githost (from `vitest/browser`), and
-  `flush(...)`es the result. The two providers' frozen ids are unrelated, so the card spec puts
-  qits-githost's recorded entries under the project's recorded repository ids and says so. An error answer is only a status; the store reads
-  no body from it.
+  `goldenMaster` command, which reads only a (state, operation) the committed pact uses
+  (`pactedGoldenMasters`), so the provider verifies every body a screenshot shows. A spec calls
+  `goldenMaster(state, operationId, provider?)` from `src/testing/browser/golden-master.ts`
+  (provider `qits-projects` unless named), which registers the body as a frozen recording, and
+  `flush(...)`es it, or a part of it, as it is. `guardGoldenMasters()` (`setup.ts`) fails a 2xx
+  answer that is not a recording; an error answer is only a status and may carry anything. No
+  `useValue` for a store or a `$core` token (only `EVENT_SOURCE`, a transport seam), no
+  `patchState`, no copies or spreads (lint `qits/browser-spec-data-from-golden-masters`). A case
+  no recording holds gets a new provider state in the provider and a pact interaction here. The
+  two providers' frozen ids are unrelated, so the card spec puts qits-githost's recorded entries
+  under the project's recorded repository ids and says so.
 - **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
   system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is
   800x600 (`angular.json`, target `test-browser`).

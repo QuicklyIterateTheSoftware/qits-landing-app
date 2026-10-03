@@ -3,11 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { ProjectWorkArchivePage } from './project-work-archive.page';
+import { goldenMaster } from '../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of a project's Archive, answered with qits-projects' golden masters: the project list
@@ -42,7 +43,7 @@ describe('ProjectWorkArchivePage (screenshots)', () => {
 
   /** The Archive of the recorded project, with the list answered and its work requested. */
   async function shown() {
-    const list = await commands.goldenMaster('a project exists', 'listProjects');
+    const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(`/projects/${project.slug}/work-archive`);
@@ -67,9 +68,7 @@ describe('ProjectWorkArchivePage (screenshots)', () => {
 
   it('shows the work in a final state', async () => {
     const { element, work, answered } = await shown();
-    work.flush(
-      await commands.goldenMaster('a project with work in every status', 'listProjectEntities'),
-    );
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectEntities'));
     await answered();
     await expect.element(element).toHaveTextContent('Done ticket');
     await expect.element(element).toHaveTextContent('Dropped epic');
@@ -79,7 +78,7 @@ describe('ProjectWorkArchivePage (screenshots)', () => {
 
   it('says so when nothing is archived', async () => {
     const { element, work, answered } = await shown();
-    work.flush(await commands.goldenMaster('a project with no work', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with no work', 'listProjectEntities'));
     await answered();
     await expect.element(element).toHaveTextContent('Nothing here');
     await expect.element(element).toMatchScreenshot('empty');

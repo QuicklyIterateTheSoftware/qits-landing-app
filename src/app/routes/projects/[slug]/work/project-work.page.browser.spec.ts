@@ -3,10 +3,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { ProjectWorkPage } from './project-work.page';
+import { goldenMaster } from '../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of a project's Work page (board and backlog), answered with
@@ -36,7 +37,7 @@ describe('Project work (screenshots)', () => {
 
   /** The Work page of the recorded project, with the list and its work answered. */
   async function shown(answerWork = true, workState = 'a project with work in every status') {
-    const list = await commands.goldenMaster('a project exists', 'listProjects');
+    const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(`/projects/${project.slug}/work`);
@@ -50,7 +51,7 @@ describe('Project work (screenshots)', () => {
     await settle();
     const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
     if (answerWork) {
-      work.flush(await commands.goldenMaster(workState, 'listProjectEntities'));
+      work.flush(await goldenMaster(workState, 'listProjectEntities'));
       await settle();
       await harness.fixture.whenStable();
       harness.fixture.detectChanges();

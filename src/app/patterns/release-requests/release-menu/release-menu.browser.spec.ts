@@ -1,19 +1,24 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { commands, page, userEvent } from 'vitest/browser';
+import { provideRouter, Router } from '@angular/router';
+import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { SelectedProject } from '$core/projects/selected-project';
-import { EMPTY } from 'rxjs';
-import { DomainEvents } from '$core/events/domain-events';
+import { EVENT_SOURCE } from '$core/events/domain-events';
 import { ReleaseMenu } from './release-menu';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of the top bar's release menu, its answers qits-projects' golden masters. The open
- * project is the recorded one, handed in through a stand-in for `SelectedProject`.
+ * project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
+ * in the recorded project list.
  */
+
+/** The routed page under the menu; it renders nothing. */
+@Component({ selector: 'app-test-page', template: `` })
+class TestPage {}
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -21,24 +26,22 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 describe('ReleaseMenu (screenshots)', () => {
   let http: HttpTestingController;
   let projectId: string;
+  let slug: string;
 
   beforeEach(async () => {
-    const recorded = (await commands.goldenMaster('a project exists', 'getProject')).project;
+    const recorded = (await goldenMaster('a project exists', 'getProject')).project;
     projectId = recorded.id;
+    slug = recorded.slug;
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([{ path: 'projects/:slug', component: TestPage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
-        // No live stream in a screenshot.
-        { provide: DomainEvents, useValue: { on: () => EMPTY } },
+        // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
         {
-          provide: SelectedProject,
-          useValue: {
-            project: signal(recorded),
-            slug: signal(recorded.slug),
-            url: signal(`/projects/${recorded.slug}`),
-          },
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
       ],
     });
@@ -52,6 +55,7 @@ describe('ReleaseMenu (screenshots)', () => {
    * open project's requests are asked for at once; the returned request is that ask, unanswered.
    */
   async function render() {
+    await TestBed.inject(Router).navigateByUrl(`/projects/${slug}`);
     const fixture = TestBed.createComponent(ReleaseMenu);
     const element = fixture.nativeElement as HTMLElement;
     element.parentElement!.style.cssText =
@@ -61,7 +65,7 @@ describe('ReleaseMenu (screenshots)', () => {
     // In the browser the store loads the project list on its own; answer it as recorded.
     http
       .expectOne('/projects/api/projects')
-      .flush(await commands.goldenMaster('a project exists', 'listProjects'));
+      .flush(await goldenMaster('a project exists', 'listProjects'));
     await settle();
     fixture.detectChanges();
     await settle();
@@ -84,10 +88,7 @@ describe('ReleaseMenu (screenshots)', () => {
   it('is a closed lightning button with the pending count', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await commands.goldenMaster(
-        'a project with pending release requests',
-        'listProjectReleaseRequests',
-      ),
+      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
     );
     await answered(fixture);
     await expect
@@ -99,10 +100,7 @@ describe('ReleaseMenu (screenshots)', () => {
   it('lists the pending release requests with their gates', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await commands.goldenMaster(
-        'a project with pending release requests',
-        'listProjectReleaseRequests',
-      ),
+      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
     );
     await answered(fixture);
     await open(fixture);
@@ -117,10 +115,7 @@ describe('ReleaseMenu (screenshots)', () => {
   it('says so when nothing is pending', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await commands.goldenMaster(
-        'a project with no release requests',
-        'listProjectReleaseRequests',
-      ),
+      await goldenMaster('a project with no release requests', 'listProjectReleaseRequests'),
     );
     await answered(fixture);
     await open(fixture);
