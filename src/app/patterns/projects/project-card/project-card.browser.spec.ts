@@ -106,6 +106,10 @@ describe('ProjectCard (screenshots)', () => {
     );
     await answered(fixture);
     if (open) {
+      // TODO(qits-112): qits-githost has no listLoc state keyed by the recorded project's
+      // repository ids yet, so locFor re-keys a recording. Add that provider state + pact, then
+      // flush the golden master as it is.
+      // eslint-disable-next-line qits/browser-spec-data-from-golden-masters
       (await expand(fixture)).flush(await locFor(state));
       await answered(fixture);
     }

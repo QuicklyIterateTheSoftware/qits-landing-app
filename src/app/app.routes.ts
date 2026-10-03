@@ -6,8 +6,9 @@ import { sessionGuard } from '$core/auth/session.guard';
  * paths joined, `''` skipped, `:param` as `[param]`) is the directory of its component's file
  * under `routes/`, so `projects/:slug/work` renders `routes/projects/[slug]/work/*.page.ts`. A
  * routed component is a page (`<name>.page.ts`, class `<Name>Page`), or a layout when it has
- * children (`<name>.layout.ts`, class `<Name>Layout`). Components that are not routed live in
- * `patterns/` and `ui/components/`. The `@qits/angular` lint rules `qits/page-location`,
+ * children (`<name>.layout.ts`, class `<Name>Layout`). A layout shared by many routes, such as
+ * the shell, lives in `layout/` (the `$layout` alias) instead. Components that are not routed live
+ * in `layout/`, `patterns/` and `ui/components/`. The `@qits/angular` lint rules `qits/page-location`,
  * `qits/page-suffix` and `qits/route-matches-directory` check this.
  *
  * Every route loads its component lazily (`loadComponent`), so no page is in the initial bundle
@@ -44,7 +45,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./routes/shell.layout').then((m) => m.ShellLayout),
+    loadComponent: () => import('$layout/shell/shell.layout').then((m) => m.ShellLayout),
     canActivate: [sessionGuard],
     children: [
       { path: '', loadComponent: () => import('./routes/root.page').then((m) => m.RootPage) },

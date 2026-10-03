@@ -4,12 +4,12 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
-import { client as projectsClient } from '../api/projects/client.gen';
-import { provideHeyApiClient } from '../api/projects/client/client.gen';
+import { client as projectsClient } from '../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { ShellLayout } from './shell.layout';
-import { goldenMaster } from '../../testing/browser/golden-master';
-import { provideTestPlatformOrigins } from '../../testing/platform-origins';
+import { goldenMaster } from '../../../testing/browser/golden-master';
+import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));

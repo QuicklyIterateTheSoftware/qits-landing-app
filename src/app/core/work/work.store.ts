@@ -23,14 +23,14 @@ import {
   TRANSITION_TICKET,
   type WorkEntry,
 } from './work.consumes';
+import { FINISH_DELAY_MS } from './finish-delay';
 
 /** How a finish (a move to DONE) is going: running, or failed. Absent when none is. */
 export type FinishState = 'running' | 'error';
 
 type Status = 'loading' | 'loaded' | 'error';
 
-/** How long a finish waits for an Undo before it is sent. */
-export const FINISH_DELAY_MS = 5_000;
+export { FINISH_DELAY_MS };
 
 /**
  * A finish asked for in the Acceptance list and not settled yet:
