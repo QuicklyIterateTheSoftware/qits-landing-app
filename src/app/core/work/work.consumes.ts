@@ -16,7 +16,7 @@ import type { Consumed } from '@qits/angular';
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
  * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
  * shows each entity as a small card (qualified id, title, archetype), placed by its status — or,
- * for a feature or task, by its `implementedAt` — and nested under its `parent`.
+ * for a feature or task, by its `implementingAt` and `implementedAt` — and nested under its `parent`.
  */
 export const LIST_PROJECT_ENTITIES = [
   'entities[].id',
@@ -26,6 +26,7 @@ export const LIST_PROJECT_ENTITIES = [
   'entities[].status',
   'entities[].parent',
   'entities[].implementedAt',
+  'entities[].implementingAt',
 ] as const;
 
 /** One work entity, cut to what the store reads. */
@@ -62,7 +63,10 @@ export const TRANSITION_EPIC = ['epic.status'] as const;
 /** `WorkStore.finish(projectId, entry)` for a ticket: the same, from the ticket door. */
 export const TRANSITION_TICKET = ['ticket.status'] as const;
 
-/** Whether an entry can be finished (moved to DONE) from the board: a VERIFIED epic or ticket. */
+/**
+ * Whether an entry can be finished (moved to DONE) from the Acceptance list: a VERIFIED epic or
+ * ticket.
+ */
 export function finishable(entry: WorkEntry): boolean {
   return (
     entry.status === 'VERIFIED' && (entry.archetype === 'EPIC' || entry.archetype === 'TICKET')

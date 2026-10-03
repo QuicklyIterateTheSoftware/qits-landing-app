@@ -832,12 +832,16 @@ export type EntityPatch = {
      */
     dependsOn?: string | null;
     /**
-     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED.
+     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED or IMPLEMENTING.
      */
     implementedAt?: Instant | null;
+    /**
+     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is REFINED or IMPLEMENTING.
+     */
+    implementingAt?: Instant;
 };
 
-export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'DEPENDS_ON';
+export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON';
 
 export type EntityRefinementResponse = {
     refinement?: RefinementDto;
@@ -848,7 +852,7 @@ export type EntityRefinementResponse = {
  */
 export type EntityStatusMove = {
     /**
-     * REPORTED, REFINED, IMPLEMENTED, VERIFIED, DONE or DROPPED — one the entity's current status may move to
+     * REPORTED, REFINED, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk, or IMPLEMENTED from REFINED or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
      */
     target: string;
 };
@@ -923,7 +927,7 @@ export type EpicDto = {
     qualifiedId?: string;
     title?: string;
     slug?: string;
-    status?: string;
+    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     blocked?: boolean;
     supersededByEpicId?: string;
     description?: string;
@@ -943,6 +947,7 @@ export type FeatureDto = {
     description?: string;
     dependsOnFeatureId?: string;
     implementedOn?: Instant;
+    implementingOn?: Instant;
     createdAt?: Instant;
     updatedAt?: Instant;
 };
@@ -1716,6 +1721,7 @@ export type TaskDto = {
     description?: string;
     dependsOnTaskId?: string;
     implementedAt?: Instant;
+    implementingAt?: Instant;
     createdAt?: Instant;
     updatedAt?: Instant;
 };
@@ -1747,7 +1753,7 @@ export type TicketDto = {
     title?: string;
     slug?: string;
     type?: string;
-    status?: string;
+    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     blocked?: boolean;
     assignee?: string;
     createdBy?: string;
@@ -1768,7 +1774,7 @@ export type TransitionEpicRequest = {
     target?: string;
 };
 
-export type TransitionKind = 'FORWARD' | 'BACK' | 'DROP' | 'REOPEN';
+export type TransitionKind = 'FORWARD' | 'SKIP' | 'BACK' | 'DROP' | 'REOPEN';
 
 export type TransitionTicketRequest = {
     target?: string;
@@ -1793,6 +1799,7 @@ export type TransitionedEntity = {
     supersededBy?: string;
     repositoryId?: string;
     implementedAt?: Instant;
+    implementingAt?: Instant;
     dependsOn?: string;
     parent?: string;
     position?: number;
