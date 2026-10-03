@@ -26,9 +26,9 @@ export const INTERACTIONS = {
    * out on the board, the backlog and the archive, nested, with each campaign's members.
    */
   'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
-  /** `epic-card.ts`: the finish button on a VERIFIED epic moves it to DONE. */
+  /** `epic-list-item.ts`: the finish button on a VERIFIED epic in Acceptance moves it to DONE. */
   'finish-epic': 'The finish button marks a verified epic done',
-  /** `ticket-card.ts`: the finish button on a VERIFIED ticket moves it to DONE. */
+  /** `ticket-list-item.ts`: the finish button on a VERIFIED ticket in Acceptance moves it to DONE. */
   'finish-ticket': 'The finish button marks a verified ticket done',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
   'show-project-loc': 'The project cards show how many lines of code each project has',

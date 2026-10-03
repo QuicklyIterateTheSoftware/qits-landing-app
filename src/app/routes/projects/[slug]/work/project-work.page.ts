@@ -7,9 +7,10 @@ import { KanbanBoard } from '$patterns/work/kanban-board/kanban-board';
 import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
- * A project's work, at `/projects/<slug>/work`: the Board (work being worked on, nested campaign ›
- * epic › story › task, each container a lane over the columns it and its descendants are in) and
- * below it the Backlog (work not refined yet, nested the same way). The Archive link at the top
+ * A project's work, at `/projects/<slug>/work`: at the top Acceptance (VERIFIED work, each item
+ * with its finish button), then the Board (work being worked on, nested epic › feature › task,
+ * each epic a lane over the columns it and its descendants are in), and below it the Backlog (work
+ * not refined yet, nested the same way). The Archive link at the top
  * right leads to the work in a final state.
  */
 @Component({
@@ -29,7 +30,12 @@ import { WorkList } from '$patterns/work/work-list/work-list';
       </div>
 
       <ui-spinner [state]="work.state()" class="mt-6 min-h-48">
-        <section aria-labelledby="work-board">
+        <section aria-labelledby="work-acceptance">
+          <h2 id="work-acceptance" class="mt-0 mb-3 text-lg font-semibold">Acceptance</h2>
+          <app-work-list [tree]="acceptance()" [base]="workPath()" view="acceptance" />
+        </section>
+
+        <section aria-labelledby="work-board" class="mt-8">
           <h2 id="work-board" class="mt-0 mb-3 text-lg font-semibold">Board</h2>
           <app-kanban-board [tree]="board()" [base]="workPath()" />
         </section>
@@ -50,6 +56,8 @@ export class ProjectWorkPage {
   }
 
   private readonly selected = inject(SelectedProject);
+
+  protected readonly acceptance = computed(() => this.work.graph().tree('acceptance'));
 
   protected readonly board = computed(() => this.work.graph().tree('board'));
 

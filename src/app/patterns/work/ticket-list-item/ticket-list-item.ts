@@ -1,19 +1,26 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { finishControl } from '$core/work/finish-control';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
+import { FinishButton } from '$ui/components/finish-button/finish-button';
+import { Leave } from '$ui/components/leave/leave';
 import { Tag } from '$ui/components/tag/tag';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
- * A ticket in a list (Backlog, Archive): the board's small card (`ui-board-card`), its id down the
- * left edge, its title linking to it, its kind and its campaigns as tags. In the Archive it also
- * shows its final state (Done and Dropped mix there). `display: contents`, so the card is itself
- * the list's item.
+ * A ticket in a list (Backlog, Acceptance, Archive): the board's small card (`ui-board-card`), its
+ * id down the left edge, its title linking to it, its kind and its campaigns as tags. In the
+ * Archive it also shows its final state (Done and Dropped mix there).
+ *
+ * A VERIFIED ticket (in Acceptance) carries the finish button ("Mark <id> done") on the card's
+ * bottom-right corner: it hides the ticket at once and moves it to DONE a few seconds later, unless
+ * the toast's Undo takes it back (`finishControl`). When `leaving` is set, the card shrinks away
+ * (`uiLeave`), then emits `left`. `display: contents`, so the card is itself the list's item.
  */
 @Component({
   selector: 'app-ticket-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, Tag],
+  imports: [BoardCard, FinishButton, Leave, Tag],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -22,6 +29,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       [title]="n.entry.title ?? ''"
       [kind]="n.entry.archetype?.toLowerCase() ?? ''"
       [link]="base() + '/' + n.entry.qualifiedId"
+      [uiLeave]="leaving()"
+      (left)="left.emit()"
     >
       @if (n.campaigns.length || status()) {
         <div class="mt-1 flex flex-wrap gap-1">
@@ -33,6 +42,13 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
           }
         </div>
       }
+      <ui-finish-button
+        card-action
+        [shown]="finishing.shown()"
+        [state]="finishing.state()"
+        [label]="'Mark ' + n.entry.qualifiedId + ' done'"
+        (finish)="finishing.finish()"
+      />
     </ui-board-card>
   `,
 })
@@ -41,6 +57,11 @@ export class TicketListItem {
   /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
   readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
+  /** The ticket is leaving the list: it shrinks away, then emits `left`. */
+  readonly leaving = input(false);
+  readonly left = output<void>();
+
+  protected readonly finishing = finishControl(this.node);
 
   /** In the Archive, which final state the ticket is in. */
   protected readonly status = computed(() =>

@@ -1,33 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
+import { withLeaving, type RowState } from '$core/work/leaving';
 import type { WorkNode } from '$core/work/work-tree';
 import { Board, type BoardColumnSpec } from '$ui/components/board/board';
 import { SelectionHighlight } from '$ui/components/highlight/highlight';
 import { EpicCard } from '$patterns/work/epic-card/epic-card';
 import { TicketCard } from '$patterns/work/ticket-card/ticket-card';
-
-/** A top-level board node as drawn, and whether it is on its way out. */
-export interface BoardRowState {
-  readonly node: WorkNode;
-  readonly leaving: boolean;
-}
-
-/**
- * The rows to draw for the tree `next`, given those drawn before: `next`'s nodes in its order,
- * and every node drawn before that `next` no longer has, still in its place, marked leaving.
- */
-export function withLeaving(
-  previous: readonly BoardRowState[],
-  next: readonly WorkNode[],
-): readonly BoardRowState[] {
-  const nextIds = new Set(next.map((node) => node.entry.id));
-  const rows: BoardRowState[] = next.map((node) => ({ node, leaving: false }));
-  previous.forEach((row, index) => {
-    if (nextIds.has(row.node.entry.id)) return;
-    rows.splice(Math.min(index, rows.length), 0, { node: row.node, leaving: true });
-  });
-  return rows;
-}
 
 /** How many items of `tree` (not context) sit in each of the board's columns. */
 export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
@@ -45,9 +23,9 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
  * column headed with how many items sit in it. Each top-level epic is an `app-epic-card` (a lane,
  * with its features and tasks), anything else an `app-ticket-card`.
  *
- * A node that leaves the tree (finished, here or in another tab) stays in its place while it
+ * A node that leaves the tree (verified, here or in another tab) stays in its place while it
  * shrinks away, and goes when it has (`withLeaving`). No scrolling or clipping box around the
- * board: the finish button sits on a card's corner, partly outside it, and must stay clickable.
+ * board: an expand button sits on a lane's edge, partly outside it, and must stay clickable.
  *
  * The card, row or lane the text selection is in is highlighted (`SelectionHighlight`), so a
  * find-in-page step shows which card it landed in.
@@ -90,7 +68,7 @@ export class KanbanBoard {
    * The top-level nodes as drawn: the tree's, plus any that just left it, kept in place while they
    * shrink away (`leaving`) and dropped on `left`.
    */
-  protected readonly rows = linkedSignal<readonly WorkNode[], readonly BoardRowState[]>({
+  protected readonly rows = linkedSignal<readonly WorkNode[], readonly RowState[]>({
     source: this.tree,
     computation: (next, previous) => withLeaving(previous?.value ?? [], next),
   });

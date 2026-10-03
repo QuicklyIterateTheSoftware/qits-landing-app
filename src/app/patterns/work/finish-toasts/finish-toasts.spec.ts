@@ -44,7 +44,7 @@ describe('FinishToasts', () => {
     expect(toasts.map((t) => t.text)).toEqual([
       'qits-1 finished',
       'qits-2 finished',
-      'qits-3 could not be finished. It is back on the board.',
+      'qits-3 could not be finished. It is back in Acceptance.',
     ]);
     expect(toasts.map((t) => t.button.textContent?.trim())).toEqual(['Undo', '', 'Dismiss']);
     // A finish being sent can no longer be undone: its button is hidden by class.
