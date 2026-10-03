@@ -210,6 +210,11 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 2',
     ]);
     await expect.element(locator.getByText('No features')).not.toBeVisible();
+    // No chin: the columns end with the last feature's title bar.
+    const rows = element.querySelectorAll('ui-board-row');
+    const last = rows[rows.length - 1].getBoundingClientRect();
+    const columns = element.querySelector('ui-board > div:nth-child(2)')!.getBoundingClientRect();
+    expect(Math.round(columns.bottom)).toBe(Math.round(last.bottom));
     await shoot(element, 'every-task-status');
   });
 
