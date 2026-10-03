@@ -31,6 +31,28 @@ class Variants {
   ];
 }
 
+/** An action with details, joined to one without, at the right like a page's actions. */
+@Component({
+  imports: [ActionButton],
+  host: { class: 'flex h-56 w-[30rem] items-start justify-end p-4' },
+  template: `
+    <ui-action-button [action]="dispatch" join="start" />
+    <ui-action-button [action]="archive" join="end" />
+  `,
+})
+class WithDetails {
+  readonly dispatch: Action = {
+    label: 'Dispatch',
+    variant: 'success',
+    callback: noop,
+    details: {
+      title: 'Moves through',
+      items: ['Refining', 'Ready', 'Implementing', 'Reviewing'],
+    },
+  };
+  readonly archive: Action = { label: 'Archive', variant: 'muted', callback: noop };
+}
+
 describe('ActionButton (screenshots)', () => {
   function shown() {
     const fixture = TestBed.createComponent(Variants);
@@ -56,5 +78,32 @@ describe('ActionButton (screenshots)', () => {
     for (let i = 0; i < 5; i++) await userEvent.tab();
     await expect.element(element.getByRole('button', { name: 'Archive' }).last()).toHaveFocus();
     await expect.element(element).toMatchScreenshot('focus');
+  });
+
+  describe('with details', () => {
+    function detailed() {
+      const fixture = TestBed.createComponent(WithDetails);
+      fixture.detectChanges();
+      return page.elementLocator(fixture.nativeElement);
+    }
+
+    it('draws closed', async () => {
+      await expect.element(detailed()).toMatchScreenshot('details-closed');
+    });
+
+    it('opens on hover, below the button and lined up with its right edge', async () => {
+      const element = detailed();
+      await userEvent.hover(element.getByRole('button', { name: 'Dispatch' }));
+      await expect.element(element.getByRole('tooltip')).toBeVisible();
+      await expect.element(element).toMatchScreenshot('details-hover');
+    });
+
+    it('opens on keyboard focus, above the joined neighbour', async () => {
+      const element = detailed();
+      await userEvent.tab();
+      await expect.element(element.getByRole('button', { name: 'Dispatch' })).toHaveFocus();
+      await expect.element(element.getByRole('tooltip')).toBeVisible();
+      await expect.element(element).toMatchScreenshot('details-focus');
+    });
   });
 });

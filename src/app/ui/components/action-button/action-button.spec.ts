@@ -58,4 +58,48 @@ describe('ActionButton', () => {
     for (const c of present) expect(button.classList).toContain(c);
     for (const c of absent) expect(button.classList).not.toContain(c);
   });
+
+  it('has no popover and no description without details', () => {
+    const { fixture, button } = render();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('ui-popover')).toBeNull();
+    expect(button.hasAttribute('aria-describedby')).toBe(false);
+  });
+
+  it('shows its details in a popover the button names as its description', () => {
+    const { fixture, host } = render();
+    host.action.set({
+      label: 'Dispatch',
+      variant: 'success',
+      callback: () => host.calls.update((n) => n + 1),
+      details: { title: 'Moves through', items: ['Refining', 'Implementing', 'Reviewing'] },
+    });
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const button = element.querySelector('button')!;
+    const panel = element.querySelector<HTMLElement>('ui-popover [role=tooltip]')!;
+    expect(button.getAttribute('aria-describedby')).toBe(panel.id);
+    expect(panel.querySelector('p')?.textContent?.trim()).toBe('Moves through');
+    expect([...panel.querySelectorAll('ol > li')].map((li) => li.textContent?.trim())).toEqual([
+      'Refining',
+      'Implementing',
+      'Reviewing',
+    ]);
+    button.click();
+    expect(host.calls()).toBe(1);
+  });
+
+  it('leaves out the title when the details have none', () => {
+    const { fixture, host } = render();
+    host.action.set({
+      label: 'Go',
+      variant: 'muted',
+      callback: () => undefined,
+      details: { items: ['One'] },
+    });
+    fixture.detectChanges();
+    const panel = (fixture.nativeElement as HTMLElement).querySelector('[role=tooltip]')!;
+    expect(panel.querySelector('p')).toBeNull();
+    expect(panel.querySelectorAll('li').length).toBe(1);
+  });
 });

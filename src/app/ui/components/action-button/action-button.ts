@@ -1,4 +1,6 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Popover } from '$ui/components/popover/popover';
 import { Action } from './action';
 
 /** Where a button sits in a row of joined buttons: its rounded corners follow. */
@@ -29,21 +31,46 @@ const JOINS = {
  *
  * `join` rounds only the outer corners of a row of joined buttons (`app-page-layout` uses it for an
  * action group).
+ *
+ * An action with `details` shows them in a `ui-popover` while the button is hovered or focused: the
+ * title, then the items as an ordered list. The panel lines up with the button's right edge, as
+ * actions mostly sit at the right of the page. The button names the panel in `aria-describedby`.
  */
 @Component({
   selector: 'ui-action-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgTemplateOutlet, Popover],
   host: { class: 'inline-flex' },
   template: `
-    <button
-      type="button"
-      class="relative inline-flex h-8 cursor-pointer items-center border px-3 text-sm font-semibold whitespace-nowrap focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-deep-600"
-      [class]="classes()"
-      [attr.data-variant]="action().variant"
-      (click)="action().callback()"
-    >
-      {{ action().label }}
-    </button>
+    @if (action().details; as details) {
+      <ui-popover #popover align="end">
+        <ng-container *ngTemplateOutlet="button; context: { describedBy: popover.panelId() }" />
+        <div popover-content>
+          @if (details.title) {
+            <p class="m-0 mb-1 font-semibold">{{ details.title }}</p>
+          }
+          <ol class="m-0 list-decimal pl-5">
+            @for (item of details.items; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ol>
+        </div>
+      </ui-popover>
+    } @else {
+      <ng-container *ngTemplateOutlet="button; context: { describedBy: null }" />
+    }
+    <ng-template #button let-describedBy="describedBy">
+      <button
+        type="button"
+        class="relative inline-flex h-8 cursor-pointer items-center border px-3 text-sm font-semibold whitespace-nowrap focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-deep-600"
+        [class]="classes()"
+        [attr.data-variant]="action().variant"
+        [attr.aria-describedby]="describedBy"
+        (click)="action().callback()"
+      >
+        {{ action().label }}
+      </button>
+    </ng-template>
   `,
 })
 export class ActionButton {
