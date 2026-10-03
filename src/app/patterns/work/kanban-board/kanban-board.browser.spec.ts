@@ -96,13 +96,16 @@ describe('KanbanBoard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('nested');
   });
 
-  /** Changes the text selection and waits for the browser's `selectionchange`. */
+  /**
+   * Changes the text selection and waits for the browser's `selectionchange`, for one second at
+   * most: an event that never comes must fail the checks below, not hang the test.
+   */
   async function select(change: (selection: Selection) => void) {
     const changed = new Promise((resolve) =>
       document.addEventListener('selectionchange', resolve, { once: true }),
     );
     change(document.getSelection()!);
-    await changed;
+    await Promise.race([changed, new Promise((resolve) => setTimeout(resolve, 1_000))]);
   }
 
   it('highlights the card the text selection is in', async () => {
@@ -114,7 +117,7 @@ describe('KanbanBoard (screenshots)', () => {
     range.selectNodeContents(title);
     await select((selection) => selection.addRange(range));
     const card = title.closest('ui-board-card')!;
-    expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
+    await expect.poll(() => card.classList.contains('outline-ocean-deep-600')).toBe(true);
     // No selection colour in the shot; the highlight stays until it fades.
     await select((selection) => selection.removeAllRanges());
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
