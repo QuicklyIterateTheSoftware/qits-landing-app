@@ -23,8 +23,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * (REFINED to VERIFYING):
  *
  * - with `header`, a bar on top that runs on down the left side as one ┌, as an epic's lane does on
- *   the In Progress board: the bar holds its title (linking to it), its status, its campaigns as
- *   tags and a Workspace tag while it has an ACTIVE workspace (`app-workspace-link`); the left
+ *   the In Progress board: the bar holds its status, its campaigns as tags and a Workspace tag
+ *   while it has an ACTIVE workspace (`app-workspace-link`) at its left, and its title (linking
+ *   to it) at its right; the left
  *   strip holds its id, written up from the bottom. The strip is in the grid, so a long id makes
  *   the whole taller;
  * - below it a board (`ui-board`) of five columns (`EPIC_BOARD_COLUMNS`): the In Progress board's
@@ -67,7 +68,10 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         <header
           class="col-start-2 row-start-1 flex flex-wrap items-center gap-2 bg-charcoal-brown-800/40 px-3 py-1.5 text-xs text-white [&>a]:text-inherit [&>a]:no-underline [&>a]:hover:underline"
         >
-          <a class="text-sm font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
+          <!-- First for a screen reader, drawn last: at the bar's right end. -->
+          <a class="order-last ml-auto text-right text-sm font-semibold" [routerLink]="link">{{
+            n.entry.title
+          }}</a>
           <ui-tag [label]="status()" [class.hidden]="!status()" />
           @for (campaign of n.campaigns; track campaign.id) {
             <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
@@ -75,7 +79,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           <app-workspace-link [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
         </header>
       }
-      <ui-board class="col-span-full row-start-2" [columns]="columns()" gutter>
+      <!-- pb-6: the board's columns reach 1.5rem past its own box (for what comes after it on a
+           page); here the board is the end, so the box, and with it the strip, reaches them. -->
+      <ui-board class="col-span-full row-start-2 pb-6" [columns]="columns()" gutter>
         @for (row of rows(); track row.node.entry.id) {
           <ui-board-row class="mb-4" [idLength]="row.node.entry.qualifiedId?.length ?? 0">
             @for (card of row.cards; track card.node.entry.id) {

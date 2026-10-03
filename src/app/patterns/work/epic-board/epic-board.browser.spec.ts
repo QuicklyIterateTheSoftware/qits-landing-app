@@ -166,6 +166,15 @@ describe('EpicBoard (screenshots)', () => {
     expect(getComputedStyle(strip).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
     expect(Math.round(strip.getBoundingClientRect().top)).toBe(Math.round(board.top));
     expect(Math.round(strip.getBoundingClientRect().bottom)).toBe(Math.round(board.bottom));
+    // The columns end with the board, not below it.
+    const columns = element.querySelector('ui-board > div:nth-child(2)')!.getBoundingClientRect();
+    expect(Math.round(columns.bottom)).toBe(Math.round(board.bottom));
+    // In the bar: the tags at the left, the title at the right.
+    const bar = element.querySelector('app-epic-board header')!.getBoundingClientRect();
+    const titleLink = locator.getByRole('link', { name: title, exact: true }).element();
+    const tag = element.querySelector('app-epic-board header ui-tag')!.getBoundingClientRect();
+    expect(bar.right - titleLink.getBoundingClientRect().right).toBeLessThan(16);
+    expect(tag.left - bar.left).toBeLessThan(16);
     expect(id.getBoundingClientRect().top).toBeGreaterThan(board.top);
     expect(id.getBoundingClientRect().bottom).toBeLessThan(board.bottom);
     await shoot(element, name);
