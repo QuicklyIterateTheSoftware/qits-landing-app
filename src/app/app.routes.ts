@@ -42,6 +42,9 @@ import { sessionGuard } from '$core/auth/session.guard';
  * nothing to bounce on, and the server answers `/work` with a 302 instead of rendering an empty
  * page.
  *
+ * A work item's workspace is at `projects/<slug>/workspaces/<qualified id>` (`WorkspacePage`),
+ * where the workspace links on cards lead.
+ *
  * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
  * outside the shell, so the guard does not run on it.
  */
@@ -117,6 +120,13 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+      {
+        path: 'projects/:slug/workspaces/:id',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/workspaces/[id]/workspace.page').then(
+            (m) => m.WorkspacePage,
+          ),
       },
       {
         path: 'projects/:slug/editor',
