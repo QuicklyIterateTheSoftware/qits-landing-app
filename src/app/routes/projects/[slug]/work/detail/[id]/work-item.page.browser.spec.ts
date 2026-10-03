@@ -26,7 +26,7 @@ import { openRecordedWork } from '../../../../../../../testing/browser/recorded-
  *
  * The workspaces come from qits-workspaces' golden masters (`answerWorkspaces`), whose ids are
  * those of the "… in detail" states: the bug ticket's history, and "a work item with no
- * workspaces" for the improvement ticket.
+ * workspaces" for every other item.
  *
  * The page follows transitions through the event stream; the stream here never connects.
  */
@@ -113,29 +113,20 @@ describe('WorkItemPage (screenshots)', () => {
 
   /**
    * Answers the open workspaces from "a project with workspaces bound to work items", and the
-   * item's own workspaces: that state's list for the item it records (the bug ticket), "a work item
-   * with no workspaces" for the item that state names (the improvement ticket), else 404 (the
-   * region then shows its error icon).
+   * item's own workspaces: that state's list for the item it records (the bug ticket), and for any
+   * other item "a work item with no workspaces" (its answer names no id).
    */
   async function answerWorkspaces() {
     await settle();
     http
       .expectOne('/workspaces/api/work/workspaces')
       .flush(await goldenMaster(BOUND, 'listOpenWorkspaces', 'qits-workspaces'));
-    const [bug, improvement] = await Promise.all([
-      goldenMaster('a bug ticket in detail', 'getEntity'),
-      goldenMaster('an improvement ticket in detail', 'getEntity'),
-    ]);
-    const recorded = new Map([
-      [bug.id, BOUND],
-      [improvement.id, NONE],
-    ]);
+    const bug = (await goldenMaster('a bug ticket in detail', 'getEntity')).id;
     for (const read of http.match((r) =>
       /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
     )) {
-      const state = recorded.get(read.request.url.split('/')[4]);
-      if (state) read.flush(await goldenMaster(state, 'listWorkItemWorkspaces', 'qits-workspaces'));
-      else read.flush(null, { status: 404, statusText: 'Not Found' });
+      const state = read.request.url.split('/')[4] === bug ? BOUND : NONE;
+      read.flush(await goldenMaster(state, 'listWorkItemWorkspaces', 'qits-workspaces'));
     }
   }
 

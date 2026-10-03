@@ -10,7 +10,9 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
  * itself (the card clips its content, so a shadow inside it would not show). Projected content (tags, say)
  * goes under the title; a word too long for the card breaks anywhere (`wrap-anywhere`), so it never overflows.
  * `[card-corner]` (a `ui-tag-link` of variant `corner`) goes last, in the bottom-right corner,
- * mirroring the kind chip; the card's right corners are square, so it needs no clipping, and a
+ * mirroring the kind chip. While a shown `[card-action]` (the finish button) sits on that corner,
+ * the bubble moves left of it (`--card-corner-inset`), so the two sit side by side. The card's
+ * right corners are square, so it needs no clipping, and a
  * clipping card would cut its finish button and its popovers. While the pointer or the focus is in
  * the card, it is raised above its neighbours, so a popover in it is not drawn under the next card.
  */
@@ -20,7 +22,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
   imports: [RouterLink, IdStrip],
   host: {
     class:
-      'relative z-10 mx-2 flex self-start transition-shadow duration-150 focus-within:z-20 hover:z-20 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm',
+      'relative z-10 mx-2 flex self-start transition-shadow duration-150 focus-within:z-20 hover:z-20 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm [&:has(>ui-finish-button>button.flex)]:[--card-corner-inset:1.25rem]',
     '[class]': "border() + (atRoot ? ' ' + spacing : '')",
     '[style.grid-column]': 'placement()',
     'data-highlight-target': '',

@@ -98,32 +98,26 @@ describe('WorkItemPage', () => {
 
   /**
    * Answers the open workspaces from "a project with workspaces bound to work items", and the
-   * item's own workspaces: that state's list for the item it records (the bug ticket), "a work item
-   * with no workspaces" for the item that state names (the improvement ticket), else 404.
+   * item's own workspaces: that state's list for the item it records (the bug ticket), and for any
+   * other item "a work item with no workspaces" (its answer names no id). With `failHistory`, the
+   * history read answers 500 instead.
    */
-  async function answerWorkspaces() {
+  async function answerWorkspaces(failHistory = false) {
     // The history read waits for the item, which the work's answer brings.
     TestBed.tick();
     await settle();
     http.expectOne(OPEN_WORKSPACES).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
-    const recorded = new Map([
-      [
-        workspacesGoldenMasters.operation(BOUND, 'listWorkItemWorkspaces').params['bugTicketId'],
-        BOUND,
-      ],
-      [
-        workspacesGoldenMasters.operation(NONE, 'listWorkItemWorkspaces').params[
-          'improvementTicketId'
-        ],
-        NONE,
-      ],
-    ]);
+    const bug = workspacesGoldenMasters.operation(BOUND, 'listWorkItemWorkspaces').params[
+      'bugTicketId'
+    ];
     for (const read of http.match((r) =>
       /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
     )) {
-      const state = recorded.get(read.request.url.split('/')[4]);
-      if (state) read.flush(workspacesGoldenMaster(state, 'listWorkItemWorkspaces'));
-      else read.flush(null, { status: 404, statusText: 'Not Found' });
+      if (failHistory) read.flush(null, { status: 500, statusText: 'Server Error' });
+      else {
+        const state = read.request.url.split('/')[4] === bug ? BOUND : NONE;
+        read.flush(workspacesGoldenMaster(state, 'listWorkItemWorkspaces'));
+      }
     }
   }
 
@@ -131,7 +125,13 @@ describe('WorkItemPage', () => {
    * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
    * a campaign's read too, from `campaignState`, and the item's own reads (`answerDetail`).
    */
-  async function shown(title: string, state = WORK, detail = false, campaignState = state) {
+  async function shown(
+    title: string,
+    state = WORK,
+    detail = false,
+    campaignState = state,
+    failHistory = false,
+  ) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const work = goldenMaster(state, 'listProjectEntities');
@@ -155,7 +155,7 @@ describe('WorkItemPage', () => {
     }
     http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
-    await answerWorkspaces();
+    await answerWorkspaces(failHistory);
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
@@ -249,6 +249,16 @@ describe('WorkItemPage', () => {
       [`abandoned ${branch} ${opened} · Closed 1 Jan 2026, 00:00`, link],
     ]);
     expect(noneShown(element)).toBe(false);
+  });
+
+  it('marks the Workspaces region as failed when the history cannot be read', async () => {
+    const { element, history } = await shown('Reported ticket', WORK, false, WORK, true);
+    expect(history()).toEqual([]);
+    expect(noneShown(element)).toBe(false);
+    const icon = element.querySelector(
+      'section[aria-label=Workspaces] [aria-label="Failed to load"]',
+    );
+    expect(icon?.parentElement?.classList.contains('hidden')).toBe(false);
   });
 
   it('says so when an item has no workspaces', async () => {

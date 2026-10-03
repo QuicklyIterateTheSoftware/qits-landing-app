@@ -5,6 +5,7 @@ import { page, userEvent } from 'vitest/browser';
 import { RouterLink } from '@angular/router';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Tag } from '$ui/components/tag/tag';
+import { TagLink } from '$ui/components/tag-link/tag-link';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
 import { BoardCount } from './board-count';
@@ -131,6 +132,26 @@ class Collapsing {
   `,
 })
 class Finishing {
+  readonly columns = COLUMNS;
+}
+
+/** A verified ticket that still has a corner bubble (an open workspace), beside one without. */
+@Component({
+  imports: [Board, BoardCard, FinishButton, TagLink],
+  host: { class: 'block w-[48rem] p-4' },
+  template: `
+    <ui-board [columns]="columns" gutter>
+      <ui-board-card [column]="2" code="qits-44" title="A verified ticket" kind="ticket">
+        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-finish-button card-action label="Mark qits-44 done" />
+      </ui-board-card>
+      <ui-board-card [column]="1" code="qits-45" title="An implemented ticket" kind="ticket">
+        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+      </ui-board-card>
+    </ui-board>
+  `,
+})
+class CornerAndFinish {
   readonly columns = COLUMNS;
 }
 
@@ -282,6 +303,28 @@ describe('Board (screenshots)', () => {
     await expect
       .element(page.elementLocator(fixture.nativeElement))
       .toMatchScreenshot('lanes-collapsing');
+  });
+
+  it('draws a corner bubble beside the finish button, never under it', async () => {
+    const fixture = TestBed.createComponent(CornerAndFinish);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const [withButton, without] = [...element.querySelectorAll('ui-board-card')];
+    const bubble = withButton.querySelector('ui-tag-link a')!.getBoundingClientRect();
+    const button = withButton.querySelector('ui-finish-button button')!.getBoundingClientRect();
+    const intersect =
+      bubble.left < button.right &&
+      button.left < bubble.right &&
+      bubble.top < button.bottom &&
+      button.top < bubble.bottom;
+    expect(intersect).toBe(false);
+    expect(bubble.right).toBeLessThan(button.left);
+    // Without a finish button, the bubble stays flush in the corner (inside the 1px border).
+    const card = without.getBoundingClientRect();
+    const alone = without.querySelector('ui-tag-link a')!.getBoundingClientRect();
+    expect(Math.round(card.right - alone.right)).toBe(1);
+    expect(Math.round(card.bottom - alone.bottom)).toBe(1);
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('corner-and-finish');
   });
 
   it('draws the finish button on verified items, idle, running and failed', async () => {
