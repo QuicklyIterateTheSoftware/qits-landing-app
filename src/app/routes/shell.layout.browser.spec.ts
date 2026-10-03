@@ -33,6 +33,7 @@ describe('ShellLayout (screenshots)', () => {
         provideRouter([
           { path: '', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
+          { path: 'projects/:slug/work/:item', component: TestPage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -92,11 +93,12 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('narrow-open');
   });
 
-  it('lists the open project’s sections and marks the current one', async () => {
+  /** The layout at `path` below the recorded project, which is open; its menus answered. */
+  async function renderProject(path: string) {
     const fixture = TestBed.createComponent(ShellLayout);
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
-    const navigated = TestBed.inject(Router).navigateByUrl(`/projects/${project.slug}/work`);
+    const navigated = TestBed.inject(Router).navigateByUrl(`/projects/${project.slug}${path}`);
     fixture.detectChanges();
     await navigated;
     await settle();
@@ -112,6 +114,11 @@ describe('ShellLayout (screenshots)', () => {
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
+    return { fixture, project, layout: page.elementLocator(fixture.nativeElement) };
+  }
+
+  it('lists the open project’s sections and marks the current one', async () => {
+    const { project, layout } = await renderProject('/work');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
       .element(navigation.getByRole('link', { name: 'Work' }))
@@ -120,6 +127,49 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toHaveTextContent(project.name);
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('project');
+    await expect.element(layout).toMatchScreenshot('project');
+  });
+
+  it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {
+    const { project, layout } = await renderProject('/work/qits-112');
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb.getByRole('link', { name: 'Projects' })).toBeVisible();
+    await expect.element(breadcrumb.getByRole('link', { name: project.name })).toBeVisible();
+    await expect.element(breadcrumb.getByRole('button', { includeHidden: true })).not.toBeVisible();
+    await expect.element(layout).toMatchScreenshot('work-item-wide');
+  });
+
+  it('collapses a work item’s breadcrumbs to the first, … and the last two on a narrow screen', async () => {
+    await page.viewport(400, 600);
+    const { project, layout } = await renderProject('/work/qits-112');
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect
+      .element(breadcrumb.getByRole('button', { name: `Show the full path: ${project.name}` }))
+      .toBeVisible();
+    await expect.element(breadcrumb.getByRole('link', { name: 'Projects' })).toBeVisible();
+    await expect
+      .element(
+        breadcrumb.getByRole('link', { name: project.name, exact: true, includeHidden: true }),
+      )
+      .not.toBeVisible();
+    await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
+    await expect.element(breadcrumb.getByRole('link', { name: 'qits-112' })).toBeVisible();
+    await expect.element(layout).toMatchScreenshot('work-item-narrow');
+  });
+
+  it('opens the whole trail from the … on a narrow screen until focus leaves it', async () => {
+    await page.viewport(400, 600);
+    const { project, layout } = await renderProject('/work/qits-112');
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    const name = breadcrumb.getByRole('link', {
+      name: project.name,
+      exact: true,
+      includeHidden: true,
+    });
+    await userEvent.click(breadcrumb.getByRole('button', { name: /^Show the full path/ }));
+    await expect.element(name).toBeVisible();
+    await expect.element(layout).toMatchScreenshot('work-item-narrow-expanded');
+    await userEvent.click(page.getByText('Page content'));
+    await expect.element(name).not.toBeVisible();
   });
 });

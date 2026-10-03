@@ -5,6 +5,7 @@ import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
+import { Breadcrumbs } from '$ui/components/breadcrumbs/breadcrumbs';
 
 /** One entry of the sidebar. */
 export interface NavLink {
@@ -25,6 +26,7 @@ export interface NavLink {
   selector: 'app-shell-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    Breadcrumbs,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
@@ -49,23 +51,9 @@ export interface NavLink {
           <span class="block h-0.5 bg-gray-700"></span>
           <span class="block h-0.5 bg-gray-700"></span>
         </button>
-        <nav aria-label="Breadcrumb">
-          <ol class="m-0 flex list-none items-center gap-2 p-0">
-            <li><a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a></li>
-            @for (crumb of crumbs(); track crumb.path; let last = $last) {
-              <li class="flex items-center gap-2">
-                <span aria-hidden="true" class="text-gray-400">›</span>
-                <!-- One element for both cases (no @if): the last crumb is the current page. -->
-                <a
-                  class="text-gray-600 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
-                  [routerLink]="crumb.path"
-                  [attr.aria-current]="last ? 'page' : null"
-                  >{{ crumb.label }}</a
-                >
-              </li>
-            }
-          </ol>
-        </nav>
+        <ui-breadcrumbs [crumbs]="crumbs()">
+          <a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a>
+        </ui-breadcrumbs>
         <!-- The menus at the right end: the platform's version bumps and notifications (always), then the open
              project's release requests and its settings (both hidden, not removed, while no
              project is open). -->
