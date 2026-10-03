@@ -1,3 +1,5 @@
+import { playwright } from '@vitest/browser-playwright';
+import type { Plugin } from 'vite';
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
 import {
@@ -37,7 +39,32 @@ const parkPointer: BrowserCommand<[]> = async (context) => {
   ).page.mouse.move(0, 0);
 };
 
+/**
+ * Chromium's flags for the screenshot tests: `--disable-partial-raster`. By default Chromium
+ * re-rasters only the invalidated part of a tile, and the antialiased edge of a rounded corner
+ * drawn that way can come out one colour step off the whole-tile result (seen on the cards: 2 to
+ * 5 pixels, one step in one channel). What gets invalidated first changes from run to run, so the
+ * same page gave different pixels. Rastering whole tiles every time makes it the same pixels.
+ *
+ * Set from a plugin because the Angular builder makes the provider itself: a `browser.provider` in
+ * this file is merged into the config, but the browser is launched by the builder's provider, with
+ * the builder's options. `configureVitest` runs before any browser starts, so swapping the
+ * provider there is what reaches the launch.
+ */
+const chromiumFlags: Plugin = {
+  name: 'qits:chromium-flags',
+  configureVitest({ project }) {
+    const browser = project.config.browser;
+    if (browser.provider?.name !== 'playwright') return;
+    browser.provider = playwright({
+      ...(browser.provider.options as Parameters<typeof playwright>[0]),
+      launchOptions: { args: ['--disable-partial-raster'] },
+    });
+  },
+};
+
 export default defineConfig({
+  plugins: [chromiumFlags],
   test: {
     browser: {
       commands: { goldenMaster, parkPointer },
