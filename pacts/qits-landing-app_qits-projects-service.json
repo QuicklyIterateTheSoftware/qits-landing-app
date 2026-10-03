@@ -8,6 +8,204 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "transitionEpic"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "finish-epic",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "finish-epic: transitionEpic",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verified epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/epics/${epicId}/transition",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/epics/00000000-0000-4000-8000-000000000001/transition"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "epic": {
+              "status": "DONE"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.epic.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "transitionTicket"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "finish-ticket",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "finish-ticket: transitionTicket",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verified ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/tickets/${ticketId}/transition",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/tickets/00000000-0000-4000-8000-000000000002/transition"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "ticket": {
+              "status": "DONE"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.ticket.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "listProjects"
           },
           "qits-trigger": {
