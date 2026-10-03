@@ -6,7 +6,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { addGoldenInteraction } from '@qits/angular/testing';
-import { getCampaign } from '../../api/projects';
+import { getCampaign, listProjectEntities } from '../../api/projects';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
@@ -138,6 +138,49 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
         // The same call `load` makes per campaign, made on its own: the mock answers one request.
         storeAt(server.url);
         const op = masters.operation('a campaign with ordered developments', 'getCampaign');
+        const { data } = await TestBed.runInInjectionContext(() =>
+          getCampaign({ path: { id: op.params['campaignId'] } }),
+        );
+        expect(data?.campaign?.members?.length).toBeGreaterThan(0);
+      },
+    ));
+
+  // The card screenshots' states (`work-board-node`, `work-list-node`), recorded on
+  // qits-projects-service `external/card-states` (8c13d17e) and not yet in the installed
+  // @qits/projects-golden-masters. Skipped until the pin bump; then drop the `.skip` and run with
+  // QITS_GOLDEN_UPDATE=true to write them into the committed pact.
+  it.skip.each([
+    'a ticket of every type',
+    'a verified epic with every task implemented',
+    'a done epic with every task implemented',
+  ])('show-project-work-board: %s', (state) =>
+    given('show-project-work-board', state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const projectId = projectOf(state);
+      await store.load(projectId);
+      expect(store.byProject()[projectId]?.status).toBe('loaded');
+    }),
+  );
+
+  it.skip('show-project-work-board: a campaign with work in every phase', () =>
+    given('show-project-work-board', 'a campaign with work in every phase').executeTest(
+      async (server) => {
+        // The entities read on its own: `load` would go on to read the campaign, which this
+        // interaction does not answer (the next one does).
+        storeAt(server.url);
+        const projectId = projectOf('a campaign with work in every phase');
+        const { data } = await TestBed.runInInjectionContext(() =>
+          listProjectEntities({ path: { projectId } }),
+        );
+        expect(data?.entities?.length).toBeGreaterThan(0);
+      },
+    ));
+
+  it.skip('show-project-work-board: the members of a campaign with work in every phase', () =>
+    givenCampaign('show-project-work-board', 'a campaign with work in every phase').executeTest(
+      async (server) => {
+        storeAt(server.url);
+        const op = masters.operation('a campaign with work in every phase', 'getCampaign');
         const { data } = await TestBed.runInInjectionContext(() =>
           getCampaign({ path: { id: op.params['campaignId'] } }),
         );
