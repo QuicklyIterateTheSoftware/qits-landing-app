@@ -127,14 +127,19 @@ describe('WorkItemPage (screenshots)', () => {
    * Answers the open workspaces from "a project with workspaces bound to work items", and the
    * item's own workspaces: that state's list for the item it records (the bug ticket), and for any
    * other item "a work item with no workspaces" (its answer names no id). In an `UNBOUND` state the
-   * open workspaces answer 404 and every item's workspaces are "a work item with no workspaces".
+   * open workspaces are "no work item has an open workspace" and every item's workspaces are "a work
+   * item with no workspaces".
    */
   async function answerWorkspaces(state: string) {
     await settle();
     const open = http.expectOne('/workspaces/api/work/workspaces');
-    // TODO: answer from qits-workspaces' "no work item has an open workspace" once it is released.
-    if (UNBOUND.has(state)) open.flush(null, { status: 404, statusText: 'Not Found' });
-    else open.flush(await goldenMaster(BOUND, 'listOpenWorkspaces', 'qits-workspaces'));
+    open.flush(
+      await goldenMaster(
+        UNBOUND.has(state) ? 'no work item has an open workspace' : BOUND,
+        'listOpenWorkspaces',
+        'qits-workspaces',
+      ),
+    );
     const bug = (await goldenMaster('a bug ticket in detail', 'getEntity')).id;
     for (const read of http.match((r) =>
       /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),

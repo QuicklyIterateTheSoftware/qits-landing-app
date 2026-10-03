@@ -106,6 +106,72 @@
         "references": {
           "qits-call": {
             "app": "qits-workspaces-service",
+            "operationId": "listOpenWorkspaces"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-open-workspaces",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-open-workspaces: listOpenWorkspaces",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no work item has an open workspace",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "bugTicketQualifiedId": "contract-00000001-10",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "improvementTicketQualifiedId": "contract-00000001-11",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "taskId": "00000000-0000-4000-8000-000000000011"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/workspaces/api/work/workspaces"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
             "operationId": "listWorkItemWorkspaces"
           },
           "qits-trigger": {

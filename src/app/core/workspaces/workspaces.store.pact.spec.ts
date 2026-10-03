@@ -28,6 +28,7 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
+const NO_OPEN = 'no work item has an open workspace';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-workspaces-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -73,6 +74,20 @@ describe('qits-landing-app → qits-workspaces-service pact', () => {
       // The mock server answers each id with a value of the recorded shape, not the recorded one.
       expect(store.openWorkIds().length).toBeGreaterThan(0);
       expect(store.hasOpen(store.openWorkIds()[0])).toBe(true);
+    }));
+
+  it('show-open-workspaces: the store holds no item when none has an active workspace', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: NO_OPEN,
+      operationId: 'listOpenWorkspaces',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-open-workspaces' },
+      consumes: LIST_OPEN_WORKSPACES,
+    }).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      await store.load();
+      expect(store.status()).toBe('loaded');
+      expect(store.openWorkIds()).toEqual([]);
     }));
 
   it('show-work-item-workspaces: the store holds an item’s workspaces, newest first', () =>
