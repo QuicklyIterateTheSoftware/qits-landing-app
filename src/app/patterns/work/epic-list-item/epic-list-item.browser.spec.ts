@@ -103,8 +103,8 @@ describe('EpicListItem (screenshots)', () => {
     expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
   });
 
-  // These two epics' tasks are IMPLEMENTED by their own status (qits-763), so they are on the
-  // board, not under the epic here: the lane has no rows, and its summary counts none verified.
+  // This epic's tasks are IMPLEMENTED by their own status (qits-763), so they are on the board,
+  // not under the epic here: the lane has no rows, and its summary counts none verified.
   it('a VERIFIED epic whose tasks are still on the board: expanded, then collapsed', async () => {
     const { element, locator, harness } = await shown(
       'acceptance',
@@ -122,10 +122,22 @@ describe('EpicListItem (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('verified-tasks-open-collapsed');
   });
 
-  it('a DONE epic whose tasks are still on the board: collapsed', async () => {
-    const { locator } = await shown('archive', DONE_COMPLETE, 'contract-00000001-1', 'Done epic');
-    // The Archive starts every epic collapsed.
+  it('every task implemented (DONE): collapsed, then expanded', async () => {
+    const { element, locator, harness } = await shown(
+      'archive',
+      DONE_COMPLETE,
+      'contract-00000001-1',
+      'Done epic',
+    );
+    // The Archive starts every epic collapsed; a done one counts its verified tasks. Finishing the
+    // epic moved none of its IMPLEMENTED tasks (qits-763), but the epic takes them to the Archive.
     await expect.element(locator).toHaveTextContent('0 / 2 ✅');
-    await expect.element(locator).toMatchScreenshot('done-tasks-open-collapsed');
+    await expect.element(locator).toMatchScreenshot('all-done-collapsed');
+    await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
+    harness.fixture.detectChanges();
+    // Park the pointer: the button's hover colour stays out of the screenshot.
+    await commands.parkPointer();
+    await expect.element(locator).toHaveTextContent('Second shipped task');
+    await expect.element(locator).toMatchScreenshot('all-done-expanded');
   });
 });
