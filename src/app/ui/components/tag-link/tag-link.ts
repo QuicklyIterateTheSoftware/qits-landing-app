@@ -14,7 +14,8 @@ export type TagLinkVariant = 'tag' | 'corner';
 /**
  * A small label that is a router link.
  *
- * - `tag`: drawn like `ui-tag`, its background coloured from its text (`tagColour`).
+ * - `tag`: drawn like `ui-tag`, its background coloured from its text (`tagColour`). Where the
+ *   row is too narrow (a card), its text wraps, so it never overflows.
  * - `corner`: the mirror of `ui-board-card`'s kind chip, for the card's `[card-corner]` slot. Only
  *   its top-left corner is rounded, and its negative margins take it flush into the card body's
  *   bottom-right corner (the body has `p-2`). It takes a line of its own, so it never covers text.
@@ -33,7 +34,7 @@ export type TagLinkVariant = 'tag' | 'corner';
   },
   template: `
     <a
-      class="block text-[0.6875rem] whitespace-nowrap no-underline hover:underline"
+      class="block text-[0.6875rem] no-underline hover:underline"
       [class]="linkClasses()"
       [style.background-color]="colour()"
       [routerLink]="link()"
@@ -57,8 +58,8 @@ export class TagLink {
 
   protected readonly linkClasses = computed(() =>
     this.variant() === 'corner'
-      ? 'rounded-tl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] text-ocean-deep-800'
-      : 'px-2.5 leading-4 font-medium text-charcoal-brown-950',
+      ? 'rounded-tl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] whitespace-nowrap text-ocean-deep-800'
+      : 'px-2.5 leading-4 font-medium wrap-anywhere text-charcoal-brown-950',
   );
 
   protected readonly colour = computed(() =>

@@ -7,7 +7,7 @@ import { BoardCount } from '$ui/components/board/board-count';
 import { BoardLane } from '$ui/components/board/board-lane';
 import { BoardRow } from '$ui/components/board/board-row';
 import { Leave } from '$ui/components/leave/leave';
-import { Tag } from '$ui/components/tag/tag';
+import { WorkRef } from '$patterns/work/work-ref/work-ref';
 
 /**
  * An epic on the board, with its features and their tasks:
@@ -29,7 +29,7 @@ import { Tag } from '$ui/components/tag/tag';
 @Component({
   selector: 'app-epic-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, BoardLane, BoardRow, BoardCard, BoardCount, Leave, Tag],
+  imports: [RouterLink, BoardLane, BoardRow, BoardCard, BoardCount, Leave, WorkRef],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -47,7 +47,7 @@ import { Tag } from '$ui/components/tag/tag';
       }
       <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
       @for (campaign of n.campaigns; track campaign.id) {
-        <ui-tag lane-tags [label]="campaign.title ?? ''" />
+        <app-work-ref lane-tags [qualifiedId]="campaign.qualifiedId ?? ''" />
       }
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
       @for (feature of n.children; track feature.entry.id) {
@@ -64,7 +64,7 @@ import { Tag } from '$ui/components/tag/tag';
               @if (task.campaigns.length) {
                 <div class="mt-1 flex flex-wrap gap-1">
                   @for (campaign of task.campaigns; track campaign.id) {
-                    <ui-tag [label]="campaign.title ?? ''" />
+                    <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
                   }
                 </div>
               }

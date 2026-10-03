@@ -5,6 +5,7 @@ import { BoardCard } from '$ui/components/board/board-card';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { Tag } from '$ui/components/tag/tag';
+import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
@@ -23,7 +24,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-ticket-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, FinishButton, Leave, Tag],
+  imports: [BoardCard, FinishButton, Leave, Tag, WorkRef],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -38,7 +39,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       @if (n.campaigns.length || status()) {
         <div class="mt-1 flex flex-wrap gap-1">
           @for (campaign of n.campaigns; track campaign.id) {
-            <ui-tag [label]="campaign.title ?? ''" />
+            <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
           }
           @if (status(); as status) {
             <ui-tag [label]="status" />

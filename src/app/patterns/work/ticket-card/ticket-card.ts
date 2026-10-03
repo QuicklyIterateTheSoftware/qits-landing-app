@@ -3,7 +3,7 @@ import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { Leave } from '$ui/components/leave/leave';
-import { Tag } from '$ui/components/tag/tag';
+import { WorkRef } from '$patterns/work/work-ref/work-ref';
 
 /**
  * A ticket on the board: a card (`ui-board-card`) in its column, its id down the left edge, its
@@ -16,7 +16,7 @@ import { Tag } from '$ui/components/tag/tag';
 @Component({
   selector: 'app-ticket-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, Leave, Tag],
+  imports: [BoardCard, Leave, WorkRef],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -33,7 +33,7 @@ import { Tag } from '$ui/components/tag/tag';
       @if (n.campaigns.length) {
         <div class="mt-1 flex flex-wrap gap-1">
           @for (campaign of n.campaigns; track campaign.id) {
-            <ui-tag [label]="campaign.title ?? ''" />
+            <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
           }
         </div>
       }

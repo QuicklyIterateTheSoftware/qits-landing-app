@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { page } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
@@ -92,5 +92,15 @@ describe('TicketCard (screenshots)', () => {
   ])('%s', async (name, state, qualifiedId, title) => {
     const { locator } = await shown(state, qualifiedId, title);
     await expect.element(locator).toMatchScreenshot(name);
+  });
+
+  it('previews its campaign on hover', async () => {
+    const { element, locator } = await shown(CAMPAIGN, 'contract-00000001-3', 'Refined ticket');
+    // The popover hangs below the card; the host grows so the screenshot holds it.
+    element.style.paddingBottom = '9rem';
+    const campaign = locator.getByRole('link', { name: /^Campaign: / });
+    await userEvent.hover(campaign);
+    await expect.element(locator.getByRole('tooltip')).toBeVisible();
+    await expect.element(locator).toMatchScreenshot('campaign-preview');
   });
 });

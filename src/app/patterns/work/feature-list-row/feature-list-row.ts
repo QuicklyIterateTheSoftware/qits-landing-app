@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { ListRow } from '$ui/components/list/list-row';
-import { Tag } from '$ui/components/tag/tag';
+import { WorkRef } from '$patterns/work/work-ref/work-ref';
 
 /**
  * A feature in a list, as an epic's lane (`app-epic-list-item`) and a work item's page draw it: a
@@ -17,7 +17,7 @@ import { Tag } from '$ui/components/tag/tag';
 @Component({
   selector: 'app-feature-list-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListRow, BoardCard, Tag],
+  imports: [RouterLink, ListRow, BoardCard, WorkRef],
   host: { class: 'contents' },
   template: `
     @let feature = node();
@@ -32,7 +32,7 @@ import { Tag } from '$ui/components/tag/tag';
           @if (task.campaigns.length) {
             <div class="mt-1 flex flex-wrap gap-1">
               @for (campaign of task.campaigns; track campaign.id) {
-                <ui-tag [label]="campaign.title ?? ''" />
+                <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
               }
             </div>
           }

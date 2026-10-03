@@ -6,6 +6,7 @@ import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { ListLane } from '$ui/components/list/list-lane';
 import { Tag } from '$ui/components/tag/tag';
+import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
@@ -32,7 +33,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-epic-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListLane, FeatureListRow, FinishButton, Leave, Tag],
+  imports: [RouterLink, ListLane, FeatureListRow, FinishButton, Leave, Tag, WorkRef],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -41,7 +42,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       <span lane-summary>{{ summary() }}</span>
       <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
       @for (campaign of n.campaigns; track campaign.id) {
-        <ui-tag lane-tags [label]="campaign.title ?? ''" />
+        <app-work-ref lane-tags [qualifiedId]="campaign.qualifiedId ?? ''" />
       }
       @if (status(); as status) {
         <ui-tag lane-tags [label]="status" />
