@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ProjectsStore } from '../../../core/projects/projects.store';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
-import { SelectedProject } from '../../../core/projects/selected-project';
+import { ProjectsStore } from '../../../../core/projects/projects.store';
+import { Spinner, type LoadState } from '../../../../ui/components/spinner/spinner';
+import { SelectedProject } from '../../../../core/projects/selected-project';
 
 /**
  * A project's settings, at `/projects/<slug>/setup`, reached by the gear in the top bar. For now it
  * only names the project; the settings come later.
  */
 @Component({
-  selector: 'app-project-setup',
+  selector: 'app-project-setup-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Spinner],
   template: `
@@ -20,7 +20,7 @@ import { SelectedProject } from '../../../core/projects/selected-project';
     </div>
   `,
 })
-export class ProjectSetup {
+export class ProjectSetupPage {
   protected readonly selected = inject(SelectedProject);
   private readonly store = inject(ProjectsStore);
 

@@ -160,7 +160,7 @@ tag, so an archetype default is invisible to it. The file's own header carries t
 .config/qits/deployments.yml    application: qits-landing, host: landing, routes: /landing
 docker/Dockerfile               build stage (npm ci + ng build) -> slim non-root runtime
 src/server.ts                   express + AngularNodeAppEngine, :8080, /landing/health
-src/app/landing/               the page
-src/app/app.routes.ts          '' and a '**' catch-all, so /landing renders too
+src/app/routes/                the pages, on a tree that mirrors the URL (see AGENTS.md)
+src/app/app.routes.ts          lazy routes, and a '**' catch-all, so /landing renders too
 src/app/app.routes.server.ts   RenderMode.Server
 ```

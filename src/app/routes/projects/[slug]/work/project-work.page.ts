@@ -7,14 +7,14 @@ import {
   linkedSignal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SelectedProject } from '../../../core/projects/selected-project';
-import { SelectedWork } from '../../../core/work/selected-work';
-import { BOARD_COLUMNS } from '../../../core/work/work-statuses';
-import type { WorkNode } from '../../../core/work/work-tree';
-import { Board, type BoardColumnSpec } from '../../../ui/components/board/board';
-import { Spinner } from '../../../ui/components/spinner/spinner';
-import { WorkBoardNode } from '../work-board-node/work-board-node';
-import { WorkListNode } from '../work-list-node/work-list-node';
+import { SelectedProject } from '../../../../core/projects/selected-project';
+import { SelectedWork } from '../../../../core/work/selected-work';
+import { BOARD_COLUMNS } from '../../../../core/work/work-statuses';
+import type { WorkNode } from '../../../../core/work/work-tree';
+import { Board, type BoardColumnSpec } from '../../../../ui/components/board/board';
+import { Spinner } from '../../../../ui/components/spinner/spinner';
+import { WorkBoardNode } from '../../../../patterns/work/work-board-node/work-board-node';
+import { WorkListNode } from '../../../../patterns/work/work-list-node/work-list-node';
 
 /** A top-level board node as drawn, and whether it is on its way out. */
 export interface BoardRowState {
@@ -46,7 +46,7 @@ export function withLeaving(
  * right leads to the work in a final state.
  */
 @Component({
-  selector: 'app-project-work',
+  selector: 'app-project-work-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, Spinner, Board, WorkBoardNode, WorkListNode],
   host: { class: 'block' },
@@ -96,7 +96,7 @@ export function withLeaving(
     </div>
   `,
 })
-export class ProjectWork {
+export class ProjectWorkPage {
   protected readonly work = inject(SelectedWork);
 
   constructor() {
@@ -136,6 +136,6 @@ export class ProjectWork {
   protected readonly workPath = computed(() => `/projects/${this.selected.slug() ?? ''}/work`);
 
   protected readonly archivePath = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/archive`,
+    () => `/projects/${this.selected.slug() ?? ''}/work-archive`,
   );
 }

@@ -11,6 +11,8 @@ import { ReleaseMenu } from '../patterns/release-requests/release-menu/release-m
 export interface NavLink {
   readonly label: string;
   readonly path: string;
+  /** Other pages that belong to this section (the Work section's archive). */
+  readonly also?: readonly string[];
 }
 
 /**
@@ -21,7 +23,7 @@ export interface NavLink {
  * breakpoint is CSS, so the server renders the same markup as the browser.
  */
 @Component({
-  selector: 'app-layout',
+  selector: 'app-shell-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
@@ -111,9 +113,7 @@ export interface NavLink {
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
                 [routerLink]="link.path"
-                routerLinkActive=""
-                [routerLinkActiveOptions]="{ exact: false }"
-                ariaCurrentWhenActive="page"
+                [attr.aria-current]="link.path === section()?.path ? 'page' : null"
                 (click)="closeNav()"
                 >{{ link.label }}</a
               >
@@ -139,7 +139,7 @@ export interface NavLink {
     <app-finish-toasts />
   `,
 })
-export class Layout {
+export class ShellLayout {
   private readonly selected = inject(SelectedProject);
   /** Where the backends answer; the alert shows when some have no address. */
   protected readonly origins = inject(AppOrigins);
@@ -153,7 +153,11 @@ export class Layout {
     return slug === undefined
       ? []
       : [
-          { label: 'Work', path: `/projects/${slug}/work` },
+          {
+            label: 'Work',
+            path: `/projects/${slug}/work`,
+            also: [`/projects/${slug}/work-archive`],
+          },
           { label: 'Editor', path: `/projects/${slug}/editor` },
           { label: 'Repositories', path: `/projects/${slug}/repositories` },
           { label: 'Observability', path: `/projects/${slug}/observability` },
@@ -173,16 +177,21 @@ export class Layout {
     const slug = this.selected.slug();
     if (!project || !slug) return [projects];
     const crumbs = [projects, { label: project.name ?? slug, path: `/projects/${slug}` }];
-    const url = this.selected.url();
-    const within = (path: string) =>
-      url === path || url.startsWith(`${path}/`) || url.startsWith(`${path}?`);
-    const section = [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find(
-      (link) => within(link.path),
-    );
+    const section = this.section();
     if (!section) return crumbs;
     // A section's own subpages, one level deep: Work › Archive, Work › <item id>.
-    const sub = workSubpage(url, `/projects/${slug}/work`);
+    const sub = workSubpage(this.selected.url(), `/projects/${slug}`);
     return sub ? [...crumbs, section, sub] : [...crumbs, section];
+  });
+
+  /** The section the URL is in: a sidebar link, or Setup from the gear. */
+  protected readonly section = computed((): NavLink | undefined => {
+    const slug = this.selected.slug();
+    if (slug === undefined) return undefined;
+    const url = this.selected.url();
+    return [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find((link) =>
+      [link.path, ...(link.also ?? [])].some((path) => within(url, path)),
+    );
   });
 
   /** The open project's settings page, or undefined while no project is open. */
@@ -202,13 +211,21 @@ export class Layout {
   }
 }
 
+/** True when `url` is `path` or a page below it, query and fragment ignored. */
+function within(url: string, path: string): boolean {
+  return url === path || /^[/?#]/.test(url.startsWith(path) ? url.slice(path.length) : 'x');
+}
+
 /**
- * The crumb of a page below the work section (`<work>/archive`, `<work>/<item id>`), or undefined
- * for the section itself and anything outside it.
+ * The crumb of a page below the work section of the project at `project` (`/projects/<slug>`):
+ * `<project>/work-archive` or `<project>/work/<item id>`. Undefined for the section itself and
+ * anything outside it.
  */
-export function workSubpage(url: string, work: string): NavLink | undefined {
+export function workSubpage(url: string, project: string): NavLink | undefined {
+  const archive = `${project}/work-archive`;
+  if (within(url, archive)) return { label: 'Archive', path: archive };
+  const work = `${project}/work`;
   const rest = url.startsWith(`${work}/`) ? url.slice(work.length + 1).split(/[/?#]/)[0] : '';
   if (!rest) return undefined;
-  const id = decodeURIComponent(rest);
-  return { label: id === 'archive' ? 'Archive' : id, path: `${work}/${rest}` };
+  return { label: decodeURIComponent(rest), path: `${work}/${rest}` };
 }

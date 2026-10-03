@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SelectedProject } from '../../../core/projects/selected-project';
-import { SelectedWork } from '../../../core/work/selected-work';
-import { Spinner } from '../../../ui/components/spinner/spinner';
-import { WorkListNode } from '../work-list-node/work-list-node';
+import { SelectedProject } from '../../../../core/projects/selected-project';
+import { SelectedWork } from '../../../../core/work/selected-work';
+import { Spinner } from '../../../../ui/components/spinner/spinner';
+import { WorkListNode } from '../../../../patterns/work/work-list-node/work-list-node';
 
 /**
- * A project's finished work, at `/projects/<slug>/work/archive`: everything in a final state (Done
+ * A project's finished work, at `/projects/<slug>/work-archive`: everything in a final state (Done
  * or Dropped), nested as on the board, in the same groups the Backlog uses.
  */
 @Component({
-  selector: 'app-project-work-archive',
+  selector: 'app-project-work-archive-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, Spinner, WorkListNode],
   host: { class: 'block' },
@@ -40,7 +40,7 @@ import { WorkListNode } from '../work-list-node/work-list-node';
     </div>
   `,
 })
-export class ProjectWorkArchive {
+export class ProjectWorkArchivePage {
   protected readonly work = inject(SelectedWork);
 
   constructor() {

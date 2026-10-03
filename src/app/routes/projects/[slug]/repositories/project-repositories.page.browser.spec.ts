@@ -3,10 +3,10 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { commands, page } from 'vitest/browser';
-import { client as projectsClient } from '../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { SelectedProject } from '../../../core/projects/selected-project';
-import { ProjectRepositories } from './project-repositories';
+import { client as projectsClient } from '../../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
+import { SelectedProject } from '../../../../core/projects/selected-project';
+import { ProjectRepositoriesPage } from './project-repositories.page';
 
 /**
  * Screenshots of the Repositories page, answered with qits-projects' recording of "a project with
@@ -20,7 +20,7 @@ const ID = '00000000-0000-4000-8000-000000000001';
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-describe('ProjectRepositories (screenshots)', () => {
+describe('ProjectRepositoriesPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe('ProjectRepositories (screenshots)', () => {
   async function render() {
     // Tall enough for the whole tree: a screenshot shows only what is in the viewport.
     await page.viewport(900, 1200);
-    const fixture = TestBed.createComponent(ProjectRepositories);
+    const fixture = TestBed.createComponent(ProjectRepositoriesPage);
     (fixture.nativeElement as HTMLElement).style.width = '900px';
     fixture.detectChanges();
     await settle();

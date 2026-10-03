@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
-import { Layout } from './layout';
+import { ShellLayout } from './shell.layout';
 
 /** A page with fixed text, so the screenshots show the layout and nothing that loads. */
 @Component({ selector: 'app-test-page', template: `<p>Page content</p>` })
@@ -12,7 +12,7 @@ class TestPage {}
  * Screenshots of the layout in a real browser: the wide sidebar, and the narrow burger closed and
  * open. It calls no backend.
  */
-describe('Layout (screenshots)', () => {
+describe('ShellLayout (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideRouter([{ path: '', component: TestPage }])],
@@ -24,7 +24,7 @@ describe('Layout (screenshots)', () => {
   });
 
   async function render() {
-    const fixture = TestBed.createComponent(Layout);
+    const fixture = TestBed.createComponent(ShellLayout);
     await TestBed.inject(Router).navigateByUrl('/');
     fixture.detectChanges();
     await fixture.whenStable();

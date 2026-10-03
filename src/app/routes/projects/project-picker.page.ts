@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ProjectCard } from '../project-card/project-card';
-import { ProjectsStore } from '../../../core/projects/projects.store';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
+import { ProjectCard } from '../../patterns/projects/project-card/project-card';
+import { ProjectsStore } from '../../core/projects/projects.store';
+import { Spinner, type LoadState } from '../../ui/components/spinner/spinner';
 
 /**
  * The start page: every project, one card each.
@@ -11,7 +11,7 @@ import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner'
  * failure are shown by `ui-spinner` over the list's place, never as text.
  */
 @Component({
-  selector: 'app-project-picker',
+  selector: 'app-project-picker-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ProjectCard, Spinner],
   template: `
@@ -40,7 +40,7 @@ import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner'
     </div>
   `,
 })
-export class ProjectPicker {
+export class ProjectPickerPage {
   protected readonly store = inject(ProjectsStore);
 
   protected readonly state = computed((): LoadState => {

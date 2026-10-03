@@ -3,10 +3,10 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { commands, page } from 'vitest/browser';
-import { client as githostClient } from '../../../api/githost/client.gen';
-import { client as projectsClient } from '../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { ProjectPicker } from './project-picker';
+import { client as githostClient } from '../../api/githost/client.gen';
+import { client as projectsClient } from '../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../api/projects/client/client.gen';
+import { ProjectPickerPage } from './project-picker.page';
 
 /**
  * Screenshots of the start page in a real browser. The answers are qits-projects' and
@@ -16,7 +16,7 @@ import { ProjectPicker } from './project-picker';
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-describe('ProjectPicker (screenshots)', () => {
+describe('ProjectPickerPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
@@ -36,7 +36,7 @@ describe('ProjectPicker (screenshots)', () => {
 
   /** The page at the test viewport's width, with the project list requested, not answered. */
   async function render() {
-    const fixture = TestBed.createComponent(ProjectPicker);
+    const fixture = TestBed.createComponent(ProjectPickerPage);
     fixture.detectChanges();
     await settle();
     return { fixture, list: http.expectOne('/projects/api/projects') };

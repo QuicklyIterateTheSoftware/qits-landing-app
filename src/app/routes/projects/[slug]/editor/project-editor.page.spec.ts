@@ -1,4 +1,4 @@
-import { editorUrl } from './project-editor';
+import { editorUrl } from './project-editor.page';
 
 describe('editorUrl', () => {
   it("opens qits-workspaces' editor door scoped to the project", () => {

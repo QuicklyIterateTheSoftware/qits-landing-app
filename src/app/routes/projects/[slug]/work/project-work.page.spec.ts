@@ -1,5 +1,5 @@
-import type { WorkNode } from '../../../core/work/work-tree';
-import { withLeaving } from './project-work';
+import type { WorkNode } from '../../../../core/work/work-tree';
+import { withLeaving } from './project-work.page';
 
 /** A bare node: only its id matters here. */
 const node = (id: string): WorkNode => ({

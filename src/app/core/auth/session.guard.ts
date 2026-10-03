@@ -1,8 +1,8 @@
 import { DOCUMENT, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import type { CanActivateFn } from '@angular/router';
-import { AppOrigins } from '../core/platform/app-origins';
-import { ProjectsStore } from '../core/projects/projects.store';
+import { AppOrigins } from '../platform/app-origins';
+import { ProjectsStore } from '../projects/projects.store';
 
 /**
  * Sends a visitor without a session to the idp's login page, which sends them back here.

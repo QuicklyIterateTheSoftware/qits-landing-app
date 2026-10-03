@@ -4,10 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { commands, page } from 'vitest/browser';
-import { client as projectsClient } from '../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { ProjectWork } from './project-work';
-import { ProjectWorkArchive } from '../project-work-archive/project-work-archive';
+import { client as projectsClient } from '../../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
+import { ProjectWorkPage } from './project-work.page';
+import { ProjectWorkArchivePage } from '../work-archive/project-work-archive.page';
 
 /**
  * Screenshots of a project's Work page (board and backlog) and its Archive, answered with
@@ -25,8 +25,8 @@ describe('Project work (screenshots)', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'projects/:slug/work', component: ProjectWork },
-          { path: 'projects/:slug/work/archive', component: ProjectWorkArchive },
+          { path: 'projects/:slug/work', component: ProjectWorkPage },
+          { path: 'projects/:slug/work-archive', component: ProjectWorkArchivePage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -40,7 +40,7 @@ describe('Project work (screenshots)', () => {
 
   /** The page at `section` of the recorded project, with the list and its work answered. */
   async function shown(
-    section: 'work' | 'work/archive',
+    section: 'work' | 'work-archive',
     answerWork = true,
     workState = 'a project with work in every status',
   ) {
@@ -88,7 +88,7 @@ describe('Project work (screenshots)', () => {
   });
 
   it('shows the archive: the work in a final state', async () => {
-    const { element } = await shown('work/archive');
+    const { element } = await shown('work-archive');
     await expect.element(element).toHaveTextContent('Done ticket');
     await expect.element(element).toHaveTextContent('Dropped epic');
     await expect.element(element).not.toHaveTextContent('Reported ticket');

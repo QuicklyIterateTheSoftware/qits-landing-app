@@ -8,12 +8,19 @@ This file covers the rules that are easy to break.
 - `src/app/ui/components/<component>/`: dumb, presentational components (`stat`, `spinner`,
   `card`, …). Inputs and projected content only; they know nothing about projects, statuses or
   stores. Each has its own plain spec and a screenshot spec with inline data.
-- `src/app/patterns/<domain>/<component>/`: smart components (pages and their parts, such as
-  `patterns/projects/project-card/`, `patterns/work/project-work/`). They read stores and map the
+- `src/app/routes/`: the routed components, on a tree that mirrors the URL (`:param` is a
+  directory `[param]`). A route's full path (parents joined, `''` skipped) is the directory of its
+  component: `projects/:slug/work` is `routes/projects/[slug]/work/project-work.page.ts`. A routed
+  component is a page, `<name>.page.ts` with class `<Name>Page`; one with child routes is a layout,
+  `<name>.layout.ts` with class `<Name>Layout` (the shell: `routes/shell.layout.ts`). Nothing else
+  that is a component lives here. `app.routes.ts` loads every page lazily (`loadComponent`). The
+  `@qits/angular` lint rules `qits/page-location`, `qits/page-suffix` and
+  `qits/route-matches-directory` check this.
+- `src/app/patterns/<domain>/<component>/`: smart components that are not routed (menus, cards,
+  board nodes, toasts, such as `patterns/projects/project-card/`). They read stores and map the
   data onto `ui/components`. Specs sit beside each component.
 - `src/app/core/<domain>/`: state, services and pure functions (stores and their `*.consumes.ts`
-  and pact specs, `selected-project.ts`, `work-statuses.ts`).
-- `src/app/layout/`, `src/app/auth/` and `src/app/root-redirect.ts`: the shell, for now.
+  and pact specs, `selected-project.ts`, `work-statuses.ts`, the session guard in `core/auth/`).
 
 ## Live domain events
 

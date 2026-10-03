@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AppOrigins } from '../../../core/platform/app-origins';
-import { SelectedProject } from '../../../core/projects/selected-project';
+import { AppOrigins } from '../../../../core/platform/app-origins';
+import { SelectedProject } from '../../../../core/projects/selected-project';
 
 /**
  * The platform's browser editor for a project, at `/projects/<slug>/editor`, embedded in a frame
@@ -19,7 +19,7 @@ import { SelectedProject } from '../../../core/projects/selected-project';
  * its service worker and same-origin access to its own origin, which a sandbox would take away.
  */
 @Component({
-  selector: 'app-project-editor',
+  selector: 'app-project-editor-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   // The top bar is 3.5rem; the frame takes the rest of the window, without a scrollbar.
   host: { class: 'block h-[calc(100vh-3.5rem)]' },
@@ -32,7 +32,7 @@ import { SelectedProject } from '../../../core/projects/selected-project';
     ></iframe>
   `,
 })
-export class ProjectEditor {
+export class ProjectEditorPage {
   private readonly selected = inject(SelectedProject);
   private readonly origins = inject(AppOrigins);
   private readonly sanitizer = inject(DomSanitizer);

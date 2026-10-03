@@ -1,20 +1,19 @@
 import { Routes } from '@angular/router';
-import { sessionGuard } from './auth/session.guard';
-import { Layout } from './layout/layout';
-import { ProjectPage } from './patterns/projects/project-page/project-page';
-import { ProjectPicker } from './patterns/projects/project-picker/project-picker';
-import { ProjectSetup } from './patterns/projects/project-setup/project-setup';
-import { ProjectWork } from './patterns/work/project-work/project-work';
-import { WorkItem } from './patterns/work/work-item/work-item';
-import { ProjectWorkArchive } from './patterns/work/project-work-archive/project-work-archive';
-import { ProjectEvents } from './patterns/events/project-events/project-events';
-import { ProjectObservability } from './patterns/observability/project-observability/project-observability';
-import { ProjectEditor } from './patterns/projects/project-editor/project-editor';
-import { RootRedirect } from './root-redirect';
-import { ProjectRepositories } from './patterns/repositories/project-repositories/project-repositories';
+import { sessionGuard } from './core/auth/session.guard';
 
 /**
- * The root hands on to `projects` (`RootRedirect`, see there why not `redirectTo`), the project
+ * Routes live on the filesystem: `routes/` mirrors the URL. A route's full path (its parents'
+ * paths joined, `''` skipped, `:param` as `[param]`) is the directory of its component's file
+ * under `routes/`, so `projects/:slug/work` renders `routes/projects/[slug]/work/*.page.ts`. A
+ * routed component is a page (`<name>.page.ts`, class `<Name>Page`), or a layout when it has
+ * children (`<name>.layout.ts`, class `<Name>Layout`). Components that are not routed live in
+ * `patterns/` and `ui/components/`. The `@qits/angular` lint rules `qits/page-location`,
+ * `qits/page-suffix` and `qits/route-matches-directory` check this.
+ *
+ * Every route loads its component lazily (`loadComponent`), so no page is in the initial bundle
+ * and each page is a chunk of its own.
+ *
+ * The root hands on to `projects` (`RootPage`, see there why not `redirectTo`), the project
  * list is at `projects`, one project's page at `projects/<slug>`, and a catch-all that is
  * load-bearing rather than tidy.
  *
@@ -31,28 +30,83 @@ import { ProjectRepositories } from './patterns/repositories/project-repositorie
  * It also makes this application indifferent to whether the edge forwards the prefix verbatim or
  * strips it, which is one fewer thing that has to be true for the front door to work.
  *
- * `Layout` is the root route component, so the chrome survives navigation and only the outlet
+ * `ShellLayout` is the root route component, so the chrome survives navigation and only the outlet
  * beneath it changes. `sessionGuard` sends a visitor without a session to the idp's login page.
  */
 export const routes: Routes = [
   {
     path: '',
-    component: Layout,
+    loadComponent: () => import('./routes/shell.layout').then((m) => m.ShellLayout),
     canActivate: [sessionGuard],
     children: [
-      { path: '', component: RootRedirect },
-      { path: 'projects', component: ProjectPicker },
-      { path: 'projects/:slug', component: ProjectPage },
-      { path: 'projects/:slug/work', component: ProjectWork },
-      { path: 'projects/:slug/work/archive', component: ProjectWorkArchive },
-      // After `work/archive`, so that one keeps matching; item ids are qualified (`qits-112`).
-      { path: 'projects/:slug/work/:id', component: WorkItem },
-      { path: 'projects/:slug/editor', component: ProjectEditor },
-      { path: 'projects/:slug/repositories', component: ProjectRepositories },
-      { path: 'projects/:slug/observability', component: ProjectObservability },
-      { path: 'projects/:slug/events', component: ProjectEvents },
-      { path: 'projects/:slug/setup', component: ProjectSetup },
-      { path: '**', component: ProjectPicker },
+      { path: '', loadComponent: () => import('./routes/root.page').then((m) => m.RootPage) },
+      {
+        path: 'projects',
+        loadComponent: () =>
+          import('./routes/projects/project-picker.page').then((m) => m.ProjectPickerPage),
+      },
+      {
+        path: 'projects/:slug',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/project.page').then((m) => m.ProjectPage),
+      },
+      {
+        path: 'projects/:slug/work',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/work/project-work.page').then((m) => m.ProjectWorkPage),
+      },
+      {
+        path: 'projects/:slug/work-archive',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/work-archive/project-work-archive.page').then(
+            (m) => m.ProjectWorkArchivePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/work/:id',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/work/[id]/work-item.page').then((m) => m.WorkItemPage),
+      },
+      {
+        path: 'projects/:slug/editor',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/editor/project-editor.page').then(
+            (m) => m.ProjectEditorPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/project-repositories.page').then(
+            (m) => m.ProjectRepositoriesPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/observability',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/observability/project-observability.page').then(
+            (m) => m.ProjectObservabilityPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/events',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/events/project-events.page').then(
+            (m) => m.ProjectEventsPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/setup',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/setup/project-setup.page').then(
+            (m) => m.ProjectSetupPage,
+          ),
+      },
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./routes/projects/project-picker.page').then((m) => m.ProjectPickerPage),
+      },
     ],
   },
 ];

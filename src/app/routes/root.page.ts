@@ -9,11 +9,11 @@ import { Router } from '@angular/router';
  * return to.
  */
 @Component({
-  selector: 'app-root-redirect',
+  selector: 'app-root-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: ``,
 })
-export class RootRedirect {
+export class RootPage {
   constructor() {
     void inject(Router).navigate(['/projects'], { replaceUrl: true });
   }
