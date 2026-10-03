@@ -8,7 +8,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
  * (`ui-id-strip`), then its title and a kind chip. `border` is the card's border colour (a full Tailwind class, e.g. `border-ocean-deep-400`).
  * With `link`, the title is a link stretched over the whole card; hovering it shadows the card
  * itself (the card clips its content, so a shadow inside it would not show). Projected content (tags, say)
- * goes under the title.
+ * goes under the title; a word too long for the card breaks anywhere (`wrap-anywhere`), so it never overflows.
  */
 @Component({
   selector: 'ui-board-card',
@@ -25,7 +25,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
     <ui-id-strip class="rounded-l-[5px]" [id]="code()" />
     <div class="min-w-0 flex-1 p-2">
       <!-- The kind floats flush into the top-right corner; the title flows around it. -->
-      <p class="m-0 text-charcoal-brown-900">
+      <p class="m-0 text-charcoal-brown-900 wrap-anywhere">
         <span
           class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] text-[0.6875rem] text-ocean-deep-800"
           >{{ kind() }}</span

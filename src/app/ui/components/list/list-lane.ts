@@ -48,7 +48,7 @@ let nextListLaneId = 0;
       </span>
     </div>
     <div
-      class="ml-6 flex items-center justify-end gap-2 bg-charcoal-brown-800/40 px-2 py-1 text-xs text-white [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="ml-6 flex items-center justify-end gap-2 bg-charcoal-brown-800/40 px-2 py-1 text-xs wrap-anywhere text-white [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[lane-header]" />
     </div>

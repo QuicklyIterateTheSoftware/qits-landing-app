@@ -153,6 +153,29 @@ class Linked {
   readonly columns = COLUMNS;
 }
 
+/** A word longer than a column, with no space to break at: in a card title, a lane title and a feature title. */
+const LONG_WORD = 'qits-landing-app/src/app/ui/components/board/board-card.ts:wrap-anywhere';
+
+@Component({
+  imports: [Board, BoardLane, BoardRow, BoardCard],
+  host: { class: 'block w-[48rem] p-4' },
+  template: `
+    <ui-board [columns]="columns" gutter>
+      <ui-board-lane>
+        <span lane-header class="font-semibold">{{ word }}</span>
+        <ui-board-row>
+          <ui-board-card id="long" [column]="0" code="qits-51" [title]="word" kind="task" />
+          <span row-footer>{{ word }}</span>
+        </ui-board-row>
+      </ui-board-lane>
+    </ui-board>
+  `,
+})
+class LongWords {
+  readonly columns = COLUMNS;
+  readonly word = LONG_WORD;
+}
+
 describe('Board (screenshots)', () => {
   beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
 
@@ -174,6 +197,22 @@ describe('Board (screenshots)', () => {
     const fixture = TestBed.createComponent(Finishing);
     fixture.detectChanges();
     await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('finishing');
+  });
+
+  it('breaks a word too long for its card, lane or feature title instead of overflowing', async () => {
+    const fixture = TestBed.createComponent(LongWords);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const card = element.querySelector('#long') as HTMLElement;
+    const header = element.querySelector('ui-board-lane') as HTMLElement;
+    // The card stays in its column: no wider than the Refined header.
+    const column = element.querySelector('ui-board > div:first-child > div:nth-child(2)')!;
+    expect(card.getBoundingClientRect().right).toBeLessThanOrEqual(
+      column.getBoundingClientRect().right,
+    );
+    expect(card.scrollWidth).toBeLessThanOrEqual(card.clientWidth);
+    expect(header.scrollWidth).toBeLessThanOrEqual(header.clientWidth);
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('long-words');
   });
 
   it('shadows a standalone ticket card', async () => {

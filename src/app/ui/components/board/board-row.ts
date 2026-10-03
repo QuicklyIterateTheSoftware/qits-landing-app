@@ -30,7 +30,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </span>
     <ng-content />
     <div
-      class="col-span-full flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-span-full flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[row-footer]" />
     </div>
