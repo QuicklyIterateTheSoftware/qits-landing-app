@@ -1,7 +1,7 @@
 import { DOCUMENT, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import type { CanActivateFn } from '@angular/router';
-import { AppOrigins } from '$core/platform/app-origins';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ProjectsStore } from '$core/projects/projects.store';
 
 /**
@@ -10,19 +10,16 @@ import { ProjectsStore } from '$core/projects/projects.store';
  * The check is a cheap read that the edge only lets through with a valid `qits-session` cookie;
  * without one, the edge answers 401.
  *
- * The server render passes: it holds no cookie to check, and the browser checks right after. So
- * does a page whose backend origins are not known (`AppOrigins.backendsFailed()`): the layout says so,
- * and a login page on this host would be a guess.
+ * The server render passes: it holds no cookie to check, and the browser checks right after.
  */
 export const sessionGuard: CanActivateFn = async (_route, state) => {
   if (isPlatformServer(inject(PLATFORM_ID))) return true;
   // Every inject() before the first await: after it, the injection context is gone.
   const location = inject(DOCUMENT).location;
-  const origins = inject(AppOrigins);
+  const origins = inject(PlatformOrigins);
   const projects = inject(ProjectsStore);
-  if (origins.backendsFailed()) return true;
   if (!(await projects.hasSession())) {
-    location.assign(loginUrl(origins.origin('idp'), location.host, state.url));
+    location.assign(loginUrl(origins.api('idp'), location.host, state.url));
     return false;
   }
   return true;

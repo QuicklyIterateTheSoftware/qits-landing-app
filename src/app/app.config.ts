@@ -1,8 +1,8 @@
 import {
   ApplicationConfig,
   inject,
-  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
+  provideEnvironmentInitializer,
 } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
@@ -14,7 +14,7 @@ import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { routes } from './app.routes';
-import { AppOrigins, type Backend } from '$core/platform/app-origins';
+import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
 
 /** Each generated client and the backend it calls. */
 const CLIENTS = [
@@ -22,19 +22,18 @@ const CLIENTS = [
   [githostClient, 'githost'],
   [eventsClient, 'events'],
   [maintenanceClient, 'maintenance'],
-] as const satisfies readonly (readonly [unknown, Backend])[];
+] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
- * Points each generated client at its backend's origin before the first call: the app waits for
- * initializers before it routes. A cross-origin client sends the session cookie
+ * Points each generated client at its backend's origin (`PlatformOrigins.api`), synchronously, as
+ * the injector is created and so before any call. A cross-origin client sends the session cookie
  * (`credentials: 'include'`); the edge answers credentialed CORS for every host of the platform.
  */
 function provideBackendOrigins() {
-  return provideAppInitializer(async () => {
-    const origins = inject(AppOrigins);
-    await origins.load();
-    for (const [client, backend] of CLIENTS) {
-      const baseUrl = origins.origin(backend);
+  return provideEnvironmentInitializer(() => {
+    const origins = inject(PlatformOrigins);
+    for (const [client, app] of CLIENTS) {
+      const baseUrl = origins.api(app);
       client.setConfig(baseUrl ? { baseUrl, credentials: 'include' } : { baseUrl });
     }
   });

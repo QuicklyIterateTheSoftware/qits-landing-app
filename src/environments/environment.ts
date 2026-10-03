@@ -1,13 +1,13 @@
 /**
- * The build switch for where backend calls go. This file is the deployed build's; `ng serve` (the
- * `development` configuration) swaps in `environment.development.ts` through `fileReplacements`.
+ * The build switch for where platform applications answer (`core/platform/platform-origins.ts`).
+ * This file is the deployed build's; `ng serve` (the `development` configuration) swaps in
+ * `environment.development.ts` through `fileReplacements`.
  */
 export const environment = {
   /**
-   * False: each backend is called at its own application's origin, read from `/main-navigation`
-   * (`core/platform/app-origins.ts`). True: every call stays on this page's origin, which only
-   * works where something serves the backends' paths there, i.e. `proxy.conf.json` under
-   * `ng serve`.
+   * `null`: deployed. Every application answers at `https://<label>.<this page's hostname>`.
+   * A domain: `ng serve`. Api paths stay on this page's origin (`proxy.conf.json` serves them),
+   * and pages (the Editor frame, links) open on that domain.
    */
-  sameOriginApis: false,
+  platformDomain: null as string | null,
 };

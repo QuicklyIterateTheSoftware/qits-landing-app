@@ -7,7 +7,6 @@ const REPOSITORY = {
   'qits-githost': 'qits-githost-service',
   'qits-events': 'qits-events-service',
   'qits-maintenance': 'qits-maintenance-service',
-  'qits-edge': 'qits-edge-service',
 } as const;
 
 /** A provider whose golden masters the browser specs read. */

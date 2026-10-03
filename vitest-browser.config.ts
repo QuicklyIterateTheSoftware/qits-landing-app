@@ -4,7 +4,6 @@ import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
 import { pactedGoldenMasters } from '@qits/angular/testing';
 import {
-  edgeGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
   maintenanceGoldenMasters,
@@ -27,7 +26,6 @@ const READERS = {
     maintenanceGoldenMasters,
     pactWith('qits-maintenance-service'),
   ),
-  'qits-edge': pactedGoldenMasters(edgeGoldenMasters, pactWith('qits-edge-service')),
 };
 
 /**

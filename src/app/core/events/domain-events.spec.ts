@@ -10,7 +10,7 @@ import {
   type DomainEvent,
   type EventSourceLike,
 } from './domain-events';
-import { AppOrigins } from '$core/platform/app-origins';
+import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /** A stand-in for the browser's `EventSource`: records its URL, and lets a spec push frames. */
 class FakeSource implements EventSourceLike {
@@ -40,7 +40,7 @@ describe('DomainEvents', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: platform },
-        { provide: AppOrigins, useValue: { origin: () => eventsOrigin } },
+        provideTestPlatformOrigins({ events: eventsOrigin }),
         {
           provide: EVENT_SOURCE,
           useValue: (url: string) => {

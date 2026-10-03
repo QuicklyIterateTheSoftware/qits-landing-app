@@ -38,10 +38,5 @@
     "cookieDomainRewrite": {
       "*": ""
     }
-  },
-  "/main-navigation": {
-    "target": "https://qits.wohlben.eu",
-    "secure": true,
-    "changeOrigin": true
   }
 }

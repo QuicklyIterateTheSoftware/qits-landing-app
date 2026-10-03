@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AppOrigins } from '$core/platform/app-origins';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 
 /**
@@ -10,9 +10,8 @@ import { SelectedProject } from '$core/projects/selected-project';
  * The frame opens qits-workspaces' editor door, `/<slug>/editor` on the workspaces host: the door
  * asks the platform for the shared editor, waits until it answers, and then moves on to the editor
  * on its own origin, opened at the project's folder. That last step happens inside the frame, so
- * this page stays the frame around it. The workspaces origin is the navigation's `qits-workspaces`
- * (`AppOrigins`); until it is known (on the server, or when the navigation names none) the frame
- * shows `about:blank`, and the layout's alert says what is missing.
+ * this page stays the frame around it. The workspaces origin is `PlatformOrigins.page`; until it is
+ * known (on the server, deployed) the frame shows `about:blank`.
  *
  * `allow="clipboard-read; clipboard-write"` lets the editor copy and paste; the browser denies the
  * clipboard to a frame that is not allowed it. No `sandbox`: the editor needs scripts, storage,
@@ -34,14 +33,13 @@ import { SelectedProject } from '$core/projects/selected-project';
 })
 export class ProjectEditorPage {
   private readonly selected = inject(SelectedProject);
-  private readonly origins = inject(AppOrigins);
+  private readonly origins = inject(PlatformOrigins);
   private readonly sanitizer = inject(DomSanitizer);
 
   /** The editor door's address for the open project. */
-  readonly url = computed(() => editorUrl(this.origins.origin('workspaces'), this.selected.slug()));
+  readonly url = computed(() => editorUrl(this.origins.page('workspaces'), this.selected.slug()));
 
-  // The origin passed `AppOrigins`' check (https, under the platform's domain); the slug is
-  // encoded.
+  // The origin comes from code (`PlatformOrigins`), not from data; the slug is encoded.
   protected readonly src = computed(() =>
     this.sanitizer.bypassSecurityTrustResourceUrl(this.url()),
   );

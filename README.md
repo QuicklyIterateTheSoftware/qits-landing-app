@@ -60,13 +60,11 @@ origin.
 origin (`https://projects.<domain>/projects/api/…`), with the session cookie
 (`credentials: 'include'`, `EventSource` `withCredentials`). The edge routes an application's paths
 on its own host only and answers credentialed CORS for every host under the platform's domain (epic
-qits-528). The origins come from `GET /main-navigation` (`applications.<app>.origin`), read once by
-an app initializer before the first call (`core/platform/app-origins.ts`, wired in `app.config.ts`).
-If it fails, or names no origin for a backend, the layout shows an alert. A visitor without a session
-goes to `<idp origin>/idp/login?return_host=<this host>&return_path=<path>`.
-
-An origin counts only if it is `https:` on this page's domain or a name under it; anything else
-counts as missing. The Editor frame opens the navigation's `qits-workspaces` origin.
+qits-528). The origins come from code: `https://<label>.<this page's hostname>`
+(`core/platform/platform-origins.ts`, wired in `app.config.ts`). A visitor without a session goes to
+`<idp origin>/idp/login?return_host=<this host>&return_path=<path>`. The Editor frame opens
+`https://workspaces.<domain>`; under `ng serve` that domain is `platformDomain` in
+`environment.development.ts`.
 
 Under `ng serve` the backend calls stay on localhost instead: the `development` configuration swaps
 `src/environments/environment.ts` for `environment.development.ts` (`sameOriginApis: true`), so every

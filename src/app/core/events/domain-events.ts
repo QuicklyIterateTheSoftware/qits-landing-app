@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { EMPTY, Observable, Subject, filter, share } from 'rxjs';
-import { AppOrigins } from '$core/platform/app-origins';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import type { EventEntry } from './events.consumes';
 
 /** One domain event as the live stream delivers it: the same envelope as the list's entries. */
@@ -25,7 +25,7 @@ export const EVENT_SOURCE = new InjectionToken<(url: string) => EventSourceLike>
 });
 
 /**
- * qits-events' Server-Sent Events route, on qits-events' origin (`AppOrigins`); `?names=` is the
+ * qits-events' Server-Sent Events route, on qits-events' origin (`PlatformOrigins.api`); `?names=` is the
  * subscription (`*` is everything).
  */
 export const STREAM_PATH = '/events/api/stream';
@@ -65,7 +65,7 @@ const CLOSED = 2;
 export class DomainEvents {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly open = inject(EVENT_SOURCE);
-  private readonly origins = inject(AppOrigins);
+  private readonly origins = inject(PlatformOrigins);
 
   /** Each live subscription's names. */
   private readonly subscriptions = new Map<symbol, readonly string[]>();
@@ -122,7 +122,7 @@ export class DomainEvents {
     if (names === '') return;
     this.openNames = names;
     const source = this.open(
-      `${this.origins.origin('events')}${STREAM_PATH}?names=${encodeURIComponent(names)}`,
+      `${this.origins.api('events')}${STREAM_PATH}?names=${encodeURIComponent(names)}`,
     );
     source.onmessage = (message) => {
       this.backoff = RECONNECT_MIN_MS;

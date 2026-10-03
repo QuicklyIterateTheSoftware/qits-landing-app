@@ -8,8 +8,6 @@
  * The value is a one-line title, for people.
  */
 export const INTERACTIONS = {
-  /** `app-origins.ts`, `load()` from an app initializer: where each application answers. */
-  'load-app-origins': 'Opening the app reads where each application answers',
   /** `session.guard.ts`: the session check before any page under the layout renders. */
   'sign-in-landing': 'Arriving at the landing page checks the visitor has a session',
   /** `projects.store.ts`, `load()` from the store's `onInit`: the picker's list. */

@@ -46,19 +46,21 @@ panel are projected, `opened` fires on each opening.
 
 ## Backend origins
 
-Every backend path is called at its owner's origin, never relative: `AppOrigins`
-(`core/platform/app-origins.ts`) reads `/main-navigation` once in an app initializer, and
-`app.config.ts` gives each generated client its `baseUrl` and `credentials: 'include'`. A new
-backend gets an entry in `BACKEND_APPS` and in `app.config.ts`'s `CLIENTS`; an application the
-app only opens (a frame, a link) gets one in `PAGE_APPS`. Never compose a hostname.
+Where each platform application answers comes from code, not from the network: inject
+`PlatformOrigins` (`core/platform/platform-origins.ts`). The app does not read `/main-navigation`.
 
-An origin counts only if it is `https:` and its host is the platform's domain or a name under it
-(`trustedOrigin`); anything else is missing, and the layout's alert shows it. Deployed, the domain
-is the page's own hostname (the app lives at the apex). Under `ng serve`
-(`src/environments/environment.development.ts`) the backends stay same-origin on the proxy, but the
-navigation is still read through `proxy.conf.json`, and page origins are checked against the domain
-the navigation states in its own `origin` field. Pact specs keep setting each client's `baseUrl` to
-their mock server.
+- `api(app)`: the prefix for paths this page reaches as itself: calls, the event stream, the idp
+  login. `app.config.ts` gives each generated client its `baseUrl` from it, synchronously, and
+  `credentials: 'include'` when it is cross-origin.
+- `page(app)`: the origin of an application opened as its own page (the Editor frame, a link).
+
+Deployed, both are `https://<label>.<this page's hostname>` (the app lives at the apex); on the
+server both are `''`, and the server calls nothing. Under `ng serve`
+(`environment.development.ts`, `platformDomain`) `api` is `''`, because `proxy.conf.json` serves
+those paths, and `page` is `https://<label>.<platformDomain>`. The labels are `HOST_LABELS`, the
+one place a hostname is composed; a new application gets an entry there (and in `CLIENTS` when it
+has a generated client). Specs provide `provideTestPlatformOrigins` (`src/testing/`); pact specs
+keep setting each client's `baseUrl` to their mock server.
 
 ## Telemetry
 
@@ -95,7 +97,6 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | --------------------- | ---------------------------------- | --------------------------------------------------- | ------------------------------- |
 | qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
 | qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-landing-app_qits-githost-service.json`  | `@qits/githost-golden-masters`  |
-| qits-edge-service     | `core/platform/app-origins*.ts`    | `pacts/qits-landing-app_qits-edge-service.json`     | `@qits/edge-golden-masters`     |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

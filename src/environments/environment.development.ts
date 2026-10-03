@@ -1,4 +1,4 @@
-/** `ng serve`: `proxy.conf.json` serves every backend path on this origin. See `environment.ts`. */
+/** `ng serve`: `proxy.conf.json` serves every api path; pages open on this platform. See `environment.ts`. */
 export const environment = {
-  sameOriginApis: true,
+  platformDomain: 'qits.wohlben.eu' as string | null,
 };

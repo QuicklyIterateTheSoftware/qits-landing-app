@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { AppOrigins } from '$core/platform/app-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
@@ -123,15 +122,6 @@ export interface NavLink {
       </nav>
 
       <main class="col-start-1 row-start-2 min-w-0 md:col-start-2">
-        <!-- Hidden, not removed, while every backend has an address: the server renders it hidden. -->
-        <p
-          role="alert"
-          class="m-4 rounded-md border border-cinnabar-300 bg-cinnabar-50 px-4 py-3 text-cinnabar-800"
-          [class]="origins.failed() ? 'block' : 'hidden'"
-        >
-          The platform did not say where its services answer (<code>GET /main-navigation</code>), so
-          the page cannot load {{ origins.missing().join(', ') }}. Reload the page to try again.
-        </p>
         <router-outlet />
       </main>
     </div>
@@ -141,8 +131,6 @@ export interface NavLink {
 })
 export class ShellLayout {
   private readonly selected = inject(SelectedProject);
-  /** Where the backends answer; the alert shows when some have no address. */
-  protected readonly origins = inject(AppOrigins);
 
   /**
    * The sidebar lists the open project's sections; with no project open it is empty. Where you
