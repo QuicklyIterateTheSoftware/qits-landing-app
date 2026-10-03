@@ -25,7 +25,7 @@ import { EpicListItem } from './epic-list-item';
   host: { class: 'flex w-[40rem] flex-col gap-12 p-4 pb-8 [&_ui-board-card]:self-stretch' },
   template: `
     @if (node(); as node) {
-      <app-epic-list-item [node]="node" base="/projects/contract/work" [view]="view" />
+      <app-epic-list-item [node]="node" base="/projects/contract/work/detail" [view]="view" />
     }
   `,
 })

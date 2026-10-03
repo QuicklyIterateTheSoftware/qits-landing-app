@@ -18,7 +18,7 @@ import type { LoadState } from '$ui/components/spinner/spinner';
 import { SelectedProject } from '$core/projects/selected-project';
 
 /**
- * The open project's work, for the Work and Archive pages: the same `WorkStore` answer the project
+ * The open project's work, for the work section's pages: the same `WorkStore` answer the project
  * card counts from (one request per project, shared), loaded here if nothing asked for it yet.
  */
 /** The event qits-projects announces for every status or shape change of work entities. */

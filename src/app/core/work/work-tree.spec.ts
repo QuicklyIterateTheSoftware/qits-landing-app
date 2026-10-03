@@ -161,6 +161,22 @@ describe('WorkGraph', () => {
     expect(new WorkGraph(done).tree('archive').map(shape)).toEqual(['d', 'x(f)']);
   });
 
+  it('counts the epics and tickets in a phase, not their features, tasks or campaigns', () => {
+    const graph = new WorkGraph([
+      entry('r', 'TICKET', 'REPORTED'),
+      entry('e', 'EPIC', 'IMPLEMENTING'),
+      entry('f', 'FEATURE', undefined, 'e'),
+      entry('t', 'TICKET', 'VERIFYING'),
+      entry('c', 'CAMPAIGN', 'REFINED'),
+      entry('d', 'TICKET', 'DONE'),
+      entry('x', 'EPIC', 'DROPPED'),
+    ]);
+    expect(graph.count('backlog')).toBe(1);
+    expect(graph.count('board')).toBe(2);
+    expect(graph.count('acceptance')).toBe(0);
+    expect(graph.count('archive')).toBe(2);
+  });
+
   it('counts an epic’s tasks per board column, zero columns included', () => {
     const [implementing] = new WorkGraph(epic).tree('board');
     expect(taskDistribution(implementing)).toEqual({

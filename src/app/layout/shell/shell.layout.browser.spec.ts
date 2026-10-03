@@ -33,7 +33,8 @@ describe('ShellLayout (screenshots)', () => {
         provideRouter([
           { path: '', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
-          { path: 'projects/:slug/work/:item', component: TestPage },
+          { path: 'projects/:slug/work/acceptance', component: TestPage },
+          { path: 'projects/:slug/work/detail/:item', component: TestPage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -130,8 +131,19 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('project');
   });
 
+  it('keeps Work current on a page of the work section, named in the breadcrumb', async () => {
+    const { layout } = await renderProject('/work/acceptance');
+    await expect
+      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Work' }))
+      .toHaveAttribute('aria-current', 'page');
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
+    await expect.element(breadcrumb).toHaveTextContent('Acceptance');
+    await expect.element(layout).toMatchScreenshot('work-tab');
+  });
+
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {
-    const { project, layout } = await renderProject('/work/qits-112');
+    const { project, layout } = await renderProject('/work/detail/qits-112');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Projects' })).toBeVisible();
     await expect.element(breadcrumb.getByRole('link', { name: project.name })).toBeVisible();
@@ -141,7 +153,7 @@ describe('ShellLayout (screenshots)', () => {
 
   it('collapses a work item’s breadcrumbs to the first, … and the last two on a narrow screen', async () => {
     await page.viewport(400, 600);
-    const { project, layout } = await renderProject('/work/qits-112');
+    const { project, layout } = await renderProject('/work/detail/qits-112');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect
       .element(breadcrumb.getByRole('button', { name: `Show the full path: ${project.name}` }))
@@ -159,7 +171,7 @@ describe('ShellLayout (screenshots)', () => {
 
   it('opens the whole trail from the … on a narrow screen until focus leaves it', async () => {
     await page.viewport(400, 600);
-    const { project, layout } = await renderProject('/work/qits-112');
+    const { project, layout } = await renderProject('/work/detail/qits-112');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     const name = breadcrumb.getByRole('link', {
       name: project.name,

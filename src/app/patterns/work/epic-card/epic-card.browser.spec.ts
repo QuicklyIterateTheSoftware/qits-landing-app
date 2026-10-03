@@ -31,7 +31,7 @@ import { EpicCard } from './epic-card';
   template: `
     <ui-board [columns]="columns" gutter>
       @if (node(); as node) {
-        <app-epic-card [node]="node" base="/projects/contract/work" />
+        <app-epic-card [node]="node" base="/projects/contract/work/detail" />
       }
     </ui-board>
   `,

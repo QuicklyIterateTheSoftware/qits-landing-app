@@ -108,6 +108,17 @@ export class WorkGraph {
     return COLUMN_BY_STATUS['REFINED'];
   }
 
+  /**
+   * How many epics and tickets are in `phase`: the items with a status of their own. Features,
+   * tasks and campaigns are not counted.
+   */
+  count(phase: Phase): number {
+    return this.entries.filter(
+      (entry) =>
+        entry.status && entry.archetype !== 'CAMPAIGN' && PHASE_BY_STATUS[entry.status] === phase,
+    ).length;
+  }
+
   /** The tree of every entity in `phase`, with their ancestors as context, in tree order. */
   tree(phase: Phase): readonly WorkNode[] {
     const included = new Set<string>();

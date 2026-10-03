@@ -12,7 +12,7 @@ import type { WorkNode } from '$core/work/work-tree';
  * qits-projects' golden masters.
  *
  * The spec routes `projects/:slug/:view/:qualifiedId` to a small host component. The host reads
- * the open project's work through `SelectedWork`, as the Work and Archive pages do, and draws the
+ * the open project's work through `SelectedWork`, as the work section's pages do, and draws the
  * one top-level node whose qualified id the URL names ({@link nodeOf}), or the whole tree. {@link openRecordedWork}
  * navigates there and answers every request with a recording: the project list from "a project
  * exists", the work (and each campaign in it) from the case's state.

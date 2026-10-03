@@ -4,36 +4,30 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
-import { ProjectWorkArchivePage } from './project-work-archive.page';
-import { goldenMaster } from '../../../../../testing/browser/golden-master';
+import { client as projectsClient } from '../../../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
+import { WorkArchivePage } from './work-archive.page';
+import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of a project's Archive, answered with qits-projects' golden masters: the project list
  * as recorded, and "a project with work in every status" (one epic and one ticket per status, DONE
- * and DROPPED included) or "a project with no work" for its work. The page follows transitions
- * through the event stream; the stream here never connects, so nothing comes over the network.
+ * and DROPPED included) or "a project with no work" for its work.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-describe('ProjectWorkArchivePage (screenshots)', () => {
+describe('WorkArchivePage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/work-archive', component: ProjectWorkArchivePage }]),
+        provideRouter([{ path: 'projects/:slug/work/archive', component: WorkArchivePage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
-        {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
-        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -46,7 +40,7 @@ describe('ProjectWorkArchivePage (screenshots)', () => {
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work-archive`);
+    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/archive`);
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
@@ -70,6 +64,7 @@ describe('ProjectWorkArchivePage (screenshots)', () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectEntities'));
     await answered();
+    await expect.element(element.getByRole('heading', { level: 1 })).toHaveTextContent('Archive');
     await expect.element(element).toHaveTextContent('Done ticket');
     await expect.element(element).toHaveTextContent('Dropped epic');
     await expect.element(element).not.toHaveTextContent('Reported ticket');

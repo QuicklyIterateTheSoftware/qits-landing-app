@@ -7,7 +7,7 @@ const trail: readonly Crumb[] = [
   { label: 'Projects', path: '/projects' },
   { label: 'qits', path: '/projects/qits' },
   { label: 'Work', path: '/projects/qits/work' },
-  { label: 'qits-112', path: '/projects/qits/work/qits-112' },
+  { label: 'qits-112', path: '/projects/qits/work/detail/qits-112' },
 ];
 
 @Component({
@@ -108,7 +108,10 @@ describe('Breadcrumbs', () => {
   });
 
   it('names every hidden crumb in the ellipsis label', () => {
-    const deeper = [...trail, { label: 'Notes', path: '/projects/qits/work/qits-112/notes' }];
+    const deeper = [
+      ...trail,
+      { label: 'Notes', path: '/projects/qits/work/detail/qits-112/notes' },
+    ];
     const { ellipsis, items } = render(deeper);
     expect(ellipsis.querySelector('button')?.getAttribute('aria-label')).toBe(
       'Show the full path: qits › Work',

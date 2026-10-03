@@ -73,7 +73,7 @@ interface WorkState {
 
 /**
  * Each project's work entities, from qits-projects' `listProjectEntities` (the whole planning
- * tree, unfiltered): one request per project, shared by the project card and the Work pages.
+ * tree, unfiltered): one request per project, shared by the project card and the work section.
  *
  * - `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  *   project card does in the browser, and `SelectedWork` for the open project.

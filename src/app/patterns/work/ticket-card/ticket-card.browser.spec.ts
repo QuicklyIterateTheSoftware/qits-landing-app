@@ -30,7 +30,7 @@ import { TicketCard } from './ticket-card';
   template: `
     <ui-board [columns]="columns" gutter>
       @if (node(); as node) {
-        <app-ticket-card [node]="node" base="/projects/contract/work" />
+        <app-ticket-card [node]="node" base="/projects/contract/work/detail" />
       }
     </ui-board>
   `,

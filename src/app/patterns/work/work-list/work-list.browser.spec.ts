@@ -31,7 +31,7 @@ import type { WorkListView } from './work-list-view';
       "view === 'acceptance' ? 'relative block w-[40rem] p-4 pb-20 [transform:translateZ(0)]' : 'block w-[40rem] p-4 pb-8'",
   },
   template: `
-    <app-work-list [tree]="tree()" base="/projects/contract/work" [view]="view" />
+    <app-work-list [tree]="tree()" base="/projects/contract/work/detail" [view]="view" />
     @if (view === 'acceptance') {
       <app-finish-toasts />
     }

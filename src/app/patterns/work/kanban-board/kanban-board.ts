@@ -61,7 +61,7 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
 export class KanbanBoard {
   /** The board's work tree: its top-level nodes, in order. */
   readonly tree = input.required<readonly WorkNode[]>();
-  /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
+  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
 
   /**

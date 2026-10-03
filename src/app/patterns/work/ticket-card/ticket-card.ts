@@ -42,7 +42,7 @@ import { Tag } from '$ui/components/tag/tag';
 })
 export class TicketCard {
   readonly node = input.required<WorkNode>();
-  /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
+  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
   /** The ticket is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);

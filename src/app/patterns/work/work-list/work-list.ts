@@ -55,7 +55,7 @@ import type { WorkListView } from './work-list-view';
 export class WorkList {
   /** The list's work tree: its top-level nodes, in order. */
   readonly tree = input.required<readonly WorkNode[]>();
-  /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
+  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
 

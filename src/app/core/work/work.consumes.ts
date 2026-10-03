@@ -14,8 +14,8 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
- * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
- * shows each entity as a small card (qualified id, title, archetype), placed by its status — or,
+ * card and the work section. The card counts entries by status ({@link countsAsWork}); the work
+ * section shows each entity as a small card (qualified id, title, archetype), placed by its status — or,
  * for a feature or task, by its `implementingAt` and `implementedAt` — and nested under its `parent`.
  */
 export const LIST_PROJECT_ENTITIES = [

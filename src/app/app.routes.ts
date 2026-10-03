@@ -34,6 +34,14 @@ import { sessionGuard } from '$core/auth/session.guard';
  * `ShellLayout` is the root route component, so the chrome survives navigation and only the outlet
  * beneath it changes. `sessionGuard` sends a visitor without a session to the idp's login page.
  *
+ * The work section: `projects/<slug>/work` is `WorkLayout`, a row of tabs over its pages
+ * (`refinement`, `in-progress`, `acceptance`, `archive`). An item's page is at
+ * `work/detail/<qualified id>`, so an id can never be taken for a tab; it sits outside the layout,
+ * with no tabs. `/work` opens `in-progress` by a `redirectTo`, not a page as at the root: the
+ * redirect happens before the URL is written, so `/work` never enters the history and Back has
+ * nothing to bounce on, and the server answers `/work` with a 302 instead of rendering an empty
+ * page.
+ *
  * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
  * outside the shell, so the guard does not run on it.
  */
@@ -60,21 +68,48 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/project.page').then((m) => m.ProjectPage),
       },
       {
-        path: 'projects/:slug/work',
+        path: 'projects/:slug/work/detail/:id',
         loadComponent: () =>
-          import('./routes/projects/[slug]/work/project-work.page').then((m) => m.ProjectWorkPage),
-      },
-      {
-        path: 'projects/:slug/work-archive',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/work-archive/project-work-archive.page').then(
-            (m) => m.ProjectWorkArchivePage,
+          import('./routes/projects/[slug]/work/detail/[id]/work-item.page').then(
+            (m) => m.WorkItemPage,
           ),
       },
       {
-        path: 'projects/:slug/work/:id',
+        path: 'projects/:slug/work',
         loadComponent: () =>
-          import('./routes/projects/[slug]/work/[id]/work-item.page').then((m) => m.WorkItemPage),
+          import('./routes/projects/[slug]/work/work.layout').then((m) => m.WorkLayout),
+        children: [
+          // A redirect, not a page like the root's `RootPage`: see "The work section" above.
+          { path: '', pathMatch: 'full', redirectTo: 'in-progress' },
+          {
+            path: 'refinement',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/refinement/work-refinement.page').then(
+                (m) => m.WorkRefinementPage,
+              ),
+          },
+          {
+            path: 'in-progress',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/in-progress/work-in-progress.page').then(
+                (m) => m.WorkInProgressPage,
+              ),
+          },
+          {
+            path: 'acceptance',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/acceptance/work-acceptance.page').then(
+                (m) => m.WorkAcceptancePage,
+              ),
+          },
+          {
+            path: 'archive',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/archive/work-archive.page').then(
+                (m) => m.WorkArchivePage,
+              ),
+          },
+        ],
       },
       {
         path: 'projects/:slug/editor',

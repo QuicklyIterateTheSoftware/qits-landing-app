@@ -84,7 +84,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 export class EpicListItem {
   /** The epic's node: its children are its features, theirs its tasks. */
   readonly node = input.required<WorkNode>();
-  /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
+  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
   /** The epic is leaving the list: it shrinks away, then emits `left`. */

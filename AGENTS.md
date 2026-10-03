@@ -10,9 +10,10 @@ This file covers the rules that are easy to break.
   stores. Each has its own plain spec and a screenshot spec with inline data.
 - `src/app/routes/`: the routed components, on a tree that mirrors the URL (`:param` is a
   directory `[param]`). A route's full path (parents joined, `''` skipped) is the directory of its
-  component: `projects/:slug/work` is `routes/projects/[slug]/work/project-work.page.ts`. A routed
-  component is a page, `<name>.page.ts` with class `<Name>Page`; one with child routes is a layout,
-  `<name>.layout.ts` with class `<Name>Layout`. Nothing else
+  component: `projects/:slug/work/archive` is
+  `routes/projects/[slug]/work/archive/work-archive.page.ts`. A routed component is a page,
+  `<name>.page.ts` with class `<Name>Page`; one with child routes is a layout, `<name>.layout.ts`
+  with class `<Name>Layout` (`routes/projects/[slug]/work/work.layout.ts`). Nothing else
   that is a component lives here. `app.routes.ts` loads every page lazily (`loadComponent`). The
   `@qits/angular` lint rules `qits/page-location`, `qits/page-suffix` and
   `qits/route-matches-directory` check this.

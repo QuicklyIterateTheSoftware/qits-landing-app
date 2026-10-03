@@ -37,9 +37,9 @@ const LOOKS: Readonly<Record<WorkActionId, { label: string; variant: ActionVaria
 const notBuiltYet = (): void => undefined;
 
 /**
- * One work item's page, at `/projects/<slug>/work/<qualified id>`, reached from any card on the
- * board, the backlog or the archive. Its title, and its actions by archetype and status
- * (`workActions` in `$core/work/work-actions.ts`).
+ * One work item's page, at `/projects/<slug>/work/detail/<qualified id>`, reached from any card on
+ * the board or in a list. Its title, and its actions by archetype and status (`workActions` in
+ * `$core/work/work-actions.ts`).
  *
  * Wired: Mark refined and Drop for an epic or a ticket (`WorkStore.transition`). Every other press
  * is a placeholder for now (`notBuiltYet`); see `callbackOf`.

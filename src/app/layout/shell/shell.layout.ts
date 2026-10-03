@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
+import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
@@ -11,8 +12,6 @@ import { Breadcrumbs } from '$ui/components/breadcrumbs/breadcrumbs';
 export interface NavLink {
   readonly label: string;
   readonly path: string;
-  /** Other pages that belong to this section (the Work section's archive). */
-  readonly also?: readonly string[];
 }
 
 /**
@@ -129,11 +128,7 @@ export class ShellLayout {
     return slug === undefined
       ? []
       : [
-          {
-            label: 'Work',
-            path: `/projects/${slug}/work`,
-            also: [`/projects/${slug}/work-archive`],
-          },
+          { label: 'Work', path: `/projects/${slug}/work` },
           { label: 'Editor', path: `/projects/${slug}/editor` },
           { label: 'Repositories', path: `/projects/${slug}/repositories` },
           { label: 'Observability', path: `/projects/${slug}/observability` },
@@ -143,9 +138,8 @@ export class ShellLayout {
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
-   * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive). The
-   * last crumb is the current page and is
-   * not a link.
+   * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
+   * Work › <item id>). The last crumb is the current page and is not a link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
     const projects: NavLink = { label: 'Projects', path: '/projects' };
@@ -155,18 +149,18 @@ export class ShellLayout {
     const crumbs = [projects, { label: project.name ?? slug, path: `/projects/${slug}` }];
     const section = this.section();
     if (!section) return crumbs;
-    // A section's own subpages, one level deep: Work › Archive, Work › <item id>.
+    // A section's own subpages, one level deep: Work › In Progress, Work › <item id>.
     const sub = workSubpage(this.selected.url(), `/projects/${slug}`);
     return sub ? [...crumbs, section, sub] : [...crumbs, section];
   });
 
-  /** The section the URL is in: a sidebar link, or Setup from the gear. */
+  /** The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear. */
   protected readonly section = computed((): NavLink | undefined => {
     const slug = this.selected.slug();
     if (slug === undefined) return undefined;
     const url = this.selected.url();
     return [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find((link) =>
-      [link.path, ...(link.also ?? [])].some((path) => within(url, path)),
+      within(url, link.path),
     );
   });
 
@@ -194,14 +188,21 @@ function within(url: string, path: string): boolean {
 
 /**
  * The crumb of a page below the work section of the project at `project` (`/projects/<slug>`):
- * `<project>/work-archive` or `<project>/work/<item id>`. Undefined for the section itself and
- * anything outside it.
+ * one of its tabs (`<project>/work/in-progress` is "In Progress") or an item
+ * (`<project>/work/detail/<item id>` is the id). Undefined for the section itself and anything
+ * outside it.
  */
 export function workSubpage(url: string, project: string): NavLink | undefined {
-  const archive = `${project}/work-archive`;
-  if (within(url, archive)) return { label: 'Archive', path: archive };
   const work = `${project}/work`;
-  const rest = url.startsWith(`${work}/`) ? url.slice(work.length + 1).split(/[/?#]/)[0] : '';
-  if (!rest) return undefined;
-  return { label: decodeURIComponent(rest), path: `${work}/${rest}` };
+  const [first, second] = url.startsWith(`${work}/`)
+    ? url
+        .slice(work.length + 1)
+        .split(/[?#]/)[0]
+        .split('/')
+    : [];
+  if (first === WORK_DETAIL && second) {
+    return { label: decodeURIComponent(second), path: `${work}/${WORK_DETAIL}/${second}` };
+  }
+  const tab = WORK_TABS.find((t) => t.segment === first);
+  return tab ? { label: tab.label, path: `${work}/${tab.segment}` } : undefined;
 }

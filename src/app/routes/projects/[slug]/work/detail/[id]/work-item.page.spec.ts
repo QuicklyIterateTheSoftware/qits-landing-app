@@ -3,10 +3,10 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { client as projectsClient } from '../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
+import { client as projectsClient } from '../../../../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
-import { goldenMaster } from '../../../../../../testing/golden-masters';
+import { goldenMaster } from '../../../../../../../testing/golden-masters';
 import { WorkItemPage } from './work-item.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -25,7 +25,7 @@ describe('WorkItemPage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/work/:id', component: WorkItemPage }]),
+        provideRouter([{ path: 'projects/:slug/work/detail/:id', component: WorkItemPage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -47,7 +47,9 @@ describe('WorkItemPage', () => {
     const work = goldenMaster(WORK, 'listProjectEntities');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/${entity.qualifiedId}`);
+    const navigated = harness.navigateByUrl(
+      `/projects/${project.slug}/work/detail/${entity.qualifiedId}`,
+    );
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
@@ -131,7 +133,7 @@ describe('WorkItemPage', () => {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/nothing-1`);
+    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/detail/nothing-1`);
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;

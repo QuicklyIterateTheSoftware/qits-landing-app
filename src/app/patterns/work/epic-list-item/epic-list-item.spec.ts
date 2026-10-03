@@ -18,7 +18,11 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
 /** The item in the Acceptance list, as the work list draws it. */
 @Component({
   imports: [EpicListItem],
-  template: `<app-epic-list-item [node]="node()" base="/projects/qits/work" view="acceptance" />`,
+  template: `<app-epic-list-item
+    [node]="node()"
+    base="/projects/qits/work/detail"
+    view="acceptance"
+  />`,
 })
 class InAcceptance {
   readonly node = input.required<WorkNode>();
