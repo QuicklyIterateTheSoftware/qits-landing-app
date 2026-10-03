@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { HIGHLIGHT_FADES } from '$ui/components/highlight/highlight';
 import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
@@ -40,13 +41,14 @@ describe('KanbanBoard (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // The selection highlight stays at full strength for its screenshot.
+        { provide: HIGHLIGHT_FADES, useValue: false },
       ],
     });
     http = TestBed.inject(HttpTestingController);
   });
 
   afterEach(async () => {
-    vi.useRealTimers();
     http.verify();
     // Back to the configured viewport, so the next spec file renders as it always does.
     await page.viewport(800, 600);
@@ -105,8 +107,6 @@ describe('KanbanBoard (screenshots)', () => {
 
   it('highlights the card the text selection is in', async () => {
     const { element, locator } = await shown(EVERY_STATUS);
-    // The highlight fades on a timer: fake, so the shot is at full strength.
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     const title = [...element.querySelectorAll('ui-board-card a')].find(
       (link) => link.textContent?.trim() === 'Implemented ticket',
     )!;
@@ -118,9 +118,6 @@ describe('KanbanBoard (screenshots)', () => {
     // No selection colour in the shot; the highlight stays until it fades.
     await select((selection) => selection.removeAllRanges());
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
-    // Real timers again: the screenshot matcher waits between its shots, and a fake clock never
-    // moves. The fade's timer stays on the fake clock, so it never fires.
-    vi.useRealTimers();
     await expect.element(locator).toMatchScreenshot('selection-highlight');
   });
 });
