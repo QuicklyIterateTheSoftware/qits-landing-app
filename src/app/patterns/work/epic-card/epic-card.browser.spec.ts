@@ -6,12 +6,14 @@ import { provideRouter } from '@angular/router';
 import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../api/workspaces/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { Board } from '$ui/components/board/board';
 import {
   nodeOf,
   openRecordedWork,
+  openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
 import { EpicCard } from './epic-card';
@@ -68,6 +70,7 @@ describe('EpicCard (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -224,6 +227,39 @@ describe('EpicCard (screenshots)', () => {
     expect(id.top).toBeGreaterThan(lane.top);
     expect(id.bottom).toBeLessThan(lane.bottom);
     await expect.element(locator).toMatchScreenshot('campaign');
+  });
+
+  it('with workspaces: a tag in the lane, at a feature’s title, a bubble on a task', async () => {
+    // qits-workspaces' "a project with workspaces bound to work items" shares the "… in detail"
+    // seed: the epic, its PDF feature and the CSV task "Download button …" have an ACTIVE one.
+    const { element, locator, harness } = await shown(
+      'an epic in detail',
+      'contract-00000001-2',
+      'Export invoices for the accountants',
+    );
+    await openWorkspaces(http, harness);
+    const shownLinks = () =>
+      [...element.querySelectorAll('app-workspace-link:not(.hidden) a')].map((a) =>
+        a.getAttribute('href')?.split('/').pop(),
+      );
+    // In the order drawn: the lane's tag, the CSV task's bubble, then the PDF feature's title line.
+    expect(shownLinks()).toEqual([
+      'contract-00000001-2',
+      'contract-00000001-5',
+      'contract-00000001-6',
+    ]);
+    const feature = [...element.querySelectorAll('ui-board-row')].find((row) =>
+      row.textContent?.includes('PDF export'),
+    )!;
+    // At the right end of the title's bar (its padding is 0.5rem), on the title's line.
+    const title = feature.querySelector('[row-footer]')!;
+    const bar = title.parentElement!.getBoundingClientRect();
+    const tag = feature
+      .querySelector('app-workspace-link[row-footer-end]')!
+      .getBoundingClientRect();
+    expect(Math.round(bar.right - tag.right)).toBe(8);
+    expect(Math.abs(tag.top - title.getBoundingClientRect().top)).toBeLessThan(4);
+    await expect.element(locator).toMatchScreenshot('workspaces');
   });
 
   it('in two campaigns', async () => {

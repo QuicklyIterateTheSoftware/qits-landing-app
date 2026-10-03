@@ -32,6 +32,8 @@ import { FeatureDetail } from '$patterns/work/detail/feature-detail/feature-deta
 import { TaskDetail } from '$patterns/work/detail/task-detail/task-detail';
 import { TicketDetail } from '$patterns/work/detail/ticket-detail/ticket-detail';
 import { WorkDetailStore } from '$core/work/work-detail.store';
+import { WorkspacesStore } from '$core/workspaces/workspaces.store';
+import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
 
 /** Each group's caption, shown below its buttons. */
 const GROUP_TITLES: Readonly<Record<WorkActionGroupId, string>> = {
@@ -53,6 +55,8 @@ const notBuiltYet = (): void => undefined;
  * body of its own per archetype (`$patterns/work/detail/`): the description (Markdown), the
  * archetype's facts, its children as the lists draw them, its dossier and its comments. The item
  * comes from what `SelectedWork` loads; the rest from `WorkDetailStore`, by the URL's qualified id.
+ * Last, the item's workspaces in every state, newest first (`WorkspacesStore.loadHistory`, by the
+ * item's id); the page also loads the open workspaces once, for its cards' Workspace links.
  *
  * Wired: every Status move (`WorkStore.transition`, the item's entry takes the answered status),
  * Dispatch (`WorkStore.dispatch`, the whole flow) and the next phase's button (that phase alone).
@@ -72,6 +76,7 @@ const notBuiltYet = (): void => undefined;
     FeatureDetail,
     TaskDetail,
     TicketDetail,
+    WorkWorkspaces,
   ],
   host: { class: 'block' },
   template: `
@@ -108,6 +113,13 @@ const notBuiltYet = (): void => undefined;
               }
             }
           </ui-spinner>
+          <app-work-workspaces
+            class="mt-8"
+            [class.hidden]="!entry()"
+            [workspaces]="history()?.entries ?? []"
+            [state]="history()?.status ?? 'loading'"
+            [link]="workspaceLink()"
+          />
         </ui-spinner>
       </app-page-layout>
     </div>
@@ -119,6 +131,7 @@ export class WorkItemPage {
   private readonly store = inject(WorkStore);
   private readonly archetypes = inject(ArchetypesStore);
   private readonly details = inject(WorkDetailStore);
+  private readonly workspaces = inject(WorkspacesStore);
 
   /** The qualified id in the URL. */
   protected readonly id = toSignal(
@@ -135,6 +148,19 @@ export class WorkItemPage {
   protected readonly detail = computed(() => this.details.of(this.id()));
 
   protected readonly detailState = computed((): LoadState => this.detail()?.status ?? 'loading');
+
+  /** The item's id: a signal of its own, so a new entry for the same item reads nothing again. */
+  private readonly entryId = computed(() => this.entry()?.id);
+
+  /** The item's workspaces, once they are loaded. */
+  protected readonly history = computed(() => {
+    const id = this.entryId();
+    return id ? this.workspaces.historyOf(id) : undefined;
+  });
+
+  protected readonly workspaceLink = computed(
+    () => `/projects/${this.selected.slug() ?? ''}/workspaces/${this.id()}`,
+  );
 
   protected readonly title = computed(() => this.entry()?.title ?? this.id());
 
@@ -162,13 +188,21 @@ export class WorkItemPage {
   });
 
   constructor() {
-    this.work.followTransitions(inject(DestroyRef));
+    const destroy = inject(DestroyRef);
+    this.work.followTransitions(destroy);
     // In the browser only, as the work: the server render has no session cookie to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       void this.archetypes.load();
+      void this.workspaces.load();
+      this.workspaces.follow(destroy);
       effect(() => {
         const id = this.id();
         if (id) untracked(() => void this.details.load(id));
+      });
+      // By the item's id, which qits-workspaces binds a workspace to: known once the work is.
+      effect(() => {
+        const id = this.entryId();
+        if (id) untracked(() => void this.workspaces.loadHistory(id));
       });
     }
   }

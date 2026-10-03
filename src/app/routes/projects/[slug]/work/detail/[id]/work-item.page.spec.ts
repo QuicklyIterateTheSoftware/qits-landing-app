@@ -5,8 +5,13 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
-import { goldenMaster } from '../../../../../../../testing/golden-masters';
+import {
+  goldenMaster,
+  workspacesGoldenMaster,
+  workspacesGoldenMasters,
+} from '../../../../../../../testing/golden-masters';
 import { WorkItemPage } from './work-item.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -18,14 +23,25 @@ const REGISTRY = '/projects/api/entities/archetypes';
 const DETAIL = 'a campaign in detail';
 /** The links in the region of an item's children: features, tasks or members. */
 const CHILDREN = ['Features', 'Tasks', 'Members'].map((n) => `section[aria-label=${n}] a`).join();
+/** qits-workspaces' states; their ids are those of qits-projects' "… in detail" states. */
+const BOUND = 'a project with workspaces bound to work items';
+const NONE = 'a work item with no workspaces';
+const OPEN_WORKSPACES = '/workspaces/api/work/workspaces';
 
 /**
  * The work item page's actions and what they send, and the children it shows, on qits-projects'
  * golden masters: the project list and "a project with work in every status" (one epic and one
  * ticket per status), "an epic with features and tasks" and "a campaign in detail" (with the
  * campaign's own reads), and the archetype registry. Which actions show for which status is `work-actions.spec.ts`; this
- * checks the page wires them.
+ * checks the page wires them. The workspaces come from qits-workspaces' golden masters
+ * (`answerWorkspaces`).
  */
+/** Whether the Workspaces region shows "No workspaces yet". */
+const noneShown = (element: HTMLElement) =>
+  [...element.querySelectorAll('section[aria-label=Workspaces] p')].some(
+    (p) => p.textContent?.trim() === 'No workspaces yet' && !p.classList.contains('hidden'),
+  );
+
 describe('WorkItemPage', () => {
   let http: HttpTestingController;
 
@@ -36,6 +52,7 @@ describe('WorkItemPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
         {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
@@ -80,6 +97,37 @@ describe('WorkItemPage', () => {
   }
 
   /**
+   * Answers the open workspaces from "a project with workspaces bound to work items", and the
+   * item's own workspaces: that state's list for the item it records (the bug ticket), "a work item
+   * with no workspaces" for the item that state names (the improvement ticket), else 404.
+   */
+  async function answerWorkspaces() {
+    // The history read waits for the item, which the work's answer brings.
+    TestBed.tick();
+    await settle();
+    http.expectOne(OPEN_WORKSPACES).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+    const recorded = new Map([
+      [
+        workspacesGoldenMasters.operation(BOUND, 'listWorkItemWorkspaces').params['bugTicketId'],
+        BOUND,
+      ],
+      [
+        workspacesGoldenMasters.operation(NONE, 'listWorkItemWorkspaces').params[
+          'improvementTicketId'
+        ],
+        NONE,
+      ],
+    ]);
+    for (const read of http.match((r) =>
+      /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
+    )) {
+      const state = recorded.get(read.request.url.split('/')[4]);
+      if (state) read.flush(workspacesGoldenMaster(state, 'listWorkItemWorkspaces'));
+      else read.flush(null, { status: 404, statusText: 'Not Found' });
+    }
+  }
+
+  /**
    * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
    * a campaign's read too, from `campaignState`, and the item's own reads (`answerDetail`).
    */
@@ -107,15 +155,15 @@ describe('WorkItemPage', () => {
     }
     http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
+    await answerWorkspaces();
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
-    /** Each link in the children's region: its text and where it leads. */
+    /** Each link in the children's region but the Workspace links: its text and where it leads. */
     const children = () =>
-      [...element.querySelectorAll(CHILDREN)].map((a) => [
-        a.textContent?.trim(),
-        a.getAttribute('href')?.split('/').pop(),
-      ]);
+      [...element.querySelectorAll(CHILDREN)]
+        .filter((a) => !a.getAttribute('href')?.includes('/workspaces/'))
+        .map((a) => [a.textContent?.trim(), a.getAttribute('href')?.split('/').pop()]);
     const groups = () =>
       [...element.querySelectorAll('[role=group]')].map((g) => ({
         title: g.getAttribute('aria-label'),
@@ -123,7 +171,19 @@ describe('WorkItemPage', () => {
       }));
     const press = (label: string) =>
       [...element.querySelectorAll('button')].find((b) => b.textContent?.trim() === label)!.click();
-    return { harness, element, entity, groups, press, children };
+    /** Where each shown Workspace link in the children's region leads. */
+    const workspaceLinks = () =>
+      [...element.querySelectorAll(CHILDREN)]
+        .filter((a) => a.getAttribute('href')?.includes('/workspaces/'))
+        .filter((a) => !a.closest('.hidden'))
+        .map((a) => a.getAttribute('href'));
+    /** Each workspace in the item's history: its state, branch and dates, as one line. */
+    const history = () =>
+      [...element.querySelectorAll('section[aria-label=Workspaces] li a')].map((a) => [
+        [...a.children].map((part) => part.textContent?.replace(/\s+/g, ' ').trim()).join(' '),
+        a.getAttribute('href'),
+      ]);
+    return { harness, element, entity, groups, press, children, workspaceLinks, history };
   }
 
   it('shows the title and every group for a reported ticket', async () => {
@@ -137,7 +197,11 @@ describe('WorkItemPage', () => {
   });
 
   it('shows a campaign with its description, its start and its members in campaign order', async () => {
-    const { element, groups, children } = await shown('Invoicing for the Q4 close', DETAIL, true);
+    const { element, groups, children, workspaceLinks } = await shown(
+      'Invoicing for the Q4 close',
+      DETAIL,
+      true,
+    );
     expect(element.textContent).toContain('Everything accounting needs');
     // REFINED: the start, the served moves; no plan for a campaign.
     expect(groups()).toEqual([
@@ -162,6 +226,39 @@ describe('WorkItemPage', () => {
       'Remember the last export format',
     ]);
     expect(children()).toContainEqual(['Remember the last export format', 'contract-00000001-11']);
+    // The members with an ACTIVE workspace: the export epic, a CSV task, the PDF feature, the bug.
+    expect(workspaceLinks()).toEqual(
+      ['2', '5', '6', '10'].map(
+        (n) => `/projects/contract-00000001/workspaces/contract-00000001-${n}`,
+      ),
+    );
+  });
+
+  it('lists an item’s workspaces in every state, newest first, each linking to its page', async () => {
+    const { element, history } = await shown(
+      'Invoice totals are off by one cent',
+      'a bug ticket in detail',
+      true,
+    );
+    const link = '/projects/contract-00000001/workspaces/contract-00000001-10';
+    const branch = 'ticket/invoice-totals-are-off-by-one-cent';
+    const opened = 'Opened 1 Jan 2026, 00:00';
+    expect(history()).toEqual([
+      [`active ${branch} ${opened}`, link],
+      [`integrated ${branch} ${opened} · Closed 1 Jan 2026, 00:00`, link],
+      [`abandoned ${branch} ${opened} · Closed 1 Jan 2026, 00:00`, link],
+    ]);
+    expect(noneShown(element)).toBe(false);
+  });
+
+  it('says so when an item has no workspaces', async () => {
+    const { element, history } = await shown(
+      'Remember the last export format',
+      'an improvement ticket in detail',
+      true,
+    );
+    expect(history()).toEqual([]);
+    expect(noneShown(element)).toBe(true);
   });
 
   it('shows an epic’s features, each with its tasks', async () => {
@@ -268,6 +365,8 @@ describe('WorkItemPage', () => {
       .flush(goldenMaster(WORK, 'listProjectEntities'));
     http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
     await answerDetail(WORK, 'nothing-1', false);
+    // No item, so no history read: only the open workspaces.
+    await answerWorkspaces();
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;

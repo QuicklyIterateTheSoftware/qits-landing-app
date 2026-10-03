@@ -43,3 +43,4 @@ contracts:
     qits-githost-service: { packages: [maven] }
     qits-events-service: { packages: [maven] }
     qits-maintenance-service: { packages: [maven] }
+    qits-workspaces-service: { packages: [maven] }

@@ -40,7 +40,10 @@ describe('EpicListItem', () => {
       providers: [
         provideRouter([]),
         { provide: WorkStore, useValue: { finishing: signal({}), finishLater } },
-        { provide: SelectedProject, useValue: { project: signal({ id: 'p-1' }) } },
+        {
+          provide: SelectedProject,
+          useValue: { project: signal({ id: 'p-1' }), slug: signal('qits') },
+        },
       ],
     });
   });

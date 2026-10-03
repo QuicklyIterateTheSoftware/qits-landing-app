@@ -9,6 +9,7 @@ import {
   githostGoldenMasters,
   maintenanceGoldenMasters,
   projectsGoldenMasters,
+  workspacesGoldenMasters,
 } from './src/testing/golden-masters';
 
 /** The pact this app holds with `repository`, the provider whose golden masters a reader reads. */
@@ -26,6 +27,10 @@ const READERS = {
   'qits-maintenance': pactedGoldenMasters(
     maintenanceGoldenMasters,
     pactWith('qits-maintenance-service'),
+  ),
+  'qits-workspaces': pactedGoldenMasters(
+    workspacesGoldenMasters,
+    pactWith('qits-workspaces-service'),
   ),
 };
 

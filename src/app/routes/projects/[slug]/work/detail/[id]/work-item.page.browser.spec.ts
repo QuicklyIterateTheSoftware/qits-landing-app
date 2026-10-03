@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { commands, page, userEvent, type Locator } from 'vitest/browser';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { WorkItemPage } from './work-item.page';
@@ -23,6 +24,10 @@ import { openRecordedWork } from '../../../../../../../testing/browser/recorded-
  *   the actions are shot), and "an implemented ticket", in full. A press answers with the move or
  *   dispatch a move state recorded ("a refined epic", "a dropped ticket", …).
  *
+ * The workspaces come from qits-workspaces' golden masters (`answerWorkspaces`), whose ids are
+ * those of the "… in detail" states: the bug ticket's history, and "a work item with no
+ * workspaces" for the improvement ticket.
+ *
  * The page follows transitions through the event stream; the stream here never connects.
  */
 
@@ -37,6 +42,9 @@ const IMPLEMENTED = 'an implemented ticket';
  * it from this one.
  */
 const CAMPAIGN = 'a campaign in detail';
+/** qits-workspaces' states. */
+const BOUND = 'a project with workspaces bound to work items';
+const NONE = 'a work item with no workspaces';
 
 /** Waits until every image in `element` has loaded (the stubbed figure). */
 async function figuresLoaded(element: Locator) {
@@ -57,6 +65,7 @@ describe('WorkItemPage (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
         // Where the epic's dossier figures load from (stubbed: `stubFigure`).
         provideTestPlatformOrigins({ projects: PROJECTS }),
         {
@@ -103,6 +112,34 @@ describe('WorkItemPage (screenshots)', () => {
   }
 
   /**
+   * Answers the open workspaces from "a project with workspaces bound to work items", and the
+   * item's own workspaces: that state's list for the item it records (the bug ticket), "a work item
+   * with no workspaces" for the item that state names (the improvement ticket), else 404 (the
+   * region then shows its error icon).
+   */
+  async function answerWorkspaces() {
+    await settle();
+    http
+      .expectOne('/workspaces/api/work/workspaces')
+      .flush(await goldenMaster(BOUND, 'listOpenWorkspaces', 'qits-workspaces'));
+    const [bug, improvement] = await Promise.all([
+      goldenMaster('a bug ticket in detail', 'getEntity'),
+      goldenMaster('an improvement ticket in detail', 'getEntity'),
+    ]);
+    const recorded = new Map([
+      [bug.id, BOUND],
+      [improvement.id, NONE],
+    ]);
+    for (const read of http.match((r) =>
+      /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
+    )) {
+      const state = recorded.get(read.request.url.split('/')[4]);
+      if (state) read.flush(await goldenMaster(state, 'listWorkItemWorkspaces', 'qits-workspaces'));
+      else read.flush(null, { status: 404, statusText: 'Not Found' });
+    }
+  }
+
+  /**
    * The page of the entity titled `title` in `state`'s recorded work, every request answered from
    * a recording (`openRecordedWork`: a campaign's read too, from `campaignStates`), the item's own
    * reads from `state` when `detail` (`answerDetail`).
@@ -127,6 +164,7 @@ describe('WorkItemPage (screenshots)', () => {
       .expectOne('/projects/api/entities/archetypes')
       .flush(await goldenMaster('the archetype registry', 'listArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
+    await answerWorkspaces();
     await settle();
     await settle();
     await harness.fixture.whenStable();
@@ -313,6 +351,41 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Agent' }))
         .toHaveTextContent('Start campaign');
       await shootParts(element, 'detail-campaign');
+    });
+  });
+
+  describe('workspaces', () => {
+    /** The Workspaces region. */
+    const workspacesOf = (element: Locator) => element.getByRole('region', { name: 'Workspaces' });
+
+    it('a ticket’s workspaces in every state, newest first', async () => {
+      const element = await render(
+        'a bug ticket in detail',
+        'Invoice totals are off by one cent',
+        true,
+      );
+      const region = workspacesOf(element);
+      const rows = region.getByRole('listitem');
+      expect(rows.elements()).toHaveLength(3);
+      await expect.element(rows.nth(0)).toHaveTextContent(/^active/);
+      await expect.element(rows.nth(1)).toHaveTextContent(/^integrated.*Closed/);
+      await expect.element(rows.nth(2)).toHaveTextContent(/^abandoned.*Closed/);
+      await expect
+        .element(rows.nth(0).getByRole('link'))
+        .toHaveAttribute('href', '/projects/contract-00000001/workspaces/contract-00000001-10');
+      await expect.element(region).toMatchScreenshot('workspaces-history');
+    });
+
+    it('an item with no workspaces', async () => {
+      const element = await render(
+        'an improvement ticket in detail',
+        'Remember the last export format',
+        true,
+      );
+      const region = workspacesOf(element);
+      await expect.element(region).toHaveTextContent('No workspaces yet');
+      expect(region.getByRole('listitem').elements()).toHaveLength(0);
+      await expect.element(region).toMatchScreenshot('workspaces-none');
     });
   });
 

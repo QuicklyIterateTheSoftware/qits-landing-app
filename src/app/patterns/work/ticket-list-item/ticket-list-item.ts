@@ -6,12 +6,14 @@ import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { Tag } from '$ui/components/tag/tag';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
+import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
  * A ticket in a list (Backlog, Acceptance, Archive, a campaign's members): the board's small card
  * (`ui-board-card`), its id down the left edge, its title linking to it, its kind and its
- * campaigns as tags. In the Archive it also shows its final state (Done and Dropped mix there), in
+ * campaigns as tags, and a Workspace bubble in its bottom-right corner while it has an ACTIVE
+ * workspace (`app-workspace-link`). In the Archive it also shows its final state (Done and Dropped mix there), in
  * a campaign its own status (any phase). A campaign's member that is not a ticket (a feature or
  * task) is drawn the same way.
  *
@@ -24,7 +26,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-ticket-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, FinishButton, Leave, Tag, WorkRef],
+  imports: [BoardCard, FinishButton, Leave, Tag, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -46,6 +48,12 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
           }
         </div>
       }
+      <app-workspace-link
+        card-corner
+        variant="corner"
+        [workId]="n.entry.id"
+        [qualifiedId]="n.entry.qualifiedId"
+      />
       <ui-finish-button
         card-action
         [shown]="finishing.shown() && view() !== 'campaign'"

@@ -4,10 +4,12 @@ import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { Leave } from '$ui/components/leave/leave';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
+import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
  * A ticket on the board: a card (`ui-board-card`) in its column, its id down the left edge, its
- * title linking to it, its kind, and its campaigns as tags. A VERIFIED ticket is not on the board:
+ * title linking to it, its kind, its campaigns as tags, and a Workspace bubble in its bottom-right
+ * corner while it has an ACTIVE workspace (`app-workspace-link`). A VERIFIED ticket is not on the board:
  * it waits in the Acceptance list (`ticket-list-item`), with its finish button.
  *
  * When `leaving` is set (the ticket left the board), the card shrinks away (`uiLeave`), then emits
@@ -16,7 +18,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
 @Component({
   selector: 'app-ticket-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, Leave, WorkRef],
+  imports: [BoardCard, Leave, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -37,6 +39,12 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
           }
         </div>
       }
+      <app-workspace-link
+        card-corner
+        variant="corner"
+        [workId]="n.entry.id"
+        [qualifiedId]="n.entry.qualifiedId"
+      />
     </ui-board-card>
   `,
 })

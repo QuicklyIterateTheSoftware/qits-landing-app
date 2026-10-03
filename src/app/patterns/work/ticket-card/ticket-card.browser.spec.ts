@@ -6,12 +6,14 @@ import { provideRouter } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../api/workspaces/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { Board } from '$ui/components/board/board';
 import {
   nodeOf,
   openRecordedWork,
+  openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
 import { TicketCard } from './ticket-card';
@@ -59,6 +61,7 @@ describe('TicketCard (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -91,6 +94,27 @@ describe('TicketCard (screenshots)', () => {
     ['campaign', CAMPAIGN, 'contract-00000001-3', 'Refined ticket'],
   ])('%s', async (name, state, qualifiedId, title) => {
     const { locator } = await shown(state, qualifiedId, title);
+    await expect.element(locator).toMatchScreenshot(name);
+  });
+
+  // The open workspaces of qits-workspaces' "a project with workspaces bound to work items": the bug
+  // ticket of the "… in detail" seed has an ACTIVE one, the improvement ticket none.
+  it.each<Case>([
+    ['workspace', 'a bug ticket in detail', 'contract-00000001-10', 'Invoice totals are off'],
+    ['no-workspace', 'an improvement ticket in detail', 'contract-00000001-11', 'Remember the'],
+  ])('%s', async (name, state, qualifiedId, title) => {
+    const { element, harness } = await openRecordedWork(http, 'board', qualifiedId, state);
+    await openWorkspaces(http, harness);
+    const locator = page.elementLocator(element);
+    await expect.element(locator).toHaveTextContent(title);
+    const link = locator.getByRole('link', { name: 'Workspace', exact: true });
+    if (name === 'workspace') {
+      await expect
+        .element(link)
+        .toHaveAttribute('href', `/projects/contract-00000001/workspaces/${qualifiedId}`);
+    } else {
+      expect(element.querySelector('app-workspace-link')?.classList).toContain('hidden');
+    }
     await expect.element(locator).toMatchScreenshot(name);
   });
 

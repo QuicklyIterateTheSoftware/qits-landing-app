@@ -7,9 +7,10 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { Subject } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { WORK_REFRESH_DEBOUNCE_MS } from '$core/work/selected-work';
-import { goldenMaster } from '../../../../../testing/golden-masters';
+import { goldenMaster, workspacesGoldenMaster } from '../../../../../testing/golden-masters';
 import { WorkLayout } from './work.layout';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -18,9 +19,14 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 @Component({ selector: 'app-test-page', template: `<p>Page content</p>` })
 class TestPage {}
 
+/** The open workspaces' read (`WorkspacesStore.load()`), and the state it is answered from. */
+const OPEN_WORKSPACES = '/workspaces/api/work/workspaces';
+const BOUND = 'a project with workspaces bound to work items';
+
 /**
  * The work section's tabs on qits-projects' golden masters: the project list, and "a project with
- * work in every status" (one epic and one ticket per status) or "a project with no work".
+ * work in every status" (one epic and one ticket per status) or "a project with no work". The open
+ * workspaces come from qits-workspaces' "a project with workspaces bound to work items".
  */
 describe('WorkLayout', () => {
   let http: HttpTestingController;
@@ -48,6 +54,7 @@ describe('WorkLayout', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
         { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
       ],
     });
@@ -63,6 +70,7 @@ describe('WorkLayout', () => {
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
+    http.expectOne(OPEN_WORKSPACES).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
     TestBed.tick();
     await settle();
     TestBed.tick();
@@ -154,6 +162,7 @@ describe('WorkLayout', () => {
     await harness.navigateByUrl(`/projects/${project.slug}/work/archive`);
     await settle();
     http.expectNone(entities);
+    http.expectNone(OPEN_WORKSPACES);
     expect(links()[4].getAttribute('aria-current')).toBe('page');
   });
 
@@ -167,5 +176,7 @@ describe('WorkLayout', () => {
     await settle();
     await answered('a project with no work');
     expect(counts()).toEqual([0, 0, 0, 0, 0]);
+    // The open workspaces follow too: a dispatch opens one, an integration closes it.
+    http.expectOne(OPEN_WORKSPACES).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
   });
 });

@@ -79,10 +79,11 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(element).not.toHaveTextContent('Reported ticket');
     await expect.element(element).not.toHaveTextContent('Verified ticket');
     await expect.element(element).not.toHaveTextContent('Done ticket');
-    // Every card leads to its item's page, below work/detail.
-    const hrefs = [...element.element().querySelectorAll('a[href]')].map((a) =>
-      a.getAttribute('href'),
-    );
+    // Every card leads to its item's page, below work/detail. The Workspace links are hidden: this
+    // page alone loads no open workspaces (the layout does).
+    const hrefs = [...element.element().querySelectorAll('a[href]')]
+      .filter((a) => !a.closest('app-workspace-link'))
+      .map((a) => a.getAttribute('href'));
     expect(hrefs.length).toBeGreaterThan(0);
     for (const href of hrefs) expect(href).toMatch(`/projects/${project.slug}/work/detail/`);
     await expect.element(element).toMatchScreenshot('board');
