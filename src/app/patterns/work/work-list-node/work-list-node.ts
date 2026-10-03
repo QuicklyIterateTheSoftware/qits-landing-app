@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { taskProgress, type WorkNode } from '../../../core/work/work-tree';
-import { BoardCard } from '../../../ui/components/board/board-card';
-import { ListLane } from '../../../ui/components/list/list-lane';
-import { ListRow } from '../../../ui/components/list/list-row';
-import { Tag } from '../../../ui/components/tag/tag';
+import { taskProgress, type WorkNode } from '$core/work/work-tree';
+import { BoardCard } from '$ui/components/board/board-card';
+import { ListLane } from '$ui/components/list/list-lane';
+import { ListRow } from '$ui/components/list/list-row';
+import { Tag } from '$ui/components/tag/tag';
 
 /** Which list the node is in. */
 export type WorkListView = 'backlog' | 'archive';

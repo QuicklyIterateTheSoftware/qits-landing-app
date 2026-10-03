@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { sessionGuard } from './core/auth/session.guard';
+import { sessionGuard } from '$core/auth/session.guard';
 
 /**
  * Routes live on the filesystem: `routes/` mirrors the URL. A route's full path (its parents'

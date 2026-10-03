@@ -5,7 +5,7 @@ import {
   input,
   linkedSignal,
 } from '@angular/core';
-import { ExpandButton } from '../expand-button/expand-button';
+import { ExpandButton } from '$ui/components/expand-button/expand-button';
 
 let nextListLaneId = 0;
 

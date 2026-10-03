@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AppOrigins } from '../../../../core/platform/app-origins';
-import { SelectedProject } from '../../../../core/projects/selected-project';
+import { AppOrigins } from '$core/platform/app-origins';
+import { SelectedProject } from '$core/projects/selected-project';
 
 /**
  * The platform's browser editor for a project, at `/projects/<slug>/editor`, embedded in a frame

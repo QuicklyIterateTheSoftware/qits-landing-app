@@ -1,5 +1,5 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { Spinner, type LoadState } from '../spinner/spinner';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** How the action behind the button is going. */
 export type FinishButtonState = 'idle' | 'running' | 'error';

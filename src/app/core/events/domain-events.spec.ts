@@ -10,7 +10,7 @@ import {
   type DomainEvent,
   type EventSourceLike,
 } from './domain-events';
-import { AppOrigins } from '../platform/app-origins';
+import { AppOrigins } from '$core/platform/app-origins';
 
 /** A stand-in for the browser's `EventSource`: records its URL, and lets a spec push frames. */
 class FakeSource implements EventSourceLike {

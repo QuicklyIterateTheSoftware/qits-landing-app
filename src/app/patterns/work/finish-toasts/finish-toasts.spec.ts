@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import type { WorkEntry } from '../../../core/work/work.consumes';
-import { WorkStore, type PendingFinish } from '../../../core/work/work.store';
+import type { WorkEntry } from '$core/work/work.consumes';
+import { WorkStore, type PendingFinish } from '$core/work/work.store';
 import { FinishToasts } from './finish-toasts';
 
 const pending = (qualifiedId: string, phase: PendingFinish['phase']): PendingFinish => ({

@@ -7,14 +7,14 @@ import {
   linkedSignal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SelectedProject } from '../../../../core/projects/selected-project';
-import { SelectedWork } from '../../../../core/work/selected-work';
-import { BOARD_COLUMNS } from '../../../../core/work/work-statuses';
-import type { WorkNode } from '../../../../core/work/work-tree';
-import { Board, type BoardColumnSpec } from '../../../../ui/components/board/board';
-import { Spinner } from '../../../../ui/components/spinner/spinner';
-import { WorkBoardNode } from '../../../../patterns/work/work-board-node/work-board-node';
-import { WorkListNode } from '../../../../patterns/work/work-list-node/work-list-node';
+import { SelectedProject } from '$core/projects/selected-project';
+import { SelectedWork } from '$core/work/selected-work';
+import { BOARD_COLUMNS } from '$core/work/work-statuses';
+import type { WorkNode } from '$core/work/work-tree';
+import { Board, type BoardColumnSpec } from '$ui/components/board/board';
+import { Spinner } from '$ui/components/spinner/spinner';
+import { WorkBoardNode } from '$patterns/work/work-board-node/work-board-node';
+import { WorkListNode } from '$patterns/work/work-list-node/work-list-node';
 
 /** A top-level board node as drawn, and whether it is on its way out. */
 export interface BoardRowState {

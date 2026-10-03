@@ -6,7 +6,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { ExpandButton } from '../expand-button/expand-button';
+import { ExpandButton } from '$ui/components/expand-button/expand-button';
 
 /** The card's title row. Optional: a card without one draws no header. */
 @Component({

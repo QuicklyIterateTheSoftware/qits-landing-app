@@ -5,8 +5,8 @@ import { EMPTY } from 'rxjs';
 import { commands, page } from 'vitest/browser';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
-import { DomainEvents } from '../../../core/events/domain-events';
-import { PENDING_BUMPS } from '../../../core/maintenance/maintenance.consumes';
+import { DomainEvents } from '$core/events/domain-events';
+import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { BumpsMenu } from './bumps-menu';
 
 /** Screenshots of the top bar's bumps menu, its answers qits-maintenance' golden masters. */

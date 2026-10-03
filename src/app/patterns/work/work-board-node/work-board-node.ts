@@ -1,19 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SelectedProject } from '../../../core/projects/selected-project';
-import { finishable } from '../../../core/work/work.consumes';
-import { WorkStore } from '../../../core/work/work.store';
-import { BOARD_COLUMNS } from '../../../core/work/work-statuses';
-import { startsCollapsed, taskProgress, type WorkNode } from '../../../core/work/work-tree';
-import { BoardCard } from '../../../ui/components/board/board-card';
-import { BoardLane } from '../../../ui/components/board/board-lane';
-import { BoardRow } from '../../../ui/components/board/board-row';
-import {
-  FinishButton,
-  type FinishButtonState,
-} from '../../../ui/components/finish-button/finish-button';
-import { Leave } from '../../../ui/components/leave/leave';
-import { Tag } from '../../../ui/components/tag/tag';
+import { SelectedProject } from '$core/projects/selected-project';
+import { finishable } from '$core/work/work.consumes';
+import { WorkStore } from '$core/work/work.store';
+import { BOARD_COLUMNS } from '$core/work/work-statuses';
+import { startsCollapsed, taskProgress, type WorkNode } from '$core/work/work-tree';
+import { BoardCard } from '$ui/components/board/board-card';
+import { BoardLane } from '$ui/components/board/board-lane';
+import { BoardRow } from '$ui/components/board/board-row';
+import { FinishButton, type FinishButtonState } from '$ui/components/finish-button/finish-button';
+import { Leave } from '$ui/components/leave/leave';
+import { Tag } from '$ui/components/tag/tag';
 
 /**
  * One node of the work tree on the board:

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
-import { DomainEvents } from '../../../core/events/domain-events';
-import type { BumpEntry } from '../../../core/maintenance/maintenance.consumes';
-import { MaintenanceStore } from '../../../core/maintenance/maintenance.store';
-import { Dropdown } from '../../../ui/components/dropdown/dropdown';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
+import { DomainEvents } from '$core/events/domain-events';
+import type { BumpEntry } from '$core/maintenance/maintenance.consumes';
+import { MaintenanceStore } from '$core/maintenance/maintenance.store';
+import { Dropdown } from '$ui/components/dropdown/dropdown';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
  * The domain events after which bumps may have moved: a release or an artifact that makes a bump

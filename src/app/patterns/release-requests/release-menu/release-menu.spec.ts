@@ -4,10 +4,10 @@ import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { SelectedProject } from '../../../core/projects/selected-project';
+import { SelectedProject } from '$core/projects/selected-project';
 import { goldenMaster } from '../../../../testing/golden-masters';
 import { Subject } from 'rxjs';
-import { DomainEvents, type DomainEvent } from '../../../core/events/domain-events';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { gateTone, ReleaseMenu, REFRESH_DEBOUNCE_MS, requestTone } from './release-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */

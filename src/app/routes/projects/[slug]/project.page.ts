@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ProjectsStore } from '../../../core/projects/projects.store';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
-import { SelectedProject } from '../../../core/projects/selected-project';
+import { ProjectsStore } from '$core/projects/projects.store';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { SelectedProject } from '$core/projects/selected-project';
 
 /**
  * One project's page, at `/projects/<slug>`. For now it only names the project; its content comes

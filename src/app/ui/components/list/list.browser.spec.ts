@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, RouterLink } from '@angular/router';
 import { page } from 'vitest/browser';
-import { BoardCard } from '../board/board-card';
-import { Tag } from '../tag/tag';
+import { BoardCard } from '$ui/components/board/board-card';
+import { Tag } from '$ui/components/tag/tag';
 import { ListLane } from './list-lane';
 import { ListRow } from './list-row';
 

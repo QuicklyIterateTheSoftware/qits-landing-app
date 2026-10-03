@@ -4,8 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { client as eventsClient } from '../../../api/events/client.gen';
 import { provideHeyApiClient } from '../../../api/events/client/client.gen';
-import { DomainEvents, type DomainEvent } from '../../../core/events/domain-events';
-import { RECENT_EVENTS } from '../../../core/events/events.consumes';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { RECENT_EVENTS } from '$core/events/events.consumes';
 import { eventsGoldenMaster } from '../../../../testing/golden-masters';
 import { eventTime, NotificationsMenu } from './notifications-menu';
 

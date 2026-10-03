@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { EMPTY, Observable, Subject, filter, share } from 'rxjs';
-import { AppOrigins } from '../platform/app-origins';
+import { AppOrigins } from '$core/platform/app-origins';
 import type { EventEntry } from './events.consumes';
 
 /** One domain event as the live stream delivers it: the same envelope as the list's entries. */

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ALL, DomainEvents } from '../../../core/events/domain-events';
-import { EventsStore } from '../../../core/events/events.store';
-import { Dropdown } from '../../../ui/components/dropdown/dropdown';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
+import { ALL, DomainEvents } from '$core/events/domain-events';
+import { EventsStore } from '$core/events/events.store';
+import { Dropdown } from '$ui/components/dropdown/dropdown';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** An instant as `2026-01-01 00:00 UTC`: the same on every machine, so screenshots are stable. */
 export function eventTime(instant: string | undefined): string {

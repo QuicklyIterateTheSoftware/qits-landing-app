@@ -1,4 +1,4 @@
-import { payloadProjectId, type DomainEvent } from '../events/domain-events';
+import { payloadProjectId, type DomainEvent } from '$core/events/domain-events';
 import type { ReleaseRequestEntry } from './projects.consumes';
 
 /**

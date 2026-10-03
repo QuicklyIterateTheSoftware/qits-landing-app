@@ -5,8 +5,8 @@ import { EMPTY } from 'rxjs';
 import { commands, page } from 'vitest/browser';
 import { client as eventsClient } from '../../../api/events/client.gen';
 import { provideHeyApiClient } from '../../../api/events/client/client.gen';
-import { DomainEvents } from '../../../core/events/domain-events';
-import { RECENT_EVENTS } from '../../../core/events/events.consumes';
+import { DomainEvents } from '$core/events/domain-events';
+import { RECENT_EVENTS } from '$core/events/events.consumes';
 import { NotificationsMenu } from './notifications-menu';
 
 /** Screenshots of the top bar's notifications menu, its answers qits-events' golden masters. */

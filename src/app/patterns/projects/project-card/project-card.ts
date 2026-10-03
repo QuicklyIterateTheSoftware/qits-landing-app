@@ -10,14 +10,14 @@ import {
   untracked,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LocStore, type LanguageLines } from '../../../core/loc/loc.store';
-import type { Project } from '../../../core/projects/projects.store';
-import { RepositoriesStore } from '../../../core/repositories/repositories.store';
-import { WorkStore } from '../../../core/work/work.store';
-import { CardBody, CardExpandable, CardHeader } from '../../../ui/components/card/base-card';
-import { CardSilent } from '../../../ui/components/card/card-silent';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
-import { Stat } from '../../../ui/components/stat/stat';
+import { LocStore, type LanguageLines } from '$core/loc/loc.store';
+import type { Project } from '$core/projects/projects.store';
+import { RepositoriesStore } from '$core/repositories/repositories.store';
+import { WorkStore } from '$core/work/work.store';
+import { CardBody, CardExpandable, CardHeader } from '$ui/components/card/base-card';
+import { CardSilent } from '$ui/components/card/card-silent';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { Stat } from '$ui/components/stat/stat';
 
 /** How many languages the card names before it sums the rest as "Other". */
 export const LANGUAGES_SHOWN = 4;

@@ -9,15 +9,15 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, filter } from 'rxjs';
-import { DomainEvents } from '../../../core/events/domain-events';
+import { DomainEvents } from '$core/events/domain-events';
 import {
   affectsReleaseRequests,
   RELEASE_REQUEST_EVENTS,
-} from '../../../core/projects/release-request-events';
-import { ProjectsStore } from '../../../core/projects/projects.store';
-import { SelectedProject } from '../../../core/projects/selected-project';
-import { Dropdown } from '../../../ui/components/dropdown/dropdown';
-import { Spinner, type LoadState } from '../../../ui/components/spinner/spinner';
+} from '$core/projects/release-request-events';
+import { ProjectsStore } from '$core/projects/projects.store';
+import { SelectedProject } from '$core/projects/selected-project';
+import { Dropdown } from '$ui/components/dropdown/dropdown';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** How long a burst of domain events waits before the requests are fetched again. */
 export const REFRESH_DEBOUNCE_MS = 1_000;

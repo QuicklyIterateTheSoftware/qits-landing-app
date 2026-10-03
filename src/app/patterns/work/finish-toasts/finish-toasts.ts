@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { WorkStore, type PendingFinish } from '../../../core/work/work.store';
-import { Toast, ToastStack } from '../../../ui/components/toast/toast';
+import { WorkStore, type PendingFinish } from '$core/work/work.store';
+import { Toast, ToastStack } from '$ui/components/toast/toast';
 
 /** One toast as drawn. */
 interface FinishToast {

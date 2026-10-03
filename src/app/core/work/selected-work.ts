@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
-import { DomainEvents } from '../events/domain-events';
-import { ProjectsStore } from '../projects/projects.store';
+import { DomainEvents } from '$core/events/domain-events';
+import { ProjectsStore } from '$core/projects/projects.store';
 import { WorkGraph } from './work-tree';
 import { WorkStore } from './work.store';
-import type { LoadState } from '../../ui/components/spinner/spinner';
-import { SelectedProject } from '../projects/selected-project';
+import type { LoadState } from '$ui/components/spinner/spinner';
+import { SelectedProject } from '$core/projects/selected-project';
 
 /**
  * The open project's work, for the Work and Archive pages: the same `WorkStore` answer the project

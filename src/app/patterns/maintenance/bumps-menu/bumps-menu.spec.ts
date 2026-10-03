@@ -4,8 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
-import { DomainEvents, type DomainEvent } from '../../../core/events/domain-events';
-import { PENDING_BUMPS } from '../../../core/maintenance/maintenance.consumes';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { maintenanceGoldenMaster } from '../../../../testing/golden-masters';
 import { BUMP_EVENTS, BumpsMenu, REFRESH_DEBOUNCE_MS } from './bumps-menu';
 

@@ -8,12 +8,12 @@ import {
   PLATFORM_ID,
   untracked,
 } from '@angular/core';
-import { SelectedProject } from '../../../../core/projects/selected-project';
-import { RepositoriesStore } from '../../../../core/repositories/repositories.store';
-import { repositoryTree } from '../../../../core/repositories/repository-tree';
-import { Spinner, type LoadState } from '../../../../ui/components/spinner/spinner';
-import { TreeFolder } from '../../../../ui/components/tree-folder/tree-folder';
-import { RepositoryCard } from '../../../../patterns/repositories/repository-card/repository-card';
+import { SelectedProject } from '$core/projects/selected-project';
+import { RepositoriesStore } from '$core/repositories/repositories.store';
+import { repositoryTree } from '$core/repositories/repository-tree';
+import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { TreeFolder } from '$ui/components/tree-folder/tree-folder';
+import { RepositoryCard } from '$patterns/repositories/repository-card/repository-card';
 
 /**
  * A project's repositories, at `/projects/<slug>/repositories`, laid out like the wrapper's

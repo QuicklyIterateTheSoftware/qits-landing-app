@@ -1,12 +1,12 @@
 import { Component, input, signal } from '@angular/core';
-import { Board } from '../../../ui/components/board/board';
-import { BOARD_COLUMNS } from '../../../core/work/work-statuses';
+import { Board } from '$ui/components/board/board';
+import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { SelectedProject } from '../../../core/projects/selected-project';
-import type { WorkEntry } from '../../../core/work/work.consumes';
-import { WorkStore } from '../../../core/work/work.store';
-import type { WorkNode } from '../../../core/work/work-tree';
+import { SelectedProject } from '$core/projects/selected-project';
+import type { WorkEntry } from '$core/work/work.consumes';
+import { WorkStore } from '$core/work/work.store';
+import type { WorkNode } from '$core/work/work-tree';
 import { WorkBoardNode } from './work-board-node';
 
 /** A board node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
-import { Spinner } from '../spinner/spinner';
+import { Spinner } from '$ui/components/spinner/spinner';
 import { Stat } from './stat';
 
 /** Screenshots of the stat tile: label lengths, value sizes and the loading spinner. */

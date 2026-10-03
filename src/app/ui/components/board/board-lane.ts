@@ -6,7 +6,7 @@ import {
   input,
   linkedSignal,
 } from '@angular/core';
-import { ExpandButton } from '../expand-button/expand-button';
+import { ExpandButton } from '$ui/components/expand-button/expand-button';
 import { BOARD_CONTEXT, ROOT_ITEM_SPACING, type BoardContext } from './board-context';
 
 let nextLaneId = 0;

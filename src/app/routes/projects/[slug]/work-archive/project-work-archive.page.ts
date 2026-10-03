@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SelectedProject } from '../../../../core/projects/selected-project';
-import { SelectedWork } from '../../../../core/work/selected-work';
-import { Spinner } from '../../../../ui/components/spinner/spinner';
-import { WorkListNode } from '../../../../patterns/work/work-list-node/work-list-node';
+import { SelectedProject } from '$core/projects/selected-project';
+import { SelectedWork } from '$core/work/selected-work';
+import { Spinner } from '$ui/components/spinner/spinner';
+import { WorkListNode } from '$patterns/work/work-list-node/work-list-node';
 
 /**
  * A project's finished work, at `/projects/<slug>/work-archive`: everything in a final state (Done

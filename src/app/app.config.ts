@@ -14,7 +14,7 @@ import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { routes } from './app.routes';
-import { AppOrigins, type Backend } from './core/platform/app-origins';
+import { AppOrigins, type Backend } from '$core/platform/app-origins';
 
 /** Each generated client and the backend it calls. */
 const CLIENTS = [

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IdStrip } from '../id-strip/id-strip';
+import { IdStrip } from '$ui/components/id-strip/id-strip';
 import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
 
 /**

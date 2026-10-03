@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { AppOrigins } from '../core/platform/app-origins';
-import { SelectedProject } from '../core/projects/selected-project';
-import { FinishToasts } from '../patterns/work/finish-toasts/finish-toasts';
-import { NotificationsMenu } from '../patterns/events/notifications-menu/notifications-menu';
-import { BumpsMenu } from '../patterns/maintenance/bumps-menu/bumps-menu';
-import { ReleaseMenu } from '../patterns/release-requests/release-menu/release-menu';
+import { AppOrigins } from '$core/platform/app-origins';
+import { SelectedProject } from '$core/projects/selected-project';
+import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
+import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
+import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
+import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
 
 /** One entry of the sidebar. */
 export interface NavLink {

@@ -5,9 +5,9 @@ import { TestBed } from '@angular/core/testing';
 import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { SelectedProject } from '../../../core/projects/selected-project';
+import { SelectedProject } from '$core/projects/selected-project';
 import { EMPTY } from 'rxjs';
-import { DomainEvents } from '../../../core/events/domain-events';
+import { DomainEvents } from '$core/events/domain-events';
 import { ReleaseMenu } from './release-menu';
 
 /**

@@ -6,7 +6,7 @@ import type { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/route
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../testing/golden-masters';
-import { AppOrigins, type Backend } from '../platform/app-origins';
+import { AppOrigins, type Backend } from '$core/platform/app-origins';
 import { sessionGuard } from './session.guard';
 
 /** The generated client builds its request after a few awaits; let them run. */

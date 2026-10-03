@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { commands, page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import { SelectedProject } from '../../../../core/projects/selected-project';
+import { SelectedProject } from '$core/projects/selected-project';
 import { ProjectRepositoriesPage } from './project-repositories.page';
 
 /**

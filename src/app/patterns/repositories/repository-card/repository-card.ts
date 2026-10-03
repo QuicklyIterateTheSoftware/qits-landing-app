@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import type { RepositoryEntry } from '../../../core/repositories/repositories.consumes';
-import { CardBody, CardExpandable, CardHeader } from '../../../ui/components/card/base-card';
-import { CardSilent } from '../../../ui/components/card/card-silent';
-import { Stat } from '../../../ui/components/stat/stat';
+import type { RepositoryEntry } from '$core/repositories/repositories.consumes';
+import { CardBody, CardExpandable, CardHeader } from '$ui/components/card/base-card';
+import { CardSilent } from '$ui/components/card/card-silent';
+import { Stat } from '$ui/components/stat/stat';
 
 /** How a repository's last backup reads on its card, and the colour it reads in. */
 interface Backup {
