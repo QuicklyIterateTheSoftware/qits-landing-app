@@ -3,7 +3,7 @@ import type { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { commands } from 'vitest/browser';
+import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
 
 /**
@@ -44,7 +44,7 @@ export async function openRecordedWork(
   qualifiedId: string,
   state: string,
 ): Promise<{ element: HTMLElement; harness: RouterTestingHarness }> {
-  const list = await commands.goldenMaster('a project exists', 'listProjects');
+  const list = await goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
   const harness = await RouterTestingHarness.create();
   const navigated = harness.navigateByUrl(`/projects/${project.slug}/${view}/${qualifiedId}`);
@@ -58,13 +58,13 @@ export async function openRecordedWork(
   await settle();
   http
     .expectOne(`/projects/api/projects/${project.id}/entities`)
-    .flush(await commands.goldenMaster(state, 'listProjectEntities'));
+    .flush(await goldenMaster(state, 'listProjectEntities'));
   await settle();
   await settle();
   // The store then reads each campaign in the tree; a state records one campaign at most.
   const campaigns = http.match((request) => request.url.startsWith('/projects/api/campaigns/'));
   if (campaigns.length) {
-    const campaign = await commands.goldenMaster(state, 'getCampaign');
+    const campaign = await goldenMaster(state, 'getCampaign');
     for (const request of campaigns) request.flush(campaign);
     await settle();
   }
