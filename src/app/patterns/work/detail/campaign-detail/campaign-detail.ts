@@ -8,7 +8,8 @@ import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
  * A campaign's page body: its description (Markdown), its members in campaign order as the
- * Campaigns page draws them (`app-work-list`, view `campaign`), and its comments. A campaign has
+ * Campaigns page draws them (`app-work-list`, view `campaign`; a member epic on the board with
+ * its own board), and its comments. A campaign has
  * no dossier.
  */
 @Component({
@@ -20,7 +21,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
     <section class="flex flex-col gap-4" aria-label="Members">
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Members</h2>
-      <app-work-list [tree]="members()" [base]="base()" view="campaign" />
+      <app-work-list [tree]="members()" [base]="base()" view="campaign" epicBoards />
     </section>
     <app-work-comments [comments]="detail()?.comments ?? []" />
   `,

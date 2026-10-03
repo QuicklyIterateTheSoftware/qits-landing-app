@@ -158,13 +158,15 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
-  // The card screenshots' states (`epic-card`, `ticket-card`, the list items).
+  // The card screenshots' states (`epic-card`, `ticket-card`, the list items, `epic-board`).
   it.each([
     'a ticket of every type',
     'a verified epic with every task implemented',
     'a done epic with every task implemented',
     'an epic with tasks in every status',
     'an epic with a feature whose tasks are all verified',
+    'an epic with a verified feature whose tasks are all verified',
+    'an implementing epic with features in mixed statuses',
   ])('show-project-work-board: %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
       const store = storeAt(server.url);

@@ -46,3 +46,21 @@ export const BOARD_COLUMNS: readonly BoardColumn[] = [
     cardBorder: 'border-mint-leaf-400',
   },
 ];
+
+/**
+ * An epic's own board (`app-epic-board`): the board's columns, then Verified, the green of the
+ * verified tile one step darker than Verifying. VERIFIED and DONE tasks sit there.
+ */
+export const EPIC_BOARD_COLUMNS: readonly BoardColumn[] = [
+  ...BOARD_COLUMNS,
+  {
+    status: 'VERIFIED',
+    label: 'Verified',
+    body: 'bg-mint-leaf-500',
+    header: 'bg-mint-leaf-600 text-mint-leaf-950',
+    cardBorder: 'border-mint-leaf-600',
+  },
+];
+
+/** The statuses for which an epic is drawn with its own board: those of the board's columns. */
+export const EPIC_BOARD_STATUSES: ReadonlySet<string> = new Set(BOARD_COLUMNS.map((c) => c.status));
