@@ -55,6 +55,8 @@ const VERIFIED_FEATURE = 'an epic with a verified feature whose tasks are all ve
 /** Four features: VERIFIED, IMPLEMENTED (its task VERIFIED), REFINED, IMPLEMENTING (two tasks). */
 const MIXED = 'an implementing epic with features in mixed statuses';
 const CAMPAIGN = 'a campaign with work in every phase';
+/** MIXED's epic as a campaign member, beside a DONE and a VERIFIED epic that have no board. */
+const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
 /** One epic, member of two campaigns. The second campaign's answer is its own state. */
 const TWO_CAMPAIGNS = 'an epic in two campaigns';
 const SECOND_CAMPAIGN = 'the second campaign of an epic in two campaigns';
@@ -305,6 +307,30 @@ describe('EpicBoard (screenshots)', () => {
     const { element, locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
     await expect.element(locator).toHaveTextContent('Card campaign');
     await shoot(element, 'campaign');
+  });
+
+  it('in a campaign past the board: features in mixed statuses, its tag in the bar', async () => {
+    const { element, locator } = await shown(
+      PAST_THE_BOARD,
+      'contract-00000001-12',
+      'Epic with mixed features',
+    );
+    await expect.element(locator).toHaveTextContent('Campaign in flight');
+    expect(columnsOf(element)).toEqual({
+      'Verified task': 'Verified',
+      'Verified task of an implemented feature': 'Verified',
+      'Refined task': 'Refined',
+      'Implementing task': 'Implementing',
+      'Verifying task': 'Verifying',
+    });
+    expect(headings(element)).toEqual([
+      'Refined 1',
+      'Implementing 1',
+      'Implemented 0',
+      'Verifying 1',
+      'Verified 2',
+    ]);
+    await shoot(element, 'campaign-mixed-features');
   });
 
   it('in two campaigns', async () => {
