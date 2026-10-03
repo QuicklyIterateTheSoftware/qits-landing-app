@@ -22,7 +22,9 @@ describe('ProjectEditorPage (screenshots)', () => {
     const slug: string = list.entries[0].project.slug;
     TestBed.configureTestingModule({
       providers: [
+        // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- fed through HTTP in the guard switch-over
         { provide: SelectedProject, useValue: { slug: signal(slug) } },
+        // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- fed through HTTP in the guard switch-over
         { provide: AppOrigins, useValue: { origin: () => origin } },
       ],
     });

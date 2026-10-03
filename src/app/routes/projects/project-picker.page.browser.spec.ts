@@ -69,6 +69,7 @@ describe('ProjectPickerPage (screenshots)', () => {
       name: 'Other',
       slug: 'other',
     };
+    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
     list.flush({ ...recorded, entries: [...recorded.entries, { project: other }] });
     await settle();
     TestBed.tick();
@@ -80,6 +81,7 @@ describe('ProjectPickerPage (screenshots)', () => {
     http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
     http
       .expectOne(`/projects/api/projects/${other.id}/repositories`)
+      // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
     http
       .expectOne(`/projects/api/projects/${project.id}/entities`)
@@ -100,6 +102,7 @@ describe('ProjectPickerPage (screenshots)', () => {
     const { fixture, list } = await render();
     // qits-projects' recorded list with its one entry removed. No recording is empty.
     const recorded = await commands.goldenMaster('a project exists', 'listProjects');
+    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
     list.flush({ ...recorded, entries: [] });
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);

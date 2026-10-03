@@ -29,6 +29,7 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- fed through HTTP in the guard switch-over
         {
           provide: SelectedProject,
           useValue: { project: signal({ id: ID, name: 'Contract project', slug: 'contract' }) },

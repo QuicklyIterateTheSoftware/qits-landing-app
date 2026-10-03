@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
  * visitor could never navigate back past it. Navigating with `replaceUrl` leaves no root entry to
  * return to.
  */
+// eslint-disable-next-line qits/page-has-screenshots -- only redirects, renders nothing
 @Component({
   selector: 'app-root-page',
   changeDetection: ChangeDetectionStrategy.OnPush,

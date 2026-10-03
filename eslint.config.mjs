@@ -6,6 +6,14 @@ export default tseslint.config(
   { ignores: ['dist/', '.angular/', 'src/app/api/'] },
   { files: ['**/*.ts'], languageOptions: { parser: tseslint.parser } },
   ...qits.configs.recommended,
+  {
+    files: ['**/*.ts'],
+    // EVENT_SOURCE is a transport seam (a fake stream that never connects); its payloads still go
+    // through assertRecorded.
+    rules: {
+      'qits/browser-spec-data-from-golden-masters': ['error', { allowTokens: ['EVENT_SOURCE'] }],
+    },
+  },
   ...climbBans(),
 );
 
