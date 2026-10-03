@@ -110,7 +110,7 @@ describe('PageLayoutComponent', () => {
     expect(groups).toHaveLength(2);
     expect(groups[0].getAttribute('aria-label')).toBe('Release');
     expect(groups[0].querySelector('span')?.textContent).toBe('Release');
-    expect(groups[0].querySelector('span')?.classList).toContain('inline');
+    expect(groups[0].querySelector('span')?.classList).toContain('block');
     const joined = [...groups[0].querySelectorAll('button')];
     expect(joined[0].classList).toContain('rounded-l-md');
     expect(joined[1].classList).toContain('-ml-px');

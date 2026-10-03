@@ -8,7 +8,7 @@ import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
-import { FINISH_DELAY_MS } from '$core/work/work.store';
+import { FINISH_DELAY_MS } from '$core/work/finish-delay';
 import { LEAVE_MS } from '$ui/components/leave/leave';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
