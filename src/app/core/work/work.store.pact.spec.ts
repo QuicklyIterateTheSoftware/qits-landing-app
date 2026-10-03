@@ -176,31 +176,35 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
-  it('show-project-work-board: a campaign with work in every phase', () =>
-    given('show-project-work-board', 'a campaign with work in every phase').executeTest(
-      async (server) => {
-        // The entities read on its own: `load` would go on to read the campaign, which this
-        // interaction does not answer (the next one does).
-        storeAt(server.url);
-        const projectId = projectOf('a campaign with work in every phase');
-        const { data } = await TestBed.runInInjectionContext(() =>
-          listProjectEntities({ path: { projectId } }),
-        );
-        expect(data?.entities?.length).toBeGreaterThan(0);
-      },
-    ));
+  it.each([
+    'a campaign with work in every phase',
+    'a campaign with a done, a verified and an implementing epic',
+  ])('show-project-work-board: %s', (state) =>
+    given('show-project-work-board', state).executeTest(async (server) => {
+      // The entities read on its own: `load` would go on to read the campaign, which this
+      // interaction does not answer (the next one does).
+      storeAt(server.url);
+      const projectId = projectOf(state);
+      const { data } = await TestBed.runInInjectionContext(() =>
+        listProjectEntities({ path: { projectId } }),
+      );
+      expect(data?.entities?.length).toBeGreaterThan(0);
+    }),
+  );
 
-  it('show-project-work-board: the members of a campaign with work in every phase', () =>
-    givenCampaign('show-project-work-board', 'a campaign with work in every phase').executeTest(
-      async (server) => {
-        storeAt(server.url);
-        const op = masters.operation('a campaign with work in every phase', 'getCampaign');
-        const { data } = await TestBed.runInInjectionContext(() =>
-          getCampaign({ path: { id: op.params['campaignId'] } }),
-        );
-        expect(data?.campaign?.members?.length).toBeGreaterThan(0);
-      },
-    ));
+  it.each([
+    'a campaign with work in every phase',
+    'a campaign with a done, a verified and an implementing epic',
+  ])('show-project-work-board: the members of %s', (state) =>
+    givenCampaign('show-project-work-board', state).executeTest(async (server) => {
+      storeAt(server.url);
+      const op = masters.operation(state, 'getCampaign');
+      const { data } = await TestBed.runInInjectionContext(() =>
+        getCampaign({ path: { id: op.params['campaignId'] } }),
+      );
+      expect(data?.campaign?.members?.length).toBeGreaterThan(0);
+    }),
+  );
 
   // The epic card with two campaign tags. A state records one answer per operation, so the second
   // campaign is a state of its own over the same seed.

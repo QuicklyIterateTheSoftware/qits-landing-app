@@ -12,6 +12,7 @@ import { provideTestPlatformOrigins } from '../../../../../../../testing/platfor
 import { WorkItemPage } from './work-item.page';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
 import { openRecordedWork } from '../../../../../../../testing/browser/recorded-work';
+import { shootMembers } from '../../../../../../../testing/browser/shoot-members';
 
 /**
  * Screenshots of one work item's page and its actions, answered with qits-projects' golden masters
@@ -42,6 +43,17 @@ const IMPLEMENTED = 'an implemented ticket';
  * it from this one.
  */
 const CAMPAIGN = 'a campaign in detail';
+/**
+ * A campaign whose members are a DONE ticket, a DONE epic, a VERIFIED epic, an IMPLEMENTING epic
+ * and a REFINED ticket, with the campaign's own reads.
+ */
+const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
+/**
+ * States over a seed of their own, whose frozen ids are also ids qits-workspaces' bound state names
+ * (the VERIFIED epic's is the PDF feature's, the campaign's the bug ticket's): no item there has a
+ * workspace (`answerWorkspaces`).
+ */
+const UNBOUND: ReadonlySet<string> = new Set([PAST_THE_BOARD]);
 /** qits-workspaces' states. */
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
@@ -114,19 +126,23 @@ describe('WorkItemPage (screenshots)', () => {
   /**
    * Answers the open workspaces from "a project with workspaces bound to work items", and the
    * item's own workspaces: that state's list for the item it records (the bug ticket), and for any
-   * other item "a work item with no workspaces" (its answer names no id).
+   * other item "a work item with no workspaces" (its answer names no id). In an `UNBOUND` state the
+   * open workspaces answer 404 and every item's workspaces are "a work item with no workspaces".
    */
-  async function answerWorkspaces() {
+  async function answerWorkspaces(state: string) {
     await settle();
-    http
-      .expectOne('/workspaces/api/work/workspaces')
-      .flush(await goldenMaster(BOUND, 'listOpenWorkspaces', 'qits-workspaces'));
+    const open = http.expectOne('/workspaces/api/work/workspaces');
+    // TODO: answer from qits-workspaces' "no work item has an open workspace" once it is released.
+    if (UNBOUND.has(state)) open.flush(null, { status: 404, statusText: 'Not Found' });
+    else open.flush(await goldenMaster(BOUND, 'listOpenWorkspaces', 'qits-workspaces'));
     const bug = (await goldenMaster('a bug ticket in detail', 'getEntity')).id;
     for (const read of http.match((r) =>
       /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
     )) {
-      const state = read.request.url.split('/')[4] === bug ? BOUND : NONE;
-      read.flush(await goldenMaster(state, 'listWorkItemWorkspaces', 'qits-workspaces'));
+      const bound = !UNBOUND.has(state) && read.request.url.split('/')[4] === bug;
+      read.flush(
+        await goldenMaster(bound ? BOUND : NONE, 'listWorkItemWorkspaces', 'qits-workspaces'),
+      );
     }
   }
 
@@ -155,7 +171,7 @@ describe('WorkItemPage (screenshots)', () => {
       .expectOne('/projects/api/entities/archetypes')
       .flush(await goldenMaster('the archetype registry', 'listArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
-    await answerWorkspaces();
+    await answerWorkspaces(state);
     await settle();
     await settle();
     await harness.fixture.whenStable();
@@ -169,8 +185,9 @@ describe('WorkItemPage (screenshots)', () => {
    * description, then each region it has (Features, Tasks, Members, Dossier, Comments). A whole
    * page is taller than the viewport, and a taller viewport is scaled down to fit the test window,
    * so each part is shot on its own; a part taller than the viewport is shot child by child
-   * (`<name>-<part>-<n>`). The actions bar is unpinned first: pinned, it would cover each part
-   * the page scrolls to.
+   * (`<name>-<part>-<n>`). A campaign's Members are shot member by member (`shootMembers`:
+   * `<name>-members-<n>`), whatever their height: a list item's host has no box of its own. The
+   * actions bar is unpinned first: pinned, it would cover each part the page scrolls to.
    */
   async function shootParts(element: Locator, name: string) {
     const root = element.element();
@@ -185,7 +202,11 @@ describe('WorkItemPage (screenshots)', () => {
         ],
       ),
     ];
-    for (const [part, found] of parts) await shoot(found, `${name}-${part}`);
+    for (const [part, found] of parts) {
+      const list = part === 'members' ? found?.querySelector('app-work-list') : null;
+      if (list) await shootMembers(list, `${name}-members`);
+      else await shoot(found, `${name}-${part}`);
+    }
   }
 
   /** Shoots `part`, or each of its children when it is taller than the viewport. */
@@ -374,6 +395,49 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Agent' }))
         .toHaveTextContent('Start campaign');
       await shootParts(element, 'detail-campaign');
+    });
+
+    it('a campaign past the board: only its implementing epic has its own board', async () => {
+      const element = await render(PAST_THE_BOARD, 'Campaign in flight', true);
+      const members = element.getByRole('region', { name: 'Members' }).element();
+      const drawn = [
+        ...members.querySelectorAll('app-ticket-list-item, app-epic-list-item, app-epic-board'),
+      ].map((member) => [member.tagName.toLowerCase(), member.textContent ?? '']);
+      expect(drawn.map(([tag]) => tag)).toEqual([
+        'app-ticket-list-item',
+        'app-epic-list-item',
+        'app-epic-list-item',
+        'app-epic-board',
+        'app-ticket-list-item',
+      ]);
+      const titles = [
+        'Done ticket',
+        'Done epic',
+        'Verified epic',
+        'Epic with mixed features',
+        'Refined ticket',
+      ];
+      drawn.forEach(([, text], i) => expect(text).toContain(titles[i]));
+      expect(
+        members.querySelector('app-epic-board')!.querySelectorAll('ui-board-row'),
+      ).toHaveLength(4);
+      // No member has a workspace.
+      expect(members.querySelectorAll('app-workspace-link:not(.hidden) a')).toHaveLength(0);
+
+      // Each lane's id is whole inside its strip, however short the lane.
+      for (const id of members.querySelectorAll('app-epic-list-item a[lane-gutter]')) {
+        const strip = id.parentElement!.parentElement!.getBoundingClientRect();
+        const box = id.getBoundingClientRect();
+        expect(box.height).toBeGreaterThan(0);
+        expect(box.top).toBeGreaterThanOrEqual(strip.top);
+        expect(box.bottom).toBeLessThanOrEqual(strip.bottom);
+      }
+      // The campaign's own reads are recorded: the page loads whole.
+      await expect
+        .element(element)
+        .toHaveTextContent('Ships two tickets and three epics, one after the other.');
+      expect(element.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(0);
+      await shootParts(element, 'detail-campaign-done-verified-implementing');
     });
   });
 

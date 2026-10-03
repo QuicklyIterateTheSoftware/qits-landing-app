@@ -21,6 +21,9 @@ let nextListLaneId = 0;
  *   holds `[lane-gutter]` written bottom to top at its bottom, and the title bar
  *   (`[lane-header]`, right-aligned, 40% charcoal) starts beside it across the top.
  * - `[lane-tags]` wrap in a row of their own below the bar, at least 1rem tall.
+ * - The strip is in the lane's grid (its first column, over all three rows), so a longer id makes
+ *   the lane taller: even a collapsed lane shows its whole id. The extra height goes to the
+ *   children's row.
  * - The children (`ui-list-row`s, cards) stack between the gutters, 1rem apart.
  * - A link projected as `[lane-header]` stretches over the whole lane and casts a shadow while
  *   hovered; rows and cards sit above it with their own links.
@@ -36,26 +39,31 @@ let nextListLaneId = 0;
   imports: [ExpandButton, Findable],
   host: {
     class:
-      'relative mx-1 block rounded-tl-xl bg-white/25 pb-(--lane-chin) ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
+      'relative mx-1 grid grid-cols-[1.5rem_minmax(0,1fr)] grid-rows-[auto_auto_1fr] rounded-tl-xl bg-white/25 pb-(--lane-chin) ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
     'data-highlight-target': '',
   },
   template: `
+    <!--
+      In the grid, not positioned, so its id sets the lane's least height: a short or collapsed
+      lane shows its whole id. It reaches into the chin (the negative margin), and keeps the chin
+      above the id too.
+    -->
     <div
-      class="absolute inset-y-0 left-0 flex w-6 items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
+      class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pt-(--lane-chin) pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
     >
       <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
         <ng-content select="[lane-gutter]" />
       </span>
     </div>
     <div
-      class="ml-6 flex items-center justify-end gap-2 bg-charcoal-brown-800/40 px-2 py-1 text-xs wrap-anywhere text-white [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-start-2 row-start-1 flex items-center justify-end gap-2 bg-charcoal-brown-800/40 px-2 py-1 text-xs wrap-anywhere text-white [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[lane-header]" />
     </div>
-    <div class="mx-6 flex min-h-4 flex-wrap items-center gap-1.5">
+    <div class="col-start-2 row-start-2 mr-6 flex min-h-4 flex-wrap items-center gap-1.5">
       <ng-content select="[lane-tags]" />
     </div>
-    <div class="relative ml-6">
+    <div class="relative col-start-2 row-start-3">
       <div
         [id]="contentId"
         class="grid transition-[grid-template-rows] duration-200 ease-out"
