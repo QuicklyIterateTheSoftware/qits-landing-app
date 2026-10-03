@@ -27,9 +27,9 @@ let nextLaneId = 0;
  * only its top-left corner rounded, holding `[lane-gutter]` written vertically at its bottom.
  * Below the bar, `[lane-tags]` sit in a row of their own across the status columns, wrapping,
  * that row no taller than the usual 1rem unless they need it; then its children
- * (`ui-board-row`s, cards) in the columns beside the strip. It is at least 7rem tall, and taller when
- * `gutterLength` (the `[lane-gutter]` text's characters, 11px mono) needs it, so even a collapsed
- * lane shows its whole id up the strip; the extra height goes below its content.
+ * (`ui-board-row`s, cards) in the columns beside the strip. It is at least 7rem tall. The strip is in
+ * the lane's grid (its first column, over all three rows), so a longer id makes the lane taller:
+ * even a collapsed or empty lane shows its whole id. The extra height goes to the children's row.
  *
  * With `collapsible`, a round button on its bottom edge switches between the children (expanded)
  * and `[lane-summary]` (collapsed), a single line on the board's columns: a child that places
@@ -53,19 +53,19 @@ let nextLaneId = 0;
     class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
     'data-highlight-target': '',
     '[class]':
-      "(onBoard ? 'relative mx-1 grid min-h-[max(7rem,calc(var(--lane-id-chars,0)*0.4125rem+2rem))] grid-cols-subgrid content-start self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
+      "(onBoard ? 'relative mx-1 grid min-h-28 grid-cols-subgrid grid-rows-[auto_auto_1fr] self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
-    '[style.--lane-id-chars]': 'gutterLength()',
   },
   template: `
     @if (onBoard) {
       <!--
         The left arm of the ┌: the whole left side, the top-left corner included, so the title bar
         starts beside it and the two never overlap. Before the bar, so the bar's stretched link
-        lies above it.
+        lies above it. In the grid, not positioned, so its id sets the lane's least height; it
+        reaches into the chin (the negative margin), and keeps the chin above the id too.
       -->
       <div
-        class="absolute inset-y-0 left-0 flex w-6 items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
+        class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex w-6 items-end justify-center justify-self-start rounded-tl-xl bg-charcoal-brown-800/40 pt-(--lane-chin) pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
       >
         <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
           <ng-content select="[lane-gutter]" />
@@ -76,7 +76,7 @@ let nextLaneId = 0;
       class="col-span-full flex items-center gap-2 px-2 py-1 text-xs wrap-anywhere [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
-          ? 'ml-6 justify-end bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
+          ? 'row-start-1 ml-6 justify-end bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
           : muted()
             ? 'relative bg-charcoal-brown-100 text-charcoal-brown-600'
             : 'relative bg-charcoal-brown-800 font-semibold text-white'
@@ -159,8 +159,6 @@ export class BoardLane implements BoardContext {
   readonly collapsible = input(false, { transform: booleanAttribute });
   /** Whether the lane starts collapsed; the button changes it after that. */
   readonly collapsed = input(false, { transform: booleanAttribute });
-  /** The length of the `[lane-gutter]` text, so the lane is tall enough for it. */
-  readonly gutterLength = input(0);
 
   protected readonly isCollapsed = linkedSignal(() => this.collapsible() && this.collapsed());
   protected readonly contentId = `board-lane-${nextLaneId++}`;

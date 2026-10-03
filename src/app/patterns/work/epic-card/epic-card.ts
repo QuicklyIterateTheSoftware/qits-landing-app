@@ -35,12 +35,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
-    <ui-board-lane
-      collapsible
-      [gutterLength]="n.entry.qualifiedId?.length ?? 0"
-      [uiLeave]="leaving()"
-      (left)="left.emit()"
-    >
+    <ui-board-lane collapsible [uiLeave]="leaving()" (left)="left.emit()">
       @for (tile of tiles(); track tile.column) {
         <ui-board-count
           lane-summary

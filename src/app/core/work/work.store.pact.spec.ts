@@ -164,6 +164,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     'a verified epic with every task implemented',
     'a done epic with every task implemented',
     'an epic with tasks in every status',
+    'an epic with a feature whose tasks are all verified',
   ])('show-project-work-board: %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
       const store = storeAt(server.url);

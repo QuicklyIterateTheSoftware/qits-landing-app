@@ -134,7 +134,8 @@ describe('Board', () => {
     const lane = render().querySelector('ui-board-lane') as HTMLElement;
     const strip = lane.firstElementChild as HTMLElement;
     const bar = strip.nextElementSibling as HTMLElement;
-    expect(strip.classList).toContain('inset-y-0');
+    // In the grid over the lane's three rows, so its id sets the lane's least height.
+    expect(strip.classList).toContain('row-span-3');
     expect(strip.classList).toContain('w-6');
     expect(strip.textContent?.trim()).toBe('L-1');
     // The bar starts where the strip ends, in the same colour.

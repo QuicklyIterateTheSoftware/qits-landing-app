@@ -48,6 +48,8 @@ const EVERY_STATUS = 'a project with work in every status';
 const NESTED = 'an epic with features and tasks';
 /** One feature with a task in each status: two of them (VERIFIED, DONE) past the board. */
 const EVERY_TASK_STATUS = 'an epic with tasks in every status';
+/** Two features: one whose three tasks are all VERIFIED (no cards left), one with open tasks. */
+const ALL_VERIFIED = 'an epic with a feature whose tasks are all verified';
 const CAMPAIGN = 'a campaign with work in every phase';
 /** One epic, member of two campaigns. The second campaign's answer is its own state. */
 const TWO_CAMPAIGNS = 'an epic in two campaigns';
@@ -198,9 +200,29 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('feature-verified-tasks');
   });
 
+  it('a feature whose tasks are all verified: no cards, its tile and its whole id', async () => {
+    const { element, locator } = await shown(ALL_VERIFIED, 'contract-00000001-1', 'Epic in flight');
+    const [verified, open] = Array.from(element.querySelectorAll('ui-board-row'));
+    expect(verified.querySelectorAll('ui-board-card')).toHaveLength(0);
+    expect(open.querySelectorAll('ui-board-card')).toHaveLength(2);
+    const tile = verified.querySelector('ui-board-count')!;
+    expect(tile.querySelector('.sr-only')?.textContent?.trim()).toBe('3 verified');
+    expect(open.querySelector('ui-board-count')).toBeNull();
+    const row = verified.getBoundingClientRect();
+    const id = verified.querySelector('[row-id]')!.getBoundingClientRect();
+    expect(id.top).toBeGreaterThan(row.top);
+    expect(id.bottom).toBeLessThanOrEqual(tile.getBoundingClientRect().top);
+    await expect.element(locator).toMatchScreenshot('feature-all-verified');
+  });
+
   it('in a campaign', async () => {
-    const { locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
+    const { element, locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
     await expect.element(locator).toHaveTextContent('Card campaign');
+    // No rows: the lane still grows to its whole id, up the left strip.
+    const lane = element.querySelector('ui-board-lane')!.getBoundingClientRect();
+    const id = element.querySelector('[lane-gutter]')!.getBoundingClientRect();
+    expect(id.top).toBeGreaterThan(lane.top);
+    expect(id.bottom).toBeLessThan(lane.bottom);
     await expect.element(locator).toMatchScreenshot('campaign');
   });
 

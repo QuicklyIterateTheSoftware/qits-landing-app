@@ -166,7 +166,7 @@ class Linked {
   template: `
     <ui-board [columns]="columns" gutter>
       @if (kind === 'folded') {
-        <ui-board-lane id="folded" collapsible collapsed [gutterLength]="20">
+        <ui-board-lane id="folded" collapsible collapsed>
           <span lane-header class="font-semibold">A collapsed epic with a long id</span>
           <span lane-gutter class="font-mono">contract-00000001-17</span>
           <ui-board-count lane-summary [column]="0" [count]="2" label="refined" />
