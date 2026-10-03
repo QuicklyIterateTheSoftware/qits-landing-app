@@ -8,7 +8,10 @@ const FITS = 560;
 
 /**
  * Screenshots of a work list's members (`app-work-list`), in order, one per member:
- * `<name>-<n>`. An epic board taller than the viewport is shot in parts, as the epic board's own
+ * `<name>-<n>`. Each is shot with room around it, as the pattern specs' hosts leave it (`p-4
+ * pb-8`): what sits on its edge, half outside (a lane's collapse button), is in the picture
+ * whole. The room is a padded box laid around the member for the shot, with negative margins, so
+ * nothing on the page moves. An epic board taller than the viewport is shot in parts, as the epic board's own
  * screenshots do: its bar, its column headings, then each row (`<name>-<n>-bar`,
  * `<name>-<n>-columns`, `<name>-<n>-row-<m>`).
  */
@@ -21,7 +24,7 @@ async function shootMember(member: Element, name: string): Promise<void> {
   const box = boxOf(member);
   if (!box) return;
   if (box.offsetHeight <= FITS) {
-    await expect.element(page.elementLocator(box)).toMatchScreenshot(name);
+    await shootWithRoom(member, name);
     return;
   }
   if (member.tagName !== 'APP-EPIC-BOARD') throw new Error(`${name} is taller than the viewport`);
@@ -48,4 +51,24 @@ function boxOf(element: Element): HTMLElement | undefined {
     if (box) return box;
   }
   return undefined;
+}
+
+/** Shoots `member` inside a box that leaves room around it, then puts it back as it was. */
+async function shootWithRoom(member: Element, name: string): Promise<void> {
+  const room = document.createElement('div');
+  // A flex column as the list is, so the member is laid out as before; inline styles, as a class
+  // used only here may be missing from the stylesheet.
+  Object.assign(room.style, {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '-1rem -1rem -2rem',
+    padding: '1rem 1rem 2rem',
+  });
+  member.replaceWith(room);
+  room.append(member);
+  try {
+    await expect.element(page.elementLocator(room)).toMatchScreenshot(name);
+  } finally {
+    room.replaceWith(member);
+  }
 }

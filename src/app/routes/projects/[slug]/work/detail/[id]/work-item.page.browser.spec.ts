@@ -184,8 +184,9 @@ describe('WorkItemPage (screenshots)', () => {
    * description, then each region it has (Features, Tasks, Members, Dossier, Comments). A whole
    * page is taller than the viewport, and a taller viewport is scaled down to fit the test window,
    * so each part is shot on its own; a part taller than the viewport is shot child by child
-   * (`<name>-<part>-<n>`). The actions bar is unpinned first: pinned, it would cover each part
-   * the page scrolls to.
+   * (`<name>-<part>-<n>`). A campaign's Members are shot member by member (`shootMembers`:
+   * `<name>-members-<n>`), whatever their height: a list item's host has no box of its own. The
+   * actions bar is unpinned first: pinned, it would cover each part the page scrolls to.
    */
   async function shootParts(element: Locator, name: string) {
     const root = element.element();
@@ -200,7 +201,11 @@ describe('WorkItemPage (screenshots)', () => {
         ],
       ),
     ];
-    for (const [part, found] of parts) await shoot(found, `${name}-${part}`);
+    for (const [part, found] of parts) {
+      const list = part === 'members' ? found?.querySelector('app-work-list') : null;
+      if (list) await shootMembers(list, `${name}-members`);
+      else await shoot(found, `${name}-${part}`);
+    }
   }
 
   /** Shoots `part`, or each of its children when it is taller than the viewport. */
@@ -417,11 +422,19 @@ describe('WorkItemPage (screenshots)', () => {
       ).toHaveLength(4);
       // No member has a workspace.
       expect(members.querySelectorAll('app-workspace-link:not(.hidden) a')).toHaveLength(0);
-      // The state records no item reads: the facts and the members are the page. One picture per
-      // member, as `shootParts` would cut the board's rows apart from the list items.
-      const name = 'detail-campaign-done-verified-implementing';
-      await shoot(element.element().querySelector('app-work-fields:not(.hidden)'), `${name}-facts`);
-      await shootMembers(members.querySelector('app-work-list')!, `${name}-members`);
+
+      // Each lane's id is whole inside its strip, however short the lane.
+      for (const id of members.querySelectorAll('app-epic-list-item a[lane-gutter]')) {
+        const strip = id.parentElement!.parentElement!.getBoundingClientRect();
+        const box = id.getBoundingClientRect();
+        expect(box.height).toBeGreaterThan(0);
+        expect(box.top).toBeGreaterThanOrEqual(strip.top);
+        expect(box.bottom).toBeLessThanOrEqual(strip.bottom);
+      }
+      // The state records no item reads: they answer 404, and the body says it failed to load
+      // (its red mark, over a white veil on the members).
+      await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
+      await shootParts(element, 'detail-campaign-done-verified-implementing');
     });
   });
 

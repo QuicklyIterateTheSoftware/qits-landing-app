@@ -140,6 +140,15 @@ describe('WorkCampaignsPage (screenshots)', () => {
     // Only the implementing epic is on the board: its features are its rows.
     const board = root.querySelector('app-epic-board')!;
     expect(board.querySelectorAll('ui-board-row')).toHaveLength(4);
+
+    // Each lane's id is whole inside its strip, however short the lane.
+    for (const id of root.querySelectorAll('app-epic-list-item a[lane-gutter]')) {
+      const strip = id.parentElement!.parentElement!.getBoundingClientRect();
+      const box = id.getBoundingClientRect();
+      expect(box.height).toBeGreaterThan(0);
+      expect(box.top).toBeGreaterThanOrEqual(strip.top);
+      expect(box.bottom).toBeLessThanOrEqual(strip.bottom);
+    }
     // Taller than the viewport, so shot in parts: the campaign's header, then each member.
     await expect
       .element(page.elementLocator(root.querySelector('app-campaign-section header')!))
