@@ -242,3 +242,11 @@ step image that has Chromium, so a changed pixel fails the release request.
 - **References are made by the platform, never by hand.** A qits-maintenance task, which an agent
   triggers for its release request, regenerates them (with `renderer.txt`) in the renderer image and
   joins the commit to that release request. Do not commit reference screenshots made anywhere else.
+- **No reference without a test.** Vitest never deletes a reference, so a deleted spec or a renamed
+  screenshot leaves an orphan. `screenshotReferences()` (`@qits/angular/screenshots`, in
+  `vitest-browser.config.ts`) records every reference each spec asks for during the run, and
+  `qits-angular screenshots --check` fails on a reference no test uses: after the run in
+  `test:browser` (judged by name, for every spec whose tests all passed), and in `lint` (only the
+  references of deleted specs, which need no run). The fix is never a hand deletion: the baselines
+  job runs `npm run screenshots:prune` after its update run, so its commit deletes the orphans too.
+  Trigger it as for a changed screenshot.
