@@ -256,4 +256,69 @@ describe('WorkStore', () => {
       expect(store.pendingFinishes()).toEqual({});
     });
   });
+
+  describe('transition', () => {
+    const ticket = { id: 't-1', archetype: 'TICKET', status: 'REPORTED' } as WorkEntry;
+    const epic = { id: 'e-1', archetype: 'EPIC', status: 'REFINED' } as WorkEntry;
+
+    async function loaded(): Promise<InstanceType<typeof WorkStore>> {
+      const store = TestBed.inject(WorkStore);
+      const done = store.load(ID);
+      await settle();
+      http.expectOne(`/projects/api/projects/${ID}/entities`).flush({ entities: [ticket, epic] });
+      await done;
+      return store;
+    }
+
+    const statusOf = (store: InstanceType<typeof WorkStore>, id: string) =>
+      store.byProject()[ID]?.entries.find((e) => e.id === id)?.status;
+
+    it('marks a reported ticket refined through the ticket door', async () => {
+      const store = await loaded();
+      const moved = store.transition(ID, ticket, 'REFINED');
+      expect(store.transitioning()['t-1']).toBe('running');
+      await settle();
+      const request = http.expectOne('/projects/api/tickets/t-1/transition');
+      expect(request.request.method).toBe('POST');
+      expect(request.request.body).toEqual({ target: 'REFINED' });
+      request.flush({ ticket: { status: 'REFINED' } });
+      await moved;
+      expect(statusOf(store, 't-1')).toBe('REFINED');
+      expect(store.transitioning()).toEqual({});
+    });
+
+    it('drops an epic through the epic door', async () => {
+      const store = await loaded();
+      const moved = store.transition(ID, epic, 'DROPPED');
+      await settle();
+      const request = http.expectOne('/projects/api/epics/e-1/transition');
+      expect(request.request.body).toEqual({ target: 'DROPPED' });
+      request.flush({ epic: { status: 'DROPPED' } });
+      await moved;
+      expect(statusOf(store, 'e-1')).toBe('DROPPED');
+    });
+
+    it('keeps the status and marks the move failed when it is refused', async () => {
+      const store = await loaded();
+      const moved = store.transition(ID, ticket, 'REFINED');
+      await settle();
+      http
+        .expectOne('/projects/api/tickets/t-1/transition')
+        .flush(null, { status: 409, statusText: 'Conflict' });
+      await moved;
+      expect(statusOf(store, 't-1')).toBe('REPORTED');
+      expect(store.transitioning()['t-1']).toBe('error');
+    });
+
+    it('sends one move while one is running', async () => {
+      const store = await loaded();
+      const moved = store.transition(ID, ticket, 'REFINED');
+      await store.transition(ID, ticket, 'REFINED');
+      await settle();
+      http
+        .expectOne('/projects/api/tickets/t-1/transition')
+        .flush({ ticket: { status: 'REFINED' } });
+      await moved;
+    });
+  });
 });

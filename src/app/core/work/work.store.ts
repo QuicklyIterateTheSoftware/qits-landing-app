@@ -30,6 +30,9 @@ export type FinishState = 'running' | 'error';
 
 type Status = 'loading' | 'loaded' | 'error';
 
+/** A work entity's status word. */
+export type WorkStatus = NonNullable<WorkEntry['status']>;
+
 export { FINISH_DELAY_MS };
 
 /**
@@ -64,6 +67,8 @@ interface WorkState {
   readonly finishing: Readonly<Record<string, FinishState>>;
   /** Each finish asked for with `finishLater` and not settled yet, by entity id, oldest first. */
   readonly pendingFinishes: Readonly<Record<string, PendingFinish>>;
+  /** Each entity's running or failed `transition`, by entity id. */
+  readonly transitioning: Readonly<Record<string, FinishState>>;
 }
 
 /**
@@ -85,10 +90,13 @@ interface WorkState {
  *   On failure the item shows again and the pending finish stays `failed` until `dismissFinish`.
  *   Leaving the page (`pagehide`) sends every waiting finish at once: the user had their chance to
  *   undo, and the request is sent with `keepalive`, so it outlives the page.
+ * - `transition(projectId, entry, target)` moves an epic or a ticket to any status its lifecycle
+ *   allows (the work item page's Mark refined and Drop), through the same doors as `finish`, and
+ *   writes the answered status into the entry. `transitioning` holds a running or failed move.
  */
 export const WorkStore = signalStore(
   { providedIn: 'root' },
-  withState<WorkState>({ byProject: {}, finishing: {}, pendingFinishes: {} }),
+  withState<WorkState>({ byProject: {}, finishing: {}, pendingFinishes: {}, transitioning: {} }),
   withComputed((store) => ({
     /** The ids of items the lists do not show: their finish is waiting or being sent. */
     hidden: computed(
@@ -136,6 +144,11 @@ export const WorkStore = signalStore(
       patchState(store, { finishing: value ? { ...rest, [entityId]: value } : rest });
     }
 
+    function setTransitioning(entityId: string, value: FinishState | undefined): void {
+      const { [entityId]: _, ...rest } = store.transitioning();
+      patchState(store, { transitioning: value ? { ...rest, [entityId]: value } : rest });
+    }
+
     /** Sets or drops a pending finish; a finish already there keeps its place in the order. */
     function setPending(entityId: string, value: PendingFinish | undefined): void {
       const { [entityId]: _, ...rest } = store.pendingFinishes();
@@ -149,12 +162,19 @@ export const WorkStore = signalStore(
       timers.delete(entityId);
     }
 
-    async function finish(projectId: string, entry: WorkEntry): Promise<void> {
+    /**
+     * Moves an epic or a ticket to `target` through its lifecycle door, and writes the answered
+     * status into its entry. The answered status, or undefined when the move failed.
+     */
+    async function move(
+      projectId: string,
+      entry: WorkEntry,
+      target: WorkStatus,
+    ): Promise<WorkStatus | undefined> {
       const id = entry.id;
-      if (!id || store.finishing()[id] === 'running') return;
-      setFinishing(id, 'running');
+      if (!id) return undefined;
       // `keepalive`: a finish sent as the page is left must still arrive.
-      const options = { path: { id }, body: { target: 'DONE' }, keepalive: true };
+      const options = { path: { id }, body: { target }, keepalive: true };
       const status =
         entry.archetype === 'EPIC'
           ? await consume(transitionEpic(options), TRANSITION_EPIC).then(({ data, error }) =>
@@ -163,18 +183,22 @@ export const WorkStore = signalStore(
           : await consume(transitionTicket(options), TRANSITION_TICKET).then(({ data, error }) =>
               error === undefined ? data?.ticket?.status : undefined,
             );
-      if (!status) {
-        setFinishing(id, 'error');
-        return;
-      }
-      setFinishing(id, undefined);
-      settled.set(id, { status: status as WorkEntry['status'], at: ++clock });
+      if (!status) return undefined;
+      settled.set(id, { status, at: ++clock });
       const work = store.byProject()[projectId];
-      if (!work) return;
-      const entries = work.entries.map((e) =>
-        e.id === id ? { ...e, status: status as WorkEntry['status'] } : e,
-      );
-      set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
+      if (work) {
+        const entries = work.entries.map((e) => (e.id === id ? { ...e, status } : e));
+        set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
+      }
+      return status;
+    }
+
+    async function finish(projectId: string, entry: WorkEntry): Promise<void> {
+      const id = entry.id;
+      if (!id || store.finishing()[id] === 'running') return;
+      setFinishing(id, 'running');
+      const status = await move(projectId, entry, 'DONE');
+      setFinishing(id, status ? undefined : 'error');
     }
 
     /** Sends the waiting finish of `entityId` now. */
@@ -231,6 +255,14 @@ export const WorkStore = signalStore(
       },
       /** Moves `entry` to DONE now. */
       finish,
+      /** Moves an epic or a ticket to `target` (Mark refined, Drop); a running move is not repeated. */
+      async transition(projectId: string, entry: WorkEntry, target: WorkStatus): Promise<void> {
+        const id = entry.id;
+        if (!id || store.transitioning()[id] === 'running') return;
+        setTransitioning(id, 'running');
+        const status = await move(projectId, entry, target);
+        setTransitioning(id, status ? undefined : 'error');
+      },
       /** Hides `entry` and moves it to DONE after {@link FINISH_DELAY_MS}, unless undone first. */
       finishLater(projectId: string, entry: WorkEntry): void {
         const id = entry.id;

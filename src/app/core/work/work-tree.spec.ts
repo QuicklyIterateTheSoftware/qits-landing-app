@@ -54,6 +54,20 @@ describe('WorkGraph', () => {
     expect(epic.map((e) => graph.columnOf(e))).toEqual([1, 2, 2, 1, 0, 0]);
   });
 
+  it('gives a feature and a task their epic’s status, and an orphan none', () => {
+    const entries = [...epic, entry('lost', 'TASK', undefined, 'gone')];
+    const graph = new WorkGraph(entries);
+    expect(entries.map((e) => graph.statusOf(e))).toEqual([
+      'IMPLEMENTING',
+      'IMPLEMENTING',
+      'IMPLEMENTING',
+      'IMPLEMENTING',
+      'IMPLEMENTING',
+      'IMPLEMENTING',
+      undefined,
+    ]);
+  });
+
   it('places work by its status: REFINED, IMPLEMENTING, IMPLEMENTED, VERIFYING', () => {
     const tickets = ['REFINED', 'IMPLEMENTING', 'IMPLEMENTED', 'VERIFYING'].map((status) =>
       entry(status, 'TICKET', status),

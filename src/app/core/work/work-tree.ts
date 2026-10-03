@@ -93,6 +93,11 @@ export class WorkGraph {
     return owner?.status ? PHASE_BY_STATUS[owner.status] : undefined;
   }
 
+  /** The entity's own status, or its nearest ancestor's (a feature's or task's epic); else none. */
+  statusOf(entry: WorkEntry): WorkEntry['status'] | undefined {
+    return this.statusOwner(entry)?.status;
+  }
+
   /** The entity's board column, or undefined when it is not on the board. */
   columnOf(entry: WorkEntry): number | undefined {
     if (this.phaseOf(entry) !== 'board') return undefined;
