@@ -12,12 +12,18 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { GET_CAMPAIGN, LIST_PROJECT_ENTITIES } from './work.consumes';
+import {
+  GET_CAMPAIGN,
+  LIST_PROJECT_ENTITIES,
+  TRANSITION_EPIC,
+  TRANSITION_TICKET,
+  type WorkEntry,
+} from './work.consumes';
 import { WorkStore } from './work.store';
 
 /**
  * `WorkStore`'s part of qits-landing-app's pact with qits-projects-service (epic qits-112): the
- * `listProjectEntities` interactions, in the same file as `ProjectsStore`'s
+ * `listProjectEntities`, `getCampaign`, `transitionEpic` and `transitionTicket` interactions, in the same file as `ProjectsStore`'s
  * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
  *
  * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against
@@ -27,7 +33,7 @@ import { WorkStore } from './work.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS = ['listProjectEntities', 'getCampaign'];
+const OPERATIONS = ['listProjectEntities', 'getCampaign', 'transitionEpic', 'transitionTicket'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -49,6 +55,20 @@ const givenCampaign = (slug: InteractionSlug, state: string) =>
     operationId: 'getCampaign',
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
     consumes: GET_CAMPAIGN,
+  });
+
+/** The move to DONE that `finish` makes for a VERIFIED epic or ticket. */
+const givenTransition = (
+  slug: InteractionSlug,
+  state: string,
+  operationId: 'transitionEpic' | 'transitionTicket',
+) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state,
+    operationId,
+    trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
+    consumes: operationId === 'transitionEpic' ? TRANSITION_EPIC : TRANSITION_TICKET,
   });
 
 /** A store whose client talks to the mock server through a real HttpClient. */
@@ -137,4 +157,31 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
         campaigns: {},
       });
     }));
+
+  it('finish-epic: the finish button moves a VERIFIED epic to DONE', () =>
+    givenTransition('finish-epic', 'a verified epic', 'transitionEpic').executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const { params } = masters.operation('a verified epic', 'transitionEpic');
+        const entry = { id: params['epicId'], archetype: 'EPIC', status: 'VERIFIED' } as WorkEntry;
+        await store.finish(params['projectId'], entry);
+        // No finish state left means the answer carried a status.
+        expect(store.finishing()[params['epicId']]).toBeUndefined();
+      },
+    ));
+
+  it('finish-ticket: the finish button moves a VERIFIED ticket to DONE', () =>
+    givenTransition('finish-ticket', 'a verified ticket', 'transitionTicket').executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const { params } = masters.operation('a verified ticket', 'transitionTicket');
+        const entry = {
+          id: params['ticketId'],
+          archetype: 'TICKET',
+          status: 'VERIFIED',
+        } as WorkEntry;
+        await store.finish(params['projectId'], entry);
+        expect(store.finishing()[params['ticketId']]).toBeUndefined();
+      },
+    ));
 });
