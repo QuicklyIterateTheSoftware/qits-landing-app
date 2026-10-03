@@ -113,7 +113,12 @@ describe('KanbanBoard (screenshots)', () => {
     )!;
     const range = document.createRange();
     range.selectNodeContents(title);
-    select((selection) => selection.addRange(range));
+    // Chrome ignores addRange while a selection exists, and an earlier spec in the shared page
+    // may have left one.
+    select((selection) => {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
     const card = title.closest('ui-board-card')!;
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
     // No selection colour in the shot; the highlight stays until it fades.
