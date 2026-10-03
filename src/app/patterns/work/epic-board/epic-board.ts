@@ -22,8 +22,11 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * One epic with its own board, as a campaign and the epic's page draw an epic on the board
  * (REFINED to VERIFYING):
  *
- * - with `header`, a bar on top: its id and title, both linking to it, its status, its campaigns
- *   as tags, and a Workspace tag while it has an ACTIVE workspace (`app-workspace-link`);
+ * - with `header`, a bar on top that runs on down the left side as one ┌, as an epic's lane does on
+ *   the In Progress board: the bar holds its title (linking to it), its status, its campaigns as
+ *   tags and a Workspace tag while it has an ACTIVE workspace (`app-workspace-link`); the left
+ *   strip holds its id, written up from the bottom. The strip is in the grid, so a long id makes
+ *   the whole taller;
  * - below it a board (`ui-board`) of five columns (`EPIC_BOARD_COLUMNS`): the In Progress board's
  *   four, then Verified, each headed with how many cards it holds;
  * - each feature is a row (`ui-board-row`), as on the In Progress board: its title along the
@@ -43,17 +46,27 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
     <article
-      class="rounded-tl-xl ring-1 ring-black/10"
+      class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-black/10"
       data-highlight-target
       [attr.aria-label]="n.entry.title"
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
       @if (header()) {
-        <header
-          class="flex flex-wrap items-center gap-2 rounded-tl-xl bg-charcoal-brown-800/40 px-3 py-1.5 text-xs text-white [&>a]:text-inherit [&>a]:no-underline [&>a]:hover:underline"
+        <!-- The left arm of the ┌, over the board's empty left gutter; above the board's pinned
+             headings, so it runs on unbroken past them. -->
+        <div
+          class="relative z-40 col-start-1 row-span-2 row-start-1 flex items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 py-4 text-white"
         >
-          <a class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
+          <a
+            class="rotate-180 font-mono text-[0.6875rem] whitespace-nowrap text-inherit no-underline [writing-mode:vertical-rl] hover:underline"
+            [routerLink]="link"
+            >{{ n.entry.qualifiedId }}</a
+          >
+        </div>
+        <header
+          class="col-start-2 row-start-1 flex flex-wrap items-center gap-2 bg-charcoal-brown-800/40 px-3 py-1.5 text-xs text-white [&>a]:text-inherit [&>a]:no-underline [&>a]:hover:underline"
+        >
           <a class="text-sm font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
           <ui-tag [label]="status()" [class.hidden]="!status()" />
           @for (campaign of n.campaigns; track campaign.id) {
@@ -62,7 +75,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           <app-workspace-link [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
         </header>
       }
-      <ui-board [columns]="columns()" gutter>
+      <ui-board class="col-span-full row-start-2" [columns]="columns()" gutter>
         @for (row of rows(); track row.node.entry.id) {
           <ui-board-row class="mb-4" [idLength]="row.node.entry.qualifiedId?.length ?? 0">
             @for (card of row.cards; track card.node.entry.id) {
