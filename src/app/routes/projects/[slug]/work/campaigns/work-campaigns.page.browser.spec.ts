@@ -98,6 +98,12 @@ describe('WorkCampaignsPage (screenshots)', () => {
     await expect
       .element(element.getByRole('link', { name: 'Reported ticket' }))
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-4$/));
+    // The refined epic has its own board; the tickets are drawn as before.
+    const root = element.element();
+    expect(root.querySelectorAll('app-epic-board')).toHaveLength(1);
+    expect(root.querySelector('app-epic-board')?.textContent).toContain('Refined epic');
+    expect(root.querySelectorAll('app-epic-list-item')).toHaveLength(0);
+    expect(root.querySelectorAll('app-ticket-list-item')).toHaveLength(3);
     // Finishing is the Acceptance list's job.
     expect(element.getByRole('button', { name: /^Mark / }).elements()).toHaveLength(0);
     await expect.element(element).toMatchScreenshot('campaign');

@@ -1,7 +1,15 @@
-import { ChangeDetectionStrategy, Component, input, linkedSignal } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  linkedSignal,
+} from '@angular/core';
+import { hasEpicBoard } from '$core/work/epic-board';
 import { withLeaving, type RowState } from '$core/work/leaving';
 import type { WorkNode } from '$core/work/work-tree';
 import { SelectionHighlight } from '$ui/components/highlight/highlight';
+import { EpicBoard } from '$patterns/work/epic-board/epic-board';
 import { EpicListItem } from '$patterns/work/epic-list-item/epic-list-item';
 import { TicketListItem } from '$patterns/work/ticket-list-item/ticket-list-item';
 import type { WorkListView } from './work-list-view';
@@ -12,7 +20,8 @@ import type { WorkListView } from './work-list-view';
  * (`tree('archive')`). Each top-level epic is an `app-epic-list-item` (a lane, with its features
  * and tasks), anything else an `app-ticket-list-item`, stacked. An empty tree says "Nothing here".
  * Both are always rendered and switched by class, so a server render hydrates as is. The card, row
- * or lane the text selection is in is highlighted (`SelectionHighlight`).
+ * or lane the text selection is in is highlighted (`SelectionHighlight`). With `epicBoards`, an epic
+ * on the board (REFINED to VERIFYING) is drawn with its own board instead (`app-epic-board`).
  *
  * A node that leaves the tree (finished, here or in another tab) stays in its place while it
  * shrinks away, and goes when it has (`withLeaving`). No clipping box around the items: the finish
@@ -21,7 +30,7 @@ import type { WorkListView } from './work-list-view';
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EpicListItem, TicketListItem],
+  imports: [EpicBoard, EpicListItem, TicketListItem],
   hostDirectives: [SelectionHighlight],
   host: { class: 'block' },
   template: `
@@ -30,7 +39,14 @@ import type { WorkListView } from './work-list-view';
       [class]="rows().length ? 'flex' : 'hidden'"
     >
       @for (row of rows(); track row.node.entry.id) {
-        @if (row.node.entry.archetype === 'EPIC') {
+        @if (epicBoards() && row.node.entry.archetype === 'EPIC' && boarded(row.node)) {
+          <app-epic-board
+            [node]="row.node"
+            [base]="base()"
+            [leaving]="row.leaving"
+            (left)="drop(row.node.entry.id)"
+          />
+        } @else if (row.node.entry.archetype === 'EPIC') {
           <app-epic-list-item
             [node]="row.node"
             [base]="base()"
@@ -58,6 +74,8 @@ export class WorkList {
   /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
+  /** Draws an epic on the board (REFINED to VERIFYING) with its own board. */
+  readonly epicBoards = input(false, { transform: booleanAttribute });
 
   /**
    * The top-level nodes as drawn: the tree's, plus any that just left it, kept in place while they
@@ -67,6 +85,10 @@ export class WorkList {
     source: this.tree,
     computation: (next, previous) => withLeaving(previous?.value ?? [], next),
   });
+
+  protected boarded(node: WorkNode): boolean {
+    return !node.context && hasEpicBoard(node.entry);
+  }
 
   protected drop(id: string | undefined): void {
     this.rows.update((rows) => rows.filter((row) => row.node.entry.id !== id));

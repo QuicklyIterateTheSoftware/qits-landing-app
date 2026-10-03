@@ -264,6 +264,38 @@ describe('WorkItemPage (screenshots)', () => {
       await shootParts(element, 'detail-epic');
     });
 
+    it('an epic on the board: its features are its own board, five columns', async () => {
+      const element = await render(
+        'an epic in detail',
+        'Export invoices for the accountants',
+        true,
+      );
+      const features = element.getByRole('region', { name: 'Features' });
+      const headings = [
+        ...features.element().querySelectorAll('ui-board > div:first-child > div'),
+      ].map((h) => h.textContent?.replace(/\d+/g, '').trim());
+      expect(headings.filter(Boolean)).toEqual([
+        'Refined',
+        'Implementing',
+        'Implemented',
+        'Verifying',
+        'Verified',
+      ]);
+      // The page names the epic already: the board has no bar of its own.
+      expect(features.element().querySelector('app-epic-board header')).toBeNull();
+      expect(features.element().querySelectorAll('ui-board-row')).toHaveLength(2);
+      expect(features.element().querySelector('app-feature-list-row')).toBeNull();
+    });
+
+    it('an epic off the board: its features as rows, as before', async () => {
+      const element = await render('a verified epic with every task implemented', 'Verified epic');
+      const features = element.getByRole('region', { name: 'Features' });
+      await expect.element(features.getByRole('link', { name: 'Shipped feature' })).toBeVisible();
+      expect(features.element().querySelector('app-epic-board')).toBeNull();
+      expect(features.element().querySelectorAll('app-feature-list-row')).toHaveLength(1);
+      await expect.element(features).toMatchScreenshot('detail-verified-epic-features');
+    });
+
     it('a feature: its dependency, description, tasks, comments', async () => {
       const element = await render('a feature in detail', 'PDF export', true, [CAMPAIGN]);
       await expect
