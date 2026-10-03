@@ -33,14 +33,14 @@ class OnBoard {
 }
 
 describe('WorkBoardNode', () => {
-  const finish = vi.fn();
+  const finishLater = vi.fn();
 
   beforeEach(() => {
-    finish.mockReset();
+    finishLater.mockReset();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: WorkStore, useValue: { finishing: signal({}), finish } },
+        { provide: WorkStore, useValue: { finishing: signal({}), finishLater } },
         { provide: SelectedProject, useValue: { project: signal({ id: 'p-1' }) } },
       ],
     });
@@ -68,9 +68,9 @@ describe('WorkBoardNode', () => {
     expect(button(element).classList.contains('hidden')).toBe(!shown);
   });
 
-  it('finishes the item in the open project on a click', () => {
+  it('asks for a finish with Undo in the open project on a click', () => {
     const element = render({ archetype: 'TICKET', status: 'VERIFIED' });
     button(element).click();
-    expect(finish).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
+    expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
   });
 });

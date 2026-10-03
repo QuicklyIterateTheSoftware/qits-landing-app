@@ -34,8 +34,15 @@ export class SelectedWork {
   private readonly workStore = inject(WorkStore);
   private readonly events = inject(DomainEvents);
 
-  /** The open project's work entities; empty until they are loaded. */
-  readonly entries = computed(() => this.work()?.entries ?? []);
+  /**
+   * The open project's work entities; empty until they are loaded. An item whose finish waits for
+   * its Undo, or is being sent, is left out (`WorkStore.hidden`): it has left the board already.
+   */
+  readonly entries = computed(() => {
+    const hidden = this.workStore.hidden();
+    const entries = this.work()?.entries ?? [];
+    return hidden.size ? entries.filter((e) => !e.id || !hidden.has(e.id)) : entries;
+  });
 
   /** The open project's work as a tree: phases, columns and spans (`work-tree.ts`). */
   readonly graph = computed(() => new WorkGraph(this.entries(), this.work()?.campaigns ?? {}));

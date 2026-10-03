@@ -25,8 +25,9 @@ import { Tag } from '../../../ui/components/tag/tag';
  *   right gutter;
  * - anything else (a task, a ticket) is a card (`ui-board-card`) in its column.
  *
- * A VERIFIED epic or ticket carries the finish button ("Mark <id> done"), which moves it to DONE
- * through `WorkStore.finish`. A node that `leaving` is set on shrinks away (`uiLeave`), then emits
+ * A VERIFIED epic or ticket carries the finish button ("Mark <id> done"): it hides the item at once
+ * and moves it to DONE a few seconds later, unless the toast's Undo takes it back
+ * (`WorkStore.finishLater`). A node that `leaving` is set on shrinks away (`uiLeave`), then emits
  * `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane,
  * row or card is itself the grid item of the board, lane or row it is in.
  */
@@ -136,6 +137,6 @@ export class WorkBoardNode {
 
   protected finish(): void {
     const projectId = this.selected.project()?.id;
-    if (projectId) void this.store.finish(projectId, this.node().entry);
+    if (projectId) this.store.finishLater(projectId, this.node().entry);
   }
 }

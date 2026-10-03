@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SelectedProject } from '../core/projects/selected-project';
+import { FinishToasts } from '../patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '../patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '../patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '../patterns/release-requests/release-menu/release-menu';
@@ -21,7 +22,15 @@ export interface NavLink {
 @Component({
   selector: 'app-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, BumpsMenu, NotificationsMenu, ReleaseMenu],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    BumpsMenu,
+    FinishToasts,
+    NotificationsMenu,
+    ReleaseMenu,
+  ],
   host: { class: 'block' },
   template: `
     <div class="grid min-h-screen grid-rows-[3.5rem_1fr] md:grid-cols-[15rem_1fr]">
@@ -116,6 +125,8 @@ export interface NavLink {
         <router-outlet />
       </main>
     </div>
+    <!-- The board's finishes and their Undo, kept while the user moves between pages. -->
+    <app-finish-toasts />
   `,
 })
 export class Layout {

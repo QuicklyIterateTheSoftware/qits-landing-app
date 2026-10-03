@@ -10,6 +10,8 @@ export const LEAVE_MS = 250;
  * `left` fires and the owner drops it. The margin goes too, so the space it took closes smoothly
  * rather than with a jump at the end. `left` fires on the transition's end, or after a fallback
  * timeout if the browser sends none; at once with `prefers-reduced-motion` or off the browser.
+ * When `uiLeave` turns false again before `left` (an Undo), the element is restored and `left`
+ * does not fire.
  */
 @Directive({ selector: '[uiLeave]' })
 export class Leave {
@@ -19,11 +21,24 @@ export class Leave {
   private readonly element = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private started = false;
+  /** Stops a running leave: `left` will not fire. */
+  private cancel?: () => void;
 
   constructor() {
     effect(() => {
       if (this.uiLeave() && !this.started) this.start();
+      else if (!this.uiLeave() && this.started) this.restore();
     });
+  }
+
+  private restore(): void {
+    this.started = false;
+    this.cancel?.();
+    this.cancel = undefined;
+    const style = this.element.style;
+    for (const name of ['max-height', 'overflow', 'transition', 'margin-bottom', 'opacity']) {
+      style.removeProperty(name);
+    }
   }
 
   private start(): void {
@@ -54,6 +69,11 @@ export class Leave {
       if (event.target === this.element && event.propertyName === 'max-height') finish();
     };
     this.element.addEventListener('transitionend', onEnd);
-    setTimeout(finish, LEAVE_MS + 150);
+    const timer = setTimeout(finish, LEAVE_MS + 150);
+    this.cancel = () => {
+      done = true;
+      clearTimeout(timer);
+      this.element.removeEventListener('transitionend', onEnd);
+    };
   }
 }

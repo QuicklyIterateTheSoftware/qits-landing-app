@@ -1,4 +1,13 @@
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { isPlatformBrowser } from '@angular/common';
+import { computed, inject, PLATFORM_ID } from '@angular/core';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withHooks,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
   getCampaign,
@@ -20,6 +29,22 @@ export type FinishState = 'running' | 'error';
 
 type Status = 'loading' | 'loaded' | 'error';
 
+/** How long a finish waits for an Undo before it is sent. */
+export const FINISH_DELAY_MS = 5_000;
+
+/**
+ * A finish asked for on the board and not settled yet:
+ *
+ * - `waiting`: the item is hidden, and Undo still takes it back;
+ * - `sending`: the move to DONE is on its way;
+ * - `failed`: the move failed; the item is back on the board until this is dismissed.
+ */
+export interface PendingFinish {
+  readonly projectId: string;
+  readonly entry: WorkEntry;
+  readonly phase: 'waiting' | 'sending' | 'failed';
+}
+
 /**
  * A project's work, as `load(projectId)` left it: its entities, and how many count as work (the
  * project card's tile).
@@ -37,6 +62,8 @@ interface WorkState {
   readonly byProject: Readonly<Record<string, ProjectWork>>;
   /** Each entity's running or failed finish, by entity id. */
   readonly finishing: Readonly<Record<string, FinishState>>;
+  /** Each finish asked for with `finishLater` and not settled yet, by entity id, oldest first. */
+  readonly pendingFinishes: Readonly<Record<string, PendingFinish>>;
 }
 
 /**
@@ -53,11 +80,30 @@ interface WorkState {
  * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`transitionEpic`,
  *   `transitionTicket`) and writes the answered status into the entry: it leaves the board for the
  *   archive. DONE is final in qits-projects; nothing moves it back.
+ * - `finishLater(projectId, entry)` is the board's finish: the item is hidden at once (`hidden`),
+ *   and `finish` runs after {@link FINISH_DELAY_MS}, unless `undoFinish(id)` takes it back first.
+ *   On failure the item shows again and the pending finish stays `failed` until `dismissFinish`.
+ *   Leaving the page (`pagehide`) sends every waiting finish at once: the user had their chance to
+ *   undo, and the request is sent with `keepalive`, so it outlives the page.
  */
 export const WorkStore = signalStore(
   { providedIn: 'root' },
-  withState<WorkState>({ byProject: {}, finishing: {} }),
+  withState<WorkState>({ byProject: {}, finishing: {}, pendingFinishes: {} }),
+  withComputed((store) => ({
+    /** The ids of items the board does not show: their finish is waiting or being sent. */
+    hidden: computed(
+      () =>
+        new Set(
+          Object.entries(store.pendingFinishes()).flatMap(([id, p]) =>
+            p.phase === 'failed' ? [] : [id],
+          ),
+        ),
+    ),
+  })),
   withMethods((store) => {
+    /** The timer of each waiting finish, by entity id. */
+    const timers = new Map<string, ReturnType<typeof setTimeout>>();
+
     function set(projectId: string, value: ProjectWork): void {
       patchState(store, { byProject: { ...store.byProject(), [projectId]: value } });
     }
@@ -65,6 +111,60 @@ export const WorkStore = signalStore(
     function setFinishing(entityId: string, value: FinishState | undefined): void {
       const { [entityId]: _, ...rest } = store.finishing();
       patchState(store, { finishing: value ? { ...rest, [entityId]: value } : rest });
+    }
+
+    /** Sets or drops a pending finish; a finish already there keeps its place in the order. */
+    function setPending(entityId: string, value: PendingFinish | undefined): void {
+      const { [entityId]: _, ...rest } = store.pendingFinishes();
+      patchState(store, {
+        pendingFinishes: value ? { ...store.pendingFinishes(), [entityId]: value } : rest,
+      });
+    }
+
+    function stopTimer(entityId: string): void {
+      clearTimeout(timers.get(entityId));
+      timers.delete(entityId);
+    }
+
+    async function finish(projectId: string, entry: WorkEntry): Promise<void> {
+      const id = entry.id;
+      if (!id || store.finishing()[id] === 'running') return;
+      setFinishing(id, 'running');
+      // `keepalive`: a finish sent as the page is left must still arrive.
+      const options = { path: { id }, body: { target: 'DONE' }, keepalive: true };
+      const status =
+        entry.archetype === 'EPIC'
+          ? await consume(transitionEpic(options), TRANSITION_EPIC).then(({ data, error }) =>
+              error === undefined ? data?.epic?.status : undefined,
+            )
+          : await consume(transitionTicket(options), TRANSITION_TICKET).then(({ data, error }) =>
+              error === undefined ? data?.ticket?.status : undefined,
+            );
+      if (!status) {
+        setFinishing(id, 'error');
+        return;
+      }
+      setFinishing(id, undefined);
+      const work = store.byProject()[projectId];
+      if (!work) return;
+      const entries = work.entries.map((e) =>
+        e.id === id ? { ...e, status: status as WorkEntry['status'] } : e,
+      );
+      set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
+    }
+
+    /** Sends the waiting finish of `entityId` now. */
+    async function send(entityId: string): Promise<void> {
+      stopTimer(entityId);
+      const pending = store.pendingFinishes()[entityId];
+      if (pending?.phase !== 'waiting') return;
+      setPending(entityId, { ...pending, phase: 'sending' });
+      await finish(pending.projectId, pending.entry);
+      // The entry carries DONE before the pending finish goes, so the item never shows again.
+      setPending(
+        entityId,
+        store.finishing()[entityId] === 'error' ? { ...pending, phase: 'failed' } : undefined,
+      );
     }
 
     async function fetch(projectId: string): Promise<ProjectWork> {
@@ -104,30 +204,45 @@ export const WorkStore = signalStore(
         const next = await fetch(projectId);
         if (next.status === 'loaded' || !store.byProject()[projectId]) set(projectId, next);
       },
-      async finish(projectId: string, entry: WorkEntry): Promise<void> {
+      /** Moves `entry` to DONE now. */
+      finish,
+      /** Hides `entry` and moves it to DONE after {@link FINISH_DELAY_MS}, unless undone first. */
+      finishLater(projectId: string, entry: WorkEntry): void {
         const id = entry.id;
-        if (!id || store.finishing()[id] === 'running') return;
-        setFinishing(id, 'running');
-        const body = { target: 'DONE' };
-        const status =
-          entry.archetype === 'EPIC'
-            ? await consume(transitionEpic({ path: { id }, body }), TRANSITION_EPIC).then(
-                ({ data, error }) => (error === undefined ? data?.epic?.status : undefined),
-              )
-            : await consume(transitionTicket({ path: { id }, body }), TRANSITION_TICKET).then(
-                ({ data, error }) => (error === undefined ? data?.ticket?.status : undefined),
-              );
-        if (!status) {
-          setFinishing(id, 'error');
-          return;
-        }
+        const phase = id ? store.pendingFinishes()[id]?.phase : undefined;
+        if (!id || phase === 'waiting' || phase === 'sending') return;
         setFinishing(id, undefined);
-        const work = store.byProject()[projectId];
-        if (!work) return;
-        const entries = work.entries.map((e) =>
-          e.id === id ? { ...e, status: status as WorkEntry['status'] } : e,
+        setPending(id, { projectId, entry, phase: 'waiting' });
+        timers.set(
+          id,
+          setTimeout(() => void send(id), FINISH_DELAY_MS),
         );
-        set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
+      },
+      /** Takes a waiting finish back: the item shows again, and nothing is sent. */
+      undoFinish(entityId: string): void {
+        if (store.pendingFinishes()[entityId]?.phase !== 'waiting') return;
+        stopTimer(entityId);
+        setPending(entityId, undefined);
+      },
+      /** Forgets a failed finish. */
+      dismissFinish(entityId: string): void {
+        if (store.pendingFinishes()[entityId]?.phase === 'failed') setPending(entityId, undefined);
+      },
+      /** Sends every waiting finish now. */
+      async flushFinishes(): Promise<void> {
+        await Promise.all(Object.keys(store.pendingFinishes()).map((id) => send(id)));
+      },
+    };
+  }),
+  withHooks((store) => {
+    const browser = isPlatformBrowser(inject(PLATFORM_ID));
+    const leave = () => void store.flushFinishes();
+    return {
+      onInit: () => {
+        if (browser) globalThis.addEventListener('pagehide', leave);
+      },
+      onDestroy: () => {
+        if (browser) globalThis.removeEventListener('pagehide', leave);
       },
     };
   }),
