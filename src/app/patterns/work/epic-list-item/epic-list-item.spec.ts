@@ -68,7 +68,7 @@ describe('EpicListItem', () => {
     expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
   });
 
-  it('sums up a VERIFIED epic’s tasks as all done, and starts collapsed', () => {
+  it('sums up a VERIFIED epic’s tasks as all done, and starts expanded', () => {
     const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
     const feature = { ...node({ id: 'f', qualifiedId: 'qits-2', archetype: 'FEATURE' }) };
     const epic = {
@@ -78,7 +78,7 @@ describe('EpicListItem', () => {
     const element = render(epic);
     expect(element.querySelector('[lane-summary]')?.textContent).toBe('2 / 2 ✅');
     expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(
-      'false',
+      'true',
     );
   });
 });

@@ -16,8 +16,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  *
  * - the epic is a lane (`ui-list-lane`): its title in the bar at the top and its id up the left
  *   gutter, both linking to it, its campaigns as tags below the bar. It collapses to one line: in
- *   the Backlog "<n> tasks", expanded at first; in Acceptance "<n> / <n> ✅" (a VERIFIED epic's
- *   tasks are all done), collapsed at first when it has tasks; in the Archive "<n> / <n> ✅" for a
+ *   the Backlog "<n> tasks" and in Acceptance "<n> / <n> ✅" (a VERIFIED epic's tasks are all
+ *   done), expanded at first; in the Archive "<n> / <n> ✅" for a
  *   done epic, or "<n> tasks" for a dropped one, collapsed at first;
  * - each feature is a row (`ui-list-row`): its title along the bottom, its id up the right gutter;
  * - each task is the board's small card (`ui-board-card`), with its campaigns.
@@ -93,12 +93,8 @@ export class EpicListItem {
 
   protected readonly finishing = finishControl(this.node);
 
-  /** Whether the lane starts collapsed: always in the Archive, with tasks in Acceptance. */
-  protected readonly collapsed = computed(
-    () =>
-      this.view() === 'archive' ||
-      (this.view() === 'acceptance' && taskProgress(this.node()).total > 0),
-  );
+  /** Whether the lane starts collapsed: only in the Archive. */
+  protected readonly collapsed = computed(() => this.view() === 'archive');
 
   protected readonly summary = computed(() => {
     const { total } = taskProgress(this.node());
