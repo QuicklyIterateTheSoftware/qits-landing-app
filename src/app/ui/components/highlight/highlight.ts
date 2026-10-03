@@ -1,9 +1,25 @@
-import { DestroyRef, Directive, ElementRef, inject, Injectable, PLATFORM_ID } from '@angular/core';
+import {
+  DestroyRef,
+  Directive,
+  ElementRef,
+  inject,
+  Injectable,
+  InjectionToken,
+  PLATFORM_ID,
+} from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 /** How long a highlight stays at full strength, then how long it fades. */
 export const HIGHLIGHT_MS = 2_000;
 export const HIGHLIGHT_FADE_MS = 1_000;
+
+/**
+ * Whether a highlight fades (default: yes). A screenshot spec turns it off, so the highlight
+ * stays at full strength without a fake clock.
+ */
+export const HIGHLIGHT_FADES = new InjectionToken<boolean>('HIGHLIGHT_FADES', {
+  factory: () => true,
+});
 
 /** The attribute that marks an element as one that can be highlighted: a card, a lane, a row. */
 export const HIGHLIGHT_TARGET = 'data-highlight-target';
@@ -21,6 +37,7 @@ const FADING = ['outline-transparent', 'transition-[outline-color]', 'duration-1
  */
 @Injectable({ providedIn: 'root' })
 export class Highlighter {
+  private readonly fades = inject(HIGHLIGHT_FADES);
   private current?: HTMLElement;
   private timers: ReturnType<typeof setTimeout>[] = [];
 
@@ -33,6 +50,7 @@ export class Highlighter {
     this.clear();
     this.current = element;
     element.classList.add(...STRONG);
+    if (!this.fades) return;
     this.timers = [
       setTimeout(() => {
         element.classList.remove('outline-ocean-deep-600');
