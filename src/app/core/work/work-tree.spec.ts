@@ -133,6 +133,23 @@ describe('WorkGraph', () => {
     expect(new WorkGraph(epic).campaigns()).toEqual([]);
   });
 
+  it('splits the campaigns into open and archived by their phase', () => {
+    const done = entry('done', 'CAMPAIGN', 'DONE');
+    const dropped = entry('dropped', 'CAMPAIGN', 'DROPPED');
+    const reported = entry('reported', 'CAMPAIGN', 'REPORTED');
+    const verified = entry('verified-campaign', 'CAMPAIGN', 'VERIFIED');
+    const graph = new WorkGraph([dropped, ...campaign, done, reported, verified], members);
+    expect(graph.openCampaigns().map((c) => c.id)).toEqual([
+      'campaign',
+      'reported',
+      'verified-campaign',
+    ]);
+    // In the board's order (by number), not the list's.
+    expect(graph.archivedCampaigns().map((c) => c.id)).toEqual(['done', 'dropped']);
+    // Campaigns stay out of the phase counts.
+    expect(graph.count('archive')).toBe(0);
+  });
+
   it('gives a campaign’s members in campaign order, each with its whole subtree', () => {
     const graph = new WorkGraph(campaign, members);
     expect(graph.membersOf(campaign[0]).map(shape)).toEqual([

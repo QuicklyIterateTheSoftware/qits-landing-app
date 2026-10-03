@@ -127,6 +127,27 @@ describe('WorkLayout', () => {
     expect(counts()).toEqual([2, 0, 1, 0, 0]);
   });
 
+  it('counts a dropped campaign in the Archive, not in Campaigns', async () => {
+    const { counts, harness } = await shown('archive');
+    // "a campaign with work in every phase", with its campaign DROPPED: no recorded state holds a
+    // campaign in a final state yet.
+    const work = goldenMaster('a campaign with work in every phase', 'listProjectEntities');
+    http.expectOne(entities).flush({
+      ...work,
+      entities: work.entities.map((e: { archetype: string }) =>
+        e.archetype === 'CAMPAIGN' ? { ...e, status: 'DROPPED' } : e,
+      ),
+    });
+    await settle();
+    http
+      .expectOne((r) => r.url.startsWith('/projects/api/campaigns/'))
+      .flush(goldenMaster('a campaign with work in every phase', 'getCampaign'));
+    await settle();
+    await harness.fixture.whenStable();
+    // Archive: the done ticket and the dropped campaign.
+    expect(counts()).toEqual([0, 1, 3, 0, 2]);
+  });
+
   it('asks for the work once while moving between the pages', async () => {
     const { harness, links, answered } = await shown('refinement');
     await answered('a project with work in every status');

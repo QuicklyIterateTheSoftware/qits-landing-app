@@ -20,8 +20,10 @@ import { BOARD_COLUMNS } from './work-statuses';
  * - **Order**: one order everywhere, independent of status, column and update time
  *   (`byNumber`): the roots (epics and tickets together) by the number of their qualified id, and
  *   inside each parent its children the same way. Removing an item leaves the rest in place.
- * - **Campaigns** (`campaigns`, `membersOf`): span the phases, so they have a list of their own.
- *   Each campaign's members come in campaign order, each with its whole subtree.
+ * - **Campaigns** (`campaigns`, `membersOf`): span the phases, so they have a list of their own
+ *   while open (`openCampaigns`); once in a final state they go to the archive like any other work
+ *   (`archivedCampaigns`, by the same `PHASE_BY_STATUS`). Each campaign's members come in campaign
+ *   order, each with its whole subtree.
  */
 
 export type Phase = 'backlog' | 'board' | 'acceptance' | 'archive';
@@ -92,6 +94,16 @@ export class WorkGraph {
   /** The project's campaigns, in the board's order (`byNumber`). */
   campaigns(): readonly WorkEntry[] {
     return this.entries.filter((entry) => entry.archetype === 'CAMPAIGN').sort(byNumber);
+  }
+
+  /** The campaigns not in the archive (their phase by `PHASE_BY_STATUS`), in the board's order. */
+  openCampaigns(): readonly WorkEntry[] {
+    return this.campaigns().filter((campaign) => this.phaseOf(campaign) !== 'archive');
+  }
+
+  /** The campaigns in the archive (DONE, DROPPED), in the board's order. */
+  archivedCampaigns(): readonly WorkEntry[] {
+    return this.campaigns().filter((campaign) => this.phaseOf(campaign) === 'archive');
   }
 
   /**

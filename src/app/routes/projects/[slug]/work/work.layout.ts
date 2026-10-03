@@ -6,8 +6,8 @@ import { WORK_TABS } from '$core/work/work-tabs';
 /**
  * A project's work section, at `/projects/<slug>/work/…`: a row of links to its pages
  * (Campaigns, then Refinement, In Progress, Acceptance, Archive, in the order work moves through
- * them), each with its count once the work is loaded (campaigns, or epics and tickets), and the
- * page below. `/work` opens In Progress.
+ * them), each with its count once the work is loaded (open campaigns; epics and tickets; in the
+ * Archive also its campaigns), and the page below. `/work` opens In Progress.
  *
  * The pages share the open project's work (`SelectedWork`, one request per project), so moving
  * between them fetches nothing. The layout keeps that work current while any of them is open.

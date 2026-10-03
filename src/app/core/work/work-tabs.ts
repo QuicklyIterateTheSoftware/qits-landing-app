@@ -10,16 +10,21 @@ export interface WorkTab {
 }
 
 /**
- * The work section's pages: first the campaigns, which span the phases, then the phases in the
+ * The work section's pages: first the open campaigns, which span the phases, then the phases in the
  * order work moves through them: the backlog, the board, the acceptance list and the archive.
  * `/work` itself opens In Progress.
  */
 export const WORK_TABS: readonly WorkTab[] = [
-  { segment: 'campaigns', label: 'Campaigns', count: (graph) => graph.campaigns().length },
+  { segment: 'campaigns', label: 'Campaigns', count: (graph) => graph.openCampaigns().length },
   { segment: 'refinement', label: 'Refinement', count: (graph) => graph.count('backlog') },
   { segment: 'in-progress', label: 'In Progress', count: (graph) => graph.count('board') },
   { segment: 'acceptance', label: 'Acceptance', count: (graph) => graph.count('acceptance') },
-  { segment: 'archive', label: 'Archive', count: (graph) => graph.count('archive') },
+  {
+    segment: 'archive',
+    label: 'Archive',
+    // The page shows the archived campaigns too, so the count does.
+    count: (graph) => graph.count('archive') + graph.archivedCampaigns().length,
+  },
 ];
 
 /**
