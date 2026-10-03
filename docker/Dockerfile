@@ -13,9 +13,9 @@
 #
 # WHAT THE RELEASE STEP HANDS THE BUILDER, and why each arrives the way it does:
 #
-#   ARG QITS_NPM_REGISTRY_URL   the hosted registry that serves the @qits scope. An ORIGIN is not a
-#   ARG QITS_NPM_PROXY_URL      credential, and the build needs both in a `FROM`-visible ARG/ENV
-#                               pair because `node -p 'new URL(process.env…)'` reads them.
+#   ARG QITS_DOMAIN             the platform's public domain (qits-731). The two npm roots — the
+#                               hosted registry serving the @qits scope and the npmjs cache — are
+#                               both code under it, derived in the RUN below.
 #   --secret id=qits-npm-token  a CREDENTIAL. A build arg is written into the image history and this
 #                               image is pullable, so a token passed that way would ship with it.
 #
@@ -24,11 +24,11 @@
 # builder's choice rather than this file's. The bare file mount is served identically by every
 # frontend version. qits-ci-service's own Dockerfile writes that call out at length.
 #
-# AN ABSENT OR EMPTY SECRET IS A SUPPORTED STATE and leaves the install ANONYMOUS rather than
-# broken. The release step always writes the file and it is empty whenever the run holds no
-# commission or the mint failed; qits-artifacts still accepts an anonymous read, so NO `_authToken`
-# line at all is the call that works, where an empty one is npm sending `Bearer ` with nothing after
-# it — a 401 that costs a release.
+# AN ABSENT OR EMPTY SECRET IS NO LONGER A SUPPORTED STATE: both registries answer 401 anonymously
+# (qits-731), so a run that mints no token fails the install rather than falling back to an anonymous
+# read. The release step always writes the file, empty or not; this Dockerfile still writes NO
+# `_authToken` line at all when it is empty, rather than one with nothing after `Bearer `, because
+# that at least fails with npm naming the host instead of a silently wrong credential.
 
 # ---------------------------------------------------------------------------------------------
 # BUILD STAGE
@@ -41,42 +41,22 @@
 # node is neither.
 FROM node:24-alpine AS build
 
-# ENV as well as ARG: the `node -p` expressions below read these out of `process.env`, and an ARG
-# alone is not in a RUN's environment.
-#
-# The defaults are the DEVELOPER-HOST addresses — the same pair `.npmrc` commits, published through
-# the edge — so a bare `docker build` on the deployment host works with no flags. CI overrides both
-# with the in-network addresses, which is the only place they resolve from inside the builder.
-ARG QITS_NPM_REGISTRY_URL=http://registry.dev.localhost:8080/artifacts/npm/npm/
-ARG QITS_NPM_PROXY_URL=http://mirror.dev.localhost:8080/npm/npmjs/
-ENV QITS_NPM_REGISTRY_URL=$QITS_NPM_REGISTRY_URL
-ENV QITS_NPM_PROXY_URL=$QITS_NPM_PROXY_URL
+# ONE INPUT: the platform's public domain (qits-731). Both npm roots are code under it — the hosted
+# registry serving the @qits scope and the npmjs pull-through cache — derived in the RUN below, not
+# read off a per-environment address. `wohlben.eu` is the live platform's, so a bare `docker build`
+# on a workstation needs no flag.
+ARG QITS_DOMAIN=wohlben.eu
 
 WORKDIR /src
 
 # The whole tree, minus what `.dockerignore` withholds — `node_modules`, `dist` and, load-bearingly,
 # the committed `.npmrc`, which would outrank the `~/.npmrc` written below and send every request to
-# an address the builder cannot resolve.
+# a registry this build has no credential for.
 COPY . .
 
-# THE LOCKFILE-ORIGIN SWAP AND THE INSTALL, IN ONE RUN, because the swap has to happen between the
-# checkout and `npm ci` and nothing else may run in between.
-#
-# npm pins a full resolved URL per package and fetches tarballs by that URL, never asking the
-# configured registry — so a lockfile generated against one address installs from that address or
-# from nothing. The paths are identical everywhere, so replacing the ORIGIN and keeping the path is
-# the whole operation, and the integrity hashes are what make it safe.
-#
-# THE BYTE PLANE IS TWO SERVICES, WHICH IS WHY THE SECOND EXPRESSION READS THE PATH.
-# qits-platform-mirror holds the npmjs pull-through cache; qits-artifacts hosts the @qits scope. An
-# entry under the hosted registry's own pathname is a @qits tarball and gets the hosted origin;
-# every other entry gets the proxy's. Flattening all of them to one origin sends every @qits tarball
-# to the mirror, which has never held one.
-#
-# THE ORDER OF THE TWO EXPRESSIONS IS THE WHOLE TRICK. sed applies -e in sequence per line, so the
-# broad proxy swap runs FIRST and the narrow path-anchored one corrects the @qits entries after it.
-# The other order lets the broad expression undo the narrow one. This is the same two expressions in
-# the same order as `.config/qits/release.yml`'s QA step, and they move together.
+# THE LOCKFILE IS INSTALLED EXACTLY AS COMMITTED (qits-731): package-lock.json and .npmrc are
+# published through the public hosts already, the same pair this build derives below, so there is no
+# origin left to rewrite. `npm ci` needs only a credential, which arrives from the secret mount.
 #
 # THE `_authToken` KEY MUST MATCH THE REGISTRY URL EXACTLY, TRAILING SLASH INCLUDED. npm looks the
 # token up under the scheme-less form of the registry it is about to dial and does not normalise the
@@ -85,20 +65,15 @@ COPY . .
 #
 # THE MIRROR GETS THE TOKEN TOO: it no longer answers anonymous reads (2026-09-29).
 RUN --mount=type=secret,id=qits-npm-token \
-    hosted_origin=$(node -p 'new URL(process.env.QITS_NPM_REGISTRY_URL).origin'); \
-    proxy_origin=$(node -p 'new URL(process.env.QITS_NPM_PROXY_URL).origin'); \
-    hosted_path=$(node -p 'new URL(process.env.QITS_NPM_REGISTRY_URL).pathname'); \
-    sed -i -E \
-      -e "s#(\"resolved\": \")https?://[^/\"]+#\1$proxy_origin#" \
-      -e "s#(\"resolved\": \")https?://[^/\"]+($hosted_path)#\1$hosted_origin\2#" \
-      package-lock.json; \
+    hosted_url="https://registry.qits.$QITS_DOMAIN/artifacts/npm/npm/"; \
+    proxy_url="https://mirror.qits.$QITS_DOMAIN/npm/npmjs/"; \
     token=$(cat /run/secrets/qits-npm-token 2>/dev/null || true); \
     ( umask 077; \
       printf 'registry=%s\n@qits:registry=%s\n' \
-        "$QITS_NPM_PROXY_URL" "$QITS_NPM_REGISTRY_URL" > ~/.npmrc; \
+        "$proxy_url" "$hosted_url" > ~/.npmrc; \
       [ -n "$token" ] && printf '%s:_authToken=%s\n%s:_authToken=%s\n' \
-        "${QITS_NPM_REGISTRY_URL#*:}" "$token" \
-        "${QITS_NPM_PROXY_URL#*:}" "$token" >> ~/.npmrc; ) ; \
+        "${hosted_url#*:}" "$token" \
+        "${proxy_url#*:}" "$token" >> ~/.npmrc; ) ; \
     npm ci --no-audit --no-fund && npm run build
 
 # ---------------------------------------------------------------------------------------------
