@@ -103,6 +103,33 @@ describe('KanbanBoard (screenshots)', () => {
     }
   });
 
+  /** Changes the text selection and waits for the browser's `selectionchange`. */
+  async function select(change: (selection: Selection) => void) {
+    const changed = new Promise((resolve) =>
+      document.addEventListener('selectionchange', resolve, { once: true }),
+    );
+    change(document.getSelection()!);
+    await changed;
+  }
+
+  it('highlights the card the text selection is in', async () => {
+    const { element, locator } = await shown(EVERY_STATUS);
+    // The highlight fades on a timer: fake, so the shot is at full strength.
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const title = [...element.querySelectorAll('ui-board-card a')].find(
+      (link) => link.textContent?.trim() === 'Implemented ticket',
+    )!;
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    await select((selection) => selection.addRange(range));
+    const card = title.closest('ui-board-card')!;
+    expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
+    // No selection colour in the shot; the highlight stays until it fades.
+    await select((selection) => selection.removeAllRanges());
+    expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
+    await expect.element(locator).toMatchScreenshot('selection-highlight');
+  });
+
   /** The board's top-level items, top to bottom, by qualified id. */
   function order(element: HTMLElement): string[] {
     return [...element.querySelectorAll('app-epic-card > *, app-ticket-card > *')]

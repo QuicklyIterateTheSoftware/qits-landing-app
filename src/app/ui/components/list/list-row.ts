@@ -14,6 +14,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   host: {
     class:
       'relative flex flex-col gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 [&_ui-board-card]:self-stretch',
+    'data-highlight-target': '',
   },
   template: `
     <span

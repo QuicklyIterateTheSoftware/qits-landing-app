@@ -2,11 +2,15 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  inject,
   input,
   output,
   signal,
 } from '@angular/core';
 import { ExpandButton } from '$ui/components/expand-button/expand-button';
+import { Findable } from '$ui/components/findable/findable';
+import { HIGHLIGHT_TARGET, Highlighter } from '$ui/components/highlight/highlight';
 
 /** The card's title row. Optional: a card without one draws no header. */
 @Component({
@@ -40,20 +44,22 @@ let nextExpandableId = 0;
  * the content downwards with a short animation, and closes it again.
  *
  * Both states are always rendered and switched by class, never by `@if`, so a server-rendered
- * page hydrates without leftovers. The content's height animates through `grid-template-rows`
+ * page hydrates without leftovers. Closed content is hidden until found: find-in-page searches it
+ * and opens it on a match. The content's height animates through `grid-template-rows`
  * (0fr to 1fr), which needs no measured height.
  */
 @Component({
   selector: 'card-expandable',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ExpandButton],
+  imports: [ExpandButton, Findable],
   host: { class: 'block' },
   template: `
     <div
       [id]="contentId"
       class="grid transition-[grid-template-rows] duration-200 ease-out"
       [class]="open() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
-      [attr.inert]="open() ? null : ''"
+      [uiFindable]="!open()"
+      (found)="reveal()"
     >
       <div class="min-h-0 overflow-hidden">
         <!-- When open, a chin below the content keeps the button off its last line. -->
@@ -70,6 +76,16 @@ export class CardExpandable {
 
   protected readonly open = signal(false);
   protected readonly contentId = `card-expandable-${nextExpandableId++}`;
+
+  private readonly element = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+  private readonly highlighter = inject(Highlighter);
+
+  /** Find-in-page found text in the closed content: open it and point at the card. */
+  protected reveal(): void {
+    if (!this.open()) this.toggle();
+    const card = this.element.closest<HTMLElement>(`[${HIGHLIGHT_TARGET}]`) ?? this.element;
+    this.highlighter.highlight(card);
+  }
 
   protected toggle(): void {
     this.open.update((open) => !open);
@@ -97,7 +113,7 @@ export class CardExpandable {
   changeDetection: ChangeDetectionStrategy.OnPush,
   // The host is the positioned box; the frame inside it clips to the rounded corners. An
   // expandable's button is positioned against the host, so it can sit half outside the frame.
-  host: { class: 'relative block' },
+  host: { class: 'relative block rounded-xl', 'data-highlight-target': '' },
   template: `
     <div
       class="overflow-hidden rounded-xl border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))]"

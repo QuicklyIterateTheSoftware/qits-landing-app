@@ -2,11 +2,14 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   input,
   linkedSignal,
 } from '@angular/core';
 import { ExpandButton } from '$ui/components/expand-button/expand-button';
+import { Findable } from '$ui/components/findable/findable';
+import { Highlighter } from '$ui/components/highlight/highlight';
 import { BOARD_CONTEXT, ROOT_ITEM_SPACING, type BoardContext } from './board-context';
 
 let nextLaneId = 0;
@@ -38,12 +41,13 @@ let nextLaneId = 0;
 @Component({
   selector: 'ui-board-lane',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ExpandButton],
+  imports: [ExpandButton, Findable],
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardLane }],
   host: {
     // Exactly one display class, chosen by where the lane is (a static one would fight it).
     // The chin below the last row; the id at the bottom of the left strip keeps the same distance.
     class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
+    'data-highlight-target': '',
     '[class]':
       "(onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
@@ -93,7 +97,8 @@ let nextLaneId = 0;
     <!--
       The rows. On a board their height animates through grid-template-rows (0fr to 1fr), as on the
       card's expandable; both views are always rendered and switched by class. Collapsed, the rows
-      clip fully and are inert; open, they clip with a margin, so hover shadows still show.
+      are hidden until found (find-in-page opens the lane); open, they clip with a margin, so
+      hover shadows and highlights still show.
     -->
     <div
       [id]="contentId"
@@ -103,7 +108,8 @@ let nextLaneId = 0;
           : 'col-span-full row-start-3 grid grid-cols-subgrid transition-[grid-template-rows] duration-200 ease-out ' +
             (isCollapsed() ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]')
       "
-      [attr.inert]="onBoard && isCollapsed() ? '' : null"
+      [uiFindable]="onBoard && isCollapsed()"
+      (found)="reveal()"
     >
       <div
         [class]="
@@ -147,6 +153,15 @@ export class BoardLane implements BoardContext {
 
   protected readonly isCollapsed = linkedSignal(() => this.collapsible() && this.collapsed());
   protected readonly contentId = `board-lane-${nextLaneId++}`;
+
+  private readonly element = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+  private readonly highlighter = inject(Highlighter);
+
+  /** Find-in-page found text in the collapsed rows: open the lane and point at it. */
+  protected reveal(): void {
+    this.isCollapsed.set(false);
+    this.highlighter.highlight(this.element);
+  }
 
   private readonly parent = inject(BOARD_CONTEXT, { optional: true, skipSelf: true });
   readonly onBoard = this.parent?.onBoard ?? false;

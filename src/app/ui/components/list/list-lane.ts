@@ -2,10 +2,14 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  inject,
   input,
   linkedSignal,
 } from '@angular/core';
 import { ExpandButton } from '$ui/components/expand-button/expand-button';
+import { Findable } from '$ui/components/findable/findable';
+import { Highlighter } from '$ui/components/highlight/highlight';
 
 let nextListLaneId = 0;
 
@@ -22,15 +26,17 @@ let nextListLaneId = 0;
  *   hovered; rows and cards sit above it with their own links.
  * - With `collapsible`, the round button on the bottom edge switches between the children and
  *   `[lane-summary]`; `collapsed` sets where it starts. Both views are always rendered and
- *   switched by class, the hidden one inert, so a server render hydrates as is.
+ *   switched by class, so a server render hydrates as is. Collapsed children are hidden until
+ *   found: find-in-page searches them and opens the lane on a match.
  */
 @Component({
   selector: 'ui-list-lane',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ExpandButton],
+  imports: [ExpandButton, Findable],
   host: {
     class:
       'relative mx-1 block rounded-tl-xl bg-white/25 pb-(--lane-chin) ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
+    'data-highlight-target': '',
   },
   template: `
     <div
@@ -53,7 +59,8 @@ let nextListLaneId = 0;
         [id]="contentId"
         class="grid transition-[grid-template-rows] duration-200 ease-out"
         [class]="isCollapsed() ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'"
-        [attr.inert]="isCollapsed() ? '' : null"
+        [uiFindable]="isCollapsed()"
+        (found)="reveal()"
       >
         <div
           class="flex min-h-0 flex-col gap-4 pr-6 [&_ui-board-card]:self-stretch"
@@ -92,4 +99,13 @@ export class ListLane {
 
   protected readonly isCollapsed = linkedSignal(() => this.collapsible() && this.collapsed());
   protected readonly contentId = `list-lane-${nextListLaneId++}`;
+
+  private readonly element = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+  private readonly highlighter = inject(Highlighter);
+
+  /** Find-in-page found text in the collapsed children: open the lane and point at it. */
+  protected reveal(): void {
+    this.isCollapsed.set(false);
+    this.highlighter.highlight(this.element);
+  }
 }

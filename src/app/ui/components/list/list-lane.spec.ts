@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Highlighter } from '$ui/components/highlight/highlight';
 import { ListLane } from './list-lane';
 
 @Component({
@@ -28,10 +29,10 @@ describe('ListLane', () => {
     return { fixture, content, summary, button };
   }
 
-  it('starts collapsed when told: the summary shows, the children are inert', () => {
+  it('starts collapsed when told: the summary shows, the children are hidden until found', () => {
     const { content, summary, button } = lane(true);
     expect(content().classList).toContain('grid-rows-[0fr]');
-    expect(content().hasAttribute('inert')).toBe(true);
+    expect(content().getAttribute('hidden')).toBe('until-found');
     expect(summary().classList).toContain('opacity-100');
     expect(button().getAttribute('aria-expanded')).toBe('false');
     expect(button().getAttribute('aria-controls')).toBe(content().id);
@@ -43,5 +44,15 @@ describe('ListLane', () => {
     fixture.detectChanges();
     expect(content().classList).toContain('grid-rows-[1fr]');
     expect(summary().classList).toContain('opacity-0');
+  });
+
+  it('opens and is highlighted when find-in-page finds text in its children', () => {
+    const { fixture, content, button } = lane(true);
+    content().dispatchEvent(new Event('beforematch'));
+    fixture.detectChanges();
+    expect(content().hasAttribute('hidden')).toBe(false);
+    expect(button().getAttribute('aria-expanded')).toBe('true');
+    expect(TestBed.inject(Highlighter).highlighted?.tagName).toBe('UI-LIST-LANE');
+    TestBed.inject(Highlighter).clear();
   });
 });

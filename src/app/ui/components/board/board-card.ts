@@ -19,6 +19,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
       'relative z-10 mx-2 flex self-start transition-shadow duration-150 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm',
     '[class]': "border() + (atRoot ? ' ' + spacing : '')",
     '[style.grid-column]': 'placement()',
+    'data-highlight-target': '',
   },
   template: `
     <ui-id-strip class="rounded-l-[5px]" [id]="code()" />

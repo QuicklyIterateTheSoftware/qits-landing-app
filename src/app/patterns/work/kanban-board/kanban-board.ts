@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } fro
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import type { WorkNode } from '$core/work/work-tree';
 import { Board, type BoardColumnSpec } from '$ui/components/board/board';
+import { SelectionHighlight } from '$ui/components/highlight/highlight';
 import { EpicCard } from '$patterns/work/epic-card/epic-card';
 import { TicketCard } from '$patterns/work/ticket-card/ticket-card';
 
@@ -47,11 +48,15 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
  * A node that leaves the tree (finished, here or in another tab) stays in its place while it
  * shrinks away, and goes when it has (`withLeaving`). No scrolling or clipping box around the
  * board: the finish button sits on a card's corner, partly outside it, and must stay clickable.
+ *
+ * The card, row or lane the text selection is in is highlighted (`SelectionHighlight`), so a
+ * find-in-page step shows which card it landed in.
  */
 @Component({
   selector: 'app-kanban-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Board, EpicCard, TicketCard],
+  hostDirectives: [SelectionHighlight],
   host: { class: 'block' },
   template: `
     <ui-board class="min-w-[40rem]" [columns]="columns()" gutter>

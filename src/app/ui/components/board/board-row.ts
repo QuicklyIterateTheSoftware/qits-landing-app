@@ -20,6 +20,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     class:
       'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5',
     '[style.grid-column]': 'placement()',
+    'data-highlight-target': '',
   },
   template: `
     <span

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import type { WorkNode } from '$core/work/work-tree';
+import { SelectionHighlight } from '$ui/components/highlight/highlight';
 import { EpicListItem } from '$patterns/work/epic-list-item/epic-list-item';
 import { TicketListItem } from '$patterns/work/ticket-list-item/ticket-list-item';
 import type { WorkListView } from './work-list-view';
@@ -8,12 +9,14 @@ import type { WorkListView } from './work-list-view';
  * A list of work, drawn like the board: the Backlog (`WorkGraph.tree('backlog')`) or the Archive
  * (`tree('archive')`). Each top-level epic is an `app-epic-list-item` (a lane, with its features
  * and tasks), anything else an `app-ticket-list-item`, stacked. An empty tree says "Nothing here".
- * Both are always rendered and switched by class, so a server render hydrates as is.
+ * Both are always rendered and switched by class, so a server render hydrates as is. The card, row
+ * or lane the text selection is in is highlighted (`SelectionHighlight`).
  */
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [EpicListItem, TicketListItem],
+  hostDirectives: [SelectionHighlight],
   host: { class: 'block' },
   template: `
     <div

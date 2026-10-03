@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Highlighter } from '$ui/components/highlight/highlight';
 import { provideRouter } from '@angular/router';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
@@ -162,7 +163,7 @@ describe('Board', () => {
     it('starts collapsed when told: the summary shows, the rows do not', () => {
       const { rows, summary, button } = lane(true);
       expect(rows().classList).toContain('grid-rows-[0fr]');
-      expect(rows().hasAttribute('inert')).toBe(true);
+      expect(rows().getAttribute('hidden')).toBe('until-found');
       expect(summary().classList).toContain('opacity-100');
       expect(button().getAttribute('aria-expanded')).toBe('false');
       expect(button().getAttribute('aria-controls')).toBe(rows().id);
@@ -171,7 +172,7 @@ describe('Board', () => {
     it('starts expanded otherwise', () => {
       const { rows, summary, button } = lane(false);
       expect(rows().classList).toContain('grid-rows-[1fr]');
-      expect(rows().hasAttribute('inert')).toBe(false);
+      expect(rows().hasAttribute('hidden')).toBe(false);
       expect(summary().classList).toContain('opacity-0');
       expect(summary().hasAttribute('inert')).toBe(true);
       expect(button().getAttribute('aria-expanded')).toBe('true');
@@ -186,6 +187,17 @@ describe('Board', () => {
       button().click();
       fixture.detectChanges();
       expect(rows().classList).toContain('grid-rows-[0fr]');
+    });
+
+    it('opens and is highlighted when find-in-page finds text in its rows', () => {
+      const { fixture, rows, button } = lane(true);
+      rows().dispatchEvent(new Event('beforematch'));
+      fixture.detectChanges();
+      expect(rows().hasAttribute('hidden')).toBe(false);
+      expect(button().getAttribute('aria-expanded')).toBe('true');
+      const highlighted = TestBed.inject(Highlighter).highlighted;
+      expect(highlighted?.tagName).toBe('UI-BOARD-LANE');
+      TestBed.inject(Highlighter).clear();
     });
   });
 });
