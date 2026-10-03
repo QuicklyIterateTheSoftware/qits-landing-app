@@ -12,9 +12,9 @@ dist
 .angular
 
 # THE ONE ENTRY THAT IS LOAD-BEARING RATHER THAN TIDY. npm ranks a PROJECT .npmrc above ~/.npmrc,
-# and the Dockerfile writes ~/.npmrc from the two build-args the release step hands the builder.
-# Copied into the context, the committed file — which names the edge vhosts a developer uses, and
-# which the builder resolves not at all — would win and break every install. app.yml's Dockerfile
+# and the Dockerfile writes ~/.npmrc from the two registries it derives off the one QITS_DOMAIN
+# build-arg (qits-731). Copied into the context, the committed file — which carries no credential —
+# would win and leave the install anonymous against hosts that now refuse it. app.yml's Dockerfile
 # contract names this exact hazard and offers exactly two ways out; this is one of them.
 .npmrc
 
