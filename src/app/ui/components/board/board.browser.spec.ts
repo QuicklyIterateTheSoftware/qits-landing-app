@@ -178,7 +178,54 @@ class LongWords {
   readonly word = LONG_WORD;
 }
 
+/**
+ * A board taller than its 20rem scroller, as a long board in the document, with a 2.5rem bar and
+ * 2rem of pinned actions above it (`--app-header-h`, `--page-actions-h`) and space after it.
+ */
+@Component({
+  imports: [Board, BoardCard],
+  host: {
+    class: 'block h-80 w-[48rem] overflow-y-auto px-4',
+    style: '--app-header-h: 2.5rem; --page-actions-h: 2rem',
+  },
+  template: `
+    <div class="sticky top-0 z-50 h-10 bg-charcoal-brown-800"></div>
+    <div class="sticky top-10 z-40 h-8 bg-charcoal-brown-200"></div>
+    <ui-board [columns]="columns" gutter>
+      @for (card of cards; track card) {
+        <ui-board-card [column]="card % 3" [code]="'qits-' + card" title="A card" kind="task" />
+      }
+    </ui-board>
+    <div class="h-[40rem]"></div>
+  `,
+})
+class LongBoard {
+  readonly columns = COLUMNS;
+  readonly cards = Array.from({ length: 12 }, (_, i) => i + 1);
+}
+
 describe('Board (screenshots)', () => {
+  it('pins the headings below the bar and the actions while the board is in view', async () => {
+    const fixture = TestBed.createComponent(LongBoard);
+    fixture.detectChanges();
+    const scroller = fixture.nativeElement as HTMLElement;
+    const headings = scroller.querySelector<HTMLElement>('[data-board-headings]')!;
+    const board = scroller.querySelector<HTMLElement>('ui-board')!;
+    scroller.scrollTop = 300;
+    // 2.5rem + 2rem = 72px below the scroller's top edge, though the board's top has scrolled away.
+    expect(Math.round(headings.getBoundingClientRect().top)).toBe(
+      Math.round(scroller.getBoundingClientRect().top) + 72,
+    );
+    expect(board.getBoundingClientRect().top).toBeLessThan(scroller.getBoundingClientRect().top);
+    await expect.element(page.elementLocator(scroller)).toMatchScreenshot('pinned-headings');
+    // Past the board's end the headings leave with it.
+    scroller.scrollTop +=
+      board.getBoundingClientRect().bottom - scroller.getBoundingClientRect().top - 20;
+    expect(headings.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      board.getBoundingClientRect().bottom + 1,
+    );
+  });
+
   beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
 
   it('draws an epic lane with feature rows, tags and cards', async () => {

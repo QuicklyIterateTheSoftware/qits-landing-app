@@ -69,6 +69,27 @@ class Scrolled {
   readonly rows = ROWS;
 }
 
+/** The long page in its scroller under a 2.5rem pinned bar, as the shell's top bar (`--app-header-h`). */
+@Component({
+  imports: [PageLayoutComponent],
+  host: {
+    class: 'block h-80 w-[48rem] overflow-y-auto px-4',
+    style: '--app-header-h: 2.5rem',
+  },
+  template: `
+    <div class="sticky top-0 z-50 -mx-4 h-10 bg-charcoal-brown-800"></div>
+    <app-page-layout title="A long page" [actions]="actions">
+      @for (row of rows; track row) {
+        <p class="m-0 border-b border-charcoal-brown-200 py-3">{{ row }}</p>
+      }
+    </app-page-layout>
+  `,
+})
+class ScrolledUnderBar {
+  readonly actions = ACTIONS;
+  readonly rows = ROWS;
+}
+
 @Component({
   imports: [PageLayoutComponent],
   host: { class: 'block w-[22rem] p-4' },
@@ -128,6 +149,27 @@ describe('PageLayoutComponent (screenshots)', () => {
       element.getBoundingClientRect().top,
     );
     await expect.element(page.elementLocator(element)).toMatchScreenshot('pinned');
+  });
+
+  it('pins the actions below the top bar, and tells their height to the content', async () => {
+    const { fixture, element } = shown(ScrolledUnderBar);
+    await fixture.whenStable();
+    element.scrollTop = 400;
+    const actions = element.querySelector<HTMLElement>('[data-page-actions]')!;
+    // 2.5rem below the scroller's top edge: under the bar, not behind it.
+    expect(Math.round(actions.getBoundingClientRect().top)).toBe(
+      Math.round(element.getBoundingClientRect().top) + 40,
+    );
+    // The measured height, for what pins below the actions (the board's headings).
+    await expect
+      .poll(() =>
+        element
+          .querySelector<HTMLElement>('app-page-layout')!
+          .style.getPropertyValue('--page-actions-h'),
+      )
+      .toBe(`${actions.offsetHeight}px`);
+    expect(actions.offsetHeight).toBeGreaterThan(0);
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('pinned-under-bar');
   });
 
   it('pins the actions while the document scrolls', async () => {

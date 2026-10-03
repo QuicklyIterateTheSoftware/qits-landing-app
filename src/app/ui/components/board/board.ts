@@ -26,6 +26,11 @@ export interface BoardColumnSpec {
  * packing): an item never moves up into a gap above an earlier one, so the items keep the order
  * they are given, and removing one does not lift a later one past another.
  *
+ * The headings stay pinned to the top of the window while the board is in view, and leave with
+ * its end. They pin below the shell's top bar (`--app-header-h`) and the page's pinned actions
+ * (`--page-actions-h`); both are 0 where they are unset. Sticky works only with no scrolling box
+ * between the board and the document, so nothing around a board may set `overflow`.
+ *
  * ```html
  * <ui-board [columns]="columns" gutter>
  *   <ui-board-card [column]="0" code="qits-1" title="…" kind="ticket" />
@@ -38,7 +43,11 @@ export interface BoardColumnSpec {
   host: { class: 'block' },
   providers: [{ provide: BOARD_CONTEXT, useExisting: Board }],
   template: `
-    <div class="grid" [style.grid-template-columns]="template()">
+    <div
+      class="sticky top-[calc(var(--app-header-h,0px)_+_var(--page-actions-h,0px))] z-30 grid bg-white"
+      [style.grid-template-columns]="template()"
+      data-board-headings
+    >
       @if (gutter()) {
         <div></div>
       }

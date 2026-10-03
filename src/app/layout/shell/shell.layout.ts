@@ -34,10 +34,15 @@ export interface NavLink {
     NotificationsMenu,
     ReleaseMenu,
   ],
-  host: { class: 'block' },
+  // `--app-header-h`: the top bar's fixed height. What pins below the bar (the page's actions, the
+  // board's headings) reads it; outside the shell it is unset and they pin at 0.
+  host: { class: 'block [--app-header-h:3.5rem]' },
   template: `
-    <div class="grid min-h-screen grid-rows-[3.5rem_1fr] md:grid-cols-[15rem_1fr]">
-      <header class="col-span-full flex items-center gap-3 border-b border-gray-200 bg-white px-4">
+    <div class="grid min-h-screen grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_1fr]">
+      <!-- Pinned to the top of the window, always: the document scrolls, not the shell. -->
+      <header
+        class="sticky top-0 z-50 col-span-full flex items-center gap-3 border-b border-gray-200 bg-white px-4"
+      >
         <button
           type="button"
           class="inline-flex size-9 cursor-pointer flex-col justify-center gap-1 rounded-md border-0 bg-transparent p-2 md:hidden"

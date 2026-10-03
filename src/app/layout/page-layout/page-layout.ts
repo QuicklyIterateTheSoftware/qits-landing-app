@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { Action, ActionGroup, isActionGroup } from '$ui/components/action-button/action';
 import { ActionButton, ActionJoin } from '$ui/components/action-button/action-button';
 
@@ -32,7 +43,10 @@ interface ShownGroup {
  * - Content: everything else.
  *
  * The page scrolls as a whole (the document scrolls, not the shell), and the actions stay pinned
- * to the top of the window while any of the page is in view. The actions float right and come
+ * to the top of the window, just below the shell's top bar (`--app-header-h`), while any of the
+ * page is in view. Their height is `--page-actions-h` on this component, measured in the browser
+ * (0 on the server and while there are no actions), so what pins inside the content (the board's
+ * headings) sits below them instead of under them. The actions float right and come
  * first; the header after them is a box of its own (flex) beside the float, so a long title wraps
  * there first. Once less than 12rem is left beside the actions, the header moves below them: the
  * actions keep line 1. The content clears both. A float's sticky box is bound by this component's
@@ -47,10 +61,11 @@ interface ShownGroup {
   selector: 'app-page-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ActionButton],
-  host: { class: 'flow-root' },
+  host: { class: 'flow-root', '[style.--page-actions-h]': "actionsHeight() + 'px'" },
   template: `
     <div
-      class="sticky top-0 z-10 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
+      #actionsBar
+      class="sticky top-[var(--app-header-h,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
       data-page-actions
     >
       <ng-content select="[slot=actions], [uiPageActions]">
@@ -91,6 +106,23 @@ export class PageLayoutComponent {
 
   /** The page's actions, unless actions are projected. */
   readonly actions = input<readonly (Action | ActionGroup)[]>([]);
+
+  private readonly actionsBar = viewChild.required<ElementRef<HTMLElement>>('actionsBar');
+
+  /** The actions bar's height in px, kept current while it changes (0 when it has no actions). */
+  protected readonly actionsHeight = signal(0);
+
+  constructor() {
+    const destroy = inject(DestroyRef);
+    afterNextRender(() => {
+      // Absent in jsdom (the plain specs); there the height stays 0.
+      if (typeof ResizeObserver === 'undefined') return;
+      const bar = this.actionsBar().nativeElement;
+      const observer = new ResizeObserver(() => this.actionsHeight.set(bar.offsetHeight));
+      observer.observe(bar);
+      destroy.onDestroy(() => observer.disconnect());
+    });
+  }
 
   protected readonly groups = computed((): readonly ShownGroup[] =>
     this.actions().map((item) => {
