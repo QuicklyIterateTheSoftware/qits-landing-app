@@ -7,10 +7,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "prettier --check . && eslint .",
+    "lint": "prettier --check . && eslint . && qits-angular screenshots --check",
     "generate:api": "openapi-ts",
     "serve:ssr": "node dist/qits-landing-app/server/server.mjs",
-    "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser"
+    "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser && qits-angular screenshots --check",
+    "screenshots:prune": "qits-angular screenshots --prune"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
