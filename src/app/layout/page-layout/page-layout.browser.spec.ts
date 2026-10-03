@@ -25,9 +25,9 @@ const ROWS = Array.from({ length: 24 }, (_, i) => `Row ${i + 1} of the page's lo
   imports: [PageLayoutComponent],
   host: { class: 'block w-[48rem] p-4' },
   template: `
-    <ui-page-layout title="Work" [actions]="actions">
+    <app-page-layout title="Work" [actions]="actions">
       <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
-    </ui-page-layout>
+    </app-page-layout>
   `,
 })
 class WithInputs {
@@ -38,14 +38,14 @@ class WithInputs {
   imports: [PageLayoutComponent],
   host: { class: 'block w-[48rem] p-4' },
   template: `
-    <ui-page-layout title="Ignored" [actions]="actions">
+    <app-page-layout title="Ignored" [actions]="actions">
       <div slot="header">
         <h1 class="m-0 text-2xl font-bold">qits</h1>
         <p class="m-0 text-sm text-charcoal-brown-600">A custom header with a subtitle</p>
       </div>
       <a slot="actions" class="text-sm text-charcoal-brown-600" href="/archive">Archive</a>
       <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
-    </ui-page-layout>
+    </app-page-layout>
   `,
 })
 class WithSlots {
@@ -57,11 +57,11 @@ class WithSlots {
   imports: [PageLayoutComponent],
   host: { class: 'block h-80 w-[48rem] overflow-y-auto px-4' },
   template: `
-    <ui-page-layout title="A long page" [actions]="actions">
+    <app-page-layout title="A long page" [actions]="actions">
       @for (row of rows; track row) {
         <p class="m-0 border-b border-charcoal-brown-200 py-3">{{ row }}</p>
       }
-    </ui-page-layout>
+    </app-page-layout>
   `,
 })
 class Scrolled {
@@ -73,9 +73,9 @@ class Scrolled {
   imports: [PageLayoutComponent],
   host: { class: 'block w-[22rem] p-4' },
   template: `
-    <ui-page-layout title="Repositories of the project" [actions]="actions">
+    <app-page-layout title="Repositories of the project" [actions]="actions">
       <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
-    </ui-page-layout>
+    </app-page-layout>
   `,
 })
 class Narrow {

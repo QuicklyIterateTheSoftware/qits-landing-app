@@ -14,15 +14,15 @@ interface ShownGroup {
  * right, and the content below.
  *
  * ```html
- * <ui-page-layout title="Work" [actions]="[{ label: 'Archive', variant: 'muted', callback: open }]">
+ * <app-page-layout title="Work" [actions]="[{ label: 'Archive', variant: 'muted', callback: open }]">
  *   …the content…
- * </ui-page-layout>
+ * </app-page-layout>
  *
- * <ui-page-layout>
+ * <app-page-layout>
  *   <div slot="header">…a custom header…</div>
  *   <a slot="actions" routerLink="…">…a custom action…</a>
  *   …the content…
- * </ui-page-layout>
+ * </app-page-layout>
  * ```
  *
  * - Header: `title` as an `<h1>`, or projected `[slot=header]` / `[uiPageHeader]` content, which wins.
@@ -42,7 +42,7 @@ interface ShownGroup {
  * The class is not `PageLayout`: a class named `…Layout` is a routed layout (`qits/page-suffix`).
  */
 @Component({
-  selector: 'ui-page-layout',
+  selector: 'app-page-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ActionButton],
   host: { class: 'flow-root' },

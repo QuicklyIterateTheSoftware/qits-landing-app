@@ -4,7 +4,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { KanbanBoard } from '$patterns/work/kanban-board/kanban-board';
-import { PageLayoutComponent } from '$ui/components/page-layout/page-layout';
+import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
@@ -21,7 +21,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <ui-page-layout title="Work">
+      <app-page-layout title="Work">
         <!-- A link, not an Action: it navigates (an href to open in a new tab, to copy). -->
         <a
           slot="actions"
@@ -46,7 +46,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
             <app-work-list [tree]="backlog()" [base]="workPath()" view="backlog" />
           </section>
         </ui-spinner>
-      </ui-page-layout>
+      </app-page-layout>
     </div>
   `,
 })

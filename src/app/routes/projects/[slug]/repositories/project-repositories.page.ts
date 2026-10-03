@@ -11,7 +11,7 @@ import {
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { repositoryTree } from '$core/repositories/repository-tree';
-import { PageLayoutComponent } from '$ui/components/page-layout/page-layout';
+import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { TreeFolder } from '$ui/components/tree-folder/tree-folder';
 import { RepositoryCard } from '$patterns/repositories/repository-card/repository-card';
@@ -29,7 +29,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <ui-page-layout title="Repositories">
+      <app-page-layout title="Repositories">
         <ui-spinner [state]="state()" class="min-h-48">
           <div class="flex flex-col gap-6">
             <section aria-label="Wrapper" [class]="tree().wrapper ? 'block' : 'hidden'">
@@ -86,7 +86,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
             </section>
           </div>
         </ui-spinner>
-      </ui-page-layout>
+      </app-page-layout>
     </div>
   `,
 })

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ProjectCard } from '$patterns/projects/project-card/project-card';
 import { ProjectsStore } from '$core/projects/projects.store';
-import { PageLayoutComponent } from '$ui/components/page-layout/page-layout';
+import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
@@ -17,7 +17,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   imports: [PageLayoutComponent, ProjectCard, Spinner],
   template: `
     <div class="mx-auto max-w-[60rem] px-6 pt-16 pb-12">
-      <ui-page-layout title="Projects">
+      <app-page-layout title="Projects">
         <ui-spinner [state]="state()" class="mt-6 min-h-48">
           @if (store.status() === 'loaded') {
             @if (store.entities().length === 0) {
@@ -35,7 +35,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             }
           }
         </ui-spinner>
-      </ui-page-layout>
+      </app-page-layout>
     </div>
   `,
 })

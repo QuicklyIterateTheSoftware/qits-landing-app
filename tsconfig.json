@@ -16,7 +16,8 @@
     "paths": {
       "$core/*": ["./src/app/core/*"],
       "$ui/*": ["./src/app/ui/*"],
-      "$patterns/*": ["./src/app/patterns/*"]
+      "$patterns/*": ["./src/app/patterns/*"],
+      "$layout/*": ["./src/app/layout/*"]
     }
   },
   "angularCompilerOptions": {

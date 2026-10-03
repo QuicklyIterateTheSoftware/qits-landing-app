@@ -7,8 +7,8 @@ const noop = () => undefined;
 
 @Component({
   imports: [PageLayoutComponent],
-  template: `<ui-page-layout [title]="title()" [actions]="actions()"
-    ><p>Content</p></ui-page-layout
+  template: `<app-page-layout [title]="title()" [actions]="actions()"
+    ><p>Content</p></app-page-layout
   >`,
 })
 class WithInputs {
@@ -19,11 +19,11 @@ class WithInputs {
 @Component({
   imports: [PageLayoutComponent],
   template: `
-    <ui-page-layout title="Ignored" [actions]="actions">
+    <app-page-layout title="Ignored" [actions]="actions">
       <h1 slot="header">Custom header</h1>
       <a slot="actions" href="/archive">Archive</a>
       <p>Content</p>
-    </ui-page-layout>
+    </app-page-layout>
   `,
 })
 class WithSlots {
@@ -33,10 +33,10 @@ class WithSlots {
 @Component({
   imports: [PageLayoutComponent],
   template: `
-    <ui-page-layout>
+    <app-page-layout>
       <div uiPageHeader><h1>Directive header</h1></div>
       <div uiPageActions><button type="button">Directive action</button></div>
-    </ui-page-layout>
+    </app-page-layout>
   `,
 })
 class WithAttributes {}

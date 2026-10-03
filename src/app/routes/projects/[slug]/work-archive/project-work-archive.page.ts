@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
-import { PageLayoutComponent } from '$ui/components/page-layout/page-layout';
+import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
@@ -17,7 +17,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <ui-page-layout title="Archive">
+      <app-page-layout title="Archive">
         <a
           slot="actions"
           class="text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
@@ -27,7 +27,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
         <ui-spinner [state]="work.state()" class="min-h-48">
           <app-work-list [tree]="archived()" [base]="workPath()" view="archive" />
         </ui-spinner>
-      </ui-page-layout>
+      </app-page-layout>
     </div>
   `,
 })

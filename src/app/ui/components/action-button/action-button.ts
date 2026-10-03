@@ -27,7 +27,7 @@ const JOINS = {
  * <ui-action-button [action]="{ label: 'Retry', variant: 'success', callback: retry }" />
  * ```
  *
- * `join` rounds only the outer corners of a row of joined buttons (`ui-page-layout` uses it for an
+ * `join` rounds only the outer corners of a row of joined buttons (`app-page-layout` uses it for an
  * action group).
  */
 @Component({

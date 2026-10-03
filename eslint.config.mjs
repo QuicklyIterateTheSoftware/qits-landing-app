@@ -18,13 +18,17 @@ export default tseslint.config(
 );
 
 /**
- * Reach core/, ui/ and patterns/ through their aliases ($core/…, $ui/…, $patterns/…, see
- * tsconfig.json), never by a relative climb. Everywhere: no relative path that names one of the
- * three. Inside them, also no climb that stays in the tree (`../platform/…` from core/auth/).
+ * Reach core/, ui/, patterns/ and layout/ through their aliases ($core/…, $ui/…, $patterns/…,
+ * $layout/…, see tsconfig.json), never by a relative climb. Everywhere: no relative path that names
+ * one of the four. Inside them, also no climb that stays in the tree (`../platform/…` from core/auth/).
  */
 function climbBans() {
-  const message = 'Import core/, ui/ and patterns/ through $core/, $ui/ or $patterns/.';
-  const named = { regex: '^\\.{1,2}/(?:\\.\\./)*(?:.*/)?(?:core|ui|patterns)(?:/|$)', message };
+  const message =
+    'Import core/, ui/, patterns/ and layout/ through $core/, $ui/, $patterns/ or $layout/.';
+  const named = {
+    regex: '^\\.{1,2}/(?:\\.\\./)*(?:.*/)?(?:core|ui|patterns|layout)(?:/|$)',
+    message,
+  };
   const ban = (files, ...regexes) => ({
     files,
     rules: {
@@ -43,5 +47,7 @@ function climbBans() {
       ['src/app/patterns/*/*/**/*.ts', 'src/app/ui/*/*/**/*.ts'],
       '^\\.\\./(?:\\.\\./)?(?!\\.\\./)',
     ),
+    // layout/<component>/x.ts: one `../` stays in layout.
+    ban(['src/app/layout/*/**/*.ts'], '^\\.\\./(?!\\.\\./)'),
   ];
 }
