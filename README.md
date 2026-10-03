@@ -100,10 +100,11 @@ revisiting once that is measured, and not worth guessing at now.
 
 **The build is self-contained.** `.config/qits/release.yml`'s release slot runs `buildctl` and
 nothing else, so the `npm ci` and the `npm run build` happen inside the image build — which is what
-makes the image a person builds on a workstation and the image CI builds the same image. The
-registry ORIGINS arrive as build args (`QITS_NPM_REGISTRY_URL`, `QITS_NPM_PROXY_URL`) and the
-credential as a buildkit SECRET (`id=qits-npm-token`, mounted at `/run/secrets/qits-npm-token`); an
-absent or empty secret leaves the install anonymous rather than broken.
+makes the image a person builds on a workstation and the image CI builds the same image. The two
+registry origins are code derived from one build arg (`QITS_DOMAIN`, qits-731) and the credential
+arrives as a buildkit SECRET (`id=qits-npm-token`, mounted at `/run/secrets/qits-npm-token`); both
+registries answer 401 anonymously, so an absent or empty secret fails the install rather than falling
+back to one.
 
 ```
 docker build -f docker/Dockerfile -t qits/qits-landing:dev .
@@ -113,9 +114,8 @@ docker run --rm -p 8080:8080 qits/qits-landing:dev
 Two things about it that are decisions:
 
 - **`.npmrc` is `.dockerignore`d.** npm ranks a project `.npmrc` above `~/.npmrc`, and the build
-  writes `~/.npmrc` from the build args. Copied into the context, the committed file — which names
-  the developer's edge vhosts — would win and send every request to an address the builder cannot
-  resolve.
+  writes `~/.npmrc` from the two registries it derives off `QITS_DOMAIN`. Copied into the context,
+  the committed file — which carries no credential — would win and leave the install with none.
 - **The runtime stage installs nothing.** `outputMode: server` bundles every third-party dependency,
   express and `@angular/ssr` included, into `server/server.mjs`; the only bare specifiers left are
   node builtins. Measured by running the built server from a directory with no `node_modules`
