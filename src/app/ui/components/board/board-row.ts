@@ -32,8 +32,9 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))]',
+      'relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 pt-2 ring-1 ring-black/5 has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))]',
     '[style.--row-id-chars]': 'idLength()',
+    '[class]': "solid() ? 'bg-white/20' : 'bg-white/50'",
     '[style.grid-column]': 'placement()',
     'data-highlight-target': '',
   },
@@ -64,7 +65,7 @@ export class BoardRow implements BoardContext {
   readonly idLength = input(0);
   /**
    * Draws bar and strip in a solid colour, the same over every column, instead of translucent
-   * over each column's own.
+   * over each column's own, and lets more of the columns' colours through the row's white.
    */
   readonly solid = input(false, { transform: booleanAttribute });
 
