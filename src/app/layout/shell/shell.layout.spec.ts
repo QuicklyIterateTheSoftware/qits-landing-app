@@ -1,4 +1,21 @@
-import { workSubpage } from './shell.layout';
+import { workspaceCrumb, workSubpage } from './shell.layout';
+
+describe('workspaceCrumb', () => {
+  const project = '/projects/qits';
+
+  it('names a work item’s workspace page', () => {
+    expect(workspaceCrumb(`${project}/workspaces/qits-111?x=1`, project)).toEqual({
+      label: 'Workspace qits-111',
+      path: `${project}/workspaces/qits-111`,
+    });
+  });
+
+  it('is undefined anywhere else', () => {
+    expect(workspaceCrumb(`${project}/workspaces/`, project)).toBeUndefined();
+    expect(workspaceCrumb(`${project}/work/detail/qits-111`, project)).toBeUndefined();
+    expect(workspaceCrumb('/projects/other/workspaces/qits-111', project)).toBeUndefined();
+  });
+});
 
 describe('workSubpage', () => {
   const project = '/projects/qits';
