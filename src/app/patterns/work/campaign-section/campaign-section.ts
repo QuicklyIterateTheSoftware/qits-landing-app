@@ -4,17 +4,19 @@ import type { WorkEntry } from '$core/work/work.consumes';
 import type { WorkNode } from '$core/work/work-tree';
 import { Tag } from '$ui/components/tag/tag';
 import { WorkList } from '$patterns/work/work-list/work-list';
+import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
  * One campaign, as the Campaigns page and the Archive draw it: its id, its title (a heading of
  * `level`, linking to its page), its status, the start of its description, and its members in
- * campaign order, drawn as the lists draw them (`app-work-list`, view `campaign`). `display:
+ * campaign order, drawn as the lists draw them (`app-work-list`, view `campaign`). Next to its
+ * status, a Workspace tag while it has an ACTIVE workspace (`app-workspace-link`). `display:
  * contents`, so the section is itself the list's item.
  */
 @Component({
   selector: 'app-campaign-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Tag, WorkList],
+  imports: [RouterLink, Tag, WorkList, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     <section class="flex flex-col gap-8" [attr.aria-label]="entry().title">
@@ -29,6 +31,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
             >
           </div>
           <ui-tag [label]="status()" [class.hidden]="!status()" />
+          <app-workspace-link [workId]="entry().id" [qualifiedId]="entry().qualifiedId" />
         </div>
         <p
           class="m-0 line-clamp-2 max-w-[48rem] text-sm text-charcoal-brown-600"

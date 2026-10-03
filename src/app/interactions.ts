@@ -56,6 +56,13 @@ export const INTERACTIONS = {
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */
   'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
+  /**
+   * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspacesStore`: the ACTIVE
+   * workspaces bound to work items, one request per page, for the Workspace links on the cards.
+   */
+  'show-open-workspaces': 'The work pages link each work item that has an active workspace',
+  /** `work-item.page.ts` via `WorkspacesStore`: the item's workspaces in every state. */
+  'show-work-item-workspaces': 'The work item page lists the item’s workspaces, newest first',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

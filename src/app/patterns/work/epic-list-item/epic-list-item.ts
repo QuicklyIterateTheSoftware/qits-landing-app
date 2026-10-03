@@ -7,6 +7,7 @@ import { Leave } from '$ui/components/leave/leave';
 import { ListLane } from '$ui/components/list/list-lane';
 import { Tag } from '$ui/components/tag/tag';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
+import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
@@ -15,7 +16,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  * the board:
  *
  * - the epic is a lane (`ui-list-lane`): its title in the bar at the top and its id up the left
- *   gutter, both linking to it, its campaigns as tags below the bar. It collapses to one line: in
+ *   gutter, both linking to it, its campaigns as tags below the bar, and a Workspace tag while it
+ *   has an ACTIVE workspace (`app-workspace-link`). It collapses to one line: in
  *   the Backlog "<n> tasks" and in Acceptance "<verified> / <n> ✅", expanded at first; in the
  *   Archive "<verified> / <n> ✅" for a done epic, or "<n> tasks" for a dropped one, collapsed at
  *   first; in a campaign "<verified> / <n> ✅" for a verified or done epic, else "<n> tasks",
@@ -34,7 +36,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-epic-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListLane, FeatureListRow, FinishButton, Leave, Tag, WorkRef],
+  imports: [RouterLink, ListLane, FeatureListRow, FinishButton, Leave, Tag, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -48,6 +50,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       @if (status(); as status) {
         <ui-tag lane-tags [label]="status" />
       }
+      <app-workspace-link lane-tags [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
       <ui-finish-button
         lane-action

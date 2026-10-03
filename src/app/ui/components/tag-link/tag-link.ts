@@ -19,6 +19,7 @@ export type TagLinkVariant = 'tag' | 'corner';
  * - `corner`: the mirror of `ui-board-card`'s kind chip, for the card's `[card-corner]` slot. Only
  *   its top-left corner is rounded, and its negative margins take it flush into the card body's
  *   bottom-right corner (the body has `p-2`). It takes a line of its own, so it never covers text.
+ *   `--card-corner-inset` (set by the card) moves it that far left of the corner.
  *
  * `shown` is switched by class, never by `@if`, so a server render hydrates as is. The host is
  * positioned, so the link sits above a card's or row's stretched link and takes its own clicks.
@@ -53,7 +54,9 @@ export class TagLink {
 
   protected readonly hostClasses = computed(() => {
     if (!this.shown()) return 'hidden';
-    return this.variant() === 'corner' ? 'mt-1 -mr-2 -mb-2 ml-auto block w-fit' : 'inline-block';
+    return this.variant() === 'corner'
+      ? 'mt-1 mr-[calc(var(--card-corner-inset,0rem)-0.5rem)] -mb-2 ml-auto block w-fit'
+      : 'inline-block';
   });
 
   protected readonly linkClasses = computed(() =>

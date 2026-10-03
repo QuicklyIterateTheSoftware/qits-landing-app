@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
+import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 
 /**
  * Helpers for the screenshot tests of the work patterns (`kanban-board`, `epic-card`,
@@ -15,7 +16,8 @@ import type { WorkNode } from '$core/work/work-tree';
  * the open project's work through `SelectedWork`, as the work section's pages do, and draws the
  * one top-level node whose qualified id the URL names ({@link nodeOf}), or the whole tree. {@link openRecordedWork}
  * navigates there and answers every request with a recording: the project list from "a project
- * exists", the work (and each campaign in it) from the case's state.
+ * exists", the work (and each campaign in it) from the case's state. {@link openWorkspaces} then
+ * loads the open workspaces, for the cards' Workspace links.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -81,4 +83,30 @@ export async function openRecordedWork(
   await harness.fixture.whenStable();
   harness.fixture.detectChanges();
   return { element: harness.routeNativeElement as HTMLElement, harness };
+}
+
+/**
+ * Loads the open workspaces (`WorkspacesStore.load()`, as the work pages do) and answers them from
+ * qits-workspaces' "a project with workspaces bound to work items", whose ids are those of
+ * qits-projects' "… in detail" states: the epic, its PDF feature, a CSV task and the bug ticket of
+ * that seed have an ACTIVE workspace.
+ */
+export async function openWorkspaces(
+  http: HttpTestingController,
+  harness: RouterTestingHarness,
+): Promise<void> {
+  const load = TestBed.inject(WorkspacesStore).load();
+  await settle();
+  http
+    .expectOne('/workspaces/api/work/workspaces')
+    .flush(
+      await goldenMaster(
+        'a project with workspaces bound to work items',
+        'listOpenWorkspaces',
+        'qits-workspaces',
+      ),
+    );
+  await load;
+  await harness.fixture.whenStable();
+  harness.fixture.detectChanges();
 }

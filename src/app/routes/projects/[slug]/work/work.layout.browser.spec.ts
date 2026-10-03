@@ -7,6 +7,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkLayout } from './work.layout';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
@@ -18,8 +19,9 @@ class TestPage {}
 /**
  * Screenshots of the work section's tabs, answered with qits-projects' golden masters: the project
  * list as recorded, and "a project with work in every status" (one epic and one ticket per status)
- * for the counts. The layout follows transitions through the event stream; the stream here never
- * connects.
+ * for the counts. The layout also loads the open workspaces, answered from qits-workspaces' "a
+ * project with workspaces bound to work items". The layout follows transitions through the event
+ * stream; the stream here never connects.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -47,6 +49,7 @@ describe('WorkLayout (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
         {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
@@ -67,6 +70,15 @@ describe('WorkLayout (screenshots)', () => {
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
+    http
+      .expectOne('/workspaces/api/work/workspaces')
+      .flush(
+        await goldenMaster(
+          'a project with workspaces bound to work items',
+          'listOpenWorkspaces',
+          'qits-workspaces',
+        ),
+      );
     // SelectedWork's effect asks for the work once the project is known; let it run.
     TestBed.tick();
     await settle();
