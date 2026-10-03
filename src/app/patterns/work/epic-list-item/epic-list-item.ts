@@ -2,12 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { RouterLink } from '@angular/router';
 import { finishControl } from '$core/work/finish-control';
 import { taskDistribution, type WorkNode } from '$core/work/work-tree';
-import { BoardCard } from '$ui/components/board/board-card';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { ListLane } from '$ui/components/list/list-lane';
-import { ListRow } from '$ui/components/list/list-row';
 import { Tag } from '$ui/components/tag/tag';
+import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
@@ -20,8 +19,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  *   done), expanded at first; in the Archive "<n> / <n> ✅" for a
  *   done epic, or "<n> tasks" for a dropped one, collapsed at first; in a campaign "<n> / <n> ✅"
  *   for a verified or done epic, else "<n> tasks", collapsed at first;
- * - each feature is a row (`ui-list-row`): its title along the bottom, its id up the right gutter;
- * - each task is the board's small card (`ui-board-card`), with its campaigns.
+ * - each feature is a row (`app-feature-list-row`): its title along the bottom, its id up the right
+ *   gutter, each of its tasks the board's small card, with its campaigns.
  *
  * In the Archive the epic (unless it is only context) also shows its final state, in a campaign its
  * own status. A VERIFIED epic in Acceptance (not in a campaign) carries the finish button ("Mark <id> done") on the lane's bottom-right corner:
@@ -33,7 +32,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-epic-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListLane, ListRow, BoardCard, FinishButton, Leave, Tag],
+  imports: [RouterLink, ListLane, FeatureListRow, FinishButton, Leave, Tag],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -56,28 +55,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         (finish)="finishing.finish()"
       />
       @for (feature of n.children; track feature.entry.id) {
-        <ui-list-row>
-          @for (task of feature.children; track task.entry.id) {
-            <ui-board-card
-              [code]="task.entry.qualifiedId ?? ''"
-              [title]="task.entry.title ?? ''"
-              [kind]="task.entry.archetype?.toLowerCase() ?? ''"
-              [link]="base() + '/' + task.entry.qualifiedId"
-            >
-              @if (task.campaigns.length) {
-                <div class="mt-1 flex flex-wrap gap-1">
-                  @for (campaign of task.campaigns; track campaign.id) {
-                    <ui-tag [label]="campaign.title ?? ''" />
-                  }
-                </div>
-              }
-            </ui-board-card>
-          }
-          <span row-id class="font-mono">{{ feature.entry.qualifiedId }}</span>
-          <a row-footer [routerLink]="base() + '/' + feature.entry.qualifiedId">{{
-            feature.entry.title
-          }}</a>
-        </ui-list-row>
+        <app-feature-list-row [node]="feature" [base]="base()" />
       }
     </ui-list-lane>
   `,

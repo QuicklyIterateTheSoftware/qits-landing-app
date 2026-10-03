@@ -31,11 +31,11 @@ describe('workActions', () => {
 
   describe('CAMPAIGN', () => {
     it.each<[string, Table]>([
-      ['REPORTED', { status: ['markRefined', 'drop'] }],
+      ['REPORTED', { agent: ['dispatch'], status: ['markRefined', 'drop'] }],
       ['REFINED', { agent: ['dispatch'], status: ['drop', 'block'] }],
-      ['IMPLEMENTING', { status: ['drop'] }],
-      ['IMPLEMENTED', { status: ['drop'] }],
-      ['VERIFYING', { status: ['drop'] }],
+      ['IMPLEMENTING', { agent: ['dispatch'], status: ['drop'] }],
+      ['IMPLEMENTED', { agent: ['dispatch'], status: ['drop'] }],
+      ['VERIFYING', { agent: ['dispatch'], status: ['drop'] }],
       ['VERIFIED', { status: ['drop'] }],
       ['DONE', {}],
       ['DROPPED', {}],

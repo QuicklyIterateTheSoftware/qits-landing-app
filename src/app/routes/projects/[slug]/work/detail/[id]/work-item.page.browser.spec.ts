@@ -9,16 +9,15 @@ import { provideHeyApiClient } from '../../../../../../api/projects/client/clien
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkItemPage } from './work-item.page';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
+import { openRecordedWork } from '../../../../../../../testing/browser/recorded-work';
 
 /**
  * Screenshots of one work item's page and its actions, answered with qits-projects' golden masters:
  * the project list as recorded, and the work of "a project with work in every status" (one epic and
- * one ticket per status) or "an epic with features and tasks". The page follows transitions
+ * one ticket per status), "an epic with features and tasks" or "a campaign with work in every
+ * phase" (with the campaign's read). The page follows transitions
  * through the event stream; the stream here never connects.
  */
-
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 describe('WorkItemPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -41,29 +40,14 @@ describe('WorkItemPage (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  /** The page of the entity titled `title` in `state`'s recorded work. */
+  /**
+   * The page of the entity titled `title` in `state`'s recorded work, every request answered from
+   * a recording (`openRecordedWork`: a campaign's read too).
+   */
   async function render(state: string, title: string) {
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
     const work = await goldenMaster(state, 'listProjectEntities');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/work/detail/${entity.qualifiedId}`,
-    );
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    // SelectedWork's effect asks for the work once the project is known; let it run.
-    TestBed.tick();
-    await settle();
-    TestBed.tick();
-    await settle();
-    http.expectOne(`/projects/api/projects/${project.id}/entities`).flush(work);
-    await settle();
-    await harness.fixture.whenStable();
-    harness.fixture.detectChanges();
-    const element = harness.routeNativeElement as HTMLElement;
+    const { element } = await openRecordedWork(http, 'work/detail', entity.qualifiedId, state);
     element.style.width = '760px';
     return page.elementLocator(element);
   }
@@ -110,5 +94,33 @@ describe('WorkItemPage (screenshots)', () => {
     const buttons = element.getByRole('group', { name: 'Plan' }).getByRole('button');
     expect(buttons.elements().map((b) => b.textContent?.trim())).toEqual(['Edit', 'Reshape']);
     await expect.element(element).toMatchScreenshot('feature');
+  });
+
+  it('shows a campaign’s description and its members, and offers its start', async () => {
+    const element = await render('a campaign with work in every phase', 'Card campaign');
+    await expect
+      .element(element.getByRole('group', { name: 'Agent' }))
+      .toHaveTextContent('Start campaign');
+    await expect.element(element).toHaveTextContent('Seeded work.');
+    const members = element.getByRole('region', { name: 'Members' });
+    await expect.element(members.getByRole('link', { name: 'Done ticket' })).toBeVisible();
+    await expect.element(members).not.toHaveTextContent('Ticket outside the campaign');
+    await expect.element(element).toMatchScreenshot('campaign');
+  });
+
+  it('shows an epic’s features with their tasks', async () => {
+    const element = await render('an epic with features and tasks', 'Nested epic');
+    const features = element.getByRole('region', { name: 'Features' });
+    await expect.element(features.getByRole('link', { name: 'Open feature' })).toBeVisible();
+    await expect.element(features.getByRole('link', { name: 'Open task' })).toBeVisible();
+    await expect.element(element).toMatchScreenshot('epic-with-features');
+  });
+
+  it('shows a feature’s tasks', async () => {
+    const element = await render('an epic with features and tasks', 'Shipped feature');
+    const tasks = element.getByRole('region', { name: 'Tasks' });
+    await expect.element(tasks.getByRole('link', { name: 'Second shipped task' })).toBeVisible();
+    await expect.element(tasks).not.toHaveTextContent('Open task');
+    await expect.element(element).toMatchScreenshot('feature-with-tasks');
   });
 });

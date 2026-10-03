@@ -149,6 +149,15 @@ describe('WorkGraph', () => {
     expect(graph.membersOf(two[6]).map(shape)).toEqual(['verified{campaign}']);
   });
 
+  it('gives an item with its whole subtree and every campaign tag, whatever the phase', () => {
+    const graph = new WorkGraph(campaign, members);
+    expect(shape(graph.nodeOf(campaign[2]))).toBe('running{campaign}(feature)');
+    const epics = new WorkGraph(epic);
+    expect(shape(epics.nodeOf(epic[0]))).toBe('epic(shipped(t1 t2) open(t3))');
+    expect(shape(epics.nodeOf(epic[1]))).toBe('shipped(t1 t2)');
+    expect(shape(epics.nodeOf(epic[2]))).toBe('t1');
+  });
+
   it('keeps a reported epic with its feature in the backlog', () => {
     const reportedEpic = [
       entry('epic', 'EPIC', 'REPORTED'),

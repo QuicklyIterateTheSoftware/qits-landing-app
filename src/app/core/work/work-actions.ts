@@ -5,8 +5,13 @@
  * Three groups, each left out when empty:
  *
  * - `agent` (Dispatch, Next phase): while a phase runs behind the status, so before VERIFIED. An
- *   epic or a ticket gets both. A campaign gets Dispatch only (its start), and only at REFINED: the
- *   service starts a campaign from REFINED and refuses a single phase.
+ *   epic or a ticket gets both. A campaign gets Dispatch only (its start: the service refuses a
+ *   single phase), by the same rule: until VERIFIED.
+ *
+ *   INTERIM for a campaign: the service starts a campaign only from REFINED, so a press at any
+ *   other status will be refused. By USER RULE which actions are available must come from the
+ *   backend (the archetype registry's `phases`), but CAMPAIGN's `phases` is `{}` today; move this
+ *   there once the registry says it.
  * - `status` (Mark refined, Drop, Block): status moves. None in a final state (DONE, DROPPED).
  *   Mark refined at REPORTED only (its one forward move by name); Drop in every open status; Block
  *   where a phase runs (an epic or ticket before VERIFIED, a campaign at REFINED).
@@ -58,7 +63,7 @@ export function workActions(
 
   const agent: WorkActionId[] = [];
   if (lifecycle && PHASED.has(s)) agent.push('dispatch', 'nextPhase');
-  if (campaign && s === 'REFINED') agent.push('dispatch');
+  if (campaign && PHASED.has(s)) agent.push('dispatch');
 
   const moves: WorkActionId[] = [];
   if (lifecycle || campaign) {

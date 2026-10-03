@@ -13,10 +13,13 @@ import { WorkItemPage } from './work-item.page';
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const WORK = 'a project with work in every status';
+const CAMPAIGN = 'a campaign with work in every phase';
+const EPIC = 'an epic with features and tasks';
 
 /**
- * The work item page's actions and what they send, on qits-projects' golden masters: the project
- * list and "a project with work in every status" (one epic and one ticket per status). Which
+ * The work item page's actions and what they send, and the children it shows, on qits-projects'
+ * golden masters: the project list and "a project with work in every status" (one epic and one
+ * ticket per status), "a campaign with work in every phase" and "an epic with features and tasks". Which
  * actions show for which status is `work-actions.spec.ts`; this checks the page wires them.
  */
 describe('WorkItemPage', () => {
@@ -40,11 +43,14 @@ describe('WorkItemPage', () => {
 
   afterEach(() => http.verify());
 
-  /** The page of the entity titled `title` in the recorded work, with everything answered. */
-  async function shown(title: string) {
+  /**
+   * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
+   * a campaign's read too, from the same state.
+   */
+  async function shown(title: string, state = WORK) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
-    const work = goldenMaster(WORK, 'listProjectEntities');
+    const work = goldenMaster(state, 'listProjectEntities');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
@@ -59,8 +65,19 @@ describe('WorkItemPage', () => {
     await settle();
     http.expectOne(`/projects/api/projects/${project.id}/entities`).flush(work);
     await settle();
+    await settle();
+    for (const read of http.match((r) => r.url.startsWith('/projects/api/campaigns/'))) {
+      read.flush(goldenMaster(state, 'getCampaign'));
+    }
+    await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
+    /** Each link below the header: its text and where it leads. */
+    const children = () =>
+      [...element.querySelectorAll('section a')].map((a) => [
+        a.textContent?.trim(),
+        a.getAttribute('href')?.split('/').pop(),
+      ]);
     const groups = () =>
       [...element.querySelectorAll('[role=group]')].map((g) => ({
         title: g.getAttribute('aria-label'),
@@ -68,7 +85,7 @@ describe('WorkItemPage', () => {
       }));
     const press = (label: string) =>
       [...element.querySelectorAll('button')].find((b) => b.textContent?.trim() === label)!.click();
-    return { harness, element, entity, groups, press };
+    return { harness, element, entity, groups, press, children };
   }
 
   it('shows the title and every group for a reported ticket', async () => {
@@ -79,6 +96,53 @@ describe('WorkItemPage', () => {
       { title: 'Status', actions: ['Mark refined', 'Drop', 'Block'] },
       { title: 'Plan', actions: ['Edit', 'Reshape', 'Refine'] },
     ]);
+  });
+
+  it('shows a campaign with its description, its start and its members in campaign order', async () => {
+    const { element, groups, children } = await shown('Card campaign', CAMPAIGN);
+    expect(element.textContent).toContain('Seeded work.');
+    // REFINED: the start, the moves; no plan for a campaign.
+    expect(groups()).toEqual([
+      { title: 'Agent', actions: ['Start campaign'] },
+      { title: 'Status', actions: ['Drop', 'Block'] },
+    ]);
+    expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Members');
+    const titles = children()
+      .map(([text]) => text)
+      .filter((text) => !text?.startsWith('contract-'));
+    expect(titles).toEqual(['Refined epic', 'Refined ticket', 'Reported ticket', 'Done ticket']);
+    expect(children()).toContainEqual(['Reported ticket', 'contract-00000001-4']);
+  });
+
+  it('shows an epic’s features, each with its tasks', async () => {
+    const { element, children } = await shown('Nested epic', EPIC);
+    expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Features');
+    expect(children()).toEqual([
+      ['First shipped task', 'contract-00000001-3'],
+      ['Second shipped task', 'contract-00000001-4'],
+      ['Shipped feature', 'contract-00000001-2'],
+      ['Open task', 'contract-00000001-6'],
+      ['Open feature', 'contract-00000001-5'],
+    ]);
+  });
+
+  it('shows a feature’s tasks', async () => {
+    const { element, children } = await shown('Shipped feature', EPIC);
+    expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Tasks');
+    expect(children()).toEqual([
+      ['First shipped task', 'contract-00000001-3'],
+      ['Second shipped task', 'contract-00000001-4'],
+      ['Shipped feature', 'contract-00000001-2'],
+    ]);
+  });
+
+  it.each([
+    ['ticket', 'Reported ticket', WORK],
+    ['task', 'Open task', EPIC],
+  ])('shows no children for a %s', async (_, title, state) => {
+    const { element, children } = await shown(title, state);
+    expect(element.querySelector('section')?.className).toContain('hidden');
+    expect(children()).toEqual([]);
   });
 
   it('shows no actions for done work', async () => {

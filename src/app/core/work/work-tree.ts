@@ -107,6 +107,14 @@ export class WorkGraph {
       .map((entry) => this.subtree(entry, campaign));
   }
 
+  /**
+   * `entry` with every descendant (an epic's features and tasks, a feature's tasks), none of them
+   * context, each with all its campaigns.
+   */
+  nodeOf(entry: WorkEntry): WorkNode {
+    return this.subtree(entry);
+  }
+
   /** The entity's phase, from its own status or its nearest ancestor's; undefined if none has one. */
   phaseOf(entry: WorkEntry): Phase | undefined {
     const owner = this.statusOwner(entry);
@@ -167,13 +175,13 @@ export class WorkGraph {
     return { entry, children, context, column, campaigns };
   }
 
-  /** `entry` with every descendant, none of them context; `campaign` left out of their tags. */
-  private subtree(entry: WorkEntry, campaign: WorkEntry): WorkNode {
+  /** `entry` with every descendant, none of them context; `campaign`, if any, left out of their tags. */
+  private subtree(entry: WorkEntry, campaign?: WorkEntry): WorkNode {
     const children = (this.childrenOf.get(entry.id!) ?? [])
       .map((id) => this.byId.get(id)!)
       .sort(byNumber)
       .map((child) => this.subtree(child, campaign));
-    const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign.id);
+    const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign?.id);
     return { entry, children, context: false, campaigns };
   }
 
