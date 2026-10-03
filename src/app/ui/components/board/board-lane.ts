@@ -27,7 +27,9 @@ let nextLaneId = 0;
  * only its top-left corner rounded, holding `[lane-gutter]` written vertically at its bottom.
  * Below the bar, `[lane-tags]` sit in a row of their own across the status columns, wrapping,
  * that row no taller than the usual 1rem unless they need it; then its children
- * (`ui-board-row`s, cards) in the columns beside the strip.
+ * (`ui-board-row`s, cards) in the columns beside the strip. It is at least 10rem tall, so an id of
+ * 20 characters (`contract-00000001-17`) fits up the strip even when the lane is collapsed; the
+ * extra height goes below its content.
  *
  * With `collapsible`, a round button on its bottom edge switches between the children (expanded)
  * and `[lane-summary]` (collapsed), a single line on the board's columns: a child that places
@@ -51,7 +53,7 @@ let nextLaneId = 0;
     class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
     'data-highlight-target': '',
     '[class]':
-      "(onBoard ? 'relative mx-1 grid grid-cols-subgrid self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
+      "(onBoard ? 'relative mx-1 grid min-h-40 grid-cols-subgrid content-start self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `

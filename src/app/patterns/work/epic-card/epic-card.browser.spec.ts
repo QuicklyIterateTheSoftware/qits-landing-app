@@ -46,6 +46,8 @@ class OneEpic {
 const EVERY_STATUS = 'a project with work in every status';
 /** Two features, one with two tasks (one implemented), one with an open task. */
 const NESTED = 'an epic with features and tasks';
+/** One feature with a task in each status: two of them (VERIFIED, DONE) past the board. */
+const EVERY_TASK_STATUS = 'an epic with tasks in every status';
 const CAMPAIGN = 'a campaign with work in every phase';
 /** One epic, member of two campaigns. The second campaign's answer is its own state. */
 const TWO_CAMPAIGNS = 'an epic in two campaigns';
@@ -175,6 +177,23 @@ describe('EpicCard (screenshots)', () => {
     expect(tiles(element)).toEqual([]);
     await expect.element(locator).toHaveTextContent('No tasks');
     await expect.element(locator).toMatchScreenshot('verifying-collapsed');
+  });
+
+  it('a feature with tasks past the board: a tile in its row’s gutter, above its id', async () => {
+    const { element, locator } = await shown(
+      EVERY_TASK_STATUS,
+      'contract-00000001-1',
+      'Epic in flight',
+    );
+    // The board's four tasks are cards; the verified and the done one are counted in the tile.
+    expect(element.querySelectorAll('ui-board-card')).toHaveLength(4);
+    await expect.element(locator).not.toHaveTextContent('Verified task');
+    const row = element.querySelector('ui-board-row')!;
+    const tile = row.querySelector('ui-board-count')!;
+    expect(tile.querySelector('.sr-only')?.textContent?.trim()).toBe('2 verified');
+    const id = row.querySelector('[row-id]')!.getBoundingClientRect();
+    expect(tile.getBoundingClientRect().bottom).toBeLessThanOrEqual(id.top);
+    await expect.element(locator).toMatchScreenshot('feature-verified-tasks');
   });
 
   it('in a campaign', async () => {

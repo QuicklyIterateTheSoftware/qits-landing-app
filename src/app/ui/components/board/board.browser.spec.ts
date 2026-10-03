@@ -155,6 +155,48 @@ class Linked {
   readonly columns = COLUMNS;
 }
 
+/**
+ * A feature row by what its gutter holds, with an id of 20 characters: `verified`, its tasks all
+ * past the board (a tile, no cards); `mixed` (a tile and a card); `empty` (neither). Or `folded`: a
+ * collapsed lane with an id as long.
+ */
+@Component({
+  imports: [Board, BoardLane, BoardRow, BoardCard, BoardCount],
+  host: { class: 'block w-[48rem] p-4' },
+  template: `
+    <ui-board [columns]="columns" gutter>
+      @if (kind === 'folded') {
+        <ui-board-lane id="folded" collapsible collapsed>
+          <span lane-header class="font-semibold">A collapsed epic with a long id</span>
+          <span lane-gutter class="font-mono">contract-00000001-17</span>
+          <ui-board-count lane-summary [column]="0" [count]="2" label="refined" />
+          <ui-board-count lane-summary column="gutter" [count]="1" label="verified" />
+        </ui-board-lane>
+      } @else {
+        <ui-board-lane>
+          <span lane-header class="font-semibold">An epic</span>
+          <span lane-gutter class="font-mono">contract-00000001-10</span>
+          <ui-board-row id="row">
+            @if (kind === 'mixed') {
+              <ui-board-card [column]="1" code="qits-14" title="A shipped task" kind="task" />
+            }
+            @if (kind !== 'empty') {
+              <ui-board-count row-gutter column="gutter" [count]="count" label="verified" />
+            }
+            <span row-id class="font-mono">contract-00000001-11</span>
+            <span row-footer>A feature</span>
+          </ui-board-row>
+        </ui-board-lane>
+      }
+    </ui-board>
+  `,
+})
+class GutterCase {
+  readonly columns = COLUMNS;
+  kind: 'verified' | 'mixed' | 'empty' | 'folded' = 'verified';
+  count = 3;
+}
+
 /** A word longer than a column, with no space to break at: in a card title, a lane title and a feature title. */
 const LONG_WORD = 'qits-landing-app/src/app/ui/components/board/board-card.ts:wrap-anywhere';
 
@@ -246,6 +288,50 @@ describe('Board (screenshots)', () => {
     const fixture = TestBed.createComponent(Finishing);
     fixture.detectChanges();
     await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('finishing');
+  });
+
+  /** Renders one `GutterCase`. */
+  function gutterCase(kind: GutterCase['kind'], count = 3): HTMLElement {
+    const fixture = TestBed.createComponent(GutterCase);
+    fixture.componentInstance.kind = kind;
+    fixture.componentInstance.count = count;
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  const box = (e: Element) => e.getBoundingClientRect();
+
+  it.each([
+    ['verified', 3, '3 verified'],
+    ['mixed', 1, '1 verified'],
+    ['empty', 0, undefined],
+  ] as const)('draws a feature row, %s, its long id whole', async (kind, count, srText) => {
+    const element = gutterCase(kind, count);
+    const row = element.querySelector('#row') as HTMLElement;
+    const label = row.querySelector('[row-id]')!;
+    // The id's rotated wrapper, then the strip.
+    const strip = label.parentElement!.parentElement!;
+    expect(box(label).top).toBeGreaterThanOrEqual(box(strip).top);
+    expect(box(label).bottom).toBeLessThanOrEqual(box(strip).bottom);
+    // The bar stays at the row's bottom.
+    const bar = row.querySelector('[row-footer]')!.parentElement!;
+    expect(Math.round(box(bar).bottom)).toBe(Math.round(box(row).bottom));
+    const tile = row.querySelector('ui-board-count');
+    expect(tile?.querySelector('.sr-only')?.textContent?.trim()).toBe(srText);
+    if (tile) {
+      // At the top of the strip, inside it, above the id.
+      expect(box(tile).bottom).toBeLessThanOrEqual(box(label).top);
+      expect(box(tile).left).toBeGreaterThanOrEqual(box(strip).left);
+      expect(box(tile).right).toBeLessThanOrEqual(box(strip).right);
+    }
+    await expect.element(page.elementLocator(element)).toMatchScreenshot(`row-${kind}`);
+  });
+
+  it('draws a collapsed lane with its long id whole', async () => {
+    const element = gutterCase('folded');
+    const lane = element.querySelector('#folded') as HTMLElement;
+    expect(box(lane.querySelector('[lane-gutter]')!).top).toBeGreaterThanOrEqual(box(lane).top);
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('lane-long-id');
   });
 
   it('breaks a word too long for its card, lane or feature title instead of overflowing', async () => {

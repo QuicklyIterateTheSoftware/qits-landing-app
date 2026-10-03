@@ -261,6 +261,14 @@ describe('WorkGraph', () => {
     // The epic in acceptance, there only as context to t1, counts the same tasks.
     const [acceptance] = graph.tree('acceptance');
     expect(acceptance.tasks).toEqual(board.tasks);
+    // A feature whose tasks are all past the board: on the board, no task in a column, both counted.
+    const shipped = board.children[0];
+    expect(taskDistribution(shipped)).toEqual({ columns: [0, 0, 0, 0], verified: 2, total: 2 });
+    expect(taskDistribution(board.children[1])).toEqual({
+      columns: [1, 0, 0, 0],
+      verified: 0,
+      total: 1,
+    });
   });
 
   it('counts only the total off the board', () => {

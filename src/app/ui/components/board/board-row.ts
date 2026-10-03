@@ -12,6 +12,12 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
  * say) sits at the bar's right end, on the title's line. A link in the footer stretches over the
  * row and its strip, so the id opens the feature too: the row is the positioning box, and cards sit above it, so hovering a card shadows the
  * card, not the row.
+ *
+ * `[row-gutter]` (a `ui-board-count`, say) sits at the top of the strip, level with the cards'
+ * tops; the id then starts below it. The row is at least 9.5rem tall (11rem with a
+ * `[row-gutter]`), so an id of 20 characters (`contract-00000001-17`, about 7.5rem) fits up the
+ * strip with about the chin to spare. The first line of cards takes the extra height, so the bar
+ * stays at the bottom.
  */
 @Component({
   selector: 'ui-board-row',
@@ -19,19 +25,23 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid grid-cols-subgrid grid-flow-row-dense gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5',
+      'relative grid min-h-38 grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 has-[[row-gutter]]:min-h-44',
     '[style.grid-column]': 'placement()',
     'data-highlight-target': '',
   },
   template: `
     <span
-      class="absolute inset-y-0 left-full flex w-6 items-start justify-center rounded-br-xl pt-(--lane-chin) bg-charcoal-brown-600/40 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 [&>*]:rotate-180 [&>*]:[writing-mode:vertical-rl]"
+      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 bg-charcoal-brown-600/40 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 *:shrink-0"
     >
-      <ng-content select="[row-id]" />
+      <ng-content select="[row-gutter]" />
+      <!-- Alone, the id starts the chin (pt-2 + mt-2) below the top; after a tile, the gap below it. -->
+      <span class="rotate-180 [writing-mode:vertical-rl] first:mt-2">
+        <ng-content select="[row-id]" />
+      </span>
     </span>
     <ng-content />
     <div
-      class="col-span-full flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
+      class="col-span-full flex self-end items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
     >
       <ng-content select="[row-footer]" />
       <ng-content select="[row-footer-end]" />

@@ -18,7 +18,8 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
  *   its tasks whose own status is VERIFIED or DONE (they are off the board, in Acceptance or the
  *   Archive); none for a column without tasks; "No tasks" when it has none. Expanded at first;
  * - each feature is a row of that lane (`ui-board-row`), its title along the bottom and its id up
- *   the right gutter;
+ *   the right gutter, above the id a count tile for its tasks past the board (VERIFIED or DONE),
+ *   when it has any: so a feature whose tasks are all verified does not look empty;
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns.
  *
  * A VERIFIED epic is not on the board: it waits in the Acceptance list (`epic-list-item`), with
@@ -70,6 +71,9 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
               }
             </ui-board-card>
           }
+          @if (verified(feature); as count) {
+            <ui-board-count row-gutter column="gutter" [count]="count" label="verified" />
+          }
           <span row-id class="font-mono">{{ feature.entry.qualifiedId }}</span>
           <a row-footer [routerLink]="base() + '/' + feature.entry.qualifiedId">{{
             feature.entry.title
@@ -97,6 +101,11 @@ export class EpicCard {
     tiles.push({ column: 'gutter', count: verified, label: 'verified' });
     return tiles.filter((tile) => tile.count > 0);
   });
+
+  /** A feature's tasks past the board (own status VERIFIED or DONE): its row's gutter tile. */
+  protected verified(feature: WorkNode): number {
+    return taskDistribution(feature).verified;
+  }
 
   protected border(task: WorkNode): string {
     return BOARD_COLUMNS[task.column ?? 0]?.cardBorder ?? 'border-charcoal-brown-200';
