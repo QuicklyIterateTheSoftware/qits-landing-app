@@ -9,11 +9,11 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
  * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED /
  *   IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED
- *   the archive. Features and tasks have no status: they take their nearest ancestor's (their
- *   epic's), so the children of a VERIFIED epic go to the acceptance list with it.
- * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3. A feature or
- *   task: Verifying once its epic is VERIFYING, else Implemented once `implementedAt` is set, else
- *   Implementing once `implementingAt` is set, else Refined.
+ *   the archive. Features and tasks hold a status of their own too (qits-763), so a task can be on
+ *   the board while its epic waits in Acceptance; the epic is then the task's context there. An
+ *   entity without a status takes its nearest ancestor's.
+ * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, by the
+ *   entity's own status (or that ancestor's).
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
@@ -44,6 +44,9 @@ const COLUMN_BY_STATUS: Readonly<Record<string, number>> = Object.fromEntries(
   BOARD_COLUMNS.map((column, index) => [column.status, index]),
 );
 
+/** Statuses past the board: work there is verified. */
+const PAST_BOARD: ReadonlySet<string> = new Set(['VERIFIED', 'DONE']);
+
 export interface WorkNode {
   readonly entry: WorkEntry;
   readonly children: readonly WorkNode[];
@@ -53,6 +56,15 @@ export interface WorkNode {
   readonly column?: number;
   /** The campaigns it is a member of, in the list's order. */
   readonly campaigns: readonly WorkEntry[];
+  /** Every task below it, in this tree or not (`taskDistribution`). */
+  readonly tasks: TaskTally;
+}
+
+/** The tasks below a node, wherever their own status puts them. */
+export interface TaskTally {
+  /** Their own status is VERIFIED or DONE. */
+  readonly verified: number;
+  readonly total: number;
 }
 
 /** A project's work, indexed for the questions below. */
@@ -141,22 +153,40 @@ export class WorkGraph {
   /** The entity's board column, or undefined when it is not on the board. */
   columnOf(entry: WorkEntry): number | undefined {
     if (this.phaseOf(entry) !== 'board') return undefined;
-    if (entry.status) return COLUMN_BY_STATUS[entry.status];
-    if (this.statusOwner(entry)?.status === 'VERIFYING') return COLUMN_BY_STATUS['VERIFYING'];
-    if (entry.implementedAt) return COLUMN_BY_STATUS['IMPLEMENTED'];
-    if (entry.implementingAt) return COLUMN_BY_STATUS['IMPLEMENTING'];
-    return COLUMN_BY_STATUS['REFINED'];
+    const status = this.statusOf(entry);
+    return status ? COLUMN_BY_STATUS[status] : undefined;
   }
 
-  /**
-   * How many epics and tickets are in `phase`: the items with a status of their own. Features,
-   * tasks and campaigns are not counted.
-   */
+  /** How many epics and tickets are in `phase`. Features, tasks and campaigns are not counted. */
   count(phase: Phase): number {
     return this.entries.filter(
       (entry) =>
-        entry.status && entry.archetype !== 'CAMPAIGN' && PHASE_BY_STATUS[entry.status] === phase,
+        entry.status &&
+        (entry.archetype === 'EPIC' || entry.archetype === 'TICKET') &&
+        PHASE_BY_STATUS[entry.status] === phase,
     ).length;
+  }
+
+  /**
+   * Every task below `entry`, wherever its own status puts it: how many there are and how many are
+   * VERIFIED or DONE.
+   */
+  private tasksBelow(entry: WorkEntry): TaskTally {
+    let verified = 0;
+    let total = 0;
+    const walk = (id: string) => {
+      for (const childId of this.childrenOf.get(id) ?? []) {
+        const child = this.byId.get(childId)!;
+        if (child.archetype === 'TASK') {
+          total++;
+          const status = this.statusOf(child);
+          if (status && PAST_BOARD.has(status)) verified++;
+        }
+        walk(childId);
+      }
+    };
+    if (entry.id) walk(entry.id);
+    return { verified, total };
   }
 
   /** The tree of every entity in `phase`, with their ancestors as context, in tree order. */
@@ -182,9 +212,10 @@ export class WorkGraph {
       .map((child) => this.node(child, phase, included));
     const context = this.phaseOf(entry) !== phase;
     const campaigns = this.campaignsOf(entry);
-    if (phase !== 'board') return { entry, children, context, campaigns };
+    const tasks = this.tasksBelow(entry);
+    if (phase !== 'board') return { entry, children, context, campaigns, tasks };
     const column = context ? undefined : this.columnOf(entry);
-    return { entry, children, context, column, campaigns };
+    return { entry, children, context, column, campaigns, tasks };
   }
 
   /** `entry` with every descendant, none of them context; `campaign`, if any, left out of their tags. */
@@ -194,7 +225,7 @@ export class WorkGraph {
       .sort(byNumber)
       .map((child) => this.subtree(child, campaign));
     const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign?.id);
-    return { entry, children, context: false, campaigns };
+    return { entry, children, context: false, campaigns, tasks: this.tasksBelow(entry) };
   }
 
   /** The entity itself if it has a status, else its nearest ancestor that has one. */
@@ -234,40 +265,28 @@ export function byNumber(a: WorkEntry, b: WorkEntry): number {
   return (a.id ?? '').localeCompare(b.id ?? '');
 }
 
-/** Statuses past the board: work there is verified. */
-const PAST_BOARD: ReadonlySet<string> = new Set(['VERIFIED', 'DONE']);
-
 /** Where a node's tasks (its descendants that are tasks) are. */
-export interface TaskDistribution {
-  /** Tasks per board column, by column index (`BOARD_COLUMNS`), zeros included. */
-  readonly columns: readonly number[];
+export interface TaskDistribution extends TaskTally {
   /**
-   * Tasks past the board: their own status is VERIFIED or DONE. Today a task has no status of its
-   * own and takes its epic's, so a board tree never holds one and this is 0 there.
+   * Tasks per board column, by column index (`BOARD_COLUMNS`), zeros included: the tasks of this
+   * tree only, so on the board only.
    */
-  readonly verified: number;
-  /** Every task, wherever it is. */
-  readonly total: number;
+  readonly columns: readonly number[];
 }
 
 /**
- * Where a node's tasks are: how many in each board column, how many past the board, and how many
- * in all. Off the board (no columns) only `total` counts.
+ * Where a node's tasks are: how many in each board column of its tree, and, counted below it
+ * whatever tree they are in, how many are verified (own status VERIFIED or DONE) and how many there
+ * are in all.
  */
 export function taskDistribution(node: WorkNode): TaskDistribution {
   const columns: number[] = BOARD_COLUMNS.map(() => 0);
-  let verified = 0;
-  let total = 0;
   const walk = (n: WorkNode) => {
     for (const child of n.children) {
-      if (child.entry.archetype === 'TASK') {
-        total++;
-        if (child.column !== undefined) columns[child.column]++;
-        else if (child.entry.status && PAST_BOARD.has(child.entry.status)) verified++;
-      }
+      if (child.entry.archetype === 'TASK' && child.column !== undefined) columns[child.column]++;
       walk(child);
     }
   };
   walk(node);
-  return { columns, verified, total };
+  return { columns, ...node.tasks };
 }

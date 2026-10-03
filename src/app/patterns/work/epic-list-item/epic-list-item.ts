@@ -15,10 +15,11 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  *
  * - the epic is a lane (`ui-list-lane`): its title in the bar at the top and its id up the left
  *   gutter, both linking to it, its campaigns as tags below the bar. It collapses to one line: in
- *   the Backlog "<n> tasks" and in Acceptance "<n> / <n> ✅" (a VERIFIED epic's tasks are all
- *   done), expanded at first; in the Archive "<n> / <n> ✅" for a
- *   done epic, or "<n> tasks" for a dropped one, collapsed at first; in a campaign "<n> / <n> ✅"
- *   for a verified or done epic, else "<n> tasks", collapsed at first;
+ *   the Backlog "<n> tasks" and in Acceptance "<verified> / <n> ✅", expanded at first; in the
+ *   Archive "<verified> / <n> ✅" for a done epic, or "<n> tasks" for a dropped one, collapsed at
+ *   first; in a campaign "<verified> / <n> ✅" for a verified or done epic, else "<n> tasks",
+ *   collapsed at first. Every task below the epic counts, and a task is verified by its own status
+ *   (VERIFIED or DONE): it may sit in another list than its epic;
  * - each feature is a row (`app-feature-list-row`): its title along the bottom, its id up the right
  *   gutter, each of its tasks the board's small card, with its campaigns.
  *
@@ -78,15 +79,14 @@ export class EpicListItem {
   );
 
   protected readonly summary = computed(() => {
-    const { total } = taskDistribution(this.node());
+    const { total, verified } = taskDistribution(this.node());
     const tasks = `${total} ${total === 1 ? 'task' : 'tasks'}`;
-    // A verified or done epic's tasks are all done.
     const status = this.node().entry.status;
     const done =
       (this.view() === 'acceptance' && status === 'VERIFIED') ||
       (this.view() === 'archive' && status === 'DONE') ||
       (this.view() === 'campaign' && (status === 'VERIFIED' || status === 'DONE'));
-    return done ? `${total} / ${total} ✅` : tasks;
+    return done ? `${verified} / ${total} ✅` : tasks;
   });
 
   /**

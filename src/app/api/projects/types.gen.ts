@@ -612,10 +612,22 @@ export type DeclaredArchetype = {
     requiredOnTransition?: Array<EntityProperty>;
     permitted?: Array<EntityProperty>;
     legalStatuses?: Array<string>;
+    /**
+     * The legal moves out of each status, keyed by every status in lifecycle order: FORWARD first, then SKIP, BACK, DROP/REOPEN. DONE maps to an empty list. Empty for a kind with no lifecycle. The status door (moveEntityStatus) allows exactly these.
+     */
     transitions?: {
         [key: string]: Array<LegalMove>;
     };
+    /**
+     * The statuses in lifecycle order. Empty for a kind with no lifecycle.
+     */
     lifecycle?: Array<string>;
+    /**
+     * What a dispatch press (dispatchEntity) runs from each status, keyed by every status in lifecycle order. Empty for a kind a dispatch runs no phases on: a feature, a task and a campaign (whose press is its start).
+     */
+    phases?: {
+        [key: string]: DispatchPhases;
+    };
 };
 
 export type DeclineReleaseRequest = {
@@ -654,6 +666,36 @@ export type DiscardResponse = {
 
 export type DispatchMode = 'FLOW' | 'PHASE';
 
+export type DispatchPhase = {
+    /**
+     * The phase's word: refine, implement or verify — the word dispatchEntity answers in phase.
+     */
+    phase?: string;
+    /**
+     * The status the phase runs from.
+     */
+    from?: string;
+    /**
+     * The status the platform moves the entity into when the phase starts (REFINED to IMPLEMENTING, IMPLEMENTED to VERIFYING). Null where it moves nothing.
+     */
+    enters?: string;
+    /**
+     * The status the phase's agent moves the entity to when the phase is done.
+     */
+    endsIn?: string;
+};
+
+export type DispatchPhases = {
+    /**
+     * The one phase a PHASE press runs, which is also the first phase of a FLOW press. Null where a press starts nothing (VERIFIED, DONE, DROPPED).
+     */
+    next?: DispatchPhase;
+    /**
+     * The phases a FLOW press runs, in order, until a status starts no phase. Empty where a press starts nothing. A block stops a flow early.
+     */
+    flow?: Array<DispatchPhase>;
+};
+
 export type DispatchRequest = {
     mode?: string;
 };
@@ -665,6 +707,21 @@ export type DnsSpec = {
 };
 
 export type DomainOutcome = 'REGISTERED' | 'NO_MATCHING_ZONE' | 'NOT_CONFIGURED' | 'FAILED';
+
+export type DossierAssetEntry = {
+    id?: string;
+    kind?: string;
+    mimeType?: string;
+    label?: string;
+    url?: string;
+    markdown?: string;
+    pageIds?: Array<string>;
+    createdAt?: Instant;
+};
+
+export type DossierAssetList = {
+    assets?: Array<DossierAssetEntry>;
+};
 
 export type DossierPageDto = {
     id?: string;
@@ -832,11 +889,11 @@ export type EntityPatch = {
      */
     dependsOn?: string | null;
     /**
-     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED or IMPLEMENTING.
+     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or REFINED when it was never marked implementing).
      */
     implementedAt?: Instant | null;
     /**
-     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is REFINED or IMPLEMENTING.
+     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is REFINED or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
      */
     implementingAt?: Instant;
 };
@@ -945,6 +1002,7 @@ export type FeatureDto = {
     title?: string;
     slug?: string;
     description?: string;
+    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     dependsOnFeatureId?: string;
     implementedOn?: Instant;
     implementingOn?: Instant;
@@ -1719,6 +1777,7 @@ export type TaskDto = {
     title?: string;
     slug?: string;
     description?: string;
+    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     dependsOnTaskId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
@@ -2552,14 +2611,14 @@ export type PostProjectsApiEntitiesResponses = {
 
 export type PostProjectsApiEntitiesResponse = PostProjectsApiEntitiesResponses[keyof PostProjectsApiEntitiesResponses];
 
-export type GetProjectsApiEntitiesArchetypesData = {
+export type ListArchetypesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/projects/api/entities/archetypes';
 };
 
-export type GetProjectsApiEntitiesArchetypesErrors = {
+export type ListArchetypesErrors = {
     /**
      * Not Authorized
      */
@@ -2570,14 +2629,14 @@ export type GetProjectsApiEntitiesArchetypesErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiEntitiesArchetypesResponses = {
+export type ListArchetypesResponses = {
     /**
      * OK
      */
     200: ArchetypeRegistryDocument;
 };
 
-export type GetProjectsApiEntitiesArchetypesResponse = GetProjectsApiEntitiesArchetypesResponses[keyof GetProjectsApiEntitiesArchetypesResponses];
+export type ListArchetypesResponse = ListArchetypesResponses[keyof ListArchetypesResponses];
 
 export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorData = {
     body?: never;
@@ -2751,7 +2810,7 @@ export type PostProjectsApiEntitiesByIdBlockedErrors = {
      */
     404: unknown;
     /**
-     * A feature or a task (no lifecycle), or a status that starts no phase (VERIFIED, DONE, DROPPED)
+     * A feature or a task (which runs no phase of its own), or a status that starts no phase (VERIFIED, DONE, DROPPED)
      */
     409: unknown;
 };
@@ -2864,7 +2923,7 @@ export type GetProjectsApiEntitiesByIdDispatchResponses = {
 
 export type GetProjectsApiEntitiesByIdDispatchResponse = GetProjectsApiEntitiesByIdDispatchResponses[keyof GetProjectsApiEntitiesByIdDispatchResponses];
 
-export type PostProjectsApiEntitiesByIdDispatchData = {
+export type DispatchEntityData = {
     body: DispatchRequest;
     path: {
         id: string;
@@ -2873,7 +2932,7 @@ export type PostProjectsApiEntitiesByIdDispatchData = {
     url: '/projects/api/entities/{id}/dispatch';
 };
 
-export type PostProjectsApiEntitiesByIdDispatchErrors = {
+export type DispatchEntityErrors = {
     /**
      * Bad Request
      */
@@ -2888,14 +2947,14 @@ export type PostProjectsApiEntitiesByIdDispatchErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiEntitiesByIdDispatchResponses = {
+export type DispatchEntityResponses = {
     /**
      * The dispatch made, or — for a campaign — its progress as the start press left it
      */
     200: Response27 | CampaignProgressResponse;
 };
 
-export type PostProjectsApiEntitiesByIdDispatchResponse = PostProjectsApiEntitiesByIdDispatchResponses[keyof PostProjectsApiEntitiesByIdDispatchResponses];
+export type DispatchEntityResponse = DispatchEntityResponses[keyof DispatchEntityResponses];
 
 export type GetProjectsApiEntitiesByIdRefinementData = {
     body?: never;
@@ -2955,7 +3014,7 @@ export type PostProjectsApiEntitiesByIdRefinementResponses = {
 
 export type PostProjectsApiEntitiesByIdRefinementResponse = PostProjectsApiEntitiesByIdRefinementResponses[keyof PostProjectsApiEntitiesByIdRefinementResponses];
 
-export type PostProjectsApiEntitiesByIdStatusData = {
+export type MoveEntityStatusData = {
     body: EntityStatusMove;
     path: {
         id: string;
@@ -2964,9 +3023,9 @@ export type PostProjectsApiEntitiesByIdStatusData = {
     url: '/projects/api/entities/{id}/status';
 };
 
-export type PostProjectsApiEntitiesByIdStatusErrors = {
+export type MoveEntityStatusErrors = {
     /**
-     * No target, or an archetype with no lifecycle (a feature or a task)
+     * No target
      */
     400: unknown;
     /**
@@ -2982,21 +3041,21 @@ export type PostProjectsApiEntitiesByIdStatusErrors = {
      */
     404: unknown;
     /**
-     * A move the lifecycle does not allow, or a target naming no status
+     * A move the lifecycle does not allow, a target naming no status, or a feature or a task whose epic is still REPORTED
      */
     409: unknown;
 };
 
-export type PostProjectsApiEntitiesByIdStatusResponses = {
+export type MoveEntityStatusResponses = {
     /**
      * The entity as the move left it
      */
     200: TransitionedEntity;
 };
 
-export type PostProjectsApiEntitiesByIdStatusResponse = PostProjectsApiEntitiesByIdStatusResponses[keyof PostProjectsApiEntitiesByIdStatusResponses];
+export type MoveEntityStatusResponse = MoveEntityStatusResponses[keyof MoveEntityStatusResponses];
 
-export type GetProjectsApiEpicsByEpicIdDossierData = {
+export type ListEpicDossierPagesData = {
     body?: never;
     path: {
         epicId: string;
@@ -3005,7 +3064,7 @@ export type GetProjectsApiEpicsByEpicIdDossierData = {
     url: '/projects/api/epics/{epicId}/dossier';
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierErrors = {
+export type ListEpicDossierPagesErrors = {
     /**
      * Not Authorized
      */
@@ -3016,14 +3075,14 @@ export type GetProjectsApiEpicsByEpicIdDossierErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierResponses = {
+export type ListEpicDossierPagesResponses = {
     /**
      * OK
      */
     200: ListPagesResponse;
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierResponse = GetProjectsApiEpicsByEpicIdDossierResponses[keyof GetProjectsApiEpicsByEpicIdDossierResponses];
+export type ListEpicDossierPagesResponse = ListEpicDossierPagesResponses[keyof ListEpicDossierPagesResponses];
 
 export type PostProjectsApiEpicsByEpicIdDossierData = {
     body: NewPage;
@@ -3058,6 +3117,35 @@ export type PostProjectsApiEpicsByEpicIdDossierResponses = {
 
 export type PostProjectsApiEpicsByEpicIdDossierResponse = PostProjectsApiEpicsByEpicIdDossierResponses[keyof PostProjectsApiEpicsByEpicIdDossierResponses];
 
+export type ListEpicDossierAssetsData = {
+    body?: never;
+    path: {
+        epicId: string;
+    };
+    query?: never;
+    url: '/projects/api/epics/{epicId}/dossier-assets';
+};
+
+export type ListEpicDossierAssetsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListEpicDossierAssetsResponses = {
+    /**
+     * OK
+     */
+    200: DossierAssetList;
+};
+
+export type ListEpicDossierAssetsResponse = ListEpicDossierAssetsResponses[keyof ListEpicDossierAssetsResponses];
+
 export type PostProjectsApiEpicsByEpicIdDossierAssetsData = {
     body: InlineFigureRequest;
     path: {
@@ -3091,7 +3179,7 @@ export type PostProjectsApiEpicsByEpicIdDossierAssetsResponses = {
 
 export type PostProjectsApiEpicsByEpicIdDossierAssetsResponse = PostProjectsApiEpicsByEpicIdDossierAssetsResponses[keyof PostProjectsApiEpicsByEpicIdDossierAssetsResponses];
 
-export type GetProjectsApiEpicsByEpicIdDossierAssetsByAssetIdContentData = {
+export type GetDossierAssetContentData = {
     body?: never;
     path: {
         assetId: string;
@@ -3101,7 +3189,7 @@ export type GetProjectsApiEpicsByEpicIdDossierAssetsByAssetIdContentData = {
     url: '/projects/api/epics/{epicId}/dossier-assets/{assetId}/content';
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierAssetsByAssetIdContentErrors = {
+export type GetDossierAssetContentErrors = {
     /**
      * Not Authorized
      */
@@ -3112,7 +3200,7 @@ export type GetProjectsApiEpicsByEpicIdDossierAssetsByAssetIdContentErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierAssetsByAssetIdContentResponses = {
+export type GetDossierAssetContentResponses = {
     /**
      * OK
      */
@@ -3149,7 +3237,7 @@ export type DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponses = {
 
 export type DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponse = DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponses[keyof DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponses];
 
-export type GetProjectsApiEpicsByEpicIdDossierByPageIdData = {
+export type GetEpicDossierPageData = {
     body?: never;
     path: {
         epicId: string;
@@ -3159,7 +3247,7 @@ export type GetProjectsApiEpicsByEpicIdDossierByPageIdData = {
     url: '/projects/api/epics/{epicId}/dossier/{pageId}';
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierByPageIdErrors = {
+export type GetEpicDossierPageErrors = {
     /**
      * Not Authorized
      */
@@ -3170,14 +3258,14 @@ export type GetProjectsApiEpicsByEpicIdDossierByPageIdErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierByPageIdResponses = {
+export type GetEpicDossierPageResponses = {
     /**
      * OK
      */
     200: DossierPageDto;
 };
 
-export type GetProjectsApiEpicsByEpicIdDossierByPageIdResponse = GetProjectsApiEpicsByEpicIdDossierByPageIdResponses[keyof GetProjectsApiEpicsByEpicIdDossierByPageIdResponses];
+export type GetEpicDossierPageResponse = GetEpicDossierPageResponses[keyof GetEpicDossierPageResponses];
 
 export type PutProjectsApiEpicsByEpicIdDossierByPageIdData = {
     body: WritePage;
@@ -6467,7 +6555,7 @@ export type PostProjectsApiTicketsByTicketIdCommentsResponses = {
 
 export type PostProjectsApiTicketsByTicketIdCommentsResponse = PostProjectsApiTicketsByTicketIdCommentsResponses[keyof PostProjectsApiTicketsByTicketIdCommentsResponses];
 
-export type GetProjectsApiTicketsByTicketIdDossierData = {
+export type ListTicketDossierPagesData = {
     body?: never;
     path: {
         ticketId: string;
@@ -6476,7 +6564,7 @@ export type GetProjectsApiTicketsByTicketIdDossierData = {
     url: '/projects/api/tickets/{ticketId}/dossier';
 };
 
-export type GetProjectsApiTicketsByTicketIdDossierErrors = {
+export type ListTicketDossierPagesErrors = {
     /**
      * Not Authorized
      */
@@ -6487,14 +6575,14 @@ export type GetProjectsApiTicketsByTicketIdDossierErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiTicketsByTicketIdDossierResponses = {
+export type ListTicketDossierPagesResponses = {
     /**
      * OK
      */
     200: ListPagesResponse;
 };
 
-export type GetProjectsApiTicketsByTicketIdDossierResponse = GetProjectsApiTicketsByTicketIdDossierResponses[keyof GetProjectsApiTicketsByTicketIdDossierResponses];
+export type ListTicketDossierPagesResponse = ListTicketDossierPagesResponses[keyof ListTicketDossierPagesResponses];
 
 export type PostProjectsApiTicketsByTicketIdDossierData = {
     body: NewPage;
@@ -6559,7 +6647,7 @@ export type DeleteProjectsApiTicketsByTicketIdDossierBySlugResponses = {
 
 export type DeleteProjectsApiTicketsByTicketIdDossierBySlugResponse = DeleteProjectsApiTicketsByTicketIdDossierBySlugResponses[keyof DeleteProjectsApiTicketsByTicketIdDossierBySlugResponses];
 
-export type GetProjectsApiTicketsByTicketIdDossierBySlugData = {
+export type GetTicketDossierPageData = {
     body?: never;
     path: {
         slug: string;
@@ -6569,7 +6657,7 @@ export type GetProjectsApiTicketsByTicketIdDossierBySlugData = {
     url: '/projects/api/tickets/{ticketId}/dossier/{slug}';
 };
 
-export type GetProjectsApiTicketsByTicketIdDossierBySlugErrors = {
+export type GetTicketDossierPageErrors = {
     /**
      * Not Authorized
      */
@@ -6580,14 +6668,14 @@ export type GetProjectsApiTicketsByTicketIdDossierBySlugErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiTicketsByTicketIdDossierBySlugResponses = {
+export type GetTicketDossierPageResponses = {
     /**
      * OK
      */
     200: DossierPageDto;
 };
 
-export type GetProjectsApiTicketsByTicketIdDossierBySlugResponse = GetProjectsApiTicketsByTicketIdDossierBySlugResponses[keyof GetProjectsApiTicketsByTicketIdDossierBySlugResponses];
+export type GetTicketDossierPageResponse = GetTicketDossierPageResponses[keyof GetTicketDossierPageResponses];
 
 export type PutProjectsApiTicketsByTicketIdDossierBySlugData = {
     body: WritePage;
