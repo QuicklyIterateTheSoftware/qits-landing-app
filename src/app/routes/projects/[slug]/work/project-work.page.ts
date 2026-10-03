@@ -64,18 +64,16 @@ export function withLeaving(
       <ui-spinner [state]="work.state()" class="mt-6 min-h-48">
         <section aria-labelledby="work-board">
           <h2 id="work-board" class="mt-0 mb-3 text-lg font-semibold">Board</h2>
-          <div class="overflow-x-auto">
-            <ui-board class="min-w-[40rem]" [columns]="columns()" gutter>
-              @for (row of rows(); track row.node.entry.id) {
-                <app-work-board-node
-                  [node]="row.node"
-                  [base]="workPath()"
-                  [leaving]="row.leaving"
-                  (left)="drop(row.node.entry.id)"
-                />
-              }
-            </ui-board>
-          </div>
+          <ui-board class="min-w-[40rem]" [columns]="columns()" gutter>
+            @for (row of rows(); track row.node.entry.id) {
+              <app-work-board-node
+                [node]="row.node"
+                [base]="workPath()"
+                [leaving]="row.leaving"
+                (left)="drop(row.node.entry.id)"
+              />
+            }
+          </ui-board>
         </section>
 
         <section aria-labelledby="work-backlog" class="mt-8">
