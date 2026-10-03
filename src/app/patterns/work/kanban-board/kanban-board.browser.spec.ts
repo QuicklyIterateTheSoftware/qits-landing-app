@@ -96,13 +96,14 @@ describe('KanbanBoard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('nested');
   });
 
-  /** Changes the text selection and waits for the browser's `selectionchange`. */
-  async function select(change: (selection: Selection) => void) {
-    const changed = new Promise((resolve) =>
-      document.addEventListener('selectionchange', resolve, { once: true }),
-    );
+  /**
+   * Changes the text selection and announces it. The browser's own `selectionchange` does not come
+   * when the test page lacks focus (as in CI), so the test sends it; the directive reads the real
+   * selection either way.
+   */
+  function select(change: (selection: Selection) => void) {
     change(document.getSelection()!);
-    await changed;
+    document.dispatchEvent(new Event('selectionchange'));
   }
 
   it('highlights the card the text selection is in', async () => {
@@ -112,11 +113,16 @@ describe('KanbanBoard (screenshots)', () => {
     )!;
     const range = document.createRange();
     range.selectNodeContents(title);
-    await select((selection) => selection.addRange(range));
+    // Chrome ignores addRange while a selection exists, and an earlier spec in the shared page
+    // may have left one.
+    select((selection) => {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
     const card = title.closest('ui-board-card')!;
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
     // No selection colour in the shot; the highlight stays until it fades.
-    await select((selection) => selection.removeAllRanges());
+    select((selection) => selection.removeAllRanges());
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
     await expect.element(locator).toMatchScreenshot('selection-highlight');
   });
