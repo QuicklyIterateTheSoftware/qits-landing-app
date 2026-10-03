@@ -1,34 +1,43 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { finishControl } from '$core/work/finish-control';
 import { taskProgress, type WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
+import { FinishButton } from '$ui/components/finish-button/finish-button';
+import { Leave } from '$ui/components/leave/leave';
 import { ListLane } from '$ui/components/list/list-lane';
 import { ListRow } from '$ui/components/list/list-row';
 import { Tag } from '$ui/components/tag/tag';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
- * An epic in a list (Backlog, Archive), with its features and their tasks, drawn like the board:
+ * An epic in a list (Backlog, Acceptance, Archive), with its features and their tasks, drawn like
+ * the board:
  *
  * - the epic is a lane (`ui-list-lane`): its title in the bar at the top and its id up the left
  *   gutter, both linking to it, its campaigns as tags below the bar. It collapses to one line: in
- *   the Backlog "<n> tasks", expanded at first; in the Archive "<n> / <n> ✅" for a done epic, or
- *   "<n> tasks" for a dropped one, collapsed at first;
+ *   the Backlog "<n> tasks", expanded at first; in Acceptance "<n> / <n> ✅" (a VERIFIED epic's
+ *   tasks are all done), collapsed at first when it has tasks; in the Archive "<n> / <n> ✅" for a
+ *   done epic, or "<n> tasks" for a dropped one, collapsed at first;
  * - each feature is a row (`ui-list-row`): its title along the bottom, its id up the right gutter;
  * - each task is the board's small card (`ui-board-card`), with its campaigns.
  *
- * In the Archive the epic (unless it is only context) also shows its final state. Every item links
- * to its page, `<base>/<qualified id>`. `display: contents`, so the lane is itself the list's item.
+ * In the Archive the epic (unless it is only context) also shows its final state. A VERIFIED epic
+ * (in Acceptance) carries the finish button ("Mark <id> done") on the lane's bottom-right corner:
+ * it hides the epic at once and moves it to DONE a few seconds later, unless the toast's Undo takes
+ * it back (`finishControl`). When `leaving` is set, the lane shrinks away (`uiLeave`), then emits
+ * `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
+ * is itself the list's item.
  */
 @Component({
   selector: 'app-epic-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListLane, ListRow, BoardCard, Tag],
+  imports: [RouterLink, ListLane, ListRow, BoardCard, FinishButton, Leave, Tag],
   host: { class: 'contents' },
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
-    <ui-list-lane collapsible [collapsed]="view() === 'archive'">
+    <ui-list-lane collapsible [collapsed]="collapsed()" [uiLeave]="leaving()" (left)="left.emit()">
       <span lane-summary>{{ summary() }}</span>
       <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
       @for (campaign of n.campaigns; track campaign.id) {
@@ -38,6 +47,13 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         <ui-tag lane-tags [label]="status" />
       }
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
+      <ui-finish-button
+        lane-action
+        [shown]="finishing.shown()"
+        [state]="finishing.state()"
+        [label]="'Mark ' + n.entry.qualifiedId + ' done'"
+        (finish)="finishing.finish()"
+      />
       @for (feature of n.children; track feature.entry.id) {
         <ui-list-row>
           @for (task of feature.children; track task.entry.id) {
@@ -71,14 +87,27 @@ export class EpicListItem {
   /** The work section's path, e.g. `/projects/qits/work`; items are below it. */
   readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
+  /** The epic is leaving the list: it shrinks away, then emits `left`. */
+  readonly leaving = input(false);
+  readonly left = output<void>();
+
+  protected readonly finishing = finishControl(this.node);
+
+  /** Whether the lane starts collapsed: always in the Archive, with tasks in Acceptance. */
+  protected readonly collapsed = computed(
+    () =>
+      this.view() === 'archive' ||
+      (this.view() === 'acceptance' && taskProgress(this.node()).total > 0),
+  );
 
   protected readonly summary = computed(() => {
     const { total } = taskProgress(this.node());
     const tasks = `${total} ${total === 1 ? 'task' : 'tasks'}`;
-    // Everything in the Archive is final: a done epic's tasks are all done.
-    return this.view() === 'archive' && this.node().entry.status === 'DONE'
-      ? `${total} / ${total} ✅`
-      : tasks;
+    // A verified or done epic's tasks are all done.
+    const done =
+      (this.view() === 'acceptance' && this.node().entry.status === 'VERIFIED') ||
+      (this.view() === 'archive' && this.node().entry.status === 'DONE');
+    return done ? `${total} / ${total} ✅` : tasks;
   });
 
   /** In the Archive, which final state the epic is in. */

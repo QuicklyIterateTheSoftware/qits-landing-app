@@ -22,8 +22,8 @@ import { EpicCard } from './epic-card';
  * (`recorded-work.ts`); each case names its state and the epic's qualified id in the recorded
  * answer.
  *
- * Only REFINED, IMPLEMENTED and VERIFIED epics are on the board; the Backlog and Archive ones are
- * in `work-list.browser.spec.ts`.
+ * Only REFINED, IMPLEMENTING, IMPLEMENTED and VERIFYING epics are on the board; the Backlog,
+ * Acceptance and Archive ones are in `epic-list-item.browser.spec.ts`.
  */
 @Component({
   imports: [Board, EpicCard],
@@ -46,18 +46,8 @@ class OneEpic {
 const EVERY_STATUS = 'a project with work in every status';
 /** Two features, one with two tasks (one implemented), one with an open task. */
 const NESTED = 'an epic with features and tasks';
-
-/**
- * States recorded on qits-projects-service `external/card-states` (8c13d17e), not yet in the
- * installed `@qits/projects-golden-masters`. Their cases are skipped until the pin bump; then
- * drop the `.skip`.
- */
-const VERIFIED_COMPLETE = 'a verified epic with every task implemented';
 const CAMPAIGN = 'a campaign with work in every phase';
-/**
- * Recorded on qits-projects-service `external/epic-campaigns-state` (eb00bb7c), on top of
- * 8c13d17e: one epic, member of two campaigns. The second campaign's answer is its own state.
- */
+/** One epic, member of two campaigns. The second campaign's answer is its own state. */
 const TWO_CAMPAIGNS = 'an epic in two campaigns';
 const SECOND_CAMPAIGN = 'the second campaign of an epic in two campaigns';
 
@@ -104,29 +94,31 @@ describe('EpicCard (screenshots)', () => {
 
   it.each<Case>([
     ['refined', EVERY_STATUS, 'contract-00000001-3', 'Refined epic'],
-    ['implemented', EVERY_STATUS, 'contract-00000001-5', 'Implemented epic'],
-    ['verified', EVERY_STATUS, 'contract-00000001-7', 'Verified epic'],
+    ['implementing', EVERY_STATUS, 'contract-00000001-5', 'Implementing epic'],
+    ['implemented', EVERY_STATUS, 'contract-00000001-7', 'Implemented epic'],
+    ['verifying', EVERY_STATUS, 'contract-00000001-9', 'Verifying epic'],
   ])('%s', async (name, state, qualifiedId, title) => {
     const { locator } = await shown(state, qualifiedId, title);
     await expect.element(locator).toMatchScreenshot(name);
   });
 
-  it('draws the finish button on the bottom-right corner of a VERIFIED epic', async () => {
-    const { element } = await shown(EVERY_STATUS, 'contract-00000001-7', 'Verified epic');
-    const lane = element.querySelector('ui-board-lane') as HTMLElement;
-    const finish = lane.querySelector('button[aria-label="Mark contract-00000001-7 done"]');
-    expect(finish?.classList.contains('hidden')).toBe(false);
-    const box = lane.getBoundingClientRect();
-    const button = (finish as HTMLElement).getBoundingClientRect();
-    // Centred on the corner.
-    expect(Math.abs(button.left + button.width / 2 - box.right)).toBeLessThanOrEqual(1.5);
-    expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
-  });
-
-  it('draws no finish button on an epic that is not VERIFIED', async () => {
-    const { element } = await shown(EVERY_STATUS, 'contract-00000001-5', 'Implemented epic');
-    const finish = element.querySelector('button[aria-label="Mark contract-00000001-5 done"]');
-    expect(finish?.classList.contains('hidden')).toBe(true);
+  it('a started feature and task: both in Implementing', async () => {
+    const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-17', 'Started epic');
+    await expect.element(locator).toHaveTextContent('Started feature');
+    await expect.element(locator).toHaveTextContent('Started task');
+    // The task's card sits under the Implementing header.
+    const task = [...element.querySelectorAll('ui-board-card')].find((card) =>
+      card.textContent?.includes('Started task'),
+    )!;
+    const header = [...element.querySelectorAll('ui-board > div:first-child > div')].find((h) =>
+      h.textContent?.includes('Implementing'),
+    )!;
+    const card = task.getBoundingClientRect();
+    const column = header.getBoundingClientRect();
+    const middle = card.left + card.width / 2;
+    expect(middle).toBeGreaterThan(column.left);
+    expect(middle).toBeLessThan(column.right);
+    await expect.element(locator).toMatchScreenshot('implementing-feature-task');
   });
 
   it('several features with their tasks, in a mixed state: expanded, then collapsed', async () => {
@@ -139,15 +131,13 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('features-mixed-collapsed');
   });
 
-  // Waiting on the pin bump of @qits/projects-golden-masters (qits-projects 8c13d17e).
-  it.skip('in a campaign', async () => {
+  it('in a campaign', async () => {
     const { locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
     await expect.element(locator).toHaveTextContent('Card campaign');
     await expect.element(locator).toMatchScreenshot('campaign');
   });
 
-  // Waiting on the pin bump of @qits/projects-golden-masters (qits-projects eb00bb7c).
-  it.skip('in two campaigns', async () => {
+  it('in two campaigns', async () => {
     const { locator } = await shown(TWO_CAMPAIGNS, 'contract-00000001-3', 'Epic in two campaigns', [
       TWO_CAMPAIGNS,
       SECOND_CAMPAIGN,
@@ -155,20 +145,5 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toHaveTextContent('First campaign');
     await expect.element(locator).toHaveTextContent('Second campaign');
     await expect.element(locator).toMatchScreenshot('two-campaigns');
-  });
-
-  // Waiting on the pin bump of @qits/projects-golden-masters (qits-projects 8c13d17e).
-  it.skip('every task done (VERIFIED): collapsed, then expanded', async () => {
-    const { element, locator, harness } = await shown(
-      VERIFIED_COMPLETE,
-      'contract-00000001-1',
-      'Verified epic',
-    );
-    // Every task verified: the lane starts collapsed to its summary.
-    await expect.element(locator).toHaveTextContent('2 / 2 ✅');
-    await expect.element(locator).toMatchScreenshot('all-done-collapsed');
-    await toggle(element, harness);
-    await expect.element(locator).toHaveTextContent('Second shipped task');
-    await expect.element(locator).toMatchScreenshot('all-done-expanded');
   });
 });

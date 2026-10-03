@@ -33,11 +33,11 @@ type Status = 'loading' | 'loaded' | 'error';
 export const FINISH_DELAY_MS = 5_000;
 
 /**
- * A finish asked for on the board and not settled yet:
+ * A finish asked for in the Acceptance list and not settled yet:
  *
  * - `waiting`: the item is hidden, and Undo still takes it back;
  * - `sending`: the move to DONE is on its way;
- * - `failed`: the move failed; the item is back on the board until this is dismissed.
+ * - `failed`: the move failed; the item is back in the list until this is dismissed.
  */
 export interface PendingFinish {
   readonly projectId: string;
@@ -78,9 +78,9 @@ interface WorkState {
  *   project's work, as a partial tree would group wrongly.
  * - `refresh(projectId)` fetches again and keeps showing the old work until the answer is in.
  * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`transitionEpic`,
- *   `transitionTicket`) and writes the answered status into the entry: it leaves the board for the
+ *   `transitionTicket`) and writes the answered status into the entry: it leaves the Acceptance list for the
  *   archive. DONE is final in qits-projects; nothing moves it back.
- * - `finishLater(projectId, entry)` is the board's finish: the item is hidden at once (`hidden`),
+ * - `finishLater(projectId, entry)` is the Acceptance list's finish: the item is hidden at once (`hidden`),
  *   and `finish` runs after {@link FINISH_DELAY_MS}, unless `undoFinish(id)` takes it back first.
  *   On failure the item shows again and the pending finish stays `failed` until `dismissFinish`.
  *   Leaving the page (`pagehide`) sends every waiting finish at once: the user had their chance to
@@ -90,7 +90,7 @@ export const WorkStore = signalStore(
   { providedIn: 'root' },
   withState<WorkState>({ byProject: {}, finishing: {}, pendingFinishes: {} }),
   withComputed((store) => ({
-    /** The ids of items the board does not show: their finish is waiting or being sent. */
+    /** The ids of items the lists do not show: their finish is waiting or being sent. */
     hidden: computed(
       () =>
         new Set(

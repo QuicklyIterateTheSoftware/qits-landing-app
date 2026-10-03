@@ -16,8 +16,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 import { EpicListItem } from './epic-list-item';
 
 /**
- * Screenshots of one epic in a list, per case: in the Backlog (REPORTED) or the Archive (DONE and
- * DROPPED), 40rem wide. The epic is the node the app builds from qits-projects' golden masters
+ * Screenshots of one epic in a list, per case: in the Backlog (REPORTED), Acceptance (VERIFIED,
+ * with its finish button) or the Archive (DONE and DROPPED), 40rem wide. The epic is the node the app builds from qits-projects' golden masters
  * (`recorded-work.ts`); each case names its view, its state and the epic's qualified id.
  */
 @Component({
@@ -37,11 +37,7 @@ class OneEpic {
 }
 
 const EVERY_STATUS = 'a project with work in every status';
-
-/**
- * Recorded on qits-projects-service `external/card-states` (8c13d17e), not yet in the installed
- * `@qits/projects-golden-masters`. Its case is skipped until the pin bump; then drop the `.skip`.
- */
+const VERIFIED_COMPLETE = 'a verified epic with every task implemented';
 const DONE_COMPLETE = 'a done epic with every task implemented';
 
 /** One case: the screenshot's name, the view, the state, the epic's qualified id and title. */
@@ -79,15 +75,50 @@ describe('EpicListItem (screenshots)', () => {
 
   it.each<Case>([
     ['reported', 'backlog', EVERY_STATUS, 'contract-00000001-1', 'Reported epic'],
-    ['done', 'archive', EVERY_STATUS, 'contract-00000001-9', 'Done epic'],
-    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-11', 'Dropped epic'],
+    ['verified', 'acceptance', EVERY_STATUS, 'contract-00000001-11', 'Verified epic'],
+    ['done', 'archive', EVERY_STATUS, 'contract-00000001-13', 'Done epic'],
+    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-15', 'Dropped epic'],
   ])('%s', async (name, view, state, qualifiedId, title) => {
     const { locator } = await shown(view, state, qualifiedId, title);
     await expect.element(locator).toMatchScreenshot(name);
   });
 
-  // Waiting on the pin bump of @qits/projects-golden-masters (qits-projects 8c13d17e).
-  it.skip('every task done (DONE): collapsed, then expanded', async () => {
+  it('draws the finish button on the bottom-right corner of a VERIFIED epic', async () => {
+    const { element } = await shown(
+      'acceptance',
+      EVERY_STATUS,
+      'contract-00000001-11',
+      'Verified epic',
+    );
+    const lane = element.querySelector('ui-list-lane') as HTMLElement;
+    const finish = lane.querySelector('button[aria-label="Mark contract-00000001-11 done"]');
+    expect(finish?.classList.contains('hidden')).toBe(false);
+    const box = lane.getBoundingClientRect();
+    const button = (finish as HTMLElement).getBoundingClientRect();
+    // Centred on the corner.
+    expect(Math.abs(button.left + button.width / 2 - box.right)).toBeLessThanOrEqual(1.5);
+    expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
+  });
+
+  it('every task done (VERIFIED, in Acceptance): collapsed, then expanded', async () => {
+    const { element, locator, harness } = await shown(
+      'acceptance',
+      VERIFIED_COMPLETE,
+      'contract-00000001-1',
+      'Verified epic',
+    );
+    // A verified epic's tasks are all done: the lane starts collapsed to its summary.
+    await expect.element(locator).toHaveTextContent('2 / 2 ✅');
+    await expect.element(locator).toMatchScreenshot('verified-all-done-collapsed');
+    await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
+    harness.fixture.detectChanges();
+    // Park the pointer: the button's hover colour stays out of the screenshot.
+    await commands.parkPointer();
+    await expect.element(locator).toHaveTextContent('Second shipped task');
+    await expect.element(locator).toMatchScreenshot('verified-all-done-expanded');
+  });
+
+  it('every task done (DONE): collapsed, then expanded', async () => {
     const { element, locator, harness } = await shown(
       'archive',
       DONE_COMPLETE,

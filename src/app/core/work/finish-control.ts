@@ -7,7 +7,7 @@ import type { WorkNode } from './work-tree';
 
 /** The finish button's state for one node, and what its click does. */
 export interface FinishControl {
-  /** A VERIFIED epic or ticket of the board's own phase (not context). */
+  /** A VERIFIED epic or ticket of the list's own phase (not context). */
   readonly shown: Signal<boolean>;
   readonly state: Signal<FinishButtonState>;
   /** Hides the item at once and moves it to DONE later, unless undone (`WorkStore.finishLater`). */
@@ -15,7 +15,7 @@ export interface FinishControl {
 }
 
 /**
- * The finish button of `node` on the board, in the open project. Call it in an injection context
+ * The finish button of `node` in the Acceptance list, in the open project. Call it in an injection context
  * (a field initializer of the card that draws the button).
  */
 export function finishControl(node: Signal<WorkNode>): FinishControl {

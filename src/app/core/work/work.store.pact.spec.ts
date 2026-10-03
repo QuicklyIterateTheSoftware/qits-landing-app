@@ -145,11 +145,8 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
-  // The card screenshots' states (`epic-card`, `ticket-card`, the list items), recorded on
-  // qits-projects-service `external/card-states` (8c13d17e) and not yet in the installed
-  // @qits/projects-golden-masters. Skipped until the pin bump; then drop the `.skip` and run with
-  // QITS_GOLDEN_UPDATE=true to write them into the committed pact.
-  it.skip.each([
+  // The card screenshots' states (`epic-card`, `ticket-card`, the list items).
+  it.each([
     'a ticket of every type',
     'a verified epic with every task implemented',
     'a done epic with every task implemented',
@@ -162,7 +159,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
-  it.skip('show-project-work-board: a campaign with work in every phase', () =>
+  it('show-project-work-board: a campaign with work in every phase', () =>
     given('show-project-work-board', 'a campaign with work in every phase').executeTest(
       async (server) => {
         // The entities read on its own: `load` would go on to read the campaign, which this
@@ -176,7 +173,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
-  it.skip('show-project-work-board: the members of a campaign with work in every phase', () =>
+  it('show-project-work-board: the members of a campaign with work in every phase', () =>
     givenCampaign('show-project-work-board', 'a campaign with work in every phase').executeTest(
       async (server) => {
         storeAt(server.url);
@@ -188,11 +185,9 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
-  // The epic card with two campaign tags: recorded on qits-projects-service
-  // `external/epic-campaigns-state` (eb00bb7c, on top of 8c13d17e), not yet in the installed
-  // @qits/projects-golden-masters. A state records one answer per operation, so the second
-  // campaign is a state of its own over the same seed. Skipped until the pin bump, as above.
-  it.skip('show-project-work-board: an epic in two campaigns', () =>
+  // The epic card with two campaign tags. A state records one answer per operation, so the second
+  // campaign is a state of its own over the same seed.
+  it('show-project-work-board: an epic in two campaigns', () =>
     given('show-project-work-board', 'an epic in two campaigns').executeTest(async (server) => {
       // The entities read on its own: `load` would go on to read both campaigns.
       storeAt(server.url);
@@ -203,7 +198,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       expect(data?.entities?.length).toBeGreaterThan(0);
     }));
 
-  it.skip.each([
+  it.each([
     ['an epic in two campaigns', 'firstCampaignId'],
     ['the second campaign of an epic in two campaigns', 'secondCampaignId'],
   ])('show-project-work-board: the members of %s', (state, param) =>

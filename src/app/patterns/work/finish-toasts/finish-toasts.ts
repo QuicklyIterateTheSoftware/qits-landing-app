@@ -20,7 +20,7 @@ function toast(id: string, pending: PendingFinish): FinishToast {
     case 'failed':
       return {
         id,
-        message: `${name} could not be finished. It is back on the board.`,
+        message: `${name} could not be finished. It is back in Acceptance.`,
         action: 'Dismiss',
         failed: true,
       };
@@ -28,7 +28,7 @@ function toast(id: string, pending: PendingFinish): FinishToast {
 }
 
 /**
- * A toast for each finish the board asked for and that is not settled (`WorkStore.pendingFinishes`):
+ * A toast for each finish the Acceptance list asked for and that is not settled (`WorkStore.pendingFinishes`):
  * "<id> finished" with Undo while it waits, and the failure with Dismiss if the move to DONE failed.
  * In the layout, so a toast stays while the user moves to another page.
  */

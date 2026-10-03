@@ -36,7 +36,7 @@ export class SelectedWork {
 
   /**
    * The open project's work entities; empty until they are loaded. An item whose finish waits for
-   * its Undo, or is being sent, is left out (`WorkStore.hidden`): it has left the board already.
+   * its Undo, or is being sent, is left out (`WorkStore.hidden`): it has left its list already.
    */
   readonly entries = computed(() => {
     const hidden = this.workStore.hidden();

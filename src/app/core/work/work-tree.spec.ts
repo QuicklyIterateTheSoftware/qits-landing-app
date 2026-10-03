@@ -13,6 +13,7 @@ const entry = (
   status?: string,
   parent?: string,
   implemented = false,
+  implementing = false,
 ): WorkEntry => ({
   id,
   qualifiedId: `qits-${++made}`,
@@ -21,6 +22,7 @@ const entry = (
   status: status as WorkEntry['status'],
   parent,
   implementedAt: implemented ? '2026-10-02T00:00:00Z' : undefined,
+  implementingAt: implementing || implemented ? '2026-10-01T00:00:00Z' : undefined,
 });
 
 /**
@@ -34,30 +36,51 @@ function shape(node: WorkNode): string {
 }
 
 describe('WorkGraph', () => {
-  // A REFINED epic: one implemented feature (one of its tasks implemented), one open feature.
+  // An IMPLEMENTING epic: one implemented feature (one of its tasks implemented, one started), one
+  // open feature.
   const epic = [
-    entry('epic', 'EPIC', 'REFINED'),
+    entry('epic', 'EPIC', 'IMPLEMENTING'),
     entry('shipped', 'FEATURE', undefined, 'epic', true),
     entry('t1', 'TASK', undefined, 'shipped', true),
-    entry('t2', 'TASK', undefined, 'shipped'),
+    entry('t2', 'TASK', undefined, 'shipped', false, true),
     entry('open', 'FEATURE', undefined, 'epic'),
     entry('t3', 'TASK', undefined, 'open'),
   ];
+  const withEpic = (status: string) =>
+    epic.map((e) => (e.id === 'epic' ? { ...e, status: status as WorkEntry['status'] } : e));
 
-  it('places features and tasks by their epic and implementedAt', () => {
+  it('places features and tasks by their epic, implementingAt and implementedAt', () => {
     const graph = new WorkGraph(epic);
-    expect(epic.map((e) => graph.columnOf(e))).toEqual([0, 1, 1, 0, 0, 0]);
+    expect(epic.map((e) => graph.columnOf(e))).toEqual([1, 2, 2, 1, 0, 0]);
+  });
+
+  it('places work by its status: REFINED, IMPLEMENTING, IMPLEMENTED, VERIFYING', () => {
+    const tickets = ['REFINED', 'IMPLEMENTING', 'IMPLEMENTED', 'VERIFYING'].map((status) =>
+      entry(status, 'TICKET', status),
+    );
+    expect(new WorkGraph(tickets).tree('board').map(shape)).toEqual([
+      'REFINED@0',
+      'IMPLEMENTING@1',
+      'IMPLEMENTED@2',
+      'VERIFYING@3',
+    ]);
   });
 
   it('nests features and tasks under their epic, each in its own column', () => {
     const tree = new WorkGraph(epic).tree('board');
-    expect(tree.map(shape)).toEqual(['epic@0(shipped@1(t1@1 t2@0) open@0(t3@0))']);
+    expect(tree.map(shape)).toEqual(['epic@1(shipped@2(t1@2 t2@1) open@0(t3@0))']);
   });
 
-  it('moves everything to Verified once the epic is', () => {
-    const verified = epic.map((e) => (e.id === 'epic' ? { ...e, status: 'VERIFIED' as const } : e));
-    const tree = new WorkGraph(verified).tree('board');
-    expect(tree.map(shape)).toEqual(['epic@2(shipped@2(t1@2 t2@2) open@2(t3@2))']);
+  it('moves everything to Verifying once the epic is', () => {
+    const tree = new WorkGraph(withEpic('VERIFYING')).tree('board');
+    expect(tree.map(shape)).toEqual(['epic@3(shipped@3(t1@3 t2@3) open@3(t3@3))']);
+  });
+
+  it('takes a VERIFIED epic off the board into acceptance, its children with it', () => {
+    const graph = new WorkGraph(withEpic('VERIFIED'));
+    expect(graph.tree('board')).toEqual([]);
+    expect(graph.tree('acceptance').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
+    expect(graph.columnOf(epic[2])).toBeUndefined();
   });
 
   // A REFINED campaign ordering a VERIFIED epic, a REFINED epic with a feature, a REPORTED ticket;
@@ -74,10 +97,9 @@ describe('WorkGraph', () => {
 
   it('tags campaign members instead of nesting them; campaigns are in no tree', () => {
     const tree = new WorkGraph(campaign, members).tree('board');
-    expect(tree.map(shape)).toEqual([
-      'verified@2{campaign}',
-      'running@0{campaign}(feature@0)',
-      'standalone@1',
+    expect(tree.map(shape)).toEqual(['running@0{campaign}(feature@0)', 'standalone@2']);
+    expect(new WorkGraph(campaign, members).tree('acceptance').map(shape)).toEqual([
+      'verified{campaign}',
     ]);
     expect(new WorkGraph(campaign, members).tree('backlog').map(shape)).toEqual([
       'waiting{campaign}',
@@ -125,16 +147,15 @@ describe('WorkGraph', () => {
     expect(new WorkGraph(done).tree('archive').map(shape)).toEqual(['d', 'x(f)']);
   });
 
-  it('counts an epic’s verified tasks, and starts its lane collapsed only when all are', () => {
-    const [refined] = new WorkGraph(epic).tree('board');
-    expect(taskProgress(refined)).toEqual({ verified: 0, total: 3 });
-    expect(startsCollapsed(refined)).toBe(false);
-    const verified = epic.map((e) => (e.id === 'epic' ? { ...e, status: 'VERIFIED' as const } : e));
-    const [done] = new WorkGraph(verified).tree('board');
+  it('counts an epic’s done tasks, and starts its lane collapsed only when all are', () => {
+    const [implementing] = new WorkGraph(epic).tree('board');
+    expect(taskProgress(implementing)).toEqual({ verified: 0, total: 3 });
+    expect(startsCollapsed(implementing)).toBe(false);
+    const [done] = new WorkGraph(withEpic('VERIFYING')).tree('board');
     expect(taskProgress(done)).toEqual({ verified: 3, total: 3 });
     expect(startsCollapsed(done)).toBe(true);
     // An epic with no tasks has nothing to fold away.
-    const [bare] = new WorkGraph([entry('e', 'EPIC', 'VERIFIED')]).tree('board');
+    const [bare] = new WorkGraph([entry('e', 'EPIC', 'VERIFYING')]).tree('board');
     expect(startsCollapsed(bare)).toBe(false);
   });
 

@@ -4,35 +4,27 @@ import { provideRouter } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { WorkStore } from '$core/work/work.store';
-import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import type { WorkNode } from '$core/work/work-tree';
-import { Board } from '$ui/components/board/board';
-import { TicketCard } from './ticket-card';
+import { EpicListItem } from './epic-list-item';
 
-/** A board node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */
+/** A list node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */
 const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
-  entry: { id: 'e-1', qualifiedId: 'qits-1', title: 'An item', archetype: 'TICKET', ...entry },
+  entry: { id: 'e-1', qualifiedId: 'qits-1', title: 'An item', archetype: 'EPIC', ...entry },
   children: [],
   context,
-  column: entry.status === 'VERIFIED' ? 2 : 0,
   campaigns: [],
 });
 
-/** The card on a board, as the kanban board draws it. */
+/** The item in the Acceptance list, as the work list draws it. */
 @Component({
-  imports: [Board, TicketCard],
-  template: `
-    <ui-board gutter [columns]="columns">
-      <app-ticket-card [node]="node()" base="/projects/qits/work" />
-    </ui-board>
-  `,
+  imports: [EpicListItem],
+  template: `<app-epic-list-item [node]="node()" base="/projects/qits/work" view="acceptance" />`,
 })
-class OnBoard {
+class InAcceptance {
   readonly node = input.required<WorkNode>();
-  readonly columns = BOARD_COLUMNS.map((c) => ({ label: c.label, body: c.body, header: c.header }));
 }
 
-describe('TicketCard', () => {
+describe('EpicListItem', () => {
   const finishLater = vi.fn();
 
   beforeEach(() => {
@@ -47,7 +39,7 @@ describe('TicketCard', () => {
   });
 
   function render(item: WorkNode) {
-    const fixture = TestBed.createComponent(OnBoard);
+    const fixture = TestBed.createComponent(InAcceptance);
     fixture.componentRef.setInput('node', item);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
@@ -57,11 +49,10 @@ describe('TicketCard', () => {
     element.querySelector('button[aria-label="Mark qits-1 done"]') as HTMLButtonElement;
 
   it.each([
-    ['TICKET', 'VERIFIED', false, true],
-    ['TICKET', 'IMPLEMENTED', false, false],
-    ['TICKET', 'REFINED', false, false],
-    ['TICKET', 'VERIFIED', true, false],
-    ['TASK', undefined, false, false],
+    ['EPIC', 'VERIFIED', false, true],
+    ['EPIC', 'VERIFYING', false, false],
+    ['EPIC', 'DONE', false, false],
+    ['EPIC', 'VERIFIED', true, false],
   ] as const)(
     'shows the finish button on a %s in %s (context: %s): %s',
     (archetype, status, context, shown) => {
@@ -75,5 +66,19 @@ describe('TicketCard', () => {
     const element = render(node({ status: 'VERIFIED' }));
     button(element).click();
     expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
+  });
+
+  it('sums up a VERIFIED epic’s tasks as all done, and starts collapsed', () => {
+    const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
+    const feature = { ...node({ id: 'f', qualifiedId: 'qits-2', archetype: 'FEATURE' }) };
+    const epic = {
+      ...node({ status: 'VERIFIED' }),
+      children: [{ ...feature, children: [task('qits-3'), task('qits-4')] }],
+    };
+    const element = render(epic);
+    expect(element.querySelector('[lane-summary]')?.textContent).toBe('2 / 2 ✅');
+    expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(
+      'false',
+    );
   });
 });

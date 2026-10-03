@@ -4,35 +4,27 @@ import { provideRouter } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { WorkStore } from '$core/work/work.store';
-import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import type { WorkNode } from '$core/work/work-tree';
-import { Board } from '$ui/components/board/board';
-import { EpicCard } from './epic-card';
+import { TicketListItem } from './ticket-list-item';
 
-/** A board node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */
+/** A list node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */
 const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
-  entry: { id: 'e-1', qualifiedId: 'qits-1', title: 'An item', archetype: 'EPIC', ...entry },
+  entry: { id: 'e-1', qualifiedId: 'qits-1', title: 'An item', archetype: 'TICKET', ...entry },
   children: [],
   context,
-  column: entry.status === 'VERIFIED' ? 2 : 0,
   campaigns: [],
 });
 
-/** The card on a board, as the kanban board draws it: a lane's action slot exists only there. */
+/** The item in the Acceptance list, as the work list draws it. */
 @Component({
-  imports: [Board, EpicCard],
-  template: `
-    <ui-board gutter [columns]="columns">
-      <app-epic-card [node]="node()" base="/projects/qits/work" />
-    </ui-board>
-  `,
+  imports: [TicketListItem],
+  template: `<app-ticket-list-item [node]="node()" base="/projects/qits/work" view="acceptance" />`,
 })
-class OnBoard {
+class InAcceptance {
   readonly node = input.required<WorkNode>();
-  readonly columns = BOARD_COLUMNS.map((c) => ({ label: c.label, body: c.body, header: c.header }));
 }
 
-describe('EpicCard', () => {
+describe('TicketListItem', () => {
   const finishLater = vi.fn();
 
   beforeEach(() => {
@@ -47,7 +39,7 @@ describe('EpicCard', () => {
   });
 
   function render(item: WorkNode) {
-    const fixture = TestBed.createComponent(OnBoard);
+    const fixture = TestBed.createComponent(InAcceptance);
     fixture.componentRef.setInput('node', item);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
@@ -57,10 +49,11 @@ describe('EpicCard', () => {
     element.querySelector('button[aria-label="Mark qits-1 done"]') as HTMLButtonElement;
 
   it.each([
-    ['EPIC', 'VERIFIED', false, true],
-    ['EPIC', 'IMPLEMENTED', false, false],
-    ['EPIC', 'REFINED', false, false],
-    ['EPIC', 'VERIFIED', true, false],
+    ['TICKET', 'VERIFIED', false, true],
+    ['TICKET', 'VERIFYING', false, false],
+    ['TICKET', 'DONE', false, false],
+    ['TICKET', 'VERIFIED', true, false],
+    ['TASK', undefined, false, false],
   ] as const)(
     'shows the finish button on a %s in %s (context: %s): %s',
     (archetype, status, context, shown) => {

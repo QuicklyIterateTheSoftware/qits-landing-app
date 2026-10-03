@@ -1,16 +1,19 @@
 import type { WorkEntry } from './work.consumes';
+import { BOARD_COLUMNS } from './work-statuses';
 
 /**
  * The nesting of a project's work (epic › feature › task; tickets stand alone), shared by the
- * board, the backlog and the archive so that all three group the same way.
+ * board, the backlog, the acceptance list and the archive so that all four group the same way.
  *
  * - **Parent**: an entity's `parent` (epic › feature › task). Campaigns are not structure: they
  *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
  * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED /
- *   IMPLEMENTED / VERIFIED the board, DONE / DROPPED the archive. Features and tasks have no status:
- *   they take their nearest ancestor's (their epic's).
- * - **Column** (on the board): REFINED 0, IMPLEMENTED 1, VERIFIED 2. A feature or task: Verified
- *   once its epic is VERIFIED, else Implemented once `implementedAt` is set, else Refined.
+ *   IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED
+ *   the archive. Features and tasks have no status: they take their nearest ancestor's (their
+ *   epic's), so the children of a VERIFIED epic go to the acceptance list with it.
+ * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3. A feature or
+ *   task: Verifying once its epic is VERIFYING, else Implemented once `implementedAt` is set, else
+ *   Implementing once `implementingAt` is set, else Refined.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
@@ -19,22 +22,26 @@ import type { WorkEntry } from './work.consumes';
  *   inside each parent its children the same way. Removing an item leaves the rest in place.
  */
 
-export type Phase = 'backlog' | 'board' | 'archive';
+export type Phase = 'backlog' | 'board' | 'acceptance' | 'archive';
 
 const PHASE_BY_STATUS: Readonly<Record<string, Phase>> = {
   REPORTED: 'backlog',
   REFINED: 'board',
+  IMPLEMENTING: 'board',
   IMPLEMENTED: 'board',
-  VERIFIED: 'board',
+  VERIFYING: 'board',
+  VERIFIED: 'acceptance',
   DONE: 'archive',
   DROPPED: 'archive',
 };
 
-const COLUMN_BY_STATUS: Readonly<Record<string, number>> = {
-  REFINED: 0,
-  IMPLEMENTED: 1,
-  VERIFIED: 2,
-};
+/** Each board status's column: its index in `BOARD_COLUMNS`. */
+const COLUMN_BY_STATUS: Readonly<Record<string, number>> = Object.fromEntries(
+  BOARD_COLUMNS.map((column, index) => [column.status, index]),
+);
+
+/** The board's last column (Verifying): a task there is done. */
+export const LAST_COLUMN = BOARD_COLUMNS.length - 1;
 
 export interface WorkNode {
   readonly entry: WorkEntry;
@@ -93,9 +100,10 @@ export class WorkGraph {
   columnOf(entry: WorkEntry): number | undefined {
     if (this.phaseOf(entry) !== 'board') return undefined;
     if (entry.status) return COLUMN_BY_STATUS[entry.status];
-    const owner = this.statusOwner(entry);
-    if (owner?.status === 'VERIFIED') return 2;
-    return entry.implementedAt ? 1 : 0;
+    if (this.statusOwner(entry)?.status === 'VERIFYING') return COLUMN_BY_STATUS['VERIFYING'];
+    if (entry.implementedAt) return COLUMN_BY_STATUS['IMPLEMENTED'];
+    if (entry.implementingAt) return COLUMN_BY_STATUS['IMPLEMENTING'];
+    return COLUMN_BY_STATUS['REFINED'];
   }
 
   /** The tree of every entity in `phase`, with their ancestors as context, in tree order. */
@@ -163,7 +171,11 @@ export function byNumber(a: WorkEntry, b: WorkEntry): number {
   return (a.id ?? '').localeCompare(b.id ?? '');
 }
 
-/** How many of a node's tasks (its descendants that are tasks) are verified, of how many. */
+/**
+ * How many of a node's tasks (its descendants that are tasks) are done, of how many: on the board,
+ * a task is done in the last column (its epic is VERIFYING). Off the board (no columns) it counts
+ * none: the lists say what their own phase means.
+ */
 export function taskProgress(node: WorkNode): { verified: number; total: number } {
   let verified = 0;
   let total = 0;
@@ -171,7 +183,7 @@ export function taskProgress(node: WorkNode): { verified: number; total: number 
     for (const child of n.children) {
       if (child.entry.archetype === 'TASK') {
         total++;
-        if (child.column === 2) verified++;
+        if (child.column === LAST_COLUMN) verified++;
       }
       walk(child);
     }
@@ -180,7 +192,7 @@ export function taskProgress(node: WorkNode): { verified: number; total: number 
   return { verified, total };
 }
 
-/** Whether an epic's lane starts collapsed: it has tasks and every one is verified. */
+/** Whether an epic's lane on the board starts collapsed: it has tasks and every one is done. */
 export function startsCollapsed(node: WorkNode): boolean {
   const { verified, total } = taskProgress(node);
   return total > 0 && verified === total;

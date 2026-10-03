@@ -12,7 +12,7 @@ export interface BoardColumn {
 
 /**
  * The board's columns, left to right: the statuses work moves through while it is being worked
- * on. "Implementing" goes between Refined and Implemented once qits-projects has that status. Which
+ * on. VERIFIED work is done with that: it waits in the Acceptance list above the board. Which
  * column an entity sits in, and which work is on the board at all, is `WorkGraph`'s business
  * (`work-tree.ts`); the index here is that column.
  */
@@ -25,6 +25,13 @@ export const BOARD_COLUMNS: readonly BoardColumn[] = [
     cardBorder: 'border-ocean-deep-400',
   },
   {
+    status: 'IMPLEMENTING',
+    label: 'Implementing',
+    body: 'bg-cinnabar-200',
+    header: 'bg-cinnabar-300 text-cinnabar-950',
+    cardBorder: 'border-cinnabar-300',
+  },
+  {
     status: 'IMPLEMENTED',
     label: 'Implemented',
     body: 'bg-sunflower-gold-300',
@@ -32,8 +39,8 @@ export const BOARD_COLUMNS: readonly BoardColumn[] = [
     cardBorder: 'border-sunflower-gold-400',
   },
   {
-    status: 'VERIFIED',
-    label: 'Verified',
+    status: 'VERIFYING',
+    label: 'Verifying',
     body: 'bg-mint-leaf-300',
     header: 'bg-mint-leaf-400 text-mint-leaf-950',
     cardBorder: 'border-mint-leaf-400',

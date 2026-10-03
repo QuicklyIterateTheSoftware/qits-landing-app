@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { finishControl } from '$core/work/finish-control';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { startsCollapsed, taskProgress, type WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { BoardLane } from '$ui/components/board/board-lane';
 import { BoardRow } from '$ui/components/board/board-row';
-import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { Tag } from '$ui/components/tag/tag';
 
@@ -14,22 +12,21 @@ import { Tag } from '$ui/components/tag/tag';
  * An epic on the board, with its features and their tasks:
  *
  * - the epic is a lane (`ui-board-lane`): its title in the bar at the top and its id up the gutter,
- *   both linking to it, its campaigns as tags below the bar. It collapses to "<verified> / <total>
- *   ✅" for its tasks, collapsed at first when every one is verified;
+ *   both linking to it, its campaigns as tags below the bar. It collapses to "<done> / <total> ✅"
+ *   for its tasks, collapsed at first when every one is done (the epic is VERIFYING);
  * - each feature is a row of that lane (`ui-board-row`), its title along the bottom and its id up
  *   the right gutter;
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns.
  *
- * A VERIFIED epic carries the finish button ("Mark <id> done") on the lane's bottom-right corner:
- * it hides the epic at once and moves it to DONE a few seconds later, unless the toast's Undo takes
- * it back (`finishControl`). When `leaving` is set, the lane shrinks away (`uiLeave`), then emits
- * `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
+ * A VERIFIED epic is not on the board: it waits in the Acceptance list (`epic-list-item`), with
+ * its finish button. When `leaving` is set (the epic left the board), the lane shrinks away
+ * (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
  * is itself the grid item of the board.
  */
 @Component({
   selector: 'app-epic-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, BoardLane, BoardRow, BoardCard, FinishButton, Leave, Tag],
+  imports: [RouterLink, BoardLane, BoardRow, BoardCard, Leave, Tag],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -41,13 +38,6 @@ import { Tag } from '$ui/components/tag/tag';
         <ui-tag lane-tags [label]="campaign.title ?? ''" />
       }
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
-      <ui-finish-button
-        lane-action
-        [shown]="finishing.shown()"
-        [state]="finishing.state()"
-        [label]="'Mark ' + n.entry.qualifiedId + ' done'"
-        (finish)="finishing.finish()"
-      />
       @for (feature of n.children; track feature.entry.id) {
         <ui-board-row>
           @for (task of feature.children; track task.entry.id) {
@@ -85,8 +75,6 @@ export class EpicCard {
   /** The epic is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
-
-  protected readonly finishing = finishControl(this.node);
 
   protected readonly collapsed = computed(() => startsCollapsed(this.node()));
 
