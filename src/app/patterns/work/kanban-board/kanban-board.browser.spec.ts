@@ -118,6 +118,9 @@ describe('KanbanBoard (screenshots)', () => {
     // No selection colour in the shot; the highlight stays until it fades.
     await select((selection) => selection.removeAllRanges());
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
+    // Real timers again: the screenshot matcher waits between its shots, and a fake clock never
+    // moves. The fade's timer stays on the fake clock, so it never fires.
+    vi.useRealTimers();
     await expect.element(locator).toMatchScreenshot('selection-highlight');
   });
 });
