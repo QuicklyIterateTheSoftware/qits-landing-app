@@ -21,8 +21,8 @@ import {
  *
  * `AppOrigins` reads `GET /main-navigation` once, when the app starts. The pact binds
  * `applications.<app>.origin` of each application under its current name (the first in
- * `BACKEND_APPS` and `PAGE_APPS`); the old `qits-platform-…` names are a fallback the recording
- * does not hold.
+ * `BACKEND_APPS` and `PAGE_APPS`; the old `qits-platform-…` names are a fallback the recording
+ * does not hold), and the navigation's own `origin`, which names the domain under `ng serve`.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-edge-service';
@@ -32,7 +32,7 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const DOMAIN = 'qits.example.com';
 
 const NAMES = Object.values({ ...BACKEND_APPS, ...PAGE_APPS }).map(([name]) => name);
-const READ_NAVIGATION = NAMES.map((name) => `applications.${name}.origin`);
+const READ_NAVIGATION = ['origin', ...NAMES.map((name) => `applications.${name}.origin`)];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });

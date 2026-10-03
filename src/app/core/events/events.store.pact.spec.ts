@@ -20,9 +20,8 @@ import { EventsStore } from './events.store';
  * notifications menu's list of the newest 20 (`?limit=20`, which the golden master records and the
  * interaction requires). It binds only `LIST_EVENTS`, the list the store passes to `consume(...)`.
  *
- * There is no interaction for an empty list: qits-events answers the newest events of everyone, so
- * no provider state can promise that list is empty. `events.store.spec.ts` covers it with the
- * recorded "no events" body.
+ * The empty list has an interaction too ("no events"): the menu's screenshot of it shows that
+ * recorded body, and every body a screenshot shows is one the provider verifies.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-events-service';
@@ -67,5 +66,19 @@ describe('qits-landing-app → qits-events-service pact', () => {
       expect(store.status()).toBe('loaded');
       expect(store.recent().length).toBeGreaterThan(0);
       expect(store.recent().every((event) => (event.name ?? '').length > 0)).toBe(true);
+    }));
+
+  it('open-notifications: the store holds an empty list when there are no events', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: 'no events',
+      operationId: 'listEvents',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'open-notifications' },
+      consumes: LIST_EVENTS,
+    }).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      await store.load();
+      expect(store.status()).toBe('loaded');
+      expect(store.recent()).toEqual([]);
     }));
 });

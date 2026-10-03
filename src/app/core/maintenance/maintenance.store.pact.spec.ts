@@ -20,9 +20,8 @@ import { MaintenanceStore } from './maintenance.store';
  * bumps menu's list of the newest 20 bumps (`?limit=20`, which the golden master records and the
  * interaction requires). It binds only `LIST_PENDING_BUMPS`, the list the store passes to `consume(...)`.
  *
- * There is no interaction for an empty list: qits-maintenance answers the newest bumps of every
- * repository, so no provider state can promise none is pending. `maintenance.store.spec.ts` covers
- * it with the recorded "no pending bumps" body.
+ * The empty list has an interaction too ("no pending bumps"): the menu's screenshot of it shows
+ * that recorded body, and every body a screenshot shows is one the provider verifies.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-maintenance-service';
@@ -67,5 +66,19 @@ describe('qits-landing-app → qits-maintenance-service pact', () => {
       expect(store.status()).toBe('loaded');
       expect(store.pending().length).toBeGreaterThan(0);
       expect(store.pending().every((bump) => (bump.repository ?? '').length > 0)).toBe(true);
+    }));
+
+  it('open-version-bumps: the store holds no bumps when none is pending', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: 'no pending bumps',
+      operationId: 'listPendingBumps',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'open-version-bumps' },
+      consumes: LIST_PENDING_BUMPS,
+    }).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      await store.load();
+      expect(store.status()).toBe('loaded');
+      expect(store.pending()).toEqual([]);
     }));
 });

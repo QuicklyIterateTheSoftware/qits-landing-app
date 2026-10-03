@@ -183,13 +183,19 @@ and each test compares a screenshot with a committed reference. `npm run test:br
 `npm test` (jsdom) leaves them out. The release check runs `npm run --if-present test:browser` in a
 step image that has Chromium, so a changed pixel fails the release request.
 
-- **The backend answers are the providers' golden masters**, as everywhere else. The reader uses
+- **The backend answers are the providers' golden masters, and nothing else.** The reader uses
   `node:fs`, so it runs on the Node side: `vitest-browser.config.ts` gives the browser a
-  `goldenMaster` command, and a spec calls `await commands.goldenMaster(state, operationId)`, or
-  `(state, operationId, 'qits-githost')` for qits-githost (from `vitest/browser`), and
-  `flush(...)`es the result. The two providers' frozen ids are unrelated, so the card spec puts
-  qits-githost's recorded entries under the project's recorded repository ids and says so. An error answer is only a status; the store reads
-  no body from it.
+  `goldenMaster` command, which reads only a (state, operation) the committed pact uses
+  (`pactedGoldenMasters`), so the provider verifies every body a screenshot shows. A spec calls
+  `goldenMaster(state, operationId, provider?)` from `src/testing/browser/golden-master.ts`
+  (provider `qits-projects` unless named), which registers the body as a frozen recording, and
+  `flush(...)`es it, or a part of it, as it is. `guardGoldenMasters()` (`setup.ts`) fails a 2xx
+  answer that is not a recording; an error answer is only a status and may carry anything. No
+  `useValue` for a store or a `$core` token (only `EVENT_SOURCE`, a transport seam), no
+  `patchState`, no copies or spreads (lint `qits/browser-spec-data-from-golden-masters`). A case
+  no recording holds gets a new provider state in the provider and a pact interaction here. The
+  two providers' frozen ids are unrelated, so the card spec puts qits-githost's recorded entries
+  under the project's recorded repository ids and says so.
 - **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
   system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is
   800x600 (`angular.json`, target `test-browser`).

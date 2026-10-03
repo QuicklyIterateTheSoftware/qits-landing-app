@@ -3,7 +3,10 @@ import 'vitest/browser';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
-    /** The body `provider` (default qits-projects) recorded for `operationId` in `state`. */
+    /**
+     * The body `provider` (default qits-projects) recorded for `operationId` in `state`. Specs use
+     * `golden-master.ts`, which registers it as a recording.
+     */
     goldenMaster: <T = any>(
       state: string,
       operationId: string,

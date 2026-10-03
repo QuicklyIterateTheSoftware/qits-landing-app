@@ -2,6 +2,7 @@ import { playwright } from '@vitest/browser-playwright';
 import type { Plugin } from 'vite';
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
+import { pactedGoldenMasters } from '@qits/angular/testing';
 import {
   edgeGoldenMasters,
   eventsGoldenMasters,
@@ -10,28 +11,36 @@ import {
   projectsGoldenMasters,
 } from './src/testing/golden-masters';
 
+/** The pact this app holds with `repository`, the provider whose golden masters a reader reads. */
+const pactWith = (repository: string) => `pacts/qits-landing-app_${repository}.json`;
+
 /**
- * The browser screenshot tests' Vitest config, merged by the `test-browser` target (angular.json).
- *
+ * Each provider's golden masters, as the browser screenshot tests may read them: only a (state,
+ * operation) an interaction in the committed pact uses, so the provider verifies every body a
+ * screenshot shows (`pactedGoldenMasters`).
+ */
+const READERS = {
+  'qits-projects': pactedGoldenMasters(projectsGoldenMasters, pactWith('qits-projects-service')),
+  'qits-githost': pactedGoldenMasters(githostGoldenMasters, pactWith('qits-githost-service')),
+  'qits-events': pactedGoldenMasters(eventsGoldenMasters, pactWith('qits-events-service')),
+  'qits-maintenance': pactedGoldenMasters(
+    maintenanceGoldenMasters,
+    pactWith('qits-maintenance-service'),
+  ),
+  'qits-edge': pactedGoldenMasters(edgeGoldenMasters, pactWith('qits-edge-service')),
+};
+
+/**
  * The golden masters live in `node_modules` and are read with `node:fs`, which the browser cannot
- * use. So the reader runs here, on the Node side, and a spec asks for a body through the
- * `goldenMaster` command (`commands.goldenMaster(state, operationId, provider?)` from
- * `vitest/browser`). The provider is `qits-projects` unless named.
+ * use. So the reader runs here, on the Node side, and the browser asks for a body through the
+ * `goldenMaster` command. Specs never call the command themselves: they use
+ * `src/testing/browser/golden-master.ts`, which registers every body as a recording. The provider
+ * is `qits-projects` unless named.
  */
 const goldenMaster: BrowserCommand<
-  [
-    state: string,
-    operationId: string,
-    provider?: 'qits-projects' | 'qits-githost' | 'qits-events' | 'qits-maintenance' | 'qits-edge',
-  ]
+  [state: string, operationId: string, provider?: keyof typeof READERS]
 > = (_context, state, operationId, provider = 'qits-projects') =>
-  ({
-    'qits-projects': projectsGoldenMasters,
-    'qits-githost': githostGoldenMasters,
-    'qits-events': eventsGoldenMasters,
-    'qits-maintenance': maintenanceGoldenMasters,
-    'qits-edge': edgeGoldenMasters,
-  })[provider].body(state, operationId);
+  READERS[provider].body(state, operationId);
 
 /**
  * `parkPointer`: moves the mouse to the page's top-left corner. The pointer otherwise stays where

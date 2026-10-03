@@ -53,7 +53,8 @@
               "qits-workspaces": {
                 "origin": "https://workspaces.qits.example.com"
               }
-            }
+            },
+            "origin": "https://qits.example.com"
           },
           "contentType": "application/json",
           "encoded": false
@@ -106,6 +107,14 @@
               ]
             },
             "$.applications['qits-workspaces'].origin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.origin": {
               "combine": "AND",
               "matchers": [
                 {

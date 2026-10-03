@@ -3,10 +3,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { ProjectSetupPage } from './project-setup.page';
+import { goldenMaster } from '../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of a project's Setup page, which names the project under its heading: answered with
@@ -36,7 +37,7 @@ describe('ProjectSetupPage (screenshots)', () => {
 
   /** The page for `slug` (the recorded project's by default), with the project list requested. */
   async function render(slug?: string) {
-    const recorded = await commands.goldenMaster('a project exists', 'listProjects');
+    const recorded = await goldenMaster('a project exists', 'listProjects');
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
       `/projects/${slug ?? recorded.entries[0].project.slug}/setup`,

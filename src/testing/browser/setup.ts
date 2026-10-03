@@ -5,9 +5,14 @@
  *   between machines and would change every screenshot.
  * - Animations and transitions are off, and the caret does not blink. SVG animations (SMIL, as in
  *   `ui-spinner`) are not CSS, so every `<svg>` is paused at its first frame as it is added.
+ * - Backend data in a page's or a layout's screenshots comes from golden masters only: a 2xx
+ *   `flush` must carry a recording (`golden-master.ts`), or the test fails (`guardGoldenMasters`).
  */
+import { guardGoldenMasters } from '@qits/angular/testing/browser';
 import { afterEach, beforeAll, beforeEach } from 'vitest';
 import { commands } from 'vitest/browser';
+
+guardGoldenMasters();
 
 const FONTS = '/src/testing/browser/fonts';
 
