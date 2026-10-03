@@ -1,8 +1,8 @@
 import type {
+  DispatchEntityResponses,
   GetCampaignResponses,
   ListProjectEntitiesResponses,
-  TransitionEpicResponses,
-  TransitionTicketResponses,
+  MoveEntityStatusResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
@@ -59,13 +59,18 @@ export type CampaignEntry = NonNullable<
 >;
 
 /**
- * `WorkStore.finish(projectId, entry)` for an epic: the epic's new status, which the store writes
- * into its entry so the epic leaves the board at once.
+ * `WorkStore.transition(projectId, entry, target)` and `finish(projectId, entry)`: the entity's
+ * new status (`moveEntityStatus`, one door for every archetype), which the store writes into its
+ * entry so the item moves at once.
  */
-export const TRANSITION_EPIC = ['epic.status'] as const;
+export const MOVE_ENTITY_STATUS = ['status'] as const;
 
-/** `WorkStore.finish(projectId, entry)` for a ticket: the same, from the ticket door. */
-export const TRANSITION_TICKET = ['ticket.status'] as const;
+/**
+ * `WorkStore.dispatch(projectId, entry, mode)`: which phase the press started (`dispatchEntity`).
+ * The answer carries no status: the platform's move (to IMPLEMENTING, VERIFYING) arrives as an
+ * `EntityTransitioned` event, which refetches the work.
+ */
+export const DISPATCH_ENTITY = ['dispatch.phase'] as const;
 
 /**
  * Whether an entry can be finished (moved to DONE) from the Acceptance list: a VERIFIED epic or
@@ -77,7 +82,7 @@ export function finishable(entry: WorkEntry): boolean {
   );
 }
 
-/** The epic answer, cut to what the store reads. */
-export type TransitionedEpic = Consumed<TransitionEpicResponses[200], typeof TRANSITION_EPIC>;
-/** The ticket answer, cut to what the store reads. */
-export type TransitionedTicket = Consumed<TransitionTicketResponses[200], typeof TRANSITION_TICKET>;
+/** The move answer, cut to what the store reads. */
+export type MovedEntity = Consumed<MoveEntityStatusResponses[200], typeof MOVE_ENTITY_STATUS>;
+/** The dispatch answer, cut to what the store reads. */
+export type DispatchedEntity = Consumed<DispatchEntityResponses[200], typeof DISPATCH_ENTITY>;

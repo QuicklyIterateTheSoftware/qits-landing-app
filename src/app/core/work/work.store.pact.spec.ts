@@ -13,17 +13,17 @@ import type { InteractionSlug } from '../../interactions';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
 import {
+  DISPATCH_ENTITY,
   GET_CAMPAIGN,
   LIST_PROJECT_ENTITIES,
-  TRANSITION_EPIC,
-  TRANSITION_TICKET,
+  MOVE_ENTITY_STATUS,
   type WorkEntry,
 } from './work.consumes';
-import { WorkStore } from './work.store';
+import { WorkStore, type DispatchMode, type WorkStatus } from './work.store';
 
 /**
  * `WorkStore`'s part of qits-landing-app's pact with qits-projects-service (epic qits-112): the
- * `listProjectEntities`, `getCampaign`, `transitionEpic` and `transitionTicket` interactions, in the same file as `ProjectsStore`'s
+ * `listProjectEntities`, `getCampaign`, `moveEntityStatus` and `dispatchEntity` interactions, in the same file as `ProjectsStore`'s
  * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
  *
  * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against
@@ -33,7 +33,7 @@ import { WorkStore } from './work.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS = ['listProjectEntities', 'getCampaign', 'transitionEpic', 'transitionTicket'];
+const OPERATIONS = ['listProjectEntities', 'getCampaign', 'moveEntityStatus', 'dispatchEntity'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -57,19 +57,32 @@ const givenCampaign = (slug: InteractionSlug, state: string) =>
     consumes: GET_CAMPAIGN,
   });
 
-/** The move to DONE that `finish` makes for a VERIFIED epic or ticket. */
-const givenTransition = (
-  slug: InteractionSlug,
-  state: string,
-  operationId: 'transitionEpic' | 'transitionTicket',
-) =>
+/** A move through the status door: `finish`'s move to DONE, or a Status action's. */
+const givenMove = (slug: InteractionSlug, state: string) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId,
+    operationId: 'moveEntityStatus',
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: operationId === 'transitionEpic' ? TRANSITION_EPIC : TRANSITION_TICKET,
+    consumes: MOVE_ENTITY_STATUS,
   });
+
+/** A dispatch press: Dispatch (`FLOW`) or the next phase's button (`PHASE`). */
+const givenDispatch = (state: string) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state,
+    operationId: 'dispatchEntity',
+    trigger: { kind: 'ui', app: CONSUMER, interaction: 'dispatch-work-item' },
+    consumes: DISPATCH_ENTITY,
+  });
+
+/** The entity a move or dispatch state names: its id param and its project. */
+function movedIn(state: string, operationId: string) {
+  const { params, body } = masters.operation(state, operationId);
+  const id = params['epicId'] ?? params['ticketId'];
+  return { id, projectId: params['projectId'], body: body as Record<string, string> };
+}
 
 /** A store whose client talks to the mock server through a real HttpClient. */
 function storeAt(url: string) {
@@ -226,30 +239,64 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       });
     }));
 
-  it('finish-epic: the finish button moves a VERIFIED epic to DONE', () =>
-    givenTransition('finish-epic', 'a verified epic', 'transitionEpic').executeTest(
-      async (server) => {
-        const store = storeAt(server.url);
-        const { params } = masters.operation('a verified epic', 'transitionEpic');
-        const entry = { id: params['epicId'], archetype: 'EPIC', status: 'VERIFIED' } as WorkEntry;
-        await store.finish(params['projectId'], entry);
-        // No finish state left means the answer carried a status.
-        expect(store.finishing()[params['epicId']]).toBeUndefined();
-      },
-    ));
+  // The work item page reads each item's own state and its project's work (`work-item.page`).
+  it.each(['an implemented ticket'])('show-project-work-board: the work of %s', (state) =>
+    given('show-project-work-board', state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const projectId = projectOf(state);
+      await store.load(projectId);
+      expect(store.byProject()[projectId]?.status).toBe('loaded');
+    }),
+  );
 
-  it('finish-ticket: the finish button moves a VERIFIED ticket to DONE', () =>
-    givenTransition('finish-ticket', 'a verified ticket', 'transitionTicket').executeTest(
-      async (server) => {
+  it.each([
+    ['finish-epic', 'a verified epic', 'EPIC'],
+    ['finish-ticket', 'a verified ticket', 'TICKET'],
+  ] as const)('%s: the finish button moves %s to DONE', (slug, state, archetype) =>
+    givenMove(slug, state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { id, projectId } = movedIn(state, 'moveEntityStatus');
+      const entry = { id, archetype, status: 'VERIFIED' } as WorkEntry;
+      await store.finish(projectId, entry);
+      // No finish state left means the answer carried a status.
+      expect(store.finishing()[id]).toBeUndefined();
+    }),
+  );
+
+  // One recorded move per status: each state's entity moved once, by the registry's moves.
+  it.each([
+    'a reported ticket',
+    'a refined ticket',
+    'an implementing ticket',
+    'an implemented ticket',
+    'a verifying ticket',
+    'a verified ticket',
+    'a dropped ticket',
+    'a reported epic',
+    'a refined epic',
+    'an implementing epic',
+    'an implemented epic',
+    'a verifying epic',
+    'a verified epic',
+    'a dropped epic',
+  ])('move-work-item: a Status action moves %s', (state) =>
+    givenMove('move-work-item', state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { id, projectId, body } = movedIn(state, 'moveEntityStatus');
+      await store.transition(projectId, { id } as WorkEntry, body['target'] as WorkStatus);
+      expect(store.transitioning()[id]).toBeUndefined();
+    }),
+  );
+
+  it.each(['a reported epic', 'a refined epic', 'a refined ticket', 'an implemented ticket'])(
+    'dispatch-work-item: a dispatch press for %s',
+    (state) =>
+      givenDispatch(state).executeTest(async (server) => {
         const store = storeAt(server.url);
-        const { params } = masters.operation('a verified ticket', 'transitionTicket');
-        const entry = {
-          id: params['ticketId'],
-          archetype: 'TICKET',
-          status: 'VERIFIED',
-        } as WorkEntry;
-        await store.finish(params['projectId'], entry);
-        expect(store.finishing()[params['ticketId']]).toBeUndefined();
-      },
-    ));
+        const { id, body } = movedIn(state, 'dispatchEntity');
+        await store.dispatch({ id } as WorkEntry, body['mode'] as DispatchMode);
+        expect(store.dispatching()[id]).toBeUndefined();
+        expect(store.dispatched()[id]).toBeTruthy();
+      }),
+  );
 });

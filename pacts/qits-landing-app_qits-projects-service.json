@@ -8,20 +8,20 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "transitionEpic"
+            "operationId": "dispatchEntity"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
-            "interaction": "finish-epic",
+            "interaction": "dispatch-work-item",
             "kind": "ui"
           }
         }
       },
-      "description": "finish-epic: transitionEpic",
+      "description": "dispatch-work-item: dispatchEntity",
       "pending": false,
       "providerStates": [
         {
-          "name": "a verified epic",
+          "name": "a refined epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
             "projectId": "00000000-0000-4000-8000-000000000002"
@@ -31,14 +31,14 @@
       "request": {
         "body": {
           "content": {
-            "target": "DONE"
+            "mode": "FLOW"
           },
           "contentType": "application/json",
           "encoded": false
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/epics/${epicId}/transition",
+            "expression": "/projects/api/entities/${epicId}/dispatch",
             "type": "ProviderState"
           }
         },
@@ -58,13 +58,13 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/epics/00000000-0000-4000-8000-000000000001/transition"
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/dispatch"
       },
       "response": {
         "body": {
           "content": {
-            "epic": {
-              "status": "DONE"
+            "dispatch": {
+              "phase": "implement"
             }
           },
           "contentType": "application/json",
@@ -77,7 +77,7 @@
         },
         "matchingRules": {
           "body": {
-            "$.epic.status": {
+            "$.dispatch.phase": {
               "combine": "AND",
               "matchers": [
                 {
@@ -107,7 +107,401 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "transitionTicket"
+            "operationId": "dispatchEntity"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "dispatch-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "dispatch-work-item: dispatchEntity",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "mode": "FLOW"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/dispatch",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/dispatch"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dispatch": {
+              "phase": "implement"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dispatch.phase": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "dispatchEntity"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "dispatch-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "dispatch-work-item: dispatchEntity",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a reported epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "mode": "PHASE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/dispatch",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/dispatch"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dispatch": {
+              "phase": "refine"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dispatch.phase": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "dispatchEntity"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "dispatch-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "dispatch-work-item: dispatchEntity",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an implemented ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "mode": "PHASE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/dispatch",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/dispatch"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dispatch": {
+              "phase": "verify"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dispatch.phase": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "finish-epic",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "finish-epic: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verified epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -116,7 +510,7 @@
           }
         }
       },
-      "description": "finish-ticket: transitionTicket",
+      "description": "finish-ticket: moveEntityStatus",
       "pending": false,
       "providerStates": [
         {
@@ -137,7 +531,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/tickets/${ticketId}/transition",
+            "expression": "/projects/api/entities/${ticketId}/status",
             "type": "ProviderState"
           }
         },
@@ -157,14 +551,12 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/tickets/00000000-0000-4000-8000-000000000002/transition"
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
       },
       "response": {
         "body": {
           "content": {
-            "ticket": {
-              "status": "DONE"
-            }
+            "status": "DONE"
           },
           "contentType": "application/json",
           "encoded": false
@@ -176,7 +568,7 @@
         },
         "matchingRules": {
           "body": {
-            "$.ticket.status": {
+            "$.status": {
               "combine": "AND",
               "matchers": [
                 {
@@ -289,6 +681,1364 @@
                       }
                     }
                   ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a dropped epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "REPORTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "REPORTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a dropped ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "REPORTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "REPORTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "IMPLEMENTING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "IMPLEMENTING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "IMPLEMENTING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "IMPLEMENTING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a reported epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "REFINED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "REFINED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a reported ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "REFINED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "REFINED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verified epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verified ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "DONE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verifying epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "VERIFIED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "VERIFIED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a verifying ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "VERIFIED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "VERIFIED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an implemented epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "VERIFYING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "VERIFYING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an implemented ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "VERIFYING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "VERIFYING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an implementing epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "IMPLEMENTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "IMPLEMENTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an implementing ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "IMPLEMENTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "IMPLEMENTED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             }
@@ -3304,6 +5054,143 @@
           },
           "qits-trigger": {
             "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listProjectEntities",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an implemented ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/entities",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entities": [
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "parent": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "IMPLEMENTED",
+                "title": "Database runs out of connection slots during deploys"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entities": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.entities[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entities[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectEntities"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
             "interaction": "show-project-work",
             "kind": "ui"
           }
@@ -3581,6 +5468,1351 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listArchetypes"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item-actions",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item-actions: listArchetypes",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the archetype registry"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/projects/api/entities/archetypes"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetypes": [
+              {
+                "archetype": "EPIC",
+                "phases": {
+                  "DONE": {
+                    "flow": [],
+                    "next": null
+                  },
+                  "DROPPED": {
+                    "flow": [],
+                    "next": null
+                  },
+                  "IMPLEMENTED": {
+                    "flow": [
+                      {
+                        "endsIn": "VERIFIED",
+                        "enters": "VERIFYING",
+                        "from": "IMPLEMENTED",
+                        "phase": "verify"
+                      }
+                    ],
+                    "next": {
+                      "endsIn": "VERIFIED",
+                      "enters": "VERIFYING",
+                      "from": "IMPLEMENTED",
+                      "phase": "verify"
+                    }
+                  },
+                  "IMPLEMENTING": {
+                    "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": null,
+                        "from": "IMPLEMENTING",
+                        "phase": "implement"
+                      },
+                      {
+                        "endsIn": "VERIFIED",
+                        "enters": "VERIFYING",
+                        "from": "IMPLEMENTED",
+                        "phase": "verify"
+                      }
+                    ],
+                    "next": {
+                      "endsIn": "IMPLEMENTED",
+                      "enters": null,
+                      "from": "IMPLEMENTING",
+                      "phase": "implement"
+                    }
+                  },
+                  "REFINED": {
+                    "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "REFINED",
+                        "phase": "implement"
+                      },
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "REFINED",
+                        "phase": "implement"
+                      }
+                    ],
+                    "next": {
+                      "endsIn": "IMPLEMENTED",
+                      "enters": "IMPLEMENTING",
+                      "from": "REFINED",
+                      "phase": "implement"
+                    }
+                  },
+                  "REPORTED": {
+                    "flow": [
+                      {
+                        "endsIn": "REFINED",
+                        "enters": null,
+                        "from": "REPORTED",
+                        "phase": "refine"
+                      },
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "REFINED",
+                        "phase": "implement"
+                      }
+                    ],
+                    "next": {
+                      "endsIn": "REFINED",
+                      "enters": null,
+                      "from": "REPORTED",
+                      "phase": "refine"
+                    }
+                  },
+                  "VERIFIED": {
+                    "flow": [],
+                    "next": null
+                  },
+                  "VERIFYING": {
+                    "flow": [
+                      {
+                        "endsIn": "VERIFIED",
+                        "enters": null,
+                        "from": "VERIFYING",
+                        "phase": "verify"
+                      }
+                    ],
+                    "next": {
+                      "endsIn": "VERIFIED",
+                      "enters": null,
+                      "from": "VERIFYING",
+                      "phase": "verify"
+                    }
+                  }
+                },
+                "transitions": {
+                  "DONE": [],
+                  "DROPPED": [
+                    {
+                      "kind": "REOPEN",
+                      "to": "REPORTED"
+                    }
+                  ],
+                  "IMPLEMENTED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    }
+                  ],
+                  "IMPLEMENTING": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTED"
+                    }
+                  ],
+                  "REFINED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    }
+                  ],
+                  "REPORTED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "REFINED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "REFINED"
+                    }
+                  ],
+                  "VERIFIED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "DONE"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "DONE"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "DONE"
+                    }
+                  ],
+                  "VERIFYING": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFIED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFIED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "archetype": "FEATURE",
+                "phases": {},
+                "transitions": {
+                  "DONE": [],
+                  "DROPPED": [
+                    {
+                      "kind": "REOPEN",
+                      "to": "REPORTED"
+                    }
+                  ],
+                  "IMPLEMENTED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFYING"
+                    }
+                  ],
+                  "IMPLEMENTING": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTED"
+                    }
+                  ],
+                  "REFINED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    }
+                  ],
+                  "REPORTED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "REFINED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "REFINED"
+                    }
+                  ],
+                  "VERIFIED": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "DONE"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "DONE"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "DONE"
+                    }
+                  ],
+                  "VERIFYING": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFIED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFIED"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "VERIFIED"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetypes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.flow[*].enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.next.endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.next.enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.next.from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTED.next.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "arrayContains",
+                              "variants": [
+                                {
+                                  "index": 0,
+                                  "rules": {
+                                    "$.endsIn": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.from": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.phase": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "index": 1,
+                                  "rules": {
+                                    "$.endsIn": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.enters": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.from": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.phase": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.next.endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.next.from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.next.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.next.endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.next.enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.next.from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.next.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "arrayContains",
+                              "variants": [
+                                {
+                                  "index": 0,
+                                  "rules": {
+                                    "$.endsIn": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.from": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.phase": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "index": 1,
+                                  "rules": {
+                                    "$.endsIn": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.enters": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.from": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.phase": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.next.endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.next.from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.next.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.next.endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.next.from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFYING.next.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.DROPPED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.transitions.DROPPED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.DROPPED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTING": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTING[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTING[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFIED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFIED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFIED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFYING": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFYING[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFYING[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.DROPPED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.transitions.DROPPED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.DROPPED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTING": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTING[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.IMPLEMENTING[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFIED": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFIED[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFIED[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFYING": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFYING[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.VERIFYING[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             }

@@ -15,12 +15,14 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const WORK = 'a project with work in every status';
 const CAMPAIGN = 'a campaign with work in every phase';
 const EPIC = 'an epic with features and tasks';
+const REGISTRY = '/projects/api/entities/archetypes';
 
 /**
  * The work item page's actions and what they send, and the children it shows, on qits-projects'
  * golden masters: the project list and "a project with work in every status" (one epic and one
- * ticket per status), "a campaign with work in every phase" and "an epic with features and tasks". Which
- * actions show for which status is `work-actions.spec.ts`; this checks the page wires them.
+ * ticket per status), "a campaign with work in every phase" and "an epic with features and tasks",
+ * and the archetype registry. Which actions show for which status is `work-actions.spec.ts`; this
+ * checks the page wires them.
  */
 describe('WorkItemPage', () => {
   let http: HttpTestingController;
@@ -69,6 +71,7 @@ describe('WorkItemPage', () => {
     for (const read of http.match((r) => r.url.startsWith('/projects/api/campaigns/'))) {
       read.flush(goldenMaster(state, 'getCampaign'));
     }
+    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
@@ -92,19 +95,19 @@ describe('WorkItemPage', () => {
     const { element, groups } = await shown('Reported ticket');
     expect(element.querySelector('h1')?.textContent).toContain('Reported ticket');
     expect(groups()).toEqual([
-      { title: 'Agent', actions: ['Dispatch', 'Next phase'] },
+      { title: 'Agent', actions: ['Dispatch', 'Refine'] },
       { title: 'Status', actions: ['Mark refined', 'Drop', 'Block'] },
-      { title: 'Plan', actions: ['Edit', 'Reshape', 'Refine'] },
+      { title: 'Plan', actions: ['Edit', 'Reshape', 'Refinement room'] },
     ]);
   });
 
   it('shows a campaign with its description, its start and its members in campaign order', async () => {
     const { element, groups, children } = await shown('Card campaign', CAMPAIGN);
     expect(element.textContent).toContain('Seeded work.');
-    // REFINED: the start, the moves; no plan for a campaign.
+    // REFINED: the start, the served moves; no plan for a campaign.
     expect(groups()).toEqual([
       { title: 'Agent', actions: ['Start campaign'] },
-      { title: 'Status', actions: ['Drop', 'Block'] },
+      { title: 'Status', actions: ['Mark implemented', 'Back to reported', 'Drop', 'Block'] },
     ]);
     expect(element.querySelector('section h2')?.textContent?.trim()).toBe('Members');
     const titles = children()
@@ -154,39 +157,49 @@ describe('WorkItemPage', () => {
     const { harness, entity, groups, press } = await shown('Reported ticket');
     press('Mark refined');
     await settle();
-    const request = http.expectOne(`/projects/api/tickets/${entity.id}/transition`);
+    const request = http.expectOne(`/projects/api/entities/${entity.id}/status`);
     expect(request.request.body).toEqual({ target: 'REFINED' });
-    // The recorded answer of "a verified ticket" (a move to DONE), with the status this move
-    // answers instead.
-    const answer = goldenMaster('a verified ticket', 'transitionTicket');
-    request.flush({ ticket: { ...answer.ticket, status: 'REFINED' } });
+    request.flush(goldenMaster('a reported ticket', 'moveEntityStatus'));
     await settle();
     await harness.fixture.whenStable();
     expect(groups().map((g) => g.actions)).toEqual([
-      ['Dispatch', 'Next phase'],
-      ['Drop', 'Block'],
+      ['Dispatch', 'Implement'],
+      ['Mark implementing', 'Skip to implemented', 'Back to reported', 'Drop', 'Block'],
       ['Edit', 'Reshape'],
     ]);
   });
 
-  it('drops an epic through the epic door', async () => {
+  it('drops an epic through the status door, and offers to reopen it', async () => {
     const { harness, entity, groups, press } = await shown('Implementing epic');
     press('Drop');
     await settle();
-    const request = http.expectOne(`/projects/api/epics/${entity.id}/transition`);
+    const request = http.expectOne(`/projects/api/entities/${entity.id}/status`);
     expect(request.request.body).toEqual({ target: 'DROPPED' });
-    // The recorded answer of "a verified epic" (a move to DONE), with the status this move
-    // answers instead.
-    const answer = goldenMaster('a verified epic', 'transitionEpic');
-    request.flush({ epic: { ...answer.epic, status: 'DROPPED' } });
+    // The recorded answer of "an implementing epic" (a move to IMPLEMENTED), with the status this
+    // move answers instead.
+    const answer = goldenMaster('an implementing epic', 'moveEntityStatus');
+    request.flush({ ...answer, status: 'DROPPED' });
     await settle();
     await harness.fixture.whenStable();
-    expect(groups()).toEqual([]);
+    expect(groups()).toEqual([{ title: 'Status', actions: ['Reopen'] }]);
+  });
+
+  it.each([
+    ['Dispatch', 'FLOW', 'a refined epic'],
+    ['Implement', 'PHASE', 'a reported epic'],
+  ])('presses %s: a dispatch with mode %s', async (label, mode, recorded) => {
+    const { entity, press } = await shown('Refined epic');
+    press(label);
+    await settle();
+    const request = http.expectOne(`/projects/api/entities/${entity.id}/dispatch`);
+    expect(request.request.body).toEqual({ mode });
+    request.flush(goldenMaster(recorded, 'dispatchEntity'));
+    await settle();
   });
 
   it('sends nothing for the actions not built yet', async () => {
     const { press } = await shown('Reported epic');
-    for (const label of ['Dispatch', 'Next phase', 'Block', 'Edit', 'Reshape', 'Refine']) {
+    for (const label of ['Block', 'Edit', 'Reshape', 'Refinement room']) {
       press(label);
     }
     await settle();
@@ -208,6 +221,7 @@ describe('WorkItemPage', () => {
     http
       .expectOne(`/projects/api/projects/${project.id}/entities`)
       .flush(goldenMaster(WORK, 'listProjectEntities'));
+    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;

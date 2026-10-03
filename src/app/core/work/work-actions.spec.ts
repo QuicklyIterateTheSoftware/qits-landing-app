@@ -1,72 +1,122 @@
-import { workActions, type WorkActionGroupId, type WorkActionId } from './work-actions';
+import { goldenMaster } from '../../../testing/golden-masters';
+import type { ArchetypeEntry, LegalMove } from './archetypes.consumes';
+import { lookOf, workActions, type WorkActionGroupId } from './work-actions';
 
-type Table = Partial<Record<WorkActionGroupId, readonly WorkActionId[]>>;
+/** qits-projects' recorded registry ("the archetype registry"), by archetype. */
+const registry: Record<string, ArchetypeEntry> = Object.fromEntries(
+  goldenMaster('the archetype registry', 'listArchetypes').archetypes.map((a: ArchetypeEntry) => [
+    a.archetype,
+    a,
+  ]),
+);
 
-/** `workActions` as a plain object: group id → action ids. */
-const shown = (archetype: string, status: string | null): Table =>
-  Object.fromEntries(workActions(archetype, status).map((g) => [g.id, g.actions]));
+type Table = Partial<Record<WorkActionGroupId, readonly string[]>>;
 
-const AGENT = ['dispatch', 'nextPhase'] as const;
-const PLAN = ['edit', 'reshape'] as const;
+/** `workActions` as group id → each action's label. */
+const shown = (archetype: string, status: string | null, entry = registry[archetype]): Table =>
+  Object.fromEntries(
+    workActions(entry, archetype, status).map((g) => [g.id, g.actions.map((a) => lookOf(a).label)]),
+  );
+
+const PLAN = ['Edit', 'Reshape'];
 
 describe('workActions', () => {
-  // An epic and a ticket share one lifecycle, so one table.
-  describe.each(['EPIC', 'TICKET'])('%s', (archetype) => {
+  // An epic and a ticket hold one lifecycle in the recording, so one table.
+  describe.each(['EPIC', 'TICKET'])('%s, from the registry', (archetype) => {
     it.each<[string, Table]>([
       [
         'REPORTED',
-        { agent: AGENT, status: ['markRefined', 'drop', 'block'], plan: [...PLAN, 'refine'] },
+        {
+          agent: ['Dispatch', 'Refine'],
+          status: ['Mark refined', 'Drop', 'Block'],
+          plan: [...PLAN, 'Refinement room'],
+        },
       ],
-      ['REFINED', { agent: AGENT, status: ['drop', 'block'], plan: PLAN }],
-      ['IMPLEMENTING', { agent: AGENT, status: ['drop', 'block'] }],
-      ['IMPLEMENTED', { agent: AGENT, status: ['drop', 'block'] }],
-      ['VERIFYING', { agent: AGENT, status: ['drop', 'block'] }],
-      ['VERIFIED', { status: ['drop'] }],
+      [
+        'REFINED',
+        {
+          agent: ['Dispatch', 'Implement'],
+          status: ['Mark implementing', 'Skip to implemented', 'Back to reported', 'Drop', 'Block'],
+          plan: PLAN,
+        },
+      ],
+      [
+        'IMPLEMENTING',
+        {
+          agent: ['Dispatch', 'Implement'],
+          status: ['Mark implemented', 'Back to refined', 'Drop', 'Block'],
+        },
+      ],
+      [
+        'IMPLEMENTED',
+        {
+          agent: ['Dispatch', 'Verify'],
+          status: ['Mark verifying', 'Skip to verified', 'Back to implementing', 'Drop', 'Block'],
+        },
+      ],
+      [
+        'VERIFYING',
+        {
+          agent: ['Dispatch', 'Verify'],
+          status: ['Mark verified', 'Back to implemented', 'Drop', 'Block'],
+        },
+      ],
+      ['VERIFIED', { status: ['Mark done', 'Back to verifying', 'Drop'] }],
       ['DONE', {}],
-      ['DROPPED', {}],
+      ['DROPPED', { status: ['Reopen'] }],
     ])('at %s', (status, expected) => {
       expect(shown(archetype, status)).toEqual(expected);
     });
   });
 
-  describe('CAMPAIGN', () => {
-    it.each<[string, Table]>([
-      ['REPORTED', { agent: ['dispatch'], status: ['markRefined', 'drop'] }],
-      ['REFINED', { agent: ['dispatch'], status: ['drop', 'block'] }],
-      ['IMPLEMENTING', { agent: ['dispatch'], status: ['drop'] }],
-      ['IMPLEMENTED', { agent: ['dispatch'], status: ['drop'] }],
-      ['VERIFYING', { agent: ['dispatch'], status: ['drop'] }],
-      ['VERIFIED', { status: ['drop'] }],
-      ['DONE', {}],
-      ['DROPPED', {}],
-    ])('at %s', (status, expected) => {
-      expect(shown('CAMPAIGN', status)).toEqual(expected);
+  it('gives a feature or a task its moves and the plan, but nothing to dispatch', () => {
+    for (const archetype of ['FEATURE', 'TASK']) {
+      expect(shown(archetype, 'REFINED')).toEqual({
+        status: ['Mark implementing', 'Skip to implemented', 'Back to reported', 'Drop'],
+        plan: PLAN,
+      });
+      expect(shown(archetype, 'IMPLEMENTED')).toEqual({
+        status: ['Mark verifying', 'Skip to verified', 'Back to implementing', 'Drop'],
+      });
+    }
+  });
+
+  it('gives a campaign its moves and the interim start, and no plan', () => {
+    expect(shown('CAMPAIGN', 'REFINED')).toEqual({
+      agent: ['Start campaign'],
+      status: ['Mark implemented', 'Back to reported', 'Drop', 'Block'],
+    });
+    expect(shown('CAMPAIGN', 'VERIFIED')).toEqual({
+      status: ['Mark done', 'Back to implemented', 'Drop'],
     });
   });
 
-  // A feature or a task takes its epic's status, and has no lifecycle of its own.
-  describe.each(['FEATURE', 'TASK'])('%s', (archetype) => {
-    it.each<[string | null, Table]>([
-      ['REPORTED', { plan: PLAN }],
-      ['REFINED', { plan: PLAN }],
-      ['IMPLEMENTING', {}],
-      ['IMPLEMENTED', {}],
-      ['VERIFYING', {}],
-      ['VERIFIED', {}],
-      ['DONE', {}],
-      ['DROPPED', {}],
-      [null, {}],
-    ])('under an epic at %s', (status, expected) => {
-      expect(shown(archetype, status)).toEqual(expected);
+  it('lists the flow in the Dispatch popover', () => {
+    const [agent] = workActions(registry['EPIC'], 'EPIC', 'REFINED');
+    expect(lookOf(agent.actions[0]).details).toEqual({
+      title: 'Runs',
+      items: ['implement → IMPLEMENTED', 'verify → VERIFIED'],
     });
   });
 
-  it('offers nothing for an unknown archetype or a missing status', () => {
-    expect(workActions(undefined, 'REPORTED')).toEqual([]);
-    expect(workActions('EPIC', undefined)).toEqual([]);
+  it('labels each kind of move, and an unknown kind as a plain move', () => {
+    const looks = ['FORWARD', 'SKIP', 'BACK', 'DROP', 'REOPEN', 'SIDEWAYS'].map((kind) =>
+      lookOf({ kind: 'move', move: { to: 'REFINED', kind: kind as LegalMove['kind'] } }),
+    );
+    expect(looks).toEqual([
+      { label: 'Mark refined', variant: 'success' },
+      { label: 'Skip to refined', variant: 'muted' },
+      { label: 'Back to refined', variant: 'muted' },
+      { label: 'Drop', variant: 'danger' },
+      { label: 'Reopen', variant: 'muted' },
+      { label: 'Move to refined', variant: 'muted' },
+    ]);
   });
 
-  it('keeps the groups in order: agent, status, plan', () => {
-    expect(workActions('TICKET', 'REPORTED').map((g) => g.id)).toEqual(['agent', 'status', 'plan']);
+  it('offers only the plan until the registry is in', () => {
+    const groups = workActions(undefined, 'EPIC', 'REPORTED');
+    expect(groups.map((g) => [g.id, g.actions.map((a) => lookOf(a).label)])).toEqual([
+      ['plan', PLAN],
+    ]);
   });
 });

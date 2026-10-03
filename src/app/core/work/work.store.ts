@@ -10,17 +10,17 @@ import {
 } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
+  dispatchEntity,
   getCampaign,
   listProjectEntities,
-  transitionEpic,
-  transitionTicket,
+  moveEntityStatus,
 } from '../../api/projects';
 import {
   countsAsWork,
+  DISPATCH_ENTITY,
   GET_CAMPAIGN,
   LIST_PROJECT_ENTITIES,
-  TRANSITION_EPIC,
-  TRANSITION_TICKET,
+  MOVE_ENTITY_STATUS,
   type WorkEntry,
 } from './work.consumes';
 import { FINISH_DELAY_MS } from './finish-delay';
@@ -32,6 +32,9 @@ type Status = 'loading' | 'loaded' | 'error';
 
 /** A work entity's status word. */
 export type WorkStatus = NonNullable<WorkEntry['status']>;
+
+/** What a dispatch press runs: the whole flow, or the next phase only. */
+export type DispatchMode = 'FLOW' | 'PHASE';
 
 export { FINISH_DELAY_MS };
 
@@ -80,6 +83,10 @@ interface WorkState {
   readonly pendingFinishes: Readonly<Record<string, PendingFinish>>;
   /** Each entity's running or failed `transition`, by entity id. */
   readonly transitioning: Readonly<Record<string, FinishState>>;
+  /** Each entity's running or failed `dispatch`, by entity id. */
+  readonly dispatching: Readonly<Record<string, FinishState>>;
+  /** The phase each entity's last dispatch started, by entity id. */
+  readonly dispatched: Readonly<Record<string, string>>;
 }
 
 /**
@@ -93,21 +100,32 @@ interface WorkState {
  *   one request per campaign: membership lives on the campaign, not on the entity. A failed campaign read fails the
  *   project's work, as a partial tree would group wrongly.
  * - `refresh(projectId)` fetches again and keeps showing the old work until the answer is in.
- * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`transitionEpic`,
- *   `transitionTicket`) and writes the answered status into the entry: it leaves the Acceptance list for the
- *   archive. DONE is final in qits-projects; nothing moves it back.
+ * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`moveEntityStatus`) and
+ *   writes the answered status into the entry: it leaves the Acceptance list for the archive. DONE
+ *   is final in qits-projects; nothing moves it back.
  * - `finishLater(projectId, entry)` is the Acceptance list's finish: the item is hidden at once (`hidden`),
  *   and `finish` runs after {@link FINISH_DELAY_MS}, unless `undoFinish(id)` takes it back first.
  *   On failure the item shows again and the pending finish stays `failed` until `dismissFinish`.
  *   Leaving the page (`pagehide`) sends every waiting finish at once: the user had their chance to
  *   undo, and the request is sent with `keepalive`, so it outlives the page.
- * - `transition(projectId, entry, target)` moves an epic or a ticket to any status its lifecycle
- *   allows (the work item page's Mark refined and Drop), through the same doors as `finish`, and
+ * - `transition(projectId, entry, target)` moves any work item to a status the archetype registry
+ *   serves for it (the work item page's Status actions), through the same door as `finish`, and
  *   writes the answered status into the entry. `transitioning` holds a running or failed move.
+ * - `dispatch(entry, mode)` presses dispatch (`dispatchEntity`): `FLOW` runs every
+ *   phase left, `PHASE` the next one. The answer names the phase it started (`dispatched`); the
+ *   status the platform moves the item to arrives as an event, like any other move.
+ *   `dispatching` holds a running or failed press.
  */
 export const WorkStore = signalStore(
   { providedIn: 'root' },
-  withState<WorkState>({ byProject: {}, finishing: {}, pendingFinishes: {}, transitioning: {} }),
+  withState<WorkState>({
+    byProject: {},
+    finishing: {},
+    pendingFinishes: {},
+    transitioning: {},
+    dispatching: {},
+    dispatched: {},
+  }),
   withComputed((store) => ({
     /** The ids of items the lists do not show: their finish is waiting or being sent. */
     hidden: computed(
@@ -160,6 +178,11 @@ export const WorkStore = signalStore(
       patchState(store, { transitioning: value ? { ...rest, [entityId]: value } : rest });
     }
 
+    function setDispatching(entityId: string, value: FinishState | undefined): void {
+      const { [entityId]: _, ...rest } = store.dispatching();
+      patchState(store, { dispatching: value ? { ...rest, [entityId]: value } : rest });
+    }
+
     /** Sets or drops a pending finish; a finish already there keeps its place in the order. */
     function setPending(entityId: string, value: PendingFinish | undefined): void {
       const { [entityId]: _, ...rest } = store.pendingFinishes();
@@ -174,8 +197,8 @@ export const WorkStore = signalStore(
     }
 
     /**
-     * Moves an epic or a ticket to `target` through its lifecycle door, and writes the answered
-     * status into its entry. The answered status, or undefined when the move failed.
+     * Moves an entity to `target` through the status door, and writes the answered status into its
+     * entry. The answered status, or undefined when the move failed.
      */
     async function move(
       projectId: string,
@@ -185,15 +208,11 @@ export const WorkStore = signalStore(
       const id = entry.id;
       if (!id) return undefined;
       // `keepalive`: a finish sent as the page is left must still arrive.
-      const options = { path: { id }, body: { target }, keepalive: true };
-      const status =
-        entry.archetype === 'EPIC'
-          ? await consume(transitionEpic(options), TRANSITION_EPIC).then(({ data, error }) =>
-              error === undefined ? data?.epic?.status : undefined,
-            )
-          : await consume(transitionTicket(options), TRANSITION_TICKET).then(({ data, error }) =>
-              error === undefined ? data?.ticket?.status : undefined,
-            );
+      const { data, error } = await consume(
+        moveEntityStatus({ path: { id }, body: { target }, keepalive: true }),
+        MOVE_ENTITY_STATUS,
+      );
+      const status = error === undefined ? data?.status : undefined;
       if (!status) return undefined;
       settled.set(id, { status, at: ++clock });
       const work = store.byProject()[projectId];
@@ -278,13 +297,27 @@ export const WorkStore = signalStore(
       },
       /** Moves `entry` to DONE now. */
       finish,
-      /** Moves an epic or a ticket to `target` (Mark refined, Drop); a running move is not repeated. */
+      /** Moves `entry` to `target` (a Status action); a running move is not repeated. */
       async transition(projectId: string, entry: WorkEntry, target: WorkStatus): Promise<void> {
         const id = entry.id;
         if (!id || store.transitioning()[id] === 'running') return;
         setTransitioning(id, 'running');
         const status = await move(projectId, entry, target);
         setTransitioning(id, status ? undefined : 'error');
+      },
+      /** Presses dispatch for `entry`; a running press is not repeated. */
+      async dispatch(entry: WorkEntry, mode: DispatchMode): Promise<void> {
+        const id = entry.id;
+        if (!id || store.dispatching()[id] === 'running') return;
+        setDispatching(id, 'running');
+        const { data, error } = await consume(
+          dispatchEntity({ path: { id }, body: { mode } }),
+          DISPATCH_ENTITY,
+        );
+        const failed = error !== undefined || !data;
+        setDispatching(id, failed ? 'error' : undefined);
+        const phase = !failed && 'dispatch' in data ? data.dispatch?.phase : undefined;
+        if (phase) patchState(store, { dispatched: { ...store.dispatched(), [id]: phase } });
       },
       /** Hides `entry` and moves it to DONE after {@link FINISH_DELAY_MS}, unless undone first. */
       finishLater(projectId: string, entry: WorkEntry): void {

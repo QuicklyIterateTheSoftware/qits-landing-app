@@ -15,7 +15,7 @@ import { openRecordedWork } from '../../../../../../../testing/browser/recorded-
  * Screenshots of one work item's page and its actions, answered with qits-projects' golden masters:
  * the project list as recorded, and the work of "a project with work in every status" (one epic and
  * one ticket per status), "an epic with features and tasks" or "a campaign with work in every
- * phase" (with the campaign's read). The page follows transitions
+ * phase" (with the campaign's read), and the archetype registry. The page follows transitions
  * through the event stream; the stream here never connects.
  */
 
@@ -47,7 +47,19 @@ describe('WorkItemPage (screenshots)', () => {
   async function render(state: string, title: string) {
     const work = await goldenMaster(state, 'listProjectEntities');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
-    const { element } = await openRecordedWork(http, 'work/detail', entity.qualifiedId, state);
+    const { element, harness } = await openRecordedWork(
+      http,
+      'work/detail',
+      entity.qualifiedId,
+      state,
+    );
+    // The page's actions come from the archetype registry.
+    http
+      .expectOne('/projects/api/entities/archetypes')
+      .flush(await goldenMaster('the archetype registry', 'listArchetypes'));
+    await new Promise((resolve) => setTimeout(resolve));
+    await harness.fixture.whenStable();
+    harness.fixture.detectChanges();
     element.style.width = '760px';
     return page.elementLocator(element);
   }
@@ -75,10 +87,12 @@ describe('WorkItemPage (screenshots)', () => {
     await expect.element(element).toMatchScreenshot('implementing-epic');
   });
 
-  it('offers only Drop for a verified ticket', async () => {
+  it('offers only its moves for a verified ticket', async () => {
     const element = await render('a project with work in every status', 'Verified ticket');
+    await expect
+      .element(element.getByRole('group', { name: 'Status' }))
+      .toHaveTextContent('Status Mark done Back to verifying Drop');
     expect(element.getByRole('group').elements()).toHaveLength(1);
-    await expect.element(element.getByRole('group', { name: 'Status' })).toHaveTextContent('Drop');
     await expect.element(element).toMatchScreenshot('verified-ticket');
   });
 
@@ -88,9 +102,12 @@ describe('WorkItemPage (screenshots)', () => {
     await expect.element(element).toMatchScreenshot('done-epic');
   });
 
-  it('offers Edit and Reshape for a feature of a refined epic', async () => {
+  it('offers its own moves, Edit and Reshape for a refined feature', async () => {
     const element = await render('an epic with features and tasks', 'Open feature');
-    expect(element.getByRole('group').elements()).toHaveLength(1);
+    await expect
+      .element(element.getByRole('group', { name: 'Status' }))
+      .toHaveTextContent('Mark implementing');
+    expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
     const buttons = element.getByRole('group', { name: 'Plan' }).getByRole('button');
     expect(buttons.elements().map((b) => b.textContent?.trim())).toEqual(['Edit', 'Reshape']);
     await expect.element(element).toMatchScreenshot('feature');

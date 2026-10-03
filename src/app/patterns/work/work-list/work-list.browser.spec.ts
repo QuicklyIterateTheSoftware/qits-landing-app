@@ -166,10 +166,10 @@ describe('WorkList (screenshots)', () => {
     await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
     const sent = http.match(() => true);
     expect(sent.map((request) => `${request.request.method} ${request.request.url}`)).toEqual([
-      `POST /projects/api/epics/${epic.id}/transition`,
+      `POST /projects/api/entities/${epic.id}/status`,
     ]);
     expect(sent[0].request.body).toEqual({ target: 'DONE' });
-    sent[0].flush(await goldenMaster(VERIFIED_EPIC, 'transitionEpic'));
+    sent[0].flush(await goldenMaster(VERIFIED_EPIC, 'moveEntityStatus'));
     await flushMicrotasks();
     harness.fixture.detectChanges();
     await expect.element(locator).not.toHaveTextContent('finished');

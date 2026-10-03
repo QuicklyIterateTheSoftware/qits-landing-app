@@ -1,13 +1,27 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
-import { workActions, type WorkActionGroupId, type WorkActionId } from '$core/work/work-actions';
+import { ArchetypesStore } from '$core/work/archetypes.store';
+import {
+  lookOf,
+  workActions,
+  type WorkAction,
+  type WorkActionGroupId,
+} from '$core/work/work-actions';
 import type { WorkEntry } from '$core/work/work.consumes';
-import { WorkStore } from '$core/work/work.store';
-import type { Action, ActionGroup, ActionVariant } from '$ui/components/action-button/action';
+import { WorkStore, type WorkStatus } from '$core/work/work.store';
+import type { Action, ActionGroup } from '$ui/components/action-button/action';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
@@ -19,18 +33,6 @@ const GROUP_TITLES: Readonly<Record<WorkActionGroupId, string>> = {
   agent: 'Agent',
   status: 'Status',
   plan: 'Plan',
-};
-
-/** Each action's label and look. */
-const LOOKS: Readonly<Record<WorkActionId, { label: string; variant: ActionVariant }>> = {
-  dispatch: { label: 'Dispatch', variant: 'success' },
-  nextPhase: { label: 'Next phase', variant: 'muted' },
-  markRefined: { label: 'Mark refined', variant: 'success' },
-  drop: { label: 'Drop', variant: 'danger' },
-  block: { label: 'Block', variant: 'muted' },
-  edit: { label: 'Edit', variant: 'muted' },
-  reshape: { label: 'Reshape', variant: 'muted' },
-  refine: { label: 'Refine', variant: 'muted' },
 };
 
 /** What a work item's page draws below its header. */
@@ -49,14 +51,15 @@ const notBuiltYet = (): void => undefined;
 
 /**
  * One work item's page, at `/projects/<slug>/work/detail/<qualified id>`, reached from any card on
- * the board or in a list. Its title, and its actions by archetype and status (`workActions` in
- * `$core/work/work-actions.ts`). Below, its children, drawn as the lists draw them, each linking to
+ * the board or in a list. Its title, and its actions by archetype and status, from qits-projects'
+ * archetype registry (`ArchetypesStore`, `workActions` in `$core/work/work-actions.ts`). Below, its children, drawn as the lists draw them, each linking to
  * its own page: a campaign's members in campaign order (with its description, as plain text), an
  * epic's features with their tasks, a feature's tasks (the feature as its row). A ticket or a task
  * has none. Everything comes from what `SelectedWork` loads already.
  *
- * Wired: Mark refined and Drop for an epic or a ticket (`WorkStore.transition`). Every other press
- * is a placeholder for now (`notBuiltYet`); see `callbackOf`.
+ * Wired: every Status move (`WorkStore.transition`, the item's entry takes the answered status),
+ * Dispatch (`WorkStore.dispatch`, the whole flow) and the next phase's button (that phase alone).
+ * Every other press is a placeholder for now (`notBuiltYet`); see `callbackOf`.
  */
 @Component({
   selector: 'app-work-item-page',
@@ -120,6 +123,7 @@ export class WorkItemPage {
   protected readonly work = inject(SelectedWork);
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(WorkStore);
+  private readonly archetypes = inject(ArchetypesStore);
 
   /** The qualified id in the URL. */
   protected readonly id = toSignal(
@@ -173,47 +177,46 @@ export class WorkItemPage {
     }
   });
 
-  /** The actions for the item's archetype and status; a feature or task takes its epic's. */
+  /** The actions for the item's archetype and status, from the archetype registry. */
   protected readonly actions = computed((): readonly ActionGroup[] => {
     const entry = this.entry();
     if (!entry) return [];
+    const registry = this.archetypes.of(entry.archetype);
     const status = this.work.graph().statusOf(entry);
-    return workActions(entry.archetype, status).map((group) => ({
+    return workActions(registry, entry.archetype, status).map((group) => ({
       title: GROUP_TITLES[group.id],
-      actions: group.actions.map((id) => this.action(id, entry)),
+      actions: group.actions.map((action) => this.action(action, entry)),
     }));
   });
 
   constructor() {
     this.work.followTransitions(inject(DestroyRef));
+    // In the browser only, as the work: the server render has no session cookie to send.
+    if (isPlatformBrowser(inject(PLATFORM_ID))) void this.archetypes.load();
   }
 
-  private action(id: WorkActionId, entry: WorkEntry): Action {
-    const look = LOOKS[id];
-    const label =
-      id === 'dispatch' && entry.archetype === 'CAMPAIGN' ? 'Start campaign' : look.label;
-    return { label, variant: look.variant, callback: this.callbackOf(id, entry) };
+  private action(action: WorkAction, entry: WorkEntry): Action {
+    return { ...lookOf(action), callback: this.callbackOf(action, entry) };
   }
 
-  private callbackOf(id: WorkActionId, entry: WorkEntry): () => void {
+  private callbackOf(action: WorkAction, entry: WorkEntry): () => void {
     const projectId = this.selected.project()?.id;
-    const lifecycle = entry.archetype === 'EPIC' || entry.archetype === 'TICKET';
-    switch (id) {
-      case 'markRefined':
-      case 'drop':
-        // TODO: a campaign moves through its own door (`POST /campaigns/{id}/transition`), which
-        // has no recorded provider state and no pact yet.
-        if (!lifecycle || !projectId) return notBuiltYet;
-        return () =>
-          void this.store.transition(projectId, entry, id === 'drop' ? 'DROPPED' : 'REFINED');
+    switch (action.kind) {
+      case 'move': {
+        const target = action.move.to as WorkStatus | undefined;
+        if (!projectId || !target) return notBuiltYet;
+        return () => void this.store.transition(projectId, entry, target);
+      }
       case 'dispatch':
+        // TODO: the old UI then links the workspace the dispatch stood up.
+        return () => void this.store.dispatch(entry, 'FLOW');
       case 'nextPhase':
-        // TODO: `POST /entities/{id}/dispatch` with `{mode: FLOW}` (Dispatch, a campaign's start)
-        // or `{mode: PHASE}` (Next phase); the old UI then links the workspace it stood up. It asks
-        // twice before a campaign's start ("Confirm start campaign?"): that start authorises every
-        // ungated dispatch in the campaign. Needs a recorded provider state and a pact interaction
-        // first. A campaign's start shows until VERIFIED (`workActions`), but the service starts a
-        // campaign only from REFINED: interim, until the archetype registry says when.
+        return () => void this.store.dispatch(entry, 'PHASE');
+      case 'startCampaign':
+        // TODO: `POST /entities/{id}/dispatch` starts a campaign, after asking twice ("Confirm
+        // start campaign?"): that start authorises every ungated dispatch in the campaign. Needs a
+        // recorded provider state and a pact interaction first. Interim: the registry serves no
+        // campaign phases, so when it shows is `workActions`' own rule.
         return notBuiltYet;
       case 'block':
         // TODO: the old UI opens a form for the reason (required), then sends
