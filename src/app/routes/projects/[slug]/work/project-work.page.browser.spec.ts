@@ -7,10 +7,9 @@ import { commands, page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { ProjectWorkPage } from './project-work.page';
-import { ProjectWorkArchivePage } from '../work-archive/project-work-archive.page';
 
 /**
- * Screenshots of a project's Work page (board and backlog) and its Archive, answered with
+ * Screenshots of a project's Work page (board and backlog), answered with
  * qits-projects' golden masters: the project list as recorded, and "a project with work in every
  * status" (one epic and one ticket per status, DROPPED included) for its work.
  */
@@ -24,10 +23,7 @@ describe('Project work (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([
-          { path: 'projects/:slug/work', component: ProjectWorkPage },
-          { path: 'projects/:slug/work-archive', component: ProjectWorkArchivePage },
-        ]),
+        provideRouter([{ path: 'projects/:slug/work', component: ProjectWorkPage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -38,16 +34,12 @@ describe('Project work (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  /** The page at `section` of the recorded project, with the list and its work answered. */
-  async function shown(
-    section: 'work' | 'work-archive',
-    answerWork = true,
-    workState = 'a project with work in every status',
-  ) {
+  /** The Work page of the recorded project, with the list and its work answered. */
+  async function shown(answerWork = true, workState = 'a project with work in every status') {
     const list = await commands.goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/${section}`);
+    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work`);
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
@@ -69,7 +61,7 @@ describe('Project work (screenshots)', () => {
   }
 
   it('shows the board and the backlog', async () => {
-    const { element } = await shown('work');
+    const { element } = await shown();
     await expect.element(element.getByRole('heading', { name: 'Board' })).toBeVisible();
     await expect.element(element).toHaveTextContent('Refined ticket');
     await expect.element(element).toHaveTextContent('Implemented epic');
@@ -80,23 +72,15 @@ describe('Project work (screenshots)', () => {
   });
 
   it('nests an epic’s features and tasks in its lane', async () => {
-    const { element } = await shown('work', true, 'an epic with features and tasks');
+    const { element } = await shown(true, 'an epic with features and tasks');
     await expect.element(element).toHaveTextContent('Nested epic');
     await expect.element(element).toHaveTextContent('Shipped feature');
     await expect.element(element).toHaveTextContent('Open task');
     await expect.element(element).toMatchScreenshot('work-nested');
   });
 
-  it('shows the archive: the work in a final state', async () => {
-    const { element } = await shown('work-archive');
-    await expect.element(element).toHaveTextContent('Done ticket');
-    await expect.element(element).toHaveTextContent('Dropped epic');
-    await expect.element(element).not.toHaveTextContent('Reported ticket');
-    await expect.element(element).toMatchScreenshot('archive');
-  });
-
   it('shows that the work is loading', async () => {
-    const { element, work } = await shown('work', false);
+    const { element, work } = await shown(false);
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(element).toMatchScreenshot('work-loading');
     work.flush(null, { status: 500, statusText: 'Server Error' });

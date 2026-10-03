@@ -40,6 +40,31 @@ const parkPointer: BrowserCommand<[]> = async (context) => {
 };
 
 /**
+ * `stubOrigin`: answers every request to `origin` with a plain grey page, from Playwright, without
+ * touching the network. A frame pointed at another application (the editor's) then shows the same
+ * pixels on every run, and no remote page is ever loaded. Asking again for the same origin replaces
+ * the earlier stub.
+ */
+const STUB_PAGE =
+  '<!doctype html><html><body style="margin:0;height:100vh;background:#e5e7eb"></body></html>';
+const stubOrigin: BrowserCommand<[origin: string]> = async (context, origin) => {
+  if (context.provider.name !== 'playwright') return;
+  type Route = { fulfill(response: { contentType: string; body: string }): Promise<void> };
+  const playwrightPage = (
+    context as unknown as {
+      page: {
+        unroute(url: string): Promise<void>;
+        route(url: string, handler: (route: Route) => Promise<void>): Promise<void>;
+      };
+    }
+  ).page;
+  await playwrightPage.unroute(`${origin}/**`);
+  await playwrightPage.route(`${origin}/**`, (route) =>
+    route.fulfill({ contentType: 'text/html', body: STUB_PAGE }),
+  );
+};
+
+/**
  * Chromium's flags for the screenshot tests: `--disable-partial-raster`. By default Chromium
  * re-rasters only the invalidated part of a tile, and the antialiased edge of a rounded corner
  * drawn that way can come out one colour step off the whole-tile result (seen on the cards: 2 to
@@ -67,7 +92,7 @@ export default defineConfig({
   plugins: [chromiumFlags],
   test: {
     browser: {
-      commands: { goldenMaster, parkPointer },
+      commands: { goldenMaster, parkPointer, stubOrigin },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A
       // reference that does not match writes its actual and diff images to .vitest-attachments/.
       screenshotFailures: false,

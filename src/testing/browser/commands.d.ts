@@ -11,5 +11,7 @@ declare module 'vitest/browser' {
     ) => Promise<T>;
     /** Moves the mouse to the page's top-left corner, so no element is hovered. */
     parkPointer: () => Promise<void>;
+    /** Answers every request to `origin` with a plain grey page, without the network. */
+    stubOrigin: (origin: string) => Promise<void>;
   }
 }
