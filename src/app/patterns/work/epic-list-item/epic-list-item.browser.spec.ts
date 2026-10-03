@@ -100,22 +100,22 @@ describe('EpicListItem (screenshots)', () => {
     expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
   });
 
-  it('every task done (VERIFIED, in Acceptance): collapsed, then expanded', async () => {
+  it('every task done (VERIFIED, in Acceptance): expanded, then collapsed', async () => {
     const { element, locator, harness } = await shown(
       'acceptance',
       VERIFIED_COMPLETE,
       'contract-00000001-1',
       'Verified epic',
     );
-    // A verified epic's tasks are all done: the lane starts collapsed to its summary.
-    await expect.element(locator).toHaveTextContent('2 / 2 ✅');
-    await expect.element(locator).toMatchScreenshot('verified-all-done-collapsed');
+    // The lane starts expanded; collapsed, it sums up its tasks as all done.
+    await expect.element(locator).toHaveTextContent('Second shipped task');
+    await expect.element(locator).toMatchScreenshot('verified-all-done-expanded');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
-    await expect.element(locator).toHaveTextContent('Second shipped task');
-    await expect.element(locator).toMatchScreenshot('verified-all-done-expanded');
+    await expect.element(locator).toHaveTextContent('2 / 2 ✅');
+    await expect.element(locator).toMatchScreenshot('verified-all-done-collapsed');
   });
 
   it('every task done (DONE): collapsed, then expanded', async () => {
