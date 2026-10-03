@@ -5,7 +5,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
  * children (cards) stacked across it, and a ┘ highlight: `[row-footer]` (a title) left-aligned in
  * a bar along its bottom, which ends at the row's right edge where a strip in the lane's right
  * gutter takes over, holding `[row-id]` written bottom to top at its top. Only the outer
- * bottom-right corner is rounded. A link in the footer stretches over the row and its strip and
+ * bottom-right corner is rounded. `[row-footer-end]` (a `ui-tag-link`, say) sits at the bar's
+ * right end, on the title's line. A link in the footer stretches over the row and its strip and
  * casts a shadow while hovered; cards sit above it with their own links.
  */
 @Component({
@@ -24,9 +25,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     </span>
     <ng-content />
     <div
-      class="flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
     >
       <ng-content select="[row-footer]" />
+      <ng-content select="[row-footer-end]" />
     </div>
   `,
 })

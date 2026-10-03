@@ -8,7 +8,8 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
  * right gutter beside the row, at its top, the lane's chin (`--lane-chin`) below the row's top
  * edge. Bar and strip form one ┘ in the epic bar's hue
  * one step lighter: the bar ends at the row's right edge, where the strip begins, so they never
- * overlap; only the outer bottom-right corner is rounded. A link in the footer stretches over the
+ * overlap; only the outer bottom-right corner is rounded. `[row-footer-end]` (a `ui-tag-link`,
+ * say) sits at the bar's right end, on the title's line. A link in the footer stretches over the
  * row and its strip, so the id opens the feature too: the row is the positioning box, and cards sit above it, so hovering a card shadows the
  * card, not the row.
  */
@@ -30,9 +31,10 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </span>
     <ng-content />
     <div
-      class="col-span-full flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-span-full flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
     >
       <ng-content select="[row-footer]" />
+      <ng-content select="[row-footer-end]" />
     </div>
   `,
 })
