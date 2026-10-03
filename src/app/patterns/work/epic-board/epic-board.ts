@@ -79,9 +79,14 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           <app-workspace-link [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
         </header>
       }
-      <!-- pb-6: the board's columns reach 1.5rem past its own box (for what comes after it on a
-           page); here the board is the end, so the box, and with it the strip, reaches them. -->
-      <ui-board class="col-span-full row-start-2 pb-6" [columns]="columns()" gutter>
+      <!-- The board ends with its last row's title bar: no chin, as nothing here folds. pb-6: the
+           board's columns reach 1.5rem past its own box (for what comes after it on a page);
+           here the board is the end, so the box, and with it the strip, reaches them. -->
+      <ui-board
+        class="col-span-full row-start-2 pb-6 [&_ui-board-row:last-of-type]:mb-0"
+        [columns]="columns()"
+        gutter
+      >
         @for (row of rows(); track row.node.entry.id) {
           <ui-board-row class="mb-4" [idLength]="row.node.entry.qualifiedId?.length ?? 0">
             @for (card of row.cards; track card.node.entry.id) {
