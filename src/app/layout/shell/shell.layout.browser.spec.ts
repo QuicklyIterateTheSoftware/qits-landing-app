@@ -159,10 +159,18 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('project');
   });
 
-  it('keeps Work current on a page of the work section, named in the breadcrumb', async () => {
+  it('lists the work section’s pages below Work and marks the current one', async () => {
     const { layout } = await renderProject('/work/acceptance');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    // Work holds the current page; the page itself is the current link.
     await expect
-      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Work' }))
+      .element(navigation.getByRole('link', { name: 'Work' }))
+      .toHaveAttribute('aria-current', 'true');
+    for (const label of ['Refinement', 'In Progress', 'Archive']) {
+      await expect.element(navigation.getByRole('link', { name: label })).toBeVisible();
+    }
+    await expect
+      .element(navigation.getByRole('link', { name: 'Acceptance' }))
       .toHaveAttribute('aria-current', 'page');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();

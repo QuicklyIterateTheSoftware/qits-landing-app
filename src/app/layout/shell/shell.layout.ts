@@ -12,6 +12,8 @@ import { Breadcrumbs } from '$ui/components/breadcrumbs/breadcrumbs';
 export interface NavLink {
   readonly label: string;
   readonly path: string;
+  /** The section's own pages, listed below it in the sidebar while the section is open. */
+  readonly children?: readonly NavLink[];
 }
 
 /**
@@ -102,12 +104,30 @@ export interface NavLink {
           @for (link of links(); track link.path) {
             <li>
               <a
-                class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
+                class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900 aria-[current=true]:font-semibold aria-[current=true]:text-gray-900"
                 [routerLink]="link.path"
-                [attr.aria-current]="link.path === section()?.path ? 'page' : null"
+                [attr.aria-current]="currentOf(link)"
                 (click)="closeNav()"
                 >{{ link.label }}</a
               >
+              <!-- The open section's pages, indented below it; switched by class, so the server
+                   render hydrates as is. -->
+              <ul
+                class="m-0 mt-0.5 mb-1 ml-3 list-none border-l border-gray-200 pl-2"
+                [class.hidden]="!link.children?.length || link.path !== section()?.path"
+              >
+                @for (child of link.children ?? []; track child.path) {
+                  <li>
+                    <a
+                      class="block rounded-md px-3 py-[0.3rem] text-sm text-gray-600 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
+                      [routerLink]="child.path"
+                      [attr.aria-current]="isAt(child) ? 'page' : null"
+                      (click)="closeNav()"
+                      >{{ child.label }}</a
+                    >
+                  </li>
+                }
+              </ul>
             </li>
           }
         </ul>
@@ -133,7 +153,14 @@ export class ShellLayout {
     return slug === undefined
       ? []
       : [
-          { label: 'Work', path: `/projects/${slug}/work` },
+          {
+            label: 'Work',
+            path: `/projects/${slug}/work`,
+            children: WORK_TABS.map((tab) => ({
+              label: tab.label,
+              path: `/projects/${slug}/work/${tab.segment}`,
+            })),
+          },
           { label: 'Editor', path: `/projects/${slug}/editor` },
           { label: 'Repositories', path: `/projects/${slug}/repositories` },
           { label: 'Observability', path: `/projects/${slug}/observability` },
@@ -174,6 +201,20 @@ export class ShellLayout {
     const slug = this.selected.slug();
     return slug === undefined ? undefined : `/projects/${slug}/setup`;
   });
+
+  /** Whether the URL is `link`'s page or one below it. */
+  protected isAt(link: NavLink): boolean {
+    return within(this.selected.url(), link.path);
+  }
+
+  /**
+   * A section's `aria-current`: `page` when it is the current page, `true` when the current page
+   * is one of its own pages in the sidebar below it (or another page of the section).
+   */
+  protected currentOf(link: NavLink): 'page' | 'true' | null {
+    if (link.path !== this.section()?.path) return null;
+    return link.children?.some((child) => this.isAt(child)) ? 'true' : 'page';
+  }
 
   protected readonly navOpen = signal(false);
 
