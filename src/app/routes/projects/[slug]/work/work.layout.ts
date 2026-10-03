@@ -5,9 +5,9 @@ import { WORK_TABS } from '$core/work/work-tabs';
 
 /**
  * A project's work section, at `/projects/<slug>/work/…`: a row of links to its pages
- * (Refinement, In Progress, Acceptance, Archive, in the order work moves through them), each with
- * the number of epics and tickets on it once the work is loaded, and the page below. `/work` opens
- * In Progress.
+ * (Campaigns, then Refinement, In Progress, Acceptance, Archive, in the order work moves through
+ * them), each with its count once the work is loaded (campaigns, or epics and tickets), and the
+ * page below. `/work` opens In Progress.
  *
  * The pages share the open project's work (`SelectedWork`, one request per project), so moving
  * between them fetches nothing. The layout keeps that work current while any of them is open.
@@ -47,7 +47,11 @@ export class WorkLayout {
   /** The tabs, each with its count (0 until the work is loaded, and hidden until then). */
   protected readonly tabs = computed(() => {
     const graph = this.work.graph();
-    return WORK_TABS.map((tab) => ({ ...tab, count: graph.count(tab.phase) }));
+    return WORK_TABS.map((tab) => ({
+      segment: tab.segment,
+      label: tab.label,
+      count: tab.count(graph),
+    }));
   });
 
   constructor() {

@@ -20,6 +20,8 @@ import { BOARD_COLUMNS } from './work-statuses';
  * - **Order**: one order everywhere, independent of status, column and update time
  *   (`byNumber`): the roots (epics and tickets together) by the number of their qualified id, and
  *   inside each parent its children the same way. Removing an item leaves the rest in place.
+ * - **Campaigns** (`campaigns`, `membersOf`): span the phases, so they have a list of their own.
+ *   Each campaign's members come in campaign order, each with its whole subtree.
  */
 
 export type Phase = 'backlog' | 'board' | 'acceptance' | 'archive';
@@ -64,7 +66,7 @@ export class WorkGraph {
    */
   constructor(
     private readonly entries: readonly WorkEntry[],
-    campaignMembers: Readonly<Record<string, readonly string[]>> = {},
+    private readonly campaignMembers: Readonly<Record<string, readonly string[]>> = {},
   ) {
     for (const entry of entries) if (entry.id) this.byId.set(entry.id, entry);
     for (const entry of entries) {
@@ -85,6 +87,24 @@ export class WorkGraph {
   /** The campaigns `entry` is a member of. */
   campaignsOf(entry: WorkEntry): readonly WorkEntry[] {
     return (entry.id && this.campaignsByMember.get(entry.id)) || [];
+  }
+
+  /** The project's campaigns, in the board's order (`byNumber`). */
+  campaigns(): readonly WorkEntry[] {
+    return this.entries.filter((entry) => entry.archetype === 'CAMPAIGN').sort(byNumber);
+  }
+
+  /**
+   * A campaign's members, in campaign order, each with its whole subtree (an epic's features and
+   * tasks). A member that is not in the list (hidden while its finish waits) is left out. A
+   * member's `campaigns` leave out `campaign` itself: the page it is on already names it.
+   */
+  membersOf(campaign: WorkEntry): readonly WorkNode[] {
+    const ids = (campaign.id && this.campaignMembers[campaign.id]) || [];
+    return ids
+      .map((id) => this.byId.get(id))
+      .filter((entry): entry is WorkEntry => !!entry)
+      .map((entry) => this.subtree(entry, campaign));
   }
 
   /** The entity's phase, from its own status or its nearest ancestor's; undefined if none has one. */
@@ -145,6 +165,16 @@ export class WorkGraph {
     if (phase !== 'board') return { entry, children, context, campaigns };
     const column = context ? undefined : this.columnOf(entry);
     return { entry, children, context, column, campaigns };
+  }
+
+  /** `entry` with every descendant, none of them context; `campaign` left out of their tags. */
+  private subtree(entry: WorkEntry, campaign: WorkEntry): WorkNode {
+    const children = (this.childrenOf.get(entry.id!) ?? [])
+      .map((id) => this.byId.get(id)!)
+      .sort(byNumber)
+      .map((child) => this.subtree(child, campaign));
+    const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign.id);
+    return { entry, children, context: false, campaigns };
   }
 
   /** The entity itself if it has a status, else its nearest ancestor that has one. */

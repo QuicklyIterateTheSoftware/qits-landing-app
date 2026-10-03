@@ -5,6 +5,10 @@ describe('workSubpage', () => {
   const work = `${project}/work`;
 
   it('names each tab', () => {
+    expect(workSubpage(`${work}/campaigns`, project)).toEqual({
+      label: 'Campaigns',
+      path: `${work}/campaigns`,
+    });
     expect(workSubpage(`${work}/refinement`, project)).toEqual({
       label: 'Refinement',
       path: `${work}/refinement`,

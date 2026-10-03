@@ -1,23 +1,25 @@
-import type { Phase } from './work-tree';
+import type { WorkGraph } from './work-tree';
 
 /** One page of the work section, below `/projects/<slug>/work`. */
 export interface WorkTab {
   /** The URL segment after `work/`. */
   readonly segment: string;
   readonly label: string;
-  /** The phase of work the page lists (`work-tree.ts`). */
-  readonly phase: Phase;
+  /** The number the tab shows once the work is loaded. */
+  readonly count: (graph: WorkGraph) => number;
 }
 
 /**
- * The work section's pages, in the order work moves through them: the backlog, the board, the
- * acceptance list and the archive. `/work` itself opens In Progress.
+ * The work section's pages: first the campaigns, which span the phases, then the phases in the
+ * order work moves through them: the backlog, the board, the acceptance list and the archive.
+ * `/work` itself opens In Progress.
  */
 export const WORK_TABS: readonly WorkTab[] = [
-  { segment: 'refinement', label: 'Refinement', phase: 'backlog' },
-  { segment: 'in-progress', label: 'In Progress', phase: 'board' },
-  { segment: 'acceptance', label: 'Acceptance', phase: 'acceptance' },
-  { segment: 'archive', label: 'Archive', phase: 'archive' },
+  { segment: 'campaigns', label: 'Campaigns', count: (graph) => graph.campaigns().length },
+  { segment: 'refinement', label: 'Refinement', count: (graph) => graph.count('backlog') },
+  { segment: 'in-progress', label: 'In Progress', count: (graph) => graph.count('board') },
+  { segment: 'acceptance', label: 'Acceptance', count: (graph) => graph.count('acceptance') },
+  { segment: 'archive', label: 'Archive', count: (graph) => graph.count('archive') },
 ];
 
 /**

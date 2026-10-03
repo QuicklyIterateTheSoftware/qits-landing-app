@@ -37,10 +37,12 @@ describe('WorkLayout', () => {
           {
             path: 'projects/:slug/work',
             component: WorkLayout,
-            children: ['refinement', 'in-progress', 'acceptance', 'archive'].map((path) => ({
-              path,
-              component: TestPage,
-            })),
+            children: ['campaigns', 'refinement', 'in-progress', 'acceptance', 'archive'].map(
+              (path) => ({
+                path,
+                component: TestPage,
+              }),
+            ),
           },
         ]),
         provideHttpClient(),
@@ -80,26 +82,49 @@ describe('WorkLayout', () => {
     return { harness, links, counts, answered };
   }
 
-  it('links the four pages in workflow order and marks the current one', async () => {
+  it('links Campaigns, then the four phases in workflow order, and marks the current one', async () => {
     const { links, answered } = await shown('acceptance');
     await answered('a project with no work');
     expect(links().map((a) => [a.firstChild?.textContent?.trim(), a.getAttribute('href')])).toEqual(
       [
+        ['Campaigns', `/projects/${project.slug}/work/campaigns`],
         ['Refinement', `/projects/${project.slug}/work/refinement`],
         ['In Progress', `/projects/${project.slug}/work/in-progress`],
         ['Acceptance', `/projects/${project.slug}/work/acceptance`],
         ['Archive', `/projects/${project.slug}/work/archive`],
       ],
     );
-    expect(links().map((a) => a.getAttribute('aria-current'))).toEqual([null, null, 'page', null]);
+    expect(links().map((a) => a.getAttribute('aria-current'))).toEqual([
+      null,
+      null,
+      null,
+      'page',
+      null,
+    ]);
   });
 
   it('counts the epics and tickets on each page once the work is loaded', async () => {
     const { counts, answered } = await shown('in-progress');
-    expect(counts()).toEqual([undefined, undefined, undefined, undefined]);
+    expect(counts()).toEqual([undefined, undefined, undefined, undefined, undefined]);
     await answered('a project with work in every status');
     // In Progress: an epic and a ticket per board status, and the started epic; not its feature.
-    expect(counts()).toEqual([2, 9, 2, 4]);
+    expect(counts()).toEqual([0, 2, 9, 2, 4]);
+  });
+
+  it('counts the campaigns, which no phase counts', async () => {
+    const { counts, answered, harness } = await shown('campaigns');
+    await answered('an epic in two campaigns');
+    for (const request of http.match((r) => r.url.startsWith('/projects/api/campaigns/'))) {
+      const id = request.request.url.split('/').pop();
+      const answer = ['an epic in two campaigns', 'the second campaign of an epic in two campaigns']
+        .map((state) => goldenMaster(state, 'getCampaign'))
+        .find((body) => body.campaign.id === id);
+      request.flush(answer);
+    }
+    await settle();
+    await harness.fixture.whenStable();
+    // Two campaigns; their one member, a REFINED epic, is on the board.
+    expect(counts()).toEqual([2, 0, 1, 0, 0]);
   });
 
   it('asks for the work once while moving between the pages', async () => {
@@ -108,7 +133,7 @@ describe('WorkLayout', () => {
     await harness.navigateByUrl(`/projects/${project.slug}/work/archive`);
     await settle();
     http.expectNone(entities);
-    expect(links()[3].getAttribute('aria-current')).toBe('page');
+    expect(links()[4].getAttribute('aria-current')).toBe('page');
   });
 
   it('fetches the work again after a transition, and the counts follow', async () => {
@@ -120,6 +145,6 @@ describe('WorkLayout', () => {
     vi.useRealTimers();
     await settle();
     await answered('a project with no work');
-    expect(counts()).toEqual([0, 0, 0, 0]);
+    expect(counts()).toEqual([0, 0, 0, 0, 0]);
   });
 });

@@ -5,6 +5,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { WorkStore } from '$core/work/work.store';
 import type { WorkNode } from '$core/work/work-tree';
+import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 import { TicketListItem } from './ticket-list-item';
 
 /** A list node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */
@@ -15,17 +16,18 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   campaigns: [],
 });
 
-/** The item in the Acceptance list, as the work list draws it. */
+/** The item in a list (by default Acceptance), as the work list draws it. */
 @Component({
   imports: [TicketListItem],
   template: `<app-ticket-list-item
     [node]="node()"
     base="/projects/qits/work/detail"
-    view="acceptance"
+    [view]="view()"
   />`,
 })
 class InAcceptance {
   readonly node = input.required<WorkNode>();
+  readonly view = input<WorkListView>('acceptance');
 }
 
 describe('TicketListItem', () => {
@@ -42,9 +44,10 @@ describe('TicketListItem', () => {
     });
   });
 
-  function render(item: WorkNode) {
+  function render(item: WorkNode, view: WorkListView = 'acceptance') {
     const fixture = TestBed.createComponent(InAcceptance);
     fixture.componentRef.setInput('node', item);
+    fixture.componentRef.setInput('view', view);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
   }
@@ -71,5 +74,17 @@ describe('TicketListItem', () => {
     const element = render(node({ status: 'VERIFIED' }));
     button(element).click();
     expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
+  });
+  it('in a campaign, shows its own status and no finish button', () => {
+    const element = render(node({ status: 'VERIFIED' }), 'campaign');
+    expect(button(element).classList.contains('hidden')).toBe(true);
+    expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([
+      'verified',
+    ]);
+  });
+
+  it('shows no status in Acceptance', () => {
+    const element = render(node({ status: 'VERIFIED' }));
+    expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([]);
   });
 });

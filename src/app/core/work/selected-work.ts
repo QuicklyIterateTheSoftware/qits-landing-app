@@ -47,6 +47,9 @@ export class SelectedWork {
   /** The open project's work as a tree: phases, columns and spans (`work-tree.ts`). */
   readonly graph = computed(() => new WorkGraph(this.entries(), this.work()?.campaigns ?? {}));
 
+  /** Each campaign's description, by campaign id; a campaign without one has no key. */
+  readonly campaignDescriptions = computed(() => this.work()?.campaignDescriptions ?? {});
+
   /** Loading until the project is known and its work answered; an error if either failed. */
   readonly state = computed((): LoadState => {
     if (this.store.status() === 'error') return 'error';

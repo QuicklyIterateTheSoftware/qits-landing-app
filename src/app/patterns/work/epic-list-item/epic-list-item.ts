@@ -11,19 +11,20 @@ import { Tag } from '$ui/components/tag/tag';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
- * An epic in a list (Backlog, Acceptance, Archive), with its features and their tasks, drawn like
+ * An epic in a list (Backlog, Acceptance, Archive, a campaign's members), with its features and their tasks, drawn like
  * the board:
  *
  * - the epic is a lane (`ui-list-lane`): its title in the bar at the top and its id up the left
  *   gutter, both linking to it, its campaigns as tags below the bar. It collapses to one line: in
  *   the Backlog "<n> tasks" and in Acceptance "<n> / <n> ✅" (a VERIFIED epic's tasks are all
  *   done), expanded at first; in the Archive "<n> / <n> ✅" for a
- *   done epic, or "<n> tasks" for a dropped one, collapsed at first;
+ *   done epic, or "<n> tasks" for a dropped one, collapsed at first; in a campaign "<n> / <n> ✅"
+ *   for a verified or done epic, else "<n> tasks", collapsed at first;
  * - each feature is a row (`ui-list-row`): its title along the bottom, its id up the right gutter;
  * - each task is the board's small card (`ui-board-card`), with its campaigns.
  *
- * In the Archive the epic (unless it is only context) also shows its final state. A VERIFIED epic
- * (in Acceptance) carries the finish button ("Mark <id> done") on the lane's bottom-right corner:
+ * In the Archive the epic (unless it is only context) also shows its final state, in a campaign its
+ * own status. A VERIFIED epic in Acceptance (not in a campaign) carries the finish button ("Mark <id> done") on the lane's bottom-right corner:
  * it hides the epic at once and moves it to DONE a few seconds later, unless the toast's Undo takes
  * it back (`finishControl`). When `leaving` is set, the lane shrinks away (`uiLeave`), then emits
  * `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
@@ -49,7 +50,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
       <ui-finish-button
         lane-action
-        [shown]="finishing.shown()"
+        [shown]="finishing.shown() && view() !== 'campaign'"
         [state]="finishing.state()"
         [label]="'Mark ' + n.entry.qualifiedId + ' done'"
         (finish)="finishing.finish()"
@@ -93,22 +94,29 @@ export class EpicListItem {
 
   protected readonly finishing = finishControl(this.node);
 
-  /** Whether the lane starts collapsed: only in the Archive. */
-  protected readonly collapsed = computed(() => this.view() === 'archive');
+  /** Whether the lane starts collapsed: in the Archive and in a campaign. */
+  protected readonly collapsed = computed(
+    () => this.view() === 'archive' || this.view() === 'campaign',
+  );
 
   protected readonly summary = computed(() => {
     const { total } = taskDistribution(this.node());
     const tasks = `${total} ${total === 1 ? 'task' : 'tasks'}`;
     // A verified or done epic's tasks are all done.
+    const status = this.node().entry.status;
     const done =
-      (this.view() === 'acceptance' && this.node().entry.status === 'VERIFIED') ||
-      (this.view() === 'archive' && this.node().entry.status === 'DONE');
+      (this.view() === 'acceptance' && status === 'VERIFIED') ||
+      (this.view() === 'archive' && status === 'DONE') ||
+      (this.view() === 'campaign' && (status === 'VERIFIED' || status === 'DONE'));
     return done ? `${total} / ${total} ✅` : tasks;
   });
 
-  /** In the Archive, which final state the epic is in. */
+  /**
+   * In the Archive, which final state the epic is in; in a campaign, its own status (statuses
+   * mix there).
+   */
   protected readonly status = computed(() =>
-    this.view() === 'archive' && !this.node().context
+    (this.view() === 'archive' || this.view() === 'campaign') && !this.node().context
       ? this.node().entry.status?.toLowerCase()
       : undefined,
   );

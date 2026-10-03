@@ -44,10 +44,15 @@ export function countsAsWork(entry: WorkEntry): boolean {
 }
 
 /**
- * `WorkStore.load(projectId)`, for each campaign in the tree: its members, in campaign order.
- * Campaign membership is not on the entity; the campaign answer holds it.
+ * `WorkStore.load(projectId)`, for each campaign in the tree: its members, in campaign order, and
+ * its description (the Campaigns page shows its start). Campaign membership is not on the entity;
+ * the campaign answer holds it.
  */
-export const GET_CAMPAIGN = ['campaign.id', 'campaign.members[].entity.id'] as const;
+export const GET_CAMPAIGN = [
+  'campaign.id',
+  'campaign.description',
+  'campaign.members[].entity.id',
+] as const;
 
 /** A campaign answer, cut to what the store reads. */
 export type CampaignEntry = NonNullable<

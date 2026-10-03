@@ -61,6 +61,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: '', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
           { path: 'projects/:slug/work/acceptance', component: TestPage },
+          { path: 'projects/:slug/work/campaigns', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
         ]),
@@ -166,7 +167,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Work' }))
       .toHaveAttribute('aria-current', 'true');
-    for (const label of ['Refinement', 'In Progress', 'Archive']) {
+    for (const label of ['Campaigns', 'Refinement', 'In Progress', 'Archive']) {
       await expect.element(navigation.getByRole('link', { name: label })).toBeVisible();
     }
     await expect
@@ -176,6 +177,30 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
     await expect.element(breadcrumb).toHaveTextContent('Acceptance');
     await expect.element(layout).toMatchScreenshot('work-tab');
+  });
+
+  it('lists Campaigns first below Work and marks it when open', async () => {
+    await renderProject('/work/campaigns');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect
+      .element(navigation.getByRole('link', { name: 'Work' }))
+      .toHaveAttribute('aria-current', 'true');
+    const campaigns = navigation.getByRole('link', { name: 'Campaigns' });
+    await expect.element(campaigns).toBeVisible();
+    await expect.element(campaigns).toHaveAttribute('aria-current', 'page');
+    // First of the work section's pages, right below Work.
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((a) => a.textContent?.trim());
+    expect(labels.slice(labels.indexOf('Work'), labels.indexOf('Work') + 3)).toEqual([
+      'Work',
+      'Campaigns',
+      'Refinement',
+    ]);
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toHaveTextContent('Campaigns');
   });
 
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {

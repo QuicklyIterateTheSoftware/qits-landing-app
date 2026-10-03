@@ -50,6 +50,27 @@ describe('WorkStore', () => {
     http.expectNone(`/projects/api/projects/${ID}/entities`);
   });
 
+  it('reads each campaign’s members and description', async () => {
+    const store = TestBed.inject(WorkStore);
+    const state = 'a campaign with work in every phase';
+    const campaign = goldenMaster(state, 'getCampaign');
+    const done = store.load(ID);
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${ID}/entities`)
+      .flush(goldenMaster(state, 'listProjectEntities'));
+    await settle();
+    http.expectOne(`/projects/api/campaigns/${campaign.campaign.id}`).flush(campaign);
+    await done;
+    const work = store.byProject()[ID];
+    expect(work?.campaigns[campaign.campaign.id]).toEqual(
+      campaign.campaign.members.map((m: { entity: { id: string } }) => m.entity.id),
+    );
+    expect(work?.campaignDescriptions).toEqual({
+      [campaign.campaign.id]: campaign.campaign.description,
+    });
+  });
+
   it('counts zero for a project with no work', async () => {
     const store = TestBed.inject(WorkStore);
     const done = store.load(ID);
@@ -63,6 +84,7 @@ describe('WorkStore', () => {
       count: 0,
       entries: [],
       campaigns: {},
+      campaignDescriptions: {},
     });
   });
 

@@ -1349,6 +1349,7 @@
         "body": {
           "content": {
             "campaign": {
+              "description": "Seeded work.",
               "id": "00000000-0000-4000-8000-000000000001",
               "members": [
                 {
@@ -1379,6 +1380,14 @@
         },
         "matchingRules": {
           "body": {
+            "$.campaign.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.campaign.id": {
               "combine": "AND",
               "matchers": [
@@ -1486,6 +1495,7 @@
         "body": {
           "content": {
             "campaign": {
+              "description": "Seeded work.",
               "id": "00000000-0000-4000-8000-000000000001",
               "members": [
                 {
@@ -1521,6 +1531,14 @@
         },
         "matchingRules": {
           "body": {
+            "$.campaign.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.campaign.id": {
               "combine": "AND",
               "matchers": [
@@ -1629,6 +1647,7 @@
         "body": {
           "content": {
             "campaign": {
+              "description": "Seeded work.",
               "id": "00000000-0000-4000-8000-000000000002",
               "members": [
                 {
@@ -1649,6 +1668,14 @@
         },
         "matchingRules": {
           "body": {
+            "$.campaign.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.campaign.id": {
               "combine": "AND",
               "matchers": [
@@ -1745,6 +1772,7 @@
         "body": {
           "content": {
             "campaign": {
+              "description": "Seeded work.",
               "id": "00000000-0000-4000-8000-000000000004",
               "members": [
                 {
@@ -1765,6 +1793,14 @@
         },
         "matchingRules": {
           "body": {
+            "$.campaign.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.campaign.id": {
               "combine": "AND",
               "matchers": [

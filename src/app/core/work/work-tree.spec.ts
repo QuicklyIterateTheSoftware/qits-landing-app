@@ -126,6 +126,29 @@ describe('WorkGraph', () => {
     expect(graph.campaignsOf(two[1]).map((c) => c.id)).toEqual(['campaign', 'second']);
   });
 
+  it('lists the campaigns in the board’s order, whatever the list’s order', () => {
+    const second = entry('second', 'CAMPAIGN', 'REFINED');
+    const graph = new WorkGraph([second, ...campaign], members);
+    expect(graph.campaigns().map((c) => c.id)).toEqual(['campaign', 'second']);
+    expect(new WorkGraph(epic).campaigns()).toEqual([]);
+  });
+
+  it('gives a campaign’s members in campaign order, each with its whole subtree', () => {
+    const graph = new WorkGraph(campaign, members);
+    expect(graph.membersOf(campaign[0]).map(shape)).toEqual([
+      'running(feature)',
+      'verified',
+      'waiting',
+    ]);
+  });
+
+  it('tags a member with its other campaigns only, and leaves out a member not in the list', () => {
+    const two = [...campaign, entry('second', 'CAMPAIGN', 'REFINED')];
+    const graph = new WorkGraph(two, { campaign: ['verified', 'gone'], second: ['verified'] });
+    expect(graph.membersOf(two[0]).map(shape)).toEqual(['verified{second}']);
+    expect(graph.membersOf(two[6]).map(shape)).toEqual(['verified{campaign}']);
+  });
+
   it('keeps a reported epic with its feature in the backlog', () => {
     const reportedEpic = [
       entry('epic', 'EPIC', 'REPORTED'),

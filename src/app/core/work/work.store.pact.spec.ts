@@ -222,6 +222,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
         count: 0,
         entries: [],
         campaigns: {},
+        campaignDescriptions: {},
       });
     }));
 

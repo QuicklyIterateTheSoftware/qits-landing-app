@@ -30,7 +30,10 @@ import { EpicListItem } from './epic-list-item';
   `,
 })
 class OneEpic {
-  readonly view = inject(ActivatedRoute).snapshot.paramMap.get('view') as WorkListView;
+  readonly view = inject(ActivatedRoute).snapshot.paramMap.get('view') as Exclude<
+    WorkListView,
+    'campaign'
+  >;
   private readonly work = inject(SelectedWork);
   private readonly qualifiedId = routedQualifiedId();
   readonly node = computed(() => nodeOf(this.work.graph().tree(this.view), this.qualifiedId));

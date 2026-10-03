@@ -58,7 +58,18 @@ export interface ProjectWork {
   readonly entries: readonly WorkEntry[];
   /** Each campaign's member ids, in campaign order (campaign membership is not on the entity). */
   readonly campaigns: Readonly<Record<string, readonly string[]>>;
+  /** Each campaign's description, by campaign id; a campaign without one has no key. */
+  readonly campaignDescriptions: Readonly<Record<string, string>>;
 }
+
+/** A project's work while it has none to show: loading, or failed. */
+const NO_WORK: ProjectWork = {
+  status: 'loading',
+  count: 0,
+  entries: [],
+  campaigns: {},
+  campaignDescriptions: {},
+};
 
 interface WorkState {
   /** Each project's work, by project id. A project not asked for yet has no key. */
@@ -78,8 +89,8 @@ interface WorkState {
  * - `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  *   project card does in the browser, and `SelectedWork` for the open project.
  * - Which entities count as work is `countsAsWork` in `work.consumes.ts`.
- * - Each campaign in the tree is then asked for its members (`getCampaign`), one request per
- *   campaign: membership lives on the campaign, not on the entity. A failed campaign read fails the
+ * - Each campaign in the tree is then asked for its members and its description (`getCampaign`),
+ *   one request per campaign: membership lives on the campaign, not on the entity. A failed campaign read fails the
  *   project's work, as a partial tree would group wrongly.
  * - `refresh(projectId)` fetches again and keeps showing the old work until the answer is in.
  * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`transitionEpic`,
@@ -236,16 +247,28 @@ export const WorkStore = signalStore(
           (a.data?.campaign?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
         ]),
       );
+      const campaignDescriptions = Object.fromEntries(
+        answers.flatMap((a, i) => {
+          const description = a.data?.campaign?.description;
+          return description ? [[campaignIds[i], description]] : [];
+        }),
+      );
       return failed
-        ? { status: 'error', count: 0, entries: [], campaigns: {} }
-        : { status: 'loaded', count: entries.filter(countsAsWork).length, entries, campaigns };
+        ? { ...NO_WORK, status: 'error' }
+        : {
+            status: 'loaded',
+            count: entries.filter(countsAsWork).length,
+            entries,
+            campaigns,
+            campaignDescriptions,
+          };
     }
 
     return {
       async load(projectId: string): Promise<void> {
         const current = store.byProject()[projectId];
         if (current && current.status !== 'error') return;
-        set(projectId, { status: 'loading', count: 0, entries: [], campaigns: {} });
+        set(projectId, { ...NO_WORK, status: 'loading' });
         set(projectId, await fetch(projectId));
       },
       /** Fetches again; the old work stays until the answer is in, and stays if it fails. */

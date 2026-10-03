@@ -36,6 +36,7 @@ describe('WorkLayout (screenshots)', () => {
             path: 'projects/:slug/work',
             component: WorkLayout,
             children: [
+              { path: 'campaigns', component: TestPage },
               { path: 'refinement', component: TestPage },
               { path: 'in-progress', component: TestPage },
               { path: 'acceptance', component: TestPage },
@@ -83,26 +84,28 @@ describe('WorkLayout (screenshots)', () => {
     return { locate: () => page.elementLocator(element), work, answered, project };
   }
 
-  it('shows the tabs in workflow order, each with its count, and marks the current one', async () => {
+  it('shows Campaigns, then the tabs in workflow order, each with its count, and marks the current one', async () => {
     const { locate, work, answered, project } = await shown('in-progress');
     work.flush(await goldenMaster('a project with work in every status', 'listProjectEntities'));
     await answered();
     const element = locate();
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
-    await expect.element(tabs.nth(1)).toHaveTextContent('9');
+    await expect.element(tabs.nth(2)).toHaveTextContent('9');
     expect(tabs.elements().map((a) => a.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
+      'Campaigns 0',
       'Refinement 2',
       'In Progress 9',
       'Acceptance 2',
       'Archive 4',
     ]);
     expect(tabs.elements().map((a) => a.getAttribute('href'))).toEqual([
+      `/projects/${project.slug}/work/campaigns`,
       `/projects/${project.slug}/work/refinement`,
       `/projects/${project.slug}/work/in-progress`,
       `/projects/${project.slug}/work/acceptance`,
       `/projects/${project.slug}/work/archive`,
     ]);
-    await expect.element(tabs.nth(1)).toHaveAttribute('aria-current', 'page');
+    await expect.element(tabs.nth(2)).toHaveAttribute('aria-current', 'page');
     await expect.element(tabs.nth(0)).not.toHaveAttribute('aria-current');
     await expect.element(element).toHaveTextContent('Page content');
     await expect.element(element).toMatchScreenshot('tabs');
@@ -112,8 +115,8 @@ describe('WorkLayout (screenshots)', () => {
     const { locate, work } = await shown('archive');
     const element = locate();
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
-    await expect.element(tabs.nth(3)).toHaveAttribute('aria-current', 'page');
-    await expect.element(tabs.nth(0)).toHaveAccessibleName('Refinement');
+    await expect.element(tabs.nth(4)).toHaveAttribute('aria-current', 'page');
+    await expect.element(tabs.nth(0)).toHaveAccessibleName('Campaigns');
     await expect.element(element).toMatchScreenshot('loading');
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await settle();

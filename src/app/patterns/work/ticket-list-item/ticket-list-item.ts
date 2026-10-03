@@ -8,13 +8,16 @@ import { Tag } from '$ui/components/tag/tag';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
- * A ticket in a list (Backlog, Acceptance, Archive): the board's small card (`ui-board-card`), its
- * id down the left edge, its title linking to it, its kind and its campaigns as tags. In the
- * Archive it also shows its final state (Done and Dropped mix there).
+ * A ticket in a list (Backlog, Acceptance, Archive, a campaign's members): the board's small card
+ * (`ui-board-card`), its id down the left edge, its title linking to it, its kind and its
+ * campaigns as tags. In the Archive it also shows its final state (Done and Dropped mix there), in
+ * a campaign its own status (any phase). A campaign's member that is not a ticket (a feature or
+ * task) is drawn the same way.
  *
  * A VERIFIED ticket (in Acceptance) carries the finish button ("Mark <id> done") on the card's
  * bottom-right corner: it hides the ticket at once and moves it to DONE a few seconds later, unless
- * the toast's Undo takes it back (`finishControl`). When `leaving` is set, the card shrinks away
+ * the toast's Undo takes it back (`finishControl`); not in a campaign, where finishing is not
+ * the page's job. When `leaving` is set, the card shrinks away
  * (`uiLeave`), then emits `left`. `display: contents`, so the card is itself the list's item.
  */
 @Component({
@@ -44,7 +47,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       }
       <ui-finish-button
         card-action
-        [shown]="finishing.shown()"
+        [shown]="finishing.shown() && view() !== 'campaign'"
         [state]="finishing.state()"
         [label]="'Mark ' + n.entry.qualifiedId + ' done'"
         (finish)="finishing.finish()"
@@ -63,9 +66,12 @@ export class TicketListItem {
 
   protected readonly finishing = finishControl(this.node);
 
-  /** In the Archive, which final state the ticket is in. */
+  /**
+   * In the Archive, which final state the ticket is in; in a campaign, its own status (statuses
+   * mix there).
+   */
   protected readonly status = computed(() =>
-    this.view() === 'archive' && !this.node().context
+    (this.view() === 'archive' || this.view() === 'campaign') && !this.node().context
       ? this.node().entry.status?.toLowerCase()
       : undefined,
   );
