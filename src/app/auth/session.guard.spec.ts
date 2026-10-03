@@ -30,7 +30,7 @@ describe('sessionGuard', () => {
           provide: AppOrigins,
           useValue: {
             origin: (backend: Backend) => (backend === 'idp' ? idpOrigin : ''),
-            failed: () => failed,
+            backendsFailed: () => failed,
           },
         },
         provideHttpClient(),

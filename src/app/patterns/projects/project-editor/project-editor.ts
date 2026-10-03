@@ -1,7 +1,6 @@
-import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { platformOrigin } from '../../../core/platform-host';
+import { AppOrigins } from '../../../core/platform/app-origins';
 import { SelectedProject } from '../../../core/projects/selected-project';
 
 /**
@@ -11,7 +10,9 @@ import { SelectedProject } from '../../../core/projects/selected-project';
  * The frame opens qits-workspaces' editor door, `/<slug>/editor` on the workspaces host: the door
  * asks the platform for the shared editor, waits until it answers, and then moves on to the editor
  * on its own origin, opened at the project's folder. That last step happens inside the frame, so
- * this page stays the frame around it. The workspaces host is derived from this page's host.
+ * this page stays the frame around it. The workspaces origin is the navigation's `qits-workspaces`
+ * (`AppOrigins`); until it is known (on the server, or when the navigation names none) the frame
+ * shows `about:blank`, and the layout's alert says what is missing.
  *
  * `allow="clipboard-read; clipboard-write"` lets the editor copy and paste; the browser denies the
  * clipboard to a frame that is not allowed it. No `sandbox`: the editor needs scripts, storage,
@@ -33,23 +34,24 @@ import { SelectedProject } from '../../../core/projects/selected-project';
 })
 export class ProjectEditor {
   private readonly selected = inject(SelectedProject);
-  private readonly location = inject(DOCUMENT).location;
+  private readonly origins = inject(AppOrigins);
   private readonly sanitizer = inject(DomSanitizer);
 
   /** The editor door's address for the open project. */
-  readonly url = computed(() => editorUrl(this.location, this.selected.slug()));
+  readonly url = computed(() => editorUrl(this.origins.origin('workspaces'), this.selected.slug()));
 
-  // The address is built from this page's own host and a slug from the route, never from data.
+  // The origin passed `AppOrigins`' check (https, under the platform's domain); the slug is
+  // encoded.
   protected readonly src = computed(() =>
     this.sanitizer.bypassSecurityTrustResourceUrl(this.url()),
   );
 }
 
-/** qits-workspaces' editor door for `slug`, or for no project when there is none. */
-export function editorUrl(
-  location: Pick<Location, 'protocol' | 'hostname'>,
-  slug: string | undefined,
-): string {
-  const origin = platformOrigin('workspaces', location);
+/**
+ * qits-workspaces' editor door at `origin` for `slug`, or for no project when there is none;
+ * `about:blank` while the origin is not known.
+ */
+export function editorUrl(origin: string, slug: string | undefined): string {
+  if (!origin) return 'about:blank';
   return slug === undefined ? `${origin}/editor` : `${origin}/${encodeURIComponent(slug)}/editor`;
 }

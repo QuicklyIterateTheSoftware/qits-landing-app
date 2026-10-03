@@ -65,9 +65,14 @@ an app initializer before the first call (`core/platform/app-origins.ts`, wired 
 If it fails, or names no origin for a backend, the layout shows an alert. A visitor without a session
 goes to `<idp origin>/idp/login?return_host=<this host>&return_path=<path>`.
 
-Under `ng serve` everything stays on localhost instead: the `development` configuration swaps
-`src/environments/environment.ts` for `environment.development.ts` (`sameOriginApis: true`), so no
-navigation is read, every origin is `''`, and `proxy.conf.json` forwards the paths. The server render
+An origin counts only if it is `https:` on this page's domain or a name under it; anything else
+counts as missing. The Editor frame opens the navigation's `qits-workspaces` origin.
+
+Under `ng serve` the backend calls stay on localhost instead: the `development` configuration swaps
+`src/environments/environment.ts` for `environment.development.ts` (`sameOriginApis: true`), so every
+backend origin is `''` and `proxy.conf.json` forwards the paths. The navigation is still read, through
+the proxy, for the applications the app only opens (the Editor frame); there an origin is checked
+against the domain the navigation states in its own `origin` field, since localhost has none. The server render
 calls no backend at all (it has no session cookie), so it reads no navigation either.
 
 **Generate the lockfile with npm 11 or newer.** npm 10.9.8 — the version on the current workstation

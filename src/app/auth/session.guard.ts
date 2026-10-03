@@ -11,7 +11,7 @@ import { ProjectsStore } from '../core/projects/projects.store';
  * without one, the edge answers 401.
  *
  * The server render passes: it holds no cookie to check, and the browser checks right after. So
- * does a page whose backend origins are not known (`AppOrigins.failed()`): the layout says so,
+ * does a page whose backend origins are not known (`AppOrigins.backendsFailed()`): the layout says so,
  * and a login page on this host would be a guess.
  */
 export const sessionGuard: CanActivateFn = async (_route, state) => {
@@ -20,7 +20,7 @@ export const sessionGuard: CanActivateFn = async (_route, state) => {
   const location = inject(DOCUMENT).location;
   const origins = inject(AppOrigins);
   const projects = inject(ProjectsStore);
-  if (origins.failed()) return true;
+  if (origins.backendsFailed()) return true;
   if (!(await projects.hasSession())) {
     location.assign(loginUrl(origins.origin('idp'), location.host, state.url));
     return false;

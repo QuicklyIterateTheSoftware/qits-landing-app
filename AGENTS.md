@@ -42,9 +42,16 @@ panel are projected, `opened` fires on each opening.
 Every backend path is called at its owner's origin, never relative: `AppOrigins`
 (`core/platform/app-origins.ts`) reads `/main-navigation` once in an app initializer, and
 `app.config.ts` gives each generated client its `baseUrl` and `credentials: 'include'`. A new
-backend gets an entry in `BACKEND_APPS` and in `app.config.ts`'s `CLIENTS`. Never compose a
-hostname. `ng serve` stays same-origin through `src/environments/environment.development.ts`. Pact
-specs keep setting each client's `baseUrl` to their mock server.
+backend gets an entry in `BACKEND_APPS` and in `app.config.ts`'s `CLIENTS`; an application the
+app only opens (a frame, a link) gets one in `PAGE_APPS`. Never compose a hostname.
+
+An origin counts only if it is `https:` and its host is the platform's domain or a name under it
+(`trustedOrigin`); anything else is missing, and the layout's alert shows it. Deployed, the domain
+is the page's own hostname (the app lives at the apex). Under `ng serve`
+(`src/environments/environment.development.ts`) the backends stay same-origin on the proxy, but the
+navigation is still read through `proxy.conf.json`, and page origins are checked against the domain
+the navigation states in its own `origin` field. Pact specs keep setting each client's `baseUrl` to
+their mock server.
 
 ## Telemetry
 
