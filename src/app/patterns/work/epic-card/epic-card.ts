@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
-import { startsCollapsed, taskProgress, type WorkNode } from '$core/work/work-tree';
+import { taskProgress, type WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { BoardLane } from '$ui/components/board/board-lane';
 import { BoardRow } from '$ui/components/board/board-row';
@@ -13,7 +13,7 @@ import { Tag } from '$ui/components/tag/tag';
  *
  * - the epic is a lane (`ui-board-lane`): its title in the bar at the top and its id up the gutter,
  *   both linking to it, its campaigns as tags below the bar. It collapses to "<done> / <total> ✅"
- *   for its tasks, collapsed at first when every one is done (the epic is VERIFYING);
+ *   for its tasks, expanded at first;
  * - each feature is a row of that lane (`ui-board-row`), its title along the bottom and its id up
  *   the right gutter;
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns.
@@ -31,7 +31,7 @@ import { Tag } from '$ui/components/tag/tag';
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
-    <ui-board-lane collapsible [collapsed]="collapsed()" [uiLeave]="leaving()" (left)="left.emit()">
+    <ui-board-lane collapsible [uiLeave]="leaving()" (left)="left.emit()">
       <span lane-summary>{{ summary() }}</span>
       <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
       @for (campaign of n.campaigns; track campaign.id) {
@@ -75,8 +75,6 @@ export class EpicCard {
   /** The epic is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
-
-  protected readonly collapsed = computed(() => startsCollapsed(this.node()));
 
   protected readonly summary = computed(() => {
     const { verified, total } = taskProgress(this.node());

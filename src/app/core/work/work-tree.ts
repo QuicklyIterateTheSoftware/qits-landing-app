@@ -191,9 +191,3 @@ export function taskProgress(node: WorkNode): { verified: number; total: number 
   walk(node);
   return { verified, total };
 }
-
-/** Whether an epic's lane on the board starts collapsed: it has tasks and every one is done. */
-export function startsCollapsed(node: WorkNode): boolean {
-  const { verified, total } = taskProgress(node);
-  return total > 0 && verified === total;
-}
