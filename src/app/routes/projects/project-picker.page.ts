@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ProjectCard } from '$patterns/projects/project-card/project-card';
 import { ProjectsStore } from '$core/projects/projects.store';
+import { PageLayoutComponent } from '$ui/components/page-layout/page-layout';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
@@ -13,30 +14,28 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-project-picker-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProjectCard, Spinner],
+  imports: [PageLayoutComponent, ProjectCard, Spinner],
   template: `
     <div class="mx-auto max-w-[60rem] px-6 pt-16 pb-12">
-      <header>
-        <h1 class="m-0 text-3xl leading-[1.1] font-bold">Projects</h1>
-      </header>
-
-      <ui-spinner [state]="state()" class="mt-12 min-h-48">
-        @if (store.status() === 'loaded') {
-          @if (store.entities().length === 0) {
-            <p class="m-0 text-gray-500">There are no projects yet.</p>
-          } @else {
-            <ul
-              class="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-6 p-0"
-            >
-              @for (project of store.entities(); track project.id) {
-                <li>
-                  <app-project-card [project]="project" />
-                </li>
-              }
-            </ul>
+      <ui-page-layout title="Projects">
+        <ui-spinner [state]="state()" class="mt-6 min-h-48">
+          @if (store.status() === 'loaded') {
+            @if (store.entities().length === 0) {
+              <p class="m-0 text-gray-500">There are no projects yet.</p>
+            } @else {
+              <ul
+                class="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-6 p-0"
+              >
+                @for (project of store.entities(); track project.id) {
+                  <li>
+                    <app-project-card [project]="project" />
+                  </li>
+                }
+              </ul>
+            }
           }
-        }
-      </ui-spinner>
+        </ui-spinner>
+      </ui-page-layout>
     </div>
   `,
 })

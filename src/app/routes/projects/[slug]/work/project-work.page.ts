@@ -4,6 +4,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { KanbanBoard } from '$patterns/work/kanban-board/kanban-board';
+import { PageLayoutComponent } from '$ui/components/page-layout/page-layout';
 import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
@@ -16,35 +17,36 @@ import { WorkList } from '$patterns/work/work-list/work-list';
 @Component({
   selector: 'app-project-work-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Spinner, KanbanBoard, WorkList],
+  imports: [RouterLink, PageLayoutComponent, Spinner, KanbanBoard, WorkList],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <div class="flex items-baseline justify-between gap-4">
-        <h1 class="m-0 text-3xl leading-[1.1] font-bold">Work</h1>
+      <ui-page-layout title="Work">
+        <!-- A link, not an Action: it navigates (an href to open in a new tab, to copy). -->
         <a
+          slot="actions"
           class="text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
           [routerLink]="archivePath()"
           >Archive</a
         >
-      </div>
 
-      <ui-spinner [state]="work.state()" class="mt-6 min-h-48">
-        <section aria-labelledby="work-acceptance">
-          <h2 id="work-acceptance" class="mt-0 mb-3 text-lg font-semibold">Acceptance</h2>
-          <app-work-list [tree]="acceptance()" [base]="workPath()" view="acceptance" />
-        </section>
+        <ui-spinner [state]="work.state()" class="min-h-48">
+          <section aria-labelledby="work-acceptance">
+            <h2 id="work-acceptance" class="mt-0 mb-3 text-lg font-semibold">Acceptance</h2>
+            <app-work-list [tree]="acceptance()" [base]="workPath()" view="acceptance" />
+          </section>
 
-        <section aria-labelledby="work-board" class="mt-8">
-          <h2 id="work-board" class="mt-0 mb-3 text-lg font-semibold">Board</h2>
-          <app-kanban-board [tree]="board()" [base]="workPath()" />
-        </section>
+          <section aria-labelledby="work-board" class="mt-8">
+            <h2 id="work-board" class="mt-0 mb-3 text-lg font-semibold">Board</h2>
+            <app-kanban-board [tree]="board()" [base]="workPath()" />
+          </section>
 
-        <section aria-labelledby="work-backlog" class="mt-8">
-          <h2 id="work-backlog" class="mt-0 mb-3 text-lg font-semibold">Backlog</h2>
-          <app-work-list [tree]="backlog()" [base]="workPath()" view="backlog" />
-        </section>
-      </ui-spinner>
+          <section aria-labelledby="work-backlog" class="mt-8">
+            <h2 id="work-backlog" class="mt-0 mb-3 text-lg font-semibold">Backlog</h2>
+            <app-work-list [tree]="backlog()" [base]="workPath()" view="backlog" />
+          </section>
+        </ui-spinner>
+      </ui-page-layout>
     </div>
   `,
 })
