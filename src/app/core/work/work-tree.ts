@@ -17,11 +17,6 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   when an epic goes to VERIFIED or DONE).
  * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, from the
  *   item's own status.
- * - **No status** (an older qits-projects, whose features and tasks carry none): the item takes its
- *   nearest ancestor's status, and on the board its column is Verifying once that ancestor is
- *   VERIFYING, else Implemented once `implementedAt` is set, else Implementing once
- *   `implementingAt` is set, else Refined. This goes once the recorded golden masters carry a
- *   status for every item.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
@@ -129,11 +124,11 @@ export class WorkGraph {
 
   /**
    * The entity's phase: its own status's, unless an ancestor is further on in the acceptance list
-   * or the archive, which takes it along. Undefined if neither it nor an ancestor has a status.
+   * or the archive, which takes it along. Undefined for one without a status that nothing took
+   * along (qits-projects serves a status on every entity).
    */
   phaseOf(entry: WorkEntry): Phase | undefined {
-    const status = this.statusOwner(entry)?.status;
-    const own = status ? PHASE_BY_STATUS[status] : undefined;
+    const own = entry.status ? PHASE_BY_STATUS[entry.status] : undefined;
     const parent = this.parentEntry(entry);
     const above = parent ? this.phaseOf(parent) : undefined;
     if (above && TAKES_ALONG.has(above) && (!own || PHASE_RANK[above] > PHASE_RANK[own])) {
@@ -144,18 +139,13 @@ export class WorkGraph {
 
   /** The entity's board column, or undefined when it is not on the board. */
   columnOf(entry: WorkEntry): number | undefined {
-    if (this.phaseOf(entry) !== 'board') return undefined;
-    if (entry.status) return COLUMN_BY_STATUS[entry.status];
-    // No status of its own: an older qits-projects (see "No status" above).
-    if (this.statusOwner(entry)?.status === 'VERIFYING') return COLUMN_BY_STATUS['VERIFYING'];
-    if (entry.implementedAt) return COLUMN_BY_STATUS['IMPLEMENTED'];
-    if (entry.implementingAt) return COLUMN_BY_STATUS['IMPLEMENTING'];
-    return COLUMN_BY_STATUS['REFINED'];
+    if (this.phaseOf(entry) !== 'board' || !entry.status) return undefined;
+    return COLUMN_BY_STATUS[entry.status];
   }
 
   /**
    * Where `entry`'s tasks (its descendants that are tasks) are: how many in each board column, how
-   * many verified (their own status, or with none their nearest ancestor's, is VERIFIED or DONE),
+   * many verified (their own status is VERIFIED or DONE),
    * and how many in all, whatever phase each is in.
    */
   tasksOf(entry: WorkEntry): TaskDistribution {
@@ -168,9 +158,8 @@ export class WorkGraph {
         if (child.archetype === 'TASK') {
           total++;
           const column = this.columnOf(child);
-          const status = this.statusOwner(child)?.status;
           if (column !== undefined) columns[column]++;
-          else if (status && PAST_BOARD.has(status)) verified++;
+          else if (child.status && PAST_BOARD.has(child.status)) verified++;
         }
         walk(childId);
       }
@@ -206,17 +195,6 @@ export class WorkGraph {
     if (phase !== 'board') return { entry, children, context, campaigns, tasks };
     const column = context ? undefined : this.columnOf(entry);
     return { entry, children, context, column, campaigns, tasks };
-  }
-
-  /**
-   * The entity itself if it has a status, else its nearest ancestor that has one: only an older
-   * qits-projects serves an entity without a status.
-   */
-  private statusOwner(entry: WorkEntry): WorkEntry | undefined {
-    for (let current: WorkEntry | undefined = entry; current; current = this.parentEntry(current)) {
-      if (current.status) return current;
-    }
-    return undefined;
   }
 
   private parentEntry(entry: WorkEntry): WorkEntry | undefined {

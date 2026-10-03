@@ -1867,8 +1867,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -1877,8 +1875,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -1887,8 +1883,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -1897,8 +1891,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -1907,8 +1899,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -1917,8 +1907,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -2135,8 +2123,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "DONE",
@@ -2145,11 +2131,9 @@
               {
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
-                "implementedAt": "2026-01-01T00:00:00Z",
-                "implementingAt": null,
                 "parent": "00000000-0000-4000-8000-000000000002",
                 "qualifiedId": "contract-00000001-2",
-                "status": null,
+                "status": "IMPLEMENTED",
                 "title": "Shipped feature"
               }
             ]
@@ -2236,15 +2220,6 @@
                             }
                           ]
                         },
-                        "$.implementedAt": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                            }
-                          ]
-                        },
                         "$.parent": {
                           "combine": "AND",
                           "matchers": [
@@ -2255,6 +2230,14 @@
                           ]
                         },
                         "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -2344,8 +2327,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REPORTED",
@@ -2354,11 +2335,9 @@
               {
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000013",
-                "implementedAt": null,
-                "implementingAt": "2026-01-01T00:00:00Z",
                 "parent": "00000000-0000-4000-8000-000000000012",
                 "qualifiedId": "contract-00000001-18",
-                "status": null,
+                "status": "IMPLEMENTING",
                 "title": "Started feature"
               }
             ]
@@ -2445,15 +2424,6 @@
                             }
                           ]
                         },
-                        "$.implementingAt": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                            }
-                          ]
-                        },
                         "$.parent": {
                           "combine": "AND",
                           "matchers": [
@@ -2464,6 +2434,14 @@
                           ]
                         },
                         "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -2553,8 +2531,6 @@
               {
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -2563,8 +2539,6 @@
               {
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -2573,8 +2547,6 @@
               {
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -2743,8 +2715,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
@@ -2753,11 +2723,9 @@
               {
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
-                "implementedAt": "2026-01-01T00:00:00Z",
-                "implementingAt": null,
                 "parent": "00000000-0000-4000-8000-000000000002",
                 "qualifiedId": "contract-00000001-2",
-                "status": null,
+                "status": "IMPLEMENTED",
                 "title": "Shipped feature"
               }
             ]
@@ -2844,15 +2812,6 @@
                             }
                           ]
                         },
-                        "$.implementedAt": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                            }
-                          ]
-                        },
                         "$.parent": {
                           "combine": "AND",
                           "matchers": [
@@ -2863,6 +2822,14 @@
                           ]
                         },
                         "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -2955,8 +2922,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -2965,8 +2930,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -2975,8 +2938,6 @@
               {
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -3145,8 +3106,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -3155,22 +3114,10 @@
               {
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
-                "implementedAt": "2026-01-01T00:00:00Z",
-                "implementingAt": null,
                 "parent": "00000000-0000-4000-8000-000000000002",
                 "qualifiedId": "contract-00000001-2",
-                "status": null,
+                "status": "IMPLEMENTED",
                 "title": "Shipped feature"
-              },
-              {
-                "archetype": "TASK",
-                "id": "00000000-0000-4000-8000-000000000006",
-                "implementedAt": null,
-                "implementingAt": null,
-                "parent": "00000000-0000-4000-8000-000000000003",
-                "qualifiedId": "contract-00000001-4",
-                "status": null,
-                "title": "Second shipped task"
               }
             ]
           },
@@ -3256,15 +3203,6 @@
                             }
                           ]
                         },
-                        "$.implementedAt": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                            }
-                          ]
-                        },
                         "$.parent": {
                           "combine": "AND",
                           "matchers": [
@@ -3282,46 +3220,7 @@
                             }
                           ]
                         },
-                        "$.title": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    {
-                      "index": 2,
-                      "rules": {
-                        "$.archetype": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.id": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                            }
-                          ]
-                        },
-                        "$.parent": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                            }
-                          ]
-                        },
-                        "$.qualifiedId": {
+                        "$.status": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -3485,8 +3384,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -3495,8 +3392,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -3505,8 +3400,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -3515,8 +3408,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
@@ -3525,8 +3416,6 @@
               {
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
-                "implementedAt": null,
-                "implementingAt": null,
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",

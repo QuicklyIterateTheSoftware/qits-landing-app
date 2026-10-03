@@ -100,33 +100,35 @@ describe('EpicListItem (screenshots)', () => {
     expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
   });
 
-  it('every task done (VERIFIED, in Acceptance): expanded, then collapsed', async () => {
+  it('every task implemented (VERIFIED, in Acceptance): expanded, then collapsed', async () => {
     const { element, locator, harness } = await shown(
       'acceptance',
       VERIFIED_COMPLETE,
       'contract-00000001-1',
       'Verified epic',
     );
-    // The lane starts expanded; collapsed, it sums up its tasks as all done.
+    // The lane starts expanded; collapsed, it counts its verified tasks: verifying the epic moved
+    // none of its IMPLEMENTED tasks (qits-763).
     await expect.element(locator).toHaveTextContent('Second shipped task');
     await expect.element(locator).toMatchScreenshot('verified-all-done-expanded');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
-    await expect.element(locator).toHaveTextContent('2 / 2 ✅');
+    await expect.element(locator).toHaveTextContent('0 / 2 ✅');
     await expect.element(locator).toMatchScreenshot('verified-all-done-collapsed');
   });
 
-  it('every task done (DONE): collapsed, then expanded', async () => {
+  it('every task implemented (DONE): collapsed, then expanded', async () => {
     const { element, locator, harness } = await shown(
       'archive',
       DONE_COMPLETE,
       'contract-00000001-1',
       'Done epic',
     );
-    // The Archive starts every epic collapsed; a done one sums up its tasks.
-    await expect.element(locator).toHaveTextContent('2 / 2 ✅');
+    // The Archive starts every epic collapsed; a done one counts its verified tasks, and finishing
+    // the epic moved none of its IMPLEMENTED tasks (qits-763).
+    await expect.element(locator).toHaveTextContent('0 / 2 ✅');
     await expect.element(locator).toMatchScreenshot('all-done-collapsed');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();

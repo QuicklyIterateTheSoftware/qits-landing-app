@@ -7,22 +7,13 @@ import { byNumber, WorkGraph, type WorkNode } from './work-tree';
  */
 /** Each entry's qualified id is numbered in the order the entries are made: the list's order. */
 let made = 0;
-const entry = (
-  id: string,
-  archetype: string,
-  status?: string,
-  parent?: string,
-  implemented = false,
-  implementing = false,
-): WorkEntry => ({
+const entry = (id: string, archetype: string, status?: string, parent?: string): WorkEntry => ({
   id,
   qualifiedId: `qits-${++made}`,
   title: id,
   archetype: archetype as WorkEntry['archetype'],
   status: status as WorkEntry['status'],
   parent,
-  implementedAt: implemented ? '2026-10-02T00:00:00Z' : undefined,
-  implementingAt: implementing || implemented ? '2026-10-01T00:00:00Z' : undefined,
 });
 
 /**
@@ -40,9 +31,9 @@ describe('WorkGraph', () => {
   // open feature. Each item carries its own status, as qits-projects serves it since qits-763.
   const epic = [
     entry('epic', 'EPIC', 'IMPLEMENTING'),
-    entry('shipped', 'FEATURE', 'IMPLEMENTED', 'epic', true),
-    entry('t1', 'TASK', 'IMPLEMENTED', 'shipped', true),
-    entry('t2', 'TASK', 'IMPLEMENTING', 'shipped', false, true),
+    entry('shipped', 'FEATURE', 'IMPLEMENTED', 'epic'),
+    entry('t1', 'TASK', 'IMPLEMENTED', 'shipped'),
+    entry('t2', 'TASK', 'IMPLEMENTING', 'shipped'),
     entry('open', 'FEATURE', 'REFINED', 'epic'),
     entry('t3', 'TASK', 'REFINED', 'open'),
   ];
@@ -96,27 +87,6 @@ describe('WorkGraph', () => {
     const graph = new WorkGraph(withStatus(epic, { epic: 'DONE', t1: 'VERIFIED' }));
     expect(graph.tree('acceptance')).toEqual([]);
     expect(graph.tree('archive').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
-  });
-
-  describe('from an older qits-projects, whose features and tasks carry no status', () => {
-    const legacy = epic.map((e) => (e.archetype === 'EPIC' ? e : { ...e, status: undefined }));
-    const legacyWithEpic = (status: string) => withStatus(legacy, { epic: status });
-
-    it('places them by their epic, implementingAt and implementedAt', () => {
-      const graph = new WorkGraph(legacy);
-      expect(legacy.map((e) => graph.columnOf(e))).toEqual([1, 2, 2, 1, 0, 0]);
-    });
-
-    it('moves them to Verifying with their epic', () => {
-      const tree = new WorkGraph(legacyWithEpic('VERIFYING')).tree('board');
-      expect(tree.map(shape)).toEqual(['epic@3(shipped@3(t1@3 t2@3) open@3(t3@3))']);
-    });
-
-    it('takes them into acceptance with a VERIFIED epic, counted as verified', () => {
-      const graph = new WorkGraph(legacyWithEpic('VERIFIED'));
-      expect(graph.tree('acceptance').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
-      expect(graph.tasksOf(legacy[0])).toEqual({ columns: [0, 0, 0, 0], verified: 3, total: 3 });
-    });
   });
 
   // A REFINED campaign ordering a VERIFIED epic, a REFINED epic with a feature, a REPORTED ticket;

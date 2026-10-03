@@ -16,8 +16,7 @@ import type { Consumed } from '@qits/angular';
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered, one request shared by the
  * card and the Work page. The card counts entries by status ({@link countsAsWork}); the Work page
  * shows each entity as a small card (qualified id, title, archetype), placed by its status and
- * nested under its `parent`. `implementingAt` and `implementedAt` place a feature or task that has no
- * status, which only an older qits-projects serves (`WorkGraph.columnOf`).
+ * nested under its `parent`.
  */
 export const LIST_PROJECT_ENTITIES = [
   'entities[].id',
@@ -26,8 +25,6 @@ export const LIST_PROJECT_ENTITIES = [
   'entities[].archetype',
   'entities[].status',
   'entities[].parent',
-  'entities[].implementedAt',
-  'entities[].implementingAt',
 ] as const;
 
 /** One work entity, cut to what the store reads. */
