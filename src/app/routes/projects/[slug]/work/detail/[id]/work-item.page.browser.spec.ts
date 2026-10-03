@@ -45,7 +45,7 @@ const IMPLEMENTED = 'an implemented ticket';
 const CAMPAIGN = 'a campaign in detail';
 /**
  * A campaign whose members are a DONE ticket, a DONE epic, a VERIFIED epic, an IMPLEMENTING epic
- * and a REFINED ticket. It records no item reads.
+ * and a REFINED ticket, with the campaign's own reads.
  */
 const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
 /**
@@ -132,6 +132,7 @@ describe('WorkItemPage (screenshots)', () => {
   async function answerWorkspaces(state: string) {
     await settle();
     const open = http.expectOne('/workspaces/api/work/workspaces');
+    // TODO: answer from qits-workspaces' "no work item has an open workspace" once it is released.
     if (UNBOUND.has(state)) open.flush(null, { status: 404, statusText: 'Not Found' });
     else open.flush(await goldenMaster(BOUND, 'listOpenWorkspaces', 'qits-workspaces'));
     const bug = (await goldenMaster('a bug ticket in detail', 'getEntity')).id;
@@ -397,7 +398,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a campaign past the board: only its implementing epic has its own board', async () => {
-      const element = await render(PAST_THE_BOARD, 'Campaign in flight');
+      const element = await render(PAST_THE_BOARD, 'Campaign in flight', true);
       const members = element.getByRole('region', { name: 'Members' }).element();
       const drawn = [
         ...members.querySelectorAll('app-ticket-list-item, app-epic-list-item, app-epic-board'),
@@ -431,9 +432,11 @@ describe('WorkItemPage (screenshots)', () => {
         expect(box.top).toBeGreaterThanOrEqual(strip.top);
         expect(box.bottom).toBeLessThanOrEqual(strip.bottom);
       }
-      // The state records no item reads: they answer 404, and the body says it failed to load
-      // (its red mark, over a white veil on the members).
-      await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
+      // The campaign's own reads are recorded: the page loads whole.
+      await expect
+        .element(element)
+        .toHaveTextContent('Ships two tickets and three epics, one after the other.');
+      expect(element.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(0);
       await shootParts(element, 'detail-campaign-done-verified-implementing');
     });
   });

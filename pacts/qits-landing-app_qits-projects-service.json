@@ -3427,6 +3427,7 @@
             "doneTicketId": "00000000-0000-4000-8000-000000000003",
             "implementingEpicId": "00000000-0000-4000-8000-000000000004",
             "projectId": "00000000-0000-4000-8000-000000000005",
+            "qualifiedId": "contract-00000001-1",
             "refinedTicketId": "00000000-0000-4000-8000-000000000006",
             "verifiedEpicId": "00000000-0000-4000-8000-000000000007"
           }
@@ -3456,7 +3457,7 @@
         "body": {
           "content": {
             "campaign": {
-              "description": "Seeded work.",
+              "description": "Ships two tickets and three epics, one after the other.",
               "id": "00000000-0000-4000-8000-000000000001",
               "members": [
                 {
@@ -4933,6 +4934,7 @@
             "doneTicketId": "00000000-0000-4000-8000-000000000003",
             "implementingEpicId": "00000000-0000-4000-8000-000000000004",
             "projectId": "00000000-0000-4000-8000-000000000005",
+            "qualifiedId": "contract-00000001-1",
             "refinedTicketId": "00000000-0000-4000-8000-000000000006",
             "verifiedEpicId": "00000000-0000-4000-8000-000000000007"
           }
@@ -10601,6 +10603,132 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a campaign with a done, a verified and an implementing epic",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "doneEpicId": "00000000-0000-4000-8000-000000000002",
+            "doneTicketId": "00000000-0000-4000-8000-000000000003",
+            "implementingEpicId": "00000000-0000-4000-8000-000000000004",
+            "projectId": "00000000-0000-4000-8000-000000000005",
+            "qualifiedId": "contract-00000001-1",
+            "refinedTicketId": "00000000-0000-4000-8000-000000000006",
+            "verifiedEpicId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${qualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/entities/contract-00000001-1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetype": "CAMPAIGN",
+            "assignee": null,
+            "blocked": false,
+            "dependsOn": null,
+            "description": "Ships two tickets and three epics, one after the other.",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "impetus": null,
+            "implementedAt": null,
+            "implementingAt": null,
+            "repositoryId": null,
+            "ticketType": null
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.blocked": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getEntity"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item: getEntity",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a feature in detail",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
@@ -11786,6 +11914,87 @@
               ]
             }
           },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listEntityComments"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item: listEntityComments",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign with a done, a verified and an implementing epic",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "doneEpicId": "00000000-0000-4000-8000-000000000002",
+            "doneTicketId": "00000000-0000-4000-8000-000000000003",
+            "implementingEpicId": "00000000-0000-4000-8000-000000000004",
+            "projectId": "00000000-0000-4000-8000-000000000005",
+            "qualifiedId": "contract-00000001-1",
+            "refinedTicketId": "00000000-0000-4000-8000-000000000006",
+            "verifiedEpicId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/entities/contract-00000001-1/comments"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
           "header": {
             "Content-Type": {
               "combine": "AND",

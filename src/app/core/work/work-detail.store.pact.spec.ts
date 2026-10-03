@@ -54,7 +54,11 @@ const TICKETS = [
   'an improvement ticket in detail',
   'a maintenance ticket in detail',
 ];
-const OTHERS = ['a campaign in detail', 'an implemented ticket'];
+const OTHERS = [
+  'a campaign in detail',
+  'a campaign with a done, a verified and an implementing epic',
+  'an implemented ticket',
+];
 const UNBLOCKABLE = ['a feature in detail', 'a task in detail'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-detail-pact-'));
