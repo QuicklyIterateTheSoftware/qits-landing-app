@@ -1,16 +1,17 @@
 {
   "name": "qits-landing-app",
-  "version": "2026.1003.122431",
+  "version": "2026.1003.133630",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "prettier --check . && eslint .",
+    "lint": "prettier --check . && eslint . && qits-angular screenshots --check",
     "generate:api": "openapi-ts",
     "serve:ssr": "node dist/qits-landing-app/server/server.mjs",
-    "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser"
+    "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser && qits-angular screenshots --check",
+    "screenshots:prune": "qits-angular screenshots --prune"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
@@ -36,7 +37,7 @@
     "@opentelemetry/sdk-metrics": "^2.11.0",
     "@opentelemetry/sdk-trace-node": "^2.11.0",
     "@opentelemetry/semantic-conventions": "^1.43.0",
-    "@qits/angular": "2026.1003.111853",
+    "@qits/angular": "2026.1003.131134",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

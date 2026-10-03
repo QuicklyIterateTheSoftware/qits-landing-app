@@ -2,6 +2,7 @@ import { playwright } from '@vitest/browser-playwright';
 import type { Plugin } from 'vite';
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
+import { screenshotReferences } from '@qits/angular/screenshots';
 import { pactedGoldenMasters } from '@qits/angular/testing';
 import {
   eventsGoldenMasters,
@@ -102,7 +103,9 @@ const chromiumFlags: Plugin = {
 };
 
 export default defineConfig({
-  plugins: [chromiumFlags],
+  // screenshotReferences: records the reference screenshots each spec asks for, so
+  // `qits-angular screenshots --check` (after the run, in `test:browser`) finds the ones no test uses.
+  plugins: [chromiumFlags, screenshotReferences()],
   test: {
     browser: {
       commands: { goldenMaster, parkPointer, stubOrigin },
