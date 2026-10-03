@@ -54,8 +54,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       (left)="left.emit()"
     >
       @if (header()) {
-        <!-- The left arm of the ┌, over the board's empty left gutter; above the board's pinned
-             headings, so it runs on unbroken past them. -->
+        <!-- The left arm of the ┌, over the board's empty left gutter; above the board's
+             headings, so it runs on unbroken past them. The headings are not pinned here: one
+             epic's board is small enough not to need it. -->
         <div
           class="relative z-40 col-start-1 row-span-2 row-start-1 flex items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 py-4 text-white"
         >
@@ -85,6 +86,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       <ui-board
         class="col-span-full row-start-2 pb-6 [&_ui-board-row:last-of-type]:mb-0"
         [columns]="columns()"
+        [pinned]="false"
         gutter
       >
         @for (row of rows(); track row.node.entry.id) {

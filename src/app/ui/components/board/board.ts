@@ -27,7 +27,7 @@ export interface BoardColumnSpec {
  * they are given, and removing one does not lift a later one past another.
  *
  * The headings stay pinned to the top of the window while the board is in view, and leave with
- * its end. They pin below the shell's top bar (`--app-header-h`) and the page's pinned actions
+ * its end; `[pinned]="false"` leaves them in place, for a board small enough not to need it. They pin below the shell's top bar (`--app-header-h`) and the page's pinned actions
  * (`--page-actions-h`); both are 0 where they are unset. Sticky works only with no scrolling box
  * between the board and the document, so nothing around a board may set `overflow`.
  *
@@ -44,7 +44,10 @@ export interface BoardColumnSpec {
   providers: [{ provide: BOARD_CONTEXT, useExisting: Board }],
   template: `
     <div
-      class="sticky top-[calc(var(--app-header-h,0px)_+_var(--page-actions-h,0px))] z-30 grid bg-white"
+      class="z-30 grid bg-white"
+      [class]="
+        pinned() ? 'sticky top-[calc(var(--app-header-h,0px)_+_var(--page-actions-h,0px))]' : ''
+      "
       [style.grid-template-columns]="template()"
       data-board-headings
     >
@@ -91,6 +94,8 @@ export interface BoardColumnSpec {
 })
 export class Board implements BoardContext {
   readonly columns = input.required<readonly BoardColumnSpec[]>();
+  /** Pins the headings while the board is in view (see above). */
+  readonly pinned = input(true, { transform: booleanAttribute });
   /** A narrow neutral column before the status columns. */
   readonly gutter = input(false, { transform: booleanAttribute });
 
