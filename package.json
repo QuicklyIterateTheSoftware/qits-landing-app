@@ -47,6 +47,7 @@
     "@angular/compiler-cli": "^22.1.0",
     "@hey-api/openapi-ts": "0.99.0",
     "@pact-foundation/pact": "17.1.4",
+    "@qits/edge-golden-masters": "2026.1003.81928",
     "@qits/events-golden-masters": "2026.1002.210125",
     "@qits/githost-golden-masters": "2026.1002.190746",
     "@qits/maintenance-golden-masters": "2026.1002.215821",

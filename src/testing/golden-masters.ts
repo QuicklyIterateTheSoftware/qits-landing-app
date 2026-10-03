@@ -18,6 +18,9 @@ export const maintenanceGoldenMasters = goldenMasters(
 /** qits-events' golden masters (epic qits-112), from its npm package. */
 export const eventsGoldenMasters = goldenMasters('@qits/events-golden-masters', 'qits-events');
 
+/** qits-edge's golden masters (epic qits-112), from its npm package. */
+export const edgeGoldenMasters = goldenMasters('@qits/edge-golden-masters', 'qits-edge');
+
 /** The body qits-projects recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const goldenMaster = <T = any>(state: string, operationId: string): T =>
   projectsGoldenMasters.body<T>(state, operationId);

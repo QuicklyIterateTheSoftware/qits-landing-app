@@ -3,6 +3,7 @@ import type { Plugin } from 'vite';
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
 import {
+  edgeGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
   maintenanceGoldenMasters,
@@ -18,13 +19,18 @@ import {
  * `vitest/browser`). The provider is `qits-projects` unless named.
  */
 const goldenMaster: BrowserCommand<
-  [state: string, operationId: string, provider?: 'qits-projects' | 'qits-githost' | 'qits-events']
+  [
+    state: string,
+    operationId: string,
+    provider?: 'qits-projects' | 'qits-githost' | 'qits-events' | 'qits-maintenance' | 'qits-edge',
+  ]
 > = (_context, state, operationId, provider = 'qits-projects') =>
   ({
     'qits-projects': projectsGoldenMasters,
     'qits-githost': githostGoldenMasters,
     'qits-events': eventsGoldenMasters,
     'qits-maintenance': maintenanceGoldenMasters,
+    'qits-edge': edgeGoldenMasters,
   })[provider].body(state, operationId);
 
 /**

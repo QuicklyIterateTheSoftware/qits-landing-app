@@ -88,13 +88,14 @@ string built at run time is not found, so write every class out in full.
 
 ## Pact contracts (epics qits-546, qits-112)
 
-This app is a consumer of two providers. What it relies on from each is written down as a Pact V4
+This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
 | Provider              | Store and pact spec                | Pact file                                           | Golden masters                  |
 | --------------------- | ---------------------------------- | --------------------------------------------------- | ------------------------------- |
 | qits-projects-service | `core/projects/projects.store*.ts` | `pacts/qits-landing-app_qits-projects-service.json` | `@qits/projects-golden-masters` |
 | qits-githost-service  | `core/loc/loc.store*.ts`           | `pacts/qits-landing-app_qits-githost-service.json`  | `@qits/githost-golden-masters`  |
+| qits-edge-service     | `core/platform/app-origins*.ts`    | `pacts/qits-landing-app_qits-edge-service.json`     | `@qits/edge-golden-masters`     |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
