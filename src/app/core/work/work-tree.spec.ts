@@ -96,6 +96,20 @@ describe('WorkGraph', () => {
     const graph = new WorkGraph(entries);
     expect(graph.tree('acceptance').map(shape)).toEqual(['~epic(~shipped(t1))']);
     expect(graph.columnOf(entries[2])).toBeUndefined();
+    expect(graph.tree('board').map(shape)).toEqual(['epic@1(shipped@2(t2@1) open@0(t3@0))']);
+  });
+
+  it('archives a DONE epic with its whole tree, verified items included', () => {
+    const graph = new WorkGraph(withStatus({ epic: 'DONE', t1: 'VERIFIED' }));
+    expect(graph.tree('board')).toEqual([]);
+    expect(graph.tree('acceptance')).toEqual([]);
+    expect(graph.tree('archive').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
+  });
+
+  it('archives a DROPPED epic with its whole tree', () => {
+    const graph = new WorkGraph(withEpic('DROPPED'));
+    expect(graph.tree('board')).toEqual([]);
+    expect(graph.tree('archive').map(shape)).toEqual(['epic(shipped(t1 t2) open(t3))']);
   });
 
   // A REFINED campaign ordering a VERIFIED epic, a REFINED epic with a feature, a REPORTED ticket;
@@ -235,6 +249,8 @@ describe('WorkGraph', () => {
       verified: 0,
       total: 3,
     });
+    const [verifying] = new WorkGraph(withStatus({ t1: 'VERIFYING' })).tree('board');
+    expect(taskDistribution(verifying)).toEqual({ columns: [1, 1, 0, 1], verified: 0, total: 3 });
   });
 
   it('counts the tasks below a node whose own status is VERIFIED or DONE, wherever they are', () => {
@@ -242,6 +258,9 @@ describe('WorkGraph', () => {
     const [board] = graph.tree('board');
     expect(shape(board)).toBe('epic@1(shipped@2 open@0(t3@0))');
     expect(taskDistribution(board)).toEqual({ columns: [1, 0, 0, 0], verified: 2, total: 3 });
+    // The epic in acceptance, there only as context to t1, counts the same tasks.
+    const [acceptance] = graph.tree('acceptance');
+    expect(acceptance.tasks).toEqual(board.tasks);
   });
 
   it('counts only the total off the board', () => {

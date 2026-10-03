@@ -61,7 +61,7 @@ describe('TicketListItem', () => {
     ['TICKET', 'VERIFYING', false, false],
     ['TICKET', 'DONE', false, false],
     ['TICKET', 'VERIFIED', true, false],
-    ['TASK', undefined, false, false],
+    ['TASK', 'VERIFIED', false, false],
   ] as const)(
     'shows the finish button on a %s in %s (context: %s): %s',
     (archetype, status, context, shown) => {

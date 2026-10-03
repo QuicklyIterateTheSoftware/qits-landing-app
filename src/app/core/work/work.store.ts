@@ -217,6 +217,10 @@ export const WorkStore = signalStore(
       settled.set(id, { status, at: ++clock });
       const work = store.byProject()[projectId];
       if (work) {
+        // Only the moved entry changes: an epic going to DONE moves none of its features or tasks
+        // in qits-projects (only REPORTED ↔ REFINED and → IMPLEMENTED cascade, qits-763), and the
+        // lists archive them with their epic (`WorkGraph.phaseOf`). Any other move refetches on
+        // its `EntityTransitioned` (`SelectedWork.followTransitions`).
         const entries = work.entries.map((e) => (e.id === id ? { ...e, status } : e));
         set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
       }

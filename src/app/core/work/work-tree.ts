@@ -11,7 +11,9 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED
  *   the archive. Features and tasks hold a status of their own too (qits-763), so a task can be on
  *   the board while its epic waits in Acceptance; the epic is then the task's context there. An
- *   entity without a status takes its nearest ancestor's.
+ *   entity without a status takes its nearest ancestor's. One exception: an ancestor in the
+ *   archive (DONE, DROPPED) takes every item below it there, so a finished or dropped epic archives
+ *   its whole tree (qits-projects moves no child when an epic goes to DONE or DROPPED).
  * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, by the
  *   entity's own status (or that ancestor's).
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
@@ -139,8 +141,13 @@ export class WorkGraph {
     return this.subtree(entry);
   }
 
-  /** The entity's phase, from its own status or its nearest ancestor's; undefined if none has one. */
+  /**
+   * The entity's phase, from its own status or its nearest ancestor's; undefined if none has one.
+   * An ancestor in the archive takes it there, whatever its own status.
+   */
   phaseOf(entry: WorkEntry): Phase | undefined {
+    const parent = this.parentEntry(entry);
+    if (parent && this.phaseOf(parent) === 'archive') return 'archive';
     const owner = this.statusOwner(entry);
     return owner?.status ? PHASE_BY_STATUS[owner.status] : undefined;
   }
@@ -226,6 +233,11 @@ export class WorkGraph {
       .map((child) => this.subtree(child, campaign));
     const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign?.id);
     return { entry, children, context: false, campaigns, tasks: this.tasksBelow(entry) };
+  }
+
+  private parentEntry(entry: WorkEntry): WorkEntry | undefined {
+    const parent = entry.id ? this.parentOf.get(entry.id) : undefined;
+    return parent ? this.byId.get(parent) : undefined;
   }
 
   /** The entity itself if it has a status, else its nearest ancestor that has one. */
