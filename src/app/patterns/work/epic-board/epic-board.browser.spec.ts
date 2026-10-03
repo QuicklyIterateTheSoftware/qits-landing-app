@@ -159,6 +159,9 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 0',
     ]);
     await expect.element(locator.getByText('No features')).toBeVisible();
+    // The headings are not pinned: the board is small.
+    const headingRow = element.querySelector<HTMLElement>('[data-board-headings]')!;
+    expect(getComputedStyle(headingRow).position).toBe('static');
     // Its id up the grey left strip, whole, from the bar's top to the board's end.
     const board = element.querySelector('app-epic-board article')!.getBoundingClientRect();
     const id = locator.getByRole('link', { name: qualifiedId, exact: true }).element();
