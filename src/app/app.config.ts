@@ -7,6 +7,7 @@ import {
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
+import { provideQitsIntegration } from '@qits/angular';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
@@ -44,6 +45,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(),
+    // Error records and Navigation spans; dark unless `main.ts` found a telemetry target.
+    provideQitsIntegration(),
     provideHttpClient(withFetch()),
     // Each generated client sends its calls through this app's HttpClient.
     provideHeyApiClient(projectsClient),

@@ -46,6 +46,22 @@ backend gets an entry in `BACKEND_APPS` and in `app.config.ts`'s `CLIENTS`. Neve
 hostname. `ng serve` stays same-origin through `src/environments/environment.development.ts`. Pact
 specs keep setting each client's `baseUrl` to their mock server.
 
+## Telemetry
+
+The SSR server exports traces, logs and metrics (OTLP http/protobuf) to qits-observability:
+`$QITS_OBSERVABILITY_URL` or `http://${QITS_ENVIRONMENT:-dev}-qits-observability:8080`, plus
+`/observability/api/otel/v1/<signal>`. `service.name` is `qits-landing`; the rest of the resource
+comes from `OTEL_RESOURCE_ATTRIBUTES`, which the deployer sets. The code is in `src/server/`. It
+starts only when `server.mjs` runs as the server, never under `ng serve`, the build or the tests;
+`OTEL_SDK_DISABLED=true` turns it off. Nothing patches modules (the bundle holds express): server
+spans come from a middleware, fetch spans from the undici diagnostics channels, and every
+`console` call is also a log record.
+
+The browser half is `@qits/angular` (`initQitsIntegration()` in `main.ts`). The server serves its
+contract: `GET /api/config.json` (the relay, `telemetry: null` when the server's telemetry is off)
+and `POST /api/otel/v1/{traces,logs}` (forwarded unchanged to the receiver). Each rendered page
+carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
+
 ## Styling
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in

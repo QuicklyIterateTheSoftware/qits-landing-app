@@ -6,6 +6,10 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { telemetryTarget, type TelemetryTarget } from './server/otel-config';
+import { otelRoutes } from './server/otel-routes';
+import { activeTraceparent, serverSpans, startTelemetry } from './server/otel-sdk';
+import { withTraceparentMeta } from './server/trace-meta';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -57,26 +61,71 @@ app.use(
 );
 
 /**
+ * TELEMETRY IS DECIDED AT START, NOT HERE. It stays `null` (off) unless this module runs as the
+ * server (the block at the end), so `ng serve`, the build's route extraction and the unit tests
+ * never start an SDK or export anything, like `%dev`/`%test.quarkus.otel.sdk.disabled=true` in
+ * the services. The relay reads it per request, so the browser library is on exactly when the
+ * server's own telemetry is.
+ */
+let telemetry: TelemetryTarget | null = null;
+
+app.use(otelRoutes(() => telemetry));
+
+/**
+ * Below the health probe, the static files and the telemetry routes: only what reaches the
+ * renderer gets a server span.
+ */
+app.use(serverSpans());
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+    .then(async (response) =>
+      response ? writeResponseToNodeResponse(await withTraceMeta(response), res) : next(),
+    )
     .catch(next);
 });
+
+/** Adds the render's `traceparent` to an html page, so the browser's page load joins its trace. */
+async function withTraceMeta(response: Response): Promise<Response> {
+  const traceparent = activeTraceparent();
+  if (!traceparent || !response.headers.get('Content-Type')?.startsWith('text/html')) {
+    return response;
+  }
+  const html = withTraceparentMeta(await response.text(), traceparent);
+  const headers = new Headers(response.headers);
+  headers.delete('Content-Length');
+  return new Response(html, { status: response.status, statusText: response.statusText, headers });
+}
 
 /**
  * Start the server if this module is the main entry point, or it is ran via PM2.
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
+  telemetry = telemetryTarget(process.env);
+  const stopTelemetry = telemetry ? startTelemetry(telemetry) : async () => undefined;
+  // Flush what is buffered before the container stops, but never hold the stop for long.
+  for (const signal of ['SIGTERM', 'SIGINT'] as const) {
+    process.once(signal, () => {
+      const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
+      void Promise.race([stopTelemetry(), timeout]).finally(() => process.exit(0));
+    });
+  }
+
   const port = process.env['PORT'] || DEFAULT_PORT;
   app.listen(port, (error) => {
     if (error) {
       throw error;
     }
 
-    console.log(`qits-landing listening on http://0.0.0.0:${port} (health at ${HEALTH_PATH})`);
+    console.log(
+      `qits-landing listening on http://0.0.0.0:${port} (health at ${HEALTH_PATH}, telemetry ${
+        telemetry ? `to ${telemetry.endpoint}` : 'off'
+      })`,
+    );
   });
 }
 
