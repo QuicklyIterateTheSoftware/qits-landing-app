@@ -50,6 +50,10 @@ const NESTED = 'an epic with features and tasks';
 const EVERY_TASK_STATUS = 'an epic with tasks in every status';
 /** Two features: one whose three tasks are all VERIFIED, one with open tasks. */
 const ALL_VERIFIED = 'an epic with a feature whose tasks are all verified';
+/** As ALL_VERIFIED, but the feature with only VERIFIED tasks is VERIFIED itself. */
+const VERIFIED_FEATURE = 'an epic with a verified feature whose tasks are all verified';
+/** Four features: VERIFIED, IMPLEMENTED (its task VERIFIED), REFINED, IMPLEMENTING (two tasks). */
+const MIXED = 'an implementing epic with features in mixed statuses';
 const CAMPAIGN = 'a campaign with work in every phase';
 /** One epic, member of two campaigns. The second campaign's answer is its own state. */
 const TWO_CAMPAIGNS = 'an epic in two campaigns';
@@ -91,6 +95,31 @@ describe('EpicBoard (screenshots)', () => {
     return { element, locator, harness };
   }
 
+  /**
+   * Shoots the board as a whole, or, when it is taller than the viewport (a taller one is scaled
+   * down to fit the test window), in parts: the bar, the column headings, then each row
+   * (`<name>-bar`, `<name>-columns`, `<name>-row-<n>`).
+   */
+  async function shoot(element: HTMLElement, name: string): Promise<void> {
+    if (element.offsetHeight <= 560) {
+      await expect.element(page.elementLocator(element)).toMatchScreenshot(name);
+      return;
+    }
+    const parts: [string, Element | null][] = [
+      ['bar', element.querySelector('app-epic-board header')],
+      ['columns', element.querySelector('ui-board > div:first-child')],
+      ...[...element.querySelectorAll('ui-board-row')].map((row, i): [string, Element] => [
+        `row-${i + 1}`,
+        row,
+      ]),
+    ];
+    for (const [part, found] of parts) {
+      if (found instanceof HTMLElement) {
+        await expect.element(page.elementLocator(found)).toMatchScreenshot(`${name}-${part}`);
+      }
+    }
+  }
+
   /** The column heading each card sits under, by the card's title. */
   function columnsOf(element: HTMLElement): Record<string, string> {
     const headers = [...element.querySelectorAll('ui-board > div:first-child > div')];
@@ -130,7 +159,7 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 0',
     ]);
     await expect.element(locator.getByText('No features')).toBeVisible();
-    await expect.element(locator).toMatchScreenshot(name);
+    await shoot(element, name);
   });
 
   it('an epic with tasks in every status: each in its column, VERIFIED and DONE in Verified', async () => {
@@ -163,7 +192,7 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 2',
     ]);
     await expect.element(locator.getByText('No features')).not.toBeVisible();
-    await expect.element(locator).toMatchScreenshot('every-task-status');
+    await shoot(element, 'every-task-status');
   });
 
   it('a refined epic with two features in a mixed state', async () => {
@@ -174,13 +203,13 @@ describe('EpicBoard (screenshots)', () => {
       'Second shipped task': 'Refined',
       'Open task': 'Refined',
     });
-    await expect.element(locator).toMatchScreenshot('refined-features');
+    await shoot(element, 'refined-features');
   });
 
   it('an implementing epic with a started feature and task', async () => {
     const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-17', 'Started epic');
     expect(columnsOf(element)).toEqual({ 'Started task': 'Implementing' });
-    await expect.element(locator).toMatchScreenshot('implementing-started');
+    await shoot(element, 'implementing-started');
   });
 
   it('a feature whose tasks are all verified: its cards in Verified', async () => {
@@ -192,23 +221,73 @@ describe('EpicBoard (screenshots)', () => {
       'Refined task': 'Refined',
       'Implementing task': 'Implementing',
     });
-    await expect.element(locator).toMatchScreenshot('feature-all-verified');
+    await shoot(element, 'feature-all-verified');
+  });
+
+  it('a verified feature whose tasks are all verified: its cards in Verified', async () => {
+    const { element, locator } = await shown(
+      VERIFIED_FEATURE,
+      'contract-00000001-1',
+      'Epic in flight',
+    );
+    expect(columnsOf(element)).toEqual({
+      'First verified task': 'Verified',
+      'Second verified task': 'Verified',
+      'Third verified task': 'Verified',
+      'Refined task': 'Refined',
+      'Implementing task': 'Implementing',
+    });
+    await shoot(element, 'verified-feature');
+  });
+
+  it('features in mixed statuses: each task in its own column, whatever its feature’s', async () => {
+    const { element, locator } = await shown(
+      MIXED,
+      'contract-00000001-1',
+      'Epic with mixed features',
+    );
+    const rows = [...element.querySelectorAll('ui-board-row')].map((row) =>
+      row.querySelector('[row-footer]')!.textContent!.trim(),
+    );
+    expect(rows).toEqual([
+      'Verified feature',
+      'Implemented feature',
+      'Refined feature',
+      'Implementing feature',
+    ]);
+    expect(columnsOf(element)).toEqual({
+      'Verified task': 'Verified',
+      'Verified task of an implemented feature': 'Verified',
+      'Refined task': 'Refined',
+      'Implementing task': 'Implementing',
+      'Verifying task': 'Verifying',
+    });
+    expect(headings(element)).toEqual([
+      'Refined 1',
+      'Implementing 1',
+      'Implemented 0',
+      'Verifying 1',
+      'Verified 2',
+    ]);
+    await shoot(element, 'mixed-features');
   });
 
   it('in a campaign: its tag in the bar', async () => {
-    const { locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
+    const { element, locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
     await expect.element(locator).toHaveTextContent('Card campaign');
-    await expect.element(locator).toMatchScreenshot('campaign');
+    await shoot(element, 'campaign');
   });
 
   it('in two campaigns', async () => {
-    const { locator } = await shown(TWO_CAMPAIGNS, 'contract-00000001-3', 'Epic in two campaigns', [
+    const { element, locator } = await shown(
       TWO_CAMPAIGNS,
-      SECOND_CAMPAIGN,
-    ]);
+      'contract-00000001-3',
+      'Epic in two campaigns',
+      [TWO_CAMPAIGNS, SECOND_CAMPAIGN],
+    );
     await expect.element(locator).toHaveTextContent('First campaign');
     await expect.element(locator).toHaveTextContent('Second campaign');
-    await expect.element(locator).toMatchScreenshot('two-campaigns');
+    await shoot(element, 'two-campaigns');
   });
 
   it('with workspaces: a tag in the bar, at a feature’s title, a bubble on a task', async () => {
@@ -236,6 +315,6 @@ describe('EpicBoard (screenshots)', () => {
       'Render one invoice as PDF': 'Implementing',
       'Preview the PDF before download': 'Refined',
     });
-    await expect.element(locator).toMatchScreenshot('workspaces');
+    await shoot(element, 'workspaces');
   });
 });
