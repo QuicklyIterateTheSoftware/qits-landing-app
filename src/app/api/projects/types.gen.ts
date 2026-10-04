@@ -853,7 +853,7 @@ export type EntityDispatchStateDto = {
  * A project's entities, in tree order.
  */
 export type EntityList = {
-    entities?: Array<TransitionedEntity>;
+    entities?: Array<EntitySummary>;
 };
 
 /**
@@ -912,6 +912,34 @@ export type EntityStatusMove = {
      * REPORTED, REFINED, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk, or IMPLEMENTED from REFINED or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
      */
     target: string;
+};
+
+export type EntitySummary = {
+    id?: string;
+    archetype?: Archetype;
+    projectId?: string;
+    number?: number;
+    qualifiedId?: string;
+    title?: string;
+    slug?: string;
+    slugScope?: string;
+    status?: string;
+    statusBefore?: string;
+    ticketType?: TicketType;
+    impetus?: string;
+    assignee?: string;
+    createdBy?: string;
+    supersededBy?: string;
+    repositoryId?: string;
+    implementedAt?: Instant;
+    implementingAt?: Instant;
+    dependsOn?: string;
+    parent?: string;
+    position?: number;
+    createdAt?: Instant;
+    updatedAt?: Instant;
+    changedBy?: string;
+    blocked?: boolean;
 };
 
 export type EntityTransition = {
