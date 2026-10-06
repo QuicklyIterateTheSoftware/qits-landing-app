@@ -25,6 +25,13 @@ export const BOARD_COLUMNS: readonly BoardColumn[] = [
     cardBorder: 'border-ocean-deep-400',
   },
   {
+    status: 'READY_FOR_DEV',
+    label: 'Ready for Dev',
+    body: 'bg-charcoal-brown-300',
+    header: 'bg-charcoal-brown-400 text-charcoal-brown-950',
+    cardBorder: 'border-charcoal-brown-400',
+  },
+  {
     status: 'IMPLEMENTING',
     label: 'Implementing',
     body: 'bg-cinnabar-200',

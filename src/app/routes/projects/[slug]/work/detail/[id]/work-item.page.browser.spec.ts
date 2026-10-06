@@ -290,7 +290,7 @@ describe('WorkItemPage (screenshots)', () => {
       await shootParts(element, 'detail-epic');
     });
 
-    it('an epic on the board: its features are its own board, five columns', async () => {
+    it('an epic on the board: its features are its own board, six columns', async () => {
       const element = await render(
         'an epic in detail',
         'Export invoices for the accountants',
@@ -302,6 +302,7 @@ describe('WorkItemPage (screenshots)', () => {
       ].map((h) => h.textContent?.replace(/\d+/g, '').trim());
       expect(headings.filter(Boolean)).toEqual([
         'Refined',
+        'Ready for Dev',
         'Implementing',
         'Implemented',
         'Verifying',

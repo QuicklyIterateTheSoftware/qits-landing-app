@@ -66,7 +66,13 @@ describe('KanbanBoard (screenshots)', () => {
     const headers = [...element.querySelectorAll('ui-board > div:first-child > div')]
       .map((h) => h.textContent?.replace(/\s+/g, ' ').trim())
       .filter(Boolean);
-    expect(headers).toEqual(['Refined 2', 'Implementing 5', 'Implemented 2', 'Verifying 2']);
+    expect(headers).toEqual([
+      'Refined 2',
+      'Ready for Dev 0',
+      'Implementing 5',
+      'Implemented 2',
+      'Verifying 2',
+    ]);
     for (const title of [
       'Refined epic',
       'Refined ticket',

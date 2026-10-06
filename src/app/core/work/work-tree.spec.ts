@@ -45,7 +45,7 @@ describe('WorkGraph', () => {
 
   it('places features and tasks by their own status', () => {
     const graph = new WorkGraph(epic);
-    expect(epic.map((e) => graph.columnOf(e))).toEqual([1, 2, 2, 1, 0, 0]);
+    expect(epic.map((e) => graph.columnOf(e))).toEqual([2, 3, 3, 2, 0, 0]);
   });
 
   it('gives a feature or a task without a status its epic’s, and an orphan none', () => {
@@ -63,31 +63,47 @@ describe('WorkGraph', () => {
     ]);
   });
 
-  it('places work by its status: REFINED, IMPLEMENTING, IMPLEMENTED, VERIFYING', () => {
-    const tickets = ['REFINED', 'IMPLEMENTING', 'IMPLEMENTED', 'VERIFYING'].map((status) =>
-      entry(status, 'TICKET', status),
+  it('places work by its status: REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING', () => {
+    const tickets = ['REFINED', 'READY_FOR_DEV', 'IMPLEMENTING', 'IMPLEMENTED', 'VERIFYING'].map(
+      (status) => entry(status, 'TICKET', status),
     );
     expect(new WorkGraph(tickets).tree('board').map(shape)).toEqual([
       'REFINED@0',
-      'IMPLEMENTING@1',
-      'IMPLEMENTED@2',
-      'VERIFYING@3',
+      'READY_FOR_DEV@1',
+      'IMPLEMENTING@2',
+      'IMPLEMENTED@3',
+      'VERIFYING@4',
     ]);
+  });
+
+  it('lands a READY_FOR_DEV epic and ticket on the board, in the Ready for Dev column', () => {
+    const entries = [entry('e', 'EPIC', 'READY_FOR_DEV'), entry('t', 'TICKET', 'READY_FOR_DEV')];
+    const graph = new WorkGraph(entries);
+    expect(entries.map((e) => graph.phaseOf(e))).toEqual(['board', 'board']);
+    expect(graph.tree('board').map(shape)).toEqual(['e@1', 't@1']);
+  });
+
+  it('falls a status this map does not know back to the backlog, rather than drawing it nowhere', () => {
+    const entries = [entry('e', 'EPIC', 'SOME_FUTURE_STATUS')];
+    const graph = new WorkGraph(entries);
+    expect(graph.phaseOf(entries[0])).toBe('backlog');
+    expect(graph.tree('backlog').map(shape)).toEqual(['e']);
+    expect(graph.tree('board')).toEqual([]);
   });
 
   it('nests features and tasks under their epic, each in its own column', () => {
     const tree = new WorkGraph(epic).tree('board');
-    expect(tree.map(shape)).toEqual(['epic@1(shipped@2(t1@2 t2@1) open@0(t3@0))']);
+    expect(tree.map(shape)).toEqual(['epic@2(shipped@3(t1@3 t2@2) open@0(t3@0))']);
   });
 
   it('leaves the pieces of a VERIFYING epic where their own status puts them', () => {
     const tree = new WorkGraph(withEpic('VERIFYING')).tree('board');
-    expect(tree.map(shape)).toEqual(['epic@3(shipped@2(t1@2 t2@1) open@0(t3@0))']);
+    expect(tree.map(shape)).toEqual(['epic@4(shipped@3(t1@3 t2@2) open@0(t3@0))']);
   });
 
   it('takes a VERIFIED epic into acceptance and leaves its open pieces on the board', () => {
     const graph = new WorkGraph(withEpic('VERIFIED'));
-    expect(graph.tree('board').map(shape)).toEqual(['~epic(shipped@2(t1@2 t2@1) open@0(t3@0))']);
+    expect(graph.tree('board').map(shape)).toEqual(['~epic(shipped@3(t1@3 t2@2) open@0(t3@0))']);
     expect(graph.tree('acceptance').map(shape)).toEqual(['epic']);
   });
 
@@ -96,7 +112,7 @@ describe('WorkGraph', () => {
     const graph = new WorkGraph(entries);
     expect(graph.tree('acceptance').map(shape)).toEqual(['~epic(~shipped(t1))']);
     expect(graph.columnOf(entries[2])).toBeUndefined();
-    expect(graph.tree('board').map(shape)).toEqual(['epic@1(shipped@2(t2@1) open@0(t3@0))']);
+    expect(graph.tree('board').map(shape)).toEqual(['epic@2(shipped@3(t2@2) open@0(t3@0))']);
   });
 
   it('archives a DONE epic with its whole tree, verified items included', () => {
@@ -126,7 +142,7 @@ describe('WorkGraph', () => {
 
   it('tags campaign members instead of nesting them; campaigns are in no tree', () => {
     const tree = new WorkGraph(campaign, members).tree('board');
-    expect(tree.map(shape)).toEqual(['running@0{campaign}(feature@0)', 'standalone@2']);
+    expect(tree.map(shape)).toEqual(['running@0{campaign}(feature@0)', 'standalone@3']);
     expect(new WorkGraph(campaign, members).tree('acceptance').map(shape)).toEqual([
       'verified{campaign}',
     ]);
@@ -245,27 +261,31 @@ describe('WorkGraph', () => {
   it('counts an epic’s tasks per board column, zero columns included', () => {
     const [implementing] = new WorkGraph(epic).tree('board');
     expect(taskDistribution(implementing)).toEqual({
-      columns: [1, 1, 1, 0],
+      columns: [1, 0, 1, 1, 0],
       verified: 0,
       total: 3,
     });
     const [verifying] = new WorkGraph(withStatus({ t1: 'VERIFYING' })).tree('board');
-    expect(taskDistribution(verifying)).toEqual({ columns: [1, 1, 0, 1], verified: 0, total: 3 });
+    expect(taskDistribution(verifying)).toEqual({
+      columns: [1, 0, 1, 0, 1],
+      verified: 0,
+      total: 3,
+    });
   });
 
   it('counts the tasks below a node whose own status is VERIFIED or DONE, wherever they are', () => {
     const graph = new WorkGraph(withStatus({ t1: 'VERIFIED', t2: 'DONE' }));
     const [board] = graph.tree('board');
-    expect(shape(board)).toBe('epic@1(shipped@2 open@0(t3@0))');
-    expect(taskDistribution(board)).toEqual({ columns: [1, 0, 0, 0], verified: 2, total: 3 });
+    expect(shape(board)).toBe('epic@2(shipped@3 open@0(t3@0))');
+    expect(taskDistribution(board)).toEqual({ columns: [1, 0, 0, 0, 0], verified: 2, total: 3 });
     // The epic in acceptance, there only as context to t1, counts the same tasks.
     const [acceptance] = graph.tree('acceptance');
     expect(acceptance.tasks).toEqual(board.tasks);
     // A feature whose tasks are all past the board: on the board, no task in a column, both counted.
     const shipped = board.children[0];
-    expect(taskDistribution(shipped)).toEqual({ columns: [0, 0, 0, 0], verified: 2, total: 2 });
+    expect(taskDistribution(shipped)).toEqual({ columns: [0, 0, 0, 0, 0], verified: 2, total: 2 });
     expect(taskDistribution(board.children[1])).toEqual({
-      columns: [1, 0, 0, 0],
+      columns: [1, 0, 0, 0, 0],
       verified: 0,
       total: 1,
     });
@@ -281,7 +301,7 @@ describe('WorkGraph', () => {
       t3: 'REPORTED',
     });
     const [backlog] = new WorkGraph(reported).tree('backlog');
-    expect(taskDistribution(backlog)).toEqual({ columns: [0, 0, 0, 0], verified: 0, total: 3 });
+    expect(taskDistribution(backlog)).toEqual({ columns: [0, 0, 0, 0, 0], verified: 0, total: 3 });
   });
 
   describe('order', () => {

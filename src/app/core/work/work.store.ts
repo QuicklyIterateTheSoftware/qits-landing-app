@@ -30,8 +30,14 @@ export type FinishState = 'running' | 'error';
 
 type Status = 'loading' | 'loaded' | 'error';
 
-/** A work entity's status word. */
-export type WorkStatus = NonNullable<WorkEntry['status']>;
+/**
+ * A work entity's status word. Plain `string`, not the generated client's closed union
+ * (`WorkEntry['status']`): qits-projects-service does not carry READY_FOR_DEV in its OpenAPI
+ * document yet (qits-887), so that union is missing a word a live entity can already hold once the
+ * service releases it. Regenerate the client (`npm run generate:api`) once it does, and this can
+ * narrow again; until then nothing here may depend on the union being exhaustive.
+ */
+export type WorkStatus = string;
 
 /** What a dispatch press runs: the whole flow, or the next phase only. */
 export type DispatchMode = 'FLOW' | 'PHASE';

@@ -151,10 +151,11 @@ describe('EpicBoard (screenshots)', () => {
     ['implementing-no-features', EVERY_STATUS, 'contract-00000001-5', 'Implementing epic'],
     ['implemented-no-features', EVERY_STATUS, 'contract-00000001-7', 'Implemented epic'],
     ['verifying-no-features', EVERY_STATUS, 'contract-00000001-9', 'Verifying epic'],
-  ])('%s: the bar, the five columns, "No features"', async (name, state, qualifiedId, title) => {
+  ])('%s: the bar, the six columns, "No features"', async (name, state, qualifiedId, title) => {
     const { element, locator } = await shown(state, qualifiedId, title);
     expect(headings(element)).toEqual([
       'Refined 0',
+      'Ready for Dev 0',
       'Implementing 0',
       'Implemented 0',
       'Verifying 0',
@@ -209,6 +210,7 @@ describe('EpicBoard (screenshots)', () => {
     expect(done.map((card) => card.querySelector('a')!.textContent!.trim())).toEqual(['Done task']);
     expect(headings(element)).toEqual([
       'Refined 1',
+      'Ready for Dev 0',
       'Implementing 1',
       'Implemented 1',
       'Verifying 1',
@@ -298,6 +300,7 @@ describe('EpicBoard (screenshots)', () => {
     });
     expect(headings(element)).toEqual([
       'Refined 1',
+      'Ready for Dev 0',
       'Implementing 1',
       'Implemented 0',
       'Verifying 1',
@@ -328,6 +331,7 @@ describe('EpicBoard (screenshots)', () => {
     });
     expect(headings(element)).toEqual([
       'Refined 1',
+      'Ready for Dev 0',
       'Implementing 1',
       'Implemented 0',
       'Verifying 1',

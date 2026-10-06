@@ -8,14 +8,16 @@ import { BOARD_COLUMNS } from './work-statuses';
  * - **Parent**: an entity's `parent` (epic › feature › task). Campaigns are not structure: they
  *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
  * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED /
- *   IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED
- *   the archive. Features and tasks hold a status of their own too (qits-763), so a task can be on
- *   the board while its epic waits in Acceptance; the epic is then the task's context there. An
- *   entity without a status takes its nearest ancestor's. One exception: an ancestor in the
+ *   READY_FOR_DEV / IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list,
+ *   DONE / DROPPED the archive. A status this map does not know falls back to the backlog, rather
+ *   than being drawn nowhere (the app holds no status model of its own; the fallback is a safety
+ *   net, not a model). Features and tasks hold a status of their own too (qits-763), so a task can
+ *   be on the board while its epic waits in Acceptance; the epic is then the task's context there.
+ *   An entity without a status takes its nearest ancestor's. One exception: an ancestor in the
  *   archive (DONE, DROPPED) takes every item below it there, so a finished or dropped epic archives
  *   its whole tree (qits-projects moves no child when an epic goes to DONE or DROPPED).
- * - **Column** (on the board): REFINED 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, by the
- *   entity's own status (or that ancestor's).
+ * - **Column** (on the board): REFINED 0, READY_FOR_DEV 1, IMPLEMENTING 2, IMPLEMENTED 3,
+ *   VERIFYING 4, by the entity's own status (or that ancestor's).
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
@@ -33,6 +35,7 @@ export type Phase = 'backlog' | 'board' | 'acceptance' | 'archive';
 const PHASE_BY_STATUS: Readonly<Record<string, Phase>> = {
   REPORTED: 'backlog',
   REFINED: 'board',
+  READY_FOR_DEV: 'board',
   IMPLEMENTING: 'board',
   IMPLEMENTED: 'board',
   VERIFYING: 'board',
@@ -40,6 +43,15 @@ const PHASE_BY_STATUS: Readonly<Record<string, Phase>> = {
   DONE: 'archive',
   DROPPED: 'archive',
 };
+
+/**
+ * `status`'s phase, or `'backlog'` for a word this map does not know: the app holds no status
+ * model of its own (the javadoc rule above), so an unrecognised word is a safety net rather than a
+ * model of what that word means. Without it such an entity would be drawn nowhere.
+ */
+function phaseOfStatus(status: string): Phase {
+  return PHASE_BY_STATUS[status] ?? 'backlog';
+}
 
 /** Each board status's column: its index in `BOARD_COLUMNS`. */
 const COLUMN_BY_STATUS: Readonly<Record<string, number>> = Object.fromEntries(
@@ -149,7 +161,7 @@ export class WorkGraph {
     const parent = this.parentEntry(entry);
     if (parent && this.phaseOf(parent) === 'archive') return 'archive';
     const owner = this.statusOwner(entry);
-    return owner?.status ? PHASE_BY_STATUS[owner.status] : undefined;
+    return owner?.status ? phaseOfStatus(owner.status) : undefined;
   }
 
   /** The entity's own status, or its nearest ancestor's (a feature's or task's epic); else none. */
@@ -170,7 +182,7 @@ export class WorkGraph {
       (entry) =>
         entry.status &&
         (entry.archetype === 'EPIC' || entry.archetype === 'TICKET') &&
-        PHASE_BY_STATUS[entry.status] === phase,
+        phaseOfStatus(entry.status) === phase,
     ).length;
   }
 
