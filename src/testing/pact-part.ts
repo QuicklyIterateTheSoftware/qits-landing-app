@@ -6,7 +6,10 @@ import { closeSync, existsSync, openSync, readFileSync, rmSync, writeFileSync } 
  * The committed file therefore holds every interaction exactly once, whichever spec made it.
  *
  * A spec's own interactions are told apart by `comments.references.qits-call.operationId`, which
- * `addGoldenInteraction` writes on every interaction.
+ * `addGoldenInteraction` writes on every interaction. Where two stores call the same operation
+ * (`getWork`: the work item page's read and the work list's campaign description), each spec owns
+ * that operation's interactions for its own UI interactions only (`qits-trigger.interaction`), and
+ * names it as `{ operationId, interactions }`.
  *
  * `assertPactPart` compares the spec's interactions in the committed file with the ones this run
  * generated (ignoring `metadata` and order, as `assertPactFile` does) and fails on a difference.
@@ -23,11 +26,28 @@ interface Interaction {
   readonly description: string;
   readonly providerStates?: readonly { readonly name: string }[];
   readonly comments?: {
-    readonly references?: { readonly 'qits-call'?: { readonly operationId?: string } };
+    readonly references?: {
+      readonly 'qits-call'?: { readonly operationId?: string };
+      readonly 'qits-trigger'?: { readonly interaction?: string };
+    };
   };
 }
 
+/**
+ * What a spec owns in the file: every interaction of an operation, or only those an operation has
+ * for the named UI interactions.
+ */
+export type OwnedOperation =
+  string | { readonly operationId: string; readonly interactions: readonly string[] };
+
 const operationOf = (i: Interaction) => i.comments?.references?.['qits-call']?.operationId;
+const triggerOf = (i: Interaction) => i.comments?.references?.['qits-trigger']?.interaction;
+const owns = (owned: OwnedOperation, i: Interaction) =>
+  typeof owned === 'string'
+    ? operationOf(i) === owned
+    : operationOf(i) === owned.operationId && owned.interactions.includes(triggerOf(i) ?? '');
+const named = (owned: OwnedOperation) =>
+  typeof owned === 'string' ? owned : `${owned.operationId} (${owned.interactions.join(', ')})`;
 const keyOf = (i: Interaction) =>
   `${i.description}\u0000${(i.providerStates ?? []).map((s) => s.name).join('\u0000')}`;
 const sorted = (list: readonly Interaction[]) =>
@@ -36,11 +56,11 @@ const sorted = (list: readonly Interaction[]) =>
 export function assertPactPart(
   generated: string,
   committed: string,
-  operations: readonly string[],
+  operations: readonly OwnedOperation[],
   updateSwitch: string,
 ): void {
   if (!existsSync(generated)) throw new Error(`the run wrote no pact at ${generated}`);
-  const ours = (i: Interaction) => operations.includes(operationOf(i) ?? '');
+  const ours = (i: Interaction) => operations.some((owned) => owns(owned, i));
   const fresh = JSON.parse(readFileSync(generated, 'utf8')) as Pact;
   const strangers = fresh.interactions.filter((i) => !ours(i));
   if (strangers.length) {
@@ -70,7 +90,7 @@ export function assertPactPart(
     normal(committedPact.interactions.filter(ours)) !== normal(fresh.interactions)
   ) {
     throw new Error(
-      `${committed} ${committedPact ? `differs from what this spec generates for ${operations}` : 'does not exist'}. ` +
+      `${committed} ${committedPact ? `differs from what this spec generates for ${operations.map(named)}` : 'does not exist'}. ` +
         `If the change is intended, regenerate it in this change: ${updateSwitch}=true npm test`,
     );
   }

@@ -49,7 +49,7 @@ describe('WorkRefinementPage (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '760px';
     const answered = async () => {
@@ -62,7 +62,7 @@ describe('WorkRefinementPage (screenshots)', () => {
 
   it('shows the work not refined yet', async () => {
     const { element, work, answered } = await shown();
-    work.flush(await goldenMaster('a project with work in every status', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
     await expect
       .element(element.getByRole('heading', { level: 1 }))
@@ -76,7 +76,7 @@ describe('WorkRefinementPage (screenshots)', () => {
 
   it('says so when nothing waits for refinement', async () => {
     const { element, work, answered } = await shown();
-    work.flush(await goldenMaster('a project with no work', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
     await expect.element(element).toHaveTextContent('Nothing here');
     await expect.element(element).toMatchScreenshot('empty');

@@ -85,7 +85,7 @@ describe('WorkLayout (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '760px';
     const answered = async () => {
@@ -99,7 +99,7 @@ describe('WorkLayout (screenshots)', () => {
 
   it('shows Campaigns, then the tabs in workflow order, each with its count, and marks the current one', async () => {
     const { locate, work, answered, project } = await shown('in-progress');
-    work.flush(await goldenMaster('a project with work in every status', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
     const element = locate();
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');

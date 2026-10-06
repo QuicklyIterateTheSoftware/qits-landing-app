@@ -11,6 +11,7 @@ import { client as workspacesClient } from '../../../../api/workspaces/client.ge
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { WORK_REFRESH_DEBOUNCE_MS } from '$core/work/selected-work';
 import { goldenMaster, workspacesGoldenMaster } from '../../../../../testing/golden-masters';
+import { answerCampaignReads, campaignsIn } from '../../../../../testing/campaign-reads';
 import { WorkLayout } from './work.layout';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -33,7 +34,7 @@ describe('WorkLayout', () => {
   let events: Subject<DomainEvent>;
   const list = goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
-  const entities = `/projects/api/projects/${project.id}/entities`;
+  const entities = `/projects/api/projects/${project.id}/work`;
 
   beforeEach(() => {
     events = new Subject<DomainEvent>();
@@ -88,7 +89,7 @@ describe('WorkLayout', () => {
         return count.classList.contains('hidden') ? undefined : Number(count.textContent);
       });
     const answered = async (state: string) => {
-      http.expectOne(entities).flush(goldenMaster(state, 'listProjectEntities'));
+      http.expectOne(entities).flush(goldenMaster(state, 'listProjectWork'));
       await settle();
       await harness.fixture.whenStable();
     };
@@ -130,13 +131,18 @@ describe('WorkLayout', () => {
   it('counts the campaigns, which no phase counts', async () => {
     const { counts, answered, harness } = await shown('campaigns');
     await answered('an epic in two campaigns');
-    for (const request of http.match((r) => r.url.startsWith('/projects/api/campaigns/'))) {
-      const id = request.request.url.split('/').pop();
-      const answer = ['an epic in two campaigns', 'the second campaign of an epic in two campaigns']
-        .map((state) => goldenMaster(state, 'getCampaign'))
-        .find((body) => body.campaign.id === id);
-      request.flush(answer);
-    }
+    // Each campaign's members from the state recording it (the second is a state of its own).
+    await answerCampaignReads(
+      http,
+      goldenMaster,
+      campaignsIn(goldenMaster('an epic in two campaigns', 'listProjectWork')),
+      {
+        members: {
+          'contract-00000001-1': 'an epic in two campaigns',
+          'contract-00000001-2': 'the second campaign of an epic in two campaigns',
+        },
+      },
+    );
     await settle();
     await harness.fixture.whenStable();
     // Two campaigns; their one member, a REFINED epic, waits on the Schedule tab.
@@ -147,7 +153,7 @@ describe('WorkLayout', () => {
     const { counts, harness } = await shown('archive');
     // "a campaign with work in every phase", with its campaign DROPPED: no recorded state holds a
     // campaign in a final state yet.
-    const work = goldenMaster('a campaign with work in every phase', 'listProjectEntities');
+    const work = goldenMaster('a campaign with work in every phase', 'listProjectWork');
     http.expectOne(entities).flush({
       ...work,
       entities: work.entities.map((e: { archetype: string }) =>
@@ -155,9 +161,9 @@ describe('WorkLayout', () => {
       ),
     });
     await settle();
-    http
-      .expectOne((r) => r.url.startsWith('/projects/api/campaigns/'))
-      .flush(goldenMaster('a campaign with work in every phase', 'getCampaign'));
+    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
+      members: 'a campaign with work in every phase',
+    });
     await settle();
     await harness.fixture.whenStable();
     // Schedule: the refined epic and tickets. Archive: the done ticket and the dropped campaign.

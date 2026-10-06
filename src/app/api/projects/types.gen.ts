@@ -1949,6 +1949,462 @@ export type WithdrawReleaseRequest = {
     reason?: string;
 };
 
+/**
+ * A work entity's change history, newest first.
+ */
+export type WorkAudit = {
+    entries?: Array<AuditEntryDto>;
+};
+
+/**
+ * A work entity's block flag as the write left it.
+ */
+export type WorkBlockAnswer = {
+    block?: EntityBlock;
+};
+
+/**
+ * What the block flag should become, and why.
+ */
+export type WorkBlockRequest = {
+    /**
+     * true to block, false to unblock
+     */
+    blocked: boolean;
+    /**
+     * what is in the way — required when blocking; lands on the entity's thread
+     */
+    reason?: string;
+};
+
+/**
+ * A new child: the child archetype's create schema (FEATURE under an epic, TASK under a feature) without archetype, parent and project, which the path decides.
+ */
+export type WorkChildCreate = {
+    /**
+     * The label.
+     */
+    title: string;
+    /**
+     * The long-form Markdown body.
+     */
+    description?: string;
+    /**
+     * A task's repository, in the parent's project. Required for a task.
+     */
+    repositoryId?: string;
+    /**
+     * A sibling dependency, by qualified id or UUID.
+     */
+    dependsOn?: string;
+};
+
+/**
+ * A work entity's direct children, in membership order.
+ */
+export type WorkChildren = {
+    children?: Array<TransitionedEntity>;
+};
+
+/**
+ * One comment on a work entity's thread.
+ */
+export type WorkCommentAnswer = {
+    comment?: CommentDto;
+};
+
+/**
+ * A remark for a work entity's thread.
+ */
+export type WorkCommentCreate = {
+    /**
+     * The remark, Markdown.
+     */
+    body: string;
+};
+
+/**
+ * The comment is gone.
+ */
+export type WorkCommentDeleted = {
+    success?: boolean;
+};
+
+/**
+ * A work entity's thread, oldest first.
+ */
+export type WorkCommentList = {
+    entries?: Array<WorkCommentListEntry>;
+};
+
+export type WorkCommentListEntry = {
+    comment?: CommentDto;
+};
+
+/**
+ * A JSON merge patch (RFC 7396) of one comment. body is the only property and is required: it replaces the text, and may not be null or blank. id, entityId, author, createdAt and updatedAt are server-owned; any other property is refused as unknown.
+ */
+export type WorkCommentPatch = {
+    /**
+     * The remark as it should now read, Markdown.
+     */
+    body: string;
+};
+
+/**
+ * One criterion of a member's condition.
+ */
+export type WorkConditionCriterion = {
+    /**
+     * An existing criterion's id, to keep its latch; omitted mints one.
+     */
+    id?: string;
+    /**
+     * ENTITY_STATUS, APPROVAL, …
+     */
+    kind?: string;
+    /**
+     * The kind's predicate; an ENTITY_STATUS predicate's entityId takes a qualified id or a UUID.
+     */
+    predicate?: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * One OR'd group of a member's condition.
+ */
+export type WorkConditionGroup = {
+    criteria?: Array<WorkConditionCriterion>;
+};
+
+/**
+ * A new work entity of any archetype: the archetype, plus exactly the body GET /projects/api/work/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, CAMPAIGN) names its project, a node (FEATURE, TASK) its parent.
+ */
+export type WorkCreate = {
+    /**
+     * EPIC, TICKET, FEATURE, TASK or CAMPAIGN
+     */
+    archetype: Archetype;
+    /**
+     * A root's project: its id or its slug.
+     */
+    project?: string;
+    /**
+     * A node's parent — an EPIC for a FEATURE, a FEATURE for a TASK — by qualified id or UUID.
+     */
+    parent?: string;
+    /**
+     * The label.
+     */
+    title?: string;
+    /**
+     * The long-form Markdown body.
+     */
+    description?: string;
+    /**
+     * A ticket's kind, BUG or IMPROVEMENT. MAINTENANCE is reserved for the tickets the platform files about its own stuck release requests, and it closes those itself.
+     */
+    ticketType?: string;
+    /**
+     * Why a ticket came about. Required for a ticket.
+     */
+    impetus?: string;
+    /**
+     * An epic's or a ticket's assignee.
+     */
+    assignee?: string;
+    /**
+     * A task's repository, in the task's project.
+     */
+    repositoryId?: string;
+    /**
+     * A feature's or task's sibling dependency, by qualified id or UUID.
+     */
+    dependsOn?: string;
+    /**
+     * An epic's or a ticket's acceptance criteria, in order.
+     */
+    acceptanceCriteria?: Array<string>;
+};
+
+/**
+ * A person's yes on an APPROVAL criterion.
+ */
+export type WorkCriterionApproval = {
+    /**
+     * Why, optionally.
+     */
+    note?: string;
+};
+
+/**
+ * The entity and its subtree are gone.
+ */
+export type WorkDeleted = {
+    success?: boolean;
+};
+
+/**
+ * The dispatch a press made.
+ */
+export type WorkDispatchAnswer = {
+    dispatch?: EntityDispatchDto;
+};
+
+/**
+ * Which of the two dispatch actions to press.
+ */
+export type WorkDispatchRequest = {
+    /**
+     * FLOW (Dispatch: run the whole flow) or PHASE (Run the next phase: one, then stop)
+     */
+    mode: string;
+};
+
+/**
+ * What a press would start now.
+ */
+export type WorkDispatchState = {
+    state?: EntityDispatchStateDto;
+};
+
+/**
+ * A work entity's dossier pages, in position order.
+ */
+export type WorkDossier = {
+    pages?: Array<DossierPageDto>;
+};
+
+/**
+ * One inlined figure: what it is, the URL and markdown line that render it, and the pages that name it.
+ */
+export type WorkDossierAssetEntry = {
+    id?: string;
+    kind?: string;
+    mimeType?: string;
+    label?: string;
+    url?: string;
+    markdown?: string;
+    pageIds?: Array<string>;
+    createdAt?: Instant;
+};
+
+/**
+ * A figure of the entity's refinement to copy into its dossier.
+ */
+export type WorkDossierAssetInline = {
+    /**
+     * The sketch's or the design's id.
+     */
+    sourceId: string;
+    /**
+     * IMAGE (a sketch) or DESIGN
+     */
+    kind: string;
+};
+
+/**
+ * What was inlined, and the markdown line that renders it.
+ */
+export type WorkDossierAssetInlined = {
+    id?: string;
+    kind?: string;
+    mimeType?: string;
+    label?: string;
+    url?: string;
+    markdown?: string;
+};
+
+/**
+ * The figures a dossier inlines, by label.
+ */
+export type WorkDossierAssetList = {
+    assets?: Array<WorkDossierAssetEntry>;
+};
+
+/**
+ * A new page, appended to the dossier.
+ */
+export type WorkDossierPageCreate = {
+    /**
+     * The title; the slug is minted from it.
+     */
+    title: string;
+    /**
+     * The Markdown body.
+     */
+    body?: string;
+};
+
+/**
+ * The page is gone.
+ */
+export type WorkDossierPageDeleted = {
+    success?: boolean;
+};
+
+/**
+ * Where a page should now sit.
+ */
+export type WorkDossierPageMove = {
+    /**
+     * The new position, 0-based.
+     */
+    position: number;
+};
+
+/**
+ * A retitle, a rewrite, or both — with the version the writer read.
+ */
+export type WorkDossierPageWrite = {
+    /**
+     * The new title; omitted keeps it. The slug never moves.
+     */
+    title?: string;
+    /**
+     * The new Markdown body; omitted keeps it.
+     */
+    body?: string;
+    /**
+     * The version read before the write; a stale one is a 409.
+     */
+    version: number;
+};
+
+/**
+ * A project's work entities, in tree order.
+ */
+export type WorkList = {
+    entities?: Array<EntitySummary>;
+};
+
+/**
+ * An entity to gather into the campaign.
+ */
+export type WorkMemberAdd = {
+    /**
+     * The entity to gather, by qualified id (<projectSlug>-<n>) or UUID.
+     */
+    entityId: string;
+    /**
+     * Where it goes, 0-based; omitted appends.
+     */
+    position?: number;
+    /**
+     * Whether it joins already running; omitted lets the service decide from its status and its workspace.
+     */
+    inFlight?: boolean;
+};
+
+/**
+ * One membership of a campaign.
+ */
+export type WorkMemberAnswer = {
+    member?: CampaignMemberDto;
+};
+
+/**
+ * A member's whole condition: groups OR'd, criteria in a group AND'd.
+ */
+export type WorkMemberCondition = {
+    groups?: Array<WorkConditionGroup>;
+};
+
+/**
+ * A campaign's members, in campaign order.
+ */
+export type WorkMemberList = {
+    members?: Array<CampaignMemberDto>;
+};
+
+/**
+ * Where a membership should now sit.
+ */
+export type WorkMemberMove = {
+    /**
+     * The new position, 0-based.
+     */
+    position: number;
+};
+
+/**
+ * A JSON merge patch (RFC 7396) of one work entity. An absent property is left as it is; an explicit null clears it. At least one property must be named. status, archetype, membership, supersededBy and blocked are refused with the door that moves them; slug and createdBy are server-owned; any other property is refused as unknown. A property the entity's archetype has no slot for is refused (impetus on an epic).
+ */
+export type WorkPatch = {
+    /**
+     * The label. Cannot be cleared.
+     */
+    title?: string;
+    /**
+     * The long-form Markdown body; null clears it.
+     */
+    description?: string | null;
+    /**
+     * A ticket's impetus; null clears it.
+     */
+    impetus?: string | null;
+    /**
+     * A ticket's type, BUG or IMPROVEMENT; MAINTENANCE marks a ticket the platform filed and will close itself, and retyping one away from it takes it over. Cannot be cleared.
+     */
+    ticketType?: string;
+    /**
+     * An epic's or a ticket's assignee; null clears it.
+     */
+    assignee?: string | null;
+    /**
+     * A task's repository, in the task's project. Cannot be cleared.
+     */
+    repositoryId?: string;
+    /**
+     * A feature's or task's sibling dependency, by qualified id or UUID; null clears it.
+     */
+    dependsOn?: string | null;
+    /**
+     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or READY_FOR_DEV when it was never marked implementing).
+     */
+    implementedAt?: Instant | null;
+    /**
+     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
+     */
+    implementingAt?: Instant;
+    /**
+     * An epic's or ticket's acceptance criteria, the whole list in order; null or an empty list clears them. Each item is one line of Markdown: not blank, no line break, at most one '.', and fewer than 20 whitespace characters. Editable at REFINED (outside an epic's scope freeze); from READY_FOR_DEV on a changed list is a 409, and restating the same list passes.
+     */
+    acceptanceCriteria?: Array<string> | null;
+};
+
+/**
+ * A campaign's progress, derived on the read.
+ */
+export type WorkProgressAnswer = {
+    progress?: CampaignProgressDto;
+};
+
+/**
+ * A work entity's refinement room; null on a read that found none.
+ */
+export type WorkRefinementAnswer = {
+    refinement?: RefinementDto;
+};
+
+/**
+ * A lifecycle move: the status to move to.
+ */
+export type WorkStatusMove = {
+    /**
+     * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk (IMPLEMENTING has no move back, and READY_FOR_DEV none to REPORTED), or IMPLEMENTED from READY_FOR_DEV or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
+     */
+    target: string;
+};
+
+/**
+ * The workspaces a dispatch stood on a work entity's branch.
+ */
+export type WorkWorkspaces = {
+    workspaces?: Array<WorkspaceReferenceDto>;
+};
+
 export type WorkspaceReferenceDto = {
     workspaceRowId?: number;
     repositoryId?: string;
@@ -4567,6 +5023,47 @@ export type PostProjectsApiProjectsByProjectIdTicketsResponses = {
 
 export type PostProjectsApiProjectsByProjectIdTicketsResponse = PostProjectsApiProjectsByProjectIdTicketsResponses[keyof PostProjectsApiProjectsByProjectIdTicketsResponses];
 
+export type ListProjectWorkData = {
+    body?: never;
+    path: {
+        project: string;
+    };
+    query?: {
+        archetype?: string;
+        parent?: string;
+        status?: string;
+    };
+    url: '/projects/api/projects/{project}/work';
+};
+
+export type ListProjectWorkErrors = {
+    /**
+     * An archetype or a status naming none
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project, or no such parent
+     */
+    404: unknown;
+};
+
+export type ListProjectWorkResponses = {
+    /**
+     * The work entities
+     */
+    200: WorkList;
+};
+
+export type ListProjectWorkResponse = ListProjectWorkResponses[keyof ListProjectWorkResponses];
+
 export type GetProjectsApiRefinementsByIdData = {
     body?: never;
     path: {
@@ -6787,3 +7284,1404 @@ export type PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponses = {
 };
 
 export type PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponse = PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponses[keyof PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponses];
+
+export type CreateWorkData = {
+    body: WorkCreate;
+    path?: never;
+    query?: never;
+    url: '/projects/api/work';
+};
+
+export type CreateWorkErrors = {
+    /**
+     * Every complaint about the body in one message: not an object, no or an unknown archetype, a property the create schema does not list, a missing required one, a value of the wrong shape, a parent of the wrong kind, or a repository outside the project
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent creating in a project other than its own; nothing is written
+     */
+    403: unknown;
+    /**
+     * The project, the parent or the repository names nothing
+     */
+    404: unknown;
+    /**
+     * The owning epic's status freezes its scope: a node needs the epic REPORTED
+     */
+    409: unknown;
+};
+
+export type CreateWorkResponses = {
+    /**
+     * The entity as written
+     */
+    201: TransitionedEntity;
+};
+
+export type CreateWorkResponse = CreateWorkResponses[keyof CreateWorkResponses];
+
+export type ListWorkArchetypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/projects/api/work/archetypes';
+};
+
+export type ListWorkArchetypesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListWorkArchetypesResponses = {
+    /**
+     * OK
+     */
+    200: ArchetypeRegistryDocument;
+};
+
+export type ListWorkArchetypesResponse = ListWorkArchetypesResponses[keyof ListWorkArchetypesResponses];
+
+export type GetWorkArchetypeSchemaData = {
+    body?: never;
+    path: {
+        archetype: string;
+        door: string;
+    };
+    query?: never;
+    url: '/projects/api/work/archetypes/{archetype}/schemas/{door}';
+};
+
+export type GetWorkArchetypeSchemaErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such archetype, or no such door
+     */
+    404: unknown;
+};
+
+export type GetWorkArchetypeSchemaResponses = {
+    /**
+     * The schema
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetWorkArchetypeSchemaResponse = GetWorkArchetypeSchemaResponses[keyof GetWorkArchetypeSchemaResponses];
+
+export type TransitionWorkData = {
+    body: {
+        [key: string]: EntityTransition;
+    };
+    path?: never;
+    query?: never;
+    url: '/projects/api/work/transition';
+};
+
+export type TransitionWorkErrors = {
+    /**
+     * Every violation of the stated post-state, in one message
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent whose batch reaches outside its own project; nothing of it is written
+     */
+    403: unknown;
+    /**
+     * A status this door may not state, or a changed acceptance-criteria list from READY_FOR_DEV on
+     */
+    409: unknown;
+};
+
+export type TransitionWorkResponses = {
+    /**
+     * What was written, keyed as the request was
+     */
+    200: {
+        [key: string]: TransitionedEntity;
+    };
+};
+
+export type TransitionWorkResponse = TransitionWorkResponses[keyof TransitionWorkResponses];
+
+export type DeleteWorkData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}';
+};
+
+export type DeleteWorkErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent deleting an epic or a ticket, or outside its own project
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A campaign, or a feature or a task whose epic is no longer REPORTED
+     */
+    409: unknown;
+};
+
+export type DeleteWorkResponses = {
+    /**
+     * The entity is gone
+     */
+    200: WorkDeleted;
+};
+
+export type DeleteWorkResponse = DeleteWorkResponses[keyof DeleteWorkResponses];
+
+export type GetWorkData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}';
+};
+
+export type GetWorkErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type GetWorkResponses = {
+    /**
+     * The entity
+     */
+    200: TransitionedEntity;
+};
+
+export type GetWorkResponse = GetWorkResponses[keyof GetWorkResponses];
+
+export type PatchWorkData = {
+    body: WorkPatch;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}';
+};
+
+export type PatchWorkErrors = {
+    /**
+     * Every complaint about the body in one message: not an object, empty, a property that is a move or server-owned or unknown, one the archetype has no slot for, a null where the property cannot be cleared, or a value of the wrong shape
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent writing an entity outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * The owning epic's status freezes what the patch touches, or the acceptance criteria are changed from READY_FOR_DEV on
+     */
+    409: unknown;
+};
+
+export type PatchWorkResponses = {
+    /**
+     * The entity as it stands after the edit
+     */
+    200: TransitionedEntity;
+};
+
+export type PatchWorkResponse = PatchWorkResponses[keyof PatchWorkResponses];
+
+export type PutWorkData = {
+    body: EntityTransition;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}';
+};
+
+export type PutWorkErrors = {
+    /**
+     * Every violation of the stated state, in one message
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent writing outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A status this door may not state (a change to or from READY_FOR_DEV, a jump into started work, a gated move — those go through POST /work/{qualifiedId}/status), or a changed acceptance-criteria list from READY_FOR_DEV on
+     */
+    409: unknown;
+};
+
+export type PutWorkResponses = {
+    /**
+     * The entity as written
+     */
+    200: TransitionedEntity;
+};
+
+export type PutWorkResponse = PutWorkResponses[keyof PutWorkResponses];
+
+export type GetWorkAuditData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/audit';
+};
+
+export type GetWorkAuditErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * A qualified id naming no entity
+     */
+    404: unknown;
+};
+
+export type GetWorkAuditResponses = {
+    /**
+     * The history
+     */
+    200: WorkAudit;
+};
+
+export type GetWorkAuditResponse = GetWorkAuditResponses[keyof GetWorkAuditResponses];
+
+export type SetWorkBlockedData = {
+    body: WorkBlockRequest;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/blocked';
+};
+
+export type SetWorkBlockedErrors = {
+    /**
+     * Blocking with no reason
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent blocking outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A feature or a task (which runs no phase of its own), or a status that starts no phase (VERIFIED, DONE, DROPPED)
+     */
+    409: unknown;
+};
+
+export type SetWorkBlockedResponses = {
+    /**
+     * The flag as the write left it
+     */
+    200: WorkBlockAnswer;
+};
+
+export type SetWorkBlockedResponse = SetWorkBlockedResponses[keyof SetWorkBlockedResponses];
+
+export type ListWorkChildrenData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/children';
+};
+
+export type ListWorkChildrenErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type ListWorkChildrenResponses = {
+    /**
+     * The children
+     */
+    200: WorkChildren;
+};
+
+export type ListWorkChildrenResponse = ListWorkChildrenResponses[keyof ListWorkChildrenResponses];
+
+export type CreateWorkChildData = {
+    body: WorkChildCreate;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/children';
+};
+
+export type CreateWorkChildErrors = {
+    /**
+     * A body the child's create schema refuses, or one naming archetype, parent or project
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No entity, repository or dependency
+     */
+    404: unknown;
+    /**
+     * A kind nothing hangs under, or a parent whose plan is frozen
+     */
+    409: unknown;
+};
+
+export type CreateWorkChildResponses = {
+    /**
+     * The child as created
+     */
+    201: TransitionedEntity;
+};
+
+export type CreateWorkChildResponse = CreateWorkChildResponses[keyof CreateWorkChildResponses];
+
+export type ListWorkCommentsData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/comments';
+};
+
+export type ListWorkCommentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type ListWorkCommentsResponses = {
+    /**
+     * The thread, oldest first
+     */
+    200: WorkCommentList;
+};
+
+export type ListWorkCommentsResponse = ListWorkCommentsResponses[keyof ListWorkCommentsResponses];
+
+export type AddWorkCommentData = {
+    body: WorkCommentCreate;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/comments';
+};
+
+export type AddWorkCommentErrors = {
+    /**
+     * A blank body
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent commenting outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type AddWorkCommentResponses = {
+    /**
+     * The comment as written
+     */
+    200: WorkCommentAnswer;
+};
+
+export type AddWorkCommentResponse = AddWorkCommentResponses[keyof AddWorkCommentResponses];
+
+export type DeleteWorkCommentData = {
+    body?: never;
+    path: {
+        commentId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/comments/{commentId}';
+};
+
+export type DeleteWorkCommentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id, or no comment with this id on its thread
+     */
+    404: unknown;
+};
+
+export type DeleteWorkCommentResponses = {
+    /**
+     * The comment is gone
+     */
+    200: WorkCommentDeleted;
+};
+
+export type DeleteWorkCommentResponse = DeleteWorkCommentResponses[keyof DeleteWorkCommentResponses];
+
+export type EditWorkCommentData = {
+    body: WorkCommentPatch;
+    path: {
+        commentId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/comments/{commentId}';
+};
+
+export type EditWorkCommentErrors = {
+    /**
+     * Every complaint about the body in one message: not an object, empty, body null or blank or not a string, a server-owned or unknown property
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent editing a comment outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id, or no comment with this id on its thread
+     */
+    404: unknown;
+};
+
+export type EditWorkCommentResponses = {
+    /**
+     * The comment as it stands after the edit
+     */
+    200: WorkCommentAnswer;
+};
+
+export type EditWorkCommentResponse = EditWorkCommentResponses[keyof EditWorkCommentResponses];
+
+export type GetWorkDispatchData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dispatch';
+};
+
+export type GetWorkDispatchErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type GetWorkDispatchResponses = {
+    /**
+     * The dispatch state
+     */
+    200: WorkDispatchState;
+};
+
+export type GetWorkDispatchResponse = GetWorkDispatchResponses[keyof GetWorkDispatchResponses];
+
+export type DispatchWorkData = {
+    body: WorkDispatchRequest;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dispatch';
+};
+
+export type DispatchWorkErrors = {
+    /**
+     * A missing or unknown mode
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A status that starts no phase, a feature or a task, a blocked entity, a project with no wrapper
+     */
+    409: unknown;
+};
+
+export type DispatchWorkResponses = {
+    /**
+     * The dispatch made, or — for a campaign — its progress as the start press left it
+     */
+    200: WorkDispatchAnswer | WorkProgressAnswer;
+};
+
+export type DispatchWorkResponse = DispatchWorkResponses[keyof DispatchWorkResponses];
+
+export type ListWorkDossierData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier';
+};
+
+export type ListWorkDossierErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id, or one with no dossier
+     */
+    404: unknown;
+};
+
+export type ListWorkDossierResponses = {
+    /**
+     * The pages
+     */
+    200: WorkDossier;
+};
+
+export type ListWorkDossierResponse = ListWorkDossierResponses[keyof ListWorkDossierResponses];
+
+export type CreateWorkDossierPageData = {
+    body: WorkDossierPageCreate;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier';
+};
+
+export type CreateWorkDossierPageErrors = {
+    /**
+     * A blank title
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No entity with this id, or one with no dossier
+     */
+    404: unknown;
+    /**
+     * An epic past REPORTED: its plan is frozen
+     */
+    409: unknown;
+};
+
+export type CreateWorkDossierPageResponses = {
+    /**
+     * The page as written
+     */
+    201: DossierPageDto;
+};
+
+export type CreateWorkDossierPageResponse = CreateWorkDossierPageResponses[keyof CreateWorkDossierPageResponses];
+
+export type ListWorkDossierAssetsData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier-assets';
+};
+
+export type ListWorkDossierAssetsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id, or one whose dossier inlines nothing
+     */
+    404: unknown;
+};
+
+export type ListWorkDossierAssetsResponses = {
+    /**
+     * The figures
+     */
+    200: WorkDossierAssetList;
+};
+
+export type ListWorkDossierAssetsResponse = ListWorkDossierAssetsResponses[keyof ListWorkDossierAssetsResponses];
+
+export type InlineWorkDossierAssetData = {
+    body: WorkDossierAssetInline;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier-assets';
+};
+
+export type InlineWorkDossierAssetErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No entity with this id, one whose dossier inlines nothing, or no such figure in its refinement
+     */
+    404: unknown;
+};
+
+export type InlineWorkDossierAssetResponses = {
+    /**
+     * The inlined figure
+     */
+    200: WorkDossierAssetInlined;
+};
+
+export type InlineWorkDossierAssetResponse = InlineWorkDossierAssetResponses[keyof InlineWorkDossierAssetResponses];
+
+export type GetWorkDossierAssetContentData = {
+    body?: never;
+    path: {
+        assetId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier-assets/{assetId}/content';
+};
+
+export type GetWorkDossierAssetContentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such entity, or no such figure in its dossier
+     */
+    404: unknown;
+};
+
+export type GetWorkDossierAssetContentResponses = {
+    /**
+     * The figure's bytes
+     */
+    200: unknown;
+};
+
+export type DeleteWorkDossierPageData = {
+    body?: never;
+    path: {
+        page: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier/{page}';
+};
+
+export type DeleteWorkDossierPageErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No such entity, or no such page in its dossier
+     */
+    404: unknown;
+    /**
+     * A frozen epic
+     */
+    409: unknown;
+};
+
+export type DeleteWorkDossierPageResponses = {
+    /**
+     * The page is gone
+     */
+    200: WorkDossierPageDeleted;
+};
+
+export type DeleteWorkDossierPageResponse = DeleteWorkDossierPageResponses[keyof DeleteWorkDossierPageResponses];
+
+export type GetWorkDossierPageData = {
+    body?: never;
+    path: {
+        page: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier/{page}';
+};
+
+export type GetWorkDossierPageErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such entity, or no such page in its dossier
+     */
+    404: unknown;
+};
+
+export type GetWorkDossierPageResponses = {
+    /**
+     * The page
+     */
+    200: DossierPageDto;
+};
+
+export type GetWorkDossierPageResponse = GetWorkDossierPageResponses[keyof GetWorkDossierPageResponses];
+
+export type PutWorkDossierPageData = {
+    body: WorkDossierPageWrite;
+    path: {
+        page: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier/{page}';
+};
+
+export type PutWorkDossierPageErrors = {
+    /**
+     * No version
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No such entity, or no such page in its dossier
+     */
+    404: unknown;
+    /**
+     * A stale version (the current page is in the body), or a frozen epic
+     */
+    409: unknown;
+};
+
+export type PutWorkDossierPageResponses = {
+    /**
+     * The page as written
+     */
+    200: DossierPageDto;
+};
+
+export type PutWorkDossierPageResponse = PutWorkDossierPageResponses[keyof PutWorkDossierPageResponses];
+
+export type MoveWorkDossierPageData = {
+    body: WorkDossierPageMove;
+    path: {
+        page: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/dossier/{page}/move';
+};
+
+export type MoveWorkDossierPageErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No such entity, or no such page in its dossier
+     */
+    404: unknown;
+    /**
+     * A frozen epic
+     */
+    409: unknown;
+};
+
+export type MoveWorkDossierPageResponses = {
+    /**
+     * The page in its new position
+     */
+    200: DossierPageDto;
+};
+
+export type MoveWorkDossierPageResponse = MoveWorkDossierPageResponses[keyof MoveWorkDossierPageResponses];
+
+export type ListWorkMembersData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members';
+};
+
+export type ListWorkMembersErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No campaign with this id
+     */
+    404: unknown;
+};
+
+export type ListWorkMembersResponses = {
+    /**
+     * The members
+     */
+    200: WorkMemberList;
+};
+
+export type ListWorkMembersResponse = ListWorkMembersResponses[keyof ListWorkMembersResponses];
+
+export type AddWorkMemberData = {
+    body: WorkMemberAdd;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members';
+};
+
+export type AddWorkMemberErrors = {
+    /**
+     * No entityId
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No campaign, or no entity, with this id
+     */
+    404: unknown;
+    /**
+     * The entity cannot join: already a member, a feature or a task, a closed campaign
+     */
+    409: unknown;
+};
+
+export type AddWorkMemberResponses = {
+    /**
+     * The membership as written
+     */
+    201: WorkMemberAnswer;
+};
+
+export type AddWorkMemberResponse = AddWorkMemberResponses[keyof AddWorkMemberResponses];
+
+export type RemoveWorkMemberData = {
+    body?: never;
+    path: {
+        membershipId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members/{membershipId}';
+};
+
+export type RemoveWorkMemberErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No campaign, or no such membership on it
+     */
+    404: unknown;
+    /**
+     * Claimed, or targeted by another member
+     */
+    409: unknown;
+};
+
+export type RemoveWorkMemberResponses = {
+    /**
+     * The members that remain
+     */
+    200: WorkMemberList;
+};
+
+export type RemoveWorkMemberResponse = RemoveWorkMemberResponses[keyof RemoveWorkMemberResponses];
+
+export type SetWorkMemberConditionData = {
+    body: WorkMemberCondition;
+    path: {
+        membershipId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/condition';
+};
+
+export type SetWorkMemberConditionErrors = {
+    /**
+     * A criterion the service cannot read
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No campaign, or no such membership on it
+     */
+    404: unknown;
+};
+
+export type SetWorkMemberConditionResponses = {
+    /**
+     * The member with its condition
+     */
+    200: WorkMemberAnswer;
+};
+
+export type SetWorkMemberConditionResponse = SetWorkMemberConditionResponses[keyof SetWorkMemberConditionResponses];
+
+export type ApproveWorkMemberCriterionData = {
+    body: WorkCriterionApproval;
+    path: {
+        criterionId: string;
+        membershipId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/criteria/{criterionId}/approve';
+};
+
+export type ApproveWorkMemberCriterionErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not a verified person
+     */
+    403: unknown;
+    /**
+     * No campaign, membership or criterion
+     */
+    404: unknown;
+    /**
+     * Not an APPROVAL, already satisfied, or closed
+     */
+    409: unknown;
+};
+
+export type ApproveWorkMemberCriterionResponses = {
+    /**
+     * The member with the criterion satisfied
+     */
+    200: WorkMemberAnswer;
+};
+
+export type ApproveWorkMemberCriterionResponse = ApproveWorkMemberCriterionResponses[keyof ApproveWorkMemberCriterionResponses];
+
+export type MoveWorkMemberData = {
+    body: WorkMemberMove;
+    path: {
+        membershipId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/position';
+};
+
+export type MoveWorkMemberErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No campaign, or no such membership on it
+     */
+    404: unknown;
+};
+
+export type MoveWorkMemberResponses = {
+    /**
+     * The members, in their new order
+     */
+    200: WorkMemberList;
+};
+
+export type MoveWorkMemberResponse = MoveWorkMemberResponses[keyof MoveWorkMemberResponses];
+
+export type GetWorkProgressData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/progress';
+};
+
+export type GetWorkProgressErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No campaign with this id
+     */
+    404: unknown;
+};
+
+export type GetWorkProgressResponses = {
+    /**
+     * The progress
+     */
+    200: WorkProgressAnswer;
+};
+
+export type GetWorkProgressResponse = GetWorkProgressResponses[keyof GetWorkProgressResponses];
+
+export type GetWorkRefinementData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/refinement';
+};
+
+export type GetWorkRefinementErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type GetWorkRefinementResponses = {
+    /**
+     * The room, or null
+     */
+    200: WorkRefinementAnswer;
+};
+
+export type GetWorkRefinementResponse = GetWorkRefinementResponses[keyof GetWorkRefinementResponses];
+
+export type StartWorkRefinementData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/refinement';
+};
+
+export type StartWorkRefinementErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * The entity cannot be refined now
+     */
+    409: unknown;
+    /**
+     * The git host would not cut the branch
+     */
+    502: unknown;
+};
+
+export type StartWorkRefinementResponses = {
+    /**
+     * The room
+     */
+    200: WorkRefinementAnswer;
+};
+
+export type StartWorkRefinementResponse = StartWorkRefinementResponses[keyof StartWorkRefinementResponses];
+
+export type SetWorkStatusData = {
+    body: WorkStatusMove;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/status';
+};
+
+export type SetWorkStatusErrors = {
+    /**
+     * No target
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent moving an epic, or an entity outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * A move the lifecycle does not allow, a target naming no status, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, or PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person
+     */
+    409: unknown;
+};
+
+export type SetWorkStatusResponses = {
+    /**
+     * The entity as the move left it
+     */
+    200: TransitionedEntity;
+};
+
+export type SetWorkStatusResponse = SetWorkStatusResponses[keyof SetWorkStatusResponses];
+
+export type ListWorkWorkspacesData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/workspaces';
+};
+
+export type ListWorkWorkspacesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type ListWorkWorkspacesResponses = {
+    /**
+     * The workspaces
+     */
+    200: WorkWorkspaces;
+};
+
+export type ListWorkWorkspacesResponse = ListWorkWorkspacesResponses[keyof ListWorkWorkspacesResponses];

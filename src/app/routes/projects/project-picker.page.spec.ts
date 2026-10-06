@@ -64,11 +64,11 @@ describe('ProjectPickerPage', () => {
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
     // Work: the first project's tree has three REFINED entities, the other has none.
     http
-      .expectOne(`/projects/api/projects/${project.id}/entities`)
-      .flush(goldenMaster('a project with refined work', 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${project.id}/work`)
+      .flush(goldenMaster('a project with refined work', 'listProjectWork'));
     http
-      .expectOne(`/projects/api/projects/${other.id}/entities`)
-      .flush(goldenMaster('a project with no work', 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${other.id}/work`)
+      .flush(goldenMaster('a project with no work', 'listProjectWork'));
     // qits-githost's recording for a counted repository, under the id of the project's first
     // repository (the two providers' frozen ids are unrelated), so both cards sum its lines.
     const loc = githostGoldenMaster('a repository with counted lines', 'listLoc');
@@ -130,8 +130,8 @@ describe('ProjectPickerPage', () => {
     await new Promise((resolve) => setTimeout(resolve));
     http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
     http
-      .expectOne(`/projects/api/projects/${project.id}/entities`)
-      .flush(goldenMaster('a project with refined work', 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${project.id}/work`)
+      .flush(goldenMaster('a project with refined work', 'listProjectWork'));
     // Derived from qits-githost's counted recording (two CODE languages, plus JSON and Markdown,
     // which the card leaves out): the same entry under the project's first three repositories, the
     // second and third copies' languages renamed with a " 2" / " 3" suffix and their lines doubled /

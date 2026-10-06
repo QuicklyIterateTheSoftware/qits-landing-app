@@ -50,7 +50,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '760px';
     const answered = async () => {
@@ -63,7 +63,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
 
   it('shows the verified work, each item with its finish button', async () => {
     const { element, work, answered } = await shown();
-    work.flush(await goldenMaster('a project with work in every status', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
     await expect
       .element(element.getByRole('heading', { level: 1 }))
@@ -78,7 +78,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
 
   it('says so when nothing waits to be accepted', async () => {
     const { element, work, answered } = await shown();
-    work.flush(await goldenMaster('a project with no work', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
     await expect.element(element).toHaveTextContent('Nothing here');
     await expect.element(element).toMatchScreenshot('empty');

@@ -9,12 +9,12 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { LIST_ARCHETYPES } from './archetypes.consumes';
+import { LIST_WORK_ARCHETYPES } from './archetypes.consumes';
 import { ArchetypesStore } from './archetypes.store';
 
 /**
- * `ArchetypesStore`'s part of qits-landing-app's pact with qits-projects-service (epic qits-112):
- * the `listArchetypes` interaction, in the same file as the other stores'
+ * `ArchetypesStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
+ * qits-965): the `listWorkArchetypes` interaction, in the same file as the other stores'
  * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
  *
  * The test drives `load()`, as the work item page does, against a pact mock server answering with
@@ -23,7 +23,7 @@ import { ArchetypesStore } from './archetypes.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS = ['listArchetypes'];
+const OPERATIONS = ['listWorkArchetypes'];
 const STATE = 'the archetype registry';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-archetypes-pact-'));
@@ -48,9 +48,9 @@ describe('qits-landing-app → qits-projects-service pact: archetypes', () => {
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: STATE,
-      operationId: 'listArchetypes',
+      operationId: 'listWorkArchetypes',
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-work-item-actions' },
-      consumes: LIST_ARCHETYPES,
+      consumes: LIST_WORK_ARCHETYPES,
     }).executeTest(async (server) => {
       TestBed.configureTestingModule({
         providers: [provideHttpClient(withFetch()), provideHeyApiClient(projectsClient)],

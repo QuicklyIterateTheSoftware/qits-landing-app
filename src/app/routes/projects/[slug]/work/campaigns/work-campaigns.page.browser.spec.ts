@@ -9,6 +9,7 @@ import { provideHeyApiClient } from '../../../../../api/projects/client/client.g
 import { WorkCampaignsPage } from './work-campaigns.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRecordedWork } from '../../../../../../testing/browser/recorded-work';
+import type { CampaignReads } from '../../../../../../testing/campaign-reads';
 import { shootMembers } from '../../../../../../testing/browser/shoot-members';
 
 /**
@@ -16,8 +17,11 @@ import { shootMembers } from '../../../../../../testing/browser/shoot-members';
  * project list as recorded, then the work and each campaign's members from one state. "a campaign
  * with work in every phase" has one campaign with members in the board, the backlog and the
  * archive; "a campaign with a done, a verified and an implementing epic" has one campaign whose
- * only epic on the board is the implementing one; "an epic in two campaigns" has two campaigns, the second recorded as a state of its own
- * over the same seed; "a project with no work" has none.
+ * only epic on the board is the implementing one; "an epic in two campaigns" has two campaigns, the
+ * second recorded as a state of its own over the same seed; "a project with no work" has none.
+ *
+ * Only "a campaign with a done, a verified and an implementing epic" records its campaign's
+ * `getWork`, so only its campaign shows a description; the others' description reads answer 404.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -28,6 +32,10 @@ const CAMPAIGN = 'a campaign with work in every phase';
 const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
 const TWO_CAMPAIGNS = 'an epic in two campaigns';
 const SECOND_CAMPAIGN = 'the second campaign of an epic in two campaigns';
+/** Which state answers each campaign's members, by the campaign's frozen qualified id. */
+const BOTH_CAMPAIGNS: CampaignReads = {
+  members: { 'contract-00000001-1': TWO_CAMPAIGNS, 'contract-00000001-2': SECOND_CAMPAIGN },
+};
 
 describe('WorkCampaignsPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -60,7 +68,7 @@ describe('WorkCampaignsPage (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '760px';
     const answered = async () => {
@@ -72,11 +80,11 @@ describe('WorkCampaignsPage (screenshots)', () => {
   }
 
   /**
-   * The page with the work and each campaign read answered from `state` (`openRecordedWork`; a
-   * second campaign is recorded as a state of its own, so it is in `campaignStates`).
+   * The page with the work and each campaign read answered from `state`, or as `campaigns` says
+   * (`openRecordedWork`; a second campaign is recorded as a state of its own).
    */
-  async function recorded(state: string, campaignStates?: readonly string[]) {
-    const { element } = await openRecordedWork(http, 'work', 'campaigns', state, campaignStates);
+  async function recorded(state: string, campaigns?: CampaignReads) {
+    const { element } = await openRecordedWork(http, 'work', 'campaigns', state, campaigns);
     element.style.width = '760px';
     return page.elementLocator(element);
   }
@@ -88,7 +96,8 @@ describe('WorkCampaignsPage (screenshots)', () => {
     await expect
       .element(title)
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-1$/));
-    await expect.element(element).toHaveTextContent('Seeded work.');
+    // The state records no `getWork` of its campaign, so its description is left out.
+    await expect.element(element).not.toHaveTextContent('Seeded work.');
     const text = element.element().textContent ?? '';
     const order = ['Refined epic', 'Refined ticket', 'Reported ticket', 'Done ticket'].map((t) =>
       text.indexOf(t),
@@ -115,7 +124,10 @@ describe('WorkCampaignsPage (screenshots)', () => {
   });
 
   it('shows a done and a verified epic as before, and an implementing one with its board', async () => {
-    const element = await recorded(PAST_THE_BOARD);
+    const element = await recorded(PAST_THE_BOARD, {
+      members: PAST_THE_BOARD,
+      described: [PAST_THE_BOARD],
+    });
     await expect
       .element(element.getByRole('link', { name: 'Campaign in flight' }))
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-1$/));
@@ -158,7 +170,7 @@ describe('WorkCampaignsPage (screenshots)', () => {
   });
 
   it('shows each campaign, in the board’s order', async () => {
-    const element = await recorded(TWO_CAMPAIGNS, [TWO_CAMPAIGNS, SECOND_CAMPAIGN]);
+    const element = await recorded(TWO_CAMPAIGNS, BOTH_CAMPAIGNS);
     const headings = element
       .getByRole('heading', { level: 2 })
       .elements()
@@ -169,7 +181,7 @@ describe('WorkCampaignsPage (screenshots)', () => {
 
   it('says so when the project has no campaigns', async () => {
     const { element, work, answered } = await shown();
-    work.flush(await goldenMaster('a project with no work', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
     await expect.element(element).toHaveTextContent('No campaigns');
     await expect.element(element).toMatchScreenshot('empty');

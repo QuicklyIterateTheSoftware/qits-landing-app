@@ -16,6 +16,7 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
+import type { CampaignReads } from '../../../../testing/campaign-reads';
 import { EpicCard } from './epic-card';
 
 /**
@@ -80,7 +81,12 @@ describe('EpicCard (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  async function shown(state: string, qualifiedId: string, title: string, campaigns?: string[]) {
+  async function shown(
+    state: string,
+    qualifiedId: string,
+    title: string,
+    campaigns?: CampaignReads,
+  ) {
     const { element, harness } = await openRecordedWork(
       http,
       'board',
@@ -224,10 +230,12 @@ describe('EpicCard (screenshots)', () => {
   });
 
   it('in a campaign', async () => {
+    // The state records its campaign's own reads: its members and its description.
     const { element, locator } = await shown(
       CAMPAIGN,
       'contract-00000001-12',
       'Epic with mixed features',
+      { members: CAMPAIGN, described: [CAMPAIGN] },
     );
     await expect.element(locator).toHaveTextContent('Campaign in flight');
     // The lane grows to its whole id, up the left strip.

@@ -16,6 +16,7 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
+import type { CampaignReads } from '../../../../testing/campaign-reads';
 import { TicketCard } from './ticket-card';
 
 /**
@@ -69,8 +70,13 @@ describe('TicketCard (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  async function shown(state: string, qualifiedId: string, title: string) {
-    const { element } = await openRecordedWork(http, 'board', qualifiedId, state);
+  async function shown(
+    state: string,
+    qualifiedId: string,
+    title: string,
+    campaigns?: CampaignReads,
+  ) {
+    const { element } = await openRecordedWork(http, 'board', qualifiedId, state, campaigns);
     const locator = page.elementLocator(element);
     await expect.element(locator).toHaveTextContent(title);
     return { element, locator };
@@ -118,10 +124,12 @@ describe('TicketCard (screenshots)', () => {
   });
 
   it('previews its campaign on hover', async () => {
+    // The campaign's description is recorded by "a campaign in detail", over the same seed.
     const { element, locator } = await shown(
       CAMPAIGN,
       'contract-00000001-10',
       'Invoice totals are off',
+      { members: CAMPAIGN, described: ['a campaign in detail'] },
     );
     // The popover hangs below the card; the host grows so the screenshot holds it.
     element.style.paddingBottom = '9rem';

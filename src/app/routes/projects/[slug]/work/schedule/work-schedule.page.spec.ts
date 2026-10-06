@@ -42,7 +42,7 @@ describe('WorkSchedulePage', () => {
   async function shown(state = WORK) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
-    const work = goldenMaster(state, 'listProjectEntities');
+    const work = goldenMaster(state, 'listProjectWork');
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/schedule`);
     await settle();
@@ -52,17 +52,17 @@ describe('WorkSchedulePage', () => {
     await settle();
     TestBed.tick();
     await settle();
-    http.expectOne(`/projects/api/projects/${project.id}/entities`).flush(work);
+    http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
     await settle();
     TestBed.tick();
     await settle();
-    for (const read of http.match((r) => /^\/projects\/api\/entities\/[^/]+$/.test(r.url))) {
+    for (const read of http.match((r) => /^\/projects\/api\/work\/[^/]+$/.test(r.url))) {
       const ref = read.request.url.split('/').pop();
       const entry = work.entities.find((e: { qualifiedId: string }) => e.qualifiedId === ref);
       read.flush(
         goldenMaster(
           entry.archetype === 'EPIC' ? 'an epic in detail' : 'an improvement ticket in detail',
-          'getEntity',
+          'getWork',
         ),
       );
     }
@@ -91,8 +91,9 @@ describe('WorkSchedulePage', () => {
     return { work, element, section, titles, byTitle, scheduleButton, settled };
   }
 
-  const idOf = (work: { entities: { title: string; id: string }[] }, title: string) =>
-    work.entities.find((e) => e.title === title)!.id;
+  /** The qualified id the `/work` doors address the item titled `title` by. */
+  const refOf = (work: { entities: { title: string; qualifiedId: string }[] }, title: string) =>
+    work.entities.find((e) => e.title === title)!.qualifiedId;
 
   it('lists REFINED work to schedule and READY_FOR_DEV work as scheduled, each with its criteria', async () => {
     const { titles, byTitle, scheduleButton } = await shown();
@@ -116,8 +117,8 @@ describe('WorkSchedulePage', () => {
     expect(scheduleButton().textContent?.trim()).toBe('Schedule 2');
     scheduleButton().click();
     await settle();
-    const epic = http.expectOne(`/projects/api/entities/${idOf(work, 'Refined epic')}/status`);
-    const ticket = http.expectOne(`/projects/api/entities/${idOf(work, 'Refined ticket')}/status`);
+    const epic = http.expectOne(`/projects/api/work/${refOf(work, 'Refined epic')}/status`);
+    const ticket = http.expectOne(`/projects/api/work/${refOf(work, 'Refined ticket')}/status`);
     expect([epic.request.body, ticket.request.body]).toEqual([
       { target: 'READY_FOR_DEV' },
       { target: 'READY_FOR_DEV' },
@@ -128,7 +129,7 @@ describe('WorkSchedulePage', () => {
       'Epic e cannot move to READY_FOR_DEV: PERSON_APPROVAL: scheduling (REFINED → READY_FOR_DEV) ' +
       'needs a person; agent x is a machine credential';
     epic.flush({ message: refusal }, { status: 409, statusText: 'Conflict' });
-    ticket.flush(goldenMaster('a refined ticket', 'moveEntityStatus'));
+    ticket.flush(goldenMaster('a refined ticket', 'setWorkStatus'));
     await settled();
     expect(titles('schedule-to-schedule')).toEqual(['Refined epic']);
     // In the board's order, by number: the ticket was made before the scheduled epic.
@@ -153,12 +154,12 @@ describe('WorkSchedulePage', () => {
     button.click();
     await settle();
     const request = http.expectOne(
-      `/projects/api/entities/${idOf(work, 'Ready for dev ticket')}/status`,
+      `/projects/api/work/${refOf(work, 'Ready for dev ticket')}/status`,
     );
     expect(request.request.body).toEqual({ target: 'REFINED' });
     // The recorded move of "a ready for dev ticket" (to IMPLEMENTING), with the status this move
     // answers instead: no state records the move back yet.
-    const answer = goldenMaster('a ready for dev ticket', 'moveEntityStatus');
+    const answer = goldenMaster('a ready for dev ticket', 'setWorkStatus');
     request.flush({ ...answer, status: 'REFINED' });
     await settled();
     expect(titles('schedule-scheduled')).toEqual(['Ready for dev epic']);

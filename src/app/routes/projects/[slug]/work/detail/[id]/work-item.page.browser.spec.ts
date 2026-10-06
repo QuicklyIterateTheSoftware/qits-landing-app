@@ -12,6 +12,7 @@ import { provideTestPlatformOrigins } from '../../../../../../../testing/platfor
 import { WorkItemPage } from './work-item.page';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
 import { openRecordedWork } from '../../../../../../../testing/browser/recorded-work';
+import type { CampaignReads } from '../../../../../../../testing/campaign-reads';
 import { shootMembers } from '../../../../../../../testing/browser/shoot-members';
 
 /**
@@ -40,7 +41,8 @@ const EVERY_STATUS = 'a project with work in every status';
 const IMPLEMENTED = 'an implemented ticket';
 /**
  * The detail states share one seed and its frozen ids; those that record no campaign read answer
- * it from this one.
+ * it from this one. It is also the one of them that records the campaign's `getWork` (its
+ * description).
  */
 const CAMPAIGN = 'a campaign in detail';
 /**
@@ -54,6 +56,16 @@ const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing e
  * workspace (`answerWorkspaces`).
  */
 const UNBOUND: ReadonlySet<string> = new Set([PAST_THE_BOARD]);
+
+/**
+ * Where a state's campaign reads are answered from (`openRecordedWork`): the members from
+ * `members` (by default the state's own), the description from the state of that seed that records
+ * the campaign's `getWork`.
+ */
+const campaignReads = (state: string, members = state): CampaignReads => ({
+  members,
+  described: [state === PAST_THE_BOARD ? PAST_THE_BOARD : CAMPAIGN],
+});
 /** qits-workspaces' states. */
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
@@ -96,30 +108,33 @@ describe('WorkItemPage (screenshots)', () => {
    * else with 404 (an error answer is a status only): the body then shows its children only.
    */
   async function answerDetail(state: string, ref: string, recorded: boolean) {
-    const item = http.expectOne(`/projects/api/entities/${ref}`);
-    const thread = http.expectOne(`/projects/api/entities/${ref}/comments`);
+    // A campaign's own read has the URL of the work list's read of its description, which
+    // `openRecordedWork` may have answered already, with the same recording.
+    const items = http.match(`/projects/api/work/${ref}`);
+    expect(items.length).toBeLessThanOrEqual(1);
+    const thread = http.expectOne(`/projects/api/work/${ref}/comments`);
     if (!recorded) {
-      item.flush(null, { status: 404, statusText: 'Not Found' });
+      items[0]?.flush(null, { status: 404, statusText: 'Not Found' });
       thread.flush(null, { status: 404, statusText: 'Not Found' });
       return;
     }
-    const entity = await goldenMaster(state, 'getEntity');
-    item.flush(entity);
-    thread.flush(await goldenMaster(state, 'listEntityComments'));
+    const entity = await goldenMaster(state, 'getWork');
+    items[0]?.flush(entity);
+    thread.flush(await goldenMaster(state, 'listWorkComments'));
     await settle();
     if (entity.archetype === 'EPIC') {
       http
-        .expectOne(`/projects/api/epics/${entity.id}/dossier`)
-        .flush(await goldenMaster(state, 'listEpicDossierPages'));
+        .expectOne(`/projects/api/work/${ref}/dossier`)
+        .flush(await goldenMaster(state, 'listWorkDossier'));
       http
-        .expectOne(`/projects/api/epics/${entity.id}/dossier-assets`)
-        .flush(await goldenMaster(state, 'listEpicDossierAssets'));
+        .expectOne(`/projects/api/work/${ref}/dossier-assets`)
+        .flush(await goldenMaster(state, 'listWorkDossierAssets'));
     }
     if (entity.archetype === 'TICKET') {
-      const dossier = http.expectOne(`/projects/api/tickets/${entity.id}/dossier`);
+      const dossier = http.expectOne(`/projects/api/work/${ref}/dossier`);
       // "an implemented ticket" records no dossier: its body fails to load, its actions show.
       if (state === IMPLEMENTED) dossier.flush(null, { status: 404, statusText: 'Not Found' });
-      else dossier.flush(await goldenMaster(state, 'listTicketDossierPages'));
+      else dossier.flush(await goldenMaster(state, 'listWorkDossier'));
     }
   }
 
@@ -140,7 +155,7 @@ describe('WorkItemPage (screenshots)', () => {
         'qits-workspaces',
       ),
     );
-    const bug = (await goldenMaster('a bug ticket in detail', 'getEntity')).id;
+    const bug = (await goldenMaster('a bug ticket in detail', 'getWork')).id;
     for (const read of http.match((r) =>
       /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
     )) {
@@ -153,28 +168,28 @@ describe('WorkItemPage (screenshots)', () => {
 
   /**
    * The page of the entity titled `title` in `state`'s recorded work, every request answered from
-   * a recording (`openRecordedWork`: a campaign's read too, from `campaignStates`), the item's own
+   * a recording (`openRecordedWork`: a campaign's reads too, as `campaigns` says), the item's own
    * reads from `state` when `detail` (`answerDetail`).
    */
   async function render(
     state: string,
     title: string,
     detail = false,
-    campaignStates: readonly string[] = [state],
+    campaigns: CampaignReads = campaignReads(state),
   ) {
-    const work = await goldenMaster(state, 'listProjectEntities');
+    const work = await goldenMaster(state, 'listProjectWork');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const { element, harness } = await openRecordedWork(
       http,
       'work/detail',
       entity.qualifiedId,
       state,
-      campaignStates,
+      campaigns,
     );
     // The page's actions come from the archetype registry.
     http
-      .expectOne('/projects/api/entities/archetypes')
-      .flush(await goldenMaster('the archetype registry', 'listArchetypes'));
+      .expectOne('/projects/api/work/archetypes')
+      .flush(await goldenMaster('the archetype registry', 'listWorkArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
     await answerWorkspaces(state);
     await settle();
@@ -263,7 +278,7 @@ describe('WorkItemPage (screenshots)', () => {
   describe('each archetype, from its own detail state', () => {
     beforeEach(async () => {
       // The epic's dossier figure: its bytes are not recorded, so a grey stand-in.
-      await commands.stubFigure(`${PROJECTS}/projects/api/epics/*/dossier-assets/*/content`);
+      await commands.stubFigure(`${PROJECTS}/projects/api/work/*/dossier-assets/*/content`);
     });
 
     it('an epic: description, features, dossier with its figure, comments', async () => {
@@ -323,7 +338,12 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a feature: its dependency, description, tasks, comments', async () => {
-      const element = await render('a feature in detail', 'PDF export', true, [CAMPAIGN]);
+      const element = await render(
+        'a feature in detail',
+        'PDF export',
+        true,
+        campaignReads('a feature in detail', CAMPAIGN),
+      );
       await expect
         .element(element.getByRole('link', { name: 'contract-00000001-3 · CSV export' }))
         .toBeVisible();
@@ -342,7 +362,7 @@ describe('WorkItemPage (screenshots)', () => {
         'a task in detail',
         'Download button on the invoice list',
         true,
-        [CAMPAIGN],
+        campaignReads('a task in detail', CAMPAIGN),
       );
       await expect.element(element).toHaveTextContent('Implemented1 Jan 2026, 00:00');
       await expect
@@ -381,7 +401,12 @@ describe('WorkItemPage (screenshots)', () => {
     ])(
       'a %s ticket: its facts, description, dossier, comments',
       async (type, state, title, campaigns, dossier) => {
-        const element = await render(state, title, true, campaigns.length ? campaigns : [state]);
+        const element = await render(
+          state,
+          title,
+          true,
+          campaignReads(state, campaigns.length ? campaigns[0] : state),
+        );
         await expect.element(element).toHaveTextContent(`Type${type}`);
         await expect
           .element(element.getByRole('region', { name: 'Dossier' }))
@@ -531,15 +556,15 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-implemented-ticket');
 
       // The next phase: one phase, PHASE.
-      const id = (await goldenMaster(IMPLEMENTED, 'getEntity')).id;
-      const dispatched = await press(element, 'Verify', `/projects/api/entities/${id}/dispatch`);
+      const ref = (await goldenMaster(IMPLEMENTED, 'getWork')).qualifiedId;
+      const dispatched = await press(element, 'Verify', `/projects/api/work/${ref}/dispatch`);
       expect(dispatched.request.body).toEqual({ mode: 'PHASE' });
-      dispatched.flush(await goldenMaster(IMPLEMENTED, 'dispatchEntity'));
+      dispatched.flush(await goldenMaster(IMPLEMENTED, 'dispatchWork'));
       await answered();
 
-      const moved = await press(element, 'Mark verifying', `/projects/api/entities/${id}/status`);
+      const moved = await press(element, 'Mark verifying', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'VERIFYING' });
-      moved.flush(await goldenMaster(IMPLEMENTED, 'moveEntityStatus'));
+      moved.flush(await goldenMaster(IMPLEMENTED, 'setWorkStatus'));
       await answered();
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
@@ -549,7 +574,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an implementing epic: Dispatch lists the flow it runs', async () => {
-      await commands.stubFigure(`${PROJECTS}/projects/api/epics/*/dossier-assets/*/content`);
+      await commands.stubFigure(`${PROJECTS}/projects/api/work/*/dossier-assets/*/content`);
       const element = await render(
         'an epic in detail',
         'Export invoices for the accountants',
@@ -569,16 +594,14 @@ describe('WorkItemPage (screenshots)', () => {
         .toHaveTextContent('Status Mark ready for dev Back to reported Drop');
       expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-refined-epic');
-      const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
-      const id = work.entities.find((e: { title: string }) => e.title === 'Refined epic').id;
-      const moved = await press(
-        element,
-        'Mark ready for dev',
-        `/projects/api/entities/${id}/status`,
-      );
+      const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
+      const ref = work.entities.find(
+        (e: { title: string }) => e.title === 'Refined epic',
+      ).qualifiedId;
+      const moved = await press(element, 'Mark ready for dev', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'READY_FOR_DEV' });
       // "a refined epic" records this move; its epic is another seed's, so only its status counts.
-      moved.flush(await goldenMaster('a refined epic', 'moveEntityStatus'));
+      moved.flush(await goldenMaster('a refined epic', 'setWorkStatus'));
       await answered();
       await agentButtons(element, ['Dispatch', 'Implement']);
       await expect
@@ -590,17 +613,15 @@ describe('WorkItemPage (screenshots)', () => {
       const element = await render(EVERY_STATUS, 'Ready for dev epic');
       await agentButtons(element, ['Dispatch', 'Implement']);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-ready-for-dev-epic');
-      const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
-      const id = work.entities.find((e: { title: string }) => e.title === 'Ready for dev epic').id;
-      const moved = await press(
-        element,
-        'Mark implementing',
-        `/projects/api/entities/${id}/status`,
-      );
+      const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
+      const ref = work.entities.find(
+        (e: { title: string }) => e.title === 'Ready for dev epic',
+      ).qualifiedId;
+      const moved = await press(element, 'Mark implementing', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'IMPLEMENTING' });
       // "a ready for dev epic" records this move; its epic is another seed's, so only its status
       // counts.
-      moved.flush(await goldenMaster('a ready for dev epic', 'moveEntityStatus'));
+      moved.flush(await goldenMaster('a ready for dev epic', 'setWorkStatus'));
       await answered();
       // IMPLEMENTING has no move back (qits-887).
       await expect
@@ -615,11 +636,13 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Status' }))
         .toHaveTextContent('Status Reopen');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-dropped-ticket');
-      const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
-      const id = work.entities.find((e: { title: string }) => e.title === 'Dropped ticket').id;
-      const moved = await press(element, 'Reopen', `/projects/api/entities/${id}/status`);
+      const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
+      const ref = work.entities.find(
+        (e: { title: string }) => e.title === 'Dropped ticket',
+      ).qualifiedId;
+      const moved = await press(element, 'Reopen', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'REPORTED' });
-      moved.flush(await goldenMaster('a dropped ticket', 'moveEntityStatus'));
+      moved.flush(await goldenMaster('a dropped ticket', 'setWorkStatus'));
       await answered();
       await expect
         .element(element.getByRole('group', { name: 'Status' }))

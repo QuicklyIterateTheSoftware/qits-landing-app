@@ -145,7 +145,7 @@ describe('WorkList (screenshots)', () => {
 
   it('finishing a verified epic: the bubble, the Undo toast, the move to DONE', async () => {
     const { element, locator, harness } = await shown('acceptance', EVERY_STATUS);
-    const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
+    const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
     const epic = work.entities.find(
       (e: { qualifiedId: string }) => e.qualifiedId === 'contract-00000001-13',
     );
@@ -166,10 +166,10 @@ describe('WorkList (screenshots)', () => {
     await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
     const sent = http.match(() => true);
     expect(sent.map((request) => `${request.request.method} ${request.request.url}`)).toEqual([
-      `POST /projects/api/entities/${epic.id}/status`,
+      `POST /projects/api/work/${epic.qualifiedId}/status`,
     ]);
     expect(sent[0].request.body).toEqual({ target: 'DONE' });
-    sent[0].flush(await goldenMaster(VERIFIED_EPIC, 'moveEntityStatus'));
+    sent[0].flush(await goldenMaster(VERIFIED_EPIC, 'setWorkStatus'));
     await flushMicrotasks();
     harness.fixture.detectChanges();
     await expect.element(locator).not.toHaveTextContent('finished');

@@ -32,7 +32,7 @@ describe('WorkDetailStore', () => {
 
   afterEach(() => http.verify());
 
-  const params = (state: string) => projectsGoldenMasters.operation(state, 'getEntity').params;
+  const params = (state: string) => projectsGoldenMasters.operation(state, 'getWork').params;
 
   /** Starts `load` for `state`'s item and answers the item and its comments. */
   async function started(state: string) {
@@ -40,10 +40,10 @@ describe('WorkDetailStore', () => {
     const ref = params(state)['qualifiedId'];
     const load = store.load(ref);
     await settle();
-    http.expectOne(`/projects/api/entities/${ref}`).flush(goldenMaster(state, 'getEntity'));
+    http.expectOne(`/projects/api/work/${ref}`).flush(goldenMaster(state, 'getWork'));
     http
-      .expectOne(`/projects/api/entities/${ref}/comments`)
-      .flush(goldenMaster(state, 'listEntityComments'));
+      .expectOne(`/projects/api/work/${ref}/comments`)
+      .flush(goldenMaster(state, 'listWorkComments'));
     await settle();
     return { store, ref, load };
   }
@@ -52,11 +52,11 @@ describe('WorkDetailStore', () => {
     const { store, ref, load } = await started(EPIC);
     const epicId = params(EPIC)['epicId'];
     http
-      .expectOne(`/projects/api/epics/${epicId}/dossier`)
-      .flush(goldenMaster(EPIC, 'listEpicDossierPages'));
+      .expectOne(`/projects/api/work/${ref}/dossier`)
+      .flush(goldenMaster(EPIC, 'listWorkDossier'));
     http
-      .expectOne(`/projects/api/epics/${epicId}/dossier-assets`)
-      .flush(goldenMaster(EPIC, 'listEpicDossierAssets'));
+      .expectOne(`/projects/api/work/${ref}/dossier-assets`)
+      .flush(goldenMaster(EPIC, 'listWorkDossierAssets'));
     await load;
     const detail = store.of(ref)!;
     expect(detail.status).toBe('loaded');
@@ -68,15 +68,16 @@ describe('WorkDetailStore', () => {
     ]);
     expect(detail.pages.map((p) => p.title)).toEqual(['Scope', 'Data flow', 'Rollout']);
     const asset = params(EPIC)['figureAssetId'];
+    // The pages name the figure by its stored address; the browser loads it from the `/work` door.
     const url = `/epics/${epicId}/dossier-assets/${asset}/content`;
-    expect(detail.figures).toEqual({ [url]: `https://projects.test/projects/api${url}` });
+    expect(detail.figures).toEqual({
+      [url]: `https://projects.test/projects/api/work/${ref}/dossier-assets/${asset}/content`,
+    });
   });
 
   it('reads a ticket’s dossier pages, and no figures', async () => {
     const { store, ref, load } = await started(BUG);
-    http
-      .expectOne(`/projects/api/tickets/${params(BUG)['bugTicketId']}/dossier`)
-      .flush(goldenMaster(BUG, 'listTicketDossierPages'));
+    http.expectOne(`/projects/api/work/${ref}/dossier`).flush(goldenMaster(BUG, 'listWorkDossier'));
     await load;
     const detail = store.of(ref)!;
     expect(detail.entity?.blocked).toBe(true);
@@ -91,7 +92,7 @@ describe('WorkDetailStore', () => {
     expect(store.of(ref)?.pages).toEqual([]);
     await store.load(ref);
     await settle();
-    http.expectNone(`/projects/api/entities/${ref}`);
+    http.expectNone(`/projects/api/work/${ref}`);
   });
 
   it('fails when a read fails, and reads again on the next load', async () => {
@@ -100,19 +101,19 @@ describe('WorkDetailStore', () => {
     const load = store.load(ref);
     await settle();
     http
-      .expectOne(`/projects/api/entities/${ref}`)
+      .expectOne(`/projects/api/work/${ref}`)
       .flush(null, { status: 404, statusText: 'Not Found' });
     http
-      .expectOne(`/projects/api/entities/${ref}/comments`)
-      .flush(goldenMaster(TASK, 'listEntityComments'));
+      .expectOne(`/projects/api/work/${ref}/comments`)
+      .flush(goldenMaster(TASK, 'listWorkComments'));
     await load;
     expect(store.of(ref)?.status).toBe('error');
     void store.load(ref);
     await settle();
-    http.expectOne(`/projects/api/entities/${ref}`).flush(goldenMaster(TASK, 'getEntity'));
+    http.expectOne(`/projects/api/work/${ref}`).flush(goldenMaster(TASK, 'getWork'));
     http
-      .expectOne(`/projects/api/entities/${ref}/comments`)
-      .flush(goldenMaster(TASK, 'listEntityComments'));
+      .expectOne(`/projects/api/work/${ref}/comments`)
+      .flush(goldenMaster(TASK, 'listWorkComments'));
     await settle();
     expect(store.of(ref)?.status).toBe('loaded');
   });
@@ -126,8 +127,8 @@ describe('WorkDetailStore', () => {
       const load = store.loadCriteria(ref);
       expect(store.criteriaOf(ref)).toEqual({ status: 'loading', items: [] });
       await settle();
-      const recorded = goldenMaster(IMPROVEMENT, 'getEntity');
-      http.expectOne(`/projects/api/entities/${ref}`).flush(recorded);
+      const recorded = goldenMaster(IMPROVEMENT, 'getWork');
+      http.expectOne(`/projects/api/work/${ref}`).flush(recorded);
       await load;
       expect(store.criteriaOf(ref)).toEqual({
         status: 'loaded',
@@ -136,7 +137,7 @@ describe('WorkDetailStore', () => {
       expect(recorded.acceptanceCriteria.length).toBeGreaterThan(0);
       await store.loadCriteria(ref);
       await settle();
-      http.expectNone(`/projects/api/entities/${ref}`);
+      http.expectNone(`/projects/api/work/${ref}`);
     });
 
     it('fails when the read fails, and reads again on the next call', async () => {
@@ -145,13 +146,13 @@ describe('WorkDetailStore', () => {
       const load = store.loadCriteria(ref);
       await settle();
       http
-        .expectOne(`/projects/api/entities/${ref}`)
+        .expectOne(`/projects/api/work/${ref}`)
         .flush(null, { status: 404, statusText: 'Not Found' });
       await load;
       expect(store.criteriaOf(ref)).toEqual({ status: 'error', items: [] });
       void store.loadCriteria(ref);
       await settle();
-      http.expectOne(`/projects/api/entities/${ref}`).flush(goldenMaster(EPIC, 'getEntity'));
+      http.expectOne(`/projects/api/work/${ref}`).flush(goldenMaster(EPIC, 'getWork'));
       await settle();
       expect(store.criteriaOf(ref)?.status).toBe('loaded');
     });

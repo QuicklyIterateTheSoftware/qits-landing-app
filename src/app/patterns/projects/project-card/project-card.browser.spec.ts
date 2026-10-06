@@ -72,7 +72,7 @@ describe('ProjectCard (screenshots)', () => {
     fixture.detectChanges();
     await settle();
     TestBed.tick();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     const repositories = http.expectOne(`/projects/api/projects/${project.id}/repositories`);
     // The lines are not requested until the languages section opens.
     http.expectNone('/githost/api/loc');
@@ -100,7 +100,7 @@ describe('ProjectCard (screenshots)', () => {
    */
   async function shown(state: string, workState = 'a project with refined work', open = true) {
     const { fixture, work, repositories } = await render();
-    work.flush(await goldenMaster(workState, 'listProjectEntities'));
+    work.flush(await goldenMaster(workState, 'listProjectWork'));
     repositories.flush(
       await goldenMaster('a project with 3 repositories', 'listProjectRepositories'),
     );
