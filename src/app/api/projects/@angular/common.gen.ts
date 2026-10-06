@@ -237,7 +237,7 @@ export const postProjectsApiEntitiesRequest = <ThrowOnError extends boolean = fa
 /**
  * The archetype registry: properties, lifecycles, legal moves and dispatch phases
  *
- * Every archetype's declaration, read off the registry and the state machine the doors enforce: what it requires and permits, its lifecycle, the legal moves out of each status (transitions) and what a dispatch press runs from each status (phases).
+ * Every archetype's declaration, read off the registry and the state machine the doors enforce: what it requires and permits, its lifecycle, the legal moves out of each status (transitions, each naming the quality gates it has to pass) and what a dispatch press runs from each status (phases).
  */
 export const listArchetypesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListArchetypesData, ThrowOnError>): HttpRequest<ListArchetypesResponse> => (options?.client ?? client).requestOptions<ListArchetypesResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -283,7 +283,7 @@ export const getEntityRequest = <ThrowOnError extends boolean = false>(options: 
 /**
  * Edit an entity's fields (JSON merge patch)
  *
- * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/entities/{id}/status (or the archetype's own /{id}/transition), and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it REFINED or IMPLEMENTING, and a marker moves the item's status with it. Answers the entity in the merged shape.
+ * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/entities/{id}/status (or the archetype's own /{id}/transition), and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it READY_FOR_DEV or IMPLEMENTING, and a marker moves the item's status with it. An epic's or a ticket's acceptance criteria sit outside the scope freeze and are frozen from READY_FOR_DEV on instead, where a changed list is refused and the same list restated passes. Answers the entity in the merged shape.
  */
 export const patchProjectsApiEntitiesByIdRequest = <ThrowOnError extends boolean = false>(options: Options<PatchProjectsApiEntitiesByIdData, ThrowOnError>): HttpRequest<PatchProjectsApiEntitiesByIdResponse> => (options?.client ?? client).requestOptions<PatchProjectsApiEntitiesByIdResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -373,7 +373,7 @@ export const postProjectsApiEntitiesByIdRefinementRequest = <ThrowOnError extend
 /**
  * Move an entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves under a ticket's roles, and only once its epic is past REPORTED; the epic's moves to REFINED, back to REPORTED and to IMPLEMENTED carry it, no other does. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves under a ticket's roles, and only once its epic is past REPORTED; the epic's moves to REFINED, back to REPORTED, to READY_FOR_DEV, back to REFINED and to IMPLEMENTED carry it, no other does, and its own scheduling (to READY_FOR_DEV, or back) is refused — that is the epic's. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
  */
 export const moveEntityStatusRequest = <ThrowOnError extends boolean = false>(options: Options<MoveEntityStatusData, ThrowOnError>): HttpRequest<MoveEntityStatusResponse> => (options?.client ?? client).requestOptions<MoveEntityStatusResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -529,7 +529,7 @@ export const getProjectsApiEpicsByIdAuditRequest = <ThrowOnError extends boolean
 /**
  * Transition
  *
- * Moves the epic to the target status. Its features and tasks hold statuses of their own and follow it on three moves only: REPORTED to REFINED (each REPORTED piece is refined), REFINED back to REPORTED (each REFINED piece returns) and the move to IMPLEMENTED (each piece still before IMPLEMENTED is carried there). No other move touches them: a task is verified on its own.
+ * Moves the epic to the target status. Its features and tasks hold statuses of their own and follow it on five moves only: REPORTED to REFINED (each REPORTED piece is refined), REFINED back to REPORTED (each REFINED piece returns), REFINED to READY_FOR_DEV (each REFINED piece is scheduled with it), READY_FOR_DEV back to REFINED (each piece still READY_FOR_DEV returns) and the move to IMPLEMENTED (each piece still before IMPLEMENTED is carried there). No other move touches them: a task is verified on its own, and a piece is never scheduled on its own. Two quality gates judge forward moves: REFINED and READY_FOR_DEV need acceptance criteria (ACCEPTANCE_CRITERIA), and REFINED to READY_FOR_DEV needs a person (PERSON_APPROVAL: a browser session or a person's qits CLI, verified here — never asserted headers or a machine bearer); a failing gate is a 409 naming it, and the scheduling move is recorded under the verified person's name.
  */
 export const transitionEpicRequest = <ThrowOnError extends boolean = false>(options: Options<TransitionEpicData, ThrowOnError>): HttpRequest<TransitionEpicResponse> => (options?.client ?? client).requestOptions<TransitionEpicResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1291,7 +1291,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprova
 /**
  * Sign off this request's current fold, so it may release
  *
- * The person's half of the second gate: where the repository's releases have to be approved — today the project wrapper — a request that has passed every build gate still waits for this. mergedSha is required and names the fold being approved; a stale one answers 409 naming the fold the request is on now, because an approval is a statement about content and a push may have landed while the page was open. The gate is re-asked immediately, so a fold whose build is already green releases on the click. 409 also for a request that has concluded or is already being released, for one with no fold yet, and for a repository that needs no approval at all — approving what has no gate is a caller error, not a no-op. qits:admin only: a machine may ask for a release and withdraw one, and may not sign off the estate.
+ * The person's half of the second gate: where the repository's releases have to be approved — today the project wrapper — a request that has passed every build gate still waits for this. mergedSha is required and names the fold being approved; a stale one answers 409 naming the fold the request is on now, because an approval is a statement about content and a push may have landed while the page was open. The gate is re-asked immediately, so a fold whose build is already green releases on the click. 409 also for a request that has concluded or is already being released, for one with no fold yet, and for a repository that needs no approval at all — approving what has no gate is a caller error, not a no-op. A person only: qits:admin, verified by this service from a browser session or a person's qits CLI token — asserted identity headers alone answer 403. A machine may ask for a release and withdraw one, and may not sign off the estate.
  */
 export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1375,7 +1375,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommits
 /**
  * Refuse this request's current fold, answerably
  *
- * The request is REJECTED carrying the decider's own sentence as its detail. This is NOT a withdrawal and the two must not be read as degrees of the same thing: a decline judges CONTENT and is answerable by a new fold — push a fix onto a participating branch, the request re-folds, the decision no longer names the fold it is on, and it is pending both gates again — while withdraw judges the ASK, is terminal, frees the branches and makes the next release ask mint a fresh request. Same body and same refusals as approve, mergedSha included. No unattended-gate ticket is filed: a person just said no, so somebody is watching by definition. qits:admin only.
+ * The request is REJECTED carrying the decider's own sentence as its detail. This is NOT a withdrawal and the two must not be read as degrees of the same thing: a decline judges CONTENT and is answerable by a new fold — push a fix onto a participating branch, the request re-folds, the decision no longer names the fold it is on, and it is pending both gates again — while withdraw judges the ASK, is terminal, frees the branches and makes the next release ask mint a fresh request. Same body and same refusals as approve, mergedSha included. No unattended-gate ticket is filed: a person just said no, so somebody is watching by definition. A person only, verified exactly as approve verifies one.
  */
 export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1545,7 +1545,7 @@ export const postProjectsApiTicketsByIdBlockedRequest = <ThrowOnError extends bo
 /**
  * Transition
  *
- * Moves the ticket to the target status.
+ * Moves the ticket to the target status. REFINED and READY_FOR_DEV need acceptance criteria (ACCEPTANCE_CRITERIA), and REFINED to READY_FOR_DEV needs a person (PERSON_APPROVAL: a browser session or a person's qits CLI, verified here — an agent's or a service's bearer and asserted headers are refused); a failing gate is a 409 naming it.
  */
 export const transitionTicketRequest = <ThrowOnError extends boolean = false>(options: Options<TransitionTicketData, ThrowOnError>): HttpRequest<TransitionTicketResponse> => (options?.client ?? client).requestOptions<TransitionTicketResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1823,7 +1823,7 @@ export const postProjectsApiEntitiesResource = <ThrowOnError extends boolean = f
 /**
  * The archetype registry: properties, lifecycles, legal moves and dispatch phases
  *
- * Every archetype's declaration, read off the registry and the state machine the doors enforce: what it requires and permits, its lifecycle, the legal moves out of each status (transitions) and what a dispatch press runs from each status (phases).
+ * Every archetype's declaration, read off the registry and the state machine the doors enforce: what it requires and permits, its lifecycle, the legal moves out of each status (transitions, each naming the quality gates it has to pass) and what a dispatch press runs from each status (phases).
  */
 export const listArchetypesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListArchetypesData, ThrowOnError> | undefined) => httpResource<ListArchetypesResponse>(() => {
     const opts = options ? options() : undefined;
@@ -1861,7 +1861,7 @@ export const getEntityResource = <ThrowOnError extends boolean = false>(options:
 /**
  * Edit an entity's fields (JSON merge patch)
  *
- * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/entities/{id}/status (or the archetype's own /{id}/transition), and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it REFINED or IMPLEMENTING, and a marker moves the item's status with it. Answers the entity in the merged shape.
+ * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/entities/{id}/status (or the archetype's own /{id}/transition), and a reshape, reparent or supersede through POST /projects/api/entities/transition. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it READY_FOR_DEV or IMPLEMENTING, and a marker moves the item's status with it. An epic's or a ticket's acceptance criteria sit outside the scope freeze and are frozen from READY_FOR_DEV on instead, where a changed list is refused and the same list restated passes. Answers the entity in the merged shape.
  */
 export const patchProjectsApiEntitiesByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchProjectsApiEntitiesByIdData, ThrowOnError> | undefined) => httpResource<PatchProjectsApiEntitiesByIdResponse>(() => {
     const opts = options ? options() : undefined;
@@ -1935,7 +1935,7 @@ export const postProjectsApiEntitiesByIdRefinementResource = <ThrowOnError exten
 /**
  * Move an entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves under a ticket's roles, and only once its epic is past REPORTED; the epic's moves to REFINED, back to REPORTED and to IMPLEMENTED carry it, no other does. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own /{id}/transition door and under its roles: an agent may move a ticket or a campaign of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves under a ticket's roles, and only once its epic is past REPORTED; the epic's moves to REFINED, back to REPORTED, to READY_FOR_DEV, back to REFINED and to IMPLEMENTED carry it, no other does, and its own scheduling (to READY_FOR_DEV, or back) is refused — that is the epic's. The id is the UUID or the qualified id. Answers the entity in the merged shape, with statusBefore.
  */
 export const moveEntityStatusResource = <ThrowOnError extends boolean = false>(options: () => Options<MoveEntityStatusData, ThrowOnError> | undefined) => httpResource<MoveEntityStatusResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2061,7 +2061,7 @@ export const getProjectsApiEpicsByIdAuditResource = <ThrowOnError extends boolea
 /**
  * Transition
  *
- * Moves the epic to the target status. Its features and tasks hold statuses of their own and follow it on three moves only: REPORTED to REFINED (each REPORTED piece is refined), REFINED back to REPORTED (each REFINED piece returns) and the move to IMPLEMENTED (each piece still before IMPLEMENTED is carried there). No other move touches them: a task is verified on its own.
+ * Moves the epic to the target status. Its features and tasks hold statuses of their own and follow it on five moves only: REPORTED to REFINED (each REPORTED piece is refined), REFINED back to REPORTED (each REFINED piece returns), REFINED to READY_FOR_DEV (each REFINED piece is scheduled with it), READY_FOR_DEV back to REFINED (each piece still READY_FOR_DEV returns) and the move to IMPLEMENTED (each piece still before IMPLEMENTED is carried there). No other move touches them: a task is verified on its own, and a piece is never scheduled on its own. Two quality gates judge forward moves: REFINED and READY_FOR_DEV need acceptance criteria (ACCEPTANCE_CRITERIA), and REFINED to READY_FOR_DEV needs a person (PERSON_APPROVAL: a browser session or a person's qits CLI, verified here — never asserted headers or a machine bearer); a failing gate is a 409 naming it, and the scheduling move is recorded under the verified person's name.
  */
 export const transitionEpicResource = <ThrowOnError extends boolean = false>(options: () => Options<TransitionEpicData, ThrowOnError> | undefined) => httpResource<TransitionEpicResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2677,7 +2677,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprova
 /**
  * Sign off this request's current fold, so it may release
  *
- * The person's half of the second gate: where the repository's releases have to be approved — today the project wrapper — a request that has passed every build gate still waits for this. mergedSha is required and names the fold being approved; a stale one answers 409 naming the fold the request is on now, because an approval is a statement about content and a push may have landed while the page was open. The gate is re-asked immediately, so a fold whose build is already green releases on the click. 409 also for a request that has concluded or is already being released, for one with no fold yet, and for a repository that needs no approval at all — approving what has no gate is a caller error, not a no-op. qits:admin only: a machine may ask for a release and withdraw one, and may not sign off the estate.
+ * The person's half of the second gate: where the repository's releases have to be approved — today the project wrapper — a request that has passed every build gate still waits for this. mergedSha is required and names the fold being approved; a stale one answers 409 naming the fold the request is on now, because an approval is a statement about content and a push may have landed while the page was open. The gate is re-asked immediately, so a fold whose build is already green releases on the click. 409 also for a request that has concluded or is already being released, for one with no fold yet, and for a repository that needs no approval at all — approving what has no gate is a caller error, not a no-op. A person only: qits:admin, verified by this service from a browser session or a person's qits CLI token — asserted identity headers alone answer 403. A machine may ask for a release and withdraw one, and may not sign off the estate.
  */
 export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2747,7 +2747,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommits
 /**
  * Refuse this request's current fold, answerably
  *
- * The request is REJECTED carrying the decider's own sentence as its detail. This is NOT a withdrawal and the two must not be read as degrees of the same thing: a decline judges CONTENT and is answerable by a new fold — push a fix onto a participating branch, the request re-folds, the decision no longer names the fold it is on, and it is pending both gates again — while withdraw judges the ASK, is terminal, frees the branches and makes the next release ask mint a fresh request. Same body and same refusals as approve, mergedSha included. No unattended-gate ticket is filed: a person just said no, so somebody is watching by definition. qits:admin only.
+ * The request is REJECTED carrying the decider's own sentence as its detail. This is NOT a withdrawal and the two must not be read as degrees of the same thing: a decline judges CONTENT and is answerable by a new fold — push a fix onto a participating branch, the request re-folds, the decision no longer names the fold it is on, and it is pending both gates again — while withdraw judges the ASK, is terminal, frees the branches and makes the next release ask mint a fresh request. Same body and same refusals as approve, mergedSha included. No unattended-gate ticket is filed: a person just said no, so somebody is watching by definition. A person only, verified exactly as approve verifies one.
  */
 export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2885,7 +2885,7 @@ export const postProjectsApiTicketsByIdBlockedResource = <ThrowOnError extends b
 /**
  * Transition
  *
- * Moves the ticket to the target status.
+ * Moves the ticket to the target status. REFINED and READY_FOR_DEV need acceptance criteria (ACCEPTANCE_CRITERIA), and REFINED to READY_FOR_DEV needs a person (PERSON_APPROVAL: a browser session or a person's qits CLI, verified here — an agent's or a service's bearer and asserted headers are refused); a failing gate is a 409 naming it.
  */
 export const transitionTicketResource = <ThrowOnError extends boolean = false>(options: () => Options<TransitionTicketData, ThrowOnError> | undefined) => httpResource<TransitionTicketResponse>(() => {
     const opts = options ? options() : undefined;

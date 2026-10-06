@@ -676,7 +676,7 @@ export type DispatchPhase = {
      */
     from?: string;
     /**
-     * The status the platform moves the entity into when the phase starts (REFINED to IMPLEMENTING, IMPLEMENTED to VERIFYING). Null where it moves nothing.
+     * The status the platform moves the entity into when the phase starts (READY_FOR_DEV to IMPLEMENTING, IMPLEMENTED to VERIFYING). Null where it moves nothing.
      */
     enters?: string;
     /**
@@ -814,7 +814,7 @@ export type EntityCreate = {
      */
     impetus?: string;
     /**
-     * A ticket's assignee.
+     * An epic's or a ticket's assignee.
      */
     assignee?: string;
     /**
@@ -837,6 +837,7 @@ export type EntityDispatchDto = {
     branch?: string;
     fresh?: boolean;
     agentLaunch?: string;
+    assignee?: string;
 };
 
 export type EntityDispatchStateDto = {
@@ -877,7 +878,7 @@ export type EntityPatch = {
      */
     ticketType?: string;
     /**
-     * A ticket's assignee; null clears it.
+     * An epic's or a ticket's assignee; null clears it.
      */
     assignee?: string | null;
     /**
@@ -889,16 +890,20 @@ export type EntityPatch = {
      */
     dependsOn?: string | null;
     /**
-     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is REFINED or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or REFINED when it was never marked implementing).
+     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or READY_FOR_DEV when it was never marked implementing).
      */
     implementedAt?: Instant | null;
     /**
-     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is REFINED or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
+     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
      */
     implementingAt?: Instant;
+    /**
+     * An epic's or ticket's acceptance criteria, the whole list in order; null or an empty list clears them. Each item is one line of Markdown: not blank, no line break, at most one '.', and fewer than 20 whitespace characters. Editable at REFINED (outside an epic's scope freeze); from READY_FOR_DEV on a changed list is a 409, and restating the same list passes.
+     */
+    acceptanceCriteria?: Array<string> | null;
 };
 
-export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON';
+export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA';
 
 export type EntityRefinementResponse = {
     refinement?: RefinementDto;
@@ -909,7 +914,7 @@ export type EntityRefinementResponse = {
  */
 export type EntityStatusMove = {
     /**
-     * REPORTED, REFINED, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk, or IMPLEMENTED from REFINED or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
+     * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk (IMPLEMENTING has no move back, and READY_FOR_DEV none to REPORTED), or IMPLEMENTED from READY_FOR_DEV or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
      */
     target: string;
 };
@@ -955,6 +960,7 @@ export type EntityTransition = {
     repositoryId?: string;
     implementedAt?: Instant;
     dependsOn?: string;
+    acceptanceCriteria?: Array<string>;
 };
 
 export type Entry = {
@@ -1012,10 +1018,12 @@ export type EpicDto = {
     qualifiedId?: string;
     title?: string;
     slug?: string;
-    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
+    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     blocked?: boolean;
     supersededByEpicId?: string;
     description?: string;
+    acceptanceCriteria?: Array<string>;
+    assignee?: string;
     createdAt?: Instant;
     updatedAt?: Instant;
     workspaces?: Array<WorkspaceReferenceDto>;
@@ -1030,7 +1038,7 @@ export type FeatureDto = {
     title?: string;
     slug?: string;
     description?: string;
-    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
+    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     dependsOnFeatureId?: string;
     implementedOn?: Instant;
     implementingOn?: Instant;
@@ -1125,6 +1133,10 @@ export type LaunchPins = {
 export type LegalMove = {
     to?: string;
     kind?: TransitionKind;
+    /**
+     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers). Only a FORWARD or SKIP move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
+     */
+    gates?: Array<string>;
 };
 
 export type ListPagesResponse = {
@@ -1271,6 +1283,7 @@ export type ReleaseArtifactsDto = {
 export type ReleaseGateDto = {
     kind?: string;
     state?: string;
+    detail?: string;
 };
 
 export type ReleasePhaseDto = {
@@ -1805,7 +1818,7 @@ export type TaskDto = {
     title?: string;
     slug?: string;
     description?: string;
-    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
+    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     dependsOnTaskId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
@@ -1840,12 +1853,13 @@ export type TicketDto = {
     title?: string;
     slug?: string;
     type?: string;
-    status?: 'REPORTED' | 'REFINED' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
+    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
     blocked?: boolean;
     assignee?: string;
     createdBy?: string;
     impetus?: string;
     description?: string;
+    acceptanceCriteria?: Array<string>;
     createdAt?: Instant;
     updatedAt?: Instant;
     workspaces?: Array<WorkspaceReferenceDto>;
@@ -1894,6 +1908,7 @@ export type TransitionedEntity = {
     updatedAt?: Instant;
     changedBy?: string;
     blocked?: boolean;
+    acceptanceCriteria?: Array<string>;
 };
 
 export type UpdateDesign = {
@@ -2797,7 +2812,7 @@ export type PatchProjectsApiEntitiesByIdErrors = {
      */
     404: unknown;
     /**
-     * The owning epic's status freezes what the patch touches
+     * The owning epic's status freezes what the patch touches, or the acceptance criteria are changed from READY_FOR_DEV on
      */
     409: unknown;
 };
@@ -3069,7 +3084,7 @@ export type MoveEntityStatusErrors = {
      */
     404: unknown;
     /**
-     * A move the lifecycle does not allow, a target naming no status, or a feature or a task whose epic is still REPORTED
+     * A move the lifecycle does not allow, a target naming no status, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — no acceptance criteria into REFINED or READY_FOR_DEV (ACCEPTANCE_CRITERIA), or REFINED to READY_FOR_DEV by a caller this service did not verify as a person (PERSON_APPROVAL)
      */
     409: unknown;
 };
