@@ -11,6 +11,7 @@ import {
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import {
   GET_ENTITY,
+  GET_ENTITY_CRITERIA,
   LIST_DOSSIER_PAGES,
   LIST_ENTITY_COMMENTS,
   LIST_EPIC_DOSSIER_ASSETS,
@@ -36,9 +37,18 @@ export interface WorkDetail {
 
 const LOADING: WorkDetail = { status: 'loading', comments: [], pages: [], figures: {} };
 
+/** One item's acceptance criteria, as `loadCriteria(ref)` left them. */
+export interface WorkCriteria {
+  readonly status: 'loading' | 'loaded' | 'error';
+  /** In order; empty while loading, after an error, and for an item that has none. */
+  readonly items: readonly string[];
+}
+
 interface WorkDetailState {
   /** Each item's page data, by the reference it was loaded with (its qualified id). */
   readonly byRef: Readonly<Record<string, WorkDetail>>;
+  /** Each item's acceptance criteria, by the reference they were loaded with (its qualified id). */
+  readonly criteria: Readonly<Record<string, WorkCriteria>>;
 }
 
 /**
@@ -53,10 +63,13 @@ interface WorkDetailState {
  *   does, in the browser.
  * - `refresh(ref)` reads again and keeps the old data until the answer is in.
  * - `of(ref)`: the data, or undefined before `load`.
+ * - `loadCriteria(ref)` reads the item's acceptance criteria alone (`getEntity`), once, and again
+ *   after an error: the Schedule tab shows them for each item it lists. `criteriaOf(ref)`: them,
+ *   or undefined before `loadCriteria`.
  */
 export const WorkDetailStore = signalStore(
   { providedIn: 'root' },
-  withState<WorkDetailState>({ byRef: {} }),
+  withState<WorkDetailState>({ byRef: {}, criteria: {} }),
   withMethods((store) => {
     const origins = inject(PlatformOrigins);
 
@@ -117,6 +130,25 @@ export const WorkDetailStore = signalStore(
       },
       of(ref: string): WorkDetail | undefined {
         return store.byRef()[ref];
+      },
+      async loadCriteria(ref: string): Promise<void> {
+        const current = store.criteria()[ref];
+        if (!ref || (current && current.status !== 'error')) return;
+        const put = (value: WorkCriteria) =>
+          patchState(store, { criteria: { ...store.criteria(), [ref]: value } });
+        put({ status: 'loading', items: [] });
+        const { data, error } = await consume(
+          getEntity({ path: { id: ref } }),
+          GET_ENTITY_CRITERIA,
+        );
+        put(
+          error !== undefined || !data
+            ? { status: 'error', items: [] }
+            : { status: 'loaded', items: data.acceptanceCriteria ?? [] },
+        );
+      },
+      criteriaOf(ref: string): WorkCriteria | undefined {
+        return store.criteria()[ref];
       },
     };
   }),

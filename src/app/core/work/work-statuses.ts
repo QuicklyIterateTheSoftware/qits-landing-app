@@ -11,19 +11,13 @@ export interface BoardColumn {
 }
 
 /**
- * The board's columns, left to right: the statuses work moves through while it is being worked
- * on. VERIFIED work is done with that: it waits in the Acceptance list above the board. Which
+ * The board's columns, left to right: the statuses work moves through once a person scheduled it
+ * (READY_FOR_DEV, the first column) and while it is being worked on. REFINED work waits on the
+ * Schedule tab, not here (qits-887). VERIFIED work is done with that: it waits in the Acceptance list above the board. Which
  * column an entity sits in, and which work is on the board at all, is `WorkGraph`'s business
  * (`work-tree.ts`); the index here is that column.
  */
 export const BOARD_COLUMNS: readonly BoardColumn[] = [
-  {
-    status: 'REFINED',
-    label: 'Refined',
-    body: 'bg-ocean-deep-300',
-    header: 'bg-ocean-deep-400 text-ocean-deep-950',
-    cardBorder: 'border-ocean-deep-400',
-  },
   {
     status: 'READY_FOR_DEV',
     label: 'Ready for Dev',

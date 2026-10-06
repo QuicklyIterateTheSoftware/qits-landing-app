@@ -20,6 +20,6 @@ describe('columnCounts', () => {
       at('parent', undefined, [at('child', 2)], true),
       at('ticket', 2),
     ];
-    expect(columnCounts(tree)).toEqual([1, 2, 3, 0, 0]);
+    expect(columnCounts(tree)).toEqual([1, 2, 3, 0]);
   });
 });

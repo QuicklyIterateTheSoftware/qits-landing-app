@@ -77,9 +77,9 @@ describe('TicketListItem (screenshots)', () => {
 
   it.each<Case>([
     ['reported', 'backlog', EVERY_STATUS, 'contract-00000001-2', 'Reported ticket'],
-    ['verified', 'acceptance', EVERY_STATUS, 'contract-00000001-12', 'Verified ticket'],
-    ['done', 'archive', EVERY_STATUS, 'contract-00000001-14', 'Done ticket'],
-    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-16', 'Dropped ticket'],
+    ['verified', 'acceptance', EVERY_STATUS, 'contract-00000001-14', 'Verified ticket'],
+    ['done', 'archive', EVERY_STATUS, 'contract-00000001-16', 'Done ticket'],
+    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-18', 'Dropped ticket'],
   ])('%s', async (name, view, state, qualifiedId, title) => {
     await expect.element(await shown(view, state, qualifiedId, title)).toMatchScreenshot(name);
   });
@@ -95,11 +95,11 @@ describe('TicketListItem (screenshots)', () => {
     const locator = await shown(
       'acceptance',
       EVERY_STATUS,
-      'contract-00000001-12',
+      'contract-00000001-14',
       'Verified ticket',
     );
     const card = locator.element().querySelector('ui-board-card') as HTMLElement;
-    const finish = card.querySelector('button[aria-label="Mark contract-00000001-12 done"]');
+    const finish = card.querySelector('button[aria-label="Mark contract-00000001-14 done"]');
     expect(finish?.classList.contains('hidden')).toBe(false);
     const box = card.getBoundingClientRect();
     const button = (finish as HTMLElement).getBoundingClientRect();
@@ -112,10 +112,10 @@ describe('TicketListItem (screenshots)', () => {
   });
 
   it('draws no finish button on a ticket that is not VERIFIED', async () => {
-    const locator = await shown('archive', EVERY_STATUS, 'contract-00000001-14', 'Done ticket');
+    const locator = await shown('archive', EVERY_STATUS, 'contract-00000001-16', 'Done ticket');
     const finish = locator
       .element()
-      .querySelector('button[aria-label="Mark contract-00000001-14 done"]');
+      .querySelector('button[aria-label="Mark contract-00000001-16 done"]');
     expect(finish?.classList.contains('hidden')).toBe(true);
   });
 });

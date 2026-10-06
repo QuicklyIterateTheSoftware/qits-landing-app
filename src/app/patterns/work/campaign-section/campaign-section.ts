@@ -17,7 +17,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * `level`, linking to its page), its status, the start of its description, and its members in
  * campaign order, drawn as the lists draw them (`app-work-list`, view `campaign`). Next to its
  * status, a Workspace tag while it has an ACTIVE workspace (`app-workspace-link`). With
- * `epicBoards` (the Campaigns page, not the Archive), a member epic on the board (REFINED to
+ * `epicBoards` (the Campaigns page, not the Archive), a member epic on the board (READY_FOR_DEV to
  * VERIFYING) has its own board (`app-epic-board`). `display: contents`, so the section is itself
  * the list's item.
  */

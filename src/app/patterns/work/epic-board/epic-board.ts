@@ -20,7 +20,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
  * One epic with its own board, as a campaign and the epic's page draw an epic on the board
- * (REFINED to VERIFYING):
+ * (READY_FOR_DEV to VERIFYING):
  *
  * - with `header`, a bar on top that runs on down the left side as one ┌, as an epic's lane does on
  *   the In Progress board: the bar holds its status, its campaigns as tags and a Workspace tag

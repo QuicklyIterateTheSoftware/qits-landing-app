@@ -21,7 +21,7 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a refined epic",
+          "name": "a ready for dev epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
             "projectId": "00000000-0000-4000-8000-000000000002"
@@ -120,7 +120,7 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a refined ticket",
+          "name": "a ready for dev ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
             "ticketId": "00000000-0000-4000-8000-000000000002"
@@ -913,7 +913,7 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a refined epic",
+          "name": "a ready for dev epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
             "projectId": "00000000-0000-4000-8000-000000000002"
@@ -1010,7 +1010,7 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a refined ticket",
+          "name": "a ready for dev ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
             "ticketId": "00000000-0000-4000-8000-000000000002"
@@ -1053,6 +1053,200 @@
         "body": {
           "content": {
             "status": "IMPLEMENTING"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-work-item: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "READY_FOR_DEV"
           },
           "contentType": "application/json",
           "encoded": false
@@ -2603,6 +2797,200 @@
                 {
                   "match": "type"
                 },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "schedule-work",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "schedule-work: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined epic",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${epicId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveEntityStatus"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "schedule-work",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "schedule-work: moveEntityStatus",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a refined ticket",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "target": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${ticketId}/status",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "READY_FOR_DEV"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "type"
                 }
@@ -6088,9 +6476,9 @@
               },
               {
                 "archetype": "FEATURE",
-                "id": "00000000-0000-4000-8000-000000000013",
-                "parent": "00000000-0000-4000-8000-000000000012",
-                "qualifiedId": "contract-00000001-18",
+                "id": "00000000-0000-4000-8000-000000000015",
+                "parent": "00000000-0000-4000-8000-000000000014",
+                "qualifiedId": "contract-00000001-20",
                 "status": "IMPLEMENTING",
                 "title": "Started feature"
               }
@@ -7315,7 +7703,7 @@
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
                 "qualifiedId": "contract-00000001-2",
-                "status": "REFINED",
+                "status": "READY_FOR_DEV",
                 "title": "Feature pending verification"
               }
             ]
@@ -7716,7 +8104,7 @@
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "READY_FOR_DEV",
                 "title": "Nested epic"
               },
               {
@@ -8947,6 +9335,234 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "getEntity"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-schedule-criteria",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-schedule-criteria: getEntity",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an epic in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-2",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${qualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/entities/contract-00000001-2"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "acceptanceCriteria": [
+              "It does what it says."
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.acceptanceCriteria": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.acceptanceCriteria[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getEntity"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-schedule-criteria",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-schedule-criteria: getEntity",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an improvement ticket in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-11",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/entities/${qualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/entities/contract-00000001-11"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "acceptanceCriteria": [
+              "It does what it says."
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.acceptanceCriteria": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.acceptanceCriteria[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "listArchetypes"
           },
           "qits-trigger": {
@@ -9020,27 +9636,31 @@
                       "phase": "implement"
                     }
                   },
-                  "REFINED": {
+                  "READY_FOR_DEV": {
                     "flow": [
                       {
                         "endsIn": "IMPLEMENTED",
                         "enters": "IMPLEMENTING",
-                        "from": "REFINED",
+                        "from": "READY_FOR_DEV",
                         "phase": "implement"
                       },
                       {
                         "endsIn": "IMPLEMENTED",
                         "enters": "IMPLEMENTING",
-                        "from": "REFINED",
+                        "from": "READY_FOR_DEV",
                         "phase": "implement"
                       }
                     ],
                     "next": {
                       "endsIn": "IMPLEMENTED",
                       "enters": "IMPLEMENTING",
-                      "from": "REFINED",
+                      "from": "READY_FOR_DEV",
                       "phase": "implement"
                     }
+                  },
+                  "REFINED": {
+                    "flow": [],
+                    "next": null
                   },
                   "REPORTED": {
                     "flow": [
@@ -9049,12 +9669,6 @@
                         "enters": null,
                         "from": "REPORTED",
                         "phase": "refine"
-                      },
-                      {
-                        "endsIn": "IMPLEMENTED",
-                        "enters": "IMPLEMENTING",
-                        "from": "REFINED",
-                        "phase": "implement"
                       }
                     ],
                     "next": {
@@ -9119,36 +9733,64 @@
                     {
                       "kind": "FORWARD",
                       "to": "IMPLEMENTED"
+                    }
+                  ],
+                  "READY_FOR_DEV": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
                     },
                     {
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTED"
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
                     }
                   ],
                   "REFINED": [
                     {
+                      "gates": [
+                        "ACCEPTANCE_CRITERIA",
+                        "ACCEPTANCE_CRITERIA"
+                      ],
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
+                      "to": "READY_FOR_DEV"
                     },
                     {
+                      "gates": [
+                        "ACCEPTANCE_CRITERIA",
+                        "ACCEPTANCE_CRITERIA"
+                      ],
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
+                      "to": "READY_FOR_DEV"
                     },
                     {
+                      "gates": [
+                        "ACCEPTANCE_CRITERIA",
+                        "ACCEPTANCE_CRITERIA"
+                      ],
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
-                    },
-                    {
-                      "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
+                      "to": "READY_FOR_DEV"
                     }
                   ],
                   "REPORTED": [
                     {
+                      "gates": [
+                        "ACCEPTANCE_CRITERIA"
+                      ],
                       "kind": "FORWARD",
                       "to": "REFINED"
                     },
                     {
+                      "gates": [
+                        "ACCEPTANCE_CRITERIA"
+                      ],
                       "kind": "FORWARD",
                       "to": "REFINED"
                     }
@@ -9220,28 +9862,47 @@
                     {
                       "kind": "FORWARD",
                       "to": "IMPLEMENTED"
+                    }
+                  ],
+                  "READY_FOR_DEV": [
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
                     },
                     {
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTED"
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
+                    },
+                    {
+                      "kind": "FORWARD",
+                      "to": "IMPLEMENTING"
                     }
                   ],
                   "REFINED": [
                     {
+                      "gates": [
+                        "PERSON_APPROVAL"
+                      ],
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
+                      "to": "READY_FOR_DEV"
                     },
                     {
+                      "gates": [
+                        "PERSON_APPROVAL"
+                      ],
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
+                      "to": "READY_FOR_DEV"
                     },
                     {
+                      "gates": [
+                        "PERSON_APPROVAL"
+                      ],
                       "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
-                    },
-                    {
-                      "kind": "FORWARD",
-                      "to": "IMPLEMENTING"
+                      "to": "READY_FOR_DEV"
                     }
                   ],
                   "REPORTED": [
@@ -9487,7 +10148,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.flow": {
+                        "$.phases.READY_FOR_DEV.flow": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9497,7 +10158,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.flow[*].endsIn": {
+                        "$.phases.READY_FOR_DEV.flow[*].endsIn": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9508,7 +10169,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.flow[*].enters": {
+                        "$.phases.READY_FOR_DEV.flow[*].enters": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9519,7 +10180,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.flow[*].from": {
+                        "$.phases.READY_FOR_DEV.flow[*].from": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9530,7 +10191,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.flow[*].phase": {
+                        "$.phases.READY_FOR_DEV.flow[*].phase": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9541,7 +10202,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.next.endsIn": {
+                        "$.phases.READY_FOR_DEV.next.endsIn": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9549,7 +10210,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.next.enters": {
+                        "$.phases.READY_FOR_DEV.next.enters": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9557,7 +10218,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.next.from": {
+                        "$.phases.READY_FOR_DEV.next.from": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9565,7 +10226,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.next.phase": {
+                        "$.phases.READY_FOR_DEV.next.phase": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -9577,75 +10238,33 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "arrayContains",
-                              "variants": [
-                                {
-                                  "index": 0,
-                                  "rules": {
-                                    "$.endsIn": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.from": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.phase": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    }
-                                  }
-                                },
-                                {
-                                  "index": 1,
-                                  "rules": {
-                                    "$.endsIn": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.enters": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.from": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.phase": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    }
-                                  }
-                                }
-                              ]
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -9806,17 +10425,14 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
-                              "min": 3
+                              "max": 2,
+                              "min": 2
                             }
                           ]
                         },
                         "$.transitions.IMPLEMENTING[*].kind": {
                           "combine": "AND",
                           "matchers": [
-                            {
-                              "match": "type"
-                            },
                             {
                               "match": "type"
                             },
@@ -9833,6 +10449,47 @@
                             },
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.READY_FOR_DEV": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.transitions.READY_FOR_DEV[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.READY_FOR_DEV[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             },
                             {
                               "match": "type"
@@ -9844,17 +10501,57 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 4,
-                              "min": 4
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].gates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            },
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            },
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].gates[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             }
                           ]
                         },
                         "$.transitions.REFINED[*].kind": {
                           "combine": "AND",
                           "matchers": [
-                            {
-                              "match": "type"
-                            },
                             {
                               "match": "type"
                             },
@@ -9877,9 +10574,6 @@
                             },
                             {
                               "match": "type"
-                            },
-                            {
-                              "match": "type"
                             }
                           ]
                         },
@@ -9890,6 +10584,32 @@
                               "match": "type",
                               "max": 2,
                               "min": 2
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED[*].gates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            },
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.transitions.REPORTED[*].gates[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -10079,17 +10799,14 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
-                              "min": 3
+                              "max": 2,
+                              "min": 2
                             }
                           ]
                         },
                         "$.transitions.IMPLEMENTING[*].kind": {
                           "combine": "AND",
                           "matchers": [
-                            {
-                              "match": "type"
-                            },
                             {
                               "match": "type"
                             },
@@ -10106,6 +10823,47 @@
                             },
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.READY_FOR_DEV": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.transitions.READY_FOR_DEV[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.READY_FOR_DEV[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             },
                             {
                               "match": "type"
@@ -10117,8 +10875,42 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 4,
-                              "min": 4
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].gates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            },
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            },
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.transitions.REFINED[*].gates[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -10133,18 +10925,12 @@
                             },
                             {
                               "match": "type"
-                            },
-                            {
-                              "match": "type"
                             }
                           ]
                         },
                         "$.transitions.REFINED[*].to": {
                           "combine": "AND",
                           "matchers": [
-                            {
-                              "match": "type"
-                            },
                             {
                               "match": "type"
                             },

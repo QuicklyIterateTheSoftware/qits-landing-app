@@ -7,9 +7,9 @@ import { EPIC_BOARD_COLUMNS, EPIC_BOARD_STATUSES } from './work-statuses';
  * with its tasks as cards in `EPIC_BOARD_COLUMNS`. A child without a status takes its parent's,
  * and a DONE or DROPPED feature takes its tasks with it, as `WorkGraph` does.
  *
- * - REFINED to VERIFYING: their own column; VERIFIED: the Verified column;
+ * - READY_FOR_DEV to VERIFYING: their own column; VERIFIED: the Verified column;
  * - DONE: the Verified column too, drawn muted (`done`): past verified, and still part of the epic;
- * - REPORTED (not yet refined) and DROPPED: not on the board. A DROPPED feature has no row.
+ * - REPORTED (not yet refined), REFINED (not yet scheduled) and DROPPED: not on the board. A DROPPED feature has no row.
  */
 
 const COLUMN_BY_STATUS: Readonly<Record<string, number>> = {

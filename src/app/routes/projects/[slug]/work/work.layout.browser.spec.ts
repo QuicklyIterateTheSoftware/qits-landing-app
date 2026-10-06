@@ -40,6 +40,7 @@ describe('WorkLayout (screenshots)', () => {
             children: [
               { path: 'campaigns', component: TestPage },
               { path: 'refinement', component: TestPage },
+              { path: 'schedule', component: TestPage },
               { path: 'in-progress', component: TestPage },
               { path: 'acceptance', component: TestPage },
               { path: 'archive', component: TestPage },
@@ -102,10 +103,11 @@ describe('WorkLayout (screenshots)', () => {
     await answered();
     const element = locate();
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
-    await expect.element(tabs.nth(2)).toHaveTextContent('9');
+    await expect.element(tabs.nth(3)).toHaveTextContent('9');
     expect(tabs.elements().map((a) => a.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
       'Campaigns 0',
       'Refinement 2',
+      'Schedule 4',
       'In Progress 9',
       'Acceptance 2',
       'Archive 4',
@@ -113,11 +115,12 @@ describe('WorkLayout (screenshots)', () => {
     expect(tabs.elements().map((a) => a.getAttribute('href'))).toEqual([
       `/projects/${project.slug}/work/campaigns`,
       `/projects/${project.slug}/work/refinement`,
+      `/projects/${project.slug}/work/schedule`,
       `/projects/${project.slug}/work/in-progress`,
       `/projects/${project.slug}/work/acceptance`,
       `/projects/${project.slug}/work/archive`,
     ]);
-    await expect.element(tabs.nth(2)).toHaveAttribute('aria-current', 'page');
+    await expect.element(tabs.nth(3)).toHaveAttribute('aria-current', 'page');
     await expect.element(tabs.nth(0)).not.toHaveAttribute('aria-current');
     await expect.element(element).toHaveTextContent('Page content');
     await expect.element(element).toMatchScreenshot('tabs');
@@ -127,7 +130,7 @@ describe('WorkLayout (screenshots)', () => {
     const { locate, work } = await shown('archive');
     const element = locate();
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
-    await expect.element(tabs.nth(4)).toHaveAttribute('aria-current', 'page');
+    await expect.element(tabs.nth(5)).toHaveAttribute('aria-current', 'page');
     await expect.element(tabs.nth(0)).toHaveAccessibleName('Campaigns');
     await expect.element(element).toMatchScreenshot('loading');
     work.flush(null, { status: 500, statusText: 'Server Error' });

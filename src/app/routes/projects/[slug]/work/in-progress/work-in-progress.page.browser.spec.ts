@@ -72,11 +72,13 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect
       .element(element.getByRole('heading', { level: 1 }))
       .toHaveTextContent('In Progress');
-    await expect.element(element).toHaveTextContent('Refined ticket');
+    await expect.element(element).toHaveTextContent('Ready for dev ticket');
     await expect.element(element).toHaveTextContent('Implementing epic');
     await expect.element(element).toHaveTextContent('Implemented epic');
     await expect.element(element).toHaveTextContent('Verifying ticket');
     await expect.element(element).not.toHaveTextContent('Reported ticket');
+    // Refined work waits on the Schedule tab.
+    await expect.element(element).not.toHaveTextContent('Refined ticket');
     await expect.element(element).not.toHaveTextContent('Verified ticket');
     await expect.element(element).not.toHaveTextContent('Done ticket');
     // Every card leads to its item's page, below work/detail. The Workspace links are hidden: this

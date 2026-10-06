@@ -78,9 +78,9 @@ describe('EpicListItem (screenshots)', () => {
 
   it.each<Case>([
     ['reported', 'backlog', EVERY_STATUS, 'contract-00000001-1', 'Reported epic'],
-    ['verified', 'acceptance', EVERY_STATUS, 'contract-00000001-11', 'Verified epic'],
-    ['done', 'archive', EVERY_STATUS, 'contract-00000001-13', 'Done epic'],
-    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-15', 'Dropped epic'],
+    ['verified', 'acceptance', EVERY_STATUS, 'contract-00000001-13', 'Verified epic'],
+    ['done', 'archive', EVERY_STATUS, 'contract-00000001-15', 'Done epic'],
+    ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-17', 'Dropped epic'],
   ])('%s', async (name, view, state, qualifiedId, title) => {
     const { locator } = await shown(view, state, qualifiedId, title);
     await expect.element(locator).toMatchScreenshot(name);
@@ -90,11 +90,11 @@ describe('EpicListItem (screenshots)', () => {
     const { element } = await shown(
       'acceptance',
       EVERY_STATUS,
-      'contract-00000001-11',
+      'contract-00000001-13',
       'Verified epic',
     );
     const lane = element.querySelector('ui-list-lane') as HTMLElement;
-    const finish = lane.querySelector('button[aria-label="Mark contract-00000001-11 done"]');
+    const finish = lane.querySelector('button[aria-label="Mark contract-00000001-13 done"]');
     expect(finish?.classList.contains('hidden')).toBe(false);
     const box = lane.getBoundingClientRect();
     const button = (finish as HTMLElement).getBoundingClientRect();

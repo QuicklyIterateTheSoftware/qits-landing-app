@@ -43,6 +43,18 @@ export const INTERACTIONS = {
   'show-work-item': 'The work item page shows the item’s description, dossier and comments',
   /** `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). */
   'move-work-item': 'A status action on the work item page moves the item',
+  /**
+   * `work-schedule.page.ts` via `WorkDetailStore.loadCriteria`: the Schedule tab reads each listed
+   * epic's and ticket's acceptance criteria.
+   */
+  'show-schedule-criteria': 'The Schedule tab shows each item’s acceptance criteria',
+  /**
+   * `work-schedule.page.ts`: "Schedule" moves the ticked REFINED epics and tickets to
+   * READY_FOR_DEV, with the viewer's session (a person's approval).
+   */
+  'schedule-work': 'Schedule on the Schedule tab marks the ticked work ready for dev',
+  /** `work-schedule.page.ts`: "Unschedule" moves a READY_FOR_DEV epic or ticket back to REFINED. */
+  'unschedule-work': 'Unschedule on the Schedule tab takes scheduled work back to refined',
   /** `work-item.page.ts`: Dispatch (the whole flow) or the next phase's button. */
   'dispatch-work-item': 'Dispatch or the next phase on the work item page starts an agent',
   /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */

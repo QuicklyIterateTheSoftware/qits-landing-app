@@ -35,7 +35,7 @@ import { sessionGuard } from '$core/auth/session.guard';
  * beneath it changes. `sessionGuard` sends a visitor without a session to the idp's login page.
  *
  * The work section: `projects/<slug>/work` is `WorkLayout`, a row of tabs over its pages
- * (`campaigns`, `refinement`, `in-progress`, `acceptance`, `archive`). An item's page is at
+ * (`campaigns`, `refinement`, `schedule`, `in-progress`, `acceptance`, `archive`). An item's page is at
  * `work/detail/<qualified id>`, so an id can never be taken for a tab; it sits outside the layout,
  * with no tabs. `/work` opens `in-progress` by a `redirectTo`, not a page as at the root: the
  * redirect happens before the URL is written, so `/work` never enters the history and Back has
@@ -96,6 +96,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/work/refinement/work-refinement.page').then(
                 (m) => m.WorkRefinementPage,
+              ),
+          },
+          {
+            path: 'schedule',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/schedule/work-schedule.page').then(
+                (m) => m.WorkSchedulePage,
               ),
           },
           {

@@ -21,7 +21,7 @@ import type { WorkListView } from './work-list-view';
  * and tasks), anything else an `app-ticket-list-item`, stacked. An empty tree says "Nothing here".
  * Both are always rendered and switched by class, so a server render hydrates as is. The card, row
  * or lane the text selection is in is highlighted (`SelectionHighlight`). With `epicBoards`, an epic
- * on the board (REFINED to VERIFYING) is drawn with its own board instead (`app-epic-board`).
+ * on the board (READY_FOR_DEV to VERIFYING) is drawn with its own board instead (`app-epic-board`).
  *
  * A node that leaves the tree (finished, here or in another tab) stays in its place while it
  * shrinks away, and goes when it has (`withLeaving`). No clipping box around the items: the finish
@@ -74,7 +74,7 @@ export class WorkList {
   /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
-  /** Draws an epic on the board (REFINED to VERIFYING) with its own board. */
+  /** Draws an epic on the board (READY_FOR_DEV to VERIFYING) with its own board. */
   readonly epicBoards = input(false, { transform: booleanAttribute });
 
   /**

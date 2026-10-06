@@ -330,6 +330,56 @@ describe('WorkStore', () => {
       await moved;
       expect(statusOf(store, 't-1')).toBe('REPORTED');
       expect(store.transitioning()['t-1']).toBe('error');
+      // No message in the answer: the refusal names the HTTP status.
+      expect(store.refusals()['t-1']).toBe('The move failed (HTTP 409).');
+    });
+
+    // A quality gate's refusal, in the service's words (qits-887). Error answers are only a status
+    // to the pact, so the body is the service's message format, written out.
+    const GATE =
+      'Epic e-1 cannot move to READY_FOR_DEV: ACCEPTANCE_CRITERIA: it has no acceptance criteria — ' +
+      'write them first (acceptanceCriteria: update_epic, PATCH /entities/{id} or qits work update)';
+
+    it('keeps the refusal’s message verbatim, until the next move of the same item', async () => {
+      const store = await loaded();
+      const refused = store.transition(ID, epic, 'READY_FOR_DEV');
+      await settle();
+      http
+        .expectOne('/projects/api/entities/e-1/status')
+        .flush({ message: GATE }, { status: 409, statusText: 'Conflict' });
+      await refused;
+      expect(store.refusals()).toEqual({ 'e-1': GATE });
+      expect(statusOf(store, 'e-1')).toBe('REFINED');
+
+      const again = store.transition(ID, epic, 'READY_FOR_DEV');
+      expect(store.refusals()).toEqual({});
+      await settle();
+      http.expectOne('/projects/api/entities/e-1/status').flush({ status: 'READY_FOR_DEV' });
+      await again;
+      expect(store.refusals()).toEqual({});
+      expect(statusOf(store, 'e-1')).toBe('READY_FOR_DEV');
+    });
+
+    it('moves several items at once, each on its own', async () => {
+      const store = await loaded();
+      const refined = { ...ticket, status: 'REFINED' } as WorkEntry;
+      const moved = store.transitionAll(ID, [refined, epic], 'READY_FOR_DEV');
+      await settle();
+      const sent = [
+        http.expectOne('/projects/api/entities/t-1/status'),
+        http.expectOne('/projects/api/entities/e-1/status'),
+      ];
+      expect(sent.map((r) => r.request.body)).toEqual([
+        { target: 'READY_FOR_DEV' },
+        { target: 'READY_FOR_DEV' },
+      ]);
+      sent[0].flush({ status: 'READY_FOR_DEV' });
+      sent[1].flush({ message: GATE }, { status: 409, statusText: 'Conflict' });
+      await moved;
+      expect(statusOf(store, 't-1')).toBe('READY_FOR_DEV');
+      expect(statusOf(store, 'e-1')).toBe('REFINED');
+      expect(store.transitioning()).toEqual({ 'e-1': 'error' });
+      expect(store.refusals()).toEqual({ 'e-1': GATE });
     });
 
     it('sends one move while one is running', async () => {
@@ -343,10 +393,10 @@ describe('WorkStore', () => {
   });
 
   describe('dispatch', () => {
-    const epic = { id: 'e-1', archetype: 'EPIC', status: 'REFINED' } as WorkEntry;
+    const epic = { id: 'e-1', archetype: 'EPIC', status: 'READY_FOR_DEV' } as WorkEntry;
 
     it.each([
-      ['FLOW', 'a refined epic'],
+      ['FLOW', 'a ready for dev epic'],
       ['PHASE', 'a reported epic'],
     ] as const)(
       'presses dispatch with mode %s and keeps the phase it started',

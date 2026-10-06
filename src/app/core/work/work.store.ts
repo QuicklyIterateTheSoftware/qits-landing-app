@@ -32,12 +32,24 @@ type Status = 'loading' | 'loaded' | 'error';
 
 /**
  * A work entity's status word. Plain `string`, not the generated client's closed union
- * (`WorkEntry['status']`): qits-projects-service does not carry READY_FOR_DEV in its OpenAPI
- * document yet (qits-887), so that union is missing a word a live entity can already hold once the
- * service releases it. Regenerate the client (`npm run generate:api`) once it does, and this can
- * narrow again; until then nothing here may depend on the union being exhaustive.
+ * (`WorkEntry['status']`): the union names the words qits-projects-service's OpenAPI document had
+ * when the client was generated (READY_FOR_DEV since qits-887), and a newer word can reach a live
+ * entity before the client is regenerated. Nothing here may depend on the union being exhaustive.
  */
 export type WorkStatus = string;
+
+/**
+ * Why a move failed, for a person to read: the answer's `message`, verbatim, when it carries one
+ * (a quality gate's 409: `Ticket <id> cannot move to READY_FOR_DEV: ACCEPTANCE_CRITERIA: …`), else
+ * the HTTP status. qits-projects' OpenAPI document gives its error answers no body, so the message
+ * is read defensively and nothing else of it is relied on.
+ */
+export function refusalOf(error: unknown, httpStatus: number | undefined): string {
+  const message =
+    error !== null && typeof error === 'object' && 'message' in error ? error.message : undefined;
+  if (typeof message === 'string' && message.trim()) return message;
+  return httpStatus ? `The move failed (HTTP ${httpStatus}).` : 'The move failed.';
+}
 
 /** What a dispatch press runs: the whole flow, or the next phase only. */
 export type DispatchMode = 'FLOW' | 'PHASE';
@@ -89,6 +101,12 @@ interface WorkState {
   readonly pendingFinishes: Readonly<Record<string, PendingFinish>>;
   /** Each entity's running or failed `transition`, by entity id. */
   readonly transitioning: Readonly<Record<string, FinishState>>;
+  /**
+   * Why each entity's last `transition` failed, by entity id: the service's message, verbatim (a
+   * quality gate's 409 names every gate it failed), or a fallback naming the HTTP status when the
+   * answer carried none. Gone once the entity's next `transition` starts.
+   */
+  readonly refusals: Readonly<Record<string, string>>;
   /** Each entity's running or failed `dispatch`, by entity id. */
   readonly dispatching: Readonly<Record<string, FinishState>>;
   /** The phase each entity's last dispatch started, by entity id. */
@@ -116,7 +134,10 @@ interface WorkState {
  *   undo, and the request is sent with `keepalive`, so it outlives the page.
  * - `transition(projectId, entry, target)` moves any work item to a status the archetype registry
  *   serves for it (the work item page's Status actions), through the same door as `finish`, and
- *   writes the answered status into the entry. `transitioning` holds a running or failed move.
+ *   writes the answered status into the entry. `transitioning` holds a running or failed move,
+ *   `refusals` why a move failed (the 409's message: a quality gate, say).
+ * - `transitionAll(projectId, entries, target)` moves several items at once, each as `transition`
+ *   does (the Schedule tab's Schedule and Unschedule). Each move succeeds or fails on its own.
  * - `dispatch(entry, mode)` presses dispatch (`dispatchEntity`): `FLOW` runs every
  *   phase left, `PHASE` the next one. The answer names the phase it started (`dispatched`); the
  *   status the platform moves the item to arrives as an event, like any other move.
@@ -129,6 +150,7 @@ export const WorkStore = signalStore(
     finishing: {},
     pendingFinishes: {},
     transitioning: {},
+    refusals: {},
     dispatching: {},
     dispatched: {},
   }),
@@ -184,6 +206,11 @@ export const WorkStore = signalStore(
       patchState(store, { transitioning: value ? { ...rest, [entityId]: value } : rest });
     }
 
+    function setRefusal(entityId: string, value: string | undefined): void {
+      const { [entityId]: _, ...rest } = store.refusals();
+      patchState(store, { refusals: value ? { ...rest, [entityId]: value } : rest });
+    }
+
     function setDispatching(entityId: string, value: FinishState | undefined): void {
       const { [entityId]: _, ...rest } = store.dispatching();
       patchState(store, { dispatching: value ? { ...rest, [entityId]: value } : rest });
@@ -204,40 +231,51 @@ export const WorkStore = signalStore(
 
     /**
      * Moves an entity to `target` through the status door, and writes the answered status into its
-     * entry. The answered status, or undefined when the move failed.
+     * entry. The answered status, or why the move failed.
      */
     async function move(
       projectId: string,
       entry: WorkEntry,
       target: WorkStatus,
-    ): Promise<WorkStatus | undefined> {
+    ): Promise<{ readonly status?: WorkStatus; readonly refusal?: string }> {
       const id = entry.id;
-      if (!id) return undefined;
+      if (!id) return {};
       // `keepalive`: a finish sent as the page is left must still arrive.
-      const { data, error } = await consume(
+      const { data, error, response } = await consume(
         moveEntityStatus({ path: { id }, body: { target }, keepalive: true }),
         MOVE_ENTITY_STATUS,
       );
       const status = error === undefined ? data?.status : undefined;
-      if (!status) return undefined;
+      if (!status) return { refusal: refusalOf(error, response?.status) };
       settled.set(id, { status, at: ++clock });
       const work = store.byProject()[projectId];
       if (work) {
         // Only the moved entry changes: an epic going to DONE moves none of its features or tasks
-        // in qits-projects (only REPORTED ↔ REFINED and → IMPLEMENTED cascade, qits-763), and the
-        // lists archive them with their epic (`WorkGraph.phaseOf`). Any other move refetches on
-        // its `EntityTransitioned` (`SelectedWork.followTransitions`).
+        // in qits-projects (only REPORTED ↔ REFINED ↔ READY_FOR_DEV and → IMPLEMENTED cascade,
+        // qits-763, qits-887), and the lists archive them with their epic (`WorkGraph.phaseOf`).
+        // Any other move refetches on its `EntityTransitioned` (`SelectedWork.followTransitions`):
+        // a scheduled epic's features and tasks follow it that way.
         const entries = work.entries.map((e) => (e.id === id ? { ...e, status } : e));
         set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
       }
-      return status;
+      return { status };
+    }
+
+    async function transition(projectId: string, entry: WorkEntry, target: WorkStatus) {
+      const id = entry.id;
+      if (!id || store.transitioning()[id] === 'running') return;
+      setTransitioning(id, 'running');
+      setRefusal(id, undefined);
+      const { status, refusal } = await move(projectId, entry, target);
+      setTransitioning(id, status ? undefined : 'error');
+      setRefusal(id, status ? undefined : refusal);
     }
 
     async function finish(projectId: string, entry: WorkEntry): Promise<void> {
       const id = entry.id;
       if (!id || store.finishing()[id] === 'running') return;
       setFinishing(id, 'running');
-      const status = await move(projectId, entry, 'DONE');
+      const { status } = await move(projectId, entry, 'DONE');
       setFinishing(id, status ? undefined : 'error');
     }
 
@@ -308,12 +346,14 @@ export const WorkStore = signalStore(
       /** Moves `entry` to DONE now. */
       finish,
       /** Moves `entry` to `target` (a Status action); a running move is not repeated. */
-      async transition(projectId: string, entry: WorkEntry, target: WorkStatus): Promise<void> {
-        const id = entry.id;
-        if (!id || store.transitioning()[id] === 'running') return;
-        setTransitioning(id, 'running');
-        const status = await move(projectId, entry, target);
-        setTransitioning(id, status ? undefined : 'error');
+      transition,
+      /** Moves every one of `entries` to `target`, all at once, each as `transition` does. */
+      async transitionAll(
+        projectId: string,
+        entries: readonly WorkEntry[],
+        target: WorkStatus,
+      ): Promise<void> {
+        await Promise.all(entries.map((entry) => transition(projectId, entry, target)));
       },
       /** Presses dispatch for `entry`; a running press is not repeated. */
       async dispatch(entry: WorkEntry, mode: DispatchMode): Promise<void> {

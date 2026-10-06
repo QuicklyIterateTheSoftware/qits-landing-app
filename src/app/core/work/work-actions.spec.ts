@@ -32,19 +32,20 @@ describe('workActions', () => {
           plan: [...PLAN, 'Refinement room'],
         },
       ],
+      // REFINED waits for a person to schedule it: nothing to dispatch (qits-887).
+      ['REFINED', { status: ['Mark ready for dev', 'Back to reported', 'Drop'], plan: PLAN }],
       [
-        'REFINED',
+        'READY_FOR_DEV',
         {
           agent: ['Dispatch', 'Implement'],
-          status: ['Mark implementing', 'Skip to implemented', 'Back to reported', 'Drop', 'Block'],
-          plan: PLAN,
+          status: ['Mark implementing', 'Skip to implemented', 'Back to refined', 'Drop', 'Block'],
         },
       ],
       [
         'IMPLEMENTING',
         {
           agent: ['Dispatch', 'Implement'],
-          status: ['Mark implemented', 'Back to refined', 'Drop', 'Block'],
+          status: ['Mark implemented', 'Drop', 'Block'],
         },
       ],
       [
@@ -72,7 +73,7 @@ describe('workActions', () => {
   it('gives a feature or a task its moves and the plan, but nothing to dispatch', () => {
     for (const archetype of ['FEATURE', 'TASK']) {
       expect(shown(archetype, 'REFINED')).toEqual({
-        status: ['Mark implementing', 'Skip to implemented', 'Back to reported', 'Drop'],
+        status: ['Mark ready for dev', 'Back to reported', 'Drop'],
         plan: PLAN,
       });
       expect(shown(archetype, 'IMPLEMENTED')).toEqual({
@@ -84,7 +85,7 @@ describe('workActions', () => {
   it('gives a campaign its moves and the interim start, and no plan', () => {
     expect(shown('CAMPAIGN', 'REFINED')).toEqual({
       agent: ['Start campaign'],
-      status: ['Mark implemented', 'Back to reported', 'Drop', 'Block'],
+      status: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'],
     });
     expect(shown('CAMPAIGN', 'VERIFIED')).toEqual({
       status: ['Mark done', 'Back to implemented', 'Drop'],
@@ -92,7 +93,7 @@ describe('workActions', () => {
   });
 
   it('lists the flow in the Dispatch popover', () => {
-    const [agent] = workActions(registry['EPIC'], 'EPIC', 'REFINED');
+    const [agent] = workActions(registry['EPIC'], 'EPIC', 'READY_FOR_DEV');
     expect(lookOf(agent.actions[0]).details).toEqual({
       title: 'Runs',
       items: ['implement → IMPLEMENTED', 'verify → VERIFIED'],
@@ -111,6 +112,11 @@ describe('workActions', () => {
       { label: 'Reopen', variant: 'muted' },
       { label: 'Move to refined', variant: 'muted' },
     ]);
+  });
+
+  it('spells a status word with underscores as words', () => {
+    const look = lookOf({ kind: 'move', move: { to: 'READY_FOR_DEV', kind: 'BACK' } });
+    expect(look.label).toBe('Back to ready for dev');
   });
 
   it('offers only the plan until the registry is in', () => {

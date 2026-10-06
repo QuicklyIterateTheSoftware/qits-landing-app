@@ -11,12 +11,22 @@ export interface WorkTab {
 
 /**
  * The work section's pages: first the open campaigns, which span the phases, then the phases in the
- * order work moves through them: the backlog, the board, the acceptance list and the archive.
+ * order work moves through them: the backlog, the schedule, the board, the acceptance list and the
+ * archive.
  * `/work` itself opens In Progress.
  */
 export const WORK_TABS: readonly WorkTab[] = [
   { segment: 'campaigns', label: 'Campaigns', count: (graph) => graph.openCampaigns().length },
   { segment: 'refinement', label: 'Refinement', count: (graph) => graph.count('backlog') },
+  {
+    segment: 'schedule',
+    label: 'Schedule',
+    // Both of the page's lists: REFINED to schedule, READY_FOR_DEV scheduled and not started.
+    count: (graph) => {
+      const { toSchedule, scheduled } = graph.scheduling();
+      return toSchedule.length + scheduled.length;
+    },
+  },
   { segment: 'in-progress', label: 'In Progress', count: (graph) => graph.count('board') },
   { segment: 'acceptance', label: 'Acceptance', count: (graph) => graph.count('acceptance') },
   {

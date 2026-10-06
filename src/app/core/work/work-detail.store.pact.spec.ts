@@ -19,6 +19,7 @@ import { projectsGoldenMasters as masters } from '../../../testing/golden-master
 import { assertPactPart } from '../../../testing/pact-part';
 import {
   GET_ENTITY,
+  GET_ENTITY_CRITERIA,
   GET_ENTITY_UNBLOCKABLE,
   LIST_DOSSIER_PAGES,
   LIST_ENTITY_COMMENTS,
@@ -36,6 +37,9 @@ import {
  * store's own `consumes`, against a pact mock server answering with qits-projects' golden master: a
  * path from a provider state matches any path, so one interaction per test keeps each answer to
  * its own request. `work-detail.store.spec.ts` drives `load` as a whole.
+ *
+ * The Schedule tab's criteria read (`loadCriteria`) is the same `getEntity`, binding only the
+ * acceptance criteria, of an epic and of a REFINED ticket.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -71,6 +75,16 @@ const given = (state: string, operationId: string, consumes: readonly string[]) 
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-work-item' },
     consumes,
+  });
+
+/** The Schedule tab's read of an item's acceptance criteria (`WorkDetailStore.loadCriteria`). */
+const givenCriteria = (state: string) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state,
+    operationId: 'getEntity',
+    trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-schedule-criteria' },
+    consumes: GET_ENTITY_CRITERIA,
   });
 
 /** Runs `call` against the mock server at `url`, in an injection context. */
@@ -117,6 +131,17 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
           consume(getEntity({ path: { id: refOf(state, 'getEntity') } }), GET_ENTITY),
         );
         expect(data?.archetype).toBeTruthy();
+      }),
+  );
+
+  it.each([EPIC, 'an improvement ticket in detail'])(
+    'show-schedule-criteria: the acceptance criteria of %s',
+    (state) =>
+      givenCriteria(state).executeTest(async (server) => {
+        const { data } = await at(server.url, () =>
+          consume(getEntity({ path: { id: refOf(state, 'getEntity') } }), GET_ENTITY_CRITERIA),
+        );
+        expect(data?.acceptanceCriteria?.length).toBeGreaterThan(0);
       }),
   );
 

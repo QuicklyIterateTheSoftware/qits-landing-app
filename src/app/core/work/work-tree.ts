@@ -7,17 +7,20 @@ import { BOARD_COLUMNS } from './work-statuses';
  *
  * - **Parent**: an entity's `parent` (epic › feature › task). Campaigns are not structure: they
  *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
- * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED /
- *   READY_FOR_DEV / IMPLEMENTING / IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list,
- *   DONE / DROPPED the archive. A status this map does not know falls back to the backlog, rather
+ * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED
+ *   the schedule (refined, waiting for a person to schedule it), READY_FOR_DEV / IMPLEMENTING /
+ *   IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED the archive.
+ *   A READY_FOR_DEV epic or ticket is also listed on the Schedule tab, as scheduled and not
+ *   started (`scheduling`), so it can be unscheduled there; its phase stays the board's. A status this map does not know falls back to the backlog, rather
  *   than being drawn nowhere (the app holds no status model of its own; the fallback is a safety
  *   net, not a model). Features and tasks hold a status of their own too (qits-763), so a task can
  *   be on the board while its epic waits in Acceptance; the epic is then the task's context there.
  *   An entity without a status takes its nearest ancestor's. One exception: an ancestor in the
  *   archive (DONE, DROPPED) takes every item below it there, so a finished or dropped epic archives
  *   its whole tree (qits-projects moves no child when an epic goes to DONE or DROPPED).
- * - **Column** (on the board): REFINED 0, READY_FOR_DEV 1, IMPLEMENTING 2, IMPLEMENTED 3,
- *   VERIFYING 4, by the entity's own status (or that ancestor's).
+ * - **Column** (on the board): READY_FOR_DEV 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, by
+ *   the entity's own status (or that ancestor's). A feature or task still REFINED below a started
+ *   epic is in the schedule phase, so, like a REPORTED one, it is not on the board.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
@@ -30,11 +33,11 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   order, each with its whole subtree.
  */
 
-export type Phase = 'backlog' | 'board' | 'acceptance' | 'archive';
+export type Phase = 'backlog' | 'schedule' | 'board' | 'acceptance' | 'archive';
 
 const PHASE_BY_STATUS: Readonly<Record<string, Phase>> = {
   REPORTED: 'backlog',
-  REFINED: 'board',
+  REFINED: 'schedule',
   READY_FOR_DEV: 'board',
   IMPLEMENTING: 'board',
   IMPLEMENTED: 'board',
@@ -174,6 +177,24 @@ export class WorkGraph {
     if (this.phaseOf(entry) !== 'board') return undefined;
     const status = this.statusOf(entry);
     return status ? COLUMN_BY_STATUS[status] : undefined;
+  }
+
+  /**
+   * The Schedule tab's two lists, epics and tickets only (a feature or a task moves with its epic),
+   * each in the board's order (`byNumber`): `toSchedule`, every REFINED one; `scheduled`, every
+   * READY_FOR_DEV one (scheduled, not started: started is IMPLEMENTING).
+   */
+  scheduling(): {
+    readonly toSchedule: readonly WorkEntry[];
+    readonly scheduled: readonly WorkEntry[];
+  } {
+    const roots = this.entries.filter(
+      (entry) => entry.archetype === 'EPIC' || entry.archetype === 'TICKET',
+    );
+    return {
+      toSchedule: roots.filter((entry) => entry.status === 'REFINED').sort(byNumber),
+      scheduled: roots.filter((entry) => entry.status === 'READY_FOR_DEV').sort(byNumber),
+    };
   }
 
   /** How many epics and tickets are in `phase`. Features, tasks and campaigns are not counted. */

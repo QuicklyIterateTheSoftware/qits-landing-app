@@ -314,6 +314,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
   it.each([
     'a reported ticket',
     'a refined ticket',
+    'a ready for dev ticket',
     'an implementing ticket',
     'an implemented ticket',
     'a verifying ticket',
@@ -321,6 +322,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     'a dropped ticket',
     'a reported epic',
     'a refined epic',
+    'a ready for dev epic',
     'an implementing epic',
     'an implemented epic',
     'a verifying epic',
@@ -335,15 +337,36 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
-  it.each(['a reported epic', 'a refined epic', 'a refined ticket', 'an implemented ticket'])(
-    'dispatch-work-item: a dispatch press for %s',
-    (state) =>
-      givenDispatch(state).executeTest(async (server) => {
-        const store = storeAt(server.url);
-        const { id, body } = movedIn(state, 'dispatchEntity');
-        await store.dispatch({ id } as WorkEntry, body['mode'] as DispatchMode);
-        expect(store.dispatching()[id]).toBeUndefined();
-        expect(store.dispatched()[id]).toBeTruthy();
-      }),
+  // The Schedule tab's Schedule: the ticked REFINED epics and tickets to READY_FOR_DEV, all at once,
+  // with the viewer's session (qits-887). Unscheduling (READY_FOR_DEV back to REFINED) is the same
+  // door; no state records that move yet, so no interaction pins it.
+  it.each([
+    ['a refined epic', 'EPIC'],
+    ['a refined ticket', 'TICKET'],
+  ] as const)('schedule-work: Schedule moves %s to READY_FOR_DEV', (state, archetype) =>
+    givenMove('schedule-work', state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { id, projectId, body } = movedIn(state, 'moveEntityStatus');
+      expect(body['target']).toBe('READY_FOR_DEV');
+      const entry = { id, archetype, status: 'REFINED' } as WorkEntry;
+      await store.transitionAll(projectId, [entry], 'READY_FOR_DEV');
+      expect(store.transitioning()[id]).toBeUndefined();
+      expect(store.refusals()).toEqual({});
+    }),
+  );
+
+  it.each([
+    'a reported epic',
+    'a ready for dev epic',
+    'a ready for dev ticket',
+    'an implemented ticket',
+  ])('dispatch-work-item: a dispatch press for %s', (state) =>
+    givenDispatch(state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { id, body } = movedIn(state, 'dispatchEntity');
+      await store.dispatch({ id } as WorkEntry, body['mode'] as DispatchMode);
+      expect(store.dispatching()[id]).toBeUndefined();
+      expect(store.dispatched()[id]).toBeTruthy();
+    }),
   );
 });

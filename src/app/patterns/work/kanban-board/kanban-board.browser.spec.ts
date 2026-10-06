@@ -59,23 +59,17 @@ describe('KanbanBoard (screenshots)', () => {
     return { element, locator: page.elementLocator(element), harness };
   }
 
-  it('a board with work in every status: Refined, Implementing, Implemented, Verifying', async () => {
+  it('a board with work in every status: Ready for Dev, Implementing, Implemented, Verifying', async () => {
     const { element, locator } = await shown(EVERY_STATUS);
     // The column headers, left to right, each with its count: an epic and a ticket per status,
     // plus a second implementing epic with its started feature and task.
     const headers = [...element.querySelectorAll('ui-board > div:first-child > div')]
       .map((h) => h.textContent?.replace(/\s+/g, ' ').trim())
       .filter(Boolean);
-    expect(headers).toEqual([
-      'Refined 2',
-      'Ready for Dev 0',
-      'Implementing 5',
-      'Implemented 2',
-      'Verifying 2',
-    ]);
+    expect(headers).toEqual(['Ready for Dev 2', 'Implementing 5', 'Implemented 2', 'Verifying 2']);
     for (const title of [
-      'Refined epic',
-      'Refined ticket',
+      'Ready for dev epic',
+      'Ready for dev ticket',
       'Implementing epic',
       'Implementing ticket',
       'Implemented epic',
@@ -89,8 +83,9 @@ describe('KanbanBoard (screenshots)', () => {
     ]) {
       await expect.element(locator).toHaveTextContent(title);
     }
-    // Nor Backlog, Acceptance nor Archive work on the board.
+    // Nor Backlog, Schedule, Acceptance nor Archive work on the board.
     await expect.element(locator).not.toHaveTextContent('Reported ticket');
+    await expect.element(locator).not.toHaveTextContent('Refined ticket');
     await expect.element(locator).not.toHaveTextContent('Verified ticket');
     await expect.element(locator).not.toHaveTextContent('Done ticket');
     await expect.element(locator).toMatchScreenshot('every-status');

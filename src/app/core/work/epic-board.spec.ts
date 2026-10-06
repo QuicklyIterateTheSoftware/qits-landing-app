@@ -17,9 +17,16 @@ describe('epicBoardRows', () => {
   const entries = [
     entry('epic', 'EPIC', 'IMPLEMENTING'),
     entry('f1', 'FEATURE', 'IMPLEMENTING', 'epic'),
-    ...['REPORTED', 'REFINED', 'IMPLEMENTING', 'IMPLEMENTED', 'VERIFYING', 'VERIFIED', 'DONE'].map(
-      (status) => entry(status, 'TASK', status, 'f1'),
-    ),
+    ...[
+      'REPORTED',
+      'REFINED',
+      'READY_FOR_DEV',
+      'IMPLEMENTING',
+      'IMPLEMENTED',
+      'VERIFYING',
+      'VERIFIED',
+      'DONE',
+    ].map((status) => entry(status, 'TASK', status, 'f1')),
     entry('dropped', 'TASK', 'DROPPED', 'f1'),
     entry('bare', 'TASK', undefined, 'f1'),
     entry('f2', 'FEATURE', 'DONE', 'epic'),
@@ -34,27 +41,27 @@ describe('epicBoardRows', () => {
     cards: row.cards.map((c) => `${c.node.entry.id}@${c.column}${c.done ? '~' : ''}`),
   }));
 
-  it('puts each task in its column, VERIFIED and DONE (muted) in Verified, and leaves REPORTED and DROPPED out', () => {
+  it('puts each task in its column, VERIFIED and DONE (muted) in Verified, and leaves REPORTED, REFINED and DROPPED out', () => {
     expect(shape[0]).toEqual({
       row: 'f1',
       cards: [
-        'REFINED@0',
-        'IMPLEMENTING@2',
-        'IMPLEMENTED@3',
-        'VERIFYING@4',
-        'VERIFIED@5',
-        'DONE@5~',
-        'bare@2',
+        'READY_FOR_DEV@0',
+        'IMPLEMENTING@1',
+        'IMPLEMENTED@2',
+        'VERIFYING@3',
+        'VERIFIED@4',
+        'DONE@4~',
+        'bare@1',
       ],
     });
   });
 
   it('takes a DONE feature’s tasks along, and drops a DROPPED feature’s row', () => {
-    expect(shape.slice(1)).toEqual([{ row: 'f2', cards: ['under-done@5~'] }]);
+    expect(shape.slice(1)).toEqual([{ row: 'f2', cards: ['under-done@4~'] }]);
   });
 
   it('counts the cards per column', () => {
-    expect(epicBoardCounts(rows)).toEqual([1, 0, 2, 1, 1, 3]);
+    expect(epicBoardCounts(rows)).toEqual([1, 2, 1, 1, 3]);
   });
 });
 
@@ -72,7 +79,6 @@ describe('hasEpicBoard', () => {
       'DROPPED',
     ];
     expect(statuses.filter((status) => hasEpicBoard(entry('e', 'EPIC', status)))).toEqual([
-      'REFINED',
       'READY_FOR_DEV',
       'IMPLEMENTING',
       'IMPLEMENTED',

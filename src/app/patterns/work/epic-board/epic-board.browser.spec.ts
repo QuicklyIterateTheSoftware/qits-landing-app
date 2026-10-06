@@ -20,8 +20,9 @@ import { EpicBoard } from './epic-board';
  * Screenshots of one epic with its own board, per case, 48rem wide. The epic is the node the app
  * builds from qits-projects' golden masters (`recorded-work.ts`): the whole epic
  * (`WorkGraph.nodeOf`), as the epic's page and a campaign draw it. Each case names its state and the
- * epic's qualified id in the recorded answer. Only REFINED, IMPLEMENTING, IMPLEMENTED and VERIFYING
- * epics get a board; this covers each of them in every recorded state that has one.
+ * epic's qualified id in the recorded answer. Only READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED and
+ * VERIFYING epics get a board; this covers each of them in every recorded state that has one. (A
+ * REFINED epic waits on the Schedule tab, so the campaigns' REFINED epics have none.)
  */
 @Component({
   imports: [EpicBoard],
@@ -54,12 +55,8 @@ const ALL_VERIFIED = 'an epic with a feature whose tasks are all verified';
 const VERIFIED_FEATURE = 'an epic with a verified feature whose tasks are all verified';
 /** Four features: VERIFIED, IMPLEMENTED (its task VERIFIED), REFINED, IMPLEMENTING (two tasks). */
 const MIXED = 'an implementing epic with features in mixed statuses';
-const CAMPAIGN = 'a campaign with work in every phase';
 /** MIXED's epic as a campaign member, beside a DONE and a VERIFIED epic that have no board. */
 const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
-/** One epic, member of two campaigns. The second campaign's answer is its own state. */
-const TWO_CAMPAIGNS = 'an epic in two campaigns';
-const SECOND_CAMPAIGN = 'the second campaign of an epic in two campaigns';
 /** Two features, the PDF one implementing; workspaces bound to some of its items. */
 const IN_DETAIL = 'an epic in detail';
 
@@ -147,14 +144,13 @@ describe('EpicBoard (screenshots)', () => {
   }
 
   it.each<Case>([
-    ['refined-no-features', EVERY_STATUS, 'contract-00000001-3', 'Refined epic'],
-    ['implementing-no-features', EVERY_STATUS, 'contract-00000001-5', 'Implementing epic'],
-    ['implemented-no-features', EVERY_STATUS, 'contract-00000001-7', 'Implemented epic'],
-    ['verifying-no-features', EVERY_STATUS, 'contract-00000001-9', 'Verifying epic'],
-  ])('%s: the bar, the six columns, "No features"', async (name, state, qualifiedId, title) => {
+    ['ready-for-dev-no-features', EVERY_STATUS, 'contract-00000001-5', 'Ready for dev epic'],
+    ['implementing-no-features', EVERY_STATUS, 'contract-00000001-7', 'Implementing epic'],
+    ['implemented-no-features', EVERY_STATUS, 'contract-00000001-9', 'Implemented epic'],
+    ['verifying-no-features', EVERY_STATUS, 'contract-00000001-11', 'Verifying epic'],
+  ])('%s: the bar, the five columns, "No features"', async (name, state, qualifiedId, title) => {
     const { element, locator } = await shown(state, qualifiedId, title);
     expect(headings(element)).toEqual([
-      'Refined 0',
       'Ready for Dev 0',
       'Implementing 0',
       'Implemented 0',
@@ -193,15 +189,16 @@ describe('EpicBoard (screenshots)', () => {
       'Epic in flight',
     );
     expect(columnsOf(element)).toEqual({
-      'Refined task': 'Refined',
+      'Ready_for_dev task': 'Ready for Dev',
       'Implementing task': 'Implementing',
       'Implemented task': 'Implemented',
       'Verifying task': 'Verifying',
       'Verified task': 'Verified',
       'Done task': 'Verified',
     });
-    // Not refined yet, or dropped: not on the board.
+    // Not refined yet, not scheduled yet, or dropped: not on the board.
     await expect.element(locator).not.toHaveTextContent('Reported task');
+    await expect.element(locator).not.toHaveTextContent('Refined task');
     await expect.element(locator).not.toHaveTextContent('Dropped task');
     // The done one is drawn muted.
     const done = [...element.querySelectorAll('ui-board-card')].filter((card) =>
@@ -209,8 +206,7 @@ describe('EpicBoard (screenshots)', () => {
     );
     expect(done.map((card) => card.querySelector('a')!.textContent!.trim())).toEqual(['Done task']);
     expect(headings(element)).toEqual([
-      'Refined 1',
-      'Ready for Dev 0',
+      'Ready for Dev 1',
       'Implementing 1',
       'Implemented 1',
       'Verifying 1',
@@ -231,19 +227,19 @@ describe('EpicBoard (screenshots)', () => {
     await shoot(element, 'every-task-status');
   });
 
-  it('a refined epic with two features in a mixed state', async () => {
+  it('a scheduled epic with two features in a mixed state', async () => {
     const { element, locator } = await shown(NESTED, 'contract-00000001-1', 'Nested epic');
     expect(element.querySelectorAll('ui-board-row')).toHaveLength(2);
     expect(columnsOf(element)).toEqual({
       'First shipped task': 'Implemented',
-      'Second shipped task': 'Refined',
-      'Open task': 'Refined',
+      'Second shipped task': 'Ready for Dev',
+      'Open task': 'Ready for Dev',
     });
-    await shoot(element, 'refined-features');
+    await shoot(element, 'scheduled-features');
   });
 
   it('an implementing epic with a started feature and task', async () => {
-    const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-17', 'Started epic');
+    const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-19', 'Started epic');
     expect(columnsOf(element)).toEqual({ 'Started task': 'Implementing' });
     await shoot(element, 'implementing-started');
   });
@@ -254,7 +250,6 @@ describe('EpicBoard (screenshots)', () => {
       'First verified task': 'Verified',
       'Second verified task': 'Verified',
       'Third verified task': 'Verified',
-      'Refined task': 'Refined',
       'Implementing task': 'Implementing',
     });
     await shoot(element, 'feature-all-verified');
@@ -270,7 +265,6 @@ describe('EpicBoard (screenshots)', () => {
       'First verified task': 'Verified',
       'Second verified task': 'Verified',
       'Third verified task': 'Verified',
-      'Refined task': 'Refined',
       'Implementing task': 'Implementing',
     });
     await shoot(element, 'verified-feature');
@@ -294,12 +288,10 @@ describe('EpicBoard (screenshots)', () => {
     expect(columnsOf(element)).toEqual({
       'Verified task': 'Verified',
       'Verified task of an implemented feature': 'Verified',
-      'Refined task': 'Refined',
       'Implementing task': 'Implementing',
       'Verifying task': 'Verifying',
     });
     expect(headings(element)).toEqual([
-      'Refined 1',
       'Ready for Dev 0',
       'Implementing 1',
       'Implemented 0',
@@ -307,12 +299,6 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 2',
     ]);
     await shoot(element, 'mixed-features');
-  });
-
-  it('in a campaign: its tag in the bar', async () => {
-    const { element, locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
-    await expect.element(locator).toHaveTextContent('Card campaign');
-    await shoot(element, 'campaign');
   });
 
   it('in a campaign past the board: features in mixed statuses, its tag in the bar', async () => {
@@ -325,12 +311,10 @@ describe('EpicBoard (screenshots)', () => {
     expect(columnsOf(element)).toEqual({
       'Verified task': 'Verified',
       'Verified task of an implemented feature': 'Verified',
-      'Refined task': 'Refined',
       'Implementing task': 'Implementing',
       'Verifying task': 'Verifying',
     });
     expect(headings(element)).toEqual([
-      'Refined 1',
       'Ready for Dev 0',
       'Implementing 1',
       'Implemented 0',
@@ -338,18 +322,6 @@ describe('EpicBoard (screenshots)', () => {
       'Verified 2',
     ]);
     await shoot(element, 'campaign-mixed-features');
-  });
-
-  it('in two campaigns', async () => {
-    const { element, locator } = await shown(
-      TWO_CAMPAIGNS,
-      'contract-00000001-3',
-      'Epic in two campaigns',
-      [TWO_CAMPAIGNS, SECOND_CAMPAIGN],
-    );
-    await expect.element(locator).toHaveTextContent('First campaign');
-    await expect.element(locator).toHaveTextContent('Second campaign');
-    await shoot(element, 'two-campaigns');
   });
 
   it('with workspaces: a tag in the bar, at a feature’s title, a bubble on a task', async () => {
@@ -375,7 +347,7 @@ describe('EpicBoard (screenshots)', () => {
       'Stream invoices as CSV': 'Implemented',
       'Download button on the invoice list': 'Implemented',
       'Render one invoice as PDF': 'Implementing',
-      'Preview the PDF before download': 'Refined',
+      'Preview the PDF before download': 'Ready for Dev',
     });
     await shoot(element, 'workspaces');
   });

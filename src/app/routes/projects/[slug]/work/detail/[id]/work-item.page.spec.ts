@@ -206,7 +206,7 @@ describe('WorkItemPage', () => {
     // REFINED: the start, the served moves; no plan for a campaign.
     expect(groups()).toEqual([
       { title: 'Agent', actions: ['Start campaign'] },
-      { title: 'Status', actions: ['Mark implemented', 'Back to reported', 'Drop', 'Block'] },
+      { title: 'Status', actions: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'] },
     ]);
     const titles = children()
       .map(([text]) => text)
@@ -314,9 +314,9 @@ describe('WorkItemPage', () => {
     request.flush(goldenMaster('a reported ticket', 'moveEntityStatus'));
     await settle();
     await harness.fixture.whenStable();
+    // REFINED waits for a person to schedule it: nothing to dispatch (qits-887).
     expect(groups().map((g) => g.actions)).toEqual([
-      ['Dispatch', 'Implement'],
-      ['Mark implementing', 'Skip to implemented', 'Back to reported', 'Drop', 'Block'],
+      ['Mark ready for dev', 'Back to reported', 'Drop'],
       ['Edit', 'Reshape'],
     ]);
   });
@@ -337,10 +337,10 @@ describe('WorkItemPage', () => {
   });
 
   it.each([
-    ['Dispatch', 'FLOW', 'a refined epic'],
+    ['Dispatch', 'FLOW', 'a ready for dev epic'],
     ['Implement', 'PHASE', 'a reported epic'],
   ])('presses %s: a dispatch with mode %s', async (label, mode, recorded) => {
-    const { entity, press } = await shown('Refined epic');
+    const { entity, press } = await shown('Ready for dev epic');
     press(label);
     await settle();
     const request = http.expectOne(`/projects/api/entities/${entity.id}/dispatch`);

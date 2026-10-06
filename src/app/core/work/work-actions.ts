@@ -90,8 +90,8 @@ export interface WorkActionLook {
   readonly details?: ActionDetails;
 }
 
-/** A status word as a label shows it: `IMPLEMENTED` → `implemented`. */
-const word = (status: string | undefined) => (status ?? '').toLowerCase();
+/** A status word as a label shows it: `IMPLEMENTED` → `implemented`, `READY_FOR_DEV` → `ready for dev`. */
+const word = (status: string | undefined) => (status ?? '').toLowerCase().replaceAll('_', ' ');
 
 /** A phase word as a button shows it: `implement` → `Implement`. */
 const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);

@@ -14,9 +14,9 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 
 /**
  * A project's work section, at `/projects/<slug>/work/…`: a row of links to its pages
- * (Campaigns, then Refinement, In Progress, Acceptance, Archive, in the order work moves through
- * them), each with its count once the work is loaded (open campaigns; epics and tickets; in the
- * Archive also its campaigns), and the page below. `/work` opens In Progress.
+ * (Campaigns, then Refinement, Schedule, In Progress, Acceptance, Archive, in the order work moves
+ * through them), each with its count once the work is loaded (open campaigns; epics and tickets;
+ * on Schedule both its lists, REFINED and READY_FOR_DEV; in the Archive also its campaigns), and the page below. `/work` opens In Progress.
  *
  * The pages share the open project's work (`SelectedWork`, one request per project), so moving
  * between them fetches nothing. The layout keeps that work current while any of them is open.

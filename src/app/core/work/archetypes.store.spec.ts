@@ -41,12 +41,19 @@ describe('ArchetypesStore', () => {
     const store = await loaded();
     expect(store.status()).toBe('loaded');
     expect(store.of('TICKET')?.transitions?.['REFINED']).toEqual([
-      { to: 'IMPLEMENTING', kind: 'FORWARD' },
-      { to: 'IMPLEMENTED', kind: 'SKIP' },
+      { to: 'READY_FOR_DEV', kind: 'FORWARD', gates: ['ACCEPTANCE_CRITERIA', 'PERSON_APPROVAL'] },
       { to: 'REPORTED', kind: 'BACK' },
       { to: 'DROPPED', kind: 'DROP' },
     ]);
-    expect(store.of('EPIC')?.phases?.['REFINED']?.next?.phase).toBe('implement');
+    expect(store.of('TICKET')?.transitions?.['READY_FOR_DEV']).toEqual([
+      { to: 'IMPLEMENTING', kind: 'FORWARD' },
+      { to: 'IMPLEMENTED', kind: 'SKIP' },
+      { to: 'REFINED', kind: 'BACK' },
+      { to: 'DROPPED', kind: 'DROP' },
+    ]);
+    // Implement runs from READY_FOR_DEV; REFINED waits for a person to schedule it (qits-887).
+    expect(store.of('EPIC')?.phases?.['READY_FOR_DEV']?.next?.phase).toBe('implement');
+    expect(store.of('EPIC')?.phases?.['REFINED']?.next).toBeNull();
     expect(store.of('FEATURE')?.phases).toEqual({});
     expect(store.of(undefined)).toBeUndefined();
   });

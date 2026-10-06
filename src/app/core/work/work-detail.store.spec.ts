@@ -116,4 +116,44 @@ describe('WorkDetailStore', () => {
     await settle();
     expect(store.of(ref)?.status).toBe('loaded');
   });
+
+  describe('loadCriteria', () => {
+    const IMPROVEMENT = 'an improvement ticket in detail';
+
+    it('reads an item’s acceptance criteria once', async () => {
+      const store = TestBed.inject(WorkDetailStore);
+      const ref = params(IMPROVEMENT)['qualifiedId'];
+      const load = store.loadCriteria(ref);
+      expect(store.criteriaOf(ref)).toEqual({ status: 'loading', items: [] });
+      await settle();
+      const recorded = goldenMaster(IMPROVEMENT, 'getEntity');
+      http.expectOne(`/projects/api/entities/${ref}`).flush(recorded);
+      await load;
+      expect(store.criteriaOf(ref)).toEqual({
+        status: 'loaded',
+        items: recorded.acceptanceCriteria,
+      });
+      expect(recorded.acceptanceCriteria.length).toBeGreaterThan(0);
+      await store.loadCriteria(ref);
+      await settle();
+      http.expectNone(`/projects/api/entities/${ref}`);
+    });
+
+    it('fails when the read fails, and reads again on the next call', async () => {
+      const store = TestBed.inject(WorkDetailStore);
+      const ref = params(EPIC)['qualifiedId'];
+      const load = store.loadCriteria(ref);
+      await settle();
+      http
+        .expectOne(`/projects/api/entities/${ref}`)
+        .flush(null, { status: 404, statusText: 'Not Found' });
+      await load;
+      expect(store.criteriaOf(ref)).toEqual({ status: 'error', items: [] });
+      void store.loadCriteria(ref);
+      await settle();
+      http.expectOne(`/projects/api/entities/${ref}`).flush(goldenMaster(EPIC, 'getEntity'));
+      await settle();
+      expect(store.criteriaOf(ref)?.status).toBe('loaded');
+    });
+  });
 });

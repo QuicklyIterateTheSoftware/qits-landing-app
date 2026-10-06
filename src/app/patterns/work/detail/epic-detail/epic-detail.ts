@@ -11,7 +11,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
 
 /**
  * An epic's page body: its description (Markdown), its features, its dossier with its figures
- * inline, and its comments. While the epic is on the board (REFINED to VERIFYING), its features are
+ * inline, and its comments. While the epic is on the board (READY_FOR_DEV to VERIFYING), its features are
  * its own board (`app-epic-board`, without the epic's bar: the page names it); otherwise each is a
  * row with its tasks as the lists draw them (`app-feature-list-row`). Picked with `@if`: the body
  * exists only in the browser (the server loads no work, see the work item page).

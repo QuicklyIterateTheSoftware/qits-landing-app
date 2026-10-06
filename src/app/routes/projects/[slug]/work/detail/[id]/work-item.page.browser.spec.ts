@@ -290,7 +290,7 @@ describe('WorkItemPage (screenshots)', () => {
       await shootParts(element, 'detail-epic');
     });
 
-    it('an epic on the board: its features are its own board, six columns', async () => {
+    it('an epic on the board: its features are its own board, five columns', async () => {
       const element = await render(
         'an epic in detail',
         'Export invoices for the accountants',
@@ -301,7 +301,6 @@ describe('WorkItemPage (screenshots)', () => {
         ...features.element().querySelectorAll('ui-board > div:first-child > div'),
       ].map((h) => h.textContent?.replace(/\d+/g, '').trim());
       expect(headings.filter(Boolean)).toEqual([
-        'Refined',
         'Ready for Dev',
         'Implementing',
         'Implemented',
@@ -510,13 +509,13 @@ describe('WorkItemPage (screenshots)', () => {
       expect(element.getByRole('button').elements()).toHaveLength(0);
     });
 
-    it('a refined feature: its own moves and the plan, nothing to dispatch', async () => {
+    it('a scheduled feature: its own moves, nothing to dispatch', async () => {
       const element = await render('an epic with features and tasks', 'Open feature');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark implementing Skip to implemented Back to reported Drop');
+        .toHaveTextContent('Mark implementing Skip to implemented Back to refined Drop');
       expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-refined-feature');
+      await expect.element(actionsOf(element)).toMatchScreenshot('actions-scheduled-feature');
     });
 
     it('an implemented ticket: the verify phase, its flow, and the move to VERIFYING', async () => {
@@ -563,24 +562,50 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(element).toMatchScreenshot('actions-implementing-epic-runs');
     });
 
-    it('a refined epic: the implement phase, and the move to IMPLEMENTING', async () => {
+    it('a refined epic: nothing to dispatch until a person schedules it', async () => {
       const element = await render(EVERY_STATUS, 'Refined epic');
-      await agentButtons(element, ['Dispatch', 'Implement']);
+      await expect
+        .element(element.getByRole('group', { name: 'Status' }))
+        .toHaveTextContent('Status Mark ready for dev Back to reported Drop');
+      expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-refined-epic');
       const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
       const id = work.entities.find((e: { title: string }) => e.title === 'Refined epic').id;
+      const moved = await press(
+        element,
+        'Mark ready for dev',
+        `/projects/api/entities/${id}/status`,
+      );
+      expect(moved.request.body).toEqual({ target: 'READY_FOR_DEV' });
+      // "a refined epic" records this move; its epic is another seed's, so only its status counts.
+      moved.flush(await goldenMaster('a refined epic', 'moveEntityStatus'));
+      await answered();
+      await agentButtons(element, ['Dispatch', 'Implement']);
+      await expect
+        .element(element.getByRole('group', { name: 'Status' }))
+        .toHaveTextContent('Mark implementing Skip to implemented Back to refined Drop Block');
+    });
+
+    it('a ready for dev epic: the implement phase, and the move to IMPLEMENTING', async () => {
+      const element = await render(EVERY_STATUS, 'Ready for dev epic');
+      await agentButtons(element, ['Dispatch', 'Implement']);
+      await expect.element(actionsOf(element)).toMatchScreenshot('actions-ready-for-dev-epic');
+      const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
+      const id = work.entities.find((e: { title: string }) => e.title === 'Ready for dev epic').id;
       const moved = await press(
         element,
         'Mark implementing',
         `/projects/api/entities/${id}/status`,
       );
       expect(moved.request.body).toEqual({ target: 'IMPLEMENTING' });
-      // "a refined epic" records this move; its epic is another seed's, so only its status counts.
-      moved.flush(await goldenMaster('a refined epic', 'moveEntityStatus'));
+      // "a ready for dev epic" records this move; its epic is another seed's, so only its status
+      // counts.
+      moved.flush(await goldenMaster('a ready for dev epic', 'moveEntityStatus'));
       await answered();
+      // IMPLEMENTING has no move back (qits-887).
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark implemented Back to refined Drop Block');
+        .toHaveTextContent('Mark implemented Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-implementing-epic');
     });
 

@@ -52,10 +52,12 @@ const NESTED = 'an epic with features and tasks';
 const EVERY_TASK_STATUS = 'an epic with tasks in every status';
 /** Two features: one whose three tasks are all VERIFIED (no cards left), one with open tasks. */
 const ALL_VERIFIED = 'an epic with a feature whose tasks are all verified';
-const CAMPAIGN = 'a campaign with work in every phase';
-/** One epic, member of two campaigns. The second campaign's answer is its own state. */
-const TWO_CAMPAIGNS = 'an epic in two campaigns';
-const SECOND_CAMPAIGN = 'the second campaign of an epic in two campaigns';
+/**
+ * A campaign whose IMPLEMENTING epic is on the board. (Its REFINED members wait on the Schedule
+ * tab; "an epic in two campaigns" holds a REFINED epic, so no recorded state has an epic in two
+ * campaigns on the board.)
+ */
+const CAMPAIGN = 'a campaign with a done, a verified and an implementing epic';
 
 /** One case: the screenshot's name, the state, the epic's qualified id and its title. */
 type Case = readonly [name: string, state: string, qualifiedId: string, title: string];
@@ -118,17 +120,17 @@ describe('EpicCard (screenshots)', () => {
   }
 
   it.each<Case>([
-    ['refined', EVERY_STATUS, 'contract-00000001-3', 'Refined epic'],
-    ['implementing', EVERY_STATUS, 'contract-00000001-5', 'Implementing epic'],
-    ['implemented', EVERY_STATUS, 'contract-00000001-7', 'Implemented epic'],
-    ['verifying', EVERY_STATUS, 'contract-00000001-9', 'Verifying epic'],
+    ['ready-for-dev', EVERY_STATUS, 'contract-00000001-5', 'Ready for dev epic'],
+    ['implementing', EVERY_STATUS, 'contract-00000001-7', 'Implementing epic'],
+    ['implemented', EVERY_STATUS, 'contract-00000001-9', 'Implemented epic'],
+    ['verifying', EVERY_STATUS, 'contract-00000001-11', 'Verifying epic'],
   ])('%s', async (name, state, qualifiedId, title) => {
     const { locator } = await shown(state, qualifiedId, title);
     await expect.element(locator).toMatchScreenshot(name);
   });
 
   it('a started feature and task: both in Implementing', async () => {
-    const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-17', 'Started epic');
+    const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-19', 'Started epic');
     await expect.element(locator).toHaveTextContent('Started feature');
     await expect.element(locator).toHaveTextContent('Started task');
     // The task's card sits under the Implementing header.
@@ -153,9 +155,10 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toHaveTextContent('First shipped task');
     await expect.element(locator).toMatchScreenshot('features-mixed-expanded');
     await toggle(element, harness);
-    // Two open tasks in Refined, one implemented: a tile in each of those columns, none elsewhere.
+    // Two open tasks in Ready for Dev, one implemented: a tile in each of those columns, none
+    // elsewhere.
     expect(tiles(element)).toEqual([
-      ['2 refined', 'Refined'],
+      ['2 ready for dev', 'Ready for Dev'],
       ['1 implemented', 'Implemented'],
     ]);
     await expect.element(locator).toMatchScreenshot('features-mixed-collapsed');
@@ -164,7 +167,7 @@ describe('EpicCard (screenshots)', () => {
   it('collapsed with one started task: a single tile, in Implementing', async () => {
     const { element, locator, harness } = await shown(
       EVERY_STATUS,
-      'contract-00000001-17',
+      'contract-00000001-19',
       'Started epic',
     );
     await toggle(element, harness);
@@ -175,7 +178,7 @@ describe('EpicCard (screenshots)', () => {
   it('collapsed without tasks: "No tasks", no tiles', async () => {
     const { element, locator, harness } = await shown(
       EVERY_STATUS,
-      'contract-00000001-9',
+      'contract-00000001-11',
       'Verifying epic',
     );
     await toggle(element, harness);
@@ -190,7 +193,8 @@ describe('EpicCard (screenshots)', () => {
       'contract-00000001-1',
       'Epic in flight',
     );
-    // The board's four tasks are cards; the verified and the done one are counted in the tile.
+    // The board's four tasks are cards (READY_FOR_DEV to VERIFYING; the REPORTED and the REFINED
+    // one are not on the board); the verified and the done one are counted in the tile.
     expect(element.querySelectorAll('ui-board-card')).toHaveLength(4);
     await expect.element(locator).not.toHaveTextContent('Verified task');
     const row = element.querySelector('ui-board-row')!;
@@ -207,7 +211,8 @@ describe('EpicCard (screenshots)', () => {
     const { element, locator } = await shown(ALL_VERIFIED, 'contract-00000001-1', 'Epic in flight');
     const [verified, open] = Array.from(element.querySelectorAll('ui-board-row'));
     expect(verified.querySelectorAll('ui-board-card')).toHaveLength(0);
-    expect(open.querySelectorAll('ui-board-card')).toHaveLength(2);
+    // The open feature's REFINED task waits on the Schedule tab: only its IMPLEMENTING one is a card.
+    expect(open.querySelectorAll('ui-board-card')).toHaveLength(1);
     const tile = verified.querySelector('ui-board-count')!;
     expect(tile.querySelector('.sr-only')?.textContent?.trim()).toBe('3 verified');
     expect(open.querySelector('ui-board-count')).toBeNull();
@@ -219,9 +224,13 @@ describe('EpicCard (screenshots)', () => {
   });
 
   it('in a campaign', async () => {
-    const { element, locator } = await shown(CAMPAIGN, 'contract-00000001-2', 'Refined epic');
-    await expect.element(locator).toHaveTextContent('Card campaign');
-    // No rows: the lane still grows to its whole id, up the left strip.
+    const { element, locator } = await shown(
+      CAMPAIGN,
+      'contract-00000001-12',
+      'Epic with mixed features',
+    );
+    await expect.element(locator).toHaveTextContent('Campaign in flight');
+    // The lane grows to its whole id, up the left strip.
     const lane = element.querySelector('ui-board-lane')!.getBoundingClientRect();
     const id = element.querySelector('[lane-gutter]')!.getBoundingClientRect();
     expect(id.top).toBeGreaterThan(lane.top);
@@ -260,15 +269,5 @@ describe('EpicCard (screenshots)', () => {
     expect(Math.round(bar.right - tag.right)).toBe(8);
     expect(Math.abs(tag.top - title.getBoundingClientRect().top)).toBeLessThan(4);
     await expect.element(locator).toMatchScreenshot('workspaces');
-  });
-
-  it('in two campaigns', async () => {
-    const { locator } = await shown(TWO_CAMPAIGNS, 'contract-00000001-3', 'Epic in two campaigns', [
-      TWO_CAMPAIGNS,
-      SECOND_CAMPAIGN,
-    ]);
-    await expect.element(locator).toHaveTextContent('First campaign');
-    await expect.element(locator).toHaveTextContent('Second campaign');
-    await expect.element(locator).toMatchScreenshot('two-campaigns');
   });
 });

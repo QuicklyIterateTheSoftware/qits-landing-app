@@ -10,7 +10,7 @@ import { CampaignSection } from '$patterns/work/campaign-section/campaign-sectio
  * tickets from every phase, so it has no place in a phase's list while open (a DONE or DROPPED one
  * is in the Archive); here each one (`app-campaign-section`) shows its title
  * (linking to its page), its status, the start of its description, and its members in campaign
- * order, drawn as the lists draw them, each with its own status; an epic on the board (REFINED to
+ * order, drawn as the lists draw them, each with its own status; an epic on the board (READY_FOR_DEV to
  * VERIFYING) with its own board (`app-epic-board`). Campaigns come in the board's
  * order (`byNumber`). With none, the page says so.
  */

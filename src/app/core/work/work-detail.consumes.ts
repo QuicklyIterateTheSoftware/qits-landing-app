@@ -42,6 +42,14 @@ export const GET_ENTITY_UNBLOCKABLE = GET_ENTITY.filter((path) => path !== 'bloc
 /** The item, cut to what the store reads. */
 export type EntityDetail = Consumed<GetEntityResponses[200], typeof GET_ENTITY>;
 
+/**
+ * `getEntity`, by qualified id, for the Schedule tab (`WorkDetailStore.loadCriteria`): an epic's or
+ * a ticket's acceptance criteria (one line of Markdown each), which the list of the project's work
+ * does not carry. Scheduling is refused without them (the ACCEPTANCE_CRITERIA gate), so the tab
+ * shows them beside each item.
+ */
+export const GET_ENTITY_CRITERIA = ['acceptanceCriteria'] as const;
+
 /** `listEntityComments`, by qualified id: the thread, oldest first. The body is Markdown. */
 export const LIST_ENTITY_COMMENTS = [
   'entries[].comment.id',

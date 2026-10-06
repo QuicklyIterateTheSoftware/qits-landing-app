@@ -92,7 +92,7 @@ describe('WorkList (screenshots)', () => {
     await expect.element(list).not.toHaveTextContent('Verifying ticket');
     await expect.element(list).not.toHaveTextContent('Done ticket');
     const host = element.getBoundingClientRect();
-    for (const id of ['contract-00000001-11', 'contract-00000001-12']) {
+    for (const id of ['contract-00000001-13', 'contract-00000001-14']) {
       const button = element.querySelector(`button[aria-label="Mark ${id} done"]`) as HTMLElement;
       const box = button.getBoundingClientRect();
       expect(box.width).toBeGreaterThan(0);
@@ -147,18 +147,18 @@ describe('WorkList (screenshots)', () => {
     const { element, locator, harness } = await shown('acceptance', EVERY_STATUS);
     const work = await goldenMaster(EVERY_STATUS, 'listProjectEntities');
     const epic = work.entities.find(
-      (e: { qualifiedId: string }) => e.qualifiedId === 'contract-00000001-11',
+      (e: { qualifiedId: string }) => e.qualifiedId === 'contract-00000001-13',
     );
     // The finish waits on a timer: fake from here on, so every step is exact.
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     await expect.element(locator).toMatchScreenshot('finish-initial');
-    expect(order(element)).toEqual(['contract-00000001-11', 'contract-00000001-12']);
+    expect(order(element)).toEqual(['contract-00000001-13', 'contract-00000001-14']);
 
-    await finish(element, harness, 'contract-00000001-11');
+    await finish(element, harness, 'contract-00000001-13');
     // The ticket below the finished epic stays where the list puts it.
-    expect(order(element)).toEqual(['contract-00000001-12']);
+    expect(order(element)).toEqual(['contract-00000001-14']);
     await expect.element(locator).not.toHaveTextContent('Verified epic');
-    await expect.element(locator).toHaveTextContent('contract-00000001-11 finished');
+    await expect.element(locator).toHaveTextContent('contract-00000001-13 finished');
     await expect.element(locator.getByRole('button', { name: 'Undo' })).toBeVisible();
     http.expectNone(() => true);
     await expect.element(locator).toMatchScreenshot('finish-pending');
@@ -174,14 +174,14 @@ describe('WorkList (screenshots)', () => {
     harness.fixture.detectChanges();
     await expect.element(locator).not.toHaveTextContent('finished');
     await expect.element(locator).not.toHaveTextContent('Verified epic');
-    expect(order(element)).toEqual(['contract-00000001-12']);
+    expect(order(element)).toEqual(['contract-00000001-14']);
     await expect.element(locator).toMatchScreenshot('finish-sent');
   });
 
   it('Undo brings the ticket back and sends nothing', async () => {
     const { element, locator, harness } = await shown('acceptance', EVERY_STATUS);
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    await finish(element, harness, 'contract-00000001-12');
+    await finish(element, harness, 'contract-00000001-14');
     await userEvent.click(locator.getByRole('button', { name: 'Undo' }));
     harness.fixture.detectChanges();
     await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
@@ -190,7 +190,7 @@ describe('WorkList (screenshots)', () => {
     http.expectNone(() => true);
     await expect.element(locator).toHaveTextContent('Verified ticket');
     await expect.element(locator).not.toHaveTextContent('finished');
-    expect(order(element)).toEqual(['contract-00000001-11', 'contract-00000001-12']);
+    expect(order(element)).toEqual(['contract-00000001-13', 'contract-00000001-14']);
     await expect.element(locator).toMatchScreenshot('finish-undone');
   });
 });
