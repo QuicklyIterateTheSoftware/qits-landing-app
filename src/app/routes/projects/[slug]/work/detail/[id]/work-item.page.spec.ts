@@ -12,6 +12,7 @@ import {
   workspacesGoldenMaster,
   workspacesGoldenMasters,
 } from '../../../../../../../testing/golden-masters';
+import { answerCampaignReads, campaignsIn } from '../../../../../../../testing/campaign-reads';
 import { WorkItemPage } from './work-item.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -19,7 +20,7 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const WORK = 'a project with work in every status';
 const EPIC = 'an epic with features and tasks';
-const REGISTRY = '/projects/api/entities/archetypes';
+const REGISTRY = '/projects/api/work/archetypes';
 const DETAIL = 'a campaign in detail';
 /** The links in the region of an item's children: features, tasks or members. */
 const CHILDREN = ['Features', 'Tasks', 'Members'].map((n) => `section[aria-label=${n}] a`).join();
@@ -70,29 +71,32 @@ describe('WorkItemPage', () => {
    * its description, dossier and comments but with its children.
    */
   async function answerDetail(state: string, ref: string, recorded: boolean) {
-    const item = http.expectOne(`/projects/api/entities/${ref}`);
-    const thread = http.expectOne(`/projects/api/entities/${ref}/comments`);
+    // A campaign's own read has the URL of the work list's read of its description, which `shown`
+    // may have answered already, with the same recording.
+    const items = http.match(`/projects/api/work/${ref}`);
+    expect(items.length).toBeLessThanOrEqual(1);
+    const thread = http.expectOne(`/projects/api/work/${ref}/comments`);
     if (!recorded) {
-      item.flush(null, { status: 404, statusText: 'Not Found' });
+      items[0]?.flush(null, { status: 404, statusText: 'Not Found' });
       thread.flush(null, { status: 404, statusText: 'Not Found' });
       return;
     }
-    const entity = goldenMaster(state, 'getEntity');
-    item.flush(entity);
-    thread.flush(goldenMaster(state, 'listEntityComments'));
+    const entity = goldenMaster(state, 'getWork');
+    items[0]?.flush(entity);
+    thread.flush(goldenMaster(state, 'listWorkComments'));
     await settle();
     if (entity.archetype === 'EPIC') {
       http
-        .expectOne(`/projects/api/epics/${entity.id}/dossier`)
-        .flush(goldenMaster(state, 'listEpicDossierPages'));
+        .expectOne(`/projects/api/work/${ref}/dossier`)
+        .flush(goldenMaster(state, 'listWorkDossier'));
       http
-        .expectOne(`/projects/api/epics/${entity.id}/dossier-assets`)
-        .flush(goldenMaster(state, 'listEpicDossierAssets'));
+        .expectOne(`/projects/api/work/${ref}/dossier-assets`)
+        .flush(goldenMaster(state, 'listWorkDossierAssets'));
     }
     if (entity.archetype === 'TICKET') {
       http
-        .expectOne(`/projects/api/tickets/${entity.id}/dossier`)
-        .flush(goldenMaster(state, 'listTicketDossierPages'));
+        .expectOne(`/projects/api/work/${ref}/dossier`)
+        .flush(goldenMaster(state, 'listWorkDossier'));
     }
   }
 
@@ -123,7 +127,8 @@ describe('WorkItemPage', () => {
 
   /**
    * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
-   * a campaign's read too, from `campaignState`, and the item's own reads (`answerDetail`).
+   * a campaign's members too, from `campaignState`, and its description from "a campaign in
+   * detail" (the detail states' seed), and the item's own reads (`answerDetail`).
    */
   async function shown(
     title: string,
@@ -134,7 +139,7 @@ describe('WorkItemPage', () => {
   ) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
-    const work = goldenMaster(state, 'listProjectEntities');
+    const work = goldenMaster(state, 'listProjectWork');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
@@ -147,13 +152,14 @@ describe('WorkItemPage', () => {
     await settle();
     TestBed.tick();
     await settle();
-    http.expectOne(`/projects/api/projects/${project.id}/entities`).flush(work);
+    http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
     await settle();
     await settle();
-    for (const read of http.match((r) => r.url.startsWith('/projects/api/campaigns/'))) {
-      read.flush(goldenMaster(campaignState, 'getCampaign'));
-    }
-    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
+    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
+      members: campaignState,
+      described: [DETAIL],
+    });
+    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listWorkArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
     await answerWorkspaces(failHistory);
     await settle();
@@ -309,9 +315,9 @@ describe('WorkItemPage', () => {
     const { harness, entity, groups, press } = await shown('Reported ticket');
     press('Mark refined');
     await settle();
-    const request = http.expectOne(`/projects/api/entities/${entity.id}/status`);
+    const request = http.expectOne(`/projects/api/work/${entity.qualifiedId}/status`);
     expect(request.request.body).toEqual({ target: 'REFINED' });
-    request.flush(goldenMaster('a reported ticket', 'moveEntityStatus'));
+    request.flush(goldenMaster('a reported ticket', 'setWorkStatus'));
     await settle();
     await harness.fixture.whenStable();
     // REFINED waits for a person to schedule it: nothing to dispatch (qits-887).
@@ -325,11 +331,11 @@ describe('WorkItemPage', () => {
     const { harness, entity, groups, press } = await shown('Implementing epic');
     press('Drop');
     await settle();
-    const request = http.expectOne(`/projects/api/entities/${entity.id}/status`);
+    const request = http.expectOne(`/projects/api/work/${entity.qualifiedId}/status`);
     expect(request.request.body).toEqual({ target: 'DROPPED' });
     // The recorded answer of "an implementing epic" (a move to IMPLEMENTED), with the status this
     // move answers instead.
-    const answer = goldenMaster('an implementing epic', 'moveEntityStatus');
+    const answer = goldenMaster('an implementing epic', 'setWorkStatus');
     request.flush({ ...answer, status: 'DROPPED' });
     await settle();
     await harness.fixture.whenStable();
@@ -343,9 +349,9 @@ describe('WorkItemPage', () => {
     const { entity, press } = await shown('Ready for dev epic');
     press(label);
     await settle();
-    const request = http.expectOne(`/projects/api/entities/${entity.id}/dispatch`);
+    const request = http.expectOne(`/projects/api/work/${entity.qualifiedId}/dispatch`);
     expect(request.request.body).toEqual({ mode });
-    request.flush(goldenMaster(recorded, 'dispatchEntity'));
+    request.flush(goldenMaster(recorded, 'dispatchWork'));
     await settle();
   });
 
@@ -371,9 +377,9 @@ describe('WorkItemPage', () => {
     TestBed.tick();
     await settle();
     http
-      .expectOne(`/projects/api/projects/${project.id}/entities`)
-      .flush(goldenMaster(WORK, 'listProjectEntities'));
-    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
+      .expectOne(`/projects/api/projects/${project.id}/work`)
+      .flush(goldenMaster(WORK, 'listProjectWork'));
+    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listWorkArchetypes'));
     await answerDetail(WORK, 'nothing-1', false);
     // No item, so no history read: only the open workspaces.
     await answerWorkspaces();

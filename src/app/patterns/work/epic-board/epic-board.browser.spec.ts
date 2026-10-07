@@ -14,6 +14,7 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
+import type { CampaignReads } from '../../../../testing/campaign-reads';
 import { EpicBoard } from './epic-board';
 
 /**
@@ -81,7 +82,12 @@ describe('EpicBoard (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  async function shown(state: string, qualifiedId: string, title: string, campaigns?: string[]) {
+  async function shown(
+    state: string,
+    qualifiedId: string,
+    title: string,
+    campaigns?: CampaignReads,
+  ) {
     const { element, harness } = await openRecordedWork(
       http,
       'board',
@@ -302,10 +308,12 @@ describe('EpicBoard (screenshots)', () => {
   });
 
   it('in a campaign past the board: features in mixed statuses, its tag in the bar', async () => {
+    // The state records its campaign's own reads: its members and its description.
     const { element, locator } = await shown(
       PAST_THE_BOARD,
       'contract-00000001-12',
       'Epic with mixed features',
+      { members: PAST_THE_BOARD, described: [PAST_THE_BOARD] },
     );
     await expect.element(locator).toHaveTextContent('Campaign in flight');
     expect(columnsOf(element)).toEqual({
@@ -331,7 +339,8 @@ describe('EpicBoard (screenshots)', () => {
       IN_DETAIL,
       'contract-00000001-2',
       'Export invoices for the accountants',
-      [IN_DETAIL],
+      // The campaign's description is recorded by "a campaign in detail", over the same seed.
+      { members: IN_DETAIL, described: ['a campaign in detail'] },
     );
     await openWorkspaces(http, harness);
     const shownLinks = [...element.querySelectorAll('app-workspace-link:not(.hidden) a')].map((a) =>

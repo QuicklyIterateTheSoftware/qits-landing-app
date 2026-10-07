@@ -2,19 +2,18 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
-  getEntity,
-  listEntityComments,
-  listEpicDossierAssets,
-  listEpicDossierPages,
-  listTicketDossierPages,
+  getWork,
+  listWorkComments,
+  listWorkDossier,
+  listWorkDossierAssets,
 } from '../../api/projects';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import {
-  GET_ENTITY,
-  GET_ENTITY_CRITERIA,
+  GET_WORK,
+  GET_WORK_CRITERIA,
   LIST_DOSSIER_PAGES,
-  LIST_ENTITY_COMMENTS,
-  LIST_EPIC_DOSSIER_ASSETS,
+  LIST_WORK_COMMENTS,
+  LIST_WORK_DOSSIER_ASSETS,
   type CommentEntry,
   type DossierPage,
   type EntityDetail,
@@ -30,7 +29,8 @@ export interface WorkDetail {
   readonly pages: readonly DossierPage[];
   /**
    * The epic's figures: each address its pages name a figure with, mapped to where the browser
-   * loads it (qits-projects' API origin and path). Empty for other archetypes.
+   * loads it (qits-projects' API origin and the figure's `/work/{qualifiedId}/dossier-assets/{id}/
+   * content`). Empty for other archetypes.
    */
   readonly figures: Readonly<Record<string, string>>;
 }
@@ -52,18 +52,19 @@ interface WorkDetailState {
 }
 
 /**
- * The data of one work item's page beyond what the project's work list holds, from qits-projects:
- * the item itself (`getEntity`), its comments (`listEntityComments`) and its dossier — an epic's
- * pages and figures (`listEpicDossierPages`, `listEpicDossierAssets`), a ticket's pages
- * (`listTicketDossierPages`). Features, tasks and campaigns have no dossier.
+ * The data of one work item's page beyond what the project's work list holds, from qits-projects'
+ * `/work` doors, all by qualified id: the item itself (`getWork`), its comments
+ * (`listWorkComments`) and its dossier — an epic's or a ticket's pages (`listWorkDossier`), and an
+ * epic's figures (`listWorkDossierAssets`). Features, tasks and campaigns have no dossier.
  *
  * - `load(ref)` reads by the qualified id the page's URL names, once, and again after an error.
- *   The item and its comments come together; the dossier follows, by the item's id and archetype.
+ *   The item and its comments come together; the dossier follows, by the same reference, as the
+ *   item's archetype calls for.
  *   Any failed read fails the whole page's data. Nothing calls it on its own: the work item page
  *   does, in the browser.
  * - `refresh(ref)` reads again and keeps the old data until the answer is in.
  * - `of(ref)`: the data, or undefined before `load`.
- * - `loadCriteria(ref)` reads the item's acceptance criteria alone (`getEntity`), once, and again
+ * - `loadCriteria(ref)` reads the item's acceptance criteria alone (`getWork`), once, and again
  *   after an error: the Schedule tab shows them for each item it lists. `criteriaOf(ref)`: them,
  *   or undefined before `loadCriteria`.
  */
@@ -77,25 +78,31 @@ export const WorkDetailStore = signalStore(
       patchState(store, { byRef: { ...store.byRef(), [ref]: value } });
     }
 
-    async function dossierOf(entity: EntityDetail): Promise<Omit<WorkDetail, 'status'> | null> {
-      const id = entity.id;
-      if (entity.archetype === 'EPIC' && id) {
+    async function dossierOf(
+      ref: string,
+      entity: EntityDetail,
+    ): Promise<Omit<WorkDetail, 'status'> | null> {
+      const qualifiedId = ref;
+      if (entity.archetype === 'EPIC') {
         const [pages, assets] = await Promise.all([
-          consume(listEpicDossierPages({ path: { epicId: id } }), LIST_DOSSIER_PAGES),
-          consume(listEpicDossierAssets({ path: { epicId: id } }), LIST_EPIC_DOSSIER_ASSETS),
+          consume(listWorkDossier({ path: { qualifiedId } }), LIST_DOSSIER_PAGES),
+          consume(listWorkDossierAssets({ path: { qualifiedId } }), LIST_WORK_DOSSIER_ASSETS),
         ]);
         if (pages.error !== undefined || assets.error !== undefined) return null;
-        const api = `${origins.api('projects')}/projects/api`;
+        // The pages name a figure by its stored address (`url`, data in their bodies); the browser
+        // loads it through the `/work` content door, by the item's qualified id and the figure's id.
+        const work = `${origins.api('projects')}/projects/api/work/${encodeURIComponent(qualifiedId)}`;
         const figures = Object.fromEntries(
-          (assets.data?.assets ?? []).flatMap((a) => (a.url ? [[a.url, `${api}${a.url}`]] : [])),
+          (assets.data?.assets ?? []).flatMap((a) =>
+            a.url && a.id
+              ? [[a.url, `${work}/dossier-assets/${encodeURIComponent(a.id)}/content`]]
+              : [],
+          ),
         );
         return { entity, comments: [], pages: pages.data?.pages ?? [], figures };
       }
-      if (entity.archetype === 'TICKET' && id) {
-        const pages = await consume(
-          listTicketDossierPages({ path: { ticketId: id } }),
-          LIST_DOSSIER_PAGES,
-        );
+      if (entity.archetype === 'TICKET') {
+        const pages = await consume(listWorkDossier({ path: { qualifiedId } }), LIST_DOSSIER_PAGES);
         if (pages.error !== undefined) return null;
         return { entity, comments: [], pages: pages.data?.pages ?? [], figures: {} };
       }
@@ -104,13 +111,13 @@ export const WorkDetailStore = signalStore(
 
     async function fetch(ref: string): Promise<WorkDetail> {
       const [item, thread] = await Promise.all([
-        consume(getEntity({ path: { id: ref } }), GET_ENTITY),
-        consume(listEntityComments({ path: { id: ref } }), LIST_ENTITY_COMMENTS),
+        consume(getWork({ path: { qualifiedId: ref } }), GET_WORK),
+        consume(listWorkComments({ path: { qualifiedId: ref } }), LIST_WORK_COMMENTS),
       ]);
       if (item.error !== undefined || !item.data || thread.error !== undefined) {
         return { ...LOADING, status: 'error' };
       }
-      const dossier = await dossierOf(item.data);
+      const dossier = await dossierOf(ref, item.data);
       if (!dossier) return { ...LOADING, status: 'error' };
       const comments = (thread.data?.entries ?? []).flatMap((e) => (e.comment ? [e.comment] : []));
       return { ...dossier, status: 'loaded', comments };
@@ -138,8 +145,8 @@ export const WorkDetailStore = signalStore(
           patchState(store, { criteria: { ...store.criteria(), [ref]: value } });
         put({ status: 'loading', items: [] });
         const { data, error } = await consume(
-          getEntity({ path: { id: ref } }),
-          GET_ENTITY_CRITERIA,
+          getWork({ path: { qualifiedId: ref } }),
+          GET_WORK_CRITERIA,
         );
         put(
           error !== undefined || !data

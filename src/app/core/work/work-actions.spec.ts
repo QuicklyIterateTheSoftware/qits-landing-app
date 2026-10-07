@@ -4,10 +4,9 @@ import { lookOf, workActions, type WorkActionGroupId } from './work-actions';
 
 /** qits-projects' recorded registry ("the archetype registry"), by archetype. */
 const registry: Record<string, ArchetypeEntry> = Object.fromEntries(
-  goldenMaster('the archetype registry', 'listArchetypes').archetypes.map((a: ArchetypeEntry) => [
-    a.archetype,
-    a,
-  ]),
+  goldenMaster('the archetype registry', 'listWorkArchetypes').archetypes.map(
+    (a: ArchetypeEntry) => [a.archetype, a],
+  ),
 );
 
 type Table = Partial<Record<WorkActionGroupId, readonly string[]>>;

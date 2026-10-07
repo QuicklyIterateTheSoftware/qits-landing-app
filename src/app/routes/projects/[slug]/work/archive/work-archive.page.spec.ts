@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../../../../testing/golden-masters';
+import { answerCampaignReads, campaignsIn } from '../../../../../../testing/campaign-reads';
 import { WorkArchivePage } from './work-archive.page';
 import { WorkCampaignsPage } from '../campaigns/work-campaigns.page';
 
@@ -41,7 +42,7 @@ describe('WorkArchivePage', () => {
 
   /** The recorded work, its campaign at `status`. */
   function withCampaign(status: string) {
-    const work = goldenMaster(CAMPAIGN, 'listProjectEntities');
+    const work = goldenMaster(CAMPAIGN, 'listProjectWork');
     return {
       ...work,
       entities: work.entities.map((e: { archetype: string }) =>
@@ -50,7 +51,10 @@ describe('WorkArchivePage', () => {
     };
   }
 
-  /** The page at `tab`, with the project list, the work and the campaign's read answered. */
+  /**
+   * The page at `tab`, with the project list, the work and the campaign's reads (its members and
+   * its description) answered from the state.
+   */
   async function shown(tab: string, status: string) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
@@ -63,11 +67,13 @@ describe('WorkArchivePage', () => {
     await settle();
     TestBed.tick();
     await settle();
-    http.expectOne(`/projects/api/projects/${project.id}/entities`).flush(withCampaign(status));
+    const work = withCampaign(status);
+    http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
     await settle();
-    http
-      .expectOne((r) => r.url.startsWith('/projects/api/campaigns/'))
-      .flush(goldenMaster(CAMPAIGN, 'getCampaign'));
+    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
+      members: CAMPAIGN,
+      described: [CAMPAIGN],
+    });
     await settle();
     await harness.fixture.whenStable();
     return harness.routeNativeElement as HTMLElement;

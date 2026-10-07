@@ -3,6 +3,7 @@ import type { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { answerCampaignReads, campaignsIn, type CampaignReads } from '../campaign-reads';
 import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
@@ -16,7 +17,7 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
  * the open project's work through `SelectedWork`, as the work section's pages do, and draws the
  * one top-level node whose qualified id the URL names ({@link nodeOf}), or the whole tree. {@link openRecordedWork}
  * navigates there and answers every request with a recording: the project list from "a project
- * exists", the work (and each campaign in it) from the case's state. {@link openWorkspaces} then
+ * exists", the work (and each campaign's reads, `answerCampaignReads`) from the case's state. {@link openWorkspaces} then
  * loads the open workspaces, for the cards' Workspace links.
  */
 
@@ -38,17 +39,16 @@ export function routedQualifiedId(): string | null {
 
 /**
  * Opens `/projects/<recorded slug>/<view>/<qualifiedId>` and answers the project list, then the
- * project's work from `state`. Each campaign read gets the `getCampaign` recording of the one state
- * in `campaignStates` (by default `state` alone) whose campaign has the id asked for: a state
- * records one answer per operation, so a second campaign is recorded as a state of its own over
- * the same seed, with the same frozen ids. Returns the host's element, its width fixed by the host.
+ * project's work from `state`, then each campaign's members and description as `campaigns` says
+ * (by default: the members from `state`, and no description, `answerCampaignReads`). Returns the
+ * host's element, its width fixed by the host.
  */
 export async function openRecordedWork(
   http: HttpTestingController,
   view: string,
   qualifiedId: string,
   state: string,
-  campaignStates: readonly string[] = [state],
+  campaigns: CampaignReads = { members: state },
 ): Promise<{ element: HTMLElement; harness: RouterTestingHarness }> {
   const list = await goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
@@ -62,22 +62,14 @@ export async function openRecordedWork(
   await settle();
   TestBed.tick();
   await settle();
-  http
-    .expectOne(`/projects/api/projects/${project.id}/entities`)
-    .flush(await goldenMaster(state, 'listProjectEntities'));
+  const work = await goldenMaster(state, 'listProjectWork');
+  http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
   await settle();
   await settle();
   // The store then reads each campaign in the tree.
-  const campaigns = http.match((request) => request.url.startsWith('/projects/api/campaigns/'));
-  if (campaigns.length) {
-    const recorded = await Promise.all(campaignStates.map((s) => goldenMaster(s, 'getCampaign')));
-    for (const request of campaigns) {
-      const id = request.request.url.split('/').pop();
-      const answer = recorded.find((body) => body.campaign.id === id);
-      if (!answer)
-        throw new Error(`no state in [${campaignStates.join(', ')}] records campaign ${id}`);
-      request.flush(answer);
-    }
+  const ids = campaignsIn(work);
+  if (ids.length) {
+    await answerCampaignReads(http, goldenMaster, ids, campaigns);
     await settle();
   }
   await harness.fixture.whenStable();

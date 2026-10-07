@@ -9,7 +9,7 @@ import { ArchetypesStore } from './archetypes.store';
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-const REGISTRY = '/projects/api/entities/archetypes';
+const REGISTRY = '/projects/api/work/archetypes';
 
 /** `ArchetypesStore` on qits-projects' recorded registry ("the archetype registry"). */
 describe('ArchetypesStore', () => {
@@ -32,7 +32,7 @@ describe('ArchetypesStore', () => {
     const store = TestBed.inject(ArchetypesStore);
     const load = store.load();
     await settle();
-    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
+    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listWorkArchetypes'));
     await load;
     return store;
   }
@@ -75,7 +75,7 @@ describe('ArchetypesStore', () => {
     expect(store.of('EPIC')).toBeUndefined();
     const again = store.load();
     await settle();
-    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listArchetypes'));
+    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listWorkArchetypes'));
     await again;
     expect(store.status()).toBe('loaded');
   });

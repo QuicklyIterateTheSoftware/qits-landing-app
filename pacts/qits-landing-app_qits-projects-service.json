@@ -8,7 +8,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "dispatchEntity"
+            "operationId": "dispatchWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -17,7 +17,7 @@
           }
         }
       },
-      "description": "dispatch-work-item: dispatchEntity",
+      "description": "dispatch-work-item: dispatchWork",
       "pending": false,
       "providerStates": [
         {
@@ -39,7 +39,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/dispatch",
+            "expression": "/projects/api/work/${qualifiedId}/dispatch",
             "type": "ProviderState"
           }
         },
@@ -59,7 +59,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/dispatch"
+        "path": "/projects/api/work/contract-00000001-1/dispatch"
       },
       "response": {
         "body": {
@@ -108,7 +108,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "dispatchEntity"
+            "operationId": "dispatchWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -117,7 +117,7 @@
           }
         }
       },
-      "description": "dispatch-work-item: dispatchEntity",
+      "description": "dispatch-work-item: dispatchWork",
       "pending": false,
       "providerStates": [
         {
@@ -139,7 +139,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/dispatch",
+            "expression": "/projects/api/work/${qualifiedId}/dispatch",
             "type": "ProviderState"
           }
         },
@@ -159,7 +159,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/dispatch"
+        "path": "/projects/api/work/contract-00000001-1/dispatch"
       },
       "response": {
         "body": {
@@ -208,7 +208,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "dispatchEntity"
+            "operationId": "dispatchWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -217,7 +217,7 @@
           }
         }
       },
-      "description": "dispatch-work-item: dispatchEntity",
+      "description": "dispatch-work-item: dispatchWork",
       "pending": false,
       "providerStates": [
         {
@@ -239,7 +239,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/dispatch",
+            "expression": "/projects/api/work/${qualifiedId}/dispatch",
             "type": "ProviderState"
           }
         },
@@ -259,7 +259,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/dispatch"
+        "path": "/projects/api/work/contract-00000001-1/dispatch"
       },
       "response": {
         "body": {
@@ -308,7 +308,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "dispatchEntity"
+            "operationId": "dispatchWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -317,7 +317,7 @@
           }
         }
       },
-      "description": "dispatch-work-item: dispatchEntity",
+      "description": "dispatch-work-item: dispatchWork",
       "pending": false,
       "providerStates": [
         {
@@ -339,7 +339,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/dispatch",
+            "expression": "/projects/api/work/${qualifiedId}/dispatch",
             "type": "ProviderState"
           }
         },
@@ -359,7 +359,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/dispatch"
+        "path": "/projects/api/work/contract-00000001-1/dispatch"
       },
       "response": {
         "body": {
@@ -408,7 +408,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -417,7 +417,7 @@
           }
         }
       },
-      "description": "finish-epic: moveEntityStatus",
+      "description": "finish-epic: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -439,7 +439,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -459,7 +459,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -506,7 +506,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -515,7 +515,7 @@
           }
         }
       },
-      "description": "finish-ticket: moveEntityStatus",
+      "description": "finish-ticket: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -537,7 +537,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -557,7 +557,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -712,7 +712,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -721,7 +721,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -743,7 +743,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -763,7 +763,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -810,7 +810,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -819,7 +819,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -841,7 +841,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -861,7 +861,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -908,7 +908,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -917,7 +917,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -939,7 +939,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -959,7 +959,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1006,7 +1006,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1015,7 +1015,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1037,7 +1037,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1057,7 +1057,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1104,7 +1104,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1113,7 +1113,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1135,7 +1135,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1155,7 +1155,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1202,7 +1202,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1211,7 +1211,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1233,7 +1233,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1253,7 +1253,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1300,7 +1300,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1309,7 +1309,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1331,7 +1331,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1351,7 +1351,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1398,7 +1398,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1407,7 +1407,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1429,7 +1429,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1449,7 +1449,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1496,7 +1496,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1505,7 +1505,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1527,7 +1527,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1547,7 +1547,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1594,7 +1594,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1603,7 +1603,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1625,7 +1625,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1645,7 +1645,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1692,7 +1692,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1701,7 +1701,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1723,7 +1723,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1743,7 +1743,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1790,7 +1790,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1799,7 +1799,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1821,7 +1821,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1841,7 +1841,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1888,7 +1888,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1897,7 +1897,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -1919,7 +1919,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -1939,7 +1939,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -1986,7 +1986,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -1995,7 +1995,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -2017,7 +2017,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -2037,7 +2037,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -2084,7 +2084,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -2093,7 +2093,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -2115,7 +2115,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -2135,7 +2135,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -2182,7 +2182,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -2191,7 +2191,7 @@
           }
         }
       },
-      "description": "move-work-item: moveEntityStatus",
+      "description": "move-work-item: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -2213,7 +2213,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -2233,7 +2233,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -2906,7 +2906,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -2915,7 +2915,7 @@
           }
         }
       },
-      "description": "schedule-work: moveEntityStatus",
+      "description": "schedule-work: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -2937,7 +2937,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${epicId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -2957,7 +2957,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000001/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -3004,7 +3004,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "moveEntityStatus"
+            "operationId": "setWorkStatus"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -3013,7 +3013,7 @@
           }
         }
       },
-      "description": "schedule-work: moveEntityStatus",
+      "description": "schedule-work: setWorkStatus",
       "pending": false,
       "providerStates": [
         {
@@ -3035,7 +3035,7 @@
         },
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/status",
+            "expression": "/projects/api/work/${qualifiedId}/status",
             "type": "ProviderState"
           }
         },
@@ -3055,7 +3055,7 @@
           }
         },
         "method": "POST",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/status"
+        "path": "/projects/api/work/contract-00000001-1/status"
       },
       "response": {
         "body": {
@@ -3527,7 +3527,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getCampaign"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -3536,184 +3536,7 @@
           }
         }
       },
-      "description": "show-project-work-board: getCampaign",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "a bug ticket in detail",
-          "params": {
-            "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "campaignId": "00000000-0000-4000-8000-000000000002",
-            "campaignQualifiedId": "contract-00000001-1",
-            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
-            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
-            "csvTaskId": "00000000-0000-4000-8000-000000000005",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "figureAssetId": "00000000-0000-4000-8000-000000000008",
-            "figurePageId": "00000000-0000-4000-8000-000000000009",
-            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
-            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
-            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
-            "qualifiedId": "contract-00000001-10",
-            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
-            "taskId": "00000000-0000-4000-8000-000000000011",
-            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
-          }
-        }
-      ],
-      "request": {
-        "generators": {
-          "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
-            "type": "ProviderState"
-          }
-        },
-        "matchingRules": {
-          "path": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        },
-        "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000002"
-      },
-      "response": {
-        "body": {
-          "content": {
-            "campaign": {
-              "description": "Everything accounting needs before the books close on 15 December.\n\n## Done when\n- the accountants can export every invoice of a quarter\n- tax rates are right for every country we bill\n- no open bug touches an invoice total\n",
-              "id": "00000000-0000-4000-8000-000000000002",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                }
-              ]
-            }
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.campaign.description": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 5,
-                  "min": 5
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
-            "operationId": "getCampaign"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-work-board",
-            "kind": "ui"
-          }
-        }
-      },
-      "description": "show-project-work-board: getCampaign",
+      "description": "show-project-work-board: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -3745,7 +3568,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -3760,42 +3583,12 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000002"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
           "content": {
-            "campaign": {
-              "description": "Everything accounting needs before the books close on 15 December.\n\n## Done when\n- the accountants can export every invoice of a quarter\n- tax rates are right for every country we bill\n- no open bug touches an invoice total\n",
-              "id": "00000000-0000-4000-8000-000000000002",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                }
-              ]
-            }
+            "description": "Everything accounting needs before the books close on 15 December.\n\n## Done when\n- the accountants can export every invoice of a quarter\n- tax rates are right for every country we bill\n- no open bug touches an invoice total\n"
           },
           "contentType": "application/json",
           "encoded": false
@@ -3807,55 +3600,11 @@
         },
         "matchingRules": {
           "body": {
-            "$.campaign.description": {
+            "$.description": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 5,
-                  "min": 5
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -3881,7 +3630,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getCampaign"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -3890,7 +3639,7 @@
           }
         }
       },
-      "description": "show-project-work-board: getCampaign",
+      "description": "show-project-work-board: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -3911,7 +3660,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -3926,42 +3675,12 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000001"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
           "content": {
-            "campaign": {
-              "description": "Ships two tickets and three epics, one after the other.",
-              "id": "00000000-0000-4000-8000-000000000001",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000003"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000003"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000003"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000003"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000003"
-                  }
-                }
-              ]
-            }
+            "description": "Ships two tickets and three epics, one after the other."
           },
           "contentType": "application/json",
           "encoded": false
@@ -3973,55 +3692,11 @@
         },
         "matchingRules": {
           "body": {
-            "$.campaign.description": {
+            "$.description": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 5,
-                  "min": 5
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -4047,7 +3722,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getCampaign"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -4056,7 +3731,7 @@
           }
         }
       },
-      "description": "show-project-work-board: getCampaign",
+      "description": "show-project-work-board: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -4071,7 +3746,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
+            "expression": "/projects/api/work/${campaignQualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -4086,32 +3761,12 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000001"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
           "content": {
-            "campaign": {
-              "description": "Seeded work.",
-              "id": "00000000-0000-4000-8000-000000000001",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000004"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000004"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000004"
-                  }
-                }
-              ]
-            }
+            "description": "Seeded work."
           },
           "contentType": "application/json",
           "encoded": false
@@ -4123,47 +3778,11 @@
         },
         "matchingRules": {
           "body": {
-            "$.campaign.description": {
+            "$.description": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 3,
-                  "min": 3
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -4189,7 +3808,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getCampaign"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -4198,7 +3817,7 @@
           }
         }
       },
-      "description": "show-project-work-board: getCampaign",
+      "description": "show-project-work-board: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -4218,7 +3837,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
+            "expression": "/projects/api/work/${campaignQualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -4233,37 +3852,12 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000001"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
           "content": {
-            "campaign": {
-              "description": "Seeded work.",
-              "id": "00000000-0000-4000-8000-000000000001",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000005"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000005"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000005"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000005"
-                  }
-                }
-              ]
-            }
+            "description": "Seeded work."
           },
           "contentType": "application/json",
           "encoded": false
@@ -4275,51 +3869,11 @@
         },
         "matchingRules": {
           "body": {
-            "$.campaign.description": {
+            "$.description": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 4,
-                  "min": 4
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -4345,7 +3899,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getCampaign"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -4354,184 +3908,7 @@
           }
         }
       },
-      "description": "show-project-work-board: getCampaign",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "an epic in detail",
-          "params": {
-            "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "campaignId": "00000000-0000-4000-8000-000000000002",
-            "campaignQualifiedId": "contract-00000001-1",
-            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
-            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
-            "csvTaskId": "00000000-0000-4000-8000-000000000005",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "figureAssetId": "00000000-0000-4000-8000-000000000008",
-            "figurePageId": "00000000-0000-4000-8000-000000000009",
-            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
-            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
-            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
-            "qualifiedId": "contract-00000001-2",
-            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
-            "taskId": "00000000-0000-4000-8000-000000000011",
-            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
-          }
-        }
-      ],
-      "request": {
-        "generators": {
-          "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
-            "type": "ProviderState"
-          }
-        },
-        "matchingRules": {
-          "path": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        },
-        "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000002"
-      },
-      "response": {
-        "body": {
-          "content": {
-            "campaign": {
-              "description": "Everything accounting needs before the books close on 15 December.\n\n## Done when\n- the accountants can export every invoice of a quarter\n- tax rates are right for every country we bill\n- no open bug touches an invoice total\n",
-              "id": "00000000-0000-4000-8000-000000000002",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                }
-              ]
-            }
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.campaign.description": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 5,
-                  "min": 5
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
-            "operationId": "getCampaign"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-work-board",
-            "kind": "ui"
-          }
-        }
-      },
-      "description": "show-project-work-board: getCampaign",
+      "description": "show-project-work-board: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -4549,7 +3926,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/campaigns/${firstCampaignId}",
+            "expression": "/projects/api/work/${firstCampaignQualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -4564,22 +3941,12 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000002"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
           "content": {
-            "campaign": {
-              "description": "Seeded work.",
-              "id": "00000000-0000-4000-8000-000000000002",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000001"
-                  }
-                }
-              ]
-            }
+            "description": "Seeded work."
           },
           "contentType": "application/json",
           "encoded": false
@@ -4591,39 +3958,11 @@
         },
         "matchingRules": {
           "body": {
-            "$.campaign.description": {
+            "$.description": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 1,
-                  "min": 1
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -4649,7 +3988,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getCampaign"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -4658,184 +3997,7 @@
           }
         }
       },
-      "description": "show-project-work-board: getCampaign",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "an improvement ticket in detail",
-          "params": {
-            "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "campaignId": "00000000-0000-4000-8000-000000000002",
-            "campaignQualifiedId": "contract-00000001-1",
-            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
-            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
-            "csvTaskId": "00000000-0000-4000-8000-000000000005",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "figureAssetId": "00000000-0000-4000-8000-000000000008",
-            "figurePageId": "00000000-0000-4000-8000-000000000009",
-            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
-            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
-            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
-            "qualifiedId": "contract-00000001-11",
-            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
-            "taskId": "00000000-0000-4000-8000-000000000011",
-            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
-          }
-        }
-      ],
-      "request": {
-        "generators": {
-          "path": {
-            "expression": "/projects/api/campaigns/${campaignId}",
-            "type": "ProviderState"
-          }
-        },
-        "matchingRules": {
-          "path": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        },
-        "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000002"
-      },
-      "response": {
-        "body": {
-          "content": {
-            "campaign": {
-              "description": "Everything accounting needs before the books close on 15 December.\n\n## Done when\n- the accountants can export every invoice of a quarter\n- tax rates are right for every country we bill\n- no open bug touches an invoice total\n",
-              "id": "00000000-0000-4000-8000-000000000002",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                },
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000012"
-                  }
-                }
-              ]
-            }
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.campaign.description": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 5,
-                  "min": 5
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
-            "operationId": "getCampaign"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-work-board",
-            "kind": "ui"
-          }
-        }
-      },
-      "description": "show-project-work-board: getCampaign",
+      "description": "show-project-work-board: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -4853,7 +4015,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/campaigns/${secondCampaignId}",
+            "expression": "/projects/api/work/${secondCampaignQualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -4868,22 +4030,12 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/campaigns/00000000-0000-4000-8000-000000000004"
+        "path": "/projects/api/work/contract-00000001-2"
       },
       "response": {
         "body": {
           "content": {
-            "campaign": {
-              "description": "Seeded work.",
-              "id": "00000000-0000-4000-8000-000000000004",
-              "members": [
-                {
-                  "entity": {
-                    "id": "00000000-0000-4000-8000-000000000001"
-                  }
-                }
-              ]
-            }
+            "description": "Seeded work."
           },
           "contentType": "application/json",
           "encoded": false
@@ -4895,39 +4047,11 @@
         },
         "matchingRules": {
           "body": {
-            "$.campaign.description": {
+            "$.description": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.campaign.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.campaign.members": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 1,
-                  "min": 1
-                }
-              ]
-            },
-            "$.campaign.members[*].entity.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -4953,7 +4077,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -4962,7 +4086,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -4994,7 +4118,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -5009,7 +4133,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -5176,7 +4300,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -5185,7 +4309,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -5217,7 +4341,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -5232,7 +4356,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -5399,7 +4523,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -5408,7 +4532,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -5429,7 +4553,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -5444,7 +4568,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000005/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000005/work"
       },
       "response": {
         "body": {
@@ -5611,7 +4735,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -5620,7 +4744,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -5640,7 +4764,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -5655,7 +4779,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000004/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000004/work"
       },
       "response": {
         "body": {
@@ -5874,7 +4998,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -5883,7 +5007,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -5896,7 +5020,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -5911,7 +5035,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -6078,7 +5202,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -6087,7 +5211,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -6119,7 +5243,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -6134,7 +5258,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -6301,7 +5425,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -6310,7 +5434,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -6342,7 +5466,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -6357,7 +5481,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -6524,7 +5648,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -6533,7 +5657,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -6546,7 +5670,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -6561,7 +5685,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -6728,7 +5852,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -6737,7 +5861,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -6769,7 +5893,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -6784,7 +5908,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -6951,7 +6075,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -6960,7 +6084,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -6973,7 +6097,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -6988,7 +6112,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -7135,7 +6259,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -7144,7 +6268,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -7157,7 +6281,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -7172,7 +6296,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -7339,7 +6463,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -7348,7 +6472,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -7380,7 +6504,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -7395,7 +6519,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -7562,7 +6686,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -7571,7 +6695,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -7589,7 +6713,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -7604,7 +6728,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000003/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000003/work"
       },
       "response": {
         "body": {
@@ -7751,7 +6875,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -7760,7 +6884,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -7774,7 +6898,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -7789,7 +6913,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/work"
       },
       "response": {
         "body": {
@@ -7956,7 +7080,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -7965,7 +7089,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -7979,7 +7103,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -7994,7 +7118,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/work"
       },
       "response": {
         "body": {
@@ -8161,7 +7285,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -8170,7 +7294,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -8183,7 +7307,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -8198,7 +7322,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -8365,7 +7489,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -8374,7 +7498,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -8388,7 +7512,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -8403,7 +7527,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/work"
       },
       "response": {
         "body": {
@@ -8570,7 +7694,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -8579,7 +7703,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -8594,7 +7718,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -8609,7 +7733,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -8708,7 +7832,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -8717,7 +7841,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -8731,7 +7855,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -8746,7 +7870,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000002/work"
       },
       "response": {
         "body": {
@@ -8913,7 +8037,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -8922,7 +8046,7 @@
           }
         }
       },
-      "description": "show-project-work-board: listProjectEntities",
+      "description": "show-project-work-board: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -8954,7 +8078,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -8969,7 +8093,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-00000000000f/work"
       },
       "response": {
         "body": {
@@ -9136,29 +8260,48 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listWorkMembers"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
-            "interaction": "show-project-work",
+            "interaction": "show-project-work-board",
             "kind": "ui"
           }
         }
       },
-      "description": "show-project-work: listProjectEntities",
+      "description": "show-project-work-board: listWorkMembers",
       "pending": false,
       "providerStates": [
         {
-          "name": "a project with no work",
+          "name": "a bug ticket in detail",
           "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-10",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
           }
         }
       ],
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
             "type": "ProviderState"
           }
         },
@@ -9173,7 +8316,1225 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-1",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign with a done, a verified and an implementing epic",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
+            "doneEpicId": "00000000-0000-4000-8000-000000000002",
+            "doneTicketId": "00000000-0000-4000-8000-000000000003",
+            "implementingEpicId": "00000000-0000-4000-8000-000000000004",
+            "projectId": "00000000-0000-4000-8000-000000000005",
+            "qualifiedId": "contract-00000001-1",
+            "refinedTicketId": "00000000-0000-4000-8000-000000000006",
+            "verifiedEpicId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign with ordered developments",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000004"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000004"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000004"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign with work in every phase",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
+            "doneTicketId": "00000000-0000-4000-8000-000000000002",
+            "outsideTicketId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "refinedEpicId": "00000000-0000-4000-8000-000000000005",
+            "refinedTicketId": "00000000-0000-4000-8000-000000000006",
+            "reportedTicketId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000005"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000005"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000005"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000005"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an epic in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-2",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an epic in two campaigns",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000003",
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${firstCampaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000001"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an improvement ticket in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-11",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              },
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000012"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkMembers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listWorkMembers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the second campaign of an epic in two campaigns",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000003",
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${secondCampaignQualifiedId}/members",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-2/members"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "members": [
+              {
+                "entity": {
+                  "id": "00000000-0000-4000-8000-000000000001"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.members": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.members[*].entity.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work: listProjectWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with no work",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/work",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -9210,7 +9571,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectEntities"
+            "operationId": "listProjectWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -9219,7 +9580,7 @@
           }
         }
       },
-      "description": "show-project-work: listProjectEntities",
+      "description": "show-project-work: listProjectWork",
       "pending": false,
       "providerStates": [
         {
@@ -9232,7 +9593,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/projects/${projectId}/entities",
+            "expression": "/projects/api/projects/${projectId}/work",
             "type": "ProviderState"
           }
         },
@@ -9247,7 +9608,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/entities"
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
       },
       "response": {
         "body": {
@@ -9442,7 +9803,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -9451,7 +9812,7 @@
           }
         }
       },
-      "description": "show-schedule-criteria: getEntity",
+      "description": "show-schedule-criteria: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -9483,7 +9844,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -9498,7 +9859,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-2"
+        "path": "/projects/api/work/contract-00000001-2"
       },
       "response": {
         "body": {
@@ -9557,7 +9918,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -9566,7 +9927,7 @@
           }
         }
       },
-      "description": "show-schedule-criteria: getEntity",
+      "description": "show-schedule-criteria: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -9598,7 +9959,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -9613,7 +9974,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-11"
+        "path": "/projects/api/work/contract-00000001-11"
       },
       "response": {
         "body": {
@@ -9672,7 +10033,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listArchetypes"
+            "operationId": "listWorkArchetypes"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -9681,7 +10042,7 @@
           }
         }
       },
-      "description": "show-work-item-actions: listArchetypes",
+      "description": "show-work-item-actions: listWorkArchetypes",
       "pending": false,
       "providerStates": [
         {
@@ -9690,7 +10051,7 @@
       ],
       "request": {
         "method": "GET",
-        "path": "/projects/api/entities/archetypes"
+        "path": "/projects/api/work/archetypes"
       },
       "response": {
         "body": {
@@ -11187,7 +11548,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -11196,7 +11557,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -11228,7 +11589,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -11243,7 +11604,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-10"
+        "path": "/projects/api/work/contract-00000001-10"
       },
       "response": {
         "body": {
@@ -11349,7 +11710,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -11358,7 +11719,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -11390,7 +11751,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -11405,7 +11766,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-1"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
@@ -11487,7 +11848,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -11496,7 +11857,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -11517,7 +11878,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -11532,7 +11893,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-1"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
@@ -11614,7 +11975,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -11623,7 +11984,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -11655,7 +12016,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -11670,7 +12031,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-6"
+        "path": "/projects/api/work/contract-00000001-6"
       },
       "response": {
         "body": {
@@ -11761,7 +12122,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -11770,7 +12131,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -11802,7 +12163,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -11817,7 +12178,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-12"
+        "path": "/projects/api/work/contract-00000001-12"
       },
       "response": {
         "body": {
@@ -11907,7 +12268,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -11916,7 +12277,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -11948,7 +12309,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -11963,7 +12324,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-5"
+        "path": "/projects/api/work/contract-00000001-5"
       },
       "response": {
         "body": {
@@ -12072,7 +12433,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12081,7 +12442,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -12113,7 +12474,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -12128,7 +12489,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-2"
+        "path": "/projects/api/work/contract-00000001-2"
       },
       "response": {
         "body": {
@@ -12210,7 +12571,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12219,7 +12580,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -12234,7 +12595,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -12249,7 +12610,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002"
+        "path": "/projects/api/work/contract-00000001-1"
       },
       "response": {
         "body": {
@@ -12347,7 +12708,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "getEntity"
+            "operationId": "getWork"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12356,7 +12717,7 @@
           }
         }
       },
-      "description": "show-work-item: getEntity",
+      "description": "show-work-item: getWork",
       "pending": false,
       "providerStates": [
         {
@@ -12388,7 +12749,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}",
+            "expression": "/projects/api/work/${qualifiedId}",
             "type": "ProviderState"
           }
         },
@@ -12403,7 +12764,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-11"
+        "path": "/projects/api/work/contract-00000001-11"
       },
       "response": {
         "body": {
@@ -12501,7 +12862,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12510,7 +12871,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -12542,7 +12903,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -12557,7 +12918,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-10/comments"
+        "path": "/projects/api/work/contract-00000001-10/comments"
       },
       "response": {
         "body": {
@@ -12693,7 +13054,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12702,7 +13063,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -12734,7 +13095,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -12749,7 +13110,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-1/comments"
+        "path": "/projects/api/work/contract-00000001-1/comments"
       },
       "response": {
         "body": {
@@ -12841,7 +13202,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12850,7 +13211,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -12871,7 +13232,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -12886,7 +13247,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-1/comments"
+        "path": "/projects/api/work/contract-00000001-1/comments"
       },
       "response": {
         "body": {
@@ -12923,7 +13284,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -12932,7 +13293,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -12964,7 +13325,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -12979,7 +13340,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-6/comments"
+        "path": "/projects/api/work/contract-00000001-6/comments"
       },
       "response": {
         "body": {
@@ -13071,7 +13432,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -13080,7 +13441,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -13112,7 +13473,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -13127,7 +13488,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-12/comments"
+        "path": "/projects/api/work/contract-00000001-12/comments"
       },
       "response": {
         "body": {
@@ -13164,7 +13525,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -13173,7 +13534,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -13205,7 +13566,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -13220,7 +13581,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-5/comments"
+        "path": "/projects/api/work/contract-00000001-5/comments"
       },
       "response": {
         "body": {
@@ -13312,7 +13673,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -13321,7 +13682,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -13353,7 +13714,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -13368,7 +13729,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-2/comments"
+        "path": "/projects/api/work/contract-00000001-2/comments"
       },
       "response": {
         "body": {
@@ -13504,7 +13865,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -13513,7 +13874,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -13528,7 +13889,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${ticketId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -13543,7 +13904,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/00000000-0000-4000-8000-000000000002/comments"
+        "path": "/projects/api/work/contract-00000001-1/comments"
       },
       "response": {
         "body": {
@@ -13635,7 +13996,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEntityComments"
+            "operationId": "listWorkComments"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -13644,7 +14005,7 @@
           }
         }
       },
-      "description": "show-work-item: listEntityComments",
+      "description": "show-work-item: listWorkComments",
       "pending": false,
       "providerStates": [
         {
@@ -13676,7 +14037,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/entities/${qualifiedId}/comments",
+            "expression": "/projects/api/work/${qualifiedId}/comments",
             "type": "ProviderState"
           }
         },
@@ -13691,7 +14052,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/entities/contract-00000001-11/comments"
+        "path": "/projects/api/work/contract-00000001-11/comments"
       },
       "response": {
         "body": {
@@ -13783,7 +14144,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listEpicDossierAssets"
+            "operationId": "listWorkDossier"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -13792,299 +14153,7 @@
           }
         }
       },
-      "description": "show-work-item: listEpicDossierAssets",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "an epic in detail",
-          "params": {
-            "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "campaignId": "00000000-0000-4000-8000-000000000002",
-            "campaignQualifiedId": "contract-00000001-1",
-            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
-            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
-            "csvTaskId": "00000000-0000-4000-8000-000000000005",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "figureAssetId": "00000000-0000-4000-8000-000000000008",
-            "figurePageId": "00000000-0000-4000-8000-000000000009",
-            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
-            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
-            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
-            "qualifiedId": "contract-00000001-2",
-            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
-            "taskId": "00000000-0000-4000-8000-000000000011",
-            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
-          }
-        }
-      ],
-      "request": {
-        "generators": {
-          "path": {
-            "expression": "/projects/api/epics/${epicId}/dossier-assets",
-            "type": "ProviderState"
-          }
-        },
-        "matchingRules": {
-          "path": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        },
-        "method": "GET",
-        "path": "/projects/api/epics/00000000-0000-4000-8000-000000000006/dossier-assets"
-      },
-      "response": {
-        "body": {
-          "content": {
-            "assets": [
-              {
-                "label": "Export data flow",
-                "url": "/epics/00000000-0000-4000-8000-000000000006/dossier-assets/00000000-0000-4000-8000-000000000008/content"
-              }
-            ]
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.assets": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 1,
-                  "min": 1
-                }
-              ]
-            },
-            "$.assets[*].label": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.assets[*].url": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
-            "operationId": "listEpicDossierPages"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-work-item",
-            "kind": "ui"
-          }
-        }
-      },
-      "description": "show-work-item: listEpicDossierPages",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "an epic in detail",
-          "params": {
-            "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "campaignId": "00000000-0000-4000-8000-000000000002",
-            "campaignQualifiedId": "contract-00000001-1",
-            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
-            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
-            "csvTaskId": "00000000-0000-4000-8000-000000000005",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "figureAssetId": "00000000-0000-4000-8000-000000000008",
-            "figurePageId": "00000000-0000-4000-8000-000000000009",
-            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
-            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
-            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
-            "qualifiedId": "contract-00000001-2",
-            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
-            "taskId": "00000000-0000-4000-8000-000000000011",
-            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
-          }
-        }
-      ],
-      "request": {
-        "generators": {
-          "path": {
-            "expression": "/projects/api/epics/${epicId}/dossier",
-            "type": "ProviderState"
-          }
-        },
-        "matchingRules": {
-          "path": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        },
-        "method": "GET",
-        "path": "/projects/api/epics/00000000-0000-4000-8000-000000000006/dossier"
-      },
-      "response": {
-        "body": {
-          "content": {
-            "pages": [
-              {
-                "body": "## In scope\n- invoices and credit notes\n- one date range per export\n\n## Out of scope\n- exports of payments; the bank statement covers them\n",
-                "id": "00000000-0000-4000-8000-000000000013",
-                "title": "Scope"
-              },
-              {
-                "body": "## In scope\n- invoices and credit notes\n- one date range per export\n\n## Out of scope\n- exports of payments; the bank statement covers them\n",
-                "id": "00000000-0000-4000-8000-000000000013",
-                "title": "Scope"
-              },
-              {
-                "body": "## In scope\n- invoices and credit notes\n- one date range per export\n\n## Out of scope\n- exports of payments; the bank statement covers them\n",
-                "id": "00000000-0000-4000-8000-000000000013",
-                "title": "Scope"
-              }
-            ]
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.pages": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 3,
-                  "min": 3
-                }
-              ]
-            },
-            "$.pages[*].body": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.pages[*].id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.pages[*].title": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
-            "operationId": "listTicketDossierPages"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-work-item",
-            "kind": "ui"
-          }
-        }
-      },
-      "description": "show-work-item: listTicketDossierPages",
+      "description": "show-work-item: listWorkDossier",
       "pending": false,
       "providerStates": [
         {
@@ -14116,7 +14185,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/tickets/${bugTicketId}/dossier",
+            "expression": "/projects/api/work/${qualifiedId}/dossier",
             "type": "ProviderState"
           }
         },
@@ -14131,7 +14200,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/tickets/00000000-0000-4000-8000-000000000001/dossier"
+        "path": "/projects/api/work/contract-00000001-10/dossier"
       },
       "response": {
         "body": {
@@ -14226,7 +14295,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listTicketDossierPages"
+            "operationId": "listWorkDossier"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -14235,7 +14304,7 @@
           }
         }
       },
-      "description": "show-work-item: listTicketDossierPages",
+      "description": "show-work-item: listWorkDossier",
       "pending": false,
       "providerStates": [
         {
@@ -14267,7 +14336,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/tickets/${maintenanceTicketId}/dossier",
+            "expression": "/projects/api/work/${qualifiedId}/dossier",
             "type": "ProviderState"
           }
         },
@@ -14282,7 +14351,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/tickets/00000000-0000-4000-8000-00000000000c/dossier"
+        "path": "/projects/api/work/contract-00000001-12/dossier"
       },
       "response": {
         "body": {
@@ -14362,7 +14431,7 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listTicketDossierPages"
+            "operationId": "listWorkDossier"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
@@ -14371,7 +14440,173 @@
           }
         }
       },
-      "description": "show-work-item: listTicketDossierPages",
+      "description": "show-work-item: listWorkDossier",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an epic in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-2",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}/dossier",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-2/dossier"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "pages": [
+              {
+                "body": "## In scope\n- invoices and credit notes\n- one date range per export\n\n## Out of scope\n- exports of payments; the bank statement covers them\n",
+                "id": "00000000-0000-4000-8000-000000000013",
+                "title": "Scope"
+              },
+              {
+                "body": "## In scope\n- invoices and credit notes\n- one date range per export\n\n## Out of scope\n- exports of payments; the bank statement covers them\n",
+                "id": "00000000-0000-4000-8000-000000000013",
+                "title": "Scope"
+              },
+              {
+                "body": "## In scope\n- invoices and credit notes\n- one date range per export\n\n## Out of scope\n- exports of payments; the bank statement covers them\n",
+                "id": "00000000-0000-4000-8000-000000000013",
+                "title": "Scope"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.pages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.pages[*].body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.pages[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.pages[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkDossier"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item: listWorkDossier",
       "pending": false,
       "providerStates": [
         {
@@ -14403,7 +14638,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/projects/api/tickets/${improvementTicketId}/dossier",
+            "expression": "/projects/api/work/${qualifiedId}/dossier",
             "type": "ProviderState"
           }
         },
@@ -14418,7 +14653,7 @@
           }
         },
         "method": "GET",
-        "path": "/projects/api/tickets/00000000-0000-4000-8000-00000000000b/dossier"
+        "path": "/projects/api/work/contract-00000001-11/dossier"
       },
       "response": {
         "body": {
@@ -14434,6 +14669,142 @@
           ]
         },
         "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listWorkDossierAssets"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item: listWorkDossierAssets",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an epic in detail",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
+            "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
+            "csvFeatureId": "00000000-0000-4000-8000-000000000004",
+            "csvTaskId": "00000000-0000-4000-8000-000000000005",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "figureAssetId": "00000000-0000-4000-8000-000000000008",
+            "figurePageId": "00000000-0000-4000-8000-000000000009",
+            "frontendRepositoryId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "maintenanceTicketId": "00000000-0000-4000-8000-00000000000c",
+            "pdfTaskId": "00000000-0000-4000-8000-00000000000d",
+            "previewTaskId": "00000000-0000-4000-8000-00000000000e",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "qualifiedId": "contract-00000001-2",
+            "serviceRepositoryId": "00000000-0000-4000-8000-000000000010",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taxesEpicId": "00000000-0000-4000-8000-000000000012"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}/dossier-assets",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-2/dossier-assets"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "assets": [
+              {
+                "id": "00000000-0000-4000-8000-000000000008",
+                "label": "Export data flow",
+                "url": "/epics/00000000-0000-4000-8000-000000000006/dossier-assets/00000000-0000-4000-8000-000000000008/content"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.assets": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.assets[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.assets[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.assets[*].url": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
           "header": {
             "Content-Type": {
               "combine": "AND",

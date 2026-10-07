@@ -1,4 +1,4 @@
-import type { ListArchetypesResponses } from '../../api/projects';
+import type { ListWorkArchetypesResponses } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -10,7 +10,7 @@ import type { Consumed } from '@qits/angular';
  * served order) and what a dispatch press runs from each status (`phases`). Both are maps keyed by
  * status, so they are read whole.
  */
-export const LIST_ARCHETYPES = [
+export const LIST_WORK_ARCHETYPES = [
   'archetypes[].archetype',
   'archetypes[].transitions',
   'archetypes[].phases',
@@ -18,7 +18,7 @@ export const LIST_ARCHETYPES = [
 
 /** One archetype's entry in the registry, cut to what the store reads. */
 export type ArchetypeEntry = NonNullable<
-  Consumed<ListArchetypesResponses[200], typeof LIST_ARCHETYPES>['archetypes']
+  Consumed<ListWorkArchetypesResponses[200], typeof LIST_WORK_ARCHETYPES>['archetypes']
 >[number];
 
 /** One legal move out of a status: where to, and its kind (FORWARD, SKIP, BACK, DROP, REOPEN). */

@@ -42,7 +42,7 @@ const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 /**
- * The operations this spec owns in that file. `WorkStore`'s pact spec owns `listProjectEntities`
+ * The operations this spec owns in that file. `WorkStore`'s pact spec owns `listProjectWork`
  * and `RepositoriesStore`'s owns `listProjectRepositories`, in the same file
  * (`src/testing/pact-part.ts`).
  */

@@ -87,11 +87,11 @@ describe('ProjectPickerPage (screenshots)', () => {
       // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
       .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
     http
-      .expectOne(`/projects/api/projects/${project.id}/entities`)
-      .flush(await goldenMaster('a project with refined work', 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${project.id}/work`)
+      .flush(await goldenMaster('a project with refined work', 'listProjectWork'));
     http
-      .expectOne(`/projects/api/projects/${other.id}/entities`)
-      .flush(await goldenMaster('a project with no work', 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${other.id}/work`)
+      .flush(await goldenMaster('a project with no work', 'listProjectWork'));
     // The cards stay collapsed, so no lines are requested.
     http.expectNone('/githost/api/loc');
     await answered(fixture);

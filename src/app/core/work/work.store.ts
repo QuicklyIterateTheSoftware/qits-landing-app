@@ -10,17 +10,19 @@ import {
 } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
-  dispatchEntity,
-  getCampaign,
-  listProjectEntities,
-  moveEntityStatus,
+  dispatchWork,
+  getWork,
+  listProjectWork,
+  listWorkMembers,
+  setWorkStatus,
 } from '../../api/projects';
 import {
   countsAsWork,
-  DISPATCH_ENTITY,
-  GET_CAMPAIGN,
-  LIST_PROJECT_ENTITIES,
-  MOVE_ENTITY_STATUS,
+  DISPATCH_WORK,
+  GET_CAMPAIGN_DESCRIPTION,
+  LIST_PROJECT_WORK,
+  LIST_WORK_MEMBERS,
+  SET_WORK_STATUS,
   type WorkEntry,
 } from './work.consumes';
 import { FINISH_DELAY_MS } from './finish-delay';
@@ -83,6 +85,14 @@ export interface ProjectWork {
   readonly campaignDescriptions: Readonly<Record<string, string>>;
 }
 
+/**
+ * How qits-projects' `/work` doors address an entry: its qualified id (`qits-111`), or its id when
+ * it carries none (the doors resolve a UUID too).
+ */
+export function workRef(entry: Pick<WorkEntry, 'id' | 'qualifiedId'>): string | undefined {
+  return entry.qualifiedId || entry.id;
+}
+
 /** A project's work while it has none to show: loading, or failed. */
 const NO_WORK: ProjectWork = {
   status: 'loading',
@@ -114,17 +124,19 @@ interface WorkState {
 }
 
 /**
- * Each project's work entities, from qits-projects' `listProjectEntities` (the whole planning
- * tree, unfiltered): one request per project, shared by the project card and the work section.
+ * Each project's work entities, from qits-projects' `listProjectWork` (the whole planning tree,
+ * unfiltered): one request per project, shared by the project card and the work section. Every
+ * entity is addressed by its qualified id ({@link workRef}); the state is keyed by entity id.
  *
  * - `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  *   project card does in the browser, and `SelectedWork` for the open project.
  * - Which entities count as work is `countsAsWork` in `work.consumes.ts`.
- * - Each campaign in the tree is then asked for its members and its description (`getCampaign`),
- *   one request per campaign: membership lives on the campaign, not on the entity. A failed campaign read fails the
- *   project's work, as a partial tree would group wrongly.
+ * - Each campaign in the tree is then asked for its members (`listWorkMembers`) and its description
+ *   (`getWork`), two requests per campaign: membership lives on the campaign, not on the entity. A
+ *   failed members read fails the project's work, as a partial tree would group wrongly; a failed
+ *   description read only leaves that campaign's description out.
  * - `refresh(projectId)` fetches again and keeps showing the old work until the answer is in.
- * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`moveEntityStatus`) and
+ * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`setWorkStatus`) and
  *   writes the answered status into the entry: it leaves the Acceptance list for the archive. DONE
  *   is final in qits-projects; nothing moves it back.
  * - `finishLater(projectId, entry)` is the Acceptance list's finish: the item is hidden at once (`hidden`),
@@ -138,7 +150,7 @@ interface WorkState {
  *   `refusals` why a move failed (the 409's message: a quality gate, say).
  * - `transitionAll(projectId, entries, target)` moves several items at once, each as `transition`
  *   does (the Schedule tab's Schedule and Unschedule). Each move succeeds or fails on its own.
- * - `dispatch(entry, mode)` presses dispatch (`dispatchEntity`): `FLOW` runs every
+ * - `dispatch(entry, mode)` presses dispatch (`dispatchWork`): `FLOW` runs every
  *   phase left, `PHASE` the next one. The answer names the phase it started (`dispatched`); the
  *   status the platform moves the item to arrives as an event, like any other move.
  *   `dispatching` holds a running or failed press.
@@ -239,11 +251,12 @@ export const WorkStore = signalStore(
       target: WorkStatus,
     ): Promise<{ readonly status?: WorkStatus; readonly refusal?: string }> {
       const id = entry.id;
-      if (!id) return {};
+      const qualifiedId = workRef(entry);
+      if (!id || !qualifiedId) return {};
       // `keepalive`: a finish sent as the page is left must still arrive.
       const { data, error, response } = await consume(
-        moveEntityStatus({ path: { id }, body: { target }, keepalive: true }),
-        MOVE_ENTITY_STATUS,
+        setWorkStatus({ path: { qualifiedId }, body: { target }, keepalive: true }),
+        SET_WORK_STATUS,
       );
       const status = error === undefined ? data?.status : undefined;
       if (!status) return { refusal: refusalOf(error, response?.status) };
@@ -296,28 +309,38 @@ export const WorkStore = signalStore(
     async function fetch(projectId: string): Promise<ProjectWork> {
       const startedAt = ++clock;
       const { data, error } = await consume(
-        listProjectEntities({ path: { projectId } }),
-        LIST_PROJECT_ENTITIES,
+        listProjectWork({ path: { project: projectId } }),
+        LIST_PROJECT_WORK,
       );
       const entries = withSettled(data?.entities ?? [], startedAt);
-      const campaignIds = entries.flatMap((e) =>
-        e.archetype === 'CAMPAIGN' && e.id ? [e.id] : [],
-      );
-      const answers = await Promise.all(
-        campaignIds.map((id) => consume(getCampaign({ path: { id } }), GET_CAMPAIGN)),
-      );
+      const campaignList = entries.flatMap((e) => {
+        const qualifiedId = workRef(e);
+        return e.archetype === 'CAMPAIGN' && e.id && qualifiedId ? [{ id: e.id, qualifiedId }] : [];
+      });
+      const [members, described] = await Promise.all([
+        Promise.all(
+          campaignList.map(({ qualifiedId }) =>
+            consume(listWorkMembers({ path: { qualifiedId } }), LIST_WORK_MEMBERS),
+          ),
+        ),
+        Promise.all(
+          campaignList.map(({ qualifiedId }) =>
+            consume(getWork({ path: { qualifiedId } }), GET_CAMPAIGN_DESCRIPTION),
+          ),
+        ),
+      ]);
       const failed =
-        error !== undefined || !data || answers.some((a) => a.error !== undefined || !a.data);
+        error !== undefined || !data || members.some((a) => a.error !== undefined || !a.data);
       const campaigns = Object.fromEntries(
-        answers.map((a, i) => [
-          campaignIds[i],
-          (a.data?.campaign?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
+        members.map((a, i) => [
+          campaignList[i].id,
+          (a.data?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
         ]),
       );
       const campaignDescriptions = Object.fromEntries(
-        answers.flatMap((a, i) => {
-          const description = a.data?.campaign?.description;
-          return description ? [[campaignIds[i], description]] : [];
+        described.flatMap((a, i) => {
+          const description = a.error === undefined ? a.data?.description : undefined;
+          return description ? [[campaignList[i].id, description]] : [];
         }),
       );
       return failed
@@ -358,11 +381,12 @@ export const WorkStore = signalStore(
       /** Presses dispatch for `entry`; a running press is not repeated. */
       async dispatch(entry: WorkEntry, mode: DispatchMode): Promise<void> {
         const id = entry.id;
-        if (!id || store.dispatching()[id] === 'running') return;
+        const qualifiedId = workRef(entry);
+        if (!id || !qualifiedId || store.dispatching()[id] === 'running') return;
         setDispatching(id, 'running');
         const { data, error } = await consume(
-          dispatchEntity({ path: { id }, body: { mode } }),
-          DISPATCH_ENTITY,
+          dispatchWork({ path: { qualifiedId }, body: { mode } }),
+          DISPATCH_WORK,
         );
         const failed = error !== undefined || !data;
         setDispatching(id, failed ? 'error' : undefined);

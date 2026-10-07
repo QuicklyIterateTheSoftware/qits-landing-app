@@ -21,8 +21,8 @@ import { provideTestPlatformOrigins } from '../../../../../../testing/platform-o
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-/** A single entity's read: `/projects/api/entities/<ref>`. */
-const ENTITY_READ = /^\/projects\/api\/entities\/[^/]+$/;
+/** A single entity's read: `/projects/api/work/<qualified id>`. */
+const ENTITY_READ = /^\/projects\/api\/work\/[^/]+$/;
 
 describe('WorkSchedulePage (screenshots)', () => {
   let http: HttpTestingController;
@@ -56,7 +56,7 @@ describe('WorkSchedulePage (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '760px';
     const answered = async () => {
@@ -71,8 +71,8 @@ describe('WorkSchedulePage (screenshots)', () => {
   async function answerCriteria(entities: readonly { qualifiedId: string; archetype: string }[]) {
     TestBed.tick();
     await settle();
-    const epic = await goldenMaster('an epic in detail', 'getEntity');
-    const ticket = await goldenMaster('an improvement ticket in detail', 'getEntity');
+    const epic = await goldenMaster('an epic in detail', 'getWork');
+    const ticket = await goldenMaster('an improvement ticket in detail', 'getWork');
     for (const read of http.match((r) => ENTITY_READ.test(r.url))) {
       const ref = read.request.url.split('/').pop();
       const item = entities.find((e) => e.qualifiedId === ref);
@@ -82,10 +82,7 @@ describe('WorkSchedulePage (screenshots)', () => {
 
   it('lists the refined work to schedule and the scheduled work, each with its criteria', async () => {
     const { locator, work, answered } = await shown();
-    const recorded = await goldenMaster(
-      'a project with work in every status',
-      'listProjectEntities',
-    );
+    const recorded = await goldenMaster('a project with work in every status', 'listProjectWork');
     work.flush(recorded);
     await answered();
     await answerCriteria(recorded.entities);
@@ -100,10 +97,7 @@ describe('WorkSchedulePage (screenshots)', () => {
 
   it('shows the service’s refusal under an item it would not schedule', async () => {
     const { element, locator, work, answered } = await shown();
-    const recorded = await goldenMaster(
-      'a project with work in every status',
-      'listProjectEntities',
-    );
+    const recorded = await goldenMaster('a project with work in every status', 'listProjectWork');
     work.flush(recorded);
     await answered();
     await answerCriteria(recorded.entities);
@@ -131,7 +125,7 @@ describe('WorkSchedulePage (screenshots)', () => {
 
   it('says so when nothing waits to be scheduled', async () => {
     const { locator, work, answered } = await shown();
-    work.flush(await goldenMaster('a project with no work', 'listProjectEntities'));
+    work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
     await expect.element(locator).toHaveTextContent('Nothing to schedule.');
     await expect.element(locator).toHaveTextContent('Nothing scheduled.');

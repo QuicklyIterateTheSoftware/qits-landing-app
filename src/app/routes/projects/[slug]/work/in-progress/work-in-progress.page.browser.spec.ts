@@ -55,9 +55,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/entities`);
+    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
     if (answerWork) {
-      work.flush(await goldenMaster(workState, 'listProjectEntities'));
+      work.flush(await goldenMaster(workState, 'listProjectWork'));
       await settle();
       await harness.fixture.whenStable();
       harness.fixture.detectChanges();

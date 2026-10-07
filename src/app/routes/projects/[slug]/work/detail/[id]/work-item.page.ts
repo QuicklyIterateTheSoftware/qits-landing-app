@@ -225,25 +225,25 @@ export class WorkItemPage {
       case 'nextPhase':
         return () => void this.store.dispatch(entry, 'PHASE');
       case 'startCampaign':
-        // TODO: `POST /entities/{id}/dispatch` starts a campaign, after asking twice ("Confirm
+        // TODO: `POST /work/{qualifiedId}/dispatch` starts a campaign, after asking twice ("Confirm
         // start campaign?"): that start authorises every ungated dispatch in the campaign. Needs a
         // recorded provider state and a pact interaction first. Interim: the registry serves no
         // campaign phases, so when it shows is `workActions`' own rule.
         return notBuiltYet;
       case 'block':
         // TODO: the old UI opens a form for the reason (required), then sends
-        // `POST /entities/{id}/blocked` with `{blocked: true, reason}`; Unblock when blocked.
+        // `POST /work/{qualifiedId}/blocked` with `{blocked: true, reason}`; Unblock when blocked.
         return notBuiltYet;
       case 'edit':
         // TODO: the old UI opens a form (title, description; a ticket also impetus, type and
-        // assignee) and saves a restatement of the row through `POST /entities/transition`.
+        // assignee) and saves a restatement of the row through `PUT /work/{qualifiedId}`.
         return notBuiltYet;
       case 'reshape':
         // TODO: the old UI opens the reshape panel (promote, demote, reparent), which also saves
-        // through `POST /entities/transition`.
+        // through `POST /work/transition`.
         return notBuiltYet;
       case 'refine':
-        // TODO: the old UI opens the item's refinement room (`POST /entities/{id}/refinement`,
+        // TODO: the old UI opens the item's refinement room (`POST /work/{qualifiedId}/refinement`,
         // or the room there is) and goes to it.
         return notBuiltYet;
     }

@@ -32,43 +32,85 @@ describe('WorkStore', () => {
   it('requests nothing until asked to load', async () => {
     TestBed.inject(WorkStore);
     await settle();
-    http.expectNone(`/projects/api/projects/${ID}/entities`);
+    http.expectNone(`/projects/api/projects/${ID}/work`);
   });
 
   it('counts a project’s refined work once, from its whole planning tree', async () => {
     const store = TestBed.inject(WorkStore);
     // 3 REFINED (an epic, two tickets), 1 REPORTED, 1 DONE: only the REFINED ones count.
-    const work = goldenMaster('a project with refined work', 'listProjectEntities');
+    const work = goldenMaster('a project with refined work', 'listProjectWork');
     const done = store.load(ID);
     expect(store.byProject()[ID]?.status).toBe('loading');
     await settle();
-    http.expectOne(`/projects/api/projects/${ID}/entities`).flush(work);
+    http.expectOne(`/projects/api/projects/${ID}/work`).flush(work);
     await done;
     expect(store.byProject()[ID]).toMatchObject({ status: 'loaded', count: 3 });
     expect(store.byProject()[ID]?.entries).toHaveLength(work.entities.length);
     await store.load(ID);
-    http.expectNone(`/projects/api/projects/${ID}/entities`);
+    http.expectNone(`/projects/api/projects/${ID}/work`);
   });
 
-  it('reads each campaign’s members and description', async () => {
+  it('reads each campaign’s members and description, by its qualified id', async () => {
     const store = TestBed.inject(WorkStore);
-    const state = 'a campaign with work in every phase';
-    const campaign = goldenMaster(state, 'getCampaign');
+    const state = 'a campaign with a done, a verified and an implementing epic';
+    const campaign = goldenMaster(state, 'getWork');
+    const members = goldenMaster(state, 'listWorkMembers');
     const done = store.load(ID);
     await settle();
     http
-      .expectOne(`/projects/api/projects/${ID}/entities`)
-      .flush(goldenMaster(state, 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${ID}/work`)
+      .flush(goldenMaster(state, 'listProjectWork'));
     await settle();
-    http.expectOne(`/projects/api/campaigns/${campaign.campaign.id}`).flush(campaign);
+    http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`).flush(members);
+    http.expectOne(`/projects/api/work/${campaign.qualifiedId}`).flush(campaign);
     await done;
     const work = store.byProject()[ID];
-    expect(work?.campaigns[campaign.campaign.id]).toEqual(
-      campaign.campaign.members.map((m: { entity: { id: string } }) => m.entity.id),
+    expect(work?.status).toBe('loaded');
+    expect(work?.campaigns[campaign.id]).toEqual(
+      members.members.map((m: { entity: { id: string } }) => m.entity.id),
     );
-    expect(work?.campaignDescriptions).toEqual({
-      [campaign.campaign.id]: campaign.campaign.description,
+    expect(work?.campaignDescriptions).toEqual({ [campaign.id]: campaign.description });
+  });
+
+  it('leaves out a campaign’s description it could not read, and keeps its members', async () => {
+    const store = TestBed.inject(WorkStore);
+    const state = 'a campaign with work in every phase';
+    const members = goldenMaster(state, 'listWorkMembers');
+    const done = store.load(ID);
+    await settle();
+    const list = goldenMaster(state, 'listProjectWork');
+    http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
+    await settle();
+    const campaign = list.entities.find((e: WorkEntry) => e.archetype === 'CAMPAIGN');
+    http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`).flush(members);
+    http
+      .expectOne(`/projects/api/work/${campaign.qualifiedId}`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await done;
+    const work = store.byProject()[ID];
+    expect(work?.status).toBe('loaded');
+    expect(work?.campaigns[campaign.id]).toHaveLength(members.members.length);
+    expect(work?.campaignDescriptions).toEqual({});
+  });
+
+  it('fails the work when a campaign’s members cannot be read', async () => {
+    const store = TestBed.inject(WorkStore);
+    const state = 'a campaign with work in every phase';
+    const done = store.load(ID);
+    await settle();
+    const list = goldenMaster(state, 'listProjectWork');
+    http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
+    await settle();
+    const campaign = list.entities.find((e: WorkEntry) => e.archetype === 'CAMPAIGN');
+    http
+      .expectOne(`/projects/api/work/${campaign.qualifiedId}/members`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    http.expectOne(`/projects/api/work/${campaign.qualifiedId}`).flush(null, {
+      status: 500,
+      statusText: 'Server Error',
     });
+    await done;
+    expect(store.byProject()[ID]?.status).toBe('error');
   });
 
   it('counts zero for a project with no work', async () => {
@@ -76,8 +118,8 @@ describe('WorkStore', () => {
     const done = store.load(ID);
     await settle();
     http
-      .expectOne(`/projects/api/projects/${ID}/entities`)
-      .flush(goldenMaster('a project with no work', 'listProjectEntities'));
+      .expectOne(`/projects/api/projects/${ID}/work`)
+      .flush(goldenMaster('a project with no work', 'listProjectWork'));
     await done;
     expect(store.byProject()[ID]).toEqual({
       status: 'loaded',
@@ -93,13 +135,13 @@ describe('WorkStore', () => {
     const done = store.load(ID);
     await settle();
     http
-      .expectOne(`/projects/api/projects/${ID}/entities`)
+      .expectOne(`/projects/api/projects/${ID}/work`)
       .flush(null, { status: 500, statusText: 'Server Error' });
     await done;
     expect(store.byProject()[ID]?.status).toBe('error');
     void store.load(ID);
     await settle();
-    http.expectOne(`/projects/api/projects/${ID}/entities`);
+    http.expectOne(`/projects/api/projects/${ID}/work`);
   });
 
   describe('finishing with Undo', () => {
@@ -125,7 +167,7 @@ describe('WorkStore', () => {
       const store = TestBed.inject(WorkStore);
       const done = store.load(ID);
       await drain();
-      http.expectOne(`/projects/api/projects/${ID}/entities`).flush({ entities: [ticket, epic] });
+      http.expectOne(`/projects/api/projects/${ID}/work`).flush({ entities: [ticket, epic] });
       await done;
       return store;
     }
@@ -144,12 +186,12 @@ describe('WorkStore', () => {
 
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS - 1);
       await drain();
-      http.expectNone('/projects/api/entities/t-1/status');
+      http.expectNone('/projects/api/work/qits-1/status');
 
       await vi.advanceTimersByTimeAsync(1);
       await drain();
       expect(store.pendingFinishes()['t-1']?.phase).toBe('sending');
-      const request = http.expectOne('/projects/api/entities/t-1/status');
+      const request = http.expectOne('/projects/api/work/qits-1/status');
       expect(request.request.body).toEqual({ target: 'DONE' });
       request.flush({ status: 'DONE' });
       await drain();
@@ -168,7 +210,7 @@ describe('WorkStore', () => {
 
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS * 2);
       await drain();
-      http.expectNone('/projects/api/entities/t-1/status');
+      http.expectNone('/projects/api/work/qits-1/status');
       expect(statusOf(store, 't-1')).toBe('VERIFIED');
     });
 
@@ -178,7 +220,7 @@ describe('WorkStore', () => {
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
       http
-        .expectOne('/projects/api/entities/t-1/status')
+        .expectOne('/projects/api/work/qits-1/status')
         .flush(null, { status: 409, statusText: 'Conflict' });
       await drain();
 
@@ -203,13 +245,13 @@ describe('WorkStore', () => {
 
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS - 2_000);
       await drain();
-      http.expectOne('/projects/api/entities/t-1/status').flush({ status: 'DONE' });
-      http.expectNone('/projects/api/entities/e-1/status');
+      http.expectOne('/projects/api/work/qits-1/status').flush({ status: 'DONE' });
+      http.expectNone('/projects/api/work/qits-2/status');
 
       store.undoFinish('e-1');
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
-      http.expectNone('/projects/api/entities/e-1/status');
+      http.expectNone('/projects/api/work/qits-2/status');
       expect(statusOf(store, 't-1')).toBe('DONE');
       expect(statusOf(store, 'e-1')).toBe('VERIFIED');
     });
@@ -220,15 +262,15 @@ describe('WorkStore', () => {
       store.finishLater(ID, epic);
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
-      const ticketMove = http.expectOne('/projects/api/entities/t-1/status');
-      const epicMove = http.expectOne('/projects/api/entities/e-1/status');
+      const ticketMove = http.expectOne('/projects/api/work/qits-1/status');
+      const epicMove = http.expectOne('/projects/api/work/qits-2/status');
 
       // The ticket's event starts a fetch while the epic's move is still on its way.
       ticketMove.flush({ status: 'DONE' });
       await drain();
       const refreshed = store.refresh(ID);
       await drain();
-      const stale = http.expectOne(`/projects/api/projects/${ID}/entities`);
+      const stale = http.expectOne(`/projects/api/projects/${ID}/work`);
       epicMove.flush({ status: 'DONE' });
       await drain();
       expect(statusOf(store, 'e-1')).toBe('DONE');
@@ -241,7 +283,7 @@ describe('WorkStore', () => {
       // A fetch that started after the finish is believed again.
       const later = store.refresh(ID);
       await drain();
-      http.expectOne(`/projects/api/projects/${ID}/entities`).flush({
+      http.expectOne(`/projects/api/projects/${ID}/work`).flush({
         entities: [
           { ...ticket, status: 'DONE' },
           { ...epic, status: 'DONE' },
@@ -257,7 +299,7 @@ describe('WorkStore', () => {
       store.finishLater(ID, ticket);
       await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
       await drain();
-      http.expectOne('/projects/api/entities/t-1/status').flush({ status: 'DONE' });
+      http.expectOne('/projects/api/work/qits-1/status').flush({ status: 'DONE' });
       await drain();
     });
 
@@ -268,8 +310,8 @@ describe('WorkStore', () => {
       globalThis.dispatchEvent(new Event('pagehide'));
       await drain();
       const sent = [
-        http.expectOne('/projects/api/entities/t-1/status'),
-        http.expectOne('/projects/api/entities/e-1/status'),
+        http.expectOne('/projects/api/work/qits-1/status'),
+        http.expectOne('/projects/api/work/qits-2/status'),
       ];
       expect(sent.map((r) => r.request.keepalive)).toEqual([true, true]);
       sent[0].flush({ status: 'DONE' });
@@ -280,14 +322,24 @@ describe('WorkStore', () => {
   });
 
   describe('transition', () => {
-    const ticket = { id: 't-1', archetype: 'TICKET', status: 'REPORTED' } as WorkEntry;
-    const epic = { id: 'e-1', archetype: 'EPIC', status: 'REFINED' } as WorkEntry;
+    const ticket = {
+      id: 't-1',
+      qualifiedId: 'qits-1',
+      archetype: 'TICKET',
+      status: 'REPORTED',
+    } as WorkEntry;
+    const epic = {
+      id: 'e-1',
+      qualifiedId: 'qits-2',
+      archetype: 'EPIC',
+      status: 'REFINED',
+    } as WorkEntry;
 
     async function loaded(): Promise<InstanceType<typeof WorkStore>> {
       const store = TestBed.inject(WorkStore);
       const done = store.load(ID);
       await settle();
-      http.expectOne(`/projects/api/projects/${ID}/entities`).flush({ entities: [ticket, epic] });
+      http.expectOne(`/projects/api/projects/${ID}/work`).flush({ entities: [ticket, epic] });
       await done;
       return store;
     }
@@ -300,7 +352,7 @@ describe('WorkStore', () => {
       const moved = store.transition(ID, ticket, 'REFINED');
       expect(store.transitioning()['t-1']).toBe('running');
       await settle();
-      const request = http.expectOne('/projects/api/entities/t-1/status');
+      const request = http.expectOne('/projects/api/work/qits-1/status');
       expect(request.request.method).toBe('POST');
       expect(request.request.body).toEqual({ target: 'REFINED' });
       request.flush({ status: 'REFINED' });
@@ -313,7 +365,7 @@ describe('WorkStore', () => {
       const store = await loaded();
       const moved = store.transition(ID, epic, 'DROPPED');
       await settle();
-      const request = http.expectOne('/projects/api/entities/e-1/status');
+      const request = http.expectOne('/projects/api/work/qits-2/status');
       expect(request.request.body).toEqual({ target: 'DROPPED' });
       request.flush({ status: 'DROPPED' });
       await moved;
@@ -325,7 +377,7 @@ describe('WorkStore', () => {
       const moved = store.transition(ID, ticket, 'REFINED');
       await settle();
       http
-        .expectOne('/projects/api/entities/t-1/status')
+        .expectOne('/projects/api/work/qits-1/status')
         .flush(null, { status: 409, statusText: 'Conflict' });
       await moved;
       expect(statusOf(store, 't-1')).toBe('REPORTED');
@@ -345,7 +397,7 @@ describe('WorkStore', () => {
       const refused = store.transition(ID, epic, 'READY_FOR_DEV');
       await settle();
       http
-        .expectOne('/projects/api/entities/e-1/status')
+        .expectOne('/projects/api/work/qits-2/status')
         .flush({ message: GATE }, { status: 409, statusText: 'Conflict' });
       await refused;
       expect(store.refusals()).toEqual({ 'e-1': GATE });
@@ -354,7 +406,7 @@ describe('WorkStore', () => {
       const again = store.transition(ID, epic, 'READY_FOR_DEV');
       expect(store.refusals()).toEqual({});
       await settle();
-      http.expectOne('/projects/api/entities/e-1/status').flush({ status: 'READY_FOR_DEV' });
+      http.expectOne('/projects/api/work/qits-2/status').flush({ status: 'READY_FOR_DEV' });
       await again;
       expect(store.refusals()).toEqual({});
       expect(statusOf(store, 'e-1')).toBe('READY_FOR_DEV');
@@ -366,8 +418,8 @@ describe('WorkStore', () => {
       const moved = store.transitionAll(ID, [refined, epic], 'READY_FOR_DEV');
       await settle();
       const sent = [
-        http.expectOne('/projects/api/entities/t-1/status'),
-        http.expectOne('/projects/api/entities/e-1/status'),
+        http.expectOne('/projects/api/work/qits-1/status'),
+        http.expectOne('/projects/api/work/qits-2/status'),
       ];
       expect(sent.map((r) => r.request.body)).toEqual([
         { target: 'READY_FOR_DEV' },
@@ -387,13 +439,18 @@ describe('WorkStore', () => {
       const moved = store.transition(ID, ticket, 'REFINED');
       await store.transition(ID, ticket, 'REFINED');
       await settle();
-      http.expectOne('/projects/api/entities/t-1/status').flush({ status: 'REFINED' });
+      http.expectOne('/projects/api/work/qits-1/status').flush({ status: 'REFINED' });
       await moved;
     });
   });
 
   describe('dispatch', () => {
-    const epic = { id: 'e-1', archetype: 'EPIC', status: 'READY_FOR_DEV' } as WorkEntry;
+    const epic = {
+      id: 'e-1',
+      qualifiedId: 'qits-2',
+      archetype: 'EPIC',
+      status: 'READY_FOR_DEV',
+    } as WorkEntry;
 
     it.each([
       ['FLOW', 'a ready for dev epic'],
@@ -405,10 +462,10 @@ describe('WorkStore', () => {
         const pressed = store.dispatch(epic, mode);
         expect(store.dispatching()['e-1']).toBe('running');
         await settle();
-        const request = http.expectOne('/projects/api/entities/e-1/dispatch');
+        const request = http.expectOne('/projects/api/work/qits-2/dispatch');
         expect(request.request.method).toBe('POST');
         expect(request.request.body).toEqual({ mode });
-        const answer = goldenMaster(state, 'dispatchEntity');
+        const answer = goldenMaster(state, 'dispatchWork');
         request.flush(answer);
         await pressed;
         expect(store.dispatching()).toEqual({});
@@ -422,7 +479,7 @@ describe('WorkStore', () => {
       await store.dispatch(epic, 'FLOW');
       await settle();
       http
-        .expectOne('/projects/api/entities/e-1/dispatch')
+        .expectOne('/projects/api/work/qits-2/dispatch')
         .flush(null, { status: 409, statusText: 'Conflict' });
       await pressed;
       expect(store.dispatching()['e-1']).toBe('error');

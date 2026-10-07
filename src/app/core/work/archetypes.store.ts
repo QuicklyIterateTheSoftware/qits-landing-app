@@ -1,7 +1,7 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import { listArchetypes } from '../../api/projects';
-import { LIST_ARCHETYPES, type ArchetypeEntry } from './archetypes.consumes';
+import { listWorkArchetypes } from '../../api/projects';
+import { LIST_WORK_ARCHETYPES, type ArchetypeEntry } from './archetypes.consumes';
 
 interface ArchetypesState {
   readonly status: 'idle' | 'loading' | 'loaded' | 'error';
@@ -10,7 +10,7 @@ interface ArchetypesState {
 }
 
 /**
- * qits-projects' archetype registry (`listArchetypes`), one request for the whole app: which
+ * qits-projects' archetype registry (`listWorkArchetypes`), one request for the whole app: which
  * moves each archetype has out of each status, and what a dispatch press runs from it. The work
  * item page builds its Agent and Status actions from it (`work-actions.ts`), so the app holds no
  * status model of its own.
@@ -27,7 +27,7 @@ export const ArchetypesStore = signalStore(
     async load(): Promise<void> {
       if (store.status() !== 'idle' && store.status() !== 'error') return;
       patchState(store, { status: 'loading' });
-      const { data, error } = await consume(listArchetypes(), LIST_ARCHETYPES);
+      const { data, error } = await consume(listWorkArchetypes(), LIST_WORK_ARCHETYPES);
       if (error !== undefined || !data) {
         patchState(store, { status: 'error' });
         return;
