@@ -39,7 +39,7 @@ interface Matcher {
 }
 /** One body path's rule, e.g. `$.phases.REPORTED.flow`. */
 interface Rule {
-  readonly combine: 'AND';
+  readonly combine: 'AND' | 'OR';
   matchers: Matcher[];
 }
 type Rules = Record<string, Rule>;
@@ -58,19 +58,33 @@ interface GeneratedPact {
 const FLOW_FIELDS: readonly (keyof DispatchPhase)[] = ['endsIn', 'enters', 'from', 'phase'];
 
 /**
+ * `enters` is "null where [the phase] moves nothing" (`DispatchPhase`'s own doc comment): REPORTED's
+ * `refine`, IMPLEMENTING's own `implement` and VERIFYING's own `verify` all record it null, while the
+ * very same field is a status word everywhere else in the very same `flow` (REPORTED's `implement`
+ * and `verify`, say). `endsIn`, `from` and `phase` carry no such comment and qits-projects' golden
+ * master, today's and the one it is about to record, never nulls them. One representative element
+ * cannot speak for a whole `flow`, so `enters` is matched by type-or-null everywhere, not just where
+ * today's representative happens to show null.
+ */
+const MAYBE_NULL: ReadonlySet<keyof DispatchPhase> = new Set(['enters']);
+
+/**
  * `addGoldenInteraction` pins every `phases.<STATUS>.flow` array to the length qits-projects
  * happened to record: `type`, min = max = that length, and a `flow` recorded empty gets no rule at
  * all, so it is matched as exactly `[]`. qits-projects is about to lengthen `REPORTED.flow` and give
  * `REFINED.flow` its first phase (qits-1075), and the registry may grow other flows the same way
  * later, so this reshapes every `flow` to `type`, min 0, no max, each element's fields still matched
- * by type.
+ * by type (or, for `enters`, by type-or-null: see `MAYBE_NULL`).
  *
  * Runs on the pact this spec just generated, between the mock server answering (with qits-projects'
  * real recording, unchanged) and `assertPactPart` comparing or committing the result: it only
  * loosens what the committed pact asks a provider to match, not what the store under test read.
  *
  * A `flow` recorded empty has no element to read a shape from, so it borrows `READY_FOR_DEV`'s first
- * one — the one status whose own flow never records a null field.
+ * one — the one status whose own flow never records a null field. The same borrow replaces a
+ * recorded element at position 0 whose `enters` is null (REPORTED's, today): a provider verifies
+ * every element past the recorded length against position 0 alone, so a null there would read
+ * every later, non-null `enters` as a type mismatch (see `openEndedArchetype`).
  */
 function openEndedFlow(generated: string): void {
   const written = JSON.parse(readFileSync(generated, 'utf8')) as GeneratedPact;
@@ -101,13 +115,24 @@ function openEndedArchetype(archetype: DeclaredArchetype, rules: Rules): void {
     if (flow.length === 0) {
       if (!template) throw new Error(`${status}: no recorded flow to open-end it with`);
       flow.push({ ...template });
+    } else if (flow[0].enters == null) {
+      // A provider verifies every element an open-ended flow grows past its recorded length
+      // against element 0 (not against the element whose own position it lands on), so a
+      // null `enters` at position 0 would read every later, non-null `enters` as a type
+      // mismatch despite the `OR(type, null)` rule below: `null` only ever excuses position 0
+      // itself. Swap position 0 for a representative that never nulls it, exactly as an empty
+      // flow is given one above; the mock server already answered the consumer with the real
+      // recording before this runs, so this costs nothing it depends on.
+      if (!template) throw new Error(`${status}: no recorded flow to open-end it with`);
+      flow[0] = { ...template };
     }
     const path = `$.phases.${status}.flow`;
     rules[path] = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
     for (const field of FLOW_FIELDS) {
       const key = `${path}[*].${field}`;
-      if (flow[0][field] == null) delete rules[key];
-      else rules[key] = { combine: 'AND', matchers: [{ match: 'type' }] };
+      rules[key] = MAYBE_NULL.has(field)
+        ? { combine: 'OR', matchers: [{ match: 'type' }, { match: 'null' }] }
+        : { combine: 'AND', matchers: [{ match: 'type' }] };
     }
   }
 }
