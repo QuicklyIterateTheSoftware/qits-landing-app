@@ -91,6 +91,26 @@ describe('workActions', () => {
     });
   });
 
+  // qits-projects is about to give REFINED a flow (qits-1075): dispatch runs it, but `next` stays
+  // null (no single-phase button), so only Dispatch appears, not Implement.
+  it('offers Dispatch at REFINED once the registry gives it a non-empty flow', () => {
+    const epic = registry['EPIC'];
+    const refined = {
+      ...epic,
+      phases: {
+        ...epic.phases,
+        REFINED: {
+          next: undefined,
+          flow: [
+            { phase: 'implement', from: 'REFINED', enters: 'IMPLEMENTING', endsIn: 'IMPLEMENTED' },
+            { phase: 'verify', from: 'IMPLEMENTED', enters: 'VERIFYING', endsIn: 'VERIFIED' },
+          ],
+        },
+      },
+    };
+    expect(shown('EPIC', 'REFINED', refined).agent).toEqual(['Dispatch']);
+  });
+
   it('lists the flow in the Dispatch popover', () => {
     const [agent] = workActions(registry['EPIC'], 'EPIC', 'READY_FOR_DEV');
     expect(lookOf(agent.actions[0]).details).toEqual({

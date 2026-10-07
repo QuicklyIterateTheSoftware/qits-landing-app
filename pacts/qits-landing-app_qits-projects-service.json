@@ -10061,11 +10061,25 @@
                 "archetype": "EPIC",
                 "phases": {
                   "DONE": {
-                    "flow": [],
+                    "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "READY_FOR_DEV",
+                        "phase": "implement"
+                      }
+                    ],
                     "next": null
                   },
                   "DROPPED": {
-                    "flow": [],
+                    "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "READY_FOR_DEV",
+                        "phase": "implement"
+                      }
+                    ],
                     "next": null
                   },
                   "IMPLEMENTED": {
@@ -10129,7 +10143,14 @@
                     }
                   },
                   "REFINED": {
-                    "flow": [],
+                    "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "READY_FOR_DEV",
+                        "phase": "implement"
+                      }
+                    ],
                     "next": null
                   },
                   "REPORTED": {
@@ -10149,7 +10170,14 @@
                     }
                   },
                   "VERIFIED": {
-                    "flow": [],
+                    "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "READY_FOR_DEV",
+                        "phase": "implement"
+                      }
+                    ],
                     "next": null
                   },
                   "VERIFYING": {
@@ -10503,8 +10531,7 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 1,
-                              "min": 1
+                              "min": 0
                             }
                           ]
                         },
@@ -10576,75 +10603,8 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "arrayContains",
-                              "variants": [
-                                {
-                                  "index": 0,
-                                  "rules": {
-                                    "$.endsIn": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.from": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.phase": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    }
-                                  }
-                                },
-                                {
-                                  "index": 1,
-                                  "rules": {
-                                    "$.endsIn": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.enters": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.from": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    },
-                                    "$.phase": {
-                                      "combine": "AND",
-                                      "matchers": [
-                                        {
-                                          "match": "type"
-                                        }
-                                      ]
-                                    }
-                                  }
-                                }
-                              ]
+                              "match": "type",
+                              "min": 0
                             }
                           ]
                         },
@@ -10677,17 +10637,13 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 2,
-                              "min": 2
+                              "min": 0
                             }
                           ]
                         },
                         "$.phases.READY_FOR_DEV.flow[*].endsIn": {
                           "combine": "AND",
                           "matchers": [
-                            {
-                              "match": "type"
-                            },
                             {
                               "match": "type"
                             }
@@ -10698,9 +10654,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            },
-                            {
-                              "match": "type"
                             }
                           ]
                         },
@@ -10709,18 +10662,12 @@
                           "matchers": [
                             {
                               "match": "type"
-                            },
-                            {
-                              "match": "type"
                             }
                           ]
                         },
                         "$.phases.READY_FOR_DEV.flow[*].phase": {
                           "combine": "AND",
                           "matchers": [
-                            {
-                              "match": "type"
-                            },
                             {
                               "match": "type"
                             }
@@ -10763,8 +10710,7 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 1,
-                              "min": 1
+                              "min": 0
                             }
                           ]
                         },
@@ -10821,8 +10767,7 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 1,
-                              "min": 1
+                              "min": 0
                             }
                           ]
                         },
@@ -11234,6 +11179,194 @@
                             {
                               "match": "type"
                             },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DONE.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.phases.DONE.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DONE.flow[*].enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DONE.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DONE.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DROPPED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.phases.DROPPED.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DROPPED.flow[*].enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DROPPED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.DROPPED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.IMPLEMENTING.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFIED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFIED.flow[*].endsIn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFIED.flow[*].enters": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFIED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.VERIFIED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
                             {
                               "match": "type"
                             }
