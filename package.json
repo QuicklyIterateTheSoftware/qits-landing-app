@@ -1,6 +1,6 @@
 {
   "name": "qits-landing-app",
-  "version": "2026.1006.123656",
+  "version": "2026.1007.33401",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -52,7 +52,7 @@
     "@qits/events-golden-masters": "2026.1002.210125",
     "@qits/githost-golden-masters": "2026.1002.190746",
     "@qits/maintenance-golden-masters": "2026.1002.215821",
-    "@qits/projects-golden-masters": "2026.1006.121753",
+    "@qits/projects-golden-masters": "2026.1007.25926",
     "@qits/workspaces-golden-masters": "2026.1003.183318",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
