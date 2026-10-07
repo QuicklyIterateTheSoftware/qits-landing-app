@@ -156,7 +156,7 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
         </ui-spinner>
         @if (pools().length > 0) {
           <ul class="m-0 list-none border-t border-gray-100 p-0">
-            @for (pool of pools(); track pool.name) {
+            @for (pool of pools(); track pool.origin) {
               <li
                 class="flex items-center justify-between gap-2 px-3 py-1.5 text-[0.8125rem] text-gray-600"
               >
