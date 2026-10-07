@@ -8,12 +8,6 @@ export type ActiveProcessResponse = {
     technicalProcessId?: string;
 };
 
-export type AddCampaignMemberRequest = {
-    entityId: string;
-    position?: number;
-    inFlight?: boolean;
-};
-
 export type AddReleaseRequestSource = {
     branch: string;
     requester?: string;
@@ -120,10 +114,6 @@ export type AgentSurfaceConfigurationDto = {
     shipped?: boolean;
 };
 
-export type ApproveCampaignCriterionRequest = {
-    note?: string;
-};
-
 export type ApproveReleaseRequest = {
     mergedSha: string;
     note?: string;
@@ -191,20 +181,6 @@ export type CampaignDispatchDto = {
     agentLaunch?: string;
 };
 
-export type CampaignDto = {
-    id?: string;
-    number?: number;
-    qualifiedId?: string;
-    projectId?: string;
-    slug?: string;
-    title?: string;
-    description?: string;
-    status?: string;
-    blocked?: boolean;
-    start?: CampaignStartDto;
-    members?: Array<CampaignMemberDto>;
-};
-
 export type CampaignEvaluatorDto = {
     connected?: boolean;
     lastSweepCompletedAt?: Instant;
@@ -259,10 +235,6 @@ export type CampaignMemberProgressDto = {
     dispatchError?: string;
 };
 
-export type CampaignMemberResponse = {
-    member?: CampaignMemberDto;
-};
-
 export type CampaignMemberState = 'DROPPED' | 'DONE' | 'DISPATCH_FAILED' | 'JOINED_RUNNING' | 'RUNNING' | 'REFUSED' | 'READY' | 'WAITING';
 
 export type CampaignProgressCampaignDto = {
@@ -280,36 +252,11 @@ export type CampaignProgressDto = {
     members?: Array<CampaignMemberProgressDto>;
 };
 
-export type CampaignProgressResponse = {
-    progress?: CampaignProgressDto;
-};
-
-export type CampaignResponse = {
-    campaign?: CampaignDto;
-};
-
 export type CampaignStartDto = {
     firstStartedAt?: Instant;
     startedAt?: Instant;
     startedBy?: string;
     active?: boolean;
-};
-
-export type CampaignSummaryDto = {
-    id?: string;
-    number?: number;
-    qualifiedId?: string;
-    projectId?: string;
-    title?: string;
-    status?: string;
-    blocked?: boolean;
-    started?: boolean;
-    active?: boolean;
-    members?: number;
-};
-
-export type CampaignsResponse = {
-    campaigns?: Array<CampaignSummaryDto>;
 };
 
 export type CapabilityReportRequest = {
@@ -371,17 +318,6 @@ export type CollectTagsRequest = {
     pins: TagCollectionPinSources;
 };
 
-/**
- * One comment on an entity's thread.
- */
-export type CommentAnswer = {
-    comment?: CommentDto;
-};
-
-export type CommentDeleted = {
-    success?: boolean;
-};
-
 export type CommentDto = {
     id?: string;
     entityId?: string;
@@ -389,27 +325,6 @@ export type CommentDto = {
     body?: string;
     createdAt?: Instant;
     updatedAt?: Instant;
-};
-
-/**
- * An entity's thread, oldest first.
- */
-export type CommentList = {
-    entries?: Array<CommentListEntry>;
-};
-
-export type CommentListEntry = {
-    comment?: CommentDto;
-};
-
-/**
- * A JSON merge patch (RFC 7396) of one comment. body is the only property and is required: it replaces the text, and may not be null or blank. id, entityId, author, createdAt and updatedAt are server-owned; any other property is refused as unknown.
- */
-export type CommentPatch = {
-    /**
-     * The remark as it should now read, Markdown.
-     */
-    body: string;
 };
 
 export type CommitBuildStatusDto = {
@@ -477,18 +392,6 @@ export type CommitSubjectsDto = {
     qualifiedIds?: Array<string>;
 };
 
-export type ConditionCriterion = {
-    id?: string;
-    kind?: string;
-    predicate?: {
-        [key: string]: unknown;
-    };
-};
-
-export type ConditionGroup = {
-    criteria?: Array<ConditionCriterion>;
-};
-
 export type ConflictedPath = {
     path?: string;
     head?: string;
@@ -507,26 +410,6 @@ export type ContainerView = {
     pinnedDaemonVersion?: string;
     daemonVersionStale?: boolean;
     failureDetail?: string;
-};
-
-export type CreateCampaignRequest = {
-    title: string;
-    description?: string;
-};
-
-export type CreateEntityCommentRequest = {
-    body: string;
-};
-
-export type CreateEpicRequest = {
-    title: string;
-    description?: string;
-};
-
-export type CreateFeatureRequest = {
-    title: string;
-    description?: string;
-    dependsOnFeatureId?: string;
 };
 
 export type CreateProjectRepositoryRequest = {
@@ -549,29 +432,6 @@ export type CreateReleaseRequest = {
     summary: string;
     requester?: string;
     priority?: string;
-};
-
-export type CreateTaskRequest = {
-    repositoryId: string;
-    title: string;
-    description?: string;
-    dependsOnTaskId?: string;
-};
-
-export type CreateTicketCommentRequest = {
-    body: string;
-};
-
-export type CreateTicketRequest = {
-    title: string;
-    impetus: string;
-    description?: string;
-    type: string;
-    assignee?: string;
-};
-
-export type CreatedCampaignResponse = {
-    campaign?: CampaignDto;
 };
 
 export type CriterionApprovalDto = {
@@ -613,7 +473,7 @@ export type DeclaredArchetype = {
     permitted?: Array<EntityProperty>;
     legalStatuses?: Array<string>;
     /**
-     * The legal moves out of each status, keyed by every status in lifecycle order: FORWARD first, then SKIP, BACK, DROP/REOPEN. DONE maps to an empty list. Empty for a kind with no lifecycle. The status door (moveEntityStatus) allows exactly these.
+     * The legal moves out of each status, keyed by every status in lifecycle order: FORWARD first, then SKIP, BACK, DROP/REOPEN. DONE maps to an empty list. Empty for a kind with no lifecycle. The status door (setWorkStatus) allows exactly these.
      */
     transitions?: {
         [key: string]: Array<LegalMove>;
@@ -623,7 +483,7 @@ export type DeclaredArchetype = {
      */
     lifecycle?: Array<string>;
     /**
-     * What a dispatch press (dispatchEntity) runs from each status, keyed by every status in lifecycle order. Empty for a kind a dispatch runs no phases on: a feature, a task and a campaign (whose press is its start).
+     * What a dispatch press (dispatchWork) runs from each status, keyed by every status in lifecycle order. Empty for a kind a dispatch runs no phases on: a feature, a task and a campaign (whose press is its start).
      */
     phases?: {
         [key: string]: DispatchPhases;
@@ -633,10 +493,6 @@ export type DeclaredArchetype = {
 export type DeclineReleaseRequest = {
     mergedSha: string;
     note?: string;
-};
-
-export type DeletePageResponse = {
-    success?: boolean;
 };
 
 export type DeletedTag = {
@@ -668,7 +524,7 @@ export type DispatchMode = 'FLOW' | 'PHASE';
 
 export type DispatchPhase = {
     /**
-     * The phase's word: refine, implement or verify — the word dispatchEntity answers in phase.
+     * The phase's word: refine, implement or verify — the word dispatchWork answers in phase.
      */
     phase?: string;
     /**
@@ -696,10 +552,6 @@ export type DispatchPhases = {
     flow?: Array<DispatchPhase>;
 };
 
-export type DispatchRequest = {
-    mode?: string;
-};
-
 export type DnsSpec = {
     domain: string;
     type: ProjectDnsRecordType;
@@ -707,21 +559,6 @@ export type DnsSpec = {
 };
 
 export type DomainOutcome = 'REGISTERED' | 'NO_MATCHING_ZONE' | 'NOT_CONFIGURED' | 'FAILED';
-
-export type DossierAssetEntry = {
-    id?: string;
-    kind?: string;
-    mimeType?: string;
-    label?: string;
-    url?: string;
-    markdown?: string;
-    pageIds?: Array<string>;
-    createdAt?: Instant;
-};
-
-export type DossierAssetList = {
-    assets?: Array<DossierAssetEntry>;
-};
 
 export type DossierPageDto = {
     id?: string;
@@ -760,73 +597,6 @@ export type EntityBlock = {
     blocked?: boolean;
 };
 
-/**
- * An entity's block flag as the write left it.
- */
-export type EntityBlockAnswer = {
-    block?: EntityBlock;
-};
-
-/**
- * What the block flag should become, and why.
- */
-export type EntityBlockRequest = {
-    /**
-     * true to block, false to unblock
-     */
-    blocked: boolean;
-    /**
-     * what is in the way — required when blocking; lands on the entity's thread
-     */
-    reason?: string;
-};
-
-/**
- * A new entity of any archetype: the archetype, plus exactly the body GET /projects/api/entities/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, CAMPAIGN) names its project, a node (FEATURE, TASK) its parent.
- */
-export type EntityCreate = {
-    /**
-     * EPIC, TICKET, FEATURE, TASK or CAMPAIGN
-     */
-    archetype: Archetype;
-    /**
-     * A root's project: its id or its slug.
-     */
-    project?: string;
-    /**
-     * A node's parent — an EPIC for a FEATURE, a FEATURE for a TASK — by UUID or qualified id.
-     */
-    parent?: string;
-    /**
-     * The label.
-     */
-    title?: string;
-    /**
-     * The long-form Markdown body.
-     */
-    description?: string;
-    /**
-     * A ticket's kind, BUG or IMPROVEMENT. MAINTENANCE is reserved for the tickets the platform files about its own stuck release requests, and it closes those itself.
-     */
-    ticketType?: string;
-    /**
-     * Why a ticket came about. Required for a ticket.
-     */
-    impetus?: string;
-    /**
-     * An epic's or a ticket's assignee.
-     */
-    assignee?: string;
-    /**
-     * A task's repository, in the task's project.
-     */
-    repositoryId?: string;
-    /**
-     * A feature's or task's sibling dependency.
-     */
-    dependsOn?: string;
-};
-
 export type EntityDispatchDto = {
     entityId?: string;
     archetype?: string;
@@ -850,74 +620,7 @@ export type EntityDispatchStateDto = {
     mode?: DispatchMode;
 };
 
-/**
- * A project's entities, in tree order.
- */
-export type EntityList = {
-    entities?: Array<EntitySummary>;
-};
-
-/**
- * A JSON merge patch (RFC 7396) of one entity. An absent property is left as it is; an explicit null clears it. At least one property must be named. status, archetype, membership, supersededBy and blocked are refused with the door that moves them; slug and createdBy are server-owned; any other property is refused as unknown. A property the entity's archetype has no slot for is refused (impetus on an epic).
- */
-export type EntityPatch = {
-    /**
-     * The label. Cannot be cleared.
-     */
-    title?: string;
-    /**
-     * The long-form Markdown body; null clears it.
-     */
-    description?: string | null;
-    /**
-     * A ticket's impetus; null clears it.
-     */
-    impetus?: string | null;
-    /**
-     * A ticket's type, BUG or IMPROVEMENT; MAINTENANCE marks a ticket the platform filed and will close itself, and retyping one away from it takes it over. Cannot be cleared.
-     */
-    ticketType?: string;
-    /**
-     * An epic's or a ticket's assignee; null clears it.
-     */
-    assignee?: string | null;
-    /**
-     * A task's repository, in the task's project. Cannot be cleared.
-     */
-    repositoryId?: string;
-    /**
-     * A feature's or task's sibling dependency; null clears it.
-     */
-    dependsOn?: string | null;
-    /**
-     * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or READY_FOR_DEV when it was never marked implementing).
-     */
-    implementedAt?: Instant | null;
-    /**
-     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
-     */
-    implementingAt?: Instant;
-    /**
-     * An epic's or ticket's acceptance criteria, the whole list in order; null or an empty list clears them. Each item is one line of Markdown: not blank, no line break, at most one '.', and fewer than 20 whitespace characters. Editable at REFINED (outside an epic's scope freeze); from READY_FOR_DEV on a changed list is a 409, and restating the same list passes.
-     */
-    acceptanceCriteria?: Array<string> | null;
-};
-
 export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA';
-
-export type EntityRefinementResponse = {
-    refinement?: RefinementDto;
-};
-
-/**
- * A lifecycle move: the status to move to.
- */
-export type EntityStatusMove = {
-    /**
-     * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk (IMPLEMENTING has no move back, and READY_FOR_DEV none to REPORTED), or IMPLEMENTED from READY_FOR_DEV or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
-     */
-    target: string;
-};
 
 export type EntitySummary = {
     id?: string;
@@ -964,26 +667,6 @@ export type EntityTransition = {
 };
 
 export type Entry = {
-    feature?: FeatureDto;
-};
-
-export type Entry1 = {
-    task?: TaskDto;
-};
-
-export type Entry2 = {
-    epic?: EpicDto;
-};
-
-export type Entry3 = {
-    ticket?: TicketDto;
-};
-
-export type Entry4 = {
-    comment?: TicketCommentDto;
-};
-
-export type Entry5 = {
     repository?: RepositoryDto;
     /**
      * The wrapper's .gitmodules names this repository
@@ -991,13 +674,13 @@ export type Entry5 = {
     declared?: boolean;
 };
 
-export type Entry6 = {
+export type Entry1 = {
     path?: string;
     name?: string;
     repositoryId?: string;
 };
 
-export type Entry7 = {
+export type Entry2 = {
     project?: ProjectDto;
 };
 
@@ -1009,41 +692,6 @@ export type EntryOutcome = {
     component?: string;
     outcome?: Outcome;
     warning?: string;
-};
-
-export type EpicDto = {
-    id?: string;
-    projectId?: string;
-    number?: number;
-    qualifiedId?: string;
-    title?: string;
-    slug?: string;
-    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
-    blocked?: boolean;
-    supersededByEpicId?: string;
-    description?: string;
-    acceptanceCriteria?: Array<string>;
-    assignee?: string;
-    createdAt?: Instant;
-    updatedAt?: Instant;
-    workspaces?: Array<WorkspaceReferenceDto>;
-};
-
-export type FeatureDto = {
-    id?: string;
-    epicId?: string;
-    projectId?: string;
-    number?: number;
-    qualifiedId?: string;
-    title?: string;
-    slug?: string;
-    description?: string;
-    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
-    dependsOnFeatureId?: string;
-    implementedOn?: Instant;
-    implementingOn?: Instant;
-    createdAt?: Instant;
-    updatedAt?: Instant;
 };
 
 export type HarnessCapabilityReport = {
@@ -1089,20 +737,6 @@ export type HarnessCapabilityReport = {
     probeDetail?: string;
 };
 
-export type InlineFigureRequest = {
-    sourceId: string;
-    kind: string;
-};
-
-export type InlinedFigure = {
-    id?: string;
-    kind?: string;
-    mimeType?: string;
-    label?: string;
-    url?: string;
-    markdown?: string;
-};
-
 export type Instant = string;
 
 export type KeptTags = {
@@ -1137,10 +771,6 @@ export type LegalMove = {
      * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers). Only a FORWARD or SKIP move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
      */
     gates?: Array<string>;
-};
-
-export type ListPagesResponse = {
-    pages?: Array<DossierPageDto>;
 };
 
 export type ListResponse = {
@@ -1179,14 +809,6 @@ export type MergeConflictDto = {
     conflicts?: Array<ConflictedPath>;
 };
 
-export type MoveCampaignMemberRequest = {
-    position: number;
-};
-
-export type MovePage = {
-    position?: number;
-};
-
 export type NewAttachment = {
     mimeType?: string;
     label: string;
@@ -1199,11 +821,6 @@ export type NewDesign = {
     html: string;
     sourceRoute?: string;
     truncated?: boolean;
-};
-
-export type NewPage = {
-    title: string;
-    body?: string;
 };
 
 export type NonComplyingCommit = {
@@ -1280,6 +897,17 @@ export type ReleaseArtifactsDto = {
     detail?: string;
 };
 
+export type ReleaseAutomationDto = {
+    kind?: string;
+    label?: string;
+    state?: string;
+    foldSha?: string;
+    runId?: string;
+    branch?: string;
+    detail?: string;
+    updatedAt?: Instant;
+};
+
 export type ReleaseGateDto = {
     kind?: string;
     state?: string;
@@ -1350,6 +978,7 @@ export type ReleaseRequestDto = {
     approvedAt?: Instant;
     approvalNote?: string;
     gates?: Array<ReleaseGateDto>;
+    automations?: Array<ReleaseAutomationDto>;
     conflict?: MergeConflictDto;
     version?: string;
     supersededBy?: string;
@@ -1397,273 +1026,164 @@ export type RepositoryDto = {
 };
 
 export type Response = {
-    epic?: EpicDto;
-    successor?: EpicDto;
-};
-
-export type Response1 = {
-    entries?: Array<Entry>;
-};
-
-export type Response10 = {
-    task?: TaskDto;
-};
-
-export type Response11 = {
-    entries?: Array<Entry2>;
-};
-
-export type Response12 = {
-    epic?: EpicDto;
-};
-
-export type Response13 = {
-    entries?: Array<Entry3>;
-};
-
-export type Response14 = {
-    ticket?: TicketDto;
-};
-
-export type Response15 = {
-    task?: TaskDto;
-};
-
-export type Response16 = {
-    task?: TaskDto;
-};
-
-export type Response17 = {
-    success?: boolean;
-};
-
-export type Response18 = {
-    comment?: TicketCommentDto;
-};
-
-export type Response19 = {
-    success?: boolean;
-};
-
-export type Response2 = {
-    epic?: EpicDto;
-};
-
-export type Response20 = {
-    ticket?: TicketDto;
-};
-
-export type Response21 = {
-    ticket?: TicketDto;
-};
-
-export type Response22 = {
-    entries?: Array<Entry4>;
-};
-
-export type Response23 = {
-    ticket?: TicketDto;
-};
-
-export type Response24 = {
-    success?: boolean;
-};
-
-export type Response25 = {
-    comment?: TicketCommentDto;
-};
-
-export type Response26 = {
-    state?: EntityDispatchStateDto;
-};
-
-export type Response27 = {
-    dispatch?: EntityDispatchDto;
-};
-
-export type Response28 = {
     project?: ProjectDto;
 };
 
-export type Response29 = {
+export type Response1 = {
     repositoryId?: string;
 };
 
-export type Response3 = {
-    success?: boolean;
+export type Response10 = {
+    projectId?: string;
+    scheduled?: number;
 };
 
-export type Response30 = {
+export type Response11 = {
+    repository?: RepositoryDto;
+    projectId?: string;
+};
+
+export type Response12 = {
+    requests?: Array<ReleaseRequestDto>;
+};
+
+export type Response13 = {
+    request?: ReleaseRequestDto;
+};
+
+export type Response14 = {
+    request?: ReleaseRequestDto;
+};
+
+export type Response15 = {
+    request?: ReleaseRequestDto;
+};
+
+export type Response16 = {
+    request?: ReleaseRequestDto;
+};
+
+export type Response17 = {
+    requests?: Array<ReleaseRequestDto>;
+};
+
+export type Response18 = {
+    request?: ReleaseRequestDto;
+};
+
+export type Response19 = {
+    request?: ReleaseRequestDto;
+};
+
+export type Response2 = {
     projectId?: string;
     wrapperRepositoryId?: string;
     branch?: string;
     entries?: Array<EntryOutcome>;
 };
 
-export type Response31 = {
-    domain?: DomainOutcome;
-    domainDetail?: string;
-};
-
-export type Response32 = {
-    entries?: Array<Entry5>;
-    wrapper?: WrapperView;
-};
-
-export type Response33 = {
-    entries?: Array<Entry7>;
-};
-
-export type Response34 = {
-    project?: ProjectDto;
-};
-
-export type Response35 = {
-    success?: boolean;
-};
-
-export type Response36 = {
-    repository?: RepositoryDto;
-    projectId?: string;
-    wrapperPath?: string;
-};
-
-export type Response37 = {
-    project?: ProjectDto;
-    wrapper?: RepositoryDto;
-};
-
-export type Response38 = {
-    projectId?: string;
-    scheduled?: number;
-};
-
-export type Response39 = {
-    repository?: RepositoryDto;
-    projectId?: string;
-};
-
-export type Response4 = {
-    feature?: FeatureDto;
-};
-
-export type Response40 = {
-    requests?: Array<ReleaseRequestDto>;
-};
-
-export type Response41 = {
+export type Response20 = {
     request?: ReleaseRequestDto;
 };
 
-export type Response42 = {
+export type Response21 = {
     request?: ReleaseRequestDto;
 };
 
-export type Response43 = {
-    request?: ReleaseRequestDto;
-};
-
-export type Response44 = {
-    requests?: Array<ReleaseRequestDto>;
-};
-
-export type Response45 = {
-    request?: ReleaseRequestDto;
-};
-
-export type Response46 = {
-    request?: ReleaseRequestDto;
-};
-
-export type Response47 = {
-    request?: ReleaseRequestDto;
-};
-
-export type Response48 = {
-    request?: ReleaseRequestDto;
-};
-
-export type Response49 = {
+export type Response22 = {
     approvals?: Array<ReleaseRequestApprovalDto>;
 };
 
-export type Response5 = {
-    entries?: Array<AuditEntryDto>;
-};
-
-export type Response50 = {
+export type Response23 = {
     request?: ReleaseRequestDto;
 };
 
-export type Response51 = {
+export type Response24 = {
     technicalProcessId?: string;
 };
 
-export type Response52 = {
+export type Response25 = {
     repository?: RepositoryDto;
 };
 
-export type Response53 = {
+export type Response26 = {
     repository?: RepositoryDto;
     previousName?: string;
     changed?: boolean;
 };
 
-export type Response54 = {
+export type Response27 = {
     technicalProcessId?: string;
 };
 
-export type Response55 = {
+export type Response28 = {
     technicalProcessId?: string;
 };
 
-export type Response56 = {
+export type Response29 = {
     repositories?: Array<RepositoryCoordinatesDto>;
 };
 
-export type Response57 = {
+export type Response3 = {
+    domain?: DomainOutcome;
+    domainDetail?: string;
+};
+
+export type Response30 = {
     repository?: RepositoryDto;
 };
 
-export type Response58 = {
+export type Response31 = {
     success?: boolean;
 };
 
-export type Response59 = {
+export type Response32 = {
     success?: boolean;
 };
 
-export type Response6 = {
-    feature?: FeatureDto;
-};
-
-export type Response60 = {
+export type Response33 = {
     builds?: Array<CommitBuildStatusDto>;
 };
 
-export type Response61 = {
+export type Response34 = {
     branches?: Array<BranchDto>;
 };
 
-export type Response62 = {
+export type Response35 = {
     repositoryId?: string;
     scheduled?: boolean;
 };
 
-export type Response63 = {
+export type Response36 = {
     technicalProcessId?: string;
 };
 
+export type Response4 = {
+    entries?: Array<Entry>;
+    wrapper?: WrapperView;
+};
+
+export type Response5 = {
+    entries?: Array<Entry2>;
+};
+
+export type Response6 = {
+    project?: ProjectDto;
+};
+
 export type Response7 = {
-    entries?: Array<Entry1>;
+    success?: boolean;
 };
 
 export type Response8 = {
-    feature?: FeatureDto;
+    repository?: RepositoryDto;
+    projectId?: string;
+    wrapperPath?: string;
 };
 
 export type Response9 = {
-    success?: boolean;
+    project?: ProjectDto;
+    wrapper?: RepositoryDto;
 };
 
 export type RevisionDto = {
@@ -1683,10 +1203,6 @@ export type SaveRequest = {
     serializedPrompt?: string;
 };
 
-export type SetCampaignMemberConditionRequest = {
-    groups?: Array<ConditionGroup>;
-};
-
 export type SetMainBranchRequest = {
     branch: string;
 };
@@ -1695,11 +1211,6 @@ export type SetReleaseSourcePriority = {
     branch: string;
     priority: string;
     requester?: string;
-};
-
-export type SetTicketBlockedRequest = {
-    blocked?: boolean;
-    reason?: string;
 };
 
 export type SubmoduleChangesDto = {
@@ -1808,24 +1319,6 @@ export type TagCollectionReportDto = {
     errors?: Array<string>;
 };
 
-export type TaskDto = {
-    id?: string;
-    featureId?: string;
-    projectId?: string;
-    number?: number;
-    qualifiedId?: string;
-    repositoryId?: string;
-    title?: string;
-    slug?: string;
-    description?: string;
-    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
-    dependsOnTaskId?: string;
-    implementedAt?: Instant;
-    implementingAt?: Instant;
-    createdAt?: Instant;
-    updatedAt?: Instant;
-};
-
 export type TechnicalProcessFrame = {
     segment?: string;
     kind?: string;
@@ -1836,50 +1329,9 @@ export type TechnicalProcessFrame = {
     hintTarget?: string;
 };
 
-export type TicketCommentDto = {
-    id?: string;
-    ticketId?: string;
-    author?: string;
-    body?: string;
-    createdAt?: Instant;
-    updatedAt?: Instant;
-};
-
-export type TicketDto = {
-    id?: string;
-    projectId?: string;
-    number?: number;
-    qualifiedId?: string;
-    title?: string;
-    slug?: string;
-    type?: string;
-    status?: 'REPORTED' | 'REFINED' | 'READY_FOR_DEV' | 'IMPLEMENTING' | 'IMPLEMENTED' | 'VERIFYING' | 'VERIFIED' | 'DONE' | 'DROPPED';
-    blocked?: boolean;
-    assignee?: string;
-    createdBy?: string;
-    impetus?: string;
-    description?: string;
-    acceptanceCriteria?: Array<string>;
-    createdAt?: Instant;
-    updatedAt?: Instant;
-    workspaces?: Array<WorkspaceReferenceDto>;
-};
-
 export type TicketType = 'BUG' | 'IMPROVEMENT' | 'MAINTENANCE';
 
-export type TransitionCampaignRequest = {
-    target: string;
-};
-
-export type TransitionEpicRequest = {
-    target?: string;
-};
-
 export type TransitionKind = 'FORWARD' | 'SKIP' | 'BACK' | 'DROP' | 'REOPEN';
-
-export type TransitionTicketRequest = {
-    target?: string;
-};
 
 export type TransitionedEntity = {
     id?: string;
@@ -1918,31 +1370,14 @@ export type UpdateDesign = {
     truncated?: boolean;
 };
 
-export type UpdateFeatureRequest = {
-    title?: string;
-    description?: string;
-    dependsOnFeatureId?: string;
-    clearDependsOn?: boolean;
-    implementedOn?: Instant;
-    clearImplementedOn?: boolean;
-};
-
 export type UpdateProjectRequest = {
     name?: string;
     description?: string;
 };
 
-export type UpdateTaskRequest = {
-    title?: string;
-    description?: string;
-    dependsOnTaskId?: string;
-    clearDependsOn?: boolean;
-    implementedAt?: Instant;
-    clearImplementedAt?: boolean;
-};
-
-export type UpdateTicketCommentRequest = {
-    body: string;
+export type WaiveReleaseRequestAutomations = {
+    foldSha: string;
+    reason: string;
 };
 
 export type WithdrawReleaseRequest = {
@@ -2416,13 +1851,7 @@ export type WorkspaceReferenceDto = {
 export type WrapperView = {
     repositoryId?: string;
     branch?: string;
-    entries?: Array<Entry6>;
-};
-
-export type WritePage = {
-    title?: string;
-    body?: string;
-    version?: number;
+    entries?: Array<Entry1>;
 };
 
 export type GetProjectsApiAgentCapabilitiesData = {
@@ -2744,1431 +2173,6 @@ export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses = {
 
 export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse = GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses[keyof GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses];
 
-export type GetCampaignData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}';
-};
-
-export type GetCampaignErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetCampaignResponses = {
-    /**
-     * OK
-     */
-    200: CampaignResponse;
-};
-
-export type GetCampaignResponse = GetCampaignResponses[keyof GetCampaignResponses];
-
-export type PostProjectsApiCampaignsByIdMembersData = {
-    body: AddCampaignMemberRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/members';
-};
-
-export type PostProjectsApiCampaignsByIdMembersErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiCampaignsByIdMembersResponses = {
-    /**
-     * OK
-     */
-    200: CampaignMemberResponse;
-};
-
-export type PostProjectsApiCampaignsByIdMembersResponse = PostProjectsApiCampaignsByIdMembersResponses[keyof PostProjectsApiCampaignsByIdMembersResponses];
-
-export type DeleteProjectsApiCampaignsByIdMembersByMembershipIdData = {
-    body?: never;
-    path: {
-        id: string;
-        membershipId: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/members/{membershipId}';
-};
-
-export type DeleteProjectsApiCampaignsByIdMembersByMembershipIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiCampaignsByIdMembersByMembershipIdResponses = {
-    /**
-     * No Content
-     */
-    204: void;
-};
-
-export type DeleteProjectsApiCampaignsByIdMembersByMembershipIdResponse = DeleteProjectsApiCampaignsByIdMembersByMembershipIdResponses[keyof DeleteProjectsApiCampaignsByIdMembersByMembershipIdResponses];
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdConditionData = {
-    body: SetCampaignMemberConditionRequest;
-    path: {
-        id: string;
-        membershipId: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/members/{membershipId}/condition';
-};
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdConditionErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdConditionResponses = {
-    /**
-     * OK
-     */
-    200: CampaignMemberResponse;
-};
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdConditionResponse = PutProjectsApiCampaignsByIdMembersByMembershipIdConditionResponses[keyof PutProjectsApiCampaignsByIdMembersByMembershipIdConditionResponses];
-
-export type PostProjectsApiCampaignsByIdMembersByMembershipIdCriteriaByCriterionIdApproveData = {
-    body: ApproveCampaignCriterionRequest;
-    path: {
-        criterionId: string;
-        id: string;
-        membershipId: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/members/{membershipId}/criteria/{criterionId}/approve';
-};
-
-export type PostProjectsApiCampaignsByIdMembersByMembershipIdCriteriaByCriterionIdApproveErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiCampaignsByIdMembersByMembershipIdCriteriaByCriterionIdApproveResponses = {
-    /**
-     * OK
-     */
-    200: CampaignMemberResponse;
-};
-
-export type PostProjectsApiCampaignsByIdMembersByMembershipIdCriteriaByCriterionIdApproveResponse = PostProjectsApiCampaignsByIdMembersByMembershipIdCriteriaByCriterionIdApproveResponses[keyof PostProjectsApiCampaignsByIdMembersByMembershipIdCriteriaByCriterionIdApproveResponses];
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdPositionData = {
-    body: MoveCampaignMemberRequest;
-    path: {
-        id: string;
-        membershipId: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/members/{membershipId}/position';
-};
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdPositionErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdPositionResponses = {
-    /**
-     * OK
-     */
-    200: CampaignResponse;
-};
-
-export type PutProjectsApiCampaignsByIdMembersByMembershipIdPositionResponse = PutProjectsApiCampaignsByIdMembersByMembershipIdPositionResponses[keyof PutProjectsApiCampaignsByIdMembersByMembershipIdPositionResponses];
-
-export type GetProjectsApiCampaignsByIdProgressData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/progress';
-};
-
-export type GetProjectsApiCampaignsByIdProgressErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiCampaignsByIdProgressResponses = {
-    /**
-     * OK
-     */
-    200: CampaignProgressResponse;
-};
-
-export type GetProjectsApiCampaignsByIdProgressResponse = GetProjectsApiCampaignsByIdProgressResponses[keyof GetProjectsApiCampaignsByIdProgressResponses];
-
-export type PostProjectsApiCampaignsByIdTransitionData = {
-    body: TransitionCampaignRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/campaigns/{id}/transition';
-};
-
-export type PostProjectsApiCampaignsByIdTransitionErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiCampaignsByIdTransitionResponses = {
-    /**
-     * OK
-     */
-    200: CampaignResponse;
-};
-
-export type PostProjectsApiCampaignsByIdTransitionResponse = PostProjectsApiCampaignsByIdTransitionResponses[keyof PostProjectsApiCampaignsByIdTransitionResponses];
-
-export type DeleteProjectsApiCommentsByCommentIdData = {
-    body?: never;
-    path: {
-        commentId: string;
-    };
-    query?: never;
-    url: '/projects/api/comments/{commentId}';
-};
-
-export type DeleteProjectsApiCommentsByCommentIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No comment with this id
-     */
-    404: unknown;
-};
-
-export type DeleteProjectsApiCommentsByCommentIdResponses = {
-    /**
-     * The comment is gone
-     */
-    200: CommentDeleted;
-};
-
-export type DeleteProjectsApiCommentsByCommentIdResponse = DeleteProjectsApiCommentsByCommentIdResponses[keyof DeleteProjectsApiCommentsByCommentIdResponses];
-
-export type PatchProjectsApiCommentsByCommentIdData = {
-    body: CommentPatch;
-    path: {
-        commentId: string;
-    };
-    query?: never;
-    url: '/projects/api/comments/{commentId}';
-};
-
-export type PatchProjectsApiCommentsByCommentIdErrors = {
-    /**
-     * Every complaint about the body in one message: not an object, empty, body null or blank or not a string, a server-owned or unknown property
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent editing a comment outside its own project; nothing is written
-     */
-    403: unknown;
-    /**
-     * No comment with this id
-     */
-    404: unknown;
-};
-
-export type PatchProjectsApiCommentsByCommentIdResponses = {
-    /**
-     * The comment as it stands after the edit
-     */
-    200: CommentAnswer;
-};
-
-export type PatchProjectsApiCommentsByCommentIdResponse = PatchProjectsApiCommentsByCommentIdResponses[keyof PatchProjectsApiCommentsByCommentIdResponses];
-
-export type PostProjectsApiEntitiesData = {
-    body: EntityCreate;
-    path?: never;
-    query?: never;
-    url: '/projects/api/entities';
-};
-
-export type PostProjectsApiEntitiesErrors = {
-    /**
-     * Every complaint about the body in one message: not an object, no or an unknown archetype, a property the create schema does not list, a missing required one, a value of the wrong shape, a parent of the wrong kind, or a repository outside the project
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent creating in a project other than its own; nothing is written
-     */
-    403: unknown;
-    /**
-     * The project, the parent or the repository names nothing
-     */
-    404: unknown;
-    /**
-     * The owning epic's status freezes its scope: a node needs the epic REPORTED
-     */
-    409: unknown;
-};
-
-export type PostProjectsApiEntitiesResponses = {
-    /**
-     * The entity as written
-     */
-    201: TransitionedEntity;
-};
-
-export type PostProjectsApiEntitiesResponse = PostProjectsApiEntitiesResponses[keyof PostProjectsApiEntitiesResponses];
-
-export type ListArchetypesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/projects/api/entities/archetypes';
-};
-
-export type ListArchetypesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListArchetypesResponses = {
-    /**
-     * OK
-     */
-    200: ArchetypeRegistryDocument;
-};
-
-export type ListArchetypesResponse = ListArchetypesResponses[keyof ListArchetypesResponses];
-
-export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorData = {
-    body?: never;
-    path: {
-        archetype: string;
-        door: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/archetypes/{archetype}/schemas/{door}';
-};
-
-export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such archetype, or no such door
-     */
-    404: unknown;
-};
-
-export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponses = {
-    /**
-     * The schema
-     */
-    200: {
-        [key: string]: unknown;
-    };
-};
-
-export type GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponse = GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponses[keyof GetProjectsApiEntitiesArchetypesByArchetypeSchemasByDoorResponses];
-
-export type PostProjectsApiEntitiesTransitionData = {
-    body: {
-        [key: string]: EntityTransition;
-    };
-    path?: never;
-    query?: never;
-    url: '/projects/api/entities/transition';
-};
-
-export type PostProjectsApiEntitiesTransitionErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiEntitiesTransitionResponses = {
-    /**
-     * OK
-     */
-    200: {
-        [key: string]: TransitionedEntity;
-    };
-};
-
-export type PostProjectsApiEntitiesTransitionResponse = PostProjectsApiEntitiesTransitionResponses[keyof PostProjectsApiEntitiesTransitionResponses];
-
-export type GetEntityData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}';
-};
-
-export type GetEntityErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-};
-
-export type GetEntityResponses = {
-    /**
-     * The entity
-     */
-    200: TransitionedEntity;
-};
-
-export type GetEntityResponse = GetEntityResponses[keyof GetEntityResponses];
-
-export type PatchProjectsApiEntitiesByIdData = {
-    body: EntityPatch;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}';
-};
-
-export type PatchProjectsApiEntitiesByIdErrors = {
-    /**
-     * Every complaint about the body in one message: not an object, empty, a property that is a move or server-owned or unknown, one the archetype has no slot for, a null where the property cannot be cleared, or a value of the wrong shape
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent writing an entity outside its own project; nothing is written
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-    /**
-     * The owning epic's status freezes what the patch touches, or the acceptance criteria are changed from READY_FOR_DEV on
-     */
-    409: unknown;
-};
-
-export type PatchProjectsApiEntitiesByIdResponses = {
-    /**
-     * The entity as it stands after the edit
-     */
-    200: TransitionedEntity;
-};
-
-export type PatchProjectsApiEntitiesByIdResponse = PatchProjectsApiEntitiesByIdResponses[keyof PatchProjectsApiEntitiesByIdResponses];
-
-export type PostProjectsApiEntitiesByIdBlockedData = {
-    body: EntityBlockRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/blocked';
-};
-
-export type PostProjectsApiEntitiesByIdBlockedErrors = {
-    /**
-     * Blocking with no reason
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent blocking outside its own project; nothing is written
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-    /**
-     * A feature or a task (which runs no phase of its own), or a status that starts no phase (VERIFIED, DONE, DROPPED)
-     */
-    409: unknown;
-};
-
-export type PostProjectsApiEntitiesByIdBlockedResponses = {
-    /**
-     * The flag as the write left it
-     */
-    200: EntityBlockAnswer;
-};
-
-export type PostProjectsApiEntitiesByIdBlockedResponse = PostProjectsApiEntitiesByIdBlockedResponses[keyof PostProjectsApiEntitiesByIdBlockedResponses];
-
-export type ListEntityCommentsData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/comments';
-};
-
-export type ListEntityCommentsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-};
-
-export type ListEntityCommentsResponses = {
-    /**
-     * The thread, oldest first
-     */
-    200: CommentList;
-};
-
-export type ListEntityCommentsResponse = ListEntityCommentsResponses[keyof ListEntityCommentsResponses];
-
-export type PostProjectsApiEntitiesByIdCommentsData = {
-    body: CreateEntityCommentRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/comments';
-};
-
-export type PostProjectsApiEntitiesByIdCommentsErrors = {
-    /**
-     * A blank body
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent commenting outside its own project; nothing is written
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-};
-
-export type PostProjectsApiEntitiesByIdCommentsResponses = {
-    /**
-     * The comment as written
-     */
-    200: CommentAnswer;
-};
-
-export type PostProjectsApiEntitiesByIdCommentsResponse = PostProjectsApiEntitiesByIdCommentsResponses[keyof PostProjectsApiEntitiesByIdCommentsResponses];
-
-export type GetProjectsApiEntitiesByIdDispatchData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/dispatch';
-};
-
-export type GetProjectsApiEntitiesByIdDispatchErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiEntitiesByIdDispatchResponses = {
-    /**
-     * OK
-     */
-    200: Response26;
-};
-
-export type GetProjectsApiEntitiesByIdDispatchResponse = GetProjectsApiEntitiesByIdDispatchResponses[keyof GetProjectsApiEntitiesByIdDispatchResponses];
-
-export type DispatchEntityData = {
-    body: DispatchRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/dispatch';
-};
-
-export type DispatchEntityErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DispatchEntityResponses = {
-    /**
-     * The dispatch made, or — for a campaign — its progress as the start press left it
-     */
-    200: Response27 | CampaignProgressResponse;
-};
-
-export type DispatchEntityResponse = DispatchEntityResponses[keyof DispatchEntityResponses];
-
-export type GetProjectsApiEntitiesByIdRefinementData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/refinement';
-};
-
-export type GetProjectsApiEntitiesByIdRefinementErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiEntitiesByIdRefinementResponses = {
-    /**
-     * OK
-     */
-    200: EntityRefinementResponse;
-};
-
-export type GetProjectsApiEntitiesByIdRefinementResponse = GetProjectsApiEntitiesByIdRefinementResponses[keyof GetProjectsApiEntitiesByIdRefinementResponses];
-
-export type PostProjectsApiEntitiesByIdRefinementData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/refinement';
-};
-
-export type PostProjectsApiEntitiesByIdRefinementErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiEntitiesByIdRefinementResponses = {
-    /**
-     * OK
-     */
-    200: EntityRefinementResponse;
-};
-
-export type PostProjectsApiEntitiesByIdRefinementResponse = PostProjectsApiEntitiesByIdRefinementResponses[keyof PostProjectsApiEntitiesByIdRefinementResponses];
-
-export type MoveEntityStatusData = {
-    body: EntityStatusMove;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/entities/{id}/status';
-};
-
-export type MoveEntityStatusErrors = {
-    /**
-     * No target
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent moving an epic, or an entity outside its own project; nothing is written
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-    /**
-     * A move the lifecycle does not allow, a target naming no status, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — no acceptance criteria into REFINED or READY_FOR_DEV (ACCEPTANCE_CRITERIA), or REFINED to READY_FOR_DEV by a caller this service did not verify as a person (PERSON_APPROVAL)
-     */
-    409: unknown;
-};
-
-export type MoveEntityStatusResponses = {
-    /**
-     * The entity as the move left it
-     */
-    200: TransitionedEntity;
-};
-
-export type MoveEntityStatusResponse = MoveEntityStatusResponses[keyof MoveEntityStatusResponses];
-
-export type ListEpicDossierPagesData = {
-    body?: never;
-    path: {
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier';
-};
-
-export type ListEpicDossierPagesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListEpicDossierPagesResponses = {
-    /**
-     * OK
-     */
-    200: ListPagesResponse;
-};
-
-export type ListEpicDossierPagesResponse = ListEpicDossierPagesResponses[keyof ListEpicDossierPagesResponses];
-
-export type PostProjectsApiEpicsByEpicIdDossierData = {
-    body: NewPage;
-    path: {
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier';
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierResponse = PostProjectsApiEpicsByEpicIdDossierResponses[keyof PostProjectsApiEpicsByEpicIdDossierResponses];
-
-export type ListEpicDossierAssetsData = {
-    body?: never;
-    path: {
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier-assets';
-};
-
-export type ListEpicDossierAssetsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListEpicDossierAssetsResponses = {
-    /**
-     * OK
-     */
-    200: DossierAssetList;
-};
-
-export type ListEpicDossierAssetsResponse = ListEpicDossierAssetsResponses[keyof ListEpicDossierAssetsResponses];
-
-export type PostProjectsApiEpicsByEpicIdDossierAssetsData = {
-    body: InlineFigureRequest;
-    path: {
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier-assets';
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierAssetsErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierAssetsResponses = {
-    /**
-     * OK
-     */
-    200: InlinedFigure;
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierAssetsResponse = PostProjectsApiEpicsByEpicIdDossierAssetsResponses[keyof PostProjectsApiEpicsByEpicIdDossierAssetsResponses];
-
-export type GetDossierAssetContentData = {
-    body?: never;
-    path: {
-        assetId: string;
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier-assets/{assetId}/content';
-};
-
-export type GetDossierAssetContentErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetDossierAssetContentResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type DeleteProjectsApiEpicsByEpicIdDossierByPageIdData = {
-    body?: never;
-    path: {
-        epicId: string;
-        pageId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier/{pageId}';
-};
-
-export type DeleteProjectsApiEpicsByEpicIdDossierByPageIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponses = {
-    /**
-     * OK
-     */
-    200: DeletePageResponse;
-};
-
-export type DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponse = DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponses[keyof DeleteProjectsApiEpicsByEpicIdDossierByPageIdResponses];
-
-export type GetEpicDossierPageData = {
-    body?: never;
-    path: {
-        epicId: string;
-        pageId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier/{pageId}';
-};
-
-export type GetEpicDossierPageErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetEpicDossierPageResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type GetEpicDossierPageResponse = GetEpicDossierPageResponses[keyof GetEpicDossierPageResponses];
-
-export type PutProjectsApiEpicsByEpicIdDossierByPageIdData = {
-    body: WritePage;
-    path: {
-        epicId: string;
-        pageId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier/{pageId}';
-};
-
-export type PutProjectsApiEpicsByEpicIdDossierByPageIdErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiEpicsByEpicIdDossierByPageIdResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type PutProjectsApiEpicsByEpicIdDossierByPageIdResponse = PutProjectsApiEpicsByEpicIdDossierByPageIdResponses[keyof PutProjectsApiEpicsByEpicIdDossierByPageIdResponses];
-
-export type PostProjectsApiEpicsByEpicIdDossierByPageIdMoveData = {
-    body: MovePage;
-    path: {
-        epicId: string;
-        pageId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/dossier/{pageId}/move';
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierByPageIdMoveErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierByPageIdMoveResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type PostProjectsApiEpicsByEpicIdDossierByPageIdMoveResponse = PostProjectsApiEpicsByEpicIdDossierByPageIdMoveResponses[keyof PostProjectsApiEpicsByEpicIdDossierByPageIdMoveResponses];
-
-export type GetProjectsApiEpicsByEpicIdFeaturesData = {
-    body?: never;
-    path: {
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/features';
-};
-
-export type GetProjectsApiEpicsByEpicIdFeaturesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiEpicsByEpicIdFeaturesResponses = {
-    /**
-     * OK
-     */
-    200: Response1;
-};
-
-export type GetProjectsApiEpicsByEpicIdFeaturesResponse = GetProjectsApiEpicsByEpicIdFeaturesResponses[keyof GetProjectsApiEpicsByEpicIdFeaturesResponses];
-
-export type PostProjectsApiEpicsByEpicIdFeaturesData = {
-    body: CreateFeatureRequest;
-    path: {
-        epicId: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{epicId}/features';
-};
-
-export type PostProjectsApiEpicsByEpicIdFeaturesErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiEpicsByEpicIdFeaturesResponses = {
-    /**
-     * OK
-     */
-    200: Response4;
-};
-
-export type PostProjectsApiEpicsByEpicIdFeaturesResponse = PostProjectsApiEpicsByEpicIdFeaturesResponses[keyof PostProjectsApiEpicsByEpicIdFeaturesResponses];
-
-export type DeleteProjectsApiEpicsByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{id}';
-};
-
-export type DeleteProjectsApiEpicsByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiEpicsByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response3;
-};
-
-export type DeleteProjectsApiEpicsByIdResponse = DeleteProjectsApiEpicsByIdResponses[keyof DeleteProjectsApiEpicsByIdResponses];
-
-export type GetProjectsApiEpicsByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{id}';
-};
-
-export type GetProjectsApiEpicsByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiEpicsByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response2;
-};
-
-export type GetProjectsApiEpicsByIdResponse = GetProjectsApiEpicsByIdResponses[keyof GetProjectsApiEpicsByIdResponses];
-
-export type GetProjectsApiEpicsByIdAuditData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{id}/audit';
-};
-
-export type GetProjectsApiEpicsByIdAuditErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiEpicsByIdAuditResponses = {
-    /**
-     * OK
-     */
-    200: Response5;
-};
-
-export type GetProjectsApiEpicsByIdAuditResponse = GetProjectsApiEpicsByIdAuditResponses[keyof GetProjectsApiEpicsByIdAuditResponses];
-
-export type TransitionEpicData = {
-    body: TransitionEpicRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/epics/{id}/transition';
-};
-
-export type TransitionEpicErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type TransitionEpicResponses = {
-    /**
-     * OK
-     */
-    200: Response;
-};
-
-export type TransitionEpicResponse = TransitionEpicResponses[keyof TransitionEpicResponses];
-
-export type GetProjectsApiFeaturesByFeatureIdTasksData = {
-    body?: never;
-    path: {
-        featureId: string;
-    };
-    query?: never;
-    url: '/projects/api/features/{featureId}/tasks';
-};
-
-export type GetProjectsApiFeaturesByFeatureIdTasksErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiFeaturesByFeatureIdTasksResponses = {
-    /**
-     * OK
-     */
-    200: Response7;
-};
-
-export type GetProjectsApiFeaturesByFeatureIdTasksResponse = GetProjectsApiFeaturesByFeatureIdTasksResponses[keyof GetProjectsApiFeaturesByFeatureIdTasksResponses];
-
-export type PostProjectsApiFeaturesByFeatureIdTasksData = {
-    body: CreateTaskRequest;
-    path: {
-        featureId: string;
-    };
-    query?: never;
-    url: '/projects/api/features/{featureId}/tasks';
-};
-
-export type PostProjectsApiFeaturesByFeatureIdTasksErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiFeaturesByFeatureIdTasksResponses = {
-    /**
-     * OK
-     */
-    200: Response10;
-};
-
-export type PostProjectsApiFeaturesByFeatureIdTasksResponse = PostProjectsApiFeaturesByFeatureIdTasksResponses[keyof PostProjectsApiFeaturesByFeatureIdTasksResponses];
-
-export type DeleteProjectsApiFeaturesByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/features/{id}';
-};
-
-export type DeleteProjectsApiFeaturesByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiFeaturesByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response9;
-};
-
-export type DeleteProjectsApiFeaturesByIdResponse = DeleteProjectsApiFeaturesByIdResponses[keyof DeleteProjectsApiFeaturesByIdResponses];
-
-export type GetProjectsApiFeaturesByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/features/{id}';
-};
-
-export type GetProjectsApiFeaturesByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiFeaturesByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response8;
-};
-
-export type GetProjectsApiFeaturesByIdResponse = GetProjectsApiFeaturesByIdResponses[keyof GetProjectsApiFeaturesByIdResponses];
-
-export type PutProjectsApiFeaturesByIdData = {
-    body: UpdateFeatureRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/features/{id}';
-};
-
-export type PutProjectsApiFeaturesByIdErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiFeaturesByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response6;
-};
-
-export type PutProjectsApiFeaturesByIdResponse = PutProjectsApiFeaturesByIdResponses[keyof PutProjectsApiFeaturesByIdResponses];
-
 export type PostProjectsApiGcTagsData = {
     body: CollectTagsRequest;
     path?: never;
@@ -4249,7 +2253,7 @@ export type ListProjectsResponses = {
     /**
      * OK
      */
-    200: Response33;
+    200: Response5;
 };
 
 export type ListProjectsResponse = ListProjectsResponses[keyof ListProjectsResponses];
@@ -4284,7 +2288,7 @@ export type PostProjectsApiProjectsResponses = {
     /**
      * The project exists, with its wrapper repository
      */
-    200: Response37;
+    200: Response9;
 };
 
 export type PostProjectsApiProjectsResponse = PostProjectsApiProjectsResponses[keyof PostProjectsApiProjectsResponses];
@@ -4313,7 +2317,7 @@ export type DeleteProjectsApiProjectsByIdResponses = {
     /**
      * OK
      */
-    200: Response35;
+    200: Response7;
 };
 
 export type DeleteProjectsApiProjectsByIdResponse = DeleteProjectsApiProjectsByIdResponses[keyof DeleteProjectsApiProjectsByIdResponses];
@@ -4342,7 +2346,7 @@ export type GetProjectResponses = {
     /**
      * OK
      */
-    200: Response34;
+    200: Response6;
 };
 
 export type GetProjectResponse = GetProjectResponses[keyof GetProjectResponses];
@@ -4375,7 +2379,7 @@ export type PutProjectsApiProjectsByIdResponses = {
     /**
      * OK
      */
-    200: Response28;
+    200: Response;
 };
 
 export type PutProjectsApiProjectsByIdResponse = PutProjectsApiProjectsByIdResponses[keyof PutProjectsApiProjectsByIdResponses];
@@ -4467,173 +2471,6 @@ export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponses = {
 
 export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponse = PostProjectsApiProjectsByProjectIdAgentContainerStopResponses[keyof PostProjectsApiProjectsByProjectIdAgentContainerStopResponses];
 
-export type ListProjectCampaignsData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/projects/api/projects/{projectId}/campaigns';
-};
-
-export type ListProjectCampaignsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListProjectCampaignsResponses = {
-    /**
-     * OK
-     */
-    200: CampaignsResponse;
-};
-
-export type ListProjectCampaignsResponse = ListProjectCampaignsResponses[keyof ListProjectCampaignsResponses];
-
-export type PostProjectsApiProjectsByProjectIdCampaignsData = {
-    body: CreateCampaignRequest;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/projects/api/projects/{projectId}/campaigns';
-};
-
-export type PostProjectsApiProjectsByProjectIdCampaignsErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiProjectsByProjectIdCampaignsResponses = {
-    /**
-     * OK
-     */
-    200: CreatedCampaignResponse;
-};
-
-export type PostProjectsApiProjectsByProjectIdCampaignsResponse = PostProjectsApiProjectsByProjectIdCampaignsResponses[keyof PostProjectsApiProjectsByProjectIdCampaignsResponses];
-
-export type ListProjectEntitiesData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: {
-        archetype?: string;
-        parent?: string;
-        status?: string;
-    };
-    url: '/projects/api/projects/{projectId}/entities';
-};
-
-export type ListProjectEntitiesErrors = {
-    /**
-     * An archetype or a status naming none
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such project, or no such parent
-     */
-    404: unknown;
-};
-
-export type ListProjectEntitiesResponses = {
-    /**
-     * The entities
-     */
-    200: EntityList;
-};
-
-export type ListProjectEntitiesResponse = ListProjectEntitiesResponses[keyof ListProjectEntitiesResponses];
-
-export type ListProjectEpicsData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: {
-        status?: string;
-    };
-    url: '/projects/api/projects/{projectId}/epics';
-};
-
-export type ListProjectEpicsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListProjectEpicsResponses = {
-    /**
-     * OK
-     */
-    200: Response11;
-};
-
-export type ListProjectEpicsResponse = ListProjectEpicsResponses[keyof ListProjectEpicsResponses];
-
-export type PostProjectsApiProjectsByProjectIdEpicsData = {
-    body: CreateEpicRequest;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/projects/api/projects/{projectId}/epics';
-};
-
-export type PostProjectsApiProjectsByProjectIdEpicsErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiProjectsByProjectIdEpicsResponses = {
-    /**
-     * OK
-     */
-    200: Response12;
-};
-
-export type PostProjectsApiProjectsByProjectIdEpicsResponse = PostProjectsApiProjectsByProjectIdEpicsResponses[keyof PostProjectsApiProjectsByProjectIdEpicsResponses];
-
 export type GetProjectsApiProjectsByProjectIdEventsData = {
     body?: never;
     path: {
@@ -4691,7 +2528,7 @@ export type PostProjectsApiProjectsByProjectIdReconcileResponses = {
     /**
      * The reconcile ran. A failed re-assertion is still a 200 — the outcome is the result.
      */
-    200: Response31;
+    200: Response3;
 };
 
 export type PostProjectsApiProjectsByProjectIdReconcileResponse = PostProjectsApiProjectsByProjectIdReconcileResponses[keyof PostProjectsApiProjectsByProjectIdReconcileResponses];
@@ -4751,7 +2588,7 @@ export type ListProjectReleaseRequestsResponses = {
     /**
      * OK
      */
-    200: Response40;
+    200: Response12;
 };
 
 export type ListProjectReleaseRequestsResponse = ListProjectReleaseRequestsResponses[keyof ListProjectReleaseRequestsResponses];
@@ -4780,7 +2617,7 @@ export type ListProjectRepositoriesResponses = {
     /**
      * OK
      */
-    200: Response32;
+    200: Response4;
 };
 
 export type ListProjectRepositoriesResponse = ListProjectRepositoriesResponses[keyof ListProjectRepositoriesResponses];
@@ -4813,7 +2650,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesResponses = {
     /**
      * The repository exists and the wrapper names it
      */
-    200: Response36;
+    200: Response8;
 };
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesResponse = PostProjectsApiProjectsByProjectIdRepositoriesResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesResponses];
@@ -4850,7 +2687,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponses = {
     /**
      * The repository is registered under this project, with that name as its alias
      */
-    200: Response39;
+    200: Response11;
 };
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponse = PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponses];
@@ -4883,7 +2720,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses = 
     /**
      * Queued; the body says how many
      */
-    202: Response38;
+    202: Response10;
 };
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse = PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses];
@@ -4917,7 +2754,7 @@ export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameRespons
     /**
      * The name resolves
      */
-    200: Response29;
+    200: Response1;
 };
 
 export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponse = GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponses[keyof GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponses];
@@ -4954,74 +2791,10 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses = {
     /**
      * The reconcile ran. A per-entry failure is still a 200 — the outcomes are the result.
      */
-    200: Response30;
+    200: Response2;
 };
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse = PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses];
-
-export type ListProjectTicketsData = {
-    body?: never;
-    path: {
-        projectId: string;
-    };
-    query?: {
-        status?: string;
-    };
-    url: '/projects/api/projects/{projectId}/tickets';
-};
-
-export type ListProjectTicketsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListProjectTicketsResponses = {
-    /**
-     * OK
-     */
-    200: Response13;
-};
-
-export type ListProjectTicketsResponse = ListProjectTicketsResponses[keyof ListProjectTicketsResponses];
-
-export type PostProjectsApiProjectsByProjectIdTicketsData = {
-    body: CreateTicketRequest;
-    path: {
-        projectId: string;
-    };
-    query?: never;
-    url: '/projects/api/projects/{projectId}/tickets';
-};
-
-export type PostProjectsApiProjectsByProjectIdTicketsErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiProjectsByProjectIdTicketsResponses = {
-    /**
-     * OK
-     */
-    200: Response14;
-};
-
-export type PostProjectsApiProjectsByProjectIdTicketsResponse = PostProjectsApiProjectsByProjectIdTicketsResponses[keyof PostProjectsApiProjectsByProjectIdTicketsResponses];
 
 export type ListProjectWorkData = {
     body?: never;
@@ -5686,7 +3459,7 @@ export type GetProjectsApiRepositoriesResponses = {
     /**
      * OK
      */
-    200: Response56;
+    200: Response29;
 };
 
 export type GetProjectsApiRepositoriesResponse = GetProjectsApiRepositoriesResponses[keyof GetProjectsApiRepositoriesResponses];
@@ -5715,7 +3488,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdResponses = {
     /**
      * OK
      */
-    200: Response59;
+    200: Response32;
 };
 
 export type DeleteProjectsApiRepositoriesByRepoIdResponse = DeleteProjectsApiRepositoriesByRepoIdResponses[keyof DeleteProjectsApiRepositoriesByRepoIdResponses];
@@ -5744,7 +3517,7 @@ export type GetRepositoryResponses = {
     /**
      * OK
      */
-    200: Response57;
+    200: Response30;
 };
 
 export type GetRepositoryResponse = GetRepositoryResponses[keyof GetRepositoryResponses];
@@ -5781,7 +3554,7 @@ export type PatchProjectsApiRepositoriesByRepoIdResponses = {
     /**
      * The repository answers to the new name
      */
-    200: Response53;
+    200: Response26;
 };
 
 export type PatchProjectsApiRepositoriesByRepoIdResponse = PatchProjectsApiRepositoriesByRepoIdResponses[keyof PatchProjectsApiRepositoriesByRepoIdResponses];
@@ -5810,7 +3583,7 @@ export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponses = {
     /**
      * OK
      */
-    200: Response63;
+    200: Response36;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponse = GetProjectsApiRepositoriesByRepoIdActiveProcessResponses[keyof GetProjectsApiRepositoriesByRepoIdActiveProcessResponses];
@@ -5843,7 +3616,7 @@ export type PostProjectsApiRepositoriesByRepoIdBackupSyncResponses = {
     /**
      * Queued
      */
-    202: Response62;
+    202: Response35;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdBackupSyncResponse = PostProjectsApiRepositoriesByRepoIdBackupSyncResponses[keyof PostProjectsApiRepositoriesByRepoIdBackupSyncResponses];
@@ -5874,7 +3647,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponses = {
     /**
      * OK
      */
-    200: Response58;
+    200: Response31;
 };
 
 export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponse = DeleteProjectsApiRepositoriesByRepoIdBranchesResponses[keyof DeleteProjectsApiRepositoriesByRepoIdBranchesResponses];
@@ -5903,7 +3676,7 @@ export type GetProjectsApiRepositoriesByRepoIdBranchesResponses = {
     /**
      * OK
      */
-    200: Response61;
+    200: Response34;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdBranchesResponse = GetProjectsApiRepositoriesByRepoIdBranchesResponses[keyof GetProjectsApiRepositoriesByRepoIdBranchesResponses];
@@ -5996,7 +3769,7 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses
     /**
      * OK
      */
-    200: Response60;
+    200: Response33;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponse = GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses[keyof GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses];
@@ -6094,7 +3867,7 @@ export type PutProjectsApiRepositoriesByRepoIdMainBranchResponses = {
     /**
      * OK
      */
-    200: Response52;
+    200: Response25;
 };
 
 export type PutProjectsApiRepositoriesByRepoIdMainBranchResponse = PutProjectsApiRepositoriesByRepoIdMainBranchResponses[keyof PutProjectsApiRepositoriesByRepoIdMainBranchResponses];
@@ -6123,7 +3896,7 @@ export type PostProjectsApiRepositoriesByRepoIdPullResponses = {
     /**
      * OK
      */
-    200: Response55;
+    200: Response28;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdPullResponse = PostProjectsApiRepositoriesByRepoIdPullResponses[keyof PostProjectsApiRepositoriesByRepoIdPullResponses];
@@ -6152,7 +3925,7 @@ export type PostProjectsApiRepositoriesByRepoIdPushResponses = {
     /**
      * OK
      */
-    200: Response54;
+    200: Response27;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdPushResponse = PostProjectsApiRepositoriesByRepoIdPushResponses[keyof PostProjectsApiRepositoriesByRepoIdPushResponses];
@@ -6183,7 +3956,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponses = {
     /**
      * OK
      */
-    200: Response44;
+    200: Response17;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponses];
@@ -6216,7 +3989,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponses = {
     /**
      * OK
      */
-    200: Response47;
+    200: Response20;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponses];
@@ -6246,7 +4019,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse
     /**
      * OK
      */
-    200: Response45;
+    200: Response18;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses];
@@ -6276,7 +4049,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproval
     /**
      * OK
      */
-    200: Response49;
+    200: Response22;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponses];
@@ -6310,7 +4083,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprove
     /**
      * OK
      */
-    200: Response48;
+    200: Response21;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponses];
@@ -6344,6 +4117,69 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifact
 };
 
 export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses];
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversData = {
+    body: WaiveReleaseRequestAutomations;
+    path: {
+        repoId: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/automations/waivers';
+};
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponses = {
+    /**
+     * OK
+     */
+    200: Response14;
+};
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponses];
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsData = {
+    body?: never;
+    path: {
+        kind: string;
+        repoId: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/automations/{kind}/runs';
+};
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesData = {
     body?: never;
@@ -6531,7 +4367,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDecline
     /**
      * OK
      */
-    200: Response46;
+    200: Response19;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponses];
@@ -6562,7 +4398,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelin
     /**
      * OK
      */
-    200: Response43;
+    200: Response16;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponses];
@@ -6596,7 +4432,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSources
     /**
      * OK
      */
-    200: Response50;
+    200: Response23;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponses];
@@ -6630,7 +4466,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSources
     /**
      * OK
      */
-    200: Response42;
+    200: Response15;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponses];
@@ -6664,7 +4500,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdra
     /**
      * OK
      */
-    200: Response41;
+    200: Response13;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponses];
@@ -6693,7 +4529,7 @@ export type PostProjectsApiRepositoriesByRepoIdSyncResponses = {
     /**
      * OK
      */
-    200: Response51;
+    200: Response24;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdSyncResponse = PostProjectsApiRepositoriesByRepoIdSyncResponses[keyof PostProjectsApiRepositoriesByRepoIdSyncResponses];
@@ -6727,97 +4563,6 @@ export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponses = {
 
 export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponse = GetProjectsApiRepositoriesByRepoIdSyncStatusResponses[keyof GetProjectsApiRepositoriesByRepoIdSyncStatusResponses];
 
-export type DeleteProjectsApiTasksByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tasks/{id}';
-};
-
-export type DeleteProjectsApiTasksByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiTasksByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response17;
-};
-
-export type DeleteProjectsApiTasksByIdResponse = DeleteProjectsApiTasksByIdResponses[keyof DeleteProjectsApiTasksByIdResponses];
-
-export type GetProjectsApiTasksByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tasks/{id}';
-};
-
-export type GetProjectsApiTasksByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiTasksByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response16;
-};
-
-export type GetProjectsApiTasksByIdResponse = GetProjectsApiTasksByIdResponses[keyof GetProjectsApiTasksByIdResponses];
-
-export type PutProjectsApiTasksByIdData = {
-    body: UpdateTaskRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tasks/{id}';
-};
-
-export type PutProjectsApiTasksByIdErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiTasksByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response15;
-};
-
-export type PutProjectsApiTasksByIdResponse = PutProjectsApiTasksByIdResponses[keyof PutProjectsApiTasksByIdResponses];
-
 export type GetProjectsApiTechnicalProcessesByIdEventsData = {
     body?: never;
     path: {
@@ -6846,444 +4591,6 @@ export type GetProjectsApiTechnicalProcessesByIdEventsResponses = {
 };
 
 export type GetProjectsApiTechnicalProcessesByIdEventsResponse = GetProjectsApiTechnicalProcessesByIdEventsResponses[keyof GetProjectsApiTechnicalProcessesByIdEventsResponses];
-
-export type DeleteProjectsApiTicketCommentsByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/ticket-comments/{id}';
-};
-
-export type DeleteProjectsApiTicketCommentsByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiTicketCommentsByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response19;
-};
-
-export type DeleteProjectsApiTicketCommentsByIdResponse = DeleteProjectsApiTicketCommentsByIdResponses[keyof DeleteProjectsApiTicketCommentsByIdResponses];
-
-export type PutProjectsApiTicketCommentsByIdData = {
-    body: UpdateTicketCommentRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/ticket-comments/{id}';
-};
-
-export type PutProjectsApiTicketCommentsByIdErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiTicketCommentsByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response18;
-};
-
-export type PutProjectsApiTicketCommentsByIdResponse = PutProjectsApiTicketCommentsByIdResponses[keyof PutProjectsApiTicketCommentsByIdResponses];
-
-export type DeleteProjectsApiTicketsByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{id}';
-};
-
-export type DeleteProjectsApiTicketsByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiTicketsByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response24;
-};
-
-export type DeleteProjectsApiTicketsByIdResponse = DeleteProjectsApiTicketsByIdResponses[keyof DeleteProjectsApiTicketsByIdResponses];
-
-export type GetProjectsApiTicketsByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{id}';
-};
-
-export type GetProjectsApiTicketsByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiTicketsByIdResponses = {
-    /**
-     * OK
-     */
-    200: Response23;
-};
-
-export type GetProjectsApiTicketsByIdResponse = GetProjectsApiTicketsByIdResponses[keyof GetProjectsApiTicketsByIdResponses];
-
-export type PostProjectsApiTicketsByIdBlockedData = {
-    body: SetTicketBlockedRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{id}/blocked';
-};
-
-export type PostProjectsApiTicketsByIdBlockedErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiTicketsByIdBlockedResponses = {
-    /**
-     * OK
-     */
-    200: Response21;
-};
-
-export type PostProjectsApiTicketsByIdBlockedResponse = PostProjectsApiTicketsByIdBlockedResponses[keyof PostProjectsApiTicketsByIdBlockedResponses];
-
-export type TransitionTicketData = {
-    body: TransitionTicketRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{id}/transition';
-};
-
-export type TransitionTicketErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type TransitionTicketResponses = {
-    /**
-     * OK
-     */
-    200: Response20;
-};
-
-export type TransitionTicketResponse = TransitionTicketResponses[keyof TransitionTicketResponses];
-
-export type GetProjectsApiTicketsByTicketIdCommentsData = {
-    body?: never;
-    path: {
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/comments';
-};
-
-export type GetProjectsApiTicketsByTicketIdCommentsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiTicketsByTicketIdCommentsResponses = {
-    /**
-     * OK
-     */
-    200: Response22;
-};
-
-export type GetProjectsApiTicketsByTicketIdCommentsResponse = GetProjectsApiTicketsByTicketIdCommentsResponses[keyof GetProjectsApiTicketsByTicketIdCommentsResponses];
-
-export type PostProjectsApiTicketsByTicketIdCommentsData = {
-    body: CreateTicketCommentRequest;
-    path: {
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/comments';
-};
-
-export type PostProjectsApiTicketsByTicketIdCommentsErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiTicketsByTicketIdCommentsResponses = {
-    /**
-     * OK
-     */
-    200: Response25;
-};
-
-export type PostProjectsApiTicketsByTicketIdCommentsResponse = PostProjectsApiTicketsByTicketIdCommentsResponses[keyof PostProjectsApiTicketsByTicketIdCommentsResponses];
-
-export type ListTicketDossierPagesData = {
-    body?: never;
-    path: {
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/dossier';
-};
-
-export type ListTicketDossierPagesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListTicketDossierPagesResponses = {
-    /**
-     * OK
-     */
-    200: ListPagesResponse;
-};
-
-export type ListTicketDossierPagesResponse = ListTicketDossierPagesResponses[keyof ListTicketDossierPagesResponses];
-
-export type PostProjectsApiTicketsByTicketIdDossierData = {
-    body: NewPage;
-    path: {
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/dossier';
-};
-
-export type PostProjectsApiTicketsByTicketIdDossierErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiTicketsByTicketIdDossierResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type PostProjectsApiTicketsByTicketIdDossierResponse = PostProjectsApiTicketsByTicketIdDossierResponses[keyof PostProjectsApiTicketsByTicketIdDossierResponses];
-
-export type DeleteProjectsApiTicketsByTicketIdDossierBySlugData = {
-    body?: never;
-    path: {
-        slug: string;
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/dossier/{slug}';
-};
-
-export type DeleteProjectsApiTicketsByTicketIdDossierBySlugErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type DeleteProjectsApiTicketsByTicketIdDossierBySlugResponses = {
-    /**
-     * OK
-     */
-    200: DeletePageResponse;
-};
-
-export type DeleteProjectsApiTicketsByTicketIdDossierBySlugResponse = DeleteProjectsApiTicketsByTicketIdDossierBySlugResponses[keyof DeleteProjectsApiTicketsByTicketIdDossierBySlugResponses];
-
-export type GetTicketDossierPageData = {
-    body?: never;
-    path: {
-        slug: string;
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/dossier/{slug}';
-};
-
-export type GetTicketDossierPageErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetTicketDossierPageResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type GetTicketDossierPageResponse = GetTicketDossierPageResponses[keyof GetTicketDossierPageResponses];
-
-export type PutProjectsApiTicketsByTicketIdDossierBySlugData = {
-    body: WritePage;
-    path: {
-        slug: string;
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/dossier/{slug}';
-};
-
-export type PutProjectsApiTicketsByTicketIdDossierBySlugErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PutProjectsApiTicketsByTicketIdDossierBySlugResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type PutProjectsApiTicketsByTicketIdDossierBySlugResponse = PutProjectsApiTicketsByTicketIdDossierBySlugResponses[keyof PutProjectsApiTicketsByTicketIdDossierBySlugResponses];
-
-export type PostProjectsApiTicketsByTicketIdDossierBySlugMoveData = {
-    body: MovePage;
-    path: {
-        slug: string;
-        ticketId: string;
-    };
-    query?: never;
-    url: '/projects/api/tickets/{ticketId}/dossier/{slug}/move';
-};
-
-export type PostProjectsApiTicketsByTicketIdDossierBySlugMoveErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponses = {
-    /**
-     * OK
-     */
-    200: DossierPageDto;
-};
-
-export type PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponse = PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponses[keyof PostProjectsApiTicketsByTicketIdDossierBySlugMoveResponses];
 
 export type CreateWorkData = {
     body: WorkCreate;
