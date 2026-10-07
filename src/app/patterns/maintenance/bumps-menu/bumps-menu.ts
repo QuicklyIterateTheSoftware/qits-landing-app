@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs';
 import { DomainEvents } from '$core/events/domain-events';
@@ -41,6 +49,24 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
 }
 
 /**
+ * One origin's edge-side connection pool, as the edge serves it: already sorted by `open`
+ * descending, one entry per origin with at least one open connection (qits-1065).
+ */
+export interface UpstreamPool {
+  readonly name: string;
+  readonly environment: string;
+  readonly origin: string;
+  readonly open: number;
+  readonly max: number;
+}
+
+/**
+ * Where the edge serves current upstream connection-pool occupancy — same origin, on every host,
+ * like `/main-navigation`. Not a generated client: the edge, not a platform service, answers it.
+ */
+export const UPSTREAM_POOLS_URL = '/upstream-pools';
+
+/**
  * The top bar's bumps menu (a lighthouse): the version bumps qits-maintenance has under way across
  * the platform — each one's repository, what it moves, its mode and how it stands. Always shown,
  * because bumps are the platform's, not a project's.
@@ -48,6 +74,11 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
  * The bumps are fetched the first time the menu opens, never before (`MaintenanceStore.load`), and
  * again after domain events that move them ({@link BUMP_EVENTS}), at most once a second. The button
  * and the panel are `ui-dropdown`'s; the list scrolls inside the panel.
+ *
+ * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): fetched
+ * fresh from `/upstream-pools` every time the panel opens. A non-2xx answer, a network error or an
+ * empty array all render nothing for that section — it is not something gone wrong, just nothing to
+ * show, so it carries no error state of its own.
  */
 @Component({
   selector: 'app-bumps-menu',
@@ -59,7 +90,7 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
       label="Version bumps"
       panelLabel="Pending version bumps"
       panelId="bumps-menu"
-      (opened)="store.load()"
+      (opened)="opened()"
     >
       <svg
         dropdown-trigger
@@ -78,66 +109,98 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
         <path d="M12 3v4" />
         <path d="M4 6l3 1.5M20 6l-3 1.5M4 11h2M20 11h-2" />
       </svg>
-      <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
-        <ul class="m-0 max-h-96 list-none overflow-y-auto p-0">
-          @for (bump of store.pending(); track bump.id) {
-            <li class="flex flex-col gap-1 border-b border-gray-100 px-3 py-2 last:border-b-0">
-              <div class="flex items-baseline justify-between gap-2">
-                <span class="truncate text-sm font-semibold text-gray-900">{{
-                  bump.repository
-                }}</span>
-                <span class="flex shrink-0 gap-1">
-                  <span
-                    class="rounded bg-charcoal-brown-100 px-1.5 text-[0.6875rem] leading-4 text-charcoal-brown-700"
-                    >{{ bump.mode }}</span
-                  >
-                  <span
-                    class="rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
-                    [class]="chip(bump)"
-                    >{{ label(bump) }}</span
-                  >
-                </span>
-              </div>
-              <ul class="m-0 list-none p-0">
-                @for (change of shown(bump); track $index) {
-                  <li class="truncate text-[0.8125rem] text-gray-600">
-                    <span class="text-gray-900">{{ change.name }}</span>
-                    {{ change.from }} → {{ change.to }}
-                    <span class="text-[0.6875rem] text-gray-500">{{
-                      change.ecosystem?.toLowerCase()
-                    }}</span>
-                  </li>
-                }
-              </ul>
-              <span class="text-[0.6875rem] text-gray-500" [class.hidden]="!more(bump)"
-                >+{{ more(bump) }} more</span
+      <div dropdown-panel>
+        <ui-spinner [state]="state()" class="min-h-16">
+          <ul class="m-0 max-h-96 list-none overflow-y-auto p-0">
+            @for (bump of store.pending(); track bump.id) {
+              <li class="flex flex-col gap-1 border-b border-gray-100 px-3 py-2 last:border-b-0">
+                <div class="flex items-baseline justify-between gap-2">
+                  <span class="truncate text-sm font-semibold text-gray-900">{{
+                    bump.repository
+                  }}</span>
+                  <span class="flex shrink-0 gap-1">
+                    <span
+                      class="rounded bg-charcoal-brown-100 px-1.5 text-[0.6875rem] leading-4 text-charcoal-brown-700"
+                      >{{ bump.mode }}</span
+                    >
+                    <span
+                      class="rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
+                      [class]="chip(bump)"
+                      >{{ label(bump) }}</span
+                    >
+                  </span>
+                </div>
+                <ul class="m-0 list-none p-0">
+                  @for (change of shown(bump); track $index) {
+                    <li class="truncate text-[0.8125rem] text-gray-600">
+                      <span class="text-gray-900">{{ change.name }}</span>
+                      {{ change.from }} → {{ change.to }}
+                      <span class="text-[0.6875rem] text-gray-500">{{
+                        change.ecosystem?.toLowerCase()
+                      }}</span>
+                    </li>
+                  }
+                </ul>
+                <span class="text-[0.6875rem] text-gray-500" [class.hidden]="!more(bump)"
+                  >+{{ more(bump) }} more</span
+                >
+              </li>
+            }
+          </ul>
+          <p
+            class="m-0 px-3 py-4 text-center text-sm text-gray-500"
+            [class.hidden]="state() !== 'loaded' || store.pending().length > 0"
+          >
+            No pending version bumps
+          </p>
+        </ui-spinner>
+        @if (pools().length > 0) {
+          <ul class="m-0 list-none border-t border-gray-100 p-0">
+            @for (pool of pools(); track pool.name) {
+              <li
+                class="flex items-center justify-between gap-2 px-3 py-1.5 text-[0.8125rem] text-gray-600"
               >
-            </li>
-          }
-        </ul>
-        <p
-          class="m-0 px-3 py-4 text-center text-sm text-gray-500"
-          [class.hidden]="state() !== 'loaded' || store.pending().length > 0"
-        >
-          No pending version bumps
-        </p>
-      </ui-spinner>
+                <span class="truncate text-gray-900">{{ pool.name }}</span>
+                <span class="shrink-0 text-gray-500">{{ pool.open }}/{{ pool.max }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
     </ui-dropdown>
   `,
 })
 export class BumpsMenu {
   protected readonly store = inject(MaintenanceStore);
+  private readonly http = inject(HttpClient);
 
   protected readonly state = computed((): LoadState => {
     const status = this.store.status();
     return status === 'loaded' || status === 'error' ? status : 'loading';
   });
 
+  /** The pools shown below the bumps; empty renders nothing (never an error of its own). */
+  protected readonly pools = signal<readonly UpstreamPool[]>([]);
+
   constructor() {
     inject(DomainEvents)
       .on(BUMP_EVENTS)
       .pipe(debounceTime(REFRESH_DEBOUNCE_MS), takeUntilDestroyed(inject(DestroyRef)))
       .subscribe(() => void this.store.refresh());
+  }
+
+  /** Each time the panel opens: the bumps, as before, and a fresh read of the pools. */
+  protected opened(): void {
+    void this.store.load();
+    this.loadPools();
+  }
+
+  private loadPools(): void {
+    this.http.get<readonly UpstreamPool[]>(UPSTREAM_POOLS_URL).subscribe({
+      next: (pools) => this.pools.set(pools ?? []),
+      // Non-2xx or a network error: nothing to show for this section, never an error state.
+      error: () => this.pools.set([]),
+    });
   }
 
   protected shown(bump: BumpEntry) {

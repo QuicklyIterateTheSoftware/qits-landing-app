@@ -7,7 +7,13 @@ import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen'
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { maintenanceGoldenMaster } from '../../../../testing/golden-masters';
-import { BUMP_EVENTS, BumpsMenu, REFRESH_DEBOUNCE_MS } from './bumps-menu';
+import {
+  BUMP_EVENTS,
+  BumpsMenu,
+  REFRESH_DEBOUNCE_MS,
+  UPSTREAM_POOLS_URL,
+  type UpstreamPool,
+} from './bumps-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -50,12 +56,22 @@ describe('BumpsMenu', () => {
     return { fixture, button, panel };
   }
 
-  async function opened() {
+  /**
+   * Opens the panel and flushes the bumps request. The pools request (`/upstream-pools`) is
+   * flushed too, so every test leaves nothing outstanding for `http.verify()`: `pools` defaults to
+   * an empty answer for tests that have nothing to say about the pools section, and `poolsOpts`
+   * lets a pools-focused test answer with a different body or a non-2xx status.
+   */
+  async function opened(
+    pools: readonly UpstreamPool[] | null = [],
+    poolsOpts?: { status: number; statusText: string },
+  ) {
     const rendered = render();
     rendered.button.click();
     rendered.fixture.detectChanges();
     await settle();
     http.expectOne(LIST).flush(maintenanceGoldenMaster('pending bumps', 'listPendingBumps'));
+    http.expectOne(UPSTREAM_POOLS_URL).flush(pools, poolsOpts);
     await settle();
     rendered.fixture.detectChanges();
     return rendered;
@@ -91,5 +107,53 @@ describe('BumpsMenu', () => {
     expect(
       (fixture.nativeElement as HTMLElement).querySelector('#bumps-menu')?.textContent,
     ).toContain('No pending version bumps');
+  });
+
+  it('fetches the pools when the panel opens', async () => {
+    const rendered = render();
+    http.expectNone(UPSTREAM_POOLS_URL);
+    rendered.button.click();
+    rendered.fixture.detectChanges();
+    await settle();
+    http.expectOne(LIST).flush(maintenanceGoldenMaster('pending bumps', 'listPendingBumps'));
+    http.expectOne(UPSTREAM_POOLS_URL).flush([]);
+  });
+
+  it('lists the pools below the bumps, name and open/max, in the order received', async () => {
+    const pools: readonly UpstreamPool[] = [
+      {
+        name: 'qits-projects',
+        environment: 'dev',
+        origin: 'dev-qits-projects:8080',
+        open: 12,
+        max: 64,
+      },
+      {
+        name: 'qits-githost',
+        environment: 'dev',
+        origin: 'dev-qits-githost:8080',
+        open: 3,
+        max: 64,
+      },
+    ];
+    const { panel } = await opened(pools);
+    const rows = [...panel.querySelectorAll('ui-spinner ~ ul > li')].map((li) => [
+      li.querySelector('span:first-child')?.textContent?.trim(),
+      li.querySelector('span:last-child')?.textContent?.trim(),
+    ]);
+    expect(rows).toEqual([
+      ['qits-projects', '12/64'],
+      ['qits-githost', '3/64'],
+    ]);
+  });
+
+  it('renders nothing for the pools section on a non-2xx answer', async () => {
+    const { panel } = await opened(null, { status: 500, statusText: 'Server Error' });
+    expect(panel.querySelectorAll('ui-spinner ~ ul > li')).toHaveLength(0);
+  });
+
+  it('renders nothing for the pools section on an empty answer', async () => {
+    const { panel } = await opened([]);
+    expect(panel.querySelectorAll('ui-spinner ~ ul > li')).toHaveLength(0);
   });
 });
