@@ -24,7 +24,8 @@
           "name": "a ready for dev epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -123,6 +124,7 @@
           "name": "a ready for dev ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -222,7 +224,8 @@
           "name": "a reported epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -321,6 +324,7 @@
           "name": "an implemented ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -420,7 +424,8 @@
           "name": "a verified epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -517,6 +522,7 @@
           "name": "a verified ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -722,7 +728,8 @@
           "name": "a dropped epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -819,6 +826,7 @@
           "name": "a dropped ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -916,7 +924,8 @@
           "name": "a ready for dev epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1013,6 +1022,7 @@
           "name": "a ready for dev ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -1110,7 +1120,8 @@
           "name": "a refined epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1207,6 +1218,7 @@
           "name": "a refined ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -1304,7 +1316,8 @@
           "name": "a reported epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1401,6 +1414,7 @@
           "name": "a reported ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -1498,7 +1512,8 @@
           "name": "a verified epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1595,6 +1610,7 @@
           "name": "a verified ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -1692,7 +1708,8 @@
           "name": "a verifying epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1789,6 +1806,7 @@
           "name": "a verifying ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -1886,7 +1904,8 @@
           "name": "an implemented epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1983,6 +2002,7 @@
           "name": "an implemented ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -2080,7 +2100,8 @@
           "name": "an implementing epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -2177,6 +2198,7 @@
           "name": "an implementing ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -2534,15 +2556,7 @@
                   {
                     "kind": "CI",
                     "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
+                  },
                   {
                     "kind": "CI",
                     "state": "PENDING"
@@ -2558,15 +2572,7 @@
                   {
                     "kind": "CI",
                     "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
+                  },
                   {
                     "kind": "CI",
                     "state": "PENDING"
@@ -2582,6 +2588,10 @@
                   {
                     "kind": "CI",
                     "state": "PENDING"
+                  },
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
                   }
                 ],
                 "id": "00000000-0000-4000-8000-000000000002",
@@ -2591,6 +2601,42 @@
               },
               {
                 "gates": [
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  },
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000002",
+                "repoName": "contract-service",
+                "state": "PENDING",
+                "summary": "Waiting on its gates"
+              },
+              {
+                "gates": [
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  },
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000002",
+                "repoName": "contract-service",
+                "state": "PENDING",
+                "summary": "Waiting on its gates"
+              },
+              {
+                "gates": [
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  },
                   {
                     "kind": "CI",
                     "state": "PENDING"
@@ -2628,33 +2674,33 @@
               "matchers": [
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 }
               ]
             },
@@ -2678,12 +2724,48 @@
                 },
                 {
                   "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
             "$.requests[*].gates[*].state": {
               "combine": "AND",
               "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
                 {
                   "match": "type"
                 },
@@ -2840,7 +2922,8 @@
           "name": "a refined epic",
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
-            "projectId": "00000000-0000-4000-8000-000000000002"
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -2937,6 +3020,7 @@
           "name": "a refined ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -3460,6 +3544,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -3636,6 +3721,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -3811,6 +3897,7 @@
           "name": "a campaign with a done, a verified and an implementing epic",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "doneEpicId": "00000000-0000-4000-8000-000000000002",
             "doneTicketId": "00000000-0000-4000-8000-000000000003",
             "implementingEpicId": "00000000-0000-4000-8000-000000000004",
@@ -3976,6 +4063,7 @@
           "name": "a campaign with ordered developments",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "projectId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -4117,6 +4205,7 @@
           "name": "a campaign with work in every phase",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "doneTicketId": "00000000-0000-4000-8000-000000000002",
             "outsideTicketId": "00000000-0000-4000-8000-000000000003",
             "projectId": "00000000-0000-4000-8000-000000000004",
@@ -4273,6 +4362,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -4449,8 +4539,10 @@
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
             "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
             "projectId": "00000000-0000-4000-8000-000000000003",
-            "secondCampaignId": "00000000-0000-4000-8000-000000000004"
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
           }
         }
       ],
@@ -4574,6 +4666,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -4750,8 +4843,10 @@
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
             "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
             "projectId": "00000000-0000-4000-8000-000000000003",
-            "secondCampaignId": "00000000-0000-4000-8000-000000000004"
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
           }
         }
       ],
@@ -4875,6 +4970,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -5097,6 +5193,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -5318,6 +5415,7 @@
           "name": "a campaign with a done, a verified and an implementing epic",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "doneEpicId": "00000000-0000-4000-8000-000000000002",
             "doneTicketId": "00000000-0000-4000-8000-000000000003",
             "implementingEpicId": "00000000-0000-4000-8000-000000000004",
@@ -5529,6 +5627,7 @@
           "name": "a campaign with work in every phase",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "doneTicketId": "00000000-0000-4000-8000-000000000002",
             "outsideTicketId": "00000000-0000-4000-8000-000000000003",
             "projectId": "00000000-0000-4000-8000-000000000004",
@@ -5996,6 +6095,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -6218,6 +6318,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -6644,6 +6745,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -7254,6 +7356,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -7476,8 +7579,10 @@
           "params": {
             "epicId": "00000000-0000-4000-8000-000000000001",
             "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
             "projectId": "00000000-0000-4000-8000-000000000003",
-            "secondCampaignId": "00000000-0000-4000-8000-000000000004"
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
           }
         }
       ],
@@ -8481,6 +8586,7 @@
           "name": "an implemented ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -8824,6 +8930,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -9352,6 +9459,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -9466,6 +9574,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -11095,6 +11204,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -11256,6 +11366,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -11392,6 +11503,7 @@
           "name": "a campaign with a done, a verified and an implementing epic",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "doneEpicId": "00000000-0000-4000-8000-000000000002",
             "doneTicketId": "00000000-0000-4000-8000-000000000003",
             "implementingEpicId": "00000000-0000-4000-8000-000000000004",
@@ -11519,6 +11631,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -11665,6 +11778,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -11810,6 +11924,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -11974,6 +12089,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -12110,6 +12226,7 @@
           "name": "an implemented ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -12247,6 +12364,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -12400,6 +12518,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -12591,6 +12710,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -12737,6 +12857,7 @@
           "name": "a campaign with a done, a verified and an implementing epic",
           "params": {
             "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
             "doneEpicId": "00000000-0000-4000-8000-000000000002",
             "doneTicketId": "00000000-0000-4000-8000-000000000003",
             "implementingEpicId": "00000000-0000-4000-8000-000000000004",
@@ -12819,6 +12940,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -12966,6 +13088,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -13058,6 +13181,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -13205,6 +13329,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -13395,6 +13520,7 @@
           "name": "an implemented ticket",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-1",
             "ticketId": "00000000-0000-4000-8000-000000000002"
           }
         }
@@ -13526,6 +13652,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -13673,6 +13800,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -13798,6 +13926,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -13963,6 +14092,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -14113,6 +14243,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
@@ -14248,6 +14379,7 @@
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "campaignId": "00000000-0000-4000-8000-000000000002",
+            "campaignQualifiedId": "contract-00000001-1",
             "creditNoteTicketId": "00000000-0000-4000-8000-000000000003",
             "csvFeatureId": "00000000-0000-4000-8000-000000000004",
             "csvTaskId": "00000000-0000-4000-8000-000000000005",
