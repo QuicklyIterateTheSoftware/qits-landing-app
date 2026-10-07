@@ -234,21 +234,24 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
-  // A campaign's description, where the state recorded its `getWork` (only these two do).
-  it.each(['a campaign in detail', 'a campaign with a done, a verified and an implementing epic'])(
-    'show-project-work-board: the description of %s',
-    (state) =>
-      givenDescription(state).executeTest(async (server) => {
-        storeAt(server.url);
-        const op = masters.operation(state, 'getWork');
-        const { data } = await TestBed.runInInjectionContext(() =>
-          consume(
-            getWork({ path: { qualifiedId: op.params['qualifiedId'] } }),
-            GET_CAMPAIGN_DESCRIPTION,
-          ),
-        );
-        expect(data?.description).toBeTruthy();
-      }),
+  // A campaign's description: each state's recorded `getWork` of its campaign, by the param that
+  // names it.
+  it.each([
+    ['a campaign in detail', 'qualifiedId'],
+    ['a campaign with a done, a verified and an implementing epic', 'qualifiedId'],
+    ['a campaign with work in every phase', 'campaignQualifiedId'],
+    ['a campaign with ordered developments', 'campaignQualifiedId'],
+    ['an epic in two campaigns', 'firstCampaignQualifiedId'],
+    ['the second campaign of an epic in two campaigns', 'secondCampaignQualifiedId'],
+  ])('show-project-work-board: the description of %s', (state, param) =>
+    givenDescription(state).executeTest(async (server) => {
+      storeAt(server.url);
+      const op = masters.operation(state, 'getWork');
+      const { data } = await TestBed.runInInjectionContext(() =>
+        consume(getWork({ path: { qualifiedId: op.params[param] } }), GET_CAMPAIGN_DESCRIPTION),
+      );
+      expect(data?.description).toBeTruthy();
+    }),
   );
 
   // The epic card with two campaign tags. A state records one answer per operation, so the second

@@ -52,9 +52,8 @@ describe('WorkArchivePage', () => {
   }
 
   /**
-   * The page at `tab`, with the project list, the work and the campaign's reads answered: its
-   * members from the state; the state records no `getWork` of its campaign, so its description
-   * read answers 404 and the description is left out.
+   * The page at `tab`, with the project list, the work and the campaign's reads (its members and
+   * its description) answered from the state.
    */
   async function shown(tab: string, status: string) {
     const list = goldenMaster('a project exists', 'listProjects');
@@ -71,7 +70,10 @@ describe('WorkArchivePage', () => {
     const work = withCampaign(status);
     http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
     await settle();
-    await answerCampaignReads(http, goldenMaster, campaignsIn(work), { members: CAMPAIGN });
+    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
+      members: CAMPAIGN,
+      described: [CAMPAIGN],
+    });
     await settle();
     await harness.fixture.whenStable();
     return harness.routeNativeElement as HTMLElement;
@@ -90,6 +92,7 @@ describe('WorkArchivePage', () => {
     expect(title?.textContent?.trim()).toBe('Card campaign');
     expect(title?.getAttribute('href')).toMatch(/\/work\/detail\/contract-00000001-1$/);
     expect(section.textContent).toContain(status.toLowerCase());
+    expect(section.textContent).toContain('Seeded work.');
     // Its members, in campaign order, as on the Campaigns page.
     const text = section.textContent ?? '';
     const order = ['Refined epic', 'Refined ticket', 'Reported ticket', 'Done ticket'].map((t) =>

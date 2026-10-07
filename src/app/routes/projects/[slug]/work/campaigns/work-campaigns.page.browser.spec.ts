@@ -20,8 +20,7 @@ import { shootMembers } from '../../../../../../testing/browser/shoot-members';
  * only epic on the board is the implementing one; "an epic in two campaigns" has two campaigns, the
  * second recorded as a state of its own over the same seed; "a project with no work" has none.
  *
- * Only "a campaign with a done, a verified and an implementing epic" records its campaign's
- * `getWork`, so only its campaign shows a description; the others' description reads answer 404.
+ * Each campaign's description comes from its state's recorded `getWork` of that campaign.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -35,6 +34,7 @@ const SECOND_CAMPAIGN = 'the second campaign of an epic in two campaigns';
 /** Which state answers each campaign's members, by the campaign's frozen qualified id. */
 const BOTH_CAMPAIGNS: CampaignReads = {
   members: { 'contract-00000001-1': TWO_CAMPAIGNS, 'contract-00000001-2': SECOND_CAMPAIGN },
+  described: [TWO_CAMPAIGNS, SECOND_CAMPAIGN],
 };
 
 describe('WorkCampaignsPage (screenshots)', () => {
@@ -90,14 +90,13 @@ describe('WorkCampaignsPage (screenshots)', () => {
   }
 
   it('shows a campaign with its members, in campaign order, each with its status', async () => {
-    const element = await recorded(CAMPAIGN);
+    const element = await recorded(CAMPAIGN, { members: CAMPAIGN, described: [CAMPAIGN] });
     await expect.element(element.getByRole('heading', { level: 1 })).toHaveTextContent('Campaigns');
     const title = element.getByRole('link', { name: 'Card campaign' });
     await expect
       .element(title)
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-1$/));
-    // The state records no `getWork` of its campaign, so its description is left out.
-    await expect.element(element).not.toHaveTextContent('Seeded work.');
+    await expect.element(element).toHaveTextContent('Seeded work.');
     const text = element.element().textContent ?? '';
     const order = ['Refined epic', 'Refined ticket', 'Reported ticket', 'Done ticket'].map((t) =>
       text.indexOf(t),

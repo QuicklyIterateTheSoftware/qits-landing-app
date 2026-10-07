@@ -2556,15 +2556,7 @@
                   {
                     "kind": "CI",
                     "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
+                  },
                   {
                     "kind": "CI",
                     "state": "PENDING"
@@ -2580,15 +2572,7 @@
                   {
                     "kind": "CI",
                     "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
+                  },
                   {
                     "kind": "CI",
                     "state": "PENDING"
@@ -2604,6 +2588,10 @@
                   {
                     "kind": "CI",
                     "state": "PENDING"
+                  },
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
                   }
                 ],
                 "id": "00000000-0000-4000-8000-000000000002",
@@ -2613,6 +2601,42 @@
               },
               {
                 "gates": [
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  },
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000002",
+                "repoName": "contract-service",
+                "state": "PENDING",
+                "summary": "Waiting on its gates"
+              },
+              {
+                "gates": [
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  },
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000002",
+                "repoName": "contract-service",
+                "state": "PENDING",
+                "summary": "Waiting on its gates"
+              },
+              {
+                "gates": [
+                  {
+                    "kind": "CI",
+                    "state": "PENDING"
+                  },
                   {
                     "kind": "CI",
                     "state": "PENDING"
@@ -2650,33 +2674,33 @@
               "matchers": [
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 },
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 }
               ]
             },
@@ -2700,12 +2724,48 @@
                 },
                 {
                   "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
             "$.requests[*].gates[*].state": {
               "combine": "AND",
               "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
                 {
                   "match": "type"
                 },
@@ -3621,6 +3681,361 @@
         "body": {
           "content": {
             "description": "Ships two tickets and three epics, one after the other."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: getWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign with ordered developments",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "description": "Seeded work."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: getWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a campaign with work in every phase",
+          "params": {
+            "campaignId": "00000000-0000-4000-8000-000000000001",
+            "campaignQualifiedId": "contract-00000001-1",
+            "doneTicketId": "00000000-0000-4000-8000-000000000002",
+            "outsideTicketId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "refinedEpicId": "00000000-0000-4000-8000-000000000005",
+            "refinedTicketId": "00000000-0000-4000-8000-000000000006",
+            "reportedTicketId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${campaignQualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "description": "Seeded work."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: getWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an epic in two campaigns",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000003",
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${firstCampaignQualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "description": "Seeded work."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: getWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the second campaign of an epic in two campaigns",
+          "params": {
+            "epicId": "00000000-0000-4000-8000-000000000001",
+            "firstCampaignId": "00000000-0000-4000-8000-000000000002",
+            "firstCampaignQualifiedId": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000003",
+            "secondCampaignId": "00000000-0000-4000-8000-000000000004",
+            "secondCampaignQualifiedId": "contract-00000001-2"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${secondCampaignQualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-2"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "description": "Seeded work."
           },
           "contentType": "application/json",
           "encoded": false

@@ -16,9 +16,8 @@ export interface CampaignReads {
   /**
    * States whose `getWork` records a campaign. A description read is answered with the one that
    * records that campaign; any other with 404 (an error answer is a status only), which leaves the
-   * description out. Few states record a campaign's `getWork`: "a campaign in detail" (whose seed
-   * the other "… in detail" states share) and "a campaign with a done, a verified and an
-   * implementing epic".
+   * description out. Every campaign state records its campaign's `getWork`; the other "… in
+   * detail" states share the seed of "a campaign in detail" and are described by it.
    */
   readonly described?: readonly string[];
 }

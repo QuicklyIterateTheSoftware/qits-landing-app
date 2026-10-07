@@ -141,6 +141,7 @@ describe('WorkLayout', () => {
           'contract-00000001-1': 'an epic in two campaigns',
           'contract-00000001-2': 'the second campaign of an epic in two campaigns',
         },
+        described: ['an epic in two campaigns', 'the second campaign of an epic in two campaigns'],
       },
     );
     await settle();
@@ -163,6 +164,7 @@ describe('WorkLayout', () => {
     await settle();
     await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
       members: 'a campaign with work in every phase',
+      described: ['a campaign with work in every phase'],
     });
     await settle();
     await harness.fixture.whenStable();
