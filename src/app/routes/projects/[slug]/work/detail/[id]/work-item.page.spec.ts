@@ -320,9 +320,11 @@ describe('WorkItemPage', () => {
     request.flush(goldenMaster('a reported ticket', 'setWorkStatus'));
     await settle();
     await harness.fixture.whenStable();
-    // REFINED waits for a person to schedule it: nothing to dispatch (qits-887).
+    // A person's Dispatch pre-approves the scheduling, running the whole flow in one press
+    // (qits-1075).
     expect(groups().map((g) => g.actions)).toEqual([
-      ['Mark ready for dev', 'Back to reported', 'Drop'],
+      ['Dispatch'],
+      ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'],
       ['Edit', 'Reshape'],
     ]);
   });

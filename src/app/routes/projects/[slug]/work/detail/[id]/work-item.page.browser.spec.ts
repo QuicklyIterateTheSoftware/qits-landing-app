@@ -587,12 +587,13 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(element).toMatchScreenshot('actions-implementing-epic-runs');
     });
 
-    it('a refined epic: nothing to dispatch until a person schedules it', async () => {
+    it('a refined epic offers Dispatch (qits-1075)', async () => {
       const element = await render(EVERY_STATUS, 'Refined epic');
+      // A person's Dispatch pre-approves the scheduling, running the whole flow in one press.
+      await agentButtons(element, ['Dispatch']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Status Mark ready for dev Back to reported Drop');
-      expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
+        .toHaveTextContent('Status Mark ready for dev Back to reported Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-refined-epic');
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(

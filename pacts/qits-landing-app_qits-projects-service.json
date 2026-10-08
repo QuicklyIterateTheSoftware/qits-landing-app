@@ -10149,12 +10149,24 @@
                         "enters": "IMPLEMENTING",
                         "from": "READY_FOR_DEV",
                         "phase": "implement"
+                      },
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "READY_FOR_DEV",
+                        "phase": "implement"
                       }
                     ],
                     "next": null
                   },
                   "REPORTED": {
                     "flow": [
+                      {
+                        "endsIn": "IMPLEMENTED",
+                        "enters": "IMPLEMENTING",
+                        "from": "READY_FOR_DEV",
+                        "phase": "implement"
+                      },
                       {
                         "endsIn": "IMPLEMENTED",
                         "enters": "IMPLEMENTING",
@@ -10711,7 +10723,7 @@
                             }
                           ]
                         },
-                        "$.phases.REPORTED.flow": {
+                        "$.phases.REFINED.flow": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -10720,7 +10732,7 @@
                             }
                           ]
                         },
-                        "$.phases.REPORTED.flow[*].endsIn": {
+                        "$.phases.REFINED.flow[*].endsIn": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -10728,7 +10740,18 @@
                             }
                           ]
                         },
-                        "$.phases.REPORTED.flow[*].from": {
+                        "$.phases.REFINED.flow[*].enters": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.phases.REFINED.flow[*].from": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -10736,11 +10759,20 @@
                             }
                           ]
                         },
-                        "$.phases.REPORTED.flow[*].phase": {
+                        "$.phases.REFINED.flow[*].phase": {
                           "combine": "AND",
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
                             }
                           ]
                         },
@@ -11313,43 +11345,7 @@
                             }
                           ]
                         },
-                        "$.phases.REFINED.flow": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type",
-                              "min": 0
-                            }
-                          ]
-                        },
-                        "$.phases.REFINED.flow[*].endsIn": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.phases.REFINED.flow[*].enters": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
-                        },
-                        "$.phases.REFINED.flow[*].from": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.phases.REFINED.flow[*].phase": {
+                        "$.phases.REPORTED.flow[*].endsIn": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -11365,6 +11361,22 @@
                             },
                             {
                               "match": "null"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow[*].from": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phases.REPORTED.flow[*].phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },
