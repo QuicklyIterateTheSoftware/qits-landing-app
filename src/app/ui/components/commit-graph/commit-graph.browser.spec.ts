@@ -6,7 +6,8 @@ import { CommitGraphView, type GraphEntry } from './commit-graph';
 
 /**
  * Screenshots of the commit graph, on synthetic commits: an octopus fold of main and two branches,
- * one branch two commits long, then one row opened.
+ * one branch two commits long, with the lane legend and a "22 earlier folds" button under the
+ * fold; then one row opened.
  */
 const commits = [
   { hash: 'fold', parents: ['main2', 'feat2', 'fix1'] },
@@ -36,7 +37,9 @@ const entry = (hash: string, subject: string, label?: string): GraphEntry => ({
       [entries]="entries"
       [expanded]="expanded"
       [expansion]="opened"
+      [lanes]="lanes"
       (toggle)="toggled = $event"
+      (more)="more = $event"
     />
     <ng-template #opened let-hash
       ><p class="m-0 text-sm">The changes of {{ hash }}</p></ng-template
@@ -46,15 +49,21 @@ const entry = (hash: string, subject: string, label?: string): GraphEntry => ({
 class Graph {
   readonly graph = layoutGraph(commits);
   readonly entries = [
-    entry('fold', 'Release request r1: fold three sources', 'release/r1'),
-    entry('feat2', 'feat: the second half', 'feature/export'),
-    entry('fix1', 'fix: the rounding', 'ticket/rounding'),
-    entry('main2', 'docs: say who approves', 'main'),
+    { ...entry('fold', 'Release request r1: fold three sources'), more: '22 earlier folds' },
+    entry('feat2', 'feat: the second half'),
+    entry('fix1', 'fix: the rounding'),
+    entry('main2', 'docs: say who approves'),
     entry('feat1', 'feat: the first half'),
     entry('main1', 'chore: start'),
   ];
+  readonly lanes = [
+    { label: 'release/r1 · main' },
+    { label: 'feature/export' },
+    { label: 'ticket/rounding' },
+  ];
   expanded: ReadonlySet<string> = new Set();
   toggled = '';
+  more = '';
 }
 
 describe('CommitGraphView (screenshots)', () => {
@@ -64,6 +73,8 @@ describe('CommitGraphView (screenshots)', () => {
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view).toHaveTextContent('feature/export');
     await expect.element(view).toMatchScreenshot('graph');
+    await view.getByRole('button', { name: '22 earlier folds' }).click();
+    expect(fixture.componentInstance.more).toBe('fold');
   });
 
   it('opens a row with the lanes running on beside it, and says which was pressed', async () => {

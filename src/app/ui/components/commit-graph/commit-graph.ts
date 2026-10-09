@@ -21,6 +21,13 @@ export interface GraphEntry {
   readonly title: string;
   /** The line of history this commit opens (a branch name), if it opens one. */
   readonly label?: string;
+  /** A button under this row, with this text (say, "22 earlier folds"); pressing it emits `more`. */
+  readonly more?: string;
+}
+
+/** A lane in the legend above the graph. */
+export interface GraphLane {
+  readonly label: string;
 }
 
 /** A lane's width and a row's height, in px. */
@@ -55,6 +62,8 @@ interface Drawn {
  * subject, author and time; a commit that opens a line of history shows its name. A row is a
  * button: pressing it emits the commit's hash (`toggle`). Under each row whose hash is in
  * `expanded`, the `expansion` template is drawn with the hash, and the lanes continue beside it.
+ * Given `lanes`, a legend above names each lane in its colour. A row with `more` has a button
+ * under it (emits `more`), for rows the caller keeps folded away.
  */
 @Component({
   selector: 'ui-commit-graph',
@@ -62,6 +71,20 @@ interface Drawn {
   imports: [NgTemplateOutlet],
   host: { class: 'block' },
   template: `
+    @if (lanes().length) {
+      <ul class="m-0 mb-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" aria-label="Lanes">
+        @for (lane of lanes(); track $index) {
+          <li class="flex items-center gap-1 font-mono">
+            <span
+              class="inline-block size-2.5 rounded-full"
+              [style.background-color]="colourOf($index)"
+              aria-hidden="true"
+            ></span>
+            {{ lane.label }}
+          </li>
+        }
+      </ul>
+    }
     <ol class="m-0 list-none p-0">
       @for (drawn of drawn(); track drawn.row.hash) {
         @let open = expanded().has(drawn.row.hash);
@@ -116,20 +139,47 @@ interface Drawn {
               >{{ drawn.entry.when }}</span
             >
           </button>
+          @if (drawn.entry.more) {
+            <div class="flex py-0.5">
+              <div class="relative shrink-0 self-stretch" [style.width.px]="svgWidth()">
+                <svg class="absolute inset-0 h-full" [attr.width]="svgWidth()" aria-hidden="true">
+                  @for (line of drawn.below; track $index) {
+                    <line
+                      [attr.x1]="line.x"
+                      [attr.x2]="line.x"
+                      y1="0"
+                      y2="100%"
+                      [attr.stroke]="line.colour"
+                      stroke-width="2"
+                    />
+                  }
+                </svg>
+              </div>
+              <button
+                type="button"
+                class="ml-2 cursor-pointer rounded border border-dashed border-charcoal-brown-300 px-2 text-xs text-charcoal-brown-600 hover:bg-charcoal-brown-50"
+                (click)="more.emit(drawn.row.hash)"
+              >
+                {{ drawn.entry.more }}
+              </button>
+            </div>
+          }
           @if (open) {
             <div class="flex">
-              <svg class="shrink-0 self-stretch" [attr.width]="svgWidth()" aria-hidden="true">
-                @for (line of drawn.below; track $index) {
-                  <line
-                    [attr.x1]="line.x"
-                    [attr.x2]="line.x"
-                    y1="0"
-                    y2="100%"
-                    [attr.stroke]="line.colour"
-                    stroke-width="2"
-                  />
-                }
-              </svg>
+              <div class="relative shrink-0 self-stretch" [style.width.px]="svgWidth()">
+                <svg class="absolute inset-0 h-full" [attr.width]="svgWidth()" aria-hidden="true">
+                  @for (line of drawn.below; track $index) {
+                    <line
+                      [attr.x1]="line.x"
+                      [attr.x2]="line.x"
+                      y1="0"
+                      y2="100%"
+                      [attr.stroke]="line.colour"
+                      stroke-width="2"
+                    />
+                  }
+                </svg>
+              </div>
               <div class="min-w-0 flex-1 pt-1 pb-3 pl-2">
                 <ng-container
                   [ngTemplateOutlet]="expansion() ?? null"
@@ -152,6 +202,14 @@ export class CommitGraphView {
   /** Drawn under an opened row, with its hash. */
   readonly expansion = input<TemplateRef<unknown>>();
   readonly toggle = output<string>();
+  /** The lanes, in order, for the legend; none: no legend. */
+  readonly lanes = input<readonly GraphLane[]>([]);
+  /** A row's `more` button was pressed. */
+  readonly more = output<string>();
+
+  protected colourOf(lane: number): string {
+    return COLOURS[lane % COLOURS.length];
+  }
 
   protected readonly row = ROW;
   protected readonly mid = MID;

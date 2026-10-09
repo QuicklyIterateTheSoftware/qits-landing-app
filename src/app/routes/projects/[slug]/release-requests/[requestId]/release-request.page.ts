@@ -49,6 +49,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { CommitGraphView, type GraphEntry } from '$ui/components/commit-graph/commit-graph';
 import { inferLanes, layoutGraph } from '$core/release-requests/commit-graph';
+import { branchGraph, hasParents } from '$core/release-requests/branch-graph';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
@@ -304,7 +305,7 @@ const UNATTENDED_TITLE =
                   @let fold = view()?.commits?.value;
                   <p
                     class="m-0 mb-1 text-xs text-charcoal-brown-500"
-                    [class]="fold?.commits?.length ? 'block' : 'hidden'"
+                    [class]="fold?.commits?.length && !graph().known ? 'block' : 'hidden'"
                   >
                     Lanes are guessed: the fold's merges in one, the other commits by author. The
                     service does not yet say each commit's parents, so branches cannot be told.
@@ -314,7 +315,9 @@ const UNATTENDED_TITLE =
                     [entries]="graph().entries"
                     [expanded]="opened()"
                     [expansion]="changeset"
+                    [lanes]="graph().lanes"
                     (toggle)="toggle($event)"
+                    (more)="earlierFolds.set(!earlierFolds())"
                   />
                   <ng-template #changeset let-hash>
                     <app-commit-changes [repoId]="repoId()" [sha]="hash" />
@@ -509,30 +512,75 @@ export class ReleaseRequestPage {
     return !!request && !isSettled(request);
   });
 
+  /** The earlier fold merges are shown (they are folded away at first). */
+  protected readonly earlierFolds = signal(false);
+
   /**
-   * The fold's commits as a graph. The commits answer carries no parents, so the lanes are guessed
-   * (`inferLanes`): the fold's merges in one lane, named by the backing branch, the rest by author.
+   * The fold's commits as a graph. With every commit's parents, a branch graph (`branchGraph`):
+   * the backing branch's newest fold merge, then a lane per source. Without them, guessed lanes
+   * (`inferLanes`): the fold's merges in one lane, the rest by author, and the page says so.
+   *
+   * TODO(qits-112): qits-projects is adding `commits[].parents`, `sources[].tipSha` and a fold
+   * marker. Until the client is regenerated they are read here as the answer arrives, outside
+   * `consume`'s lists; then add them to `LIST_RELEASE_REQUEST_COMMITS` and `GET_RELEASE_REQUEST`,
+   * so the pact binds them, and drop the casts.
    */
   protected readonly graph = computed(() => {
+    const request = this.row();
     const commits = (this.view()?.commits?.value?.commits ?? []).filter((commit) => !!commit.hash);
-    const lanes = inferLanes(
-      commits.map((commit) => ({
-        hash: commit.hash ?? '',
-        author: commit.author,
-        message: commit.message,
-      })),
-      this.row()?.backingBranch ?? 'the fold',
-    );
-    const entries = commits.map((commit): GraphEntry => ({
+    const withParents = commits as readonly ((typeof commits)[number] & {
+      readonly parents?: readonly string[];
+      readonly fold?: boolean;
+    })[];
+    const entry = (commit: (typeof commits)[number], label?: string): GraphEntry => ({
       hash: commit.hash ?? '',
       shortHash: commit.shortHash ?? '',
       subject: (commit.message ?? '').split('\n', 1)[0],
       author: commit.author ?? '',
       when: this.ago(commit.date),
       title: this.instant(commit.date),
-      label: lanes.labels.get(commit.hash ?? ''),
-    }));
-    return { graph: layoutGraph(lanes.commits), entries };
+      label,
+    });
+    if (request && hasParents(withParents)) {
+      const sources = (request.sources ?? []) as readonly ((typeof request.sources & {})[number] & {
+        readonly tipSha?: string;
+      })[];
+      const graph = branchGraph({
+        commits: withParents.map((commit) => ({
+          hash: commit.hash ?? '',
+          parents: commit.parents ?? [],
+          fold: commit.fold,
+        })),
+        mergedSha: request.mergedSha ?? '',
+        backingBranch: request.backingBranch ?? 'the fold',
+        sources: sources.map((source) => ({
+          name: source.name ?? '',
+          tipSha: source.tipSha,
+          priority: source.priority,
+        })),
+        showEarlierFolds: this.earlierFolds(),
+      });
+      const byHash = new Map(commits.map((commit) => [commit.hash ?? '', commit]));
+      const entries = graph.shown.map((hash, index) => {
+        const shown = entry(byHash.get(hash)!);
+        if (index !== 0 || graph.earlierFolds === 0) return shown;
+        const more = this.earlierFolds()
+          ? `Hide the ${graph.earlierFolds} earlier folds`
+          : `${graph.earlierFolds} earlier ${graph.earlierFolds === 1 ? 'fold' : 'folds'}`;
+        return { ...shown, more };
+      });
+      return { graph, entries, lanes: graph.lanes, known: true };
+    }
+    const lanes = inferLanes(
+      commits.map((commit) => ({
+        hash: commit.hash ?? '',
+        author: commit.author,
+        message: commit.message,
+      })),
+      request?.backingBranch ?? 'the fold',
+    );
+    const entries = commits.map((commit) => entry(commit, lanes.labels.get(commit.hash ?? '')));
+    return { graph: layoutGraph(lanes.commits), entries, lanes: [], known: false };
   });
 
   /** The commits whose changesets are open, by hash. */
