@@ -22,13 +22,17 @@ const TONES: Readonly<Record<StepState, ChipTone>> = {
 /**
  * A release request's lifecycle as one compact line (`lifecycleSummary`): the automations as a cog,
  * each phase as a chip, each group of gates as a shield. Every point names itself and its state in
- * its tooltip.
+ * its tooltip. With `spread`, the points share the full width on one line.
  */
 @Component({
   selector: 'ui-lifecycle-line',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AutomationCog, GateShield],
-  host: { class: 'flex flex-wrap items-center gap-1', 'aria-label': 'Lifecycle' },
+  host: {
+    '[class]':
+      "spread() ? 'flex w-full items-center justify-around gap-1' : 'flex flex-wrap items-center gap-1'",
+    'aria-label': 'Lifecycle',
+  },
   template: `
     @for (point of points(); track point.key) {
       @switch (point.kind) {
@@ -56,6 +60,8 @@ const TONES: Readonly<Record<StepState, ChipTone>> = {
 })
 export class LifecycleLine {
   readonly points = input.required<readonly SummaryPoint[]>();
+  /** Spread the points over the full width, on one line (the lightning menu's rows). */
+  readonly spread = input(false);
 
   protected chip(state: StepState): string {
     return chipClass(TONES[state]);

@@ -117,7 +117,7 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
                   >
                 </div>
                 <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
-                <ui-lifecycle-line [points]="row.summary" />
+                <ui-lifecycle-line [points]="row.summary" [spread]="true" />
               </a>
             </li>
           }
