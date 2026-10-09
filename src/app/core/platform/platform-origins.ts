@@ -3,7 +3,8 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
 /** The platform applications this app calls or opens. */
-export type PlatformApp = 'projects' | 'githost' | 'events' | 'maintenance' | 'idp' | 'workspaces';
+export type PlatformApp =
+  'projects' | 'githost' | 'events' | 'maintenance' | 'idp' | 'workspaces' | 'ci';
 
 /**
  * Each application's host label: it answers at `https://<label>.<domain>` (epic qits-528). The one
@@ -16,6 +17,7 @@ export const HOST_LABELS: Readonly<Record<PlatformApp, string>> = {
   maintenance: 'maintenance',
   idp: 'idp',
   workspaces: 'workspaces',
+  ci: 'ci',
 };
 
 /** `https://<label of app>.<domain>`. */

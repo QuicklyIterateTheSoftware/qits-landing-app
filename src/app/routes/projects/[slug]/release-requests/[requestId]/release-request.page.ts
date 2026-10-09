@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,6 +37,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
+import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
 import { ReleaseSourcesPanel } from '$patterns/release-requests/release-sources/release-sources';
 
 /** At most one refresh a second: one release sends several events. */
@@ -58,7 +59,9 @@ const UNATTENDED_TITLE =
  * requests plus the last finalized). A request not in that list is "not found" here.
  *
  * The request comes from `ReleaseRequestStore`, with the commits its fold brought in and, once a
- * tag is cut, what it published. Domain events about the project's release requests refresh it
+ * tag is cut, what it published; the release pipeline (or, from an older service, the plain gates)
+ * with Approve and Decline. On a repository's request the pipeline follows the facts; on the estate
+ * release it comes first, because there the open question is the approval. Domain events about the project's release requests refresh it
  * (at most once a second), in place of the old page's six-second poll. A request of the project's
  * wrapper repository is the project's estate release, and the page says so.
  */
@@ -67,8 +70,10 @@ const UNATTENDED_TITLE =
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Chip,
+    NgTemplateOutlet,
     PageLayoutComponent,
     ReleaseConflictPanel,
+    ReleasePipeline,
     ReleaseSourcesPanel,
     RouterLink,
     Spinner,
@@ -173,6 +178,10 @@ const UNATTENDED_TITLE =
               <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
             }
 
+            @if (!wrapper()) {
+              <ng-container [ngTemplateOutlet]="gatesSection" />
+            }
+
             <app-release-conflict [request]="request" />
 
             @if (released(request)) {
@@ -268,6 +277,13 @@ const UNATTENDED_TITLE =
                 </ui-spinner>
               </section>
             }
+
+            <!-- Declared once, placed where the page's question puts it. -->
+            <ng-template #gatesSection>
+              <ui-spinner [state]="buildsState()" class="mt-4 min-h-12">
+                <app-release-pipeline [request]="request" [builds]="view()?.builds?.value ?? []" />
+              </ui-spinner>
+            </ng-template>
           }
         </ui-spinner>
       </app-page-layout>
@@ -326,6 +342,8 @@ export class ReleaseRequestPage {
   });
 
   protected readonly commitsState = computed(() => this.view()?.commits.status ?? 'loading');
+
+  protected readonly buildsState = computed(() => this.view()?.builds.status ?? 'loading');
 
   protected readonly artifactsState = computed(() => this.view()?.artifacts?.status ?? 'loading');
 

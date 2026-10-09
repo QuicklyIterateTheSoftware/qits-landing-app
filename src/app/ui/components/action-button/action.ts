@@ -14,6 +14,8 @@ export interface Action {
   readonly variant: ActionVariant;
   /** Shown in a popover while the button is hovered or focused. */
   readonly details?: ActionDetails;
+  /** The button cannot be pressed (a change in flight, say). */
+  readonly disabled?: boolean;
 }
 
 /** Actions shown as joined buttons. `title` names the group (its caption and `aria-label`). */
