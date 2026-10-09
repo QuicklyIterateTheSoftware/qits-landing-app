@@ -81,6 +81,11 @@ export const INTERACTIONS = {
    * runs, to link the runs of the request.
    */
   'show-release-request-runs': 'A release request’s page links the CI runs of the request',
+  /**
+   * `commit-changes.ts`: a commit under "What this release folds in", opened: its changed files
+   * and one file's patch.
+   */
+  'show-commit-changes': 'Opening a commit on a release request shows the files it changed',
   /** `release-sources.ts`: the priority select of a branch on a request's page. */
   'set-release-source-priority': 'Choosing a branch’s priority on a release request sets it',
   /** `release-pipeline-panel.ts`: Approve on a request awaiting a person's approval. */

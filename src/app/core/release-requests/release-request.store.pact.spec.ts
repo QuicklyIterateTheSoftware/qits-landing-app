@@ -34,9 +34,9 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 /** The provider states this spec needs (names to match the recordings). */
 const STATES = {
-  pending: 'a pending release request',
+  pending: 'a release request awaiting approval',
   released: 'a released release request',
-  awaitingApproval: 'a release request awaiting approval',
+  awaitingApproval: 'a release request awaiting approval while its build runs',
 } as const;
 
 /** The operations this spec owns in that file (operationIds to match the recordings). */
@@ -188,12 +188,12 @@ describe.skip('qits-landing-app → qits-projects-service pact: one release requ
   it('decline-release-request: a person declines the fold', () =>
     given(
       'decline-release-request',
-      STATES.awaitingApproval,
+      STATES.pending,
       'declineReleaseRequest',
       CHANGED_RELEASE_REQUEST,
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
-      const { repoId, requestId } = addressOf(STATES.awaitingApproval, 'declineReleaseRequest');
+      const { repoId, requestId } = addressOf(STATES.pending, 'declineReleaseRequest');
       const outcome = await store.decline(repoId, requestId, 'TODO-the-recorded-fold');
       expect(outcome.request?.id).toBe(requestId);
     }));

@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   PLATFORM_ID,
+  signal,
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -37,6 +38,7 @@ import { ReleaseRequestStore } from '$core/release-requests/release-request.stor
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
 import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
@@ -63,7 +65,7 @@ const UNATTENDED_TITLE =
  *
  * The request comes from `ReleaseRequestStore`, with the commits its fold brought in and, once a
  * tag is cut, what it published; the release pipeline (or, from an older service, the plain gates)
- * with Approve and Decline, then links to the request's CI runs in qits-ci; Withdraw in the page's actions while the request can be called off. On a repository's request the pipeline follows the facts; on the estate
+ * with Approve and Decline, then a commit's changeset when it is opened in the fold's list, then links to the request's CI runs in qits-ci; Withdraw in the page's actions while the request can be called off. On a repository's request the pipeline follows the facts; on the estate
  * release it comes first, because there the open question is the approval. Domain events about the project's release requests refresh it
  * (at most once a second), in place of the old page's six-second poll. A request of the project's
  * wrapper repository is the project's estate release, and the page says so.
@@ -73,6 +75,7 @@ const UNATTENDED_TITLE =
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Chip,
+    CommitChangesView,
     NgTemplateOutlet,
     PageLayoutComponent,
     ReleaseConflictPanel,
@@ -220,21 +223,41 @@ const UNATTENDED_TITLE =
                 @let fold = view()?.commits?.value;
                 <ul class="m-0 flex list-none flex-col gap-1 p-0">
                   @for (commit of fold?.commits ?? []; track commit.hash) {
-                    <li class="flex flex-wrap items-baseline gap-2 text-sm">
-                      <span class="font-mono text-charcoal-brown-600" [title]="commit.hash ?? ''">{{
-                        commit.shortHash
-                      }}</span>
-                      <span class="min-w-48 flex-1 break-words text-charcoal-brown-950">{{
-                        commit.message
-                      }}</span>
-                      <span class="text-xs whitespace-nowrap text-charcoal-brown-500">{{
-                        commit.author
-                      }}</span>
-                      <span
-                        class="text-xs whitespace-nowrap text-charcoal-brown-500"
-                        [title]="instant(commit.date)"
-                        >{{ ago(commit.date) }}</span
+                    @let open = opened().has(commit.hash ?? '');
+                    <li>
+                      <button
+                        type="button"
+                        class="flex w-full cursor-pointer flex-wrap items-baseline gap-2 rounded px-1 text-left text-sm hover:bg-charcoal-brown-50"
+                        [attr.aria-expanded]="open"
+                        (click)="toggle(commit.hash ?? '')"
                       >
+                        <span class="w-3 text-charcoal-brown-400" aria-hidden="true">{{
+                          open ? '▾' : '▸'
+                        }}</span>
+                        <span
+                          class="font-mono text-charcoal-brown-600"
+                          [title]="commit.hash ?? ''"
+                          >{{ commit.shortHash }}</span
+                        >
+                        <span class="min-w-48 flex-1 break-words text-charcoal-brown-950">{{
+                          commit.message
+                        }}</span>
+                        <span class="text-xs whitespace-nowrap text-charcoal-brown-500">{{
+                          commit.author
+                        }}</span>
+                        <span
+                          class="text-xs whitespace-nowrap text-charcoal-brown-500"
+                          [title]="instant(commit.date)"
+                          >{{ ago(commit.date) }}</span
+                        >
+                      </button>
+                      @if (open) {
+                        <app-commit-changes
+                          class="mt-1 mb-3 ml-5"
+                          [repoId]="repoId()"
+                          [sha]="commit.hash ?? ''"
+                        />
+                      }
                     </li>
                   }
                 </ul>
@@ -378,6 +401,15 @@ export class ReleaseRequestPage {
     const request = this.row();
     return !!request && !isSettled(request);
   });
+
+  /** The commits whose changesets are open, by hash. */
+  protected readonly opened = signal<ReadonlySet<string>>(new Set());
+
+  protected toggle(hash: string): void {
+    const next = new Set(this.opened());
+    if (!next.delete(hash)) next.add(hash);
+    this.opened.set(next);
+  }
 
   protected foldTitle(request: ReleaseRequest): string {
     return request.mergedSha
