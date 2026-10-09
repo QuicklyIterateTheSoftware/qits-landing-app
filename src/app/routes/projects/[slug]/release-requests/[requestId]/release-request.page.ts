@@ -39,6 +39,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
 import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
 import { ReleaseSourcesPanel } from '$patterns/release-requests/release-sources/release-sources';
+import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
 /** At most one refresh a second: one release sends several events. */
 const REFRESH_DEBOUNCE_MS = 1_000;
@@ -60,7 +61,7 @@ const UNATTENDED_TITLE =
  *
  * The request comes from `ReleaseRequestStore`, with the commits its fold brought in and, once a
  * tag is cut, what it published; the release pipeline (or, from an older service, the plain gates)
- * with Approve and Decline. On a repository's request the pipeline follows the facts; on the estate
+ * with Approve and Decline; Withdraw in the page's actions while the request can be called off. On a repository's request the pipeline follows the facts; on the estate
  * release it comes first, because there the open question is the approval. Domain events about the project's release requests refresh it
  * (at most once a second), in place of the old page's six-second poll. A request of the project's
  * wrapper repository is the project's estate release, and the page says so.
@@ -75,6 +76,7 @@ const UNATTENDED_TITLE =
     ReleaseConflictPanel,
     ReleasePipeline,
     ReleaseSourcesPanel,
+    ReleaseWithdraw,
     RouterLink,
     Spinner,
   ],
@@ -82,6 +84,9 @@ const UNATTENDED_TITLE =
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout>
+        @if (row(); as request) {
+          <app-release-withdraw uiPageActions [request]="request" />
+        }
         <div uiPageHeader class="flex min-w-0 flex-wrap items-baseline gap-2">
           <h1 class="m-0 min-w-48 flex-1 text-3xl leading-[1.1] font-bold break-words">
             {{ row()?.summary || 'Release request' }}

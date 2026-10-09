@@ -46,7 +46,7 @@ const PRIORITY_TONES: Readonly<Record<string, ReleaseTone>> = {
 };
 
 /** The request can still be withdrawn or have a branch's priority changed. */
-export function isChangeable(request: ReleaseRequest): boolean {
+export function isChangeable(request: Pick<ReleaseRequest, 'state'>): boolean {
   return !CLOSED_TO_CHANGE.has(request.state ?? '');
 }
 

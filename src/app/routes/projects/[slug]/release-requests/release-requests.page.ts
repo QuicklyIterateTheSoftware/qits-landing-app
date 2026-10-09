@@ -22,6 +22,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
 /**
  * The open project's release requests, at `/projects/<slug>/release-requests`: everything still
@@ -32,7 +33,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * Each row shows the request's state (or "awaiting approval"), its priority, "nobody watching"
  * for a stopped request a machine asked for, the repository, the summary, when it last changed, its
  * version, its merged commit, who asked, the service's detail, and its gates. The repository and
- * summary link to the request's own page, `release-requests/<id>`.
+ * summary link to the request's own page, `release-requests/<id>`. A request that can still be
+ * called off has Withdraw.
  *
  * The requests come from `ProjectsStore`, the same answer the top bar's release menu and the
  * sidebar entry read; domain events refresh it there.
@@ -40,7 +42,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-release-requests-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, RouterLink, Spinner],
+  imports: [Chip, PageLayoutComponent, ReleaseWithdraw, RouterLink, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -99,6 +101,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                       />
                     }
                   </span>
+                  <app-release-withdraw class="ml-auto" [request]="request" />
                 </div>
                 <p
                   class="mt-1 mb-0 text-sm break-words text-gray-700"
