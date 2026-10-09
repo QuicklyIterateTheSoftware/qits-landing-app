@@ -47,6 +47,8 @@ import {
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
+import { CommitGraphView, type GraphEntry } from '$ui/components/commit-graph/commit-graph';
+import { inferLanes, layoutGraph } from '$core/release-requests/commit-graph';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
@@ -91,6 +93,7 @@ const UNATTENDED_TITLE =
   imports: [
     Chip,
     CommitChangesView,
+    CommitGraphView,
     NgTemplateOutlet,
     PageLayoutComponent,
     ReleaseChangesView,
@@ -299,46 +302,23 @@ const UNATTENDED_TITLE =
                 <h2 class="m-0 mb-1 text-base font-semibold">What this release folds in</h2>
                 <ui-spinner [state]="commitsState()" class="min-h-8">
                   @let fold = view()?.commits?.value;
-                  <ul class="m-0 flex list-none flex-col gap-1 p-0">
-                    @for (commit of fold?.commits ?? []; track commit.hash) {
-                      @let open = opened().has(commit.hash ?? '');
-                      <li>
-                        <button
-                          type="button"
-                          class="flex w-full cursor-pointer flex-wrap items-baseline gap-2 rounded px-1 text-left text-sm hover:bg-charcoal-brown-50"
-                          [attr.aria-expanded]="open"
-                          (click)="toggle(commit.hash ?? '')"
-                        >
-                          <span class="w-3 text-charcoal-brown-400" aria-hidden="true">{{
-                            open ? '▾' : '▸'
-                          }}</span>
-                          <span
-                            class="font-mono text-charcoal-brown-600"
-                            [title]="commit.hash ?? ''"
-                            >{{ commit.shortHash }}</span
-                          >
-                          <span class="min-w-48 flex-1 break-words text-charcoal-brown-950">{{
-                            commit.message
-                          }}</span>
-                          <span class="text-xs whitespace-nowrap text-charcoal-brown-500">{{
-                            commit.author
-                          }}</span>
-                          <span
-                            class="text-xs whitespace-nowrap text-charcoal-brown-500"
-                            [title]="instant(commit.date)"
-                            >{{ ago(commit.date) }}</span
-                          >
-                        </button>
-                        @if (open) {
-                          <app-commit-changes
-                            class="mt-1 mb-3 ml-5"
-                            [repoId]="repoId()"
-                            [sha]="commit.hash ?? ''"
-                          />
-                        }
-                      </li>
-                    }
-                  </ul>
+                  <p
+                    class="m-0 mb-1 text-xs text-charcoal-brown-500"
+                    [class]="fold?.commits?.length ? 'block' : 'hidden'"
+                  >
+                    Lanes are guessed: the fold's merges in one, the other commits by author. The
+                    service does not yet say each commit's parents, so branches cannot be told.
+                  </p>
+                  <ui-commit-graph
+                    [graph]="graph().graph"
+                    [entries]="graph().entries"
+                    [expanded]="opened()"
+                    [expansion]="changeset"
+                    (toggle)="toggle($event)"
+                  />
+                  <ng-template #changeset let-hash>
+                    <app-commit-changes [repoId]="repoId()" [sha]="hash" />
+                  </ng-template>
                   <p
                     class="m-0 py-2 text-sm text-charcoal-brown-500"
                     [class]="fold && !fold.commits?.length ? 'block' : 'hidden'"
@@ -527,6 +507,32 @@ export class ReleaseRequestPage {
   protected readonly watching = computed(() => {
     const request = this.row();
     return !!request && !isSettled(request);
+  });
+
+  /**
+   * The fold's commits as a graph. The commits answer carries no parents, so the lanes are guessed
+   * (`inferLanes`): the fold's merges in one lane, named by the backing branch, the rest by author.
+   */
+  protected readonly graph = computed(() => {
+    const commits = (this.view()?.commits?.value?.commits ?? []).filter((commit) => !!commit.hash);
+    const lanes = inferLanes(
+      commits.map((commit) => ({
+        hash: commit.hash ?? '',
+        author: commit.author,
+        message: commit.message,
+      })),
+      this.row()?.backingBranch ?? 'the fold',
+    );
+    const entries = commits.map((commit): GraphEntry => ({
+      hash: commit.hash ?? '',
+      shortHash: commit.shortHash ?? '',
+      subject: (commit.message ?? '').split('\n', 1)[0],
+      author: commit.author ?? '',
+      when: this.ago(commit.date),
+      title: this.instant(commit.date),
+      label: lanes.labels.get(commit.hash ?? ''),
+    }));
+    return { graph: layoutGraph(lanes.commits), entries };
   });
 
   /** The commits whose changesets are open, by hash. */
