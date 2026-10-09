@@ -17,10 +17,35 @@ import {
 } from '$core/projects/release-request-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { gateTone, requestTone } from '$core/projects/release-requests';
+import { requestTone } from '$core/projects/release-requests';
+import { lifecycleSummary, type StepState } from '$core/release-requests/release-lifecycle';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+
+/** A lifecycle point's state as a chip tone. */
+const STEP_TONES: Readonly<Record<StepState, ChipTone>> = {
+  passed: 'ok',
+  running: 'waiting',
+  pending: 'neutral',
+  failed: 'failed',
+  cancelled: 'failed',
+  skipped: 'neutral',
+  unknown: 'waiting',
+  'not-reported': 'neutral',
+};
+
+/** A gate pip's colour per state. */
+const PIP_COLOURS: Readonly<Record<StepState, string>> = {
+  passed: 'bg-mint-leaf-600',
+  running: 'bg-sunflower-gold-500',
+  pending: 'bg-charcoal-brown-300',
+  failed: 'bg-cinnabar-600',
+  cancelled: 'bg-cinnabar-600',
+  skipped: 'border border-charcoal-brown-300 bg-white',
+  unknown: 'bg-sunflower-gold-500',
+  'not-reported': 'border border-dashed border-charcoal-brown-300 bg-white',
+};
 
 /** How long a burst of domain events waits before the requests are fetched again. */
 export const REFRESH_DEBOUNCE_MS = 1_000;
@@ -93,13 +118,24 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
                   >
                 </div>
                 <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
-                <span class="flex flex-wrap gap-1">
-                  @for (gate of request.gates ?? []; track gate.kind) {
-                    <span
-                      class="rounded px-1.5 text-[0.6875rem] leading-4"
-                      [class]="chip(gateTone(gate.state))"
-                      >{{ gate.kind }} · {{ gate.state }}</span
-                    >
+                <span class="flex flex-wrap items-center gap-1" aria-label="Lifecycle">
+                  @for (point of summary(request); track point.key) {
+                    @if (point.kind === 'chip') {
+                      <span
+                        class="rounded px-1.5 text-[0.6875rem] leading-4"
+                        [class]="chip(tone(point.state))"
+                        [title]="point.title"
+                        >{{ point.label }}</span
+                      >
+                    } @else {
+                      <span
+                        class="inline-block size-2 rounded-full"
+                        [class]="pip(point.state)"
+                        [title]="point.title"
+                        role="img"
+                        [attr.aria-label]="point.title"
+                      ></span>
+                    }
                   }
                 </span>
               </a>
@@ -119,7 +155,6 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
 export class ReleaseMenu {
   private readonly store = inject(ProjectsStore);
   private readonly selected = inject(SelectedProject);
-  protected readonly gateTone = gateTone;
   protected readonly requestTone = requestTone;
 
   /** The open project's id, once the list holds it. */
@@ -147,6 +182,16 @@ export class ReleaseMenu {
 
   protected chip(tone: ChipTone): string {
     return chipClass(tone);
+  }
+
+  protected readonly summary = lifecycleSummary;
+
+  protected tone(state: StepState): ChipTone {
+    return STEP_TONES[state];
+  }
+
+  protected pip(state: StepState): string {
+    return PIP_COLOURS[state];
   }
 
   constructor() {

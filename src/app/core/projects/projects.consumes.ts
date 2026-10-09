@@ -27,7 +27,10 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * Requests entry shows the newest one (`updatedAt`). The Release Requests page lists them all, with
  * priority, version, merged commit, requester, detail and whether a person must approve or nobody
  * is watching. A request's own page finds its repository (`repoId`) here, because every read of
- * one request is addressed by repository. qits-projects answers the open requests plus the last
+ * one request is addressed by repository. The menu draws each request's lifecycle as a line
+ * (`lifecycleSummary`) from its gates; TODO(qits-112): bind `automations[]` and `pipeline` too
+ * (counts, phases) once @qits/projects-golden-masters records them on this answer.
+ * qits-projects answers the open requests plus the last
  * few FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
@@ -47,6 +50,7 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].approvalRequired',
   'requests[].approvalState',
   'requests[].updatedAt',
+  'requests[].mergedToMainAt',
 ] as const;
 
 /** One release request, cut to what the menu, the sidebar and the page read. */

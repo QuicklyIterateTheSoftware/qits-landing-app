@@ -202,8 +202,28 @@ function approvalStep(request: ReleaseRequest, gate: Step | undefined): Step {
 }
 
 /** A pipeline phase as a row. */
+/** Without a pipeline (an older answer), a phase's state follows its gate. */
+const PHASE_GATES: Readonly<Record<string, string>> = { QA: 'CI', PUBLISH: 'PUBLISH' };
+
 function phaseStep(request: ReleaseRequest, phase: string, label: string): Step {
   const reported = request.pipeline?.phases?.find((entry) => entry.phase === phase);
+  if (!request.pipeline && PHASE_GATES[phase]) {
+    const gate = request.gates?.find((entry) => entry.kind === PHASE_GATES[phase]);
+    if (gate) {
+      const state = gate.state === 'PENDING' ? 'running' : stepStateOf(gate.state);
+      return {
+        key: `phase:${phase}`,
+        label,
+        state,
+        word: wordOf(gate.state),
+        detail: null,
+        checks: [],
+        runId: null,
+        kind: 'phase',
+        phase,
+      };
+    }
+  }
   const word = reported?.state;
   const state = reported ? stepStateOf(word) : 'pending';
   return {
@@ -399,4 +419,73 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
     current: alongside.includes(index) && !settled(states[index]),
     future: current >= 0 && index > last,
   }));
+}
+
+/** One point of a request's lifecycle in a compact summary: a phase chip or a gate pip. */
+export interface SummaryPoint {
+  readonly key: string;
+  readonly kind: 'chip' | 'pip';
+  /** The chip's text, or the pip's name (for its tooltip). */
+  readonly label: string;
+  readonly state: StepState;
+  /** The tooltip: the point's name and state. */
+  readonly title: string;
+}
+
+/**
+ * The lifecycle as a compact line, in its order (the same model as the panel): automations (with
+ * how many are done while some run), CI, a pip per quality gate, publish, deployment (when
+ * something deploys), a pip per deployment gate, finalized.
+ */
+export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint[] {
+  const stages = releaseLifecycle(request);
+  const byKey = new Map(stages.map((stage) => [stage.key, stage]));
+  const points: SummaryPoint[] = [];
+  const chip = (key: string, label: string, state: StepState, word: string = state) =>
+    points.push({ key, kind: 'chip', label, state, title: `${label}: ${word}` });
+  const pips = (key: 'gates' | 'deploy-gates') => {
+    for (const step of byKey.get(key)?.steps ?? []) {
+      points.push({
+        key: step.key,
+        kind: 'pip',
+        label: step.label,
+        state: step.state,
+        title: `${step.label}: ${step.word || step.state}`,
+      });
+    }
+  };
+  const automations = request.automations ?? [];
+  const automationsGate = request.gates?.find((gate) => gate.kind === 'AUTOMATIONS');
+  if (automations.length === 0 && automationsGate && !request.automations) {
+    // An answer without the rows: the gate says how they stand.
+    chip(
+      'automations',
+      'Automations',
+      stepStateOf(automationsGate.state),
+      wordOf(automationsGate.state),
+    );
+  }
+  if (automations.length > 0) {
+    const done = automations.filter((row) => {
+      const state = stepStateOf(row.state);
+      return state === 'passed' || state === 'skipped';
+    }).length;
+    const state = byKey.get('fold')!.steps.find((step) => step.kind === 'automations')!.state;
+    chip(
+      'automations',
+      done === automations.length ? 'Automations' : `Automations ${done}/${automations.length}`,
+      state,
+    );
+  }
+  const qa = byKey.get('qa')!;
+  chip('qa', 'CI', qa.state, qa.steps[0]?.word);
+  pips('gates');
+  chip('publish', 'Publish', byKey.get('publish')!.state);
+  const deploy = byKey.get('deploy')!;
+  if (deploy.state !== 'skipped') {
+    chip('deploy', 'Deploy', deploy.state, deploy.steps[0]?.word);
+    pips('deploy-gates');
+  }
+  chip('finalized', 'Finalized', byKey.get('finalized')!.state);
+  return points;
 }

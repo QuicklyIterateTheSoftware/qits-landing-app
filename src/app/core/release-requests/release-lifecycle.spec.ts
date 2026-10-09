@@ -1,5 +1,11 @@
 import type { ReleaseRequest } from './release-request.consumes';
-import { hasGenericGates, releaseLifecycle, stageState, stepStateOf } from './release-lifecycle';
+import {
+  hasGenericGates,
+  lifecycleSummary,
+  releaseLifecycle,
+  stageState,
+  stepStateOf,
+} from './release-lifecycle';
 
 // Pure rules, so hand-built requests in the shapes qits-projects answers today.
 
@@ -203,5 +209,62 @@ describe('release lifecycle', () => {
     expect(stageState([step('passed'), step('pending')])).toBe('running');
     expect(stageState([step('passed'), step('skipped')])).toBe('passed');
     expect(stageState([step('skipped')])).toBe('skipped');
+  });
+});
+
+describe('lifecycle summary', () => {
+  it('lines up automations, CI, gate pips, publish, deployment, its gates and finalized', () => {
+    const points = lifecycleSummary({
+      ...pending,
+      automations: [
+        { kind: 'a', label: 'Entity diagram', state: 'FRESH' },
+        { kind: 'b', label: 'Estate pins', state: 'RUNNING' },
+        { kind: 'c', label: 'Baselines', state: 'REQUESTED' },
+      ],
+    });
+    expect(points.map((point) => [point.kind, point.label, point.state])).toEqual([
+      ['chip', 'Automations 1/3', 'running'],
+      ['chip', 'CI', 'running'],
+      ['pip', 'CI build passed', 'pending'],
+      ['pip', 'Automations passed or waived', 'pending'],
+      ['pip', 'Approval', 'skipped'],
+      ['chip', 'Publish', 'pending'],
+      ['chip', 'Deploy', 'pending'],
+      ['pip', 'Deployment live', 'pending'],
+      ['pip', 'Not rolled back', 'not-reported'],
+      ['chip', 'Finalized', 'pending'],
+    ]);
+    expect(points[2].title).toBe('CI build passed: pending');
+  });
+
+  it('leaves out automations when none apply, and deployment when nothing deploys', () => {
+    expect(lifecycleSummary(finalized).map((point) => point.label)).toEqual([
+      'CI',
+      'CI build passed',
+      'Automations passed or waived',
+      'Approval',
+      'Publish',
+      'Finalized',
+    ]);
+  });
+
+  it('reads CI and publish from the gates when the answer has no pipeline', () => {
+    const points = lifecycleSummary({
+      id: 'r3',
+      state: 'RELEASED',
+      gates: [
+        { kind: 'CI', state: 'PASSED' },
+        { kind: 'PUBLISH', state: 'PENDING' },
+      ],
+    });
+    const withRows = lifecycleSummary({
+      id: 'r4',
+      state: 'PENDING',
+      gates: [{ kind: 'AUTOMATIONS', state: 'PENDING' }],
+    });
+    expect(withRows[0]).toMatchObject({ label: 'Automations', state: 'pending' });
+    expect(points.map((point) => point.label).slice(0, 2)).toEqual(['CI', 'CI build passed']);
+    expect(points.find((point) => point.key === 'qa')?.state).toBe('passed');
+    expect(points.find((point) => point.key === 'publish')?.state).toBe('running');
   });
 });

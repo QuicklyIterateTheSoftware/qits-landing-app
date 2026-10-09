@@ -97,7 +97,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(frame).toMatchScreenshot('closed');
   });
 
-  it('lists the pending release requests with their gates', async () => {
+  it('lists the pending release requests with their lifecycle in a line', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
       await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
@@ -107,7 +107,11 @@ describe('ReleaseMenu (screenshots)', () => {
     http.expectNone(`/projects/api/projects/${projectId}/release-requests`);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     expect(panel.getByRole('listitem').elements()).toHaveLength(5);
-    await expect.element(panel).toHaveTextContent('CI · FAILED');
+    // The lifecycle line: phase chips, a pip per gate (named in its tooltip).
+    await expect.element(panel.getByTitle('CI: failed').first()).toBeVisible();
+    await expect
+      .element(panel.getByRole('img', { name: 'CI build passed: failed' }).first())
+      .toBeInTheDocument();
     await expect.element(panel).not.toHaveTextContent('Finalized release');
     await expect.element(frame).toMatchScreenshot('open');
   });
