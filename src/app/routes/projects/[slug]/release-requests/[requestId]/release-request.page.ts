@@ -39,6 +39,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
+import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
 import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
@@ -63,12 +64,16 @@ const UNATTENDED_TITLE =
  * the page finds the repository in the project's list of requests (`ProjectsStore`: the open
  * requests plus the last finalized). A request not in that list is "not found" here.
  *
- * The request comes from `ReleaseRequestStore`, with the commits its fold brought in and, once a
- * tag is cut, what it published; the release pipeline (or, from an older service, the plain gates)
- * with Approve and Decline, then a commit's changeset when it is opened in the fold's list, then links to the request's CI runs in qits-ci; Withdraw in the page's actions while the request can be called off. On a repository's request the pipeline follows the facts; on the estate
- * release it comes first, because there the open question is the approval. Domain events about the project's release requests refresh it
- * (at most once a second), in place of the old page's six-second poll. A request of the project's
- * wrapper repository is the project's estate release, and the page says so.
+ * Two tabs, in `?tab=`. The overview: the head, the sources, the facts, the release pipeline (or,
+ * from an older service, the plain gates) with Approve and Decline, the request's CI runs, the
+ * conflict, the release, the commits its fold brought in (each opens its changeset) and what it
+ * published. Changes: what the fold changes, file by file (`?path=`), with the pipeline above it.
+ * Withdraw sits in the page's actions while the request can be called off.
+ *
+ * On a repository's request the pipeline follows the facts; on the project's estate release (its
+ * wrapper repository) it comes first, because there the open question is the approval. Domain
+ * events about the project's release requests refresh the page (at most once a second), in place
+ * of the old page's six-second poll.
  */
 @Component({
   selector: 'app-release-request-page',
@@ -78,6 +83,7 @@ const UNATTENDED_TITLE =
     CommitChangesView,
     NgTemplateOutlet,
     PageLayoutComponent,
+    ReleaseChangesView,
     ReleaseConflictPanel,
     ReleasePipeline,
     ReleaseRuns,
@@ -157,163 +163,80 @@ const UNATTENDED_TITLE =
               </p>
             }
 
-            <app-release-sources class="mt-3" [request]="request" />
-
-            <div
-              class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
+            <!-- The tab rides in ?tab=, so the path keeps meaning "which request". -->
+            <nav
+              class="mt-3 flex gap-1 border-b border-charcoal-brown-200"
+              aria-label="Release request views"
             >
-              <span
-                >folded onto <span class="font-mono">{{ request.backingBranch }}</span></span
+              <a
+                class="-mb-px border-b-2 px-3 py-1 text-sm no-underline"
+                [class]="
+                  tab() !== 'changes'
+                    ? 'border-ocean-deep-700 font-semibold text-charcoal-brown-950'
+                    : 'border-transparent text-charcoal-brown-600 hover:text-charcoal-brown-950'
+                "
+                [routerLink]="[]"
+                [queryParams]="{ tab: 'overview' }"
+                queryParamsHandling="merge"
+                >Overview</a
               >
-              <span
-                >merged
-                <span class="font-mono" [title]="foldTitle(request)">{{
-                  short(request.mergedSha)
-                }}</span></span
+              <a
+                class="-mb-px border-b-2 px-3 py-1 text-sm no-underline"
+                [class]="
+                  tab() === 'changes'
+                    ? 'border-ocean-deep-700 font-semibold text-charcoal-brown-950'
+                    : 'border-transparent text-charcoal-brown-600 hover:text-charcoal-brown-950'
+                "
+                [routerLink]="[]"
+                [queryParams]="{ tab: 'changes' }"
+                queryParamsHandling="merge"
+                >Changes</a
               >
-              <span>asked by {{ request.requester || none }}</span>
-              @if (request.gateTicketId) {
-                <a
-                  class="text-sunflower-gold-800 underline"
-                  [routerLink]="['/projects', slug(), 'work']"
-                  >a bug ticket was filed for this failure</a
-                >
+            </nav>
+
+            @if (tab() === 'changes') {
+              <!-- The approval stays in reach while the changes are read. -->
+              @if (!wrapper()) {
+                <ng-container [ngTemplateOutlet]="gatesSection" />
               }
-              <span [title]="instant(request.createdAt)">asked {{ ago(request.createdAt) }}</span>
-              <span [title]="instant(request.updatedAt)"
-                >last change {{ ago(request.updatedAt) }}</span
+              <app-release-changes class="mt-4" [request]="request" />
+            } @else {
+              <app-release-sources class="mt-3" [request]="request" />
+
+              <div
+                class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
               >
-            </div>
-
-            @if (detail(request); as sentence) {
-              <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
-            }
-
-            @if (!wrapper()) {
-              <ng-container [ngTemplateOutlet]="gatesSection" />
-            }
-
-            <app-release-conflict [request]="request" />
-
-            @if (released(request)) {
-              <section class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
-                <h2 class="m-0 mb-1 text-base font-semibold">
-                  {{ request.state === 'FINALIZED' ? 'Released and finalized' : 'Released' }}
-                </h2>
-                <p class="m-0 flex flex-wrap items-baseline gap-2">
-                  <span class="font-mono font-semibold">{{ request.version || none }}</span>
-                  <span class="text-xs text-charcoal-brown-500 italic">{{
-                    request.mergedToMainAt ? 'on main' : 'not on main yet'
-                  }}</span>
-                  @if (request.releasedSha) {
-                    <span class="text-xs text-charcoal-brown-500"
-                      >released commit
-                      <span class="font-mono" [title]="request.releasedSha">{{
-                        short(request.releasedSha)
-                      }}</span></span
-                    >
-                  }
-                </p>
-              </section>
-            }
-
-            <section class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
-              <h2 class="m-0 mb-1 text-base font-semibold">What this release folds in</h2>
-              <ui-spinner [state]="commitsState()" class="min-h-8">
-                @let fold = view()?.commits?.value;
-                <ul class="m-0 flex list-none flex-col gap-1 p-0">
-                  @for (commit of fold?.commits ?? []; track commit.hash) {
-                    @let open = opened().has(commit.hash ?? '');
-                    <li>
-                      <button
-                        type="button"
-                        class="flex w-full cursor-pointer flex-wrap items-baseline gap-2 rounded px-1 text-left text-sm hover:bg-charcoal-brown-50"
-                        [attr.aria-expanded]="open"
-                        (click)="toggle(commit.hash ?? '')"
-                      >
-                        <span class="w-3 text-charcoal-brown-400" aria-hidden="true">{{
-                          open ? '▾' : '▸'
-                        }}</span>
-                        <span
-                          class="font-mono text-charcoal-brown-600"
-                          [title]="commit.hash ?? ''"
-                          >{{ commit.shortHash }}</span
-                        >
-                        <span class="min-w-48 flex-1 break-words text-charcoal-brown-950">{{
-                          commit.message
-                        }}</span>
-                        <span class="text-xs whitespace-nowrap text-charcoal-brown-500">{{
-                          commit.author
-                        }}</span>
-                        <span
-                          class="text-xs whitespace-nowrap text-charcoal-brown-500"
-                          [title]="instant(commit.date)"
-                          >{{ ago(commit.date) }}</span
-                        >
-                      </button>
-                      @if (open) {
-                        <app-commit-changes
-                          class="mt-1 mb-3 ml-5"
-                          [repoId]="repoId()"
-                          [sha]="commit.hash ?? ''"
-                        />
-                      }
-                    </li>
-                  }
-                </ul>
-                <p
-                  class="m-0 py-2 text-sm text-charcoal-brown-500"
-                  [class]="fold && !fold.commits?.length ? 'block' : 'hidden'"
+                <span
+                  >folded onto <span class="font-mono">{{ request.backingBranch }}</span></span
                 >
-                  {{ fold?.detail || 'Nothing was folded in.' }}
-                </p>
-              </ui-spinner>
-            </section>
-
-            @if (released(request)) {
-              <section class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
-                <h2 class="m-0 mb-1 text-base font-semibold">What it published</h2>
-                <ui-spinner [state]="artifactsState()" class="min-h-8">
-                  @let published = view()?.artifacts?.value;
-                  <p
-                    class="m-0 mb-1 text-sm text-charcoal-brown-700"
-                    [class]="published?.detail ? 'block' : 'hidden'"
+                <span
+                  >merged
+                  <span class="font-mono" [title]="foldTitle(request)">{{
+                    short(request.mergedSha)
+                  }}</span></span
+                >
+                <span>asked by {{ request.requester || none }}</span>
+                @if (request.gateTicketId) {
+                  <a
+                    class="text-sunflower-gold-800 underline"
+                    [routerLink]="['/projects', slug(), 'work']"
+                    >a bug ticket was filed for this failure</a
                   >
-                    {{ published?.detail }}
-                  </p>
-                  <ul class="m-0 flex list-none flex-col gap-1 p-0">
-                    @for (artifact of published?.artifacts ?? []; track artifact.name) {
-                      <li class="flex flex-wrap items-baseline gap-2 text-sm">
-                        <span
-                          class="rounded border border-charcoal-brown-200 bg-charcoal-brown-50 px-1.5 text-xs text-charcoal-brown-600"
-                          >{{ artifact.type }}</span
-                        >
-                        <span class="break-all">{{ artifact.name }}</span>
-                        <span class="font-mono text-charcoal-brown-500">{{
-                          artifact.version
-                        }}</span>
-                      </li>
-                    }
-                  </ul>
-                  <p
-                    class="m-0 py-2 text-sm text-charcoal-brown-500"
-                    [class]="
-                      published && !published.artifacts?.length && !published.detail
-                        ? 'block'
-                        : 'hidden'
-                    "
-                  >
-                    This repository publishes nothing of its own.
-                  </p>
-                </ui-spinner>
-              </section>
-            }
+                }
+                <span [title]="instant(request.createdAt)">asked {{ ago(request.createdAt) }}</span>
+                <span [title]="instant(request.updatedAt)"
+                  >last change {{ ago(request.updatedAt) }}</span
+                >
+              </div>
 
-            <!-- Declared once, placed where the page's question puts it. -->
-            <ng-template #gatesSection>
-              <ui-spinner [state]="buildsState()" class="mt-4 min-h-12">
-                <app-release-pipeline [request]="request" [builds]="view()?.builds?.value ?? []" />
-              </ui-spinner>
+              @if (detail(request); as sentence) {
+                <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
+              }
+
+              @if (!wrapper()) {
+                <ng-container [ngTemplateOutlet]="gatesSection" />
+              }
+
               <app-release-runs
                 class="mt-4"
                 [request]="request"
@@ -321,6 +244,133 @@ const UNATTENDED_TITLE =
                 [runs]="runs()?.runs ?? []"
                 [state]="runs()?.status ?? 'loading'"
               />
+
+              <app-release-conflict [request]="request" />
+
+              @if (released(request)) {
+                <section
+                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                >
+                  <h2 class="m-0 mb-1 text-base font-semibold">
+                    {{ request.state === 'FINALIZED' ? 'Released and finalized' : 'Released' }}
+                  </h2>
+                  <p class="m-0 flex flex-wrap items-baseline gap-2">
+                    <span class="font-mono font-semibold">{{ request.version || none }}</span>
+                    <span class="text-xs text-charcoal-brown-500 italic">{{
+                      request.mergedToMainAt ? 'on main' : 'not on main yet'
+                    }}</span>
+                    @if (request.releasedSha) {
+                      <span class="text-xs text-charcoal-brown-500"
+                        >released commit
+                        <span class="font-mono" [title]="request.releasedSha">{{
+                          short(request.releasedSha)
+                        }}</span></span
+                      >
+                    }
+                  </p>
+                </section>
+              }
+
+              <section class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
+                <h2 class="m-0 mb-1 text-base font-semibold">What this release folds in</h2>
+                <ui-spinner [state]="commitsState()" class="min-h-8">
+                  @let fold = view()?.commits?.value;
+                  <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                    @for (commit of fold?.commits ?? []; track commit.hash) {
+                      @let open = opened().has(commit.hash ?? '');
+                      <li>
+                        <button
+                          type="button"
+                          class="flex w-full cursor-pointer flex-wrap items-baseline gap-2 rounded px-1 text-left text-sm hover:bg-charcoal-brown-50"
+                          [attr.aria-expanded]="open"
+                          (click)="toggle(commit.hash ?? '')"
+                        >
+                          <span class="w-3 text-charcoal-brown-400" aria-hidden="true">{{
+                            open ? '▾' : '▸'
+                          }}</span>
+                          <span
+                            class="font-mono text-charcoal-brown-600"
+                            [title]="commit.hash ?? ''"
+                            >{{ commit.shortHash }}</span
+                          >
+                          <span class="min-w-48 flex-1 break-words text-charcoal-brown-950">{{
+                            commit.message
+                          }}</span>
+                          <span class="text-xs whitespace-nowrap text-charcoal-brown-500">{{
+                            commit.author
+                          }}</span>
+                          <span
+                            class="text-xs whitespace-nowrap text-charcoal-brown-500"
+                            [title]="instant(commit.date)"
+                            >{{ ago(commit.date) }}</span
+                          >
+                        </button>
+                        @if (open) {
+                          <app-commit-changes
+                            class="mt-1 mb-3 ml-5"
+                            [repoId]="repoId()"
+                            [sha]="commit.hash ?? ''"
+                          />
+                        }
+                      </li>
+                    }
+                  </ul>
+                  <p
+                    class="m-0 py-2 text-sm text-charcoal-brown-500"
+                    [class]="fold && !fold.commits?.length ? 'block' : 'hidden'"
+                  >
+                    {{ fold?.detail || 'Nothing was folded in.' }}
+                  </p>
+                </ui-spinner>
+              </section>
+
+              @if (released(request)) {
+                <section
+                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                >
+                  <h2 class="m-0 mb-1 text-base font-semibold">What it published</h2>
+                  <ui-spinner [state]="artifactsState()" class="min-h-8">
+                    @let published = view()?.artifacts?.value;
+                    <p
+                      class="m-0 mb-1 text-sm text-charcoal-brown-700"
+                      [class]="published?.detail ? 'block' : 'hidden'"
+                    >
+                      {{ published?.detail }}
+                    </p>
+                    <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                      @for (artifact of published?.artifacts ?? []; track artifact.name) {
+                        <li class="flex flex-wrap items-baseline gap-2 text-sm">
+                          <span
+                            class="rounded border border-charcoal-brown-200 bg-charcoal-brown-50 px-1.5 text-xs text-charcoal-brown-600"
+                            >{{ artifact.type }}</span
+                          >
+                          <span class="break-all">{{ artifact.name }}</span>
+                          <span class="font-mono text-charcoal-brown-500">{{
+                            artifact.version
+                          }}</span>
+                        </li>
+                      }
+                    </ul>
+                    <p
+                      class="m-0 py-2 text-sm text-charcoal-brown-500"
+                      [class]="
+                        published && !published.artifacts?.length && !published.detail
+                          ? 'block'
+                          : 'hidden'
+                      "
+                    >
+                      This repository publishes nothing of its own.
+                    </p>
+                  </ui-spinner>
+                </section>
+              }
+            }
+
+            <!-- Declared once, placed where the page's question puts it. -->
+            <ng-template #gatesSection>
+              <ui-spinner [state]="buildsState()" class="mt-4 min-h-12">
+                <app-release-pipeline [request]="request" [builds]="view()?.builds?.value ?? []" />
+              </ui-spinner>
             </ng-template>
           }
         </ui-spinner>
@@ -345,6 +395,12 @@ export class ReleaseRequestPage {
   protected readonly ago = formatRelativeTime;
   protected readonly priorityTitle = PRIORITY_TITLE;
   protected readonly unattendedTitle = UNATTENDED_TITLE;
+
+  /** The open tab, from `?tab=`: `changes`, or the overview. */
+  protected readonly tab = toSignal(
+    inject(ActivatedRoute).queryParamMap.pipe(map((params) => params.get('tab') ?? 'overview')),
+    { initialValue: 'overview' },
+  );
 
   /** The request id in the URL. */
   protected readonly requestId = toSignal(
