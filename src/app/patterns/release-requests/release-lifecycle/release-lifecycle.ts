@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import {
   lifecycleSummary,
@@ -62,6 +63,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
   selector: 'app-release-lifecycle',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RouterLink,
     ActionButton,
     AutomationCog,
     Chip,
@@ -151,6 +153,15 @@ const RAIL: Readonly<Record<StepState, string>> = {
                     @if (deploymentHref(step.deploymentRequestId); as href) {
                       <a class="text-ocean-deep-700 no-underline hover:underline" [href]="href"
                         >the deployment</a
+                      >
+                    }
+                    @if (step.phase === 'QA' && step.state === 'failed') {
+                      <a
+                        class="text-cinnabar-700 no-underline hover:underline"
+                        [routerLink]="[]"
+                        fragment="failed-tests"
+                        queryParamsHandling="preserve"
+                        >the failing tests</a
                       >
                     }
                     @if (step.rerunnable && step.phase) {

@@ -302,7 +302,9 @@ describe('attention', () => {
       approvalRequired: false,
       gates: [{ kind: 'CI', state: 'FAILED' }],
     });
-    expect(failed.map((point) => [point.label, point.action])).toEqual([['Tests passed', 'Look']]);
+    expect(failed.map((point) => [point.label, point.action, point.anchor])).toEqual([
+      ['Tests passed', 'Look', 'failed-tests'],
+    ]);
     expect(
       lifecycleSummary({ ...waiting, gates: [{ kind: 'CI', state: 'FAILED' }] }).find(
         (p) => p.key === 'gates',

@@ -86,6 +86,12 @@ export const INTERACTIONS = {
    * and one file's patch.
    */
   'show-commit-changes': 'Opening a commit on a release request shows the files it changed',
+  /**
+   * `run-reports.ts` via `CiReportsStore`: the Overview of a release request shows the reports of
+   * its test run (and its release run): tests with the failing ones first, coverage, and the rest
+   * by their highlights.
+   */
+  'show-release-request-reports': 'A release request’s overview shows its test and release reports',
   /** `release-sources.ts`: the priority select of a branch on a request's page. */
   'set-release-source-priority': 'Choosing a branch’s priority on a release request sets it',
   /** `release-pipeline-panel.ts`: Approve on a request awaiting a person's approval. */

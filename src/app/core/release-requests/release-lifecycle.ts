@@ -491,7 +491,10 @@ export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint
       shield: state === 'failed' ? 'failed' : state === 'passed' ? 'passed' : 'pending',
       title: `${label}: ${word}`,
       attention: state === 'failed' && key === 'automations',
-      anchor: stepAnchor(key === 'qa' ? 'phase:QA' : key),
+      anchor:
+        key === 'qa' && state === 'failed'
+          ? FAILED_TESTS
+          : stepAnchor(key === 'qa' ? 'phase:QA' : key),
     });
   const pips = (key: 'gates' | 'deploy-gates') => {
     const stage = byKey.get(key);
@@ -503,6 +506,7 @@ export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint
     );
     const label = key === 'gates' ? 'Quality gates' : 'Deployment gates';
     const first = steps.find((step) => step.attention) ?? steps[0];
+    const failedTests = first?.attention && first.key.endsWith(':CI');
     points.push({
       key,
       kind: 'shield',
@@ -511,7 +515,7 @@ export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint
       shield,
       title: [label, ...lines].join('\n'),
       attention: shield === 'failed' || shield === 'waiting',
-      anchor: stepAnchor(first?.key ?? key),
+      anchor: failedTests ? FAILED_TESTS : stepAnchor(first?.key ?? key),
     });
   };
   const automations = request.automations ?? [];
@@ -594,9 +598,13 @@ export function attentionOf(request: ReleaseRequest): readonly AttentionPoint[] 
           key: step.key,
           label: step.label,
           action: step.kind === 'approval' ? 'Approve' : step.kind === 'fold' ? 'Resolve' : 'Look',
-          anchor: stepAnchor(step.key),
+          // A red test run is looked at in its failing tests.
+          anchor: step.key.endsWith(':CI') ? FAILED_TESTS : stepAnchor(step.key),
         },
       ];
     }),
   );
 }
+
+/** The id of the failing tests on the request's overview (the test run's reports). */
+export const FAILED_TESTS = 'failed-tests';

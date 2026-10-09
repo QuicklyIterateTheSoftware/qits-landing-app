@@ -15,6 +15,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, filter, map } from 'rxjs';
+import { CiReportsStore } from '$core/ci/ci-reports.store';
 import { CiRunsStore } from '$core/ci/ci-runs.store';
 import { DomainEvents } from '$core/events/domain-events';
 import { ProjectsStore } from '$core/projects/projects.store';
@@ -56,6 +57,7 @@ import { CommitChangesView } from '$patterns/release-requests/commit-changes/com
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
 import { ReleaseLifecycle } from '$patterns/release-requests/release-lifecycle/release-lifecycle';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
+import { RunReports } from '$patterns/release-requests/run-reports/run-reports';
 import { requestRuns } from '$core/release-requests/release-runs';
 import { releaseTabOf, releaseTabs, type ReleaseTab } from '$core/release-requests/release-tabs';
 import { ReleaseLaneHeader } from '$patterns/release-requests/release-lane-header/release-lane-header';
@@ -80,7 +82,8 @@ const UNATTENDED_TITLE =
  * requests plus the last finalized). A request not in that list is "not found" here.
  *
  * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
- * release and what it published. Commits: the commits the fold brought in, as a graph under its
+ * reports of its test run and release run (failing tests first, coverage, the rest), the release
+ * and what it published. Commits: the commits the fold brought in, as a graph under its
  * sources (each opens its changeset). CI runs: the request's runs in qits-ci, read when the tab
  * opens. Changes: what the fold changes, file by file (`?path=`). The lifecycle is on the
  * overview only; the head (title, chips, tabs) is on every tab.
@@ -104,6 +107,7 @@ const UNATTENDED_TITLE =
     ReleaseChangesView,
     ReleaseLifecycle,
     ReleaseRuns,
+    RunReports,
     ReleaseLaneHeader,
     ReleaseWithdraw,
     RouterLink,
@@ -407,6 +411,9 @@ const UNATTENDED_TITLE =
             <!-- Declared once, placed where the page's question puts it. -->
             <ng-template #gatesSection>
               <app-release-lifecycle class="mt-4" [request]="request" [slug]="slug()" />
+              @for (run of reportRuns(); track run.runId) {
+                <app-run-reports class="mt-4" [runId]="run.runId" [title]="run.title" />
+              }
             </ng-template>
           }
         </ui-spinner>
@@ -420,6 +427,7 @@ export class ReleaseRequestPage {
   private readonly repositories = inject(RepositoriesStore);
   private readonly store = inject(ReleaseRequestStore);
   private readonly ci = inject(CiRunsStore);
+  private readonly reports = inject(CiReportsStore);
 
   protected readonly none = NONE;
   protected readonly badgeOf = requestBadge;
@@ -485,6 +493,31 @@ export class ReleaseRequestPage {
   });
 
   protected readonly commitsState = computed(() => this.view()?.commits.status ?? 'loading');
+
+  /**
+   * The runs whose reports the overview shows: the fold's test run; while it still runs, also the
+   * newest finished build of the same fold (its verdict, with the failing tests a rerun is
+   * answering); then the release run.
+   */
+  protected readonly reportRuns = computed(() => {
+    const phases = this.row()?.pipeline?.phases ?? [];
+    const phaseOf = (phase: string) => phases.find((entry) => entry.phase === phase);
+    const qa = phaseOf('QA');
+    const runs: { runId: string; title: string }[] = [];
+    if (qa?.runId) runs.push({ runId: qa.runId, title: 'Test run reports' });
+    const finished = (this.view()?.builds?.value ?? []).find(
+      (build) => !!build.runId && build.runId !== qa?.runId,
+    );
+    if (finished?.runId && (qa?.state === 'RUNNING' || qa?.state === 'PENDING' || !qa)) {
+      runs.push({
+        runId: finished.runId,
+        title: `Last finished test run of this fold (${(finished.status ?? '').toLowerCase()})`,
+      });
+    }
+    const publish = phaseOf('PUBLISH')?.runId;
+    if (publish) runs.push({ runId: publish, title: 'Release run reports' });
+    return runs;
+  });
 
   /** The repository's newest CI runs, where the request's runs are found. */
   protected readonly runs = computed(() => this.ci.byRepository()[this.repoId()]);
@@ -667,9 +700,20 @@ export class ReleaseRequestPage {
       const target = fragment();
       if (!browser || !target || !this.row() || scrolled === target) return;
       scrolled = target;
-      afterNextRender(() => document.getElementById(target)?.scrollIntoView({ block: 'center' }), {
-        injector,
-      });
+      // The check may be drawn later than the request (the test reports load on their own): look
+      // for it for a few seconds.
+      afterNextRender(
+        () => {
+          let tries = 0;
+          const look = () => {
+            const element = document.getElementById(target);
+            if (element) element.scrollIntoView({ block: 'center' });
+            else if (++tries < 20) setTimeout(look, 250);
+          };
+          look();
+        },
+        { injector },
+      );
     });
     // The CI runs are read when their tab opens, not before.
     effect(() => {
@@ -694,6 +738,7 @@ export class ReleaseRequestPage {
         const repoId = this.repoId();
         if (!repoId) return;
         void this.store.refresh(repoId, this.requestId());
+        for (const run of this.reportRuns()) this.reports.refreshRun(run.runId);
         void this.ci.refresh(repoId);
       });
   }
