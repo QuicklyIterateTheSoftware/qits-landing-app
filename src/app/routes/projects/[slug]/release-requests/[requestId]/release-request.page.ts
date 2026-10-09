@@ -80,7 +80,8 @@ const UNATTENDED_TITLE =
  * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
  * release and what it published. Commits: the commits the fold brought in, as a graph under its
  * sources (each opens its changeset). CI runs: the request's runs in qits-ci, read when the tab
- * opens. Changes: what the fold changes, file by file (`?path=`), with the lifecycle above it.
+ * opens. Changes: what the fold changes, file by file (`?path=`). The lifecycle is on the
+ * overview only; the head (title, chips, tabs) is on every tab.
  * The tab labels count the commits and, once read, the runs.
  * Withdraw sits in the page's actions while the request can be called off.
  *
@@ -271,12 +272,12 @@ const UNATTENDED_TITLE =
                 [state]="runs()?.status ?? 'loading'"
               />
             } @else if (tab() === 'changes') {
-              <!-- The approval stays in reach while the changes are read. -->
-              @if (!wrapper()) {
-                <ng-container [ngTemplateOutlet]="gatesSection" />
-              }
               <app-release-changes class="mt-4" [request]="request" />
             } @else {
+              <!-- On the estate the open question is the approval, so the lifecycle comes first. -->
+              @if (wrapper()) {
+                <ng-container [ngTemplateOutlet]="gatesSection" />
+              }
               <div
                 class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
               >
