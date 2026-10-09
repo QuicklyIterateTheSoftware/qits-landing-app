@@ -23,7 +23,10 @@ import {
 import { requestBadge } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
-import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
+import type {
+  ReleaseArtifact,
+  ReleaseRequest,
+} from '$core/release-requests/release-request.consumes';
 import {
   formatInstant,
   formatRelativeTime,
@@ -35,6 +38,13 @@ import {
   shortShaOrNone,
 } from '$core/release-requests/release-request-model';
 import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
+import {
+  artifactLinks,
+  releaseLinks,
+  repositoryScope,
+  type AppLink,
+} from '$core/release-requests/release-links';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -268,6 +278,20 @@ const UNATTENDED_TITLE =
                       >
                     }
                   </p>
+                  <ul class="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-sm">
+                    @for (link of releaseLinks(); track link.label) {
+                      <li>
+                        <a
+                          class="text-ocean-deep-700 no-underline hover:underline"
+                          [href]="link.href"
+                          >{{ link.label }}
+                          @if (link.label === 'The released commit') {
+                            <span class="font-mono">{{ short(request.releasedSha) }}</span>
+                          }
+                        </a>
+                      </li>
+                    }
+                  </ul>
                 </section>
               }
 
@@ -344,7 +368,17 @@ const UNATTENDED_TITLE =
                             class="rounded border border-charcoal-brown-200 bg-charcoal-brown-50 px-1.5 text-xs text-charcoal-brown-600"
                             >{{ artifact.type }}</span
                           >
-                          <span class="break-all">{{ artifact.name }}</span>
+                          @for (link of artifactLinks(artifact); track link.label) {
+                            @if (link.href) {
+                              <a
+                                class="break-all text-ocean-deep-700 no-underline hover:underline"
+                                [href]="link.href"
+                                >{{ link.label }}</a
+                              >
+                            } @else {
+                              <span class="break-all">{{ link.label }}</span>
+                            }
+                          }
                           <span class="font-mono text-charcoal-brown-500">{{
                             artifact.version
                           }}</span>
@@ -444,6 +478,43 @@ export class ReleaseRequestPage {
   protected readonly buildsState = computed(() => this.view()?.builds.status ?? 'loading');
 
   protected readonly artifactsState = computed(() => this.view()?.artifacts?.status ?? 'loading');
+
+  private readonly origins = inject(PlatformOrigins);
+
+  /** A link with its address joined to its application's origin; no href when none is known. */
+  private linked(link: AppLink): AppLink & { readonly href?: string } {
+    const origin = link.app ? this.origins.page(link.app) : '';
+    return { ...link, href: origin && link.path ? `${origin}${link.path}` : undefined };
+  }
+
+  /** `/<slug>/<group>/<repository>/`, where the platform's SPAs address the repository. */
+  private readonly scope = computed(() => {
+    const id = this.projectId();
+    const entries = id ? this.repositories.byProject()[id]?.wrapper?.entries : undefined;
+    const path = entries?.find((entry) => entry.repositoryId === this.repoId())?.path;
+    return repositoryScope(this.slug(), path, this.row()?.repoName);
+  });
+
+  /** The release's tag, commit, deployment and train, where they can be addressed. */
+  protected readonly releaseLinks = computed(() => {
+    const request = this.row();
+    if (!request) return [];
+    return releaseLinks({
+      slug: this.slug(),
+      scope: this.scope(),
+      repoId: request.repoId,
+      repoName: request.repoName,
+      version: request.version,
+      releasedSha: request.releasedSha,
+      deployable: this.view()?.artifacts?.value?.deployable === true,
+    })
+      .map((link) => this.linked(link))
+      .filter((link) => !!link.href);
+  });
+
+  protected artifactLinks(artifact: ReleaseArtifact) {
+    return artifactLinks(artifact, this.scope()).map((link) => this.linked(link));
+  }
 
   /** A request of the project's wrapper repository: the project's own estate release. */
   protected readonly wrapper = computed(() => {
