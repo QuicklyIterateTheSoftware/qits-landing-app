@@ -292,6 +292,9 @@ describe('release pipeline', () => {
     it('ticks the automations once every row is fresh or waived, crosses them on a failure', () => {
       expect(automationsName([])).toBe('✓ Automations');
       expect(automationsName([{ state: 'FRESH' }, { state: 'WAIVED' }])).toBe('✓ Automations');
+      expect(automationsName([{ state: 'FRESH' }, { state: 'NOT_APPLICABLE' }])).toBe(
+        '✓ Automations',
+      );
       expect(automationsName([{ state: 'FAILED' }, { state: 'RUNNING' }])).toBe('✗ Automations');
       expect(automationsName([{ state: 'RUNNING' }])).toBe('Automations');
     });

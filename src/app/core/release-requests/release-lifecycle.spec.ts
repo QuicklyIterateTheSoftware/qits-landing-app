@@ -186,6 +186,10 @@ describe('release lifecycle', () => {
     expect(stages[5].steps.map((step) => step.label)).toEqual(['Smoke test']);
   });
 
+  it('reads a not applicable automation as skipped, never as unknown', () => {
+    expect(stepStateOf('NOT_APPLICABLE')).toBe('skipped');
+  });
+
   it('reads the backend’s words as states, an unknown one as unknown', () => {
     expect(
       ['SUCCESS', 'FRESH', 'REQUESTED', 'WAITING', 'NOT_REQUIRED', 'WAIVED', 'SUPERSEDED', 'X'].map(

@@ -343,7 +343,11 @@ export function verdictWord(build: CommitBuild): string {
 }
 
 /** Automation states after which the gate holds nothing back. */
-const AUTOMATION_SETTLED_STATES: ReadonlySet<string> = new Set(['FRESH', 'WAIVED']);
+const AUTOMATION_SETTLED_STATES: ReadonlySet<string> = new Set([
+  'FRESH',
+  'WAIVED',
+  'NOT_APPLICABLE',
+]);
 
 /** The automations gate's name in the plain gates list: ✓ when settled, ✗ when one failed. */
 export function automationsName(rows: readonly ReleaseAutomation[]): string {
