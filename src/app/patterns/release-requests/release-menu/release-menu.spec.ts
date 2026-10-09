@@ -8,7 +8,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { goldenMaster } from '../../../../testing/golden-masters';
 import { Subject } from 'rxjs';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
-import { gateTone, ReleaseMenu, REFRESH_DEBOUNCE_MS, requestTone } from './release-menu';
+import { ReleaseMenu, REFRESH_DEBOUNCE_MS } from './release-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -124,21 +124,5 @@ describe('ReleaseMenu', () => {
     document.body.click();
     fixture.detectChanges();
     expect(panel.classList.contains('hidden')).toBe(true);
-  });
-
-  it('colours gates and requests by how they stand', () => {
-    expect(['PASSED', 'PENDING', 'FAILED', 'UNKNOWN'].map(gateTone)).toEqual([
-      'ok',
-      'waiting',
-      'failed',
-      'neutral',
-    ]);
-    expect(['READY', 'RELEASED', 'PENDING', 'CONFLICTED', 'REJECTED'].map(requestTone)).toEqual([
-      'ok',
-      'ok',
-      'waiting',
-      'failed',
-      'failed',
-    ]);
   });
 });

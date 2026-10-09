@@ -16,50 +16,13 @@ import {
 } from '$core/projects/release-request-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
+import { gateTone, requestTone } from '$core/projects/release-requests';
+import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** How long a burst of domain events waits before the requests are fetched again. */
 export const REFRESH_DEBOUNCE_MS = 1_000;
-
-/** A chip's Tailwind classes, written out in full so Tailwind finds them. */
-const CHIP = {
-  ok: 'bg-mint-leaf-100 text-mint-leaf-800',
-  waiting: 'bg-sunflower-gold-100 text-sunflower-gold-800',
-  failed: 'bg-cinnabar-100 text-cinnabar-700',
-  neutral: 'bg-charcoal-brown-100 text-charcoal-brown-700',
-} as const;
-
-/** A gate's state as a chip colour: passed, waiting, failed, or not known. */
-export function gateTone(state: string | undefined): keyof typeof CHIP {
-  switch (state) {
-    case 'PASSED':
-      return 'ok';
-    case 'PENDING':
-      return 'waiting';
-    case 'FAILED':
-      return 'failed';
-    default:
-      return 'neutral';
-  }
-}
-
-/** A request's state as a chip colour: on its way, waiting, or stuck. */
-export function requestTone(state: string | undefined): keyof typeof CHIP {
-  switch (state) {
-    case 'READY':
-    case 'RELEASED':
-      return 'ok';
-    case 'PENDING':
-      return 'waiting';
-    case 'REJECTED':
-    case 'FAILED':
-    case 'CONFLICTED':
-      return 'failed';
-    default:
-      return 'neutral';
-  }
-}
 
 /**
  * The top bar's lightning menu: the open project's pending release requests, each with its state
@@ -170,8 +133,8 @@ export class ReleaseMenu {
     return status === 'loaded' || status === 'error' ? status : 'loading';
   });
 
-  protected chip(tone: keyof typeof CHIP): string {
-    return CHIP[tone];
+  protected chip(tone: ChipTone): string {
+    return chipClass(tone);
   }
 
   constructor() {

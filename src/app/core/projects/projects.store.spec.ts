@@ -114,7 +114,7 @@ describe('ProjectsStore', () => {
     expect(store.ids()).toEqual([OTHER_ID]);
   });
 
-  it('keeps a project’s pending release requests, fetched once', async () => {
+  it('keeps a project’s release requests and, apart, the pending ones, fetched once', async () => {
     const store = await loadedStore();
     const id = project().id;
     // Recorded: PENDING, RELEASED, READY, REJECTED, CONFLICTED and one FINALIZED, most recently
@@ -128,6 +128,7 @@ describe('ProjectsStore', () => {
     await done;
     const kept = store.releaseRequests()[id];
     expect(kept?.status).toBe('loaded');
+    expect(kept?.requests).toHaveLength(6);
     expect(kept?.pending.map((r) => r.state)).toEqual([
       'PENDING',
       'RELEASED',
@@ -148,7 +149,7 @@ describe('ProjectsStore', () => {
       .expectOne(`/projects/api/projects/${id}/release-requests`)
       .flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));
     await done;
-    expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', pending: [] });
+    expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', requests: [], pending: [] });
   });
 
   it('reports failed release requests, and fetches them again on the next ask', async () => {

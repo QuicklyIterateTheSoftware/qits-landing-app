@@ -164,6 +164,43 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(store.releaseRequests()[projectId]?.status).toBe('loaded');
     }));
 
+  it('show-project-release-requests: the page reads every request, with its details', () =>
+    given(
+      'show-project-release-requests',
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with pending release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      const kept = store.releaseRequests()[projectId];
+      expect(kept?.status).toBe('loaded');
+      expect(kept?.requests.length).toBeGreaterThan(0);
+      expect(kept?.requests.every((r) => typeof r.updatedAt === 'string')).toBe(true);
+    }));
+
+  it('show-project-release-requests: a project without any shows none', () =>
+    given(
+      'show-project-release-requests',
+      'a project with no release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with no release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      expect(store.releaseRequests()[projectId]?.requests).toEqual([]);
+    }));
+
   it('open-release-requests: a project without any lists none', () =>
     given(
       'open-release-requests',
@@ -178,6 +215,10 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       );
       const projectId = op.params['projectId'];
       await store.loadReleaseRequests(projectId);
-      expect(store.releaseRequests()[projectId]).toEqual({ status: 'loaded', pending: [] });
+      expect(store.releaseRequests()[projectId]).toEqual({
+        status: 'loaded',
+        requests: [],
+        pending: [],
+      });
     }));
 });

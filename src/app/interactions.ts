@@ -61,9 +61,16 @@ export const INTERACTIONS = {
   'show-project-loc': 'The project cards show how many lines of code each project has',
   /**
    * `release-menu.ts`: the top bar's lightning menu, for the open project — fetched when the
-   * project opens, and again when domain events say its requests changed.
+   * project opens, and again when domain events say its requests changed. The sidebar's Release
+   * Requests entry shows the newest request from the same answer.
    */
   'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
+  /**
+   * `release-requests.page.ts`: the Release Requests page lists every request of the open project
+   * qits-projects answers (the open ones and the last finalized ones).
+   */
+  'show-project-release-requests':
+    'The Release Requests page lists the project’s open and recently finalized release requests',
   /** `notifications-menu.ts`: the top bar's notifications menu, on its first opening. */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */

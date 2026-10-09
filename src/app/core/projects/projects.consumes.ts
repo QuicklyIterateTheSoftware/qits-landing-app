@@ -22,9 +22,12 @@ export const LIST_PROJECTS = [
 export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as const;
 
 /**
- * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request with its
- * repository, summary, state and gates. qits-projects answers the open requests plus the last few
- * FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
+ * `loadReleaseRequests(projectId)`: one answer serves three readers. The top bar's release menu
+ * lists each pending request with its repository, summary, state and gates. The sidebar's Release
+ * Requests entry shows the newest one (`updatedAt`). The Release Requests page lists them all, with
+ * priority, version, merged commit, requester, detail and whether a person must approve or nobody
+ * is watching. qits-projects answers the open requests plus the last few FINALIZED ones; the menu
+ * keeps the pending ones ({@link isPendingRelease}).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
@@ -33,9 +36,18 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].state',
   'requests[].gates[].kind',
   'requests[].gates[].state',
+  'requests[].priority',
+  'requests[].version',
+  'requests[].mergedSha',
+  'requests[].requester',
+  'requests[].detail',
+  'requests[].unattended',
+  'requests[].approvalRequired',
+  'requests[].approvalState',
+  'requests[].updatedAt',
 ] as const;
 
-/** One release request, cut to what the menu reads. */
+/** One release request, cut to what the menu, the sidebar and the page read. */
 export type ReleaseRequestEntry = NonNullable<
   Consumed<
     ListProjectReleaseRequestsResponses[200],

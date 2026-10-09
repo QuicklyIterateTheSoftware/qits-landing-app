@@ -48,8 +48,9 @@ class TallPage {
 /**
  * Screenshots of the layout in a real browser: the wide sidebar, and the narrow burger closed and
  * open, with no project open; and the sidebar of an open project. The open project is qits-projects'
- * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu)
- * are the recorded "a project with no release requests". The event stream never connects.
+ * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu and
+ * the sidebar's Release Requests entry) are the recorded "a project with no release requests", or
+ * "a project with pending release requests" where a case says so. The event stream never connects.
  */
 describe('ShellLayout (screenshots)', () => {
   let http: HttpTestingController;
@@ -64,6 +65,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/work/campaigns', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
+          { path: 'projects/:slug/release-requests', component: TestPage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -123,8 +125,11 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('narrow-open');
   });
 
-  /** The layout at `path` below the recorded project, which is open; its menus answered. */
-  async function renderProject(path: string) {
+  /**
+   * The layout at `path` below the recorded project, which is open; its menus answered, the
+   * release requests from the recorded `requests` state.
+   */
+  async function renderProject(path: string, requests = 'a project with no release requests') {
     const fixture = TestBed.createComponent(ShellLayout);
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
@@ -138,9 +143,7 @@ describe('ShellLayout (screenshots)', () => {
     await settle();
     http
       .expectOne(`/projects/api/projects/${project.id}/release-requests`)
-      .flush(
-        await goldenMaster('a project with no release requests', 'listProjectReleaseRequests'),
-      );
+      .flush(await goldenMaster(requests, 'listProjectReleaseRequests'));
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -201,6 +204,43 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toHaveTextContent('Campaigns');
+  });
+
+  it('shows the newest release request below Release Requests, between Work and Editor', async () => {
+    const { project, layout } = await renderProject(
+      '/release-requests',
+      'a project with pending release requests',
+    );
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const entry = navigation.getByRole('link', { name: /^Release Requests/ });
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    // Recorded: every request changed at the same instant, so the first listed is the newest.
+    await expect.element(entry).toHaveTextContent('contract-service');
+    await expect.element(entry).toHaveTextContent('pending');
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((a) => a.firstChild?.textContent?.trim());
+    expect(labels).toEqual([
+      'Work',
+      'Release Requests',
+      'Editor',
+      'Repositories',
+      'Observability',
+      'Events',
+    ]);
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toHaveTextContent(`${project.name}›Release Requests`);
+    await expect.element(layout).toMatchScreenshot('release-requests');
+  });
+
+  it('shows no line below Release Requests for a project without any', async () => {
+    await renderProject('/work');
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Release Requests' });
+    await expect.element(entry).toHaveTextContent(/^Release Requests$/);
   });
 
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {

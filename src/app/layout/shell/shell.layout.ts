@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ProjectsStore } from '$core/projects/projects.store';
+import { latestReleaseRequest, requestBadge } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
@@ -7,6 +9,7 @@ import { NotificationsMenu } from '$patterns/events/notifications-menu/notificat
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
 import { Breadcrumbs } from '$ui/components/breadcrumbs/breadcrumbs';
+import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 
 /** One entry of the sidebar. */
 export interface NavLink {
@@ -14,6 +17,17 @@ export interface NavLink {
   readonly path: string;
   /** The section's own pages, listed below it in the sidebar while the section is open. */
   readonly children?: readonly NavLink[];
+  /** A line below the label: what is newest in the section, with a chip. */
+  readonly note?: NavNote;
+}
+
+/** The line below a sidebar entry's label. */
+export interface NavNote {
+  readonly text: string;
+  readonly chip: string;
+  readonly tone: ChipTone;
+  /** The full story, on hover. */
+  readonly title: string;
 }
 
 /**
@@ -108,7 +122,20 @@ export interface NavLink {
                 [routerLink]="link.path"
                 [attr.aria-current]="currentOf(link)"
                 (click)="closeNav()"
-                >{{ link.label }}</a
+                >{{ link.label }}
+                <!-- The section's newest item, below the label; switched by class. -->
+                <span
+                  class="mt-0.5 items-center gap-1.5 text-xs font-normal text-gray-500"
+                  [class]="link.note ? 'flex' : 'hidden'"
+                  [attr.title]="link.note?.title"
+                >
+                  <span class="min-w-0 truncate">{{ link.note?.text }}</span>
+                  <span
+                    class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
+                    [class]="chip(link.note?.tone)"
+                    >{{ link.note?.chip }}</span
+                  >
+                </span></a
               >
               <!-- The open section's pages, indented below it; switched by class, so the server
                    render hydrates as is. -->
@@ -143,6 +170,28 @@ export interface NavLink {
 })
 export class ShellLayout {
   private readonly selected = inject(SelectedProject);
+  private readonly projects = inject(ProjectsStore);
+
+  /**
+   * The open project's newest release request (`latestReleaseRequest`), as the line below the
+   * sidebar's Release Requests entry: its repository and version, and its state. The requests are
+   * the ones the top bar's release menu fetches when the project opens (`ProjectsStore`); until
+   * they are there, and for a project without any, there is no line.
+   */
+  private readonly latestRelease = computed((): NavNote | undefined => {
+    const id = this.selected.project()?.id;
+    const requests = id === undefined ? undefined : this.projects.releaseRequests()[id];
+    const latest = latestReleaseRequest(requests?.requests ?? []);
+    if (!latest) return undefined;
+    const badge = requestBadge(latest);
+    const text = [latest.repoName, latest.version].filter(Boolean).join(' ');
+    return {
+      text,
+      chip: badge.label,
+      tone: badge.tone,
+      title: `${text}: ${latest.summary ?? ''} (${badge.label})`,
+    };
+  });
 
   /**
    * The sidebar lists the open project's sections; with no project open it is empty. Where you
@@ -161,6 +210,11 @@ export class ShellLayout {
               path: `/projects/${slug}/work/${tab.segment}`,
             })),
           },
+          {
+            label: 'Release Requests',
+            path: `/projects/${slug}/${RELEASE_REQUESTS}`,
+            note: this.latestRelease(),
+          },
           { label: 'Editor', path: `/projects/${slug}/editor` },
           { label: 'Repositories', path: `/projects/${slug}/repositories` },
           { label: 'Observability', path: `/projects/${slug}/observability` },
@@ -171,7 +225,7 @@ export class ShellLayout {
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
    * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
-   * Work › <item id>). A work item's workspace page has no section: "Workspace <item id>" follows
+   * Work › <item id>, Release Requests › <request id>). A work item's workspace page has no section: "Workspace <item id>" follows
    * the project. The last crumb is the current page and is not a link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
@@ -184,8 +238,11 @@ export class ShellLayout {
     if (workspace) return [...crumbs, workspace];
     const section = this.section();
     if (!section) return crumbs;
-    // A section's own subpages, one level deep: Work › In Progress, Work › <item id>.
-    const sub = workSubpage(this.selected.url(), `/projects/${slug}`);
+    // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
+    // Release Requests › <request id>.
+    const url = this.selected.url();
+    const sub =
+      workSubpage(url, `/projects/${slug}`) ?? releaseRequestSubpage(url, `/projects/${slug}`);
     return sub ? [...crumbs, section, sub] : [...crumbs, section];
   });
 
@@ -219,6 +276,11 @@ export class ShellLayout {
     return link.children?.some((child) => this.isAt(child)) ? 'true' : 'page';
   }
 
+  /** A note's chip colours; neutral while there is no note. */
+  protected chip(tone: ChipTone | undefined): string {
+    return chipClass(tone ?? 'neutral');
+  }
+
   protected readonly navOpen = signal(false);
 
   protected toggleNav(): void {
@@ -229,6 +291,9 @@ export class ShellLayout {
     this.navOpen.set(false);
   }
 }
+
+/** The release requests section's segment below a project: `/projects/<slug>/release-requests`. */
+export const RELEASE_REQUESTS = 'release-requests';
 
 /** True when `url` is `path` or a page below it, query and fragment ignored. */
 function within(url: string, path: string): boolean {
@@ -265,4 +330,16 @@ export function workSubpage(url: string, project: string): NavLink | undefined {
   }
   const tab = WORK_TABS.find((t) => t.segment === first);
   return tab ? { label: tab.label, path: `${work}/${tab.segment}` } : undefined;
+}
+
+/**
+ * The crumb of one release request below the project at `project` (`/projects/<slug>`):
+ * `<project>/release-requests/<id>` is the id's first eight characters. Undefined for the list
+ * itself and anything outside it.
+ */
+export function releaseRequestSubpage(url: string, project: string): NavLink | undefined {
+  const prefix = `${project}/${RELEASE_REQUESTS}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
+  return id ? { label: decodeURIComponent(id).slice(0, 8), path: `${prefix}${id}` } : undefined;
 }

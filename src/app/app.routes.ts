@@ -42,6 +42,8 @@ import { sessionGuard } from '$core/auth/session.guard';
  * nothing to bounce on, and the server answers `/work` with a 302 instead of rendering an empty
  * page.
  *
+ * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`).
+ *
  * A work item's workspace is at `projects/<slug>/workspaces/<qualified id>` (`WorkspacePage`),
  * where the workspace links on cards lead.
  *
@@ -133,6 +135,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./routes/projects/[slug]/workspaces/[id]/workspace.page').then(
             (m) => m.WorkspacePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/release-requests',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/release-requests/release-requests.page').then(
+            (m) => m.ReleaseRequestsPage,
           ),
       },
       {
