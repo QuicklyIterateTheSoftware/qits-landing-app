@@ -101,8 +101,10 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
-    // The CI runs are read only when their tab opens.
-    http.expectNone((r) => r.url.startsWith('/ci/api/runs'));
+    // TODO(qits-112): qits-ci has no golden masters yet, so its runs answer with an error.
+    http
+      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
+      .flush(null, { status: 500, statusText: 'Server Error' });
     request.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
@@ -135,6 +137,9 @@ describe('ReleaseRequestPage (screenshots)', () => {
     http
       .expectOne((r) => r.url.endsWith('/builds'))
       .flush(await goldenMaster(state, 'listCommitBuilds'));
+    http
+      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
+      .flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const graph = page.elementLocator(element).getByRole('region', {
       name: 'What this release folds in',

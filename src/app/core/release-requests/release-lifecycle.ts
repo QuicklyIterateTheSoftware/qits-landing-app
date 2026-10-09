@@ -152,6 +152,22 @@ function gateStage(gate: GenericGate): 'gates' | 'publish' | 'deploy-gates' {
   return 'gates';
 }
 
+/**
+ * The gates of the request's current fold. Their states come from the request's own `gates` (the
+ * service evaluates them for `mergedSha`); the pipeline's gates only add where each sits
+ * (`between`). A pipeline gate the request's list does not name keeps its own state.
+ */
+export function currentGates(request: ReleaseRequest): readonly GenericGate[] {
+  const own = (request.gates ?? []) as readonly GenericGate[];
+  const pipeline = (request.pipeline?.gates ?? []) as readonly GenericGate[];
+  if (pipeline.length === 0) return own;
+  const byKind = new Map(own.map((gate) => [gate.kind, gate]));
+  return pipeline.map((gate) => {
+    const fresh = byKind.get(gate.kind);
+    return fresh ? { ...gate, state: fresh.state, detail: fresh.detail ?? gate.detail } : gate;
+  });
+}
+
 /** Whether the answer's gates carry the generic shape (a label and a position on each). */
 export function hasGenericGates(gates: readonly GenericGate[]): boolean {
   return gates.length > 0 && gates.every((gate) => !!gate.label && !!gate.position);
@@ -274,9 +290,7 @@ const notReported = (key: string, label: string): Step => ({
  * and asks qits-maintenance for the automations); the gates then decide in order.
  */
 export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
-  const allGates: readonly GenericGate[] = (request.pipeline?.gates ??
-    request.gates ??
-    []) as readonly GenericGate[];
+  const allGates = currentGates(request);
   const generic = hasGenericGates(allGates);
   const gateSteps = allGates.map((gate) => ({
     stage: gateStage(gate),

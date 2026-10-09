@@ -59,6 +59,7 @@ import { ReleaseLifecycle } from '$patterns/release-requests/release-lifecycle/r
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
 import { RunReports } from '$patterns/release-requests/run-reports/run-reports';
 import { requestRuns } from '$core/release-requests/release-runs';
+import { currentFoldPhases } from '$core/release-requests/fold-truth';
 import { releaseTabOf, releaseTabs, type ReleaseTab } from '$core/release-requests/release-tabs';
 import { ReleaseLaneHeader } from '$patterns/release-requests/release-lane-header/release-lane-header';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
@@ -83,10 +84,14 @@ const UNATTENDED_TITLE =
  *
  * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
  * reports of its test run and release run (failing tests first, coverage, the rest), the release
- * and what it published. Commits: the commits the fold brought in, as a graph under its
- * sources (each opens its changeset). CI runs: the request's runs in qits-ci, read when the tab
- * opens. Changes: what the fold changes, file by file (`?path=`). The lifecycle is on the
- * overview only; the head (title, chips, tabs) is on every tab.
+ * and what it published. Commits: the commits the fold brought in, as a graph under its sources
+ * (each opens its changeset). Builds: the request's runs in qits-ci (also read for the overview,
+ * to check its test phase). Changes: what the fold changes, file by file (`?path=`). The
+ * lifecycle is on the overview only; the head (title, chips, tabs) is on every tab.
+ *
+ * Everything the page shows is of the request's current fold (`mergedSha`): gate states from the
+ * request's own gates, a stale QA phase replaced from the runs (`currentFoldPhases`), reports only
+ * of runs at that commit. A re-fold reads the fold's commits, verdicts and reports again.
  * The tab labels count the commits and, once read, the runs.
  * Withdraw sits in the page's actions while the request can be called off.
  *
@@ -410,10 +415,20 @@ const UNATTENDED_TITLE =
 
             <!-- Declared once, placed where the page's question puts it. -->
             <ng-template #gatesSection>
-              <app-release-lifecycle class="mt-4" [request]="request" [slug]="slug()" />
+              <app-release-lifecycle
+                class="mt-4"
+                [request]="current() ?? request"
+                [slug]="slug()"
+              />
               @for (run of reportRuns(); track run.runId) {
                 <app-run-reports class="mt-4" [runId]="run.runId" [title]="run.title" />
               }
+              <p
+                class="mt-4 mb-0 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2 text-sm text-charcoal-brown-600"
+                [class]="noFinishedBuild() ? 'block' : 'hidden'"
+              >
+                No finished build of this fold yet.
+              </p>
             </ng-template>
           }
         </ui-spinner>
@@ -495,29 +510,61 @@ export class ReleaseRequestPage {
   protected readonly commitsState = computed(() => this.view()?.commits.status ?? 'loading');
 
   /**
-   * The runs whose reports the overview shows: the fold's test run; while it still runs, also the
-   * newest finished build of the same fold (its verdict, with the failing tests a rerun is
-   * answering); then the release run.
+   * The request as the page shows it: only its current fold (`mergedSha`). A QA phase that names a
+   * run of an earlier fold (a race in qits-projects, fixed but not yet released) is replaced from
+   * qits-ci's runs (`currentFoldPhases`).
+   */
+  protected readonly current = computed(() => {
+    const request = this.row();
+    const runs = this.runs();
+    return request
+      ? currentFoldPhases(request, runs?.status === 'loaded' ? runs.runs : undefined)
+      : undefined;
+  });
+
+  /** The CI verdicts on the request's current fold; none while they belong to another fold. */
+  private readonly foldBuilds = computed(() => {
+    const view = this.view();
+    const fold = this.row()?.mergedSha ?? '';
+    return view?.fold === fold ? (view?.builds?.value ?? []) : [];
+  });
+
+  /**
+   * The runs whose reports the overview shows, all of the current fold: its test run; while that
+   * still runs, the newest finished build of the same commit (`foldBuilds`); then the release run.
    */
   protected readonly reportRuns = computed(() => {
-    const phases = this.row()?.pipeline?.phases ?? [];
+    const phases = this.current()?.pipeline?.phases ?? [];
     const phaseOf = (phase: string) => phases.find((entry) => entry.phase === phase);
     const qa = phaseOf('QA');
     const runs: { runId: string; title: string }[] = [];
     if (qa?.runId) runs.push({ runId: qa.runId, title: 'Test run reports' });
-    const finished = (this.view()?.builds?.value ?? []).find(
-      (build) => !!build.runId && build.runId !== qa?.runId,
-    );
-    if (finished?.runId && (qa?.state === 'RUNNING' || qa?.state === 'PENDING' || !qa)) {
-      runs.push({
-        runId: finished.runId,
-        title: `Last finished test run of this fold (${(finished.status ?? '').toLowerCase()})`,
-      });
+    if (this.testRunning()) {
+      const finished = this.foldBuilds().find(
+        (build) => !!build.runId && build.runId !== qa?.runId,
+      );
+      if (finished?.runId) {
+        runs.push({
+          runId: finished.runId,
+          title: `Last finished build of this fold (${(finished.status ?? '').toLowerCase()})`,
+        });
+      }
     }
     const publish = phaseOf('PUBLISH')?.runId;
     if (publish) runs.push({ runId: publish, title: 'Release run reports' });
     return runs;
   });
+
+  /** The fold's test run has not finished (or not started). */
+  private readonly testRunning = computed(() => {
+    const qa = this.current()?.pipeline?.phases?.find((phase) => phase.phase === 'QA');
+    return !qa || qa.state === 'RUNNING' || qa.state === 'PENDING';
+  });
+
+  /** The fold's test run still runs and no build of this fold has finished yet. */
+  protected readonly noFinishedBuild = computed(
+    () => !!this.row()?.mergedSha && this.testRunning() && this.foldBuilds().length === 0,
+  );
 
   /** The repository's newest CI runs, where the request's runs are found. */
   protected readonly runs = computed(() => this.ci.byRepository()[this.repoId()]);
@@ -715,12 +762,10 @@ export class ReleaseRequestPage {
         { injector },
       );
     });
-    // The CI runs are read when their tab opens, not before.
+    // The CI runs: the Builds tab lists them, and the overview checks its QA phase against them.
     effect(() => {
       const repoId = this.repoId();
-      if (browser && repoId && this.tab() === 'runs') {
-        untracked(() => void this.ci.load(repoId));
-      }
+      if (browser && repoId) untracked(() => void this.ci.load(repoId));
     });
     if (!browser) return;
     inject(DomainEvents)
