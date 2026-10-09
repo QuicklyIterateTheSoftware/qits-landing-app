@@ -38,7 +38,7 @@ export type AgentConfigurationDocumentDto = {
 
 export type AgentContainerResponse = {
     /**
-     * The project's agent container, as this service last observed it.
+     * The project's front desk, as this service last observed it.
      */
     container?: ContainerView;
 };
@@ -97,7 +97,7 @@ export type AgentResolvedMcpServerDto = {
     allowedTools?: Array<string>;
 };
 
-export type AgentRuntimeStatus = 'RUNNING' | 'STOPPED' | 'PROVISIONING' | 'FAILED' | 'ABSENT';
+export type AgentRuntimeStatus = 'RUNNING' | 'STOPPED' | 'PROVISIONING' | 'FAILED' | 'ABSENT' | 'QUEUED' | 'UNAVAILABLE';
 
 export type AgentSurfaceConfigurationDto = {
     surface?: string;
@@ -218,6 +218,9 @@ export type CampaignMemberEntityDto = {
     title?: string;
     status?: string;
     blocked?: boolean;
+    blockSource?: string;
+    blockReason?: string;
+    blockedBy?: string;
 };
 
 export type CampaignMemberProgressDto = {
@@ -244,6 +247,9 @@ export type CampaignProgressCampaignDto = {
     status?: string;
     blocked?: boolean;
     start?: CampaignStartDto;
+    blockSource?: string;
+    blockReason?: string;
+    blockedBy?: string;
 };
 
 export type CampaignProgressDto = {
@@ -410,6 +416,25 @@ export type ContainerView = {
     pinnedDaemonVersion?: string;
     daemonVersionStale?: boolean;
     failureDetail?: string;
+    runnerId?: Uuid;
+    runnerName?: string;
+    lifecycle?: FrontDeskLifecycle;
+    queuedAt?: Instant;
+};
+
+export type CreateDeskRunnerRequest = {
+    /**
+     * [a-z][a-z0-9-]{0,63}, unique
+     */
+    name: string;
+    /**
+     * Free text, at most 1024 characters
+     */
+    description?: string;
+    /**
+     * How many desks it may hold at once, at least 1. Default 8
+     */
+    slots?: number;
 };
 
 export type CreateProjectRepositoryRequest = {
@@ -516,6 +541,89 @@ export type DesignDto = {
     html?: string;
 };
 
+export type DeskRunnerCheck = {
+    name?: string;
+    ok?: boolean;
+    detail?: string;
+};
+
+export type DeskRunnerCheckReport = {
+    name?: string;
+    ok?: boolean;
+    detail?: string;
+    data?: JsonNode;
+};
+
+export type DeskRunnerDesk = {
+    projectId?: string;
+    slug?: string;
+    state?: string;
+};
+
+export type DeskRunnerDto = {
+    id?: Uuid;
+    name?: string;
+    description?: string;
+    slots?: number;
+    version?: string;
+    registered?: boolean;
+    registeredAt?: Instant;
+    quarantined?: boolean;
+    quarantinedAt?: Instant;
+    quarantineReason?: string;
+    loginState?: string;
+    lastSeenAt?: Instant;
+    lastHealthCheckAt?: Instant;
+    lastHealthCheckOk?: boolean;
+    createdAt?: Instant;
+    connected?: boolean;
+    connectedSince?: Instant;
+    pinnedVersion?: string;
+    loginCommand?: string;
+    desks?: Array<DeskRunnerDesk>;
+    health?: DeskRunnerHealth;
+};
+
+export type DeskRunnerHealth = {
+    at?: Instant;
+    ok?: boolean;
+    detail?: string;
+    checks?: Array<DeskRunnerCheck>;
+};
+
+export type DeskRunnerHealthCheckRequested = {
+    requestId?: string;
+};
+
+export type DeskRunnerHealthDto = {
+    at?: Instant;
+    ok?: boolean;
+    detail?: string;
+    requestId?: string;
+    dataOmitted?: boolean;
+    checks?: Array<DeskRunnerCheckReport>;
+};
+
+export type DeskRunnerRegistered = {
+    clientId?: string;
+    secret?: string;
+    tokenUrl?: string;
+    audience?: string;
+    socketUrl?: string;
+};
+
+export type DeskRunnerRegistrationDto = {
+    runner?: DeskRunnerDto;
+    /**
+     * The runner's one-use registration token. Returned once
+     */
+    registrationToken?: string;
+    /**
+     * The one line that installs the runner on a docker host: it fetches the generic install script with the registration token and pipes it into sudo sh with this runner's values. Returned once
+     */
+    installLine?: string;
+};
+
 export type DiscardResponse = {
     success?: boolean;
 };
@@ -594,7 +702,22 @@ export type EntityBlock = {
     entityId?: string;
     archetype?: Archetype;
     status?: string;
+    /**
+     * The effective block: an explicit block, or the agent session waiting for a person past the debounce
+     */
     blocked?: boolean;
+    /**
+     * EXPLICIT, AGENT_WAITING or BOTH; absent while not blocked
+     */
+    blockSource?: string;
+    /**
+     * The explicit block's stated reason, else the agent-waiting sentence; absent while not blocked
+     */
+    blockReason?: string;
+    /**
+     * Who set the explicit block; absent otherwise
+     */
+    blockedBy?: string;
 };
 
 export type EntityDispatchDto = {
@@ -618,6 +741,10 @@ export type EntityDispatchStateDto = {
     blocked?: boolean;
     dispatchable?: boolean;
     mode?: DispatchMode;
+    preApprovedBy?: string;
+    blockSource?: string;
+    blockReason?: string;
+    blockedBy?: string;
 };
 
 export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA';
@@ -648,6 +775,9 @@ export type EntitySummary = {
     updatedAt?: Instant;
     changedBy?: string;
     blocked?: boolean;
+    blockSource?: string;
+    blockReason?: string;
+    blockedBy?: string;
 };
 
 export type EntityTransition = {
@@ -694,6 +824,8 @@ export type EntryOutcome = {
     warning?: string;
 };
 
+export type FrontDeskLifecycle = 'ALWAYS_ON' | 'ON_DEMAND';
+
 export type HarnessCapabilityReport = {
     /**
      * CLAUDE or KIMI
@@ -738,6 +870,33 @@ export type HarnessCapabilityReport = {
 };
 
 export type Instant = string;
+
+export type JsonNode = {
+    empty?: boolean;
+    valueNode?: boolean;
+    containerNode?: boolean;
+    missingNode?: boolean;
+    array?: boolean;
+    object?: boolean;
+    nodeType?: JsonNodeType;
+    pojo?: boolean;
+    number?: boolean;
+    integralNumber?: boolean;
+    floatingPointNumber?: boolean;
+    short?: boolean;
+    int?: boolean;
+    long?: boolean;
+    float?: boolean;
+    double?: boolean;
+    bigDecimal?: boolean;
+    bigInteger?: boolean;
+    textual?: boolean;
+    boolean?: boolean;
+    null?: boolean;
+    binary?: boolean;
+};
+
+export type JsonNodeType = 'ARRAY' | 'BINARY' | 'BOOLEAN' | 'MISSING' | 'NULL' | 'NUMBER' | 'OBJECT' | 'POJO' | 'STRING';
 
 export type KeptTags = {
     newest?: number;
@@ -834,6 +993,21 @@ export type NonComplyingCommit = {
 
 export type Outcome = 'CREATED' | 'ADOPTED' | 'KEPT' | 'COMPONENT_UPDATED' | 'SYNC_TARGET_UPDATED' | 'UNDECLARED' | 'SKIPPED';
 
+export type PatchDeskRunnerRequest = {
+    /**
+     * [a-z][a-z0-9-]{0,63}, unique; absent leaves it
+     */
+    name?: string;
+    /**
+     * Blank clears it; absent leaves it
+     */
+    description?: string;
+    /**
+     * At least 1; absent leaves it
+     */
+    slots?: number;
+};
+
 export type ProcessResponse = {
     refinement?: RefinementDto;
     technicalProcessId?: string;
@@ -853,6 +1027,7 @@ export type ProjectDto = {
     slug?: string;
     description?: string;
     dns?: ProjectDnsRecordDto;
+    frontDeskLifecycle?: FrontDeskLifecycle;
 };
 
 export type RefinementDto = {
@@ -883,6 +1058,13 @@ export type RefinementResponse = {
     refinement?: RefinementDto;
 };
 
+export type RegisterDeskRunnerRequest = {
+    /**
+     * What the runner says about itself — a JSON object, at most 16 KiB
+     */
+    capabilities?: JsonNode;
+};
+
 export type ReleaseArtifactDto = {
     type?: string;
     name?: string;
@@ -906,6 +1088,14 @@ export type ReleaseAutomationDto = {
     branch?: string;
     detail?: string;
     updatedAt?: Instant;
+    failure?: ReleaseAutomationFailureDto;
+};
+
+export type ReleaseAutomationFailureDto = {
+    stepIndex?: number;
+    image?: string;
+    exitCode?: number;
+    excerpt?: string;
 };
 
 export type ReleaseGateDto = {
@@ -920,6 +1110,7 @@ export type ReleasePhaseDto = {
     runId?: string;
     startedAt?: Instant;
     finishedAt?: Instant;
+    detail?: string;
 };
 
 export type ReleasePipelineDto = {
@@ -1361,7 +1552,12 @@ export type TransitionedEntity = {
     changedBy?: string;
     blocked?: boolean;
     acceptanceCriteria?: Array<string>;
+    blockSource?: string;
+    blockReason?: string;
+    blockedBy?: string;
 };
+
+export type Uuid = string;
 
 export type UpdateDesign = {
     title: string;
@@ -1382,6 +1578,28 @@ export type WaiveReleaseRequestAutomations = {
 
 export type WithdrawReleaseRequest = {
     reason?: string;
+};
+
+/**
+ * Whether the agent session working an entity is waiting for a person.
+ */
+export type WorkAgentWaitingReport = {
+    /**
+     * true when the session ended its turn with nothing in flight; false when it is working again
+     */
+    waiting: boolean;
+    /**
+     * What the session says it is waiting for (the hook that reported it)
+     */
+    cause?: string;
+    /**
+     * The reporting session, for the log
+     */
+    sessionId?: string;
+    /**
+     * When the session stamped the frame, epoch milliseconds; absent reads as now. A frame older than the entity's last activity is ignored
+     */
+    at?: number;
 };
 
 /**
@@ -2383,6 +2601,35 @@ export type PutProjectsApiProjectsByIdResponses = {
 };
 
 export type PutProjectsApiProjectsByIdResponse = PutProjectsApiProjectsByIdResponses[keyof PutProjectsApiProjectsByIdResponses];
+
+export type DeleteProjectsApiProjectsByProjectIdAgentContainerData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/agent-container';
+};
+
+export type DeleteProjectsApiProjectsByProjectIdAgentContainerErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type DeleteProjectsApiProjectsByProjectIdAgentContainerResponses = {
+    /**
+     * The desk is gone, or there was none
+     */
+    204: void;
+};
+
+export type DeleteProjectsApiProjectsByProjectIdAgentContainerResponse = DeleteProjectsApiProjectsByProjectIdAgentContainerResponses[keyof DeleteProjectsApiProjectsByProjectIdAgentContainerResponses];
 
 export type GetProjectsApiProjectsByProjectIdAgentContainerData = {
     body?: never;
@@ -4563,6 +4810,454 @@ export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponses = {
 
 export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponse = GetProjectsApiRepositoriesByRepoIdSyncStatusResponses[keyof GetProjectsApiRepositoriesByRepoIdSyncStatusResponses];
 
+export type GetProjectsApiRunnersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/projects/api/runners';
+};
+
+export type GetProjectsApiRunnersErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetProjectsApiRunnersResponses = {
+    /**
+     * Every runner, by name
+     */
+    200: Array<DeskRunnerDto>;
+};
+
+export type GetProjectsApiRunnersResponse = GetProjectsApiRunnersResponses[keyof GetProjectsApiRunnersResponses];
+
+export type PostProjectsApiRunnersData = {
+    body: CreateDeskRunnerRequest;
+    path?: never;
+    query?: never;
+    url: '/projects/api/runners';
+};
+
+export type PostProjectsApiRunnersErrors = {
+    /**
+     * A malformed name, slots or description
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * The name is taken
+     */
+    409: unknown;
+    /**
+     * qits-idp refused the registration token
+     */
+    502: unknown;
+    /**
+     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED: it knows no public domain to address a runner by
+     */
+    503: unknown;
+};
+
+export type PostProjectsApiRunnersResponses = {
+    /**
+     * The runner, its registration token and the install line carrying it
+     */
+    201: DeskRunnerRegistrationDto;
+};
+
+export type PostProjectsApiRunnersResponse = PostProjectsApiRunnersResponses[keyof PostProjectsApiRunnersResponses];
+
+export type GetProjectsApiRunnersInstallShData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/projects/api/runners/install.sh';
+};
+
+export type GetProjectsApiRunnersInstallShErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * RUNNER_PLANE_UNCONFIGURED, or the script cannot be rendered
+     */
+    503: unknown;
+};
+
+export type GetProjectsApiRunnersInstallShResponses = {
+    /**
+     * A POSIX sh script, carrying no secret
+     */
+    200: string;
+};
+
+export type GetProjectsApiRunnersInstallShResponse = GetProjectsApiRunnersInstallShResponses[keyof GetProjectsApiRunnersInstallShResponses];
+
+export type DeleteProjectsApiRunnersByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}';
+};
+
+export type DeleteProjectsApiRunnersByIdErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * RUNNER_OWNS_DESKS: a project's front desk is placed on it
+     */
+    409: unknown;
+};
+
+export type DeleteProjectsApiRunnersByIdResponses = {
+    /**
+     * Gone
+     */
+    204: void;
+};
+
+export type DeleteProjectsApiRunnersByIdResponse = DeleteProjectsApiRunnersByIdResponses[keyof DeleteProjectsApiRunnersByIdResponses];
+
+export type GetProjectsApiRunnersByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}';
+};
+
+export type GetProjectsApiRunnersByIdErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type GetProjectsApiRunnersByIdResponses = {
+    /**
+     * The runner
+     */
+    200: DeskRunnerDto;
+};
+
+export type GetProjectsApiRunnersByIdResponse = GetProjectsApiRunnersByIdResponses[keyof GetProjectsApiRunnersByIdResponses];
+
+export type PatchProjectsApiRunnersByIdData = {
+    body: PatchDeskRunnerRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}';
+};
+
+export type PatchProjectsApiRunnersByIdErrors = {
+    /**
+     * A malformed name, slots below 1, or an overlong description
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * The name is taken
+     */
+    409: unknown;
+};
+
+export type PatchProjectsApiRunnersByIdResponses = {
+    /**
+     * The runner as it now is
+     */
+    200: DeskRunnerDto;
+};
+
+export type PatchProjectsApiRunnersByIdResponse = PatchProjectsApiRunnersByIdResponses[keyof PatchProjectsApiRunnersByIdResponses];
+
+export type PostProjectsApiRunnersByIdGreenlightData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}/greenlight';
+};
+
+export type PostProjectsApiRunnersByIdGreenlightErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type PostProjectsApiRunnersByIdGreenlightResponses = {
+    /**
+     * The runner as it now is
+     */
+    200: DeskRunnerDto;
+};
+
+export type PostProjectsApiRunnersByIdGreenlightResponse = PostProjectsApiRunnersByIdGreenlightResponses[keyof PostProjectsApiRunnersByIdGreenlightResponses];
+
+export type GetProjectsApiRunnersByIdHealthData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}/health';
+};
+
+export type GetProjectsApiRunnersByIdHealthErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type GetProjectsApiRunnersByIdHealthResponses = {
+    /**
+     * The newest health check
+     */
+    200: DeskRunnerHealthDto;
+    /**
+     * No health check has settled yet
+     */
+    204: void;
+};
+
+export type GetProjectsApiRunnersByIdHealthResponse = GetProjectsApiRunnersByIdHealthResponses[keyof GetProjectsApiRunnersByIdHealthResponses];
+
+export type PostProjectsApiRunnersByIdHealthcheckData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}/healthcheck';
+};
+
+export type PostProjectsApiRunnersByIdHealthcheckErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * RUNNER_UNAVAILABLE: the runner is not connected
+     */
+    409: unknown;
+};
+
+export type PostProjectsApiRunnersByIdHealthcheckResponses = {
+    /**
+     * Sent, or one is pending already; its requestId
+     */
+    202: DeskRunnerHealthCheckRequested;
+};
+
+export type PostProjectsApiRunnersByIdHealthcheckResponse = PostProjectsApiRunnersByIdHealthcheckResponses[keyof PostProjectsApiRunnersByIdHealthcheckResponses];
+
+export type PostProjectsApiRunnersByIdLoginCheckData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}/login-check';
+};
+
+export type PostProjectsApiRunnersByIdLoginCheckErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * RUNNER_UNAVAILABLE: the runner is not connected
+     */
+    409: unknown;
+};
+
+export type PostProjectsApiRunnersByIdLoginCheckResponses = {
+    /**
+     * Sent
+     */
+    202: unknown;
+};
+
+export type PostProjectsApiRunnersByIdRegisterData = {
+    body: RegisterDeskRunnerRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}/register';
+};
+
+export type PostProjectsApiRunnersByIdRegisterErrors = {
+    /**
+     * Capabilities that are not a JSON object
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * The token is not this runner's
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * The runner is already registered
+     */
+    409: unknown;
+    /**
+     * qits-idp refused the runner's client
+     */
+    502: unknown;
+    /**
+     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
+     */
+    503: unknown;
+};
+
+export type PostProjectsApiRunnersByIdRegisterResponses = {
+    /**
+     * The runner's own client and where to use it
+     */
+    200: DeskRunnerRegistered;
+};
+
+export type PostProjectsApiRunnersByIdRegisterResponse = PostProjectsApiRunnersByIdRegisterResponses[keyof PostProjectsApiRunnersByIdRegisterResponses];
+
+export type PostProjectsApiRunnersByIdRegistrationTokenData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/runners/{id}/registration-token';
+};
+
+export type PostProjectsApiRunnersByIdRegistrationTokenErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * The runner is already registered
+     */
+    409: unknown;
+    /**
+     * qits-idp refused the registration token
+     */
+    502: unknown;
+    /**
+     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
+     */
+    503: unknown;
+};
+
+export type PostProjectsApiRunnersByIdRegistrationTokenResponses = {
+    /**
+     * The runner, its new registration token and the install line carrying it
+     */
+    200: DeskRunnerRegistrationDto;
+};
+
+export type PostProjectsApiRunnersByIdRegistrationTokenResponse = PostProjectsApiRunnersByIdRegistrationTokenResponses[keyof PostProjectsApiRunnersByIdRegistrationTokenResponses];
+
 export type GetProjectsApiTechnicalProcessesByIdEventsData = {
     body?: never;
     path: {
@@ -4884,6 +5579,43 @@ export type PutWorkResponses = {
 };
 
 export type PutWorkResponse = PutWorkResponses[keyof PutWorkResponses];
+
+export type ReportWorkAgentWaitingData = {
+    body: WorkAgentWaitingReport;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/agent-waiting';
+};
+
+export type ReportWorkAgentWaitingErrors = {
+    /**
+     * No waiting value
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type ReportWorkAgentWaitingResponses = {
+    /**
+     * The frame was taken (or ignored)
+     */
+    204: void;
+};
+
+export type ReportWorkAgentWaitingResponse = ReportWorkAgentWaitingResponses[keyof ReportWorkAgentWaitingResponses];
 
 export type GetWorkAuditData = {
     body?: never;

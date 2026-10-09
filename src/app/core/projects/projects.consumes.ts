@@ -26,11 +26,13 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * lists each pending request with its repository, summary, state and gates. The sidebar's Release
  * Requests entry shows the newest one (`updatedAt`). The Release Requests page lists them all, with
  * priority, version, merged commit, requester, detail and whether a person must approve or nobody
- * is watching. qits-projects answers the open requests plus the last few FINALIZED ones; the menu
- * keeps the pending ones ({@link isPendingRelease}).
+ * is watching. A request's own page finds its repository (`repoId`) here, because every read of
+ * one request is addressed by repository. qits-projects answers the open requests plus the last
+ * few FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
+  'requests[].repoId',
   'requests[].repoName',
   'requests[].summary',
   'requests[].state',

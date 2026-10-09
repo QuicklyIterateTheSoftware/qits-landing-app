@@ -2568,6 +2568,7 @@
                 "id": "00000000-0000-4000-8000-000000000002",
                 "mergedSha": null,
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
                 "requester": "contract-seeder",
                 "state": "PENDING",
@@ -2593,6 +2594,7 @@
                 "id": "00000000-0000-4000-8000-000000000004",
                 "mergedSha": null,
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000005",
                 "repoName": "contract-frontend",
                 "requester": "contract-seeder",
                 "state": "RELEASED",
@@ -2618,6 +2620,7 @@
                 "id": "00000000-0000-4000-8000-000000000006",
                 "mergedSha": "0000000000000000000000000000000000000004",
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
                 "requester": "contract-seeder",
                 "state": "READY",
@@ -2643,6 +2646,7 @@
                 "id": "00000000-0000-4000-8000-000000000008",
                 "mergedSha": null,
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000005",
                 "repoName": "contract-frontend",
                 "requester": "contract-seeder",
                 "state": "CONFLICTED",
@@ -2734,6 +2738,15 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                             }
                           ]
                         },
@@ -2853,6 +2866,15 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                             }
                           ]
                         },
@@ -2991,6 +3013,15 @@
                             }
                           ]
                         },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
                         "$.repoName": {
                           "combine": "AND",
                           "matchers": [
@@ -3115,6 +3146,15 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                             }
                           ]
                         },
@@ -3525,6 +3565,7 @@
                 "id": "00000000-0000-4000-8000-000000000002",
                 "mergedSha": null,
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
                 "requester": "contract-seeder",
                 "state": "PENDING",
@@ -3550,6 +3591,7 @@
                 "id": "00000000-0000-4000-8000-000000000004",
                 "mergedSha": null,
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000005",
                 "repoName": "contract-frontend",
                 "requester": "contract-seeder",
                 "state": "RELEASED",
@@ -3575,6 +3617,7 @@
                 "id": "00000000-0000-4000-8000-000000000006",
                 "mergedSha": "0000000000000000000000000000000000000004",
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
                 "requester": "contract-seeder",
                 "state": "READY",
@@ -3600,6 +3643,7 @@
                 "id": "00000000-0000-4000-8000-000000000008",
                 "mergedSha": null,
                 "priority": "MEDIUM",
+                "repoId": "00000000-0000-4000-8000-000000000005",
                 "repoName": "contract-frontend",
                 "requester": "contract-seeder",
                 "state": "CONFLICTED",
@@ -3691,6 +3735,15 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                             }
                           ]
                         },
@@ -3810,6 +3863,15 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                             }
                           ]
                         },
@@ -3948,6 +4010,15 @@
                             }
                           ]
                         },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
                         "$.repoName": {
                           "combine": "AND",
                           "matchers": [
@@ -4072,6 +4143,15 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                             }
                           ]
                         },
