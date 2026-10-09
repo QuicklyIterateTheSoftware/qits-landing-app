@@ -48,15 +48,14 @@ import { PlatformOrigins } from '$core/platform/platform-origins';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { CommitGraphView, type GraphEntry } from '$ui/components/commit-graph/commit-graph';
-import { inferLanes, layoutGraph } from '$core/release-requests/commit-graph';
-import { branchGraph, hasParents } from '$core/release-requests/branch-graph';
+import { branchGraph, guessedGraph, hasParents } from '$core/release-requests/branch-graph';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
 import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
-import { ReleaseSourcesPanel } from '$patterns/release-requests/release-sources/release-sources';
+import { ReleaseLaneHeader } from '$patterns/release-requests/release-lane-header/release-lane-header';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
 /** At most one refresh a second: one release sends several events. */
@@ -101,7 +100,7 @@ const UNATTENDED_TITLE =
     ReleaseConflictPanel,
     ReleasePipeline,
     ReleaseRuns,
-    ReleaseSourcesPanel,
+    ReleaseLaneHeader,
     ReleaseWithdraw,
     RouterLink,
     Spinner,
@@ -215,8 +214,6 @@ const UNATTENDED_TITLE =
               }
               <app-release-changes class="mt-4" [request]="request" />
             } @else {
-              <app-release-sources class="mt-3" [request]="request" />
-
               <div
                 class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
               >
@@ -307,18 +304,25 @@ const UNATTENDED_TITLE =
                     class="m-0 mb-1 text-xs text-charcoal-brown-500"
                     [class]="fold?.commits?.length && !graph().known ? 'block' : 'hidden'"
                   >
-                    Lanes are guessed: the fold's merges in one, the other commits by author. The
-                    service does not yet say each commit's parents, so branches cannot be told.
+                    Lanes are guessed: the fold's merges under the backing branch, the other commits
+                    by author. The service does not yet say each commit's parents, so no commit can
+                    be placed on its source branch.
                   </p>
                   <ui-commit-graph
+                    class="overflow-x-auto"
                     [graph]="graph().graph"
                     [entries]="graph().entries"
                     [expanded]="opened()"
                     [expansion]="changeset"
                     [lanes]="graph().lanes"
+                    [laneWidth]="laneWidth"
+                    [header]="laneHeader"
                     (toggle)="toggle($event)"
                     (more)="earlierFolds.set(!earlierFolds())"
                   />
+                  <ng-template #laneHeader let-lane>
+                    <app-release-lane-header [lane]="lane" [request]="request" />
+                  </ng-template>
                   <ng-template #changeset let-hash>
                     <app-commit-changes [repoId]="repoId()" [sha]="hash" />
                   </ng-template>
@@ -512,13 +516,18 @@ export class ReleaseRequestPage {
     return !!request && !isSettled(request);
   });
 
+  /** Each lane's width in the commit graph, in px: room for a branch name and its priority. */
+  protected readonly laneWidth = 96;
+
   /** The earlier fold merges are shown (they are folded away at first). */
   protected readonly earlierFolds = signal(false);
 
   /**
    * The fold's commits as a graph. With every commit's parents, a branch graph (`branchGraph`):
    * the backing branch's newest fold merge, then a lane per source. Without them, guessed lanes
-   * (`inferLanes`): the fold's merges in one lane, the rest by author, and the page says so.
+   * (`guessedGraph`): the fold's merges in the backing branch's lane, an empty lane per source,
+   * and the other commits in a lane per author; the page says so. Either way each lane has a
+   * column header (`app-release-lane-header`) with the source's priority select.
    *
    * TODO(qits-112): qits-projects is adding `commits[].parents`, `sources[].tipSha` and a fold
    * marker. Until the client is regenerated they are read here as the answer arrives, outside
@@ -571,16 +580,24 @@ export class ReleaseRequestPage {
       });
       return { graph, entries, lanes: graph.lanes, known: true };
     }
-    const lanes = inferLanes(
-      commits.map((commit) => ({
+    const graph = guessedGraph({
+      commits: commits.map((commit) => ({
         hash: commit.hash ?? '',
         author: commit.author,
         message: commit.message,
       })),
-      request?.backingBranch ?? 'the fold',
-    );
-    const entries = commits.map((commit) => entry(commit, lanes.labels.get(commit.hash ?? '')));
-    return { graph: layoutGraph(lanes.commits), entries, lanes: [], known: false };
+      backingBranch: request?.backingBranch ?? 'the fold',
+      sources: (request?.sources ?? []).map((source) => ({
+        name: source.name ?? '',
+        priority: source.priority,
+      })),
+    });
+    return {
+      graph,
+      entries: commits.map((commit) => entry(commit)),
+      lanes: graph.lanes,
+      known: false,
+    };
   });
 
   /** The commits whose changesets are open, by hash. */

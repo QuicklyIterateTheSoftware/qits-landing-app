@@ -1,4 +1,10 @@
-import type { CommitGraph, GraphEdge, GraphRow } from './commit-graph';
+import {
+  inferLanes,
+  type CommitGraph,
+  type GraphEdge,
+  type GraphRow,
+  type InferredCommit,
+} from './commit-graph';
 
 /**
  * A release request's fold as a branch graph, from the commits' parents: one fixed lane per line
@@ -34,7 +40,8 @@ export interface BranchSource {
 /** One lane: its label, and whose line it is. */
 export interface BranchLane {
   readonly label: string;
-  readonly kind: 'backing' | 'source' | 'other';
+  /** `guess`: a lane of commits by one author, while parents are not known. */
+  readonly kind: 'backing' | 'source' | 'other' | 'guess';
 }
 
 /** The branch graph: the drawn graph, its lanes, the shown commits and the hidden folds. */
@@ -228,4 +235,53 @@ export function fixedLaneLayout(commits: readonly PlacedCommit[], width: number)
     };
   });
   return { rows, width };
+}
+
+/**
+ * The same lanes before the commits carry parents: the backing branch's lane with the fold's own
+ * merge commits, a lane per source with nothing in it (no commit can be placed on a branch
+ * without parents), then a lane per author with that author's other commits, each a straight
+ * line (`inferLanes`). Every commit shows; nothing is folded away.
+ */
+export function guessedGraph(input: {
+  readonly commits: readonly InferredCommit[];
+  readonly backingBranch: string;
+  readonly sources: readonly BranchSource[];
+}): BranchGraph {
+  const sources = orderedSources(input.sources);
+  const inferred = inferLanes(input.commits, input.backingBranch);
+  const parentOf = new Map(inferred.commits.map((commit) => [commit.hash, commit.parents ?? []]));
+  // Each guessed lane opens at the commit its label is keyed by; walk it down to place it.
+  const laneOfHash = new Map<string, number>();
+  const lanes: BranchLane[] = [
+    { label: input.backingBranch, kind: 'backing' },
+    ...sources.map((source): BranchLane => ({ label: source.name, kind: 'source' })),
+  ];
+  for (const commit of input.commits) {
+    const label = inferred.labels.get(commit.hash);
+    if (label === undefined || laneOfHash.has(commit.hash)) continue;
+    let lane = 0;
+    if (label !== input.backingBranch) {
+      lane = lanes.length;
+      lanes.push({ label, kind: 'guess' });
+    }
+    for (let at: string | undefined = commit.hash; at; at = parentOf.get(at)?.[0]) {
+      laneOfHash.set(at, lane);
+    }
+  }
+  const graph = fixedLaneLayout(
+    inferred.commits.map((commit) => ({
+      hash: commit.hash,
+      lane: laneOfHash.get(commit.hash) ?? 0,
+      parents: commit.parents ?? [],
+    })),
+    lanes.length,
+  );
+  return {
+    ...graph,
+    lanes,
+    shown: inferred.commits.map((commit) => commit.hash),
+    earlierFolds: 0,
+    hiddenFolds: 0,
+  };
 }

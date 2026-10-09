@@ -2,6 +2,7 @@ import {
   branchGraph,
   fixedLaneLayout,
   foldChain,
+  guessedGraph,
   hasParents,
   type BranchCommit,
 } from './branch-graph';
@@ -166,5 +167,31 @@ describe('branch graph', () => {
       [[], [0], false, [0]],
       [[], [], true, []],
     ]);
+  });
+});
+
+describe('guessed graph', () => {
+  it('heads a lane per source, empty, with the guessed lanes beside them', () => {
+    const graph = guessedGraph({
+      commits: [
+        { hash: 'f2', author: 'qits-projects', message: 'Release request r1: bump' },
+        { hash: 'b2', author: 'maint', message: 'bump(dependencies): 5' },
+        { hash: 'f1', author: 'qits-projects', message: 'Release request r1: bump' },
+        { hash: 'b1', author: 'maint', message: 'bump(dependencies): 4' },
+        { hash: 't1', author: 'agent', message: 'fix: x' },
+      ],
+      backingBranch: 'release/r1',
+      sources: [{ name: 'maintenance/dependencies' }, { name: 'main' }],
+    });
+    expect(graph.lanes.map((lane) => [lane.label, lane.kind])).toEqual([
+      ['release/r1', 'backing'],
+      ['main', 'source'],
+      ['maintenance/dependencies', 'source'],
+      ['by maint', 'guess'],
+      ['by agent', 'guess'],
+    ]);
+    expect(graph.rows.map((row) => row.lane)).toEqual([0, 3, 0, 3, 4]);
+    expect(graph.shown).toHaveLength(5);
+    expect(graph.hiddenFolds).toBe(0);
   });
 });

@@ -30,8 +30,7 @@ export interface GraphLane {
   readonly label: string;
 }
 
-/** A lane's width and a row's height, in px. */
-const LANE = 14;
+/** A row's height, in px. */
 const ROW = 28;
 const MID = ROW / 2;
 
@@ -43,8 +42,6 @@ const COLOURS = [
   'var(--color-cinnabar-600)',
   'var(--color-charcoal-brown-500)',
 ];
-
-const x = (lane: number) => lane * LANE + LANE / 2;
 
 /** One row's drawing: straight lines, curves and the dot. */
 interface Drawn {
@@ -62,7 +59,8 @@ interface Drawn {
  * subject, author and time; a commit that opens a line of history shows its name. A row is a
  * button: pressing it emits the commit's hash (`toggle`). Under each row whose hash is in
  * `expanded`, the `expansion` template is drawn with the hash, and the lanes continue beside it.
- * Given `lanes`, a legend above names each lane in its colour. A row with `more` has a button
+ * Given `lanes`, a legend above names each lane in its colour; given `header` too, each lane has a
+ * column header instead (`laneWidth` wide), with the lane's line drawn under it. A row with `more` has a button
  * under it (emits `more`), for rows the caller keeps folded away.
  */
 @Component({
@@ -71,7 +69,23 @@ interface Drawn {
   imports: [NgTemplateOutlet],
   host: { class: 'block' },
   template: `
-    @if (lanes().length) {
+    @if (header(); as head) {
+      <div class="mb-1 flex" role="row" aria-label="Lanes">
+        @for (lane of lanes(); track $index) {
+          <div
+            class="min-w-0 shrink-0 border-b-2 px-1 pb-1"
+            role="columnheader"
+            [style.width.px]="laneWidth()"
+            [style.border-color]="colourOf($index)"
+          >
+            <ng-container
+              [ngTemplateOutlet]="head"
+              [ngTemplateOutletContext]="{ $implicit: lane, index: $index }"
+            />
+          </div>
+        }
+      </div>
+    } @else if (lanes().length) {
       <ul class="m-0 mb-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" aria-label="Lanes">
         @for (lane of lanes(); track $index) {
           <li class="flex items-center gap-1 font-mono">
@@ -114,7 +128,7 @@ interface Drawn {
                 stroke-width="1.5"
               />
             </svg>
-            <span class="font-mono text-charcoal-brown-600" [title]="drawn.entry.hash">{{
+            <span class="shrink-0 font-mono text-charcoal-brown-600" [title]="drawn.entry.hash">{{
               drawn.entry.shortHash
             }}</span>
             @if (drawn.entry.label) {
@@ -126,13 +140,15 @@ interface Drawn {
               >
             }
             <span
-              class="min-w-0 flex-1 truncate text-charcoal-brown-950"
+              class="min-w-40 flex-1 truncate text-charcoal-brown-950"
               [title]="drawn.entry.subject"
               >{{ drawn.entry.subject }}</span
             >
-            <span class="text-xs whitespace-nowrap text-charcoal-brown-500">{{
-              drawn.entry.author
-            }}</span>
+            <span
+              class="max-w-32 truncate text-xs text-charcoal-brown-500"
+              [title]="drawn.entry.author"
+              >{{ drawn.entry.author }}</span
+            >
             <span
               class="text-xs whitespace-nowrap text-charcoal-brown-500"
               [title]="drawn.entry.title"
@@ -140,7 +156,7 @@ interface Drawn {
             >
           </button>
           @if (drawn.entry.more) {
-            <div class="flex py-0.5">
+            <div class="flex">
               <div class="relative shrink-0 self-stretch" [style.width.px]="svgWidth()">
                 <svg class="absolute inset-0 h-full" [attr.width]="svgWidth()" aria-hidden="true">
                   @for (line of drawn.below; track $index) {
@@ -157,7 +173,7 @@ interface Drawn {
               </div>
               <button
                 type="button"
-                class="ml-2 cursor-pointer rounded border border-dashed border-charcoal-brown-300 px-2 text-xs text-charcoal-brown-600 hover:bg-charcoal-brown-50"
+                class="my-0.5 ml-2 cursor-pointer rounded border border-dashed border-charcoal-brown-300 px-2 text-xs text-charcoal-brown-600 hover:bg-charcoal-brown-50"
                 (click)="more.emit(drawn.row.hash)"
               >
                 {{ drawn.entry.more }}
@@ -202,8 +218,12 @@ export class CommitGraphView {
   /** Drawn under an opened row, with its hash. */
   readonly expansion = input<TemplateRef<unknown>>();
   readonly toggle = output<string>();
-  /** The lanes, in order, for the legend; none: no legend. */
+  /** The lanes, in order: a legend, or with `header`, a column header over each lane. */
   readonly lanes = input<readonly GraphLane[]>([]);
+  /** Each lane's width, in px. */
+  readonly laneWidth = input(14);
+  /** Drawn as each lane's column header, with the lane and its index. */
+  readonly header = input<TemplateRef<unknown>>();
   /** A row's `more` button was pressed. */
   readonly more = output<string>();
 
@@ -214,10 +234,14 @@ export class CommitGraphView {
   protected readonly row = ROW;
   protected readonly mid = MID;
 
-  protected readonly svgWidth = computed(() => Math.max(1, this.graph().width) * LANE);
+  protected readonly svgWidth = computed(
+    () => Math.max(1, this.graph().width, this.lanes().length) * this.laneWidth(),
+  );
 
   protected readonly drawn = computed((): readonly Drawn[] => {
     const entries = this.entries();
+    const width = this.laneWidth();
+    const x = (lane: number) => lane * width + width / 2;
     return this.graph().rows.map((row, index) => {
       const colour = (lane: number) => COLOURS[lane % COLOURS.length];
       const paths: { d: string; colour: string }[] = [];
