@@ -113,7 +113,9 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect
       .element(panel.getByRole('img', { name: /Tests passed: failed/ }).first())
       .toHaveAttribute('data-shield', 'failed');
-    await expect.element(panel.getByText(/Needs you/).first()).toBeVisible();
+    await expect
+      .element(panel.getByRole('link', { name: /contract-frontend/ }).first())
+      .toHaveAttribute('title', 'Look: Tests passed');
     await expect.element(panel).not.toHaveTextContent('Finalized release');
     await expect.element(frame).toMatchScreenshot('open');
   });

@@ -33,8 +33,8 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
  * shield for each group of gates. Shown only while a project is open, like the settings gear.
  *
  * A request that needs a person (`attentionOf`: an approval to give, a conflict, a failed gate or
- * automation) is listed first, marked, and says what is needed; its link opens the request's page
- * at that check. The button's badge counts those requests, in red; with none, it counts the
+ * automation) is listed first, with an amber border, and its shield or cog stands out; its link
+ * opens the request's page at that check, whose name is in the link's tooltip. The button's badge counts those requests, in red; with none, it counts the
  * pending requests, in amber.
  *
  * The requests are fetched as soon as a project opens (`loadReleaseRequests`), so the button
@@ -101,6 +101,9 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
                 class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-gray-50"
                 [routerLink]="['/projects', slug(), 'release-requests', request.id ?? '']"
                 [fragment]="row.attention[0]?.anchor"
+                [attr.title]="
+                  row.attention[0] ? row.attention[0].action + ': ' + row.attention[0].label : null
+                "
                 (click)="menu.close()"
               >
                 <div class="flex items-baseline justify-between gap-2">
@@ -115,26 +118,6 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
                 </div>
                 <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
                 <ui-lifecycle-line [points]="row.summary" />
-                @if (row.attention[0]; as first) {
-                  <span
-                    class="flex items-center gap-1 text-xs font-semibold text-sunflower-gold-900"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      class="size-4 shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 3 2.5 20h19z" />
-                      <path d="M12 10v4M12 17v.01" />
-                    </svg>
-                    Needs you: {{ first.action }} · {{ first.label }}
-                  </span>
-                }
               </a>
             </li>
           }
