@@ -2,12 +2,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedProject } from '$core/projects/selected-project';
 import { goldenMaster } from '../../../../testing/golden-masters';
 import { Subject } from 'rxjs';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { isPendingRelease, type ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { ReleaseMenu, REFRESH_DEBOUNCE_MS } from './release-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -27,6 +29,7 @@ describe('ReleaseMenu', () => {
       providers: [
         // A server platform: the store does not load the project list by itself.
         { provide: PLATFORM_ID, useValue: 'server' },
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -77,6 +80,29 @@ describe('ReleaseMenu', () => {
     http.expectNone(`/projects/api/projects/${recorded.id}/release-requests`);
     expect(panel.classList.contains('hidden')).toBe(false);
     expect(panel.querySelectorAll('li')).toHaveLength(5);
+  });
+
+  it('links each request to its page, and closes as the link is followed', async () => {
+    const { fixture, button, panel } = render();
+    await settle();
+    const answer = goldenMaster(
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+    ) as { requests: ReleaseRequestEntry[] };
+    http.expectOne(`/projects/api/projects/${recorded.id}/release-requests`).flush(answer);
+    await settle();
+    button.click();
+    fixture.detectChanges();
+    const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>('li a'));
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(
+      answer.requests
+        .filter(isPendingRelease)
+        .map((r) => `/projects/${recorded.slug}/release-requests/${r.id}`),
+    );
+
+    links[0].click();
+    fixture.detectChanges();
+    expect(panel.classList.contains('hidden')).toBe(true);
   });
 
   it('fetches again, once, after a burst of events about the open project', async () => {

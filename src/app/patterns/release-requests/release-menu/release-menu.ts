@@ -8,6 +8,7 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { debounceTime, filter } from 'rxjs';
 import { DomainEvents } from '$core/events/domain-events';
 import {
@@ -32,12 +33,13 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
  * carries their count right away (none when nothing is pending). They are fetched again when a
  * domain event says they may have changed ({@link RELEASE_REQUEST_EVENTS}, filtered to the open
  * project by `affectsReleaseRequests`), at most once a second, since one release sends several.
- * The button and the panel are `ui-dropdown`'s.
+ * The button and the panel are `ui-dropdown`'s. Each request links to its page
+ * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel.
  */
 @Component({
   selector: 'app-release-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, Spinner],
+  imports: [Dropdown, RouterLink, Spinner],
   // One display class or the other: a static display class would beat `hidden`. `ml-auto` pushes
   // the menu and the settings gear after it to the right end of the top bar.
   host: {
@@ -45,6 +47,7 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
   },
   template: `
     <ui-dropdown
+      #menu
       label="Release requests"
       panelLabel="Pending release requests"
       panelId="release-menu"
@@ -73,27 +76,33 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
       <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
         <ul class="m-0 list-none p-0">
           @for (request of pending(); track request.id) {
-            <li class="flex flex-col gap-1 border-b border-gray-100 px-3 py-2 last:border-b-0">
-              <div class="flex items-baseline justify-between gap-2">
-                <span class="truncate text-sm font-semibold text-gray-900">{{
-                  request.repoName
-                }}</span>
-                <span
-                  class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
-                  [class]="chip(requestTone(request.state))"
-                  >{{ request.state }}</span
-                >
-              </div>
-              <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
-              <span class="flex flex-wrap gap-1">
-                @for (gate of request.gates ?? []; track gate.kind) {
+            <li class="border-b border-gray-100 last:border-b-0">
+              <a
+                class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-gray-50"
+                [routerLink]="['/projects', slug(), 'release-requests', request.id ?? '']"
+                (click)="menu.close()"
+              >
+                <div class="flex items-baseline justify-between gap-2">
+                  <span class="truncate text-sm font-semibold text-gray-900">{{
+                    request.repoName
+                  }}</span>
                   <span
-                    class="rounded px-1.5 text-[0.6875rem] leading-4"
-                    [class]="chip(gateTone(gate.state))"
-                    >{{ gate.kind }} · {{ gate.state }}</span
+                    class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
+                    [class]="chip(requestTone(request.state))"
+                    >{{ request.state }}</span
                   >
-                }
-              </span>
+                </div>
+                <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
+                <span class="flex flex-wrap gap-1">
+                  @for (gate of request.gates ?? []; track gate.kind) {
+                    <span
+                      class="rounded px-1.5 text-[0.6875rem] leading-4"
+                      [class]="chip(gateTone(gate.state))"
+                      >{{ gate.kind }} · {{ gate.state }}</span
+                    >
+                  }
+                </span>
+              </a>
             </li>
           }
         </ul>
@@ -115,6 +124,9 @@ export class ReleaseMenu {
 
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);
+
+  /** The open project's slug, which the request links name. */
+  protected readonly slug = this.selected.slug;
 
   private readonly requests = computed(() => {
     const id = this.projectId();
