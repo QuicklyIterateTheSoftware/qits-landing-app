@@ -17,7 +17,6 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
   backing: 'the fold',
   source: '',
   other: 'no source reaches these',
-  guess: 'guessed by author',
 };
 
 /**

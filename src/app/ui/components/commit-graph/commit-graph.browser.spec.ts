@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
+import { branchGraph, type BranchCommit } from '$core/release-requests/branch-graph';
 import { layoutGraph } from '$core/release-requests/commit-graph';
 import { CommitGraphView, type GraphEntry } from './commit-graph';
 
@@ -127,5 +128,82 @@ describe('CommitGraphView with lane headers (screenshots)', () => {
     const view = page.elementLocator(fixture.nativeElement);
     expect(view.getByRole('columnheader').elements()).toHaveLength(4);
     await expect.element(view).toMatchScreenshot('headed');
+  });
+});
+
+/**
+ * The fold of a request shaped like dd113f4c: 23 chained fold merges (one shown, 22 counted), 25
+ * bumps on maintenance/dependencies, two one-commit ticket branches merged at the first fold; main
+ * owns no commit, so it has no lane.
+ */
+function dd113f4cShape(): BranchCommit[] {
+  const commits: BranchCommit[] = [];
+  for (let k = 23; k >= 1; k--) {
+    commits.push({
+      hash: `f${k}`,
+      parents: k === 1 ? ['base', 'b3', 't1', 't2'] : [`f${k - 1}`, `b${k + 2}`],
+      fold: true,
+    });
+    commits.push({ hash: `b${k + 2}`, parents: [`b${k + 1}`], fold: false });
+  }
+  commits.push({ hash: 'b2', parents: ['b1'], fold: false });
+  commits.push({ hash: 'b1', parents: ['main-old'], fold: false });
+  commits.push({ hash: 't2', parents: ['main-old'], fold: false });
+  commits.push({ hash: 't1', parents: ['main-old'], fold: false });
+  return commits;
+}
+
+@Component({
+  imports: [CommitGraphView],
+  host: { class: 'block w-[56rem] p-4' },
+  template: `
+    <ui-commit-graph
+      [graph]="graph"
+      [entries]="entries"
+      [lanes]="graph.lanes"
+      [laneWidth]="96"
+      [header]="head"
+    />
+    <ng-template #head let-lane>
+      <p class="m-0 truncate font-mono text-xs font-semibold" [title]="lane.label">
+        {{ lane.label }}
+      </p>
+    </ng-template>
+  `,
+})
+class Folded {
+  readonly graph = branchGraph({
+    commits: dd113f4cShape(),
+    mergedSha: 'f23',
+    backingBranch: 'release/dd113f4c',
+    sources: [
+      { name: 'main', tipSha: 'main-tip' },
+      { name: 'maintenance/dependencies', tipSha: 'b25' },
+      { name: 'ticket/runner-placed-row', tipSha: 't1' },
+      { name: 'ticket/remove-the-workspace-services', tipSha: 't2' },
+    ],
+  });
+  readonly entries = this.graph.shown.map((hash, index) => ({
+    ...entry(
+      hash,
+      hash.startsWith('f')
+        ? 'Release request dd113f4c: bump(dependencies): 5 dependencies'
+        : hash.startsWith('b')
+          ? `bump(dependencies): ${hash.slice(1)} dependencies`
+          : `fix: ${hash}`,
+    ),
+    more: index === 0 ? `${this.graph.earlierFolds} earlier folds` : undefined,
+  }));
+}
+
+describe('CommitGraphView on a chain of folds (screenshots)', () => {
+  it('pulls every source lane into the newest fold, earlier folds counted', async () => {
+    await page.viewport(900, 1000);
+    const fixture = TestBed.createComponent(Folded);
+    fixture.detectChanges();
+    const view = page.elementLocator(fixture.nativeElement);
+    await expect.element(view).toHaveTextContent('22 earlier folds');
+    await expect.element(view).toMatchScreenshot('folds');
+    await page.viewport(800, 600);
   });
 });

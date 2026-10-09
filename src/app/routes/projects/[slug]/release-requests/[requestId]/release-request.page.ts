@@ -52,8 +52,7 @@ import { branchGraph, guessedGraph, hasParents } from '$core/release-requests/br
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
-import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
-import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
+import { ReleaseLifecycle } from '$patterns/release-requests/release-lifecycle/release-lifecycle';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
 import { ReleaseLaneHeader } from '$patterns/release-requests/release-lane-header/release-lane-header';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
@@ -76,13 +75,14 @@ const UNATTENDED_TITLE =
  * the page finds the repository in the project's list of requests (`ProjectsStore`: the open
  * requests plus the last finalized). A request not in that list is "not found" here.
  *
- * Two tabs, in `?tab=`. The overview: the head, the sources, the facts, the release pipeline (or,
- * from an older service, the plain gates) with Approve and Decline, the request's CI runs, the
- * conflict, the release, the commits its fold brought in (each opens its changeset) and what it
- * published. Changes: what the fold changes, file by file (`?path=`), with the pipeline above it.
+ * Two tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle (fold and
+ * automations, QA, quality gates with Approve and Decline, publish, deployment and its gates, the
+ * tag reaching main), the request's CI runs, the release, the commits its fold brought in as a
+ * graph under its sources (each opens its changeset) and what it published. Changes: what the fold
+ * changes, file by file (`?path=`), with the lifecycle above it.
  * Withdraw sits in the page's actions while the request can be called off.
  *
- * On a repository's request the pipeline follows the facts; on the project's estate release (its
+ * On a repository's request the lifecycle follows the facts; on the project's estate release (its
  * wrapper repository) it comes first, because there the open question is the approval. Domain
  * events about the project's release requests refresh the page (at most once a second), in place
  * of the old page's six-second poll.
@@ -97,8 +97,7 @@ const UNATTENDED_TITLE =
     NgTemplateOutlet,
     PageLayoutComponent,
     ReleaseChangesView,
-    ReleaseConflictPanel,
-    ReleasePipeline,
+    ReleaseLifecycle,
     ReleaseRuns,
     ReleaseLaneHeader,
     ReleaseWithdraw,
@@ -256,8 +255,6 @@ const UNATTENDED_TITLE =
                 [state]="runs()?.status ?? 'loading'"
               />
 
-              <app-release-conflict [request]="request" />
-
               @if (released(request)) {
                 <section
                   class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
@@ -296,18 +293,37 @@ const UNATTENDED_TITLE =
                 </section>
               }
 
-              <section class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
-                <h2 class="m-0 mb-1 text-base font-semibold">What this release folds in</h2>
+              <section
+                class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                aria-labelledby="folds-in"
+              >
+                <h2 id="folds-in" class="m-0 mb-1 text-base font-semibold">
+                  What this release folds in
+                </h2>
                 <ui-spinner [state]="commitsState()" class="min-h-8">
                   @let fold = view()?.commits?.value;
                   <p
                     class="m-0 mb-1 text-xs text-charcoal-brown-500"
                     [class]="fold?.commits?.length && !graph().known ? 'block' : 'hidden'"
                   >
-                    Lanes are guessed: the fold's merges under the backing branch, the other commits
-                    by author. The service does not yet say each commit's parents, so no commit can
-                    be placed on its source branch.
+                    The branch graph appears once the service sends each commit's parents. Until
+                    then the commits are a plain list, newest first.
                   </p>
+                  <div
+                    class="mb-2 flex flex-wrap items-start gap-2"
+                    [class.hidden]="!graph().graph.emptySources.length"
+                  >
+                    <span class="w-full text-xs text-charcoal-brown-500">{{
+                      graph().known ? 'Sources without commits of their own:' : 'Sources:'
+                    }}</span>
+                    @for (name of graph().graph.emptySources; track name) {
+                      <app-release-lane-header
+                        class="w-36 rounded border border-charcoal-brown-200 px-1.5 py-1"
+                        [lane]="{ label: name, kind: 'source' }"
+                        [request]="request"
+                      />
+                    }
+                  </div>
                   <ui-commit-graph
                     class="overflow-x-auto"
                     [graph]="graph().graph"
@@ -389,9 +405,7 @@ const UNATTENDED_TITLE =
 
             <!-- Declared once, placed where the page's question puts it. -->
             <ng-template #gatesSection>
-              <ui-spinner [state]="buildsState()" class="mt-4 min-h-12">
-                <app-release-pipeline [request]="request" [builds]="view()?.builds?.value ?? []" />
-              </ui-spinner>
+              <app-release-lifecycle class="mt-4" [request]="request" [slug]="slug()" />
             </ng-template>
           }
         </ui-spinner>
@@ -462,8 +476,6 @@ export class ReleaseRequestPage {
   /** The repository's newest CI runs, where the request's runs are found. */
   protected readonly runs = computed(() => this.ci.byRepository()[this.repoId()]);
 
-  protected readonly buildsState = computed(() => this.view()?.builds.status ?? 'loading');
-
   protected readonly artifactsState = computed(() => this.view()?.artifacts?.status ?? 'loading');
 
   private readonly origins = inject(PlatformOrigins);
@@ -524,15 +536,14 @@ export class ReleaseRequestPage {
 
   /**
    * The fold's commits as a graph. With every commit's parents, a branch graph (`branchGraph`):
-   * the backing branch's newest fold merge, then a lane per source. Without them, guessed lanes
-   * (`guessedGraph`): the fold's merges in the backing branch's lane, an empty lane per source,
-   * and the other commits in a lane per author; the page says so. Either way each lane has a
-   * column header (`app-release-lane-header`) with the source's priority select.
+   * the newest fold merge on the backing branch's lane pulling in a lane per source that owns
+   * commits; sources without commits get a compact header above it. Without parents, a plain list
+   * in one lane (`guessedGraph`), every source in the compact headers, and a note.
    *
-   * TODO(qits-112): qits-projects is adding `commits[].parents`, `sources[].tipSha` and a fold
-   * marker. Until the client is regenerated they are read here as the answer arrives, outside
-   * `consume`'s lists; then add them to `LIST_RELEASE_REQUEST_COMMITS` and `GET_RELEASE_REQUEST`,
-   * so the pact binds them, and drop the casts.
+   * TODO(qits-112): qits-projects is adding `commits[].parents`, `commits[].fold` and, on the
+   * commits answer, `sources[].tipSha` and `foldParents` (`external/rr-commit-states`). Until the
+   * client is regenerated they are read here as the answer arrives, outside `consume`'s lists;
+   * then add them to `LIST_RELEASE_REQUEST_COMMITS`, so the pact binds them, and drop the casts.
    */
   protected readonly graph = computed(() => {
     const request = this.row();
@@ -550,10 +561,11 @@ export class ReleaseRequestPage {
       title: this.instant(commit.date),
       label,
     });
+    // TODO(qits-112): read outside consume's lists until the client is regenerated (see above).
+    const answered = this.view()?.commits?.value as
+      { readonly sources?: readonly { name?: string; tipSha?: string | null }[] } | undefined;
     if (request && hasParents(withParents)) {
-      const sources = (request.sources ?? []) as readonly ((typeof request.sources & {})[number] & {
-        readonly tipSha?: string;
-      })[];
+      const sources = answered?.sources ?? [];
       const graph = branchGraph({
         commits: withParents.map((commit) => ({
           hash: commit.hash ?? '',
@@ -562,16 +574,15 @@ export class ReleaseRequestPage {
         })),
         mergedSha: request.mergedSha ?? '',
         backingBranch: request.backingBranch ?? 'the fold',
-        sources: sources.map((source) => ({
-          name: source.name ?? '',
-          tipSha: source.tipSha,
-          priority: source.priority,
-        })),
+        sources: sources.map((source) => ({ name: source.name ?? '', tipSha: source.tipSha })),
         showEarlierFolds: this.earlierFolds(),
       });
       const byHash = new Map(commits.map((commit) => [commit.hash ?? '', commit]));
       const entries = graph.shown.map((hash, index) => {
-        const shown = entry(byHash.get(hash)!);
+        const shown = entry(
+          byHash.get(hash)!,
+          graph.notYetFolded.has(hash) ? 'not yet folded' : undefined,
+        );
         if (index !== 0 || graph.earlierFolds === 0) return shown;
         const more = this.earlierFolds()
           ? `Hide the ${graph.earlierFolds} earlier folds`
@@ -581,16 +592,9 @@ export class ReleaseRequestPage {
       return { graph, entries, lanes: graph.lanes, known: true };
     }
     const graph = guessedGraph({
-      commits: commits.map((commit) => ({
-        hash: commit.hash ?? '',
-        author: commit.author,
-        message: commit.message,
-      })),
+      commits: commits.map((commit) => ({ hash: commit.hash ?? '' })),
       backingBranch: request?.backingBranch ?? 'the fold',
-      sources: (request?.sources ?? []).map((source) => ({
-        name: source.name ?? '',
-        priority: source.priority,
-      })),
+      sources: (request?.sources ?? []).map((source) => ({ name: source.name ?? '' })),
     });
     return {
       graph,

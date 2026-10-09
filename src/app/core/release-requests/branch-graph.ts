@@ -1,52 +1,50 @@
-import {
-  inferLanes,
-  type CommitGraph,
-  type GraphEdge,
-  type GraphRow,
-  type InferredCommit,
-} from './commit-graph';
+import type { CommitGraph, GraphEdge, GraphRow } from './commit-graph';
 
 /**
- * A release request's fold as a branch graph, from the commits' parents: one fixed lane per line
- * of history, like a git flow diagram.
+ * A release request's fold as a branch graph, from the commits' parents (qits-projects'
+ * `listReleaseRequestCommits`: `commits[].parents` and `.fold`, `sources[].tipSha`,
+ * `foldParents`): one fixed lane per line of history, like a git flow diagram.
  *
- * - Lane 0 is the backing branch (`release/<id>`): the first-parent chain of fold merges from the
- *   request's `mergedSha`. A request re-folds on every push, so the chain holds one merge per
- *   re-fold; only the newest is shown unless `showEarlierFolds`, and the rest are counted.
- * - Then one lane per source, `main` first and the others in source order. A commit belongs to the
- *   source whose tip reaches it in the fewest steps (walking parents, never through a fold merge);
- *   a tie goes to the higher priority, then to the earlier source. A commit no source reaches goes
- *   to a last lane, "other".
- * - The newest fold merges every source tip in the list, so its lines run into each source's lane.
- *   Shown earlier folds keep their real parents.
+ * - The first lane is the backing branch (`release/<id>`): the request's fold merges (`fold`),
+ *   a chain of first parents from `mergedSha`, one per re-fold. Only the newest shows unless
+ *   `showEarlierFolds`; the rest are counted.
+ * - Then one lane per source that owns a commit of the list, in the sources' order. A commit
+ *   belongs to the first source (in that order) whose tip reaches it, walking parents but never
+ *   through a fold merge. A commit no source reaches goes to a last lane, "other". A source that
+ *   owns no commit (main, say, whose tip is the base) gets no lane: it is in `emptySources`.
+ * - The newest fold, collapsed, draws a line into each source lane's newest commit that any fold
+ *   of the chain merged, so the branches are seen being pulled in. Shown earlier folds keep their
+ *   real parents. A source tip no fold merged (pushed after the newest fold) is `notYetFolded`.
  */
 
 /** A commit as the branch layout reads it. */
 export interface BranchCommit {
   readonly hash: string;
   readonly parents: readonly string[];
-  /** The service marks the request's own fold merges; absent: the first-parent chain decides. */
+  /** The request's own fold merges; absent: the first-parent chain of merges decides. */
   readonly fold?: boolean;
 }
 
-/** A source branch of the request. */
+/** A source branch of the request, as the commits answer names it, in source order. */
 export interface BranchSource {
   readonly name: string;
-  /** The tip of the branch the newest fold merged. */
-  readonly tipSha?: string;
-  readonly priority?: string;
+  /** The branch's tip now (it may be newer than what the newest fold merged); null: unknown. */
+  readonly tipSha?: string | null;
 }
 
 /** One lane: its label, and whose line it is. */
 export interface BranchLane {
   readonly label: string;
-  /** `guess`: a lane of commits by one author, while parents are not known. */
-  readonly kind: 'backing' | 'source' | 'other' | 'guess';
+  readonly kind: 'backing' | 'source' | 'other';
 }
 
 /** The branch graph: the drawn graph, its lanes, the shown commits and the hidden folds. */
 export interface BranchGraph extends CommitGraph {
   readonly lanes: readonly BranchLane[];
+  /** Sources that own no commit of the list: no lane, but still a header. */
+  readonly emptySources: readonly string[];
+  /** Source tips no fold has merged yet, by hash. */
+  readonly notYetFolded: ReadonlySet<string>;
   /** The hashes of the shown commits, in row order. */
   readonly shown: readonly string[];
   /** How many earlier fold merges are hidden (0 when shown). */
@@ -54,15 +52,6 @@ export interface BranchGraph extends CommitGraph {
   /** How many earlier fold merges there are. */
   readonly earlierFolds: number;
 }
-
-const PRIORITY_RANK: Readonly<Record<string, number>> = {
-  BLOCKING: 6,
-  HIGHER: 5,
-  HIGH: 4,
-  MEDIUM: 3,
-  LOW: 2,
-  LOWEST: 1,
-};
 
 /** Whether the commits carry what the branch layout needs: parents on every commit. */
 export function hasParents(
@@ -84,15 +73,9 @@ export function foldChain(commits: readonly BranchCommit[], mergedSha: string): 
   return chain;
 }
 
-/** The lanes' sources, `main` first, then in the request's order. */
-function orderedSources(sources: readonly BranchSource[]): readonly BranchSource[] {
-  const main = sources.filter((source) => source.name === 'main');
-  return [...main, ...sources.filter((source) => source.name !== 'main')];
-}
-
 /**
  * Lays out the fold of a request: `commits` newest first with their parents, `mergedSha` the
- * newest fold, `backingBranch` its branch, `sources` its source branches.
+ * newest fold, `backingBranch` its branch, `sources` its source branches in order.
  */
 export function branchGraph(input: {
   readonly commits: readonly BranchCommit[];
@@ -101,63 +84,83 @@ export function branchGraph(input: {
   readonly sources: readonly BranchSource[];
   readonly showEarlierFolds?: boolean;
 }): BranchGraph {
-  const { commits } = input;
+  const { commits, sources } = input;
   const listed = new Set(commits.map((commit) => commit.hash));
   const byHash = new Map(commits.map((commit) => [commit.hash, commit]));
   const folds = foldChain(commits, input.mergedSha);
   const foldSet = new Set(folds);
-  const sources = orderedSources(input.sources);
 
-  // Which source reaches each commit first: breadth-first from each tip, never through a fold.
-  const claims = new Map<string, { lane: number; steps: number; rank: number }>();
+  // The first source, in order, whose tip reaches a commit owns it.
+  const owner = new Map<string, number>();
   sources.forEach((source, index) => {
-    const lane = index + 1;
-    const rank = PRIORITY_RANK[source.priority ?? ''] ?? 0;
     const start = source.tipSha;
     if (!start || !listed.has(start) || foldSet.has(start)) return;
-    const seen = new Set([start]);
-    let frontier = [start];
-    for (let steps = 0; frontier.length > 0; steps++) {
-      const next: string[] = [];
-      for (const hash of frontier) {
-        const held = claims.get(hash);
-        const better =
-          !held ||
-          steps < held.steps ||
-          (steps === held.steps && rank > held.rank) ||
-          (steps === held.steps && rank === held.rank && lane < held.lane);
-        if (better) claims.set(hash, { lane, steps, rank });
-        for (const parent of byHash.get(hash)?.parents ?? []) {
-          if (listed.has(parent) && !foldSet.has(parent) && !seen.has(parent)) {
-            seen.add(parent);
-            next.push(parent);
-          }
-        }
+    const stack = [start];
+    while (stack.length > 0) {
+      const hash = stack.pop()!;
+      if (owner.has(hash)) continue;
+      owner.set(hash, index);
+      for (const parent of byHash.get(hash)?.parents ?? []) {
+        if (listed.has(parent) && !foldSet.has(parent) && !owner.has(parent)) stack.push(parent);
       }
-      frontier = next;
     }
   });
 
-  const otherLane = sources.length + 1;
-  const unclaimed = commits.some((commit) => !foldSet.has(commit.hash) && !claims.has(commit.hash));
+  const used = sources.flatMap((source, index) =>
+    [...owner.values()].includes(index) ? [index] : [],
+  );
+  const laneOfSource = new Map(used.map((index, position) => [index, position + 1]));
+  const otherLane = used.length + 1;
+  const unowned = commits.some((commit) => !foldSet.has(commit.hash) && !owner.has(commit.hash));
   const lanes: BranchLane[] = [
     { label: input.backingBranch, kind: 'backing' },
-    ...sources.map((source): BranchLane => ({ label: source.name, kind: 'source' })),
-    ...(unclaimed ? [{ label: 'other', kind: 'other' } as BranchLane] : []),
+    ...used.map((index): BranchLane => ({ label: sources[index].name, kind: 'source' })),
+    ...(unowned ? [{ label: 'other', kind: 'other' } as BranchLane] : []),
   ];
-  const laneOf = (hash: string) => (foldSet.has(hash) ? 0 : (claims.get(hash)?.lane ?? otherLane));
+  const laneOf = (hash: string) => {
+    if (foldSet.has(hash)) return 0;
+    const index = owner.get(hash);
+    return index === undefined ? otherLane : laneOfSource.get(index)!;
+  };
+
+  // What the folds merged: every parent of a fold that is not the previous fold.
+  const merged = new Set(
+    folds.flatMap((fold) => (byHash.get(fold)?.parents ?? []).filter((p) => !foldSet.has(p))),
+  );
+  const reachable = new Set<string>();
+  for (const start of merged) {
+    const stack = [start];
+    while (stack.length > 0) {
+      const hash = stack.pop()!;
+      if (reachable.has(hash) || !listed.has(hash)) continue;
+      reachable.add(hash);
+      stack.push(...(byHash.get(hash)?.parents ?? []));
+    }
+  }
+  const notYetFolded = new Set(
+    sources.flatMap((source) =>
+      source.tipSha && listed.has(source.tipSha) && !reachable.has(source.tipSha)
+        ? [source.tipSha]
+        : [],
+    ),
+  );
 
   const showEarlier = input.showEarlierFolds === true;
   const shownCommits = commits.filter(
     (commit) => !foldSet.has(commit.hash) || commit.hash === folds[0] || showEarlier,
   );
-  const tips = sources.flatMap((source) =>
-    source.tipSha && listed.has(source.tipSha) && !foldSet.has(source.tipSha)
-      ? [source.tipSha]
-      : [],
-  );
+  // Collapsed, the newest fold pulls in each lane's newest merged commit.
+  const pulled: string[] = [];
+  const pulledLanes = new Set<number>();
+  for (const commit of commits) {
+    if (!merged.has(commit.hash) || !listed.has(commit.hash)) continue;
+    const lane = laneOf(commit.hash);
+    if (pulledLanes.has(lane)) continue;
+    pulledLanes.add(lane);
+    pulled.push(commit.hash);
+  }
   const parentsOf = (commit: BranchCommit): readonly string[] =>
-    commit.hash === folds[0] && !showEarlier ? tips : commit.parents;
+    commit.hash === folds[0] && !showEarlier ? pulled : commit.parents;
 
   const graph = fixedLaneLayout(
     shownCommits.map((commit) => ({
@@ -171,6 +174,8 @@ export function branchGraph(input: {
   return {
     ...graph,
     lanes,
+    emptySources: sources.flatMap((source, index) => (used.includes(index) ? [] : [source.name])),
+    notYetFolded,
     shown: shownCommits.map((commit) => commit.hash),
     earlierFolds,
     hiddenFolds: showEarlier ? 0 : earlierFolds,
@@ -238,49 +243,30 @@ export function fixedLaneLayout(commits: readonly PlacedCommit[], width: number)
 }
 
 /**
- * The same lanes before the commits carry parents: the backing branch's lane with the fold's own
- * merge commits, a lane per source with nothing in it (no commit can be placed on a branch
- * without parents), then a lane per author with that author's other commits, each a straight
- * line (`inferLanes`). Every commit shows; nothing is folded away.
+ * The commits before they carry parents: one plain lane under the backing branch, newest first,
+ * and every source without a lane of its own (no commit can be placed on a branch without
+ * parents).
  */
 export function guessedGraph(input: {
-  readonly commits: readonly InferredCommit[];
+  readonly commits: readonly { readonly hash: string }[];
   readonly backingBranch: string;
   readonly sources: readonly BranchSource[];
 }): BranchGraph {
-  const sources = orderedSources(input.sources);
-  const inferred = inferLanes(input.commits, input.backingBranch);
-  const parentOf = new Map(inferred.commits.map((commit) => [commit.hash, commit.parents ?? []]));
-  // Each guessed lane opens at the commit its label is keyed by; walk it down to place it.
-  const laneOfHash = new Map<string, number>();
-  const lanes: BranchLane[] = [
-    { label: input.backingBranch, kind: 'backing' },
-    ...sources.map((source): BranchLane => ({ label: source.name, kind: 'source' })),
-  ];
-  for (const commit of input.commits) {
-    const label = inferred.labels.get(commit.hash);
-    if (label === undefined || laneOfHash.has(commit.hash)) continue;
-    let lane = 0;
-    if (label !== input.backingBranch) {
-      lane = lanes.length;
-      lanes.push({ label, kind: 'guess' });
-    }
-    for (let at: string | undefined = commit.hash; at; at = parentOf.get(at)?.[0]) {
-      laneOfHash.set(at, lane);
-    }
-  }
+  const hashes = input.commits.map((commit) => commit.hash);
   const graph = fixedLaneLayout(
-    inferred.commits.map((commit) => ({
-      hash: commit.hash,
-      lane: laneOfHash.get(commit.hash) ?? 0,
-      parents: commit.parents ?? [],
+    hashes.map((hash, index) => ({
+      hash,
+      lane: 0,
+      parents: index + 1 < hashes.length ? [hashes[index + 1]] : [],
     })),
-    lanes.length,
+    1,
   );
   return {
     ...graph,
-    lanes,
-    shown: inferred.commits.map((commit) => commit.hash),
+    lanes: [{ label: input.backingBranch, kind: 'backing' }],
+    emptySources: input.sources.map((source) => source.name),
+    notYetFolded: new Set(),
+    shown: hashes,
     earlierFolds: 0,
     hiddenFolds: 0,
   };

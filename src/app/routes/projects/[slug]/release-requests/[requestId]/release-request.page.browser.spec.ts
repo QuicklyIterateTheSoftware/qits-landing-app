@@ -62,14 +62,15 @@ describe('ReleaseRequestPage (screenshots)', () => {
   }
 
   /** The page for `requestId` (default: the first recorded request), with the lists answered. */
-  async function render(requestId?: string) {
-    await page.viewport(900, 700);
+  async function render(
+    requestId?: string,
+    listState = 'a project with pending release requests',
+    width = 900,
+  ) {
+    await page.viewport(width, 700);
     const projects = await goldenMaster('a project exists', 'listProjects');
     const project = projects.entries[0].project;
-    const listed = await goldenMaster(
-      'a project with pending release requests',
-      'listProjectReleaseRequests',
-    );
+    const listed = await goldenMaster(listState, 'listProjectReleaseRequests');
     const id = requestId ?? listed.requests[0].id;
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
@@ -85,7 +86,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
       .flush(await goldenMaster('a project with 3 repositories', 'listProjectRepositories'));
     await answered(harness.fixture);
     const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
+    element.style.width = `${width}px`;
     const repoId = listed.requests.find((r: { id: string }) => r.id === id)?.repoId;
     return { fixture: harness.fixture, element, repoId, id };
   }
@@ -113,6 +114,35 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(view).toHaveTextContent('has no open or recently finalized release');
     await expect.element(view).toMatchScreenshot('not-found');
+  });
+
+  // TODO(qits-112): waits for "a refolded release request" in @qits/projects-golden-masters
+  // (qits-projects-service `external/rr-commit-states`): run once with that branch's golden masters.
+  it.skip('draws a refolded request’s fold as a branch graph under its sources', async () => {
+    const state = 'a refolded release request';
+    const recorded = await goldenMaster(state, 'getReleaseRequest');
+    const { fixture, element, repoId, id } = await render(
+      recorded.request.id,
+      'a project with release requests in every state',
+    );
+    await page.viewport(900, 1000);
+    const base = `/projects/api/repositories/${repoId}/release-requests/${id}`;
+    http.expectOne(base).flush(recorded);
+    await answered(fixture);
+    http.expectOne(`${base}/commits`).flush(await goldenMaster(state, 'listReleaseRequestCommits'));
+    http
+      .expectOne((r) => r.url.endsWith('/builds'))
+      .flush(await goldenMaster(state, 'listCommitBuilds'));
+    // qits-ci has no golden masters yet: the runs read fails.
+    http
+      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await answered(fixture);
+    const graph = page.elementLocator(element).getByRole('region', {
+      name: 'What this release folds in',
+    });
+    await expect.element(graph).toHaveTextContent('feature/export');
+    await expect.element(graph).toMatchScreenshot('refolded-graph');
   });
 
   // TODO(qits-112): waits for the provider state "a pending release request" (getReleaseRequest,

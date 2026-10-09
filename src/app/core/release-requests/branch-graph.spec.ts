@@ -10,7 +10,7 @@ import {
 // Pure layout, so hand-built commits in the shape of request dd113f4c: a chain of 23 fold merges
 // on release/r1, each merging the newest maintenance/dependencies tip into the previous fold; 25
 // bumps on maintenance/dependencies; two ticket branches of one commit each, merged at the first
-// fold. Newest first, as git log answers.
+// fold; main's tip is the base, outside the list. Newest first, as git log answers.
 
 function dd113f4c(): BranchCommit[] {
   const commits: BranchCommit[] = [];
@@ -18,31 +18,34 @@ function dd113f4c(): BranchCommit[] {
     commits.push({
       hash: `f${k}`,
       parents: k === 1 ? ['base', 'b3', 't1', 't2'] : [`f${k - 1}`, `b${k + 2}`],
+      fold: true,
     });
-    commits.push({ hash: `b${k + 2}`, parents: [`b${k + 1}`] });
+    commits.push({ hash: `b${k + 2}`, parents: [`b${k + 1}`], fold: false });
   }
-  commits.push({ hash: 'b2', parents: ['b1'] });
-  commits.push({ hash: 'b1', parents: ['main-old'] });
-  commits.push({ hash: 't2', parents: ['main-old'] });
-  commits.push({ hash: 't1', parents: ['main-old'] });
+  commits.push({ hash: 'b2', parents: ['b1'], fold: false });
+  commits.push({ hash: 'b1', parents: ['main-old'], fold: false });
+  commits.push({ hash: 't2', parents: ['main-old'], fold: false });
+  commits.push({ hash: 't1', parents: ['main-old'], fold: false });
   return commits;
 }
 
 const SOURCES = [
-  { name: 'maintenance/dependencies', tipSha: 'b25', priority: 'LOWEST' },
-  { name: 'ticket/a', tipSha: 't1', priority: 'MEDIUM' },
-  { name: 'main', tipSha: 'main-tip', priority: 'MEDIUM' },
-  { name: 'ticket/b', tipSha: 't2', priority: 'MEDIUM' },
+  { name: 'main', tipSha: 'main-tip' },
+  { name: 'maintenance/dependencies', tipSha: 'b25' },
+  { name: 'ticket/a', tipSha: 't1' },
+  { name: 'ticket/b', tipSha: 't2' },
 ];
 
-const graphOf = (showEarlierFolds = false) =>
+const graphOf = (showEarlierFolds = false, sources = SOURCES) =>
   branchGraph({
     commits: dd113f4c(),
     mergedSha: 'f23',
     backingBranch: 'release/r1',
-    sources: SOURCES,
+    sources,
     showEarlierFolds,
   });
+
+const sorted = <T>(list: readonly T[]) => [...list].sort((a, b) => (`${a}` < `${b}` ? -1 : 1));
 
 describe('branch graph', () => {
   it('needs parents on every commit', () => {
@@ -51,81 +54,101 @@ describe('branch graph', () => {
     expect(hasParents([])).toBe(false);
   });
 
-  it('follows the first-parent chain of fold merges from the newest fold', () => {
+  it('follows the chain of fold merges from the newest fold, by the service’s marker', () => {
     const chain = foldChain(dd113f4c(), 'f23');
-    expect(chain).toHaveLength(23);
-    expect([chain[0], chain[22]]).toEqual(['f23', 'f1']);
+    expect([chain.length, chain[0], chain[22]]).toEqual([23, 'f23', 'f1']);
+    expect(
+      foldChain(
+        [
+          { hash: 'f2', parents: ['f1', 'x'], fold: true },
+          { hash: 'f1', parents: ['f0', 'y'], fold: false },
+        ],
+        'f2',
+      ),
+    ).toEqual(['f2']);
   });
 
-  it('prefers the service’s fold marker over the shape when it sends one', () => {
-    const commits = [
-      { hash: 'f2', parents: ['f1', 'x'], fold: true },
-      { hash: 'f1', parents: ['f0', 'y'], fold: false },
-    ];
-    expect(foldChain(commits, 'f2')).toEqual(['f2']);
-  });
-
-  it('gives the backing branch the first lane, then main, then the sources in order', () => {
-    expect(graphOf().lanes.map((lane) => lane.label)).toEqual([
+  it('gives lanes to the backing branch and the sources that own commits; main has none', () => {
+    const graph = graphOf();
+    expect(graph.lanes.map((lane) => lane.label)).toEqual([
       'release/r1',
-      'main',
       'maintenance/dependencies',
       'ticket/a',
       'ticket/b',
     ]);
+    expect(graph.emptySources).toEqual(['main']);
   });
 
   it('shows the newest fold and counts the 22 earlier ones', () => {
     const graph = graphOf();
     expect(graph.shown).toHaveLength(28);
-    expect(graph.shown[0]).toBe('f23');
     expect(graph.shown.filter((hash) => hash.startsWith('f'))).toEqual(['f23']);
     expect([graph.earlierFolds, graph.hiddenFolds]).toEqual([22, 22]);
   });
 
-  it('puts each commit in the lane of the source that reaches it', () => {
+  it('puts each commit in the lane of the first source whose tip reaches it', () => {
     const graph = graphOf();
     const lane = (hash: string) => graph.rows.find((row) => row.hash === hash)?.lane;
-    expect(['b25', 'b13', 'b1'].map(lane)).toEqual([2, 2, 2]);
-    expect([lane('t1'), lane('t2')]).toEqual([3, 4]);
-    expect(lane('f23')).toBe(0);
+    expect(['f23', 'b25', 'b13', 'b1', 't1', 't2'].map(lane)).toEqual([0, 1, 1, 1, 2, 3]);
   });
 
-  it('merges every source lane in the list into the newest fold', () => {
-    const [fold, tip] = graphOf().rows;
-    expect(fold.edges).toEqual([
-      { from: 0, to: 2 },
-      { from: 0, to: 3 },
-      { from: 0, to: 4 },
+  it('pulls every source lane into the newest fold', () => {
+    const [fold] = graphOf().rows;
+    expect(sorted(fold.edges.map((edge) => `${edge.from}→${edge.to}`))).toEqual([
+      '0→1',
+      '0→2',
+      '0→3',
     ]);
-    // The ticket lanes run down past the bumps to their one commit each.
-    expect(tip.passing).toEqual([3, 4]);
-    expect(tip.incoming).toBe(true);
+    expect(graphOf().notYetFolded.size).toBe(0);
   });
 
-  it('shows every fold on request, each merging its maintenance tip into the previous fold', () => {
+  it('shows every fold on request, each merging its tip into the previous fold', () => {
     const graph = graphOf(true);
-    expect(graph.rows).toHaveLength(50);
-    expect(graph.hiddenFolds).toBe(0);
-    const f23 = graph.rows[0];
-    expect(f23.edges).toEqual([
+    expect([graph.rows.length, graph.hiddenFolds]).toEqual([50, 0]);
+    expect(graph.rows[0].edges).toEqual([
       { from: 0, to: 0 },
-      { from: 0, to: 2 },
+      { from: 0, to: 1 },
     ]);
     const f1 = graph.rows.find((row) => row.hash === 'f1')!;
-    expect(f1.edges).toEqual([
-      { from: 0, to: 2 },
-      { from: 0, to: 3 },
-      { from: 0, to: 4 },
-    ]);
+    expect(sorted(f1.edges.map((edge) => edge.to))).toEqual([1, 2, 3]);
+  });
+
+  it('says a tip pushed after the newest fold is not yet folded', () => {
+    const commits = [{ hash: 'b26', parents: ['b25'], fold: false }, ...dd113f4c()];
+    const graph = branchGraph({
+      commits,
+      mergedSha: 'f23',
+      backingBranch: 'release/r1',
+      sources: SOURCES.map((s) => (s.tipSha === 'b25' ? { ...s, tipSha: 'b26' } : s)),
+    });
+    expect([...graph.notYetFolded]).toEqual(['b26']);
+    expect(graph.rows.find((row) => row.hash === 'b26')?.lane).toBe(1);
+  });
+
+  it('gives a commit two sources reach to the earlier source', () => {
+    const graph = branchGraph({
+      commits: [
+        { hash: 'f', parents: ['x', 'y'], fold: true },
+        { hash: 'x', parents: ['shared'], fold: false },
+        { hash: 'y', parents: ['shared'], fold: false },
+        { hash: 'shared', parents: [], fold: false },
+      ],
+      mergedSha: 'f',
+      backingBranch: 'release/r3',
+      sources: [
+        { name: 'first', tipSha: 'x' },
+        { name: 'second', tipSha: 'y' },
+      ],
+    });
+    expect(graph.rows.find((row) => row.hash === 'shared')?.lane).toBe(1);
   });
 
   it('puts a commit no source reaches in a last lane, "other"', () => {
     const graph = branchGraph({
       commits: [
-        { hash: 'f', parents: ['p', 'a'] },
-        { hash: 'a', parents: [] },
-        { hash: 'stray', parents: [] },
+        { hash: 'f', parents: ['p', 'a'], fold: true },
+        { hash: 'a', parents: [], fold: false },
+        { hash: 'stray', parents: [], fold: false },
       ],
       mergedSha: 'f',
       backingBranch: 'release/r2',
@@ -133,24 +156,6 @@ describe('branch graph', () => {
     });
     expect(graph.lanes.map((lane) => lane.label)).toEqual(['release/r2', 'feature', 'other']);
     expect(graph.rows.map((row) => row.lane)).toEqual([0, 1, 2]);
-  });
-
-  it('gives a commit two sources reach in as many steps to the higher priority', () => {
-    const graph = branchGraph({
-      commits: [
-        { hash: 'f', parents: ['p', 'x', 'y'] },
-        { hash: 'x', parents: ['shared'] },
-        { hash: 'y', parents: ['shared'] },
-        { hash: 'shared', parents: [] },
-      ],
-      mergedSha: 'f',
-      backingBranch: 'release/r3',
-      sources: [
-        { name: 'low', tipSha: 'x', priority: 'LOW' },
-        { name: 'high', tipSha: 'y', priority: 'HIGH' },
-      ],
-    });
-    expect(graph.rows.find((row) => row.hash === 'shared')?.lane).toBe(2);
   });
 
   it('draws a line through a lane to a parent further down, and nothing to one not shown', () => {
@@ -171,27 +176,14 @@ describe('branch graph', () => {
 });
 
 describe('guessed graph', () => {
-  it('heads a lane per source, empty, with the guessed lanes beside them', () => {
+  it('lists the commits in one lane under the backing branch; every source is laneless', () => {
     const graph = guessedGraph({
-      commits: [
-        { hash: 'f2', author: 'qits-projects', message: 'Release request r1: bump' },
-        { hash: 'b2', author: 'maint', message: 'bump(dependencies): 5' },
-        { hash: 'f1', author: 'qits-projects', message: 'Release request r1: bump' },
-        { hash: 'b1', author: 'maint', message: 'bump(dependencies): 4' },
-        { hash: 't1', author: 'agent', message: 'fix: x' },
-      ],
+      commits: [{ hash: 'a' }, { hash: 'b' }, { hash: 'c' }],
       backingBranch: 'release/r1',
-      sources: [{ name: 'maintenance/dependencies' }, { name: 'main' }],
+      sources: [{ name: 'main' }, { name: 'maintenance/dependencies' }],
     });
-    expect(graph.lanes.map((lane) => [lane.label, lane.kind])).toEqual([
-      ['release/r1', 'backing'],
-      ['main', 'source'],
-      ['maintenance/dependencies', 'source'],
-      ['by maint', 'guess'],
-      ['by agent', 'guess'],
-    ]);
-    expect(graph.rows.map((row) => row.lane)).toEqual([0, 3, 0, 3, 4]);
-    expect(graph.shown).toHaveLength(5);
-    expect(graph.hiddenFolds).toBe(0);
+    expect(graph.lanes.map((lane) => lane.label)).toEqual(['release/r1']);
+    expect(graph.emptySources).toEqual(['main', 'maintenance/dependencies']);
+    expect(graph.rows.map((row) => row.lane)).toEqual([0, 0, 0]);
   });
 });
