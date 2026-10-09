@@ -111,6 +111,7 @@ export function stepStateOf(word: string | undefined): StepState {
     case 'SUPERSEDED':
       return 'pending';
     case 'NOT_REQUIRED':
+    case 'NOT_APPLICABLE':
     case 'WAIVED':
     case 'SKIPPED':
       return 'skipped';
@@ -287,7 +288,7 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
   const conflicted = !!conflict || request.state === 'CONFLICTED';
   const fold: Step = {
     key: 'fold',
-    label: 'Fold the sources',
+    label: 'Merge the sources',
     state: conflicted
       ? 'failed'
       : request.mergedSha
@@ -396,7 +397,7 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
   const stages: Omit<Stage, 'current' | 'future' | 'state'>[] = [
     {
       key: 'fold',
-      label: 'P1 · Fold & automations',
+      label: 'P1 · Merge & automations',
       steps: [fold, automationStep],
       note:
         'The automations run alongside the test run of the same fold. One that commits adds to the ' +
@@ -518,45 +519,7 @@ export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint
       anchor: failedTests ? FAILED_TESTS : stepAnchor(first?.key ?? key),
     });
   };
-  const automations = request.automations ?? [];
-  const automationsGate = request.gates?.find((gate) => gate.kind === 'AUTOMATIONS');
-  if (automations.length > 0 || automationsGate) {
-    const states = automations.map((row) => stepStateOf(row.state));
-    const done = states.filter((state) => state === 'passed' || state === 'skipped').length;
-    const gateState = stepStateOf(automationsGate?.state);
-    const cog: AutomationState =
-      states.includes('failed') || (states.length === 0 && gateState === 'failed')
-        ? 'failed'
-        : states.length > 0
-          ? done === states.length
-            ? 'passed'
-            : states.some((state) => state === 'running') || done > 0
-              ? 'running'
-              : 'pending'
-          : gateState === 'passed' || gateState === 'skipped'
-            ? 'passed'
-            : gateState === 'running'
-              ? 'running'
-              : 'pending';
-    const lines = automations.map(
-      (row) =>
-        `${row.label ?? row.kind}: ${wordOf(row.state)}${row.detail?.trim() ? ` — ${row.detail.trim()}` : ''}`,
-    );
-    points.push({
-      key: 'automations',
-      kind: 'cog',
-      label: 'Automations',
-      state: cog === 'running' ? 'running' : cog === 'pending' ? 'pending' : cog,
-      shield: cog === 'running' ? 'pending' : cog,
-      count: cog === 'running' && states.length > 0 ? `${done}/${states.length}` : undefined,
-      title: [
-        'Automations',
-        ...(lines.length ? lines : [`the gate: ${wordOf(automationsGate?.state)}`]),
-      ].join('\n'),
-      attention: cog === 'failed',
-      anchor: stepAnchor('automations'),
-    });
-  }
+  points.push(preTestPoint(request, byKey.get('fold')!));
   const qa = byKey.get('qa')!;
   chip('qa', 'Test', qa.state, qa.steps[0]?.word);
   pips('gates');
@@ -608,3 +571,103 @@ export function attentionOf(request: ReleaseRequest): readonly AttentionPoint[] 
 
 /** The id of the failing tests on the request's overview (the test run's reports). */
 export const FAILED_TESTS = 'failed-tests';
+
+/** One step of the phase before the tests, as the cog counts it. */
+interface PreTestStep {
+  readonly label: string;
+  readonly state: StepState;
+  readonly word: string;
+  readonly detail: string | null;
+  /** Not applicable to this repository: listed with its reason, not counted. */
+  readonly notApplicable: boolean;
+}
+
+/**
+ * The phase before the tests (P1) as its steps: the merge of the sources (where an upstream
+ * version bump on `maintenance/dependencies` also comes in), then every automation the answer
+ * lists, the ones that do not apply (`NOT_APPLICABLE`) with their reason. Without automation rows
+ * (an answer that carries none), the automations gate stands for them.
+ */
+export function preTestSteps(request: ReleaseRequest, fold: Stage): readonly PreTestStep[] {
+  const merge = fold.steps.find((step) => step.kind === 'fold');
+  const steps: PreTestStep[] = [
+    {
+      label: 'Merge',
+      state: merge?.state ?? 'pending',
+      word: merge?.word ?? 'not folded',
+      detail: null,
+      notApplicable: false,
+    },
+  ];
+  const rows = request.automations;
+  if (rows && rows.length > 0) {
+    for (const row of rows) {
+      steps.push({
+        label: row.label ?? row.kind ?? 'automation',
+        state: stepStateOf(row.state),
+        word: wordOf(row.state),
+        detail: row.detail?.trim() || null,
+        notApplicable: row.state === 'NOT_APPLICABLE',
+      });
+    }
+  } else {
+    const gate = (request.pipeline?.gates ?? request.gates ?? []).find(
+      (entry) => entry.kind === 'AUTOMATIONS',
+    );
+    if (gate) {
+      steps.push({
+        label: 'Automations',
+        state: stepStateOf(gate.state),
+        word: wordOf(gate.state),
+        detail: null,
+        notApplicable: false,
+      });
+    }
+  }
+  return steps;
+}
+
+/**
+ * The phase before the tests as one cog: done / applicable steps including the merge, with the
+ * ones that do not apply counted apart ("2/3 · 1 skipped") and listed with their reason in the
+ * tooltip. Red when the merge conflicted or an automation failed (somebody must act), green when
+ * every applicable step is done, blue while some run or some are done, grey before.
+ */
+function preTestPoint(request: ReleaseRequest, fold: Stage): SummaryPoint {
+  const steps = preTestSteps(request, fold);
+  const applicable = steps.filter((step) => !step.notApplicable);
+  const skipped = steps.filter((step) => step.notApplicable);
+  const done = applicable.filter((step) => step.state === 'passed' || step.state === 'skipped');
+  const cog: AutomationState = applicable.some((step) => step.state === 'failed')
+    ? 'failed'
+    : done.length === applicable.length
+      ? 'passed'
+      : done.length > 0 || applicable.some((step) => step.state === 'running')
+        ? 'running'
+        : 'pending';
+  const count =
+    cog === 'passed'
+      ? undefined
+      : `${done.length}/${applicable.length}${skipped.length ? ` · ${skipped.length} skipped` : ''}`;
+  const line = (step: PreTestStep) =>
+    `${step.label}: ${step.word}${step.detail ? ` — ${step.detail}` : ''}`;
+  return {
+    key: 'automations',
+    kind: 'cog',
+    label: 'Merge and automations',
+    state: cog,
+    shield: cog === 'running' ? 'pending' : cog,
+    count,
+    title: [
+      'Merge and automations',
+      ...applicable.map(line),
+      ...skipped.map((step) => `Skipped: ${step.label}${step.detail ? ` — ${step.detail}` : ''}`),
+    ].join('\n'),
+    attention: cog === 'failed',
+    anchor: stepAnchor(
+      applicable.find((step) => step.state === 'failed')?.label === 'Merge'
+        ? 'fold'
+        : 'automations',
+    ),
+  };
+}

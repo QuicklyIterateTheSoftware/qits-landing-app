@@ -60,7 +60,7 @@ const labels = (request: ReleaseRequest) =>
 describe('release lifecycle', () => {
   it('draws every stage, top to bottom, whatever the request has reached', () => {
     expect(labels(pending)).toEqual([
-      ['P1 · Fold & automations', 'running'],
+      ['P1 · Merge & automations', 'running'],
       ['P2 · Test', 'running'],
       ['P3 · Quality gates', 'pending'],
       ['P4 · Publish', 'pending'],
@@ -224,10 +224,16 @@ describe('lifecycle summary', () => {
         { kind: 'a', label: 'Entity diagram', state: 'FRESH' },
         { kind: 'b', label: 'Estate pins', state: 'RUNNING', detail: 'pins 2 submodules' },
         { kind: 'c', label: 'Baselines', state: 'REQUESTED' },
+        {
+          kind: 'd',
+          label: 'Screenshot baselines',
+          state: 'NOT_APPLICABLE',
+          detail: 'no frontend',
+        },
       ],
     });
     expect(points.map((point) => [point.kind, point.label, point.count])).toEqual([
-      ['cog', 'Automations', '1/3'],
+      ['cog', 'Merge and automations', '2/4 · 1 skipped'],
       ['chip', 'Test', undefined],
       ['shield', 'Quality gates', undefined],
       ['chip', 'Publish', undefined],
@@ -236,17 +242,38 @@ describe('lifecycle summary', () => {
       ['chip', 'Finalized', undefined],
     ]);
     expect(points[0].title).toBe(
-      'Automations\nEntity diagram: fresh\nEstate pins: running — pins 2 submodules\nBaselines: requested',
+      'Merge and automations\nMerge: folded\nEntity diagram: fresh\n' +
+        'Estate pins: running — pins 2 submodules\nBaselines: requested\n' +
+        'Skipped: Screenshot baselines — no frontend',
     );
     expect(points[2].title).toContain('Tests passed: pending');
   });
 
   it('leaves out deployment when nothing deploys; a finalized request is all green', () => {
     expect(line(finalized)).toEqual([
+      ['cog', 'Merge and automations', 'passed'],
       ['chip', 'Test', 'passed'],
       ['shield', 'Quality gates', 'passed'],
       ['chip', 'Publish', 'passed'],
       ['chip', 'Finalized', 'passed'],
+    ]);
+  });
+
+  it('counts the merge alone, or the merge and the automations gate, without automation rows', () => {
+    const merged = lifecycleSummary({ id: 'r7', state: 'PENDING', mergedSha: 'abc' })[0];
+    expect([merged.state, merged.count]).toEqual(['passed', undefined]);
+    const gated = lifecycleSummary({
+      id: 'r8',
+      state: 'PENDING',
+      mergedSha: 'abc',
+      gates: [{ kind: 'AUTOMATIONS', state: 'PENDING' }],
+    })[0];
+    expect([gated.state, gated.count]).toEqual(['running', '1/2']);
+    const conflicted = lifecycleSummary({ id: 'r9', state: 'CONFLICTED' })[0];
+    expect([conflicted.state, conflicted.attention, conflicted.anchor]).toEqual([
+      'failed',
+      true,
+      'check-fold',
     ]);
   });
 

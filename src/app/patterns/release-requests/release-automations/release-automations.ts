@@ -20,6 +20,9 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * each row's label, state and detail, a link to its CI run, Re-run for a failed, unknown or fresh
  * one, and for a failed one the step it stopped at with the log's excerpt.
  *
+ * An automation that does not apply to this repository (`NOT_APPLICABLE`) is greyed, with the
+ * service's reason.
+ *
  * Below the rows, "Waive for this fold" asks for a reason and waives the automations gate for the
  * fold on show (`qits:admin` only). A 403 hides it for the rest of the visit. A 409 that names
  * another fold says the fold moved.
@@ -43,7 +46,9 @@ import { ActionButton } from '$ui/components/action-button/action-button';
             [class]="
               row.state === 'FAILED'
                 ? 'border-cinnabar-200 bg-cinnabar-50'
-                : 'border-charcoal-brown-200 bg-white'
+                : row.state === 'NOT_APPLICABLE'
+                  ? 'border-dashed border-charcoal-brown-200 bg-white text-charcoal-brown-400'
+                  : 'border-charcoal-brown-200 bg-white'
             "
           >
             <div class="flex flex-wrap items-center gap-2">
