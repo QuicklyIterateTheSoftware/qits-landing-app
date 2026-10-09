@@ -20,7 +20,7 @@ describe('release request tabs', () => {
     expect(releaseTabs({ commits: 51, runs: 12 }).map((tab) => [tab.label, tab.count])).toEqual([
       ['Overview', undefined],
       ['Commits', 51],
-      ['CI runs', 12],
+      ['Builds', 12],
       ['Changes', undefined],
     ]);
     expect(releaseTabs({}).every((tab) => tab.count === undefined)).toBe(true);

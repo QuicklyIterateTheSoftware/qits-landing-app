@@ -1,5 +1,6 @@
 import type { ReleaseRequest } from './release-request.consumes';
 import {
+  attentionOf,
   hasGenericGates,
   lifecycleSummary,
   releaseLifecycle,
@@ -60,7 +61,7 @@ describe('release lifecycle', () => {
   it('draws every stage, top to bottom, whatever the request has reached', () => {
     expect(labels(pending)).toEqual([
       ['P1 · Fold & automations', 'running'],
-      ['P2 · CI / QA', 'running'],
+      ['P2 · Test', 'running'],
       ['P3 · Quality gates', 'pending'],
       ['P4 · Publish', 'pending'],
       ['P5 · Deployment', 'pending'],
@@ -85,7 +86,7 @@ describe('release lifecycle', () => {
   it('names each gate as its own row, with the approval always among them', () => {
     const gates = releaseLifecycle(pending)[2].steps;
     expect(gates.map((step) => [step.label, step.word])).toEqual([
-      ['CI build passed', 'pending'],
+      ['Tests passed', 'pending'],
       ['Automations passed or waived', 'pending'],
       ['Approval', 'not required'],
     ]);
@@ -213,42 +214,43 @@ describe('release lifecycle', () => {
 });
 
 describe('lifecycle summary', () => {
-  it('lines up automations, CI, gate pips, publish, deployment, its gates and finalized', () => {
+  const line = (request: ReleaseRequest) =>
+    lifecycleSummary(request).map((point) => [point.kind, point.label, point.shield]);
+
+  it('lines up the automations’ cog, Test, the gates’ shield, publish, deployment and its gates', () => {
     const points = lifecycleSummary({
       ...pending,
       automations: [
         { kind: 'a', label: 'Entity diagram', state: 'FRESH' },
-        { kind: 'b', label: 'Estate pins', state: 'RUNNING' },
+        { kind: 'b', label: 'Estate pins', state: 'RUNNING', detail: 'pins 2 submodules' },
         { kind: 'c', label: 'Baselines', state: 'REQUESTED' },
       ],
     });
-    expect(points.map((point) => [point.kind, point.label, point.state])).toEqual([
-      ['chip', 'Automations 1/3', 'running'],
-      ['chip', 'CI', 'running'],
-      ['pip', 'CI build passed', 'pending'],
-      ['pip', 'Automations passed or waived', 'pending'],
-      ['pip', 'Approval', 'skipped'],
-      ['chip', 'Publish', 'pending'],
-      ['chip', 'Deploy', 'pending'],
-      ['pip', 'Deployment live', 'pending'],
-      ['pip', 'Not rolled back', 'not-reported'],
-      ['chip', 'Finalized', 'pending'],
+    expect(points.map((point) => [point.kind, point.label, point.count])).toEqual([
+      ['cog', 'Automations', '1/3'],
+      ['chip', 'Test', undefined],
+      ['shield', 'Quality gates', undefined],
+      ['chip', 'Publish', undefined],
+      ['chip', 'Deploy', undefined],
+      ['shield', 'Deployment gates', undefined],
+      ['chip', 'Finalized', undefined],
     ]);
-    expect(points[2].title).toBe('CI build passed: pending');
+    expect(points[0].title).toBe(
+      'Automations\nEntity diagram: fresh\nEstate pins: running — pins 2 submodules\nBaselines: requested',
+    );
+    expect(points[2].title).toContain('Tests passed: pending');
   });
 
-  it('leaves out automations when none apply, and deployment when nothing deploys', () => {
-    expect(lifecycleSummary(finalized).map((point) => point.label)).toEqual([
-      'CI',
-      'CI build passed',
-      'Automations passed or waived',
-      'Approval',
-      'Publish',
-      'Finalized',
+  it('leaves out deployment when nothing deploys; a finalized request is all green', () => {
+    expect(line(finalized)).toEqual([
+      ['chip', 'Test', 'passed'],
+      ['shield', 'Quality gates', 'passed'],
+      ['chip', 'Publish', 'passed'],
+      ['chip', 'Finalized', 'passed'],
     ]);
   });
 
-  it('reads CI and publish from the gates when the answer has no pipeline', () => {
+  it('reads Test and publish from the gates when the answer has no pipeline', () => {
     const points = lifecycleSummary({
       id: 'r3',
       state: 'RELEASED',
@@ -257,14 +259,68 @@ describe('lifecycle summary', () => {
         { kind: 'PUBLISH', state: 'PENDING' },
       ],
     });
-    const withRows = lifecycleSummary({
-      id: 'r4',
-      state: 'PENDING',
-      gates: [{ kind: 'AUTOMATIONS', state: 'PENDING' }],
-    });
-    expect(withRows[0]).toMatchObject({ label: 'Automations', state: 'pending' });
-    expect(points.map((point) => point.label).slice(0, 2)).toEqual(['CI', 'CI build passed']);
     expect(points.find((point) => point.key === 'qa')?.state).toBe('passed');
     expect(points.find((point) => point.key === 'publish')?.state).toBe('running');
+  });
+});
+
+describe('attention', () => {
+  const waiting: ReleaseRequest = {
+    id: 'r5',
+    state: 'PENDING',
+    mergedSha: 'abc',
+    approvalRequired: true,
+    approvalState: 'WAITING',
+    gates: [
+      { kind: 'CI', state: 'PASSED' },
+      { kind: 'AUTOMATIONS', state: 'PASSED' },
+      { kind: 'APPROVAL', state: 'PENDING', detail: 'Waiting for a person to approve' },
+    ],
+  };
+
+  it('asks for a person on an approval that waits: an amber shield, and Approve', () => {
+    expect(attentionOf(waiting)).toEqual([
+      {
+        key: 'gate::APPROVAL',
+        label: 'Approval',
+        action: 'Approve',
+        anchor: 'check-gate-APPROVAL',
+      },
+    ]);
+    const gates = lifecycleSummary(waiting).find((point) => point.key === 'gates')!;
+    expect([gates.shield, gates.attention, gates.anchor]).toEqual([
+      'waiting',
+      true,
+      'check-gate-APPROVAL',
+    ]);
+    expect(gates.title).toContain('Approval: waiting — Waiting for a person to approve');
+  });
+
+  it('asks for a person on a failed gate, a failed automation and a conflict', () => {
+    const failed = attentionOf({
+      ...waiting,
+      approvalRequired: false,
+      gates: [{ kind: 'CI', state: 'FAILED' }],
+    });
+    expect(failed.map((point) => [point.label, point.action])).toEqual([['Tests passed', 'Look']]);
+    expect(
+      lifecycleSummary({ ...waiting, gates: [{ kind: 'CI', state: 'FAILED' }] }).find(
+        (p) => p.key === 'gates',
+      )?.shield,
+    ).toBe('failed');
+    const automation = attentionOf({
+      ...waiting,
+      approvalRequired: false,
+      automations: [{ kind: 'pins', label: 'Estate pins', state: 'FAILED' }],
+    });
+    expect(automation.map((point) => point.label)).toContain('Automations');
+    expect(attentionOf({ id: 'r6', state: 'CONFLICTED' }).map((point) => point.action)).toEqual([
+      'Resolve',
+    ]);
+  });
+
+  it('asks for nobody on a request that moves on its own', () => {
+    expect(attentionOf(finalized)).toEqual([]);
+    expect(attentionOf(pending)).toEqual([]);
   });
 });

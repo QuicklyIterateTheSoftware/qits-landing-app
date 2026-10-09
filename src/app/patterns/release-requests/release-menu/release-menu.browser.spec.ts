@@ -107,11 +107,13 @@ describe('ReleaseMenu (screenshots)', () => {
     http.expectNone(`/projects/api/projects/${projectId}/release-requests`);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     expect(panel.getByRole('listitem').elements()).toHaveLength(5);
-    // The lifecycle line: phase chips, a pip per gate (named in its tooltip).
-    await expect.element(panel.getByTitle('CI: failed').first()).toBeVisible();
+    // The lifecycle line: phase chips and the gates' shield; the two needing a person come first,
+    // marked, with a red broken shield.
+    await expect.element(panel.getByTitle('Test: failed').first()).toBeVisible();
     await expect
-      .element(panel.getByRole('img', { name: 'CI build passed: failed' }).first())
-      .toBeInTheDocument();
+      .element(panel.getByRole('img', { name: /Tests passed: failed/ }).first())
+      .toHaveAttribute('data-shield', 'failed');
+    await expect.element(panel.getByText(/Needs you/).first()).toBeVisible();
     await expect.element(panel).not.toHaveTextContent('Finalized release');
     await expect.element(frame).toMatchScreenshot('open');
   });

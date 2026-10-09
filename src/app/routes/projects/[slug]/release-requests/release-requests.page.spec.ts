@@ -67,7 +67,7 @@ describe('ReleaseRequestsPage', () => {
     expect(first.textContent).toContain('contract-service');
     expect(first.textContent).toContain('Waiting on its gates');
     expect(first.textContent).toContain('2026-01-01 00:00 UTC');
-    expect(first.textContent).toContain('CI · PENDING');
+    expect(first.querySelector('ui-lifecycle-line [title="Test: pending"]')).not.toBeNull();
     expect(first.querySelector('a')?.getAttribute('href')).toBe(
       `/projects/${project.slug}/release-requests/00000000-0000-4000-8000-000000000002`,
     );

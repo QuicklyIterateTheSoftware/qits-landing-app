@@ -1,10 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import {
+  lifecycleSummary,
   releaseLifecycle,
+  shieldOf,
+  stepAnchor,
   type Step,
   type StepState,
 } from '$core/release-requests/release-lifecycle';
+import {
+  AutomationCog,
+  type AutomationCogState,
+} from '$ui/components/automation-cog/automation-cog';
+import { GateShield } from '$ui/components/gate-shield/gate-shield';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal } from '$core/release-requests/release-request-model';
 import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
@@ -46,12 +54,22 @@ const RAIL: Readonly<Record<StepState, string>> = {
  * Every check is its own row: its label, its state as the backend words it, its detail and
  * sub-checks, and a link to its CI run or deployment. Actions sit on the row they act on: the
  * conflict under the fold, each automation with Re-run and the waiver, "run again" on a phase that
- * can run again, and Approve or Decline on the approval while a person must answer.
+ * can run again, and Approve or Decline on the approval while a person must answer. A check that
+ * needs a person is marked and ringed; each row has an id (`stepAnchor`), so a link can open the
+ * page at it. P1's header carries the automations' cog, P3's and P6's their gates' shield.
  */
 @Component({
   selector: 'app-release-lifecycle',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, Chip, ReleaseApproval, ReleaseAutomations, ReleaseConflictPanel],
+  imports: [
+    ActionButton,
+    AutomationCog,
+    Chip,
+    GateShield,
+    ReleaseApproval,
+    ReleaseAutomations,
+    ReleaseConflictPanel,
+  ],
   host: { class: 'block' },
   template: `
     <section class="rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
@@ -74,6 +92,16 @@ const RAIL: Readonly<Record<StepState, string>> = {
               class="flex flex-wrap items-center gap-2 rounded px-1"
               [class.bg-ocean-deep-50]="stage.current"
             >
+              @if (stage.key === 'fold' && cog(); as point) {
+                <ui-automation-cog
+                  [state]="cogState(point.state)"
+                  [count]="point.count ?? ''"
+                  [label]="point.title"
+                />
+              }
+              @if (stage.key === 'gates' || stage.key === 'deploy-gates') {
+                <ui-gate-shield [state]="shield(stage.steps)" [label]="stage.label" />
+              }
               <h3 class="m-0 text-sm font-semibold">{{ stage.label }}</h3>
               <ui-chip [label]="stageWord(stage.state)" [tone]="tone(stage.state)" />
               @if (stage.current) {
@@ -85,8 +113,32 @@ const RAIL: Readonly<Record<StepState, string>> = {
             }
             <ul class="m-0 mt-1 flex list-none flex-col gap-1 p-0">
               @for (step of stage.steps; track step.key) {
-                <li class="rounded border border-charcoal-brown-100 px-2 py-1 text-sm">
+                <li
+                  class="scroll-mt-24 rounded border px-2 py-1 text-sm"
+                  [class]="
+                    step.attention
+                      ? 'border-sunflower-gold-400 bg-sunflower-gold-50 ring-1 ring-sunflower-gold-400'
+                      : 'border-charcoal-brown-100'
+                  "
+                  [id]="anchor(step.key)"
+                >
                   <div class="flex flex-wrap items-center gap-2">
+                    @if (step.attention) {
+                      <svg
+                        viewBox="0 0 24 24"
+                        class="size-4 shrink-0 text-sunflower-gold-800"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        role="img"
+                        aria-label="Needs you"
+                      >
+                        <path d="M12 3 2.5 20h19z" />
+                        <path d="M12 10v4M12 17v.01" />
+                      </svg>
+                    }
                     <span class="font-semibold">{{ step.label }}</span>
                     @if (step.word) {
                       <ui-chip [label]="step.word" [tone]="tone(step.state)" />
@@ -153,6 +205,18 @@ export class ReleaseLifecycle {
   readonly slug = input.required<string>();
 
   protected readonly stages = computed(() => releaseLifecycle(this.request()));
+
+  /** The automations as the cog in P1's header (as in the lightning menu). */
+  protected readonly cog = computed(() =>
+    lifecycleSummary(this.request()).find((point) => point.kind === 'cog'),
+  );
+
+  protected readonly shield = shieldOf;
+  protected readonly anchor = stepAnchor;
+
+  protected cogState(state: StepState): AutomationCogState {
+    return state === 'passed' || state === 'failed' || state === 'running' ? state : 'pending';
+  }
 
   protected tone(state: StepState): ChipTone {
     return TONES[state];

@@ -14,7 +14,7 @@ export interface RequestRun {
 function phaseLabel(run: CiRun): string {
   switch (run.phase) {
     case 'RELEASE_REQUEST':
-      return 'QA of the fold';
+      return 'Test run of the fold';
     case 'RELEASE':
       return 'Release of the tag';
     default:
@@ -44,7 +44,7 @@ export function requestRuns(
     if (request.id && run.releaseRequestId === request.id) add(run.id, phaseLabel(run));
   }
   for (const phase of request.pipeline?.phases ?? []) {
-    if (phase.phase === 'QA') add(phase.runId, 'QA of the fold');
+    if (phase.phase === 'QA') add(phase.runId, 'Test run of the fold');
     if (phase.phase === 'PUBLISH') add(phase.runId, 'Release of the tag');
   }
   for (const build of builds) add(build.runId, `CI verdict on ${build.branch ?? 'the fold'}`);

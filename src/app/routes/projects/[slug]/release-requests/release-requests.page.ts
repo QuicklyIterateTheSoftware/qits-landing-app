@@ -11,17 +11,13 @@ import {
 import { RouterLink } from '@angular/router';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { ProjectsStore } from '$core/projects/projects.store';
-import {
-  gateTone,
-  nobodyWatching,
-  requestBadge,
-  shortSha,
-  utcMinute,
-} from '$core/projects/release-requests';
+import { nobodyWatching, requestBadge, shortSha, utcMinute } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
+import { attentionOf, lifecycleSummary } from '$core/release-requests/release-lifecycle';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
 /**
@@ -32,7 +28,8 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  *
  * Each row shows the request's state (or "awaiting approval"), its priority, "nobody watching"
  * for a stopped request a machine asked for, the repository, the summary, when it last changed, its
- * version, its merged commit, who asked, the service's detail, and its gates. The repository and
+ * version, its merged commit, who asked, the service's detail, and its lifecycle as a line (cog,
+ * phase chips, gate shields). A request that needs a person is ringed, with a link to that check. The repository and
  * summary link to the request's own page, `release-requests/<id>`. A request that can still be
  * called off has Withdraw.
  *
@@ -42,7 +39,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
 @Component({
   selector: 'app-release-requests-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, ReleaseWithdraw, RouterLink, Spinner],
+  imports: [Chip, LifecycleLine, PageLayoutComponent, ReleaseWithdraw, RouterLink, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -55,7 +52,15 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
           <ul class="m-0 flex list-none flex-col gap-2 p-0">
             @for (request of requests(); track request.id) {
               @let badge = badgeOf(request);
-              <li class="rounded-md border border-gray-200 bg-white px-3 py-2">
+              @let needs = attention(request);
+              <li
+                class="rounded-md border px-3 py-2"
+                [class]="
+                  needs.length
+                    ? 'border-sunflower-gold-400 bg-sunflower-gold-50 ring-1 ring-sunflower-gold-400'
+                    : 'border-gray-200 bg-white'
+                "
+              >
                 <div class="flex flex-wrap items-baseline gap-2">
                   <ui-chip [label]="badge.label" [tone]="badge.tone" />
                   <ui-chip
@@ -93,14 +98,29 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     >merged <span class="font-mono">{{ sha(request.mergedSha) || '–' }}</span></span
                   >
                   <span>{{ request.requester || '–' }}</span>
-                  <span class="flex flex-wrap gap-1">
-                    @for (gate of request.gates ?? []; track gate.kind) {
-                      <ui-chip
-                        [label]="gate.kind + ' · ' + gate.state"
-                        [tone]="gateTone(gate.state)"
-                      />
-                    }
-                  </span>
+                  <ui-lifecycle-line [points]="summary(request)" />
+                  @if (needs[0]; as first) {
+                    <a
+                      class="inline-flex items-center gap-1 font-semibold text-sunflower-gold-900 no-underline hover:underline"
+                      [routerLink]="request.id ?? ''"
+                      [fragment]="first.anchor"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        class="size-4 shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M12 3 2.5 20h19z" />
+                        <path d="M12 10v4M12 17v.01" />
+                      </svg>
+                      {{ first.action }} · {{ first.label }}
+                    </a>
+                  }
                   <app-release-withdraw class="ml-auto" [request]="request" />
                 </div>
                 <p
@@ -126,7 +146,8 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
 export class ReleaseRequestsPage {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(ProjectsStore);
-  protected readonly gateTone = gateTone;
+  protected readonly summary = lifecycleSummary;
+  protected readonly attention = attentionOf;
   protected readonly badgeOf = requestBadge;
   protected readonly when = utcMinute;
   protected readonly sha = shortSha;

@@ -45,8 +45,8 @@ describe('requestRuns', () => {
     expect(requestRuns(request, [], runs).map((r) => [r.id, r.label])).toEqual([
       ['release-1', 'Release of the tag'],
       ['auto-1', 'Automation: Bump'],
-      ['qa-2', 'QA of the fold'],
-      ['qa-1', 'QA of the fold'],
+      ['qa-2', 'Test run of the fold'],
+      ['qa-1', 'Test run of the fold'],
     ]);
   });
 
@@ -57,7 +57,7 @@ describe('requestRuns', () => {
   it('keeps a run only the request names, without qits-ci’s data, last', () => {
     const named = requestRuns(request, [{ runId: 'ci-old', branch: 'release/rr-1' }], []);
     expect(named.map((r) => [r.id, r.label, r.run])).toEqual([
-      ['qa-2', 'QA of the fold', undefined],
+      ['qa-2', 'Test run of the fold', undefined],
       ['release-1', 'Release of the tag', undefined],
       ['ci-old', 'CI verdict on release/rr-1', undefined],
       ['auto-1', 'Automation: Bump', undefined],

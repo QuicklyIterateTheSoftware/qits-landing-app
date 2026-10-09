@@ -10,6 +10,7 @@ import { goldenMaster } from '../../../../testing/golden-masters';
 import { Subject } from 'rxjs';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { isPendingRelease, type ReleaseRequestEntry } from '$core/projects/projects.consumes';
+import { attentionOf } from '$core/release-requests/release-lifecycle';
 import { ReleaseMenu, REFRESH_DEBOUNCE_MS } from './release-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -62,7 +63,7 @@ describe('ReleaseMenu', () => {
     http.expectNone(`/projects/api/projects/${recorded.id}/release-requests`);
   });
 
-  it('fetches the requests as soon as a project is open, and shows their count', async () => {
+  it('fetches the requests as soon as a project is open, and counts those needing a person', async () => {
     const { fixture, button, panel } = render();
     expect(button.getAttribute('aria-expanded')).toBe('false');
     expect(panel.classList.contains('hidden')).toBe(true);
@@ -72,7 +73,9 @@ describe('ReleaseMenu', () => {
       .flush(goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'));
     await settle();
     fixture.detectChanges();
-    expect(button.textContent?.trim()).toBe('5');
+    // The recorded REJECTED (a red build) and CONFLICTED requests need a person; with none it
+    // would count all five pending ones.
+    expect(button.textContent?.trim()).toBe('2');
 
     button.click(); // opens, from what the store holds
     fixture.detectChanges();
@@ -82,7 +85,7 @@ describe('ReleaseMenu', () => {
     expect(panel.querySelectorAll('li')).toHaveLength(5);
   });
 
-  it('links each request to its page, and closes as the link is followed', async () => {
+  it('lists the requests needing a person first, each linking to its page there', async () => {
     const { fixture, button, panel } = render();
     await settle();
     const answer = goldenMaster(
@@ -94,11 +97,16 @@ describe('ReleaseMenu', () => {
     button.click();
     fixture.detectChanges();
     const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>('li a'));
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(
-      answer.requests
-        .filter(isPendingRelease)
-        .map((r) => `/projects/${recorded.slug}/release-requests/${r.id}`),
-    );
+    const pending = answer.requests.filter(isPendingRelease);
+    const needs = pending.filter((r) => attentionOf(r).length > 0);
+    const rest = pending.filter((r) => attentionOf(r).length === 0);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual([
+      ...needs.map(
+        (r) => `/projects/${recorded.slug}/release-requests/${r.id}#${attentionOf(r)[0].anchor}`,
+      ),
+      ...rest.map((r) => `/projects/${recorded.slug}/release-requests/${r.id}`),
+    ]);
+    expect(needs.length).toBe(2);
 
     links[0].click();
     fixture.detectChanges();
@@ -129,7 +137,7 @@ describe('ReleaseMenu', () => {
     fixture.detectChanges();
     expect(
       (fixture.nativeElement as HTMLElement).querySelector('button')?.textContent?.trim(),
-    ).toBe('5');
+    ).toBe('2');
   });
 
   it('closes on Escape, returning the focus to its button, and on a click outside', async () => {

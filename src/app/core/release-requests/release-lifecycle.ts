@@ -48,6 +48,8 @@ export interface Step {
   readonly rerunnable?: boolean;
   /** The approval row asks a person now: Approve and Decline go here. */
   readonly asks?: boolean;
+  /** It blocks the request and needs a person: an approval to give, a failure to act on. */
+  readonly attention?: boolean;
   /** A deployment request to link (the deployment phase's id). */
   readonly deploymentRequestId?: string | null;
 }
@@ -80,7 +82,7 @@ interface GenericGate {
 
 /** Fallback labels for today's gate kinds, while the answer names no label. */
 const GATE_LABELS: Readonly<Record<string, string>> = {
-  CI: 'CI build passed',
+  CI: 'Tests passed',
   AUTOMATIONS: 'Automations passed or waived',
   APPROVAL: 'Approval',
   PUBLISH: 'Release pipeline of the tag green',
@@ -174,6 +176,7 @@ function gateStep(request: ReleaseRequest, gate: GenericGate, generic: boolean):
     })),
     runId: gate.runId ?? null,
     kind: gate.kind === 'APPROVAL' ? 'approval' : 'gate',
+    attention: state === 'failed',
   };
 }
 
@@ -198,6 +201,7 @@ function approvalStep(request: ReleaseRequest, gate: Step | undefined): Step {
     runId: gate?.runId ?? null,
     kind: 'approval',
     asks: required && request.state === 'PENDING' && !decided,
+    attention: required && request.state === 'PENDING' && !decided,
   };
 }
 
@@ -280,17 +284,18 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
 
   // P1: the fold, then the automations.
   const conflict = releaseConflict(request);
+  const conflicted = !!conflict || request.state === 'CONFLICTED';
   const fold: Step = {
     key: 'fold',
     label: 'Fold the sources',
-    state: conflict
+    state: conflicted
       ? 'failed'
       : request.mergedSha
         ? 'passed'
         : request.state === 'PENDING'
           ? 'running'
           : 'pending',
-    word: conflict ? 'conflicted' : request.mergedSha ? 'folded' : 'not folded',
+    word: conflicted ? 'conflicted' : request.mergedSha ? 'folded' : 'not folded',
     detail: conflict
       ? null
       : request.mergedSha
@@ -299,6 +304,7 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
     checks: [],
     runId: null,
     kind: 'fold',
+    attention: conflicted,
   };
   const automations = request.automations ?? [];
   const automationStep: Step = {
@@ -318,6 +324,7 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
     checks: [],
     runId: null,
     kind: 'automations',
+    attention: automations.some((row) => stepStateOf(row.state) === 'failed'),
   };
 
   // P3: the quality gates before publish; the approval among them, always shown.
@@ -392,13 +399,13 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
       label: 'P1 · Fold & automations',
       steps: [fold, automationStep],
       note:
-        'The automations run alongside the QA run of the same fold. One that commits adds to the ' +
-        'request, which folds again and starts a new QA run.',
+        'The automations run alongside the test run of the same fold. One that commits adds to the ' +
+        'request, which folds again and starts a new test run.',
     },
     {
       key: 'qa',
-      label: 'P2 · CI / QA',
-      steps: [phaseStep(request, 'QA', 'QA run of the fold')],
+      label: 'P2 · Test',
+      steps: [phaseStep(request, 'QA', 'Test run of the fold')],
       note: 'Runs alongside the automations, on every fold.',
     },
     { key: 'gates', label: 'P3 · Quality gates', steps: gates, note: null },
@@ -424,61 +431,130 @@ export function releaseLifecycle(request: ReleaseRequest): readonly Stage[] {
 /** One point of a request's lifecycle in a compact summary: a phase chip or a gate pip. */
 export interface SummaryPoint {
   readonly key: string;
-  readonly kind: 'chip' | 'pip';
-  /** The chip's text, or the pip's name (for its tooltip). */
+  /** It needs a person (see `Step.attention`). */
+  readonly attention: boolean;
+  /** A phase as a chip, a group of gates as a shield, the automations as a cog. */
+  readonly kind: 'chip' | 'shield' | 'cog';
+  /** The cog's "done/all" while automations run. */
+  readonly count?: string;
+  /** The chip's text, or the gate group's name. */
   readonly label: string;
   readonly state: StepState;
-  /** The tooltip: the point's name and state. */
+  /** A shield's look (`shieldOf`); for a chip, its state's. */
+  readonly shield: ShieldState;
+  /** The tooltip: the point's name and state; a shield's lists each gate. */
   readonly title: string;
+  /** The id of the point's row on the request's page, to link straight to it. */
+  readonly anchor: string;
+}
+
+/**
+ * How a group of gates looks as a shield: `passed` (all passed or skipped), `failed` (one failed:
+ * somebody must look), `waiting` (an approval waits for a person), `pending` (not reached, or
+ * running without needing anyone).
+ */
+export type ShieldState = 'passed' | 'failed' | 'waiting' | 'pending';
+
+/** How the automations look as a cog: all done, one failed, some running, none started. */
+export type AutomationState = 'passed' | 'failed' | 'running' | 'pending';
+
+/** A request's automations as one cog state (see `lifecycleSummary`). */
+
+/** A group of gates as one shield. */
+export function shieldOf(steps: readonly Step[]): ShieldState {
+  if (steps.some((step) => step.state === 'failed' || step.state === 'cancelled')) return 'failed';
+  if (steps.some((step) => step.kind === 'approval' && step.asks)) return 'waiting';
+  if (
+    steps.length > 0 &&
+    steps.every((step) => step.state === 'passed' || step.state === 'skipped')
+  ) {
+    return 'passed';
+  }
+  return 'pending';
 }
 
 /**
  * The lifecycle as a compact line, in its order (the same model as the panel): automations (with
- * how many are done while some run), CI, a pip per quality gate, publish, deployment (when
- * something deploys), a pip per deployment gate, finalized.
+ * how many are done while some run), CI, a shield for the quality gates, publish, deployment (when
+ * something deploys), a shield for the deployment gates, finalized.
  */
 export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint[] {
   const stages = releaseLifecycle(request);
   const byKey = new Map(stages.map((stage) => [stage.key, stage]));
   const points: SummaryPoint[] = [];
   const chip = (key: string, label: string, state: StepState, word: string = state) =>
-    points.push({ key, kind: 'chip', label, state, title: `${label}: ${word}` });
+    points.push({
+      key,
+      kind: 'chip',
+      label,
+      state,
+      shield: state === 'failed' ? 'failed' : state === 'passed' ? 'passed' : 'pending',
+      title: `${label}: ${word}`,
+      attention: state === 'failed' && key === 'automations',
+      anchor: stepAnchor(key === 'qa' ? 'phase:QA' : key),
+    });
   const pips = (key: 'gates' | 'deploy-gates') => {
-    for (const step of byKey.get(key)?.steps ?? []) {
-      points.push({
-        key: step.key,
-        kind: 'pip',
-        label: step.label,
-        state: step.state,
-        title: `${step.label}: ${step.word || step.state}`,
-      });
-    }
+    const stage = byKey.get(key);
+    const steps = stage?.steps ?? [];
+    const shield = shieldOf(steps);
+    const lines = steps.map(
+      (step) =>
+        `${step.label}: ${step.word || step.state}${step.detail ? ` — ${step.detail}` : ''}`,
+    );
+    const label = key === 'gates' ? 'Quality gates' : 'Deployment gates';
+    const first = steps.find((step) => step.attention) ?? steps[0];
+    points.push({
+      key,
+      kind: 'shield',
+      label,
+      state: stage?.state ?? 'pending',
+      shield,
+      title: [label, ...lines].join('\n'),
+      attention: shield === 'failed' || shield === 'waiting',
+      anchor: stepAnchor(first?.key ?? key),
+    });
   };
   const automations = request.automations ?? [];
   const automationsGate = request.gates?.find((gate) => gate.kind === 'AUTOMATIONS');
-  if (automations.length === 0 && automationsGate && !request.automations) {
-    // An answer without the rows: the gate says how they stand.
-    chip(
-      'automations',
-      'Automations',
-      stepStateOf(automationsGate.state),
-      wordOf(automationsGate.state),
+  if (automations.length > 0 || automationsGate) {
+    const states = automations.map((row) => stepStateOf(row.state));
+    const done = states.filter((state) => state === 'passed' || state === 'skipped').length;
+    const gateState = stepStateOf(automationsGate?.state);
+    const cog: AutomationState =
+      states.includes('failed') || (states.length === 0 && gateState === 'failed')
+        ? 'failed'
+        : states.length > 0
+          ? done === states.length
+            ? 'passed'
+            : states.some((state) => state === 'running') || done > 0
+              ? 'running'
+              : 'pending'
+          : gateState === 'passed' || gateState === 'skipped'
+            ? 'passed'
+            : gateState === 'running'
+              ? 'running'
+              : 'pending';
+    const lines = automations.map(
+      (row) =>
+        `${row.label ?? row.kind}: ${wordOf(row.state)}${row.detail?.trim() ? ` — ${row.detail.trim()}` : ''}`,
     );
-  }
-  if (automations.length > 0) {
-    const done = automations.filter((row) => {
-      const state = stepStateOf(row.state);
-      return state === 'passed' || state === 'skipped';
-    }).length;
-    const state = byKey.get('fold')!.steps.find((step) => step.kind === 'automations')!.state;
-    chip(
-      'automations',
-      done === automations.length ? 'Automations' : `Automations ${done}/${automations.length}`,
-      state,
-    );
+    points.push({
+      key: 'automations',
+      kind: 'cog',
+      label: 'Automations',
+      state: cog === 'running' ? 'running' : cog === 'pending' ? 'pending' : cog,
+      shield: cog === 'running' ? 'pending' : cog,
+      count: cog === 'running' && states.length > 0 ? `${done}/${states.length}` : undefined,
+      title: [
+        'Automations',
+        ...(lines.length ? lines : [`the gate: ${wordOf(automationsGate?.state)}`]),
+      ].join('\n'),
+      attention: cog === 'failed',
+      anchor: stepAnchor('automations'),
+    });
   }
   const qa = byKey.get('qa')!;
-  chip('qa', 'CI', qa.state, qa.steps[0]?.word);
+  chip('qa', 'Test', qa.state, qa.steps[0]?.word);
   pips('gates');
   chip('publish', 'Publish', byKey.get('publish')!.state);
   const deploy = byKey.get('deploy')!;
@@ -488,4 +564,39 @@ export function lifecycleSummary(request: ReleaseRequest): readonly SummaryPoint
   }
   chip('finalized', 'Finalized', byKey.get('finalized')!.state);
   return points;
+}
+
+/** A check that needs a person, and where on the request's page it is. */
+export interface AttentionPoint {
+  readonly key: string;
+  readonly label: string;
+  /** What the person does there: "Approve", "Resolve", "Look". */
+  readonly action: string;
+  /** The id of its row on the request's page (`stepAnchor`). */
+  readonly anchor: string;
+}
+
+/** The id a step's row carries on the request's page, for a link straight to it. */
+export function stepAnchor(key: string): string {
+  return `check-${key.replace(/[^A-Za-z0-9_-]+/g, '-')}`;
+}
+
+/**
+ * What in a request needs a person now, in lifecycle order: an approval to give, a conflict to
+ * resolve, a failed gate or automation to rerun or waive. Empty: nothing waits on anybody.
+ */
+export function attentionOf(request: ReleaseRequest): readonly AttentionPoint[] {
+  return releaseLifecycle(request).flatMap((stage) =>
+    stage.steps.flatMap((step) => {
+      if (!step.attention) return [];
+      return [
+        {
+          key: step.key,
+          label: step.label,
+          action: step.kind === 'approval' ? 'Approve' : step.kind === 'fold' ? 'Resolve' : 'Look',
+          anchor: stepAnchor(step.key),
+        },
+      ];
+    }),
+  );
 }

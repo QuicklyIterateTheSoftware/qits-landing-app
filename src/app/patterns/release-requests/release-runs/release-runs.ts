@@ -37,7 +37,7 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
   host: { class: 'block' },
   template: `
     <section class="rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
-      <h2 class="m-0 mb-1 text-base font-semibold">CI runs</h2>
+      <h2 class="m-0 mb-1 text-base font-semibold">Builds</h2>
       <ui-spinner [state]="state()" class="min-h-8">
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
           @for (entry of entries(); track entry.id) {
@@ -74,7 +74,7 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
           class="m-0 py-1 text-sm text-charcoal-brown-500"
           [class]="state() === 'loaded' && entries().length === 0 ? 'block' : 'hidden'"
         >
-          No CI run of this request yet.
+          No build of this request yet.
         </p>
       </ui-spinner>
       @if (repositoryHref(); as link) {

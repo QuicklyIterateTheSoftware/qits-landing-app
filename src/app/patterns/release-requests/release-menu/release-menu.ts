@@ -18,41 +18,24 @@ import {
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
 import { requestTone } from '$core/projects/release-requests';
-import { lifecycleSummary, type StepState } from '$core/release-requests/release-lifecycle';
+import { attentionOf, lifecycleSummary } from '$core/release-requests/release-lifecycle';
+import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
-
-/** A lifecycle point's state as a chip tone. */
-const STEP_TONES: Readonly<Record<StepState, ChipTone>> = {
-  passed: 'ok',
-  running: 'waiting',
-  pending: 'neutral',
-  failed: 'failed',
-  cancelled: 'failed',
-  skipped: 'neutral',
-  unknown: 'waiting',
-  'not-reported': 'neutral',
-};
-
-/** A gate pip's colour per state. */
-const PIP_COLOURS: Readonly<Record<StepState, string>> = {
-  passed: 'bg-mint-leaf-600',
-  running: 'bg-sunflower-gold-500',
-  pending: 'bg-charcoal-brown-300',
-  failed: 'bg-cinnabar-600',
-  cancelled: 'bg-cinnabar-600',
-  skipped: 'border border-charcoal-brown-300 bg-white',
-  unknown: 'bg-sunflower-gold-500',
-  'not-reported': 'border border-dashed border-charcoal-brown-300 bg-white',
-};
 
 /** How long a burst of domain events waits before the requests are fetched again. */
 export const REFRESH_DEBOUNCE_MS = 1_000;
 
 /**
  * The top bar's lightning menu: the open project's pending release requests, each with its state
- * and its gates. Shown only while a project is open, like the settings gear beside it.
+ * and its lifecycle as a line (`lifecycleSummary`): a cog for the automations, phase chips, a
+ * shield for each group of gates. Shown only while a project is open, like the settings gear.
+ *
+ * A request that needs a person (`attentionOf`: an approval to give, a conflict, a failed gate or
+ * automation) is listed first, marked, and says what is needed; its link opens the request's page
+ * at that check. The button's badge counts those requests, in red; with none, it counts the
+ * pending requests, in amber.
  *
  * The requests are fetched as soon as a project opens (`loadReleaseRequests`), so the button
  * carries their count right away (none when nothing is pending). They are fetched again when a
@@ -64,7 +47,7 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
 @Component({
   selector: 'app-release-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, RouterLink, Spinner],
+  imports: [Dropdown, LifecycleLine, RouterLink, Spinner],
   // One display class or the other: a static display class would beat `hidden`. `ml-auto` pushes
   // the menu and the settings gear after it to the right end of the top bar.
   host: {
@@ -93,18 +76,31 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
       </svg>
       <span
         dropdown-trigger
-        class="absolute -top-0.5 -right-0.5 min-w-4 rounded-full bg-sunflower-gold-500 px-1 text-[0.625rem] leading-4 font-semibold text-charcoal-brown-950"
-        [class.hidden]="!count()"
+        class="absolute -top-0.5 -right-0.5 min-w-4 rounded-full px-1 text-[0.625rem] leading-4 font-semibold"
+        [class]="
+          (attentionCount()
+            ? 'bg-cinnabar-600 text-white'
+            : 'bg-sunflower-gold-500 text-charcoal-brown-950') + (count() ? '' : ' hidden')
+        "
         aria-hidden="true"
-        >{{ count() }}</span
+        >{{ attentionCount() || count() }}</span
       >
       <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
         <ul class="m-0 list-none p-0">
-          @for (request of pending(); track request.id) {
-            <li class="border-b border-gray-100 last:border-b-0">
+          @for (row of rows(); track row.request.id) {
+            @let request = row.request;
+            <li
+              class="border-b border-gray-100 last:border-b-0"
+              [class]="
+                row.attention.length
+                  ? 'border-l-4 border-l-sunflower-gold-500 bg-sunflower-gold-50'
+                  : ''
+              "
+            >
               <a
                 class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-gray-50"
                 [routerLink]="['/projects', slug(), 'release-requests', request.id ?? '']"
+                [fragment]="row.attention[0]?.anchor"
                 (click)="menu.close()"
               >
                 <div class="flex items-baseline justify-between gap-2">
@@ -118,26 +114,27 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
                   >
                 </div>
                 <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
-                <span class="flex flex-wrap items-center gap-1" aria-label="Lifecycle">
-                  @for (point of summary(request); track point.key) {
-                    @if (point.kind === 'chip') {
-                      <span
-                        class="rounded px-1.5 text-[0.6875rem] leading-4"
-                        [class]="chip(tone(point.state))"
-                        [title]="point.title"
-                        >{{ point.label }}</span
-                      >
-                    } @else {
-                      <span
-                        class="inline-block size-2 rounded-full"
-                        [class]="pip(point.state)"
-                        [title]="point.title"
-                        role="img"
-                        [attr.aria-label]="point.title"
-                      ></span>
-                    }
-                  }
-                </span>
+                <ui-lifecycle-line [points]="row.summary" />
+                @if (row.attention[0]; as first) {
+                  <span
+                    class="flex items-center gap-1 text-xs font-semibold text-sunflower-gold-900"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      class="size-4 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 3 2.5 20h19z" />
+                      <path d="M12 10v4M12 17v.01" />
+                    </svg>
+                    Needs you: {{ first.action }} · {{ first.label }}
+                  </span>
+                }
               </a>
             </li>
           }
@@ -170,6 +167,27 @@ export class ReleaseMenu {
 
   protected readonly pending = computed(() => this.requests()?.pending ?? []);
 
+  /**
+   * The pending requests with their lifecycle line and what in them needs a person; the ones
+   * needing someone first, the rest in the answer's order.
+   */
+  protected readonly rows = computed(() => {
+    const rows = this.pending().map((request) => ({
+      request,
+      summary: lifecycleSummary(request),
+      attention: attentionOf(request),
+    }));
+    return [
+      ...rows.filter((row) => row.attention.length),
+      ...rows.filter((row) => !row.attention.length),
+    ];
+  });
+
+  /** How many pending requests need a person: the badge shows these, in red, when there are any. */
+  protected readonly attentionCount = computed(
+    () => this.rows().filter((row) => row.attention.length).length,
+  );
+
   /** How many are pending, once fetched; undefined before the first opening. */
   protected readonly count = computed(() =>
     this.requests()?.status === 'loaded' ? this.pending().length : undefined,
@@ -182,16 +200,6 @@ export class ReleaseMenu {
 
   protected chip(tone: ChipTone): string {
     return chipClass(tone);
-  }
-
-  protected readonly summary = lifecycleSummary;
-
-  protected tone(state: StepState): ChipTone {
-    return STEP_TONES[state];
-  }
-
-  protected pip(state: StepState): string {
-    return PIP_COLOURS[state];
   }
 
   constructor() {

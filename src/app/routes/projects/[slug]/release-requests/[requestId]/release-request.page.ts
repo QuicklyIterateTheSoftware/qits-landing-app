@@ -1,11 +1,13 @@
 import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
   effect,
   inject,
+  Injector,
   PLATFORM_ID,
   signal,
   untracked,
@@ -654,6 +656,20 @@ export class ReleaseRequestPage {
       if (browser && repoId && requestId) {
         untracked(() => void this.store.load(repoId, requestId));
       }
+    });
+    // A link to a check (`#check-…`, from the lightning menu or the list) scrolls to it once the
+    // request is drawn.
+    const route = inject(ActivatedRoute);
+    const fragment = toSignal(route.fragment, { initialValue: null });
+    const injector = inject(Injector);
+    let scrolled: string | null = null;
+    effect(() => {
+      const target = fragment();
+      if (!browser || !target || !this.row() || scrolled === target) return;
+      scrolled = target;
+      afterNextRender(() => document.getElementById(target)?.scrollIntoView({ block: 'center' }), {
+        injector,
+      });
     });
     // The CI runs are read when their tab opens, not before.
     effect(() => {

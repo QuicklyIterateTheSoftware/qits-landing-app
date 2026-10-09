@@ -24,7 +24,7 @@ export function releaseTabs(counts: {
   return [
     { key: 'overview', label: 'Overview' },
     { key: 'commits', label: 'Commits', count: counts.commits },
-    { key: 'runs', label: 'CI runs', count: counts.runs },
+    { key: 'runs', label: 'Builds', count: counts.runs },
     { key: 'changes', label: 'Changes' },
   ];
 }
