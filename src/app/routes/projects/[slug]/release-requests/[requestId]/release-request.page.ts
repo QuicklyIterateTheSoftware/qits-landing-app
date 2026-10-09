@@ -12,6 +12,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, filter, map } from 'rxjs';
+import { CiRunsStore } from '$core/ci/ci-runs.store';
 import { DomainEvents } from '$core/events/domain-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import {
@@ -38,6 +39,7 @@ import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
 import { ReleasePipeline } from '$patterns/release-requests/release-pipeline/release-pipeline';
+import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
 import { ReleaseSourcesPanel } from '$patterns/release-requests/release-sources/release-sources';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
@@ -61,7 +63,7 @@ const UNATTENDED_TITLE =
  *
  * The request comes from `ReleaseRequestStore`, with the commits its fold brought in and, once a
  * tag is cut, what it published; the release pipeline (or, from an older service, the plain gates)
- * with Approve and Decline; Withdraw in the page's actions while the request can be called off. On a repository's request the pipeline follows the facts; on the estate
+ * with Approve and Decline, then links to the request's CI runs in qits-ci; Withdraw in the page's actions while the request can be called off. On a repository's request the pipeline follows the facts; on the estate
  * release it comes first, because there the open question is the approval. Domain events about the project's release requests refresh it
  * (at most once a second), in place of the old page's six-second poll. A request of the project's
  * wrapper repository is the project's estate release, and the page says so.
@@ -75,6 +77,7 @@ const UNATTENDED_TITLE =
     PageLayoutComponent,
     ReleaseConflictPanel,
     ReleasePipeline,
+    ReleaseRuns,
     ReleaseSourcesPanel,
     ReleaseWithdraw,
     RouterLink,
@@ -288,6 +291,13 @@ const UNATTENDED_TITLE =
               <ui-spinner [state]="buildsState()" class="mt-4 min-h-12">
                 <app-release-pipeline [request]="request" [builds]="view()?.builds?.value ?? []" />
               </ui-spinner>
+              <app-release-runs
+                class="mt-4"
+                [request]="request"
+                [builds]="view()?.builds?.value ?? []"
+                [runs]="runs()?.runs ?? []"
+                [state]="runs()?.status ?? 'loading'"
+              />
             </ng-template>
           }
         </ui-spinner>
@@ -300,6 +310,7 @@ export class ReleaseRequestPage {
   private readonly projects = inject(ProjectsStore);
   private readonly repositories = inject(RepositoriesStore);
   private readonly store = inject(ReleaseRequestStore);
+  private readonly ci = inject(CiRunsStore);
 
   protected readonly none = NONE;
   protected readonly badgeOf = requestBadge;
@@ -348,6 +359,9 @@ export class ReleaseRequestPage {
 
   protected readonly commitsState = computed(() => this.view()?.commits.status ?? 'loading');
 
+  /** The repository's newest CI runs, where the request's runs are found. */
+  protected readonly runs = computed(() => this.ci.byRepository()[this.repoId()]);
+
   protected readonly buildsState = computed(() => this.view()?.builds.status ?? 'loading');
 
   protected readonly artifactsState = computed(() => this.view()?.artifacts?.status ?? 'loading');
@@ -393,7 +407,10 @@ export class ReleaseRequestPage {
       const repoId = this.repoId();
       const requestId = this.requestId();
       if (browser && repoId && requestId) {
-        untracked(() => void this.store.load(repoId, requestId));
+        untracked(() => {
+          void this.store.load(repoId, requestId);
+          void this.ci.load(repoId);
+        });
       }
     });
     if (!browser) return;
@@ -410,7 +427,9 @@ export class ReleaseRequestPage {
       )
       .subscribe(() => {
         const repoId = this.repoId();
-        if (repoId) void this.store.refresh(repoId, this.requestId());
+        if (!repoId) return;
+        void this.store.refresh(repoId, this.requestId());
+        void this.ci.refresh(repoId);
       });
   }
 }

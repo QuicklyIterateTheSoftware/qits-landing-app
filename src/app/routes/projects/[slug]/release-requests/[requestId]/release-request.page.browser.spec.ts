@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
+import { client as ciClient } from '../../../../../api/ci/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { ReleaseRequestPage } from './release-request.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
@@ -37,6 +38,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(ciClient),
         // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
         {
           provide: EVENT_SOURCE,
@@ -96,6 +98,10 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
+    // TODO(qits-112): qits-ci has no golden masters yet, so the runs read is answered with an error.
+    http
+      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
+      .flush(null, { status: 500, statusText: 'Server Error' });
     request.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();

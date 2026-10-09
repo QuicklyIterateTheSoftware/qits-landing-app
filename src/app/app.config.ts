@@ -8,6 +8,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideRouter } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideQitsIntegration } from '@qits/angular';
+import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
@@ -25,6 +26,7 @@ const CLIENTS = [
   [eventsClient, 'events'],
   [maintenanceClient, 'maintenance'],
   [workspacesClient, 'workspaces'],
+  [ciClient, 'ci'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -59,6 +61,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(eventsClient),
     provideHeyApiClient(maintenanceClient),
     provideHeyApiClient(workspacesClient),
+    provideHeyApiClient(ciClient),
     provideBackendOrigins(),
     // `ng serve` only: the bearer sign-in. Deployed: nothing.
     ...environment.providers,
