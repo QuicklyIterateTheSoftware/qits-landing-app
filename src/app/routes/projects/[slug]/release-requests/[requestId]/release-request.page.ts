@@ -54,6 +54,8 @@ import { CommitChangesView } from '$patterns/release-requests/commit-changes/com
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
 import { ReleaseLifecycle } from '$patterns/release-requests/release-lifecycle/release-lifecycle';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
+import { requestRuns } from '$core/release-requests/release-runs';
+import { releaseTabOf, releaseTabs, type ReleaseTab } from '$core/release-requests/release-tabs';
 import { ReleaseLaneHeader } from '$patterns/release-requests/release-lane-header/release-lane-header';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
@@ -75,11 +77,11 @@ const UNATTENDED_TITLE =
  * the page finds the repository in the project's list of requests (`ProjectsStore`: the open
  * requests plus the last finalized). A request not in that list is "not found" here.
  *
- * Two tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle (fold and
- * automations, QA, quality gates with Approve and Decline, publish, deployment and its gates, the
- * tag reaching main), the request's CI runs, the release, the commits its fold brought in as a
- * graph under its sources (each opens its changeset) and what it published. Changes: what the fold
- * changes, file by file (`?path=`), with the lifecycle above it.
+ * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
+ * release and what it published. Commits: the commits the fold brought in, as a graph under its
+ * sources (each opens its changeset). CI runs: the request's runs in qits-ci, read when the tab
+ * opens. Changes: what the fold changes, file by file (`?path=`), with the lifecycle above it.
+ * The tab labels count the commits and, once read, the runs.
  * Withdraw sits in the page's actions while the request can be called off.
  *
  * On a repository's request the lifecycle follows the facts; on the project's estate release (its
@@ -177,122 +179,32 @@ const UNATTENDED_TITLE =
 
             <!-- The tab rides in ?tab=, so the path keeps meaning "which request". -->
             <nav
-              class="mt-3 flex gap-1 border-b border-charcoal-brown-200"
+              class="mt-3 flex flex-wrap gap-1 border-b border-charcoal-brown-200"
               aria-label="Release request views"
             >
-              <a
-                class="-mb-px border-b-2 px-3 py-1 text-sm no-underline"
-                [class]="
-                  tab() !== 'changes'
-                    ? 'border-ocean-deep-700 font-semibold text-charcoal-brown-950'
-                    : 'border-transparent text-charcoal-brown-600 hover:text-charcoal-brown-950'
-                "
-                [routerLink]="[]"
-                [queryParams]="{ tab: 'overview' }"
-                queryParamsHandling="merge"
-                >Overview</a
-              >
-              <a
-                class="-mb-px border-b-2 px-3 py-1 text-sm no-underline"
-                [class]="
-                  tab() === 'changes'
-                    ? 'border-ocean-deep-700 font-semibold text-charcoal-brown-950'
-                    : 'border-transparent text-charcoal-brown-600 hover:text-charcoal-brown-950'
-                "
-                [routerLink]="[]"
-                [queryParams]="{ tab: 'changes' }"
-                queryParamsHandling="merge"
-                >Changes</a
-              >
+              @for (entry of tabs(); track entry.key) {
+                <a
+                  class="-mb-px border-b-2 px-3 py-1 text-sm no-underline"
+                  [class]="
+                    tab() === entry.key
+                      ? 'border-ocean-deep-700 font-semibold text-charcoal-brown-950'
+                      : 'border-transparent text-charcoal-brown-600 hover:text-charcoal-brown-950'
+                  "
+                  [attr.aria-current]="tab() === entry.key ? 'page' : null"
+                  [routerLink]="[]"
+                  [queryParams]="{ tab: entry.key }"
+                  queryParamsHandling="merge"
+                  >{{ entry.label
+                  }}<span
+                    class="ml-1 text-xs text-charcoal-brown-500"
+                    [class.hidden]="entry.count === undefined"
+                    >{{ entry.count }}</span
+                  ></a
+                >
+              }
             </nav>
 
-            @if (tab() === 'changes') {
-              <!-- The approval stays in reach while the changes are read. -->
-              @if (!wrapper()) {
-                <ng-container [ngTemplateOutlet]="gatesSection" />
-              }
-              <app-release-changes class="mt-4" [request]="request" />
-            } @else {
-              <div
-                class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
-              >
-                <span
-                  >folded onto <span class="font-mono">{{ request.backingBranch }}</span></span
-                >
-                <span
-                  >merged
-                  <span class="font-mono" [title]="foldTitle(request)">{{
-                    short(request.mergedSha)
-                  }}</span></span
-                >
-                <span>asked by {{ request.requester || none }}</span>
-                @if (request.gateTicketId) {
-                  <a
-                    class="text-sunflower-gold-800 underline"
-                    [routerLink]="['/projects', slug(), 'work']"
-                    >a bug ticket was filed for this failure</a
-                  >
-                }
-                <span [title]="instant(request.createdAt)">asked {{ ago(request.createdAt) }}</span>
-                <span [title]="instant(request.updatedAt)"
-                  >last change {{ ago(request.updatedAt) }}</span
-                >
-              </div>
-
-              @if (detail(request); as sentence) {
-                <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
-              }
-
-              @if (!wrapper()) {
-                <ng-container [ngTemplateOutlet]="gatesSection" />
-              }
-
-              <app-release-runs
-                class="mt-4"
-                [request]="request"
-                [builds]="view()?.builds?.value ?? []"
-                [runs]="runs()?.runs ?? []"
-                [state]="runs()?.status ?? 'loading'"
-              />
-
-              @if (released(request)) {
-                <section
-                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
-                >
-                  <h2 class="m-0 mb-1 text-base font-semibold">
-                    {{ request.state === 'FINALIZED' ? 'Released and finalized' : 'Released' }}
-                  </h2>
-                  <p class="m-0 flex flex-wrap items-baseline gap-2">
-                    <span class="font-mono font-semibold">{{ request.version || none }}</span>
-                    <span class="text-xs text-charcoal-brown-500 italic">{{
-                      request.mergedToMainAt ? 'on main' : 'not on main yet'
-                    }}</span>
-                    @if (request.releasedSha) {
-                      <span class="text-xs text-charcoal-brown-500"
-                        >released commit
-                        <span class="font-mono" [title]="request.releasedSha">{{
-                          short(request.releasedSha)
-                        }}</span></span
-                      >
-                    }
-                  </p>
-                  <ul class="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-sm">
-                    @for (link of releaseLinks(); track link.label) {
-                      <li>
-                        <a
-                          class="text-ocean-deep-700 no-underline hover:underline"
-                          [href]="link.href"
-                          >{{ link.label }}
-                          @if (link.label === 'The released commit') {
-                            <span class="font-mono">{{ short(request.releasedSha) }}</span>
-                          }
-                        </a>
-                      </li>
-                    }
-                  </ul>
-                </section>
-              }
-
+            @if (tab() === 'commits') {
               <section
                 class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
                 aria-labelledby="folds-in"
@@ -350,6 +262,92 @@ const UNATTENDED_TITLE =
                   </p>
                 </ui-spinner>
               </section>
+            } @else if (tab() === 'runs') {
+              <app-release-runs
+                class="mt-4"
+                [request]="request"
+                [builds]="view()?.builds?.value ?? []"
+                [runs]="runs()?.runs ?? []"
+                [state]="runs()?.status ?? 'loading'"
+              />
+            } @else if (tab() === 'changes') {
+              <!-- The approval stays in reach while the changes are read. -->
+              @if (!wrapper()) {
+                <ng-container [ngTemplateOutlet]="gatesSection" />
+              }
+              <app-release-changes class="mt-4" [request]="request" />
+            } @else {
+              <div
+                class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
+              >
+                <span
+                  >folded onto <span class="font-mono">{{ request.backingBranch }}</span></span
+                >
+                <span
+                  >merged
+                  <span class="font-mono" [title]="foldTitle(request)">{{
+                    short(request.mergedSha)
+                  }}</span></span
+                >
+                <span>asked by {{ request.requester || none }}</span>
+                @if (request.gateTicketId) {
+                  <a
+                    class="text-sunflower-gold-800 underline"
+                    [routerLink]="['/projects', slug(), 'work']"
+                    >a bug ticket was filed for this failure</a
+                  >
+                }
+                <span [title]="instant(request.createdAt)">asked {{ ago(request.createdAt) }}</span>
+                <span [title]="instant(request.updatedAt)"
+                  >last change {{ ago(request.updatedAt) }}</span
+                >
+              </div>
+
+              @if (detail(request); as sentence) {
+                <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
+              }
+
+              @if (!wrapper()) {
+                <ng-container [ngTemplateOutlet]="gatesSection" />
+              }
+
+              @if (released(request)) {
+                <section
+                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                >
+                  <h2 class="m-0 mb-1 text-base font-semibold">
+                    {{ request.state === 'FINALIZED' ? 'Released and finalized' : 'Released' }}
+                  </h2>
+                  <p class="m-0 flex flex-wrap items-baseline gap-2">
+                    <span class="font-mono font-semibold">{{ request.version || none }}</span>
+                    <span class="text-xs text-charcoal-brown-500 italic">{{
+                      request.mergedToMainAt ? 'on main' : 'not on main yet'
+                    }}</span>
+                    @if (request.releasedSha) {
+                      <span class="text-xs text-charcoal-brown-500"
+                        >released commit
+                        <span class="font-mono" [title]="request.releasedSha">{{
+                          short(request.releasedSha)
+                        }}</span></span
+                      >
+                    }
+                  </p>
+                  <ul class="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-sm">
+                    @for (link of releaseLinks(); track link.label) {
+                      <li>
+                        <a
+                          class="text-ocean-deep-700 no-underline hover:underline"
+                          [href]="link.href"
+                          >{{ link.label }}
+                          @if (link.label === 'The released commit') {
+                            <span class="font-mono">{{ short(request.releasedSha) }}</span>
+                          }
+                        </a>
+                      </li>
+                    }
+                  </ul>
+                </section>
+              }
 
               @if (released(request)) {
                 <section
@@ -431,11 +429,23 @@ export class ReleaseRequestPage {
   protected readonly priorityTitle = PRIORITY_TITLE;
   protected readonly unattendedTitle = UNATTENDED_TITLE;
 
-  /** The open tab, from `?tab=`: `changes`, or the overview. */
+  /** The open tab, from `?tab=`: `commits`, `runs`, `changes`, or the overview. */
   protected readonly tab = toSignal(
-    inject(ActivatedRoute).queryParamMap.pipe(map((params) => params.get('tab') ?? 'overview')),
-    { initialValue: 'overview' },
+    inject(ActivatedRoute).queryParamMap.pipe(map((params) => releaseTabOf(params.get('tab')))),
+    { initialValue: 'overview' as ReleaseTab },
   );
+
+  /** The tabs, each with a count where it is known. */
+  protected readonly tabs = computed(() => {
+    const commits = this.view()?.commits?.value?.commits;
+    const runs = this.runs();
+    const request = this.row();
+    const runCount =
+      runs?.status === 'loaded' && request
+        ? requestRuns(request, this.view()?.builds?.value ?? [], runs.runs).length
+        : undefined;
+    return releaseTabs({ commits: commits?.length, runs: runCount });
+  });
 
   /** The request id in the URL. */
   protected readonly requestId = toSignal(
@@ -641,10 +651,14 @@ export class ReleaseRequestPage {
       const repoId = this.repoId();
       const requestId = this.requestId();
       if (browser && repoId && requestId) {
-        untracked(() => {
-          void this.store.load(repoId, requestId);
-          void this.ci.load(repoId);
-        });
+        untracked(() => void this.store.load(repoId, requestId));
+      }
+    });
+    // The CI runs are read when their tab opens, not before.
+    effect(() => {
+      const repoId = this.repoId();
+      if (browser && repoId && this.tab() === 'runs') {
+        untracked(() => void this.ci.load(repoId));
       }
     });
     if (!browser) return;

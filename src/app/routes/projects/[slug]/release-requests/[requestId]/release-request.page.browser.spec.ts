@@ -66,6 +66,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
     requestId?: string,
     listState = 'a project with pending release requests',
     width = 900,
+    tab?: string,
   ) {
     await page.viewport(width, 700);
     const projects = await goldenMaster('a project exists', 'listProjects');
@@ -74,7 +75,8 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const id = requestId ?? listed.requests[0].id;
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}`,
+      `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}` +
+        (tab ? `?tab=${tab}` : ''),
     );
     await settle();
     http.expectOne('/projects/api/projects').flush(projects);
@@ -99,10 +101,8 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
-    // TODO(qits-112): qits-ci has no golden masters yet, so the runs read is answered with an error.
-    http
-      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
-      .flush(null, { status: 500, statusText: 'Server Error' });
+    // The CI runs are read only when their tab opens.
+    http.expectNone((r) => r.url.startsWith('/ci/api/runs'));
     request.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
@@ -124,6 +124,8 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const { fixture, element, repoId, id } = await render(
       recorded.request.id,
       'a project with release requests in every state',
+      900,
+      'commits',
     );
     await page.viewport(900, 1000);
     const base = `/projects/api/repositories/${repoId}/release-requests/${id}`;
@@ -133,10 +135,6 @@ describe('ReleaseRequestPage (screenshots)', () => {
     http
       .expectOne((r) => r.url.endsWith('/builds'))
       .flush(await goldenMaster(state, 'listCommitBuilds'));
-    // qits-ci has no golden masters yet: the runs read fails.
-    http
-      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
-      .flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
     const graph = page.elementLocator(element).getByRole('region', {
       name: 'What this release folds in',
@@ -151,6 +149,9 @@ describe('ReleaseRequestPage (screenshots)', () => {
 
   // TODO(qits-112): waits for "a release request awaiting approval".
   it.skip('offers Approve and Decline while a person must approve', () => {});
+
+  // TODO(qits-112): waits for "a release request awaiting approval"; qits-ci golden masters too.
+  it.skip('counts the commits and, once the CI runs tab opens, reads and counts the runs', () => {});
 
   // TODO(qits-112): waits for "a released release request" (and its artifacts).
   it.skip('shows a released request with its version and what it published', () => {});
