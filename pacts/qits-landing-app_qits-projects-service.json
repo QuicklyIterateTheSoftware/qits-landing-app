@@ -2521,9 +2521,11 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a project with pending release requests",
+          "name": "a project with release requests in every state",
           "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repositoryId": "00000000-0000-4000-8000-000000000002",
+            "requestId": "00000000-0000-4000-8000-000000000003"
           }
         }
       ],
@@ -2552,100 +2554,28 @@
           "content": {
             "requests": [
               {
-                "gates": [
+                "automations": [
                   {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  },
-                  {
-                    "kind": "CI",
+                    "detail": "Run in flight",
+                    "kind": "entity-diagram",
+                    "label": "Entity diagram",
                     "state": "PENDING"
                   }
                 ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
+                "id": "00000000-0000-4000-8000-000000000003",
+                "preRun": {
+                  "state": "PENDING"
+                },
+                "qualityGates": [
                   {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  },
-                  {
-                    "kind": "CI",
+                    "kind": "automations",
+                    "label": "Automations",
                     "state": "PENDING"
                   }
                 ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
+                "repoName": "contract-suite-app",
                 "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  },
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  },
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  },
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
-              },
-              {
-                "gates": [
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  },
-                  {
-                    "kind": "CI",
-                    "state": "PENDING"
-                  }
-                ],
-                "id": "00000000-0000-4000-8000-000000000002",
-                "repoName": "contract-service",
-                "state": "PENDING",
-                "summary": "Waiting on its gates"
+                "summary": "Release the export across the suite"
               }
             ]
           },
@@ -2663,224 +2593,133 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "max": 6,
-                  "min": 6
-                }
-              ]
-            },
-            "$.requests[*].gates": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                },
-                {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                },
-                {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                },
-                {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                },
-                {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                },
-                {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                }
-              ]
-            },
-            "$.requests[*].gates[*].kind": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.requests[*].gates[*].state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.requests[*].id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.requests[*].repoName": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.requests[*].state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.requests[*].summary": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.repoName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.preRun.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.qualityGates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.automations": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.automations[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.automations[*].label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.automations[*].state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.automations[*].detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "generators": {}
+                    }
+                  ]
                 }
               ]
             }

@@ -117,23 +117,29 @@ describe('ProjectsStore', () => {
   it('keeps a project’s pending release requests, fetched once', async () => {
     const store = await loadedStore();
     const id = project().id;
-    // Recorded: PENDING, RELEASED, READY, REJECTED, CONFLICTED and one FINALIZED, most recently
-    // moved first. FINALIZED is done, so the five others are pending, in that order.
+    // Recorded: PENDING, READY, REJECTED, CONFLICTED, FAILED, RELEASED and one FINALIZED. FINALIZED
+    // is done, so the six others are pending, in that order.
     const done = store.loadReleaseRequests(id);
     expect(store.releaseRequests()[id]?.status).toBe('loading');
     await settle();
     http
       .expectOne(`/projects/api/projects/${id}/release-requests`)
-      .flush(goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'));
+      .flush(
+        goldenMaster(
+          'a project with release requests in every state',
+          'listProjectReleaseRequests',
+        ),
+      );
     await done;
     const kept = store.releaseRequests()[id];
     expect(kept?.status).toBe('loaded');
     expect(kept?.pending.map((r) => r.state)).toEqual([
       'PENDING',
-      'RELEASED',
       'READY',
       'REJECTED',
       'CONFLICTED',
+      'FAILED',
+      'RELEASED',
     ]);
     await store.loadReleaseRequests(id);
     http.expectNone(`/projects/api/projects/${id}/release-requests`);
