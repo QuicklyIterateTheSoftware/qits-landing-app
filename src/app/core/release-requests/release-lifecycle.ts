@@ -145,21 +145,32 @@ export function stageState(steps: readonly Step[]): StepState {
 
 /** Where a gate sits: before publish (after QA), or after deployment (before finalized). */
 function gateStage(gate: GenericGate): 'gates' | 'publish' | 'deploy-gates' {
-  const where = (gate.position ?? gate.between ?? '').toUpperCase();
-  if (gate.kind === 'PUBLISH' || where === 'PUBLISH_DEPLOY') return 'publish';
+  const where = whereOf(gate);
+  const kind = kindOf(gate);
+  if (kind === 'PUBLISH' || where === 'PUBLISH_DEPLOY') return 'publish';
   if (where.includes('FINALIZED') || where.startsWith('AFTER_DEPLOY')) return 'deploy-gates';
-  if (gate.kind === 'DEPLOYMENT' && !where) return 'deploy-gates';
+  if (kind === 'DEPLOYMENT' && !where) return 'deploy-gates';
   return 'gates';
 }
 
+/** A gate's position in one spelling: `qa-publish` (quality gates) and `QA_PUBLISH` alike. */
+const whereOf = (gate: GenericGate) =>
+  (gate.position ?? gate.between ?? '').toUpperCase().replace(/-/g, '_');
+
+/** A gate's kind in one spelling: `ci` (quality gates) and `CI` alike. */
+const kindOf = (gate: GenericGate) => (gate.kind ?? '').toUpperCase().replace(/-/g, '_');
+
 /**
- * The gates of the request's current fold. Their states come from the request's own `gates` (the
- * service evaluates them for `mergedSha`); the pipeline's gates only add where each sits
- * (`between`). A pipeline gate the request's list does not name keeps its own state.
+ * The gates of the request's current fold: its `qualityGates`, each with a label, a position and
+ * its checks. An answer without them: the request's own `gates` (the service evaluates them for
+ * `mergedSha`), placed by the pipeline's gates (`between`). A pipeline gate the request's list does
+ * not name keeps its own state.
  */
 export function currentGates(request: ReleaseRequest): readonly GenericGate[] {
-  const own = (request.gates ?? []) as readonly GenericGate[];
-  const pipeline = (request.pipeline?.gates ?? []) as readonly GenericGate[];
+  const quality: readonly GenericGate[] = request.qualityGates ?? [];
+  if (quality.length > 0) return quality;
+  const own: readonly GenericGate[] = request.gates ?? [];
+  const pipeline: readonly GenericGate[] = request.pipeline?.gates ?? [];
   if (pipeline.length === 0) return own;
   const byKind = new Map(own.map((gate) => [gate.kind, gate]));
   return pipeline.map((gate) => {
@@ -180,8 +191,8 @@ function gateStep(request: ReleaseRequest, gate: GenericGate, generic: boolean):
     gate.detail?.trim() ||
     (generic ? null : gateSentence(request, gate, gateToneOf(gate.state)).replace(/^— /, ''));
   return {
-    key: `gate:${gate.position ?? gate.between ?? ''}:${gate.kind}`,
-    label: gate.label || GATE_LABELS[gate.kind ?? ''] || wordOf(gate.kind, 'gate'),
+    key: `gate:${whereOf(gate)}:${kindOf(gate)}`,
+    label: gate.label || GATE_LABELS[kindOf(gate)] || wordOf(gate.kind, 'gate'),
     state,
     word: wordOf(gate.state),
     detail: fallback || null,
@@ -192,7 +203,7 @@ function gateStep(request: ReleaseRequest, gate: GenericGate, generic: boolean):
       detail: check.detail?.trim() || null,
     })),
     runId: gate.runId ?? null,
-    kind: gate.kind === 'APPROVAL' ? 'approval' : 'gate',
+    kind: kindOf(gate) === 'APPROVAL' ? 'approval' : 'gate',
     attention: state === 'failed',
   };
 }
