@@ -30,7 +30,8 @@ describe('ReleaseMenu', () => {
       providers: [
         // A server platform: the store does not load the project list by itself.
         { provide: PLATFORM_ID, useValue: 'server' },
-        provideRouter([]),
+        // A clicked request link goes nowhere, but goes somewhere the router knows.
+        provideRouter([{ path: '**', children: [] }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
