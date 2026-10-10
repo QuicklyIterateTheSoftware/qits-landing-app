@@ -79,15 +79,31 @@ export const GET_RELEASE_REQUEST = [
   'request.pipeline.gates[].kind',
   'request.pipeline.gates[].state',
   'request.pipeline.gates[].detail',
+  'request.qualityGates[].kind',
+  'request.qualityGates[].label',
+  'request.qualityGates[].position',
+  'request.qualityGates[].state',
+  'request.qualityGates[].detail',
+  'request.qualityGates[].checks[].name',
+  'request.qualityGates[].checks[].state',
+  'request.qualityGates[].checks[].detail',
+  'request.qualityGates[].runId',
 ] as const;
 
-/** The commits the request's fold brought in (`mergedSha^1..mergedSha`). */
+/**
+ * The commits the request's fold brought in (`mergedSha^1..mergedSha`), with their parents and
+ * which of them are fold merges, and each source's tip: what the branch graph lays out.
+ */
 export const LIST_RELEASE_REQUEST_COMMITS = [
   'commits[].hash',
   'commits[].shortHash',
   'commits[].author',
   'commits[].date',
   'commits[].message',
+  'commits[].parents',
+  'commits[].fold',
+  'sources[].name',
+  'sources[].tipSha',
   'detail',
 ] as const;
 

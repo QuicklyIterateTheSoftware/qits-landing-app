@@ -632,19 +632,11 @@ export class ReleaseRequestPage {
    * the newest fold merge on the backing branch's lane pulling in a lane per source that owns
    * commits; sources without commits get a compact header above it. Without parents, a plain list
    * in one lane (`guessedGraph`), every source in the compact headers, and a note.
-   *
-   * TODO(qits-112): qits-projects is adding `commits[].parents`, `commits[].fold` and, on the
-   * commits answer, `sources[].tipSha` and `foldParents` (`external/rr-commit-states`). Until the
-   * client is regenerated they are read here as the answer arrives, outside `consume`'s lists;
-   * then add them to `LIST_RELEASE_REQUEST_COMMITS`, so the pact binds them, and drop the casts.
    */
   protected readonly graph = computed(() => {
     const request = this.row();
-    const commits = (this.view()?.commits?.value?.commits ?? []).filter((commit) => !!commit.hash);
-    const withParents = commits as readonly ((typeof commits)[number] & {
-      readonly parents?: readonly string[];
-      readonly fold?: boolean;
-    })[];
+    const answered = this.view()?.commits?.value;
+    const commits = (answered?.commits ?? []).filter((commit) => !!commit.hash);
     const entry = (commit: (typeof commits)[number], label?: string): GraphEntry => ({
       hash: commit.hash ?? '',
       shortHash: commit.shortHash ?? '',
@@ -654,13 +646,10 @@ export class ReleaseRequestPage {
       title: this.instant(commit.date),
       label,
     });
-    // TODO(qits-112): read outside consume's lists until the client is regenerated (see above).
-    const answered = this.view()?.commits?.value as
-      { readonly sources?: readonly { name?: string; tipSha?: string | null }[] } | undefined;
-    if (request && hasParents(withParents)) {
+    if (request && hasParents(commits)) {
       const sources = answered?.sources ?? [];
       const graph = branchGraph({
-        commits: withParents.map((commit) => ({
+        commits: commits.map((commit) => ({
           hash: commit.hash ?? '',
           parents: commit.parents ?? [],
           fold: commit.fold,
