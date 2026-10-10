@@ -1,12 +1,12 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
-  getProjectsApiRepositoriesByRepoIdCommitsByCommitHashChanges as listCommitChanges,
-  getProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiff as getCommitFileDiff,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges as listReleaseRequestChanges,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiff as getReleaseRequestFileDiff,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmodule as getSubmoduleChanges,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiff as getSubmoduleFileDiff,
+  listCommitChanges,
+  getCommitFileDiff,
+  listReleaseRequestChanges,
+  getReleaseRequestChangeDiff as getReleaseRequestFileDiff,
+  getReleaseRequestSubmoduleChanges as getSubmoduleChanges,
+  getReleaseRequestSubmoduleChangeDiff as getSubmoduleFileDiff,
 } from '../../api/projects';
 import {
   GET_FILE_DIFF,

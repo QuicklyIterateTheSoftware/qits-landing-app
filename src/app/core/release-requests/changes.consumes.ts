@@ -1,8 +1,8 @@
 import type {
-  GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponses,
-  GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponses,
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponses,
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponses,
+  ListCommitChangesResponses,
+  GetCommitFileDiffResponses,
+  ListReleaseRequestChangesResponses,
+  GetReleaseRequestSubmoduleChangesResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
@@ -60,7 +60,7 @@ export const LIST_COMMIT_CHANGES = ['commit', 'parent', ...files(FILE_WITH_PIN)]
 
 /** The fold's changes. */
 export type ReleaseChanges = Consumed<
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponses[200],
+  ListReleaseRequestChangesResponses[200],
   typeof LIST_RELEASE_REQUEST_CHANGES
 >;
 
@@ -68,19 +68,13 @@ export type ReleaseChanges = Consumed<
 export type ChangedFile = NonNullable<ReleaseChanges['files']>[number];
 
 /** A file's patch. */
-export type FileDiff = Consumed<
-  GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponses[200],
-  typeof GET_FILE_DIFF
->;
+export type FileDiff = Consumed<GetCommitFileDiffResponses[200], typeof GET_FILE_DIFF>;
 
 /** A submodule pin move, expanded. */
 export type SubmoduleChanges = Consumed<
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponses[200],
+  GetReleaseRequestSubmoduleChangesResponses[200],
   typeof GET_SUBMODULE_CHANGES
 >;
 
 /** A commit's changes. */
-export type CommitChanges = Consumed<
-  GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponses[200],
-  typeof LIST_COMMIT_CHANGES
->;
+export type CommitChanges = Consumed<ListCommitChangesResponses[200], typeof LIST_COMMIT_CHANGES>;

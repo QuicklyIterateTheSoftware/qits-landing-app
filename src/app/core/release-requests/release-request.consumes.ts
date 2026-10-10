@@ -1,8 +1,8 @@
 import type {
-  GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses,
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses,
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponses,
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses,
+  ListCommitBuildsResponses,
+  GetReleaseRequestArtifactsResponses,
+  ListReleaseRequestCommitsResponses,
+  GetReleaseRequestResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
@@ -110,10 +110,7 @@ export const GET_RELEASE_ARTIFACTS = [
 
 /** One release request, cut to what its page reads. */
 export type ReleaseRequest = NonNullable<
-  Consumed<
-    GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses[200],
-    typeof GET_RELEASE_REQUEST
-  >['request']
+  Consumed<GetReleaseRequestResponses[200], typeof GET_RELEASE_REQUEST>['request']
 >;
 
 /** One source branch of a request. */
@@ -138,21 +135,18 @@ export type ReleasePipelineGate = NonNullable<
 
 /** The commits answer. */
 export type ReleaseCommits = Consumed<
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponses[200],
+  ListReleaseRequestCommitsResponses[200],
   typeof LIST_RELEASE_REQUEST_COMMITS
 >;
 
 /** One CI verdict on a commit. */
 export type CommitBuild = NonNullable<
-  Consumed<
-    GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses[200],
-    typeof LIST_COMMIT_BUILDS
-  >['builds']
+  Consumed<ListCommitBuildsResponses[200], typeof LIST_COMMIT_BUILDS>['builds']
 >[number];
 
 /** The artifacts answer. */
 export type ReleaseArtifacts = Consumed<
-  GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses[200],
+  GetReleaseRequestArtifactsResponses[200],
   typeof GET_RELEASE_ARTIFACTS
 >;
 

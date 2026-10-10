@@ -1,17 +1,17 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
-  getProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuilds as listCommitBuilds,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestId as getReleaseRequest,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifacts as getReleaseArtifacts,
-  getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommits as listReleaseRequestCommits,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprove as approveReleaseRequest,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRuns as rerunReleaseAutomation,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaivers as waiveReleaseAutomations,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDecline as declineReleaseRequest,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerun as rerunReleasePhase,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriority as setReleaseSourcePriority,
-  postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdraw as withdrawReleaseRequest,
+  listCommitBuilds,
+  getReleaseRequest,
+  getReleaseRequestArtifacts as getReleaseArtifacts,
+  listReleaseRequestCommits,
+  approveReleaseRequest,
+  rerunReleaseRequestAutomation as rerunReleaseAutomation,
+  waiveReleaseRequestAutomations as waiveReleaseAutomations,
+  declineReleaseRequest,
+  rerunReleasePipelinePhase as rerunReleasePhase,
+  setReleaseSourcePriority,
+  withdrawReleaseRequest,
 } from '../../api/projects';
 import { NOTHING } from '@qits/angular';
 import {

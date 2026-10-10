@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdDesignsByDesignIdData, DeleteProjectsApiRefinementsByIdDesignsByDesignIdResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteProjectsApiRunnersByIdData, DeleteProjectsApiRunnersByIdResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, GetProjectData, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiPinsData, GetProjectsApiPinsResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameData, GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponse, GetProjectsApiRefinementsByIdActiveProcessData, GetProjectsApiRefinementsByIdActiveProcessResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdDesignsByDesignIdData, GetProjectsApiRefinementsByIdDesignsByDesignIdResponse, GetProjectsApiRefinementsByIdDesignsData, GetProjectsApiRefinementsByIdDesignsResponse, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdBranchesData, GetProjectsApiRepositoriesByRepoIdBranchesResponse, GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsData, GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponse, GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesData, GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponse, GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffData, GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponse, GetProjectsApiRepositoriesByRepoIdCommitsData, GetProjectsApiRepositoriesByRepoIdCommitsResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse, GetProjectsApiRepositoriesByRepoIdReleaseRequestsData, GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiRepositoriesData, GetProjectsApiRepositoriesResponse, GetProjectsApiRunnersByIdData, GetProjectsApiRunnersByIdHealthData, GetProjectsApiRunnersByIdHealthResponse, GetProjectsApiRunnersByIdResponse, GetProjectsApiRunnersData, GetProjectsApiRunnersInstallShData, GetProjectsApiRunnersInstallShResponse, GetProjectsApiRunnersResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchProjectsApiRunnersByIdData, PatchProjectsApiRunnersByIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiGcTagsData, PostProjectsApiGcTagsResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesAdoptData, PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdDesignsData, PostProjectsApiRefinementsByIdDiscardData, PostProjectsApiRefinementsByIdDiscardResponse, PostProjectsApiRefinementsByIdEnsureContainerData, PostProjectsApiRefinementsByIdEnsureContainerResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRefinementsByIdRecreateContainerData, PostProjectsApiRefinementsByIdRecreateContainerResponse, PostProjectsApiRefinementsByIdStopContainerData, PostProjectsApiRefinementsByIdStopContainerResponse, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponse, PostProjectsApiRepositoriesByRepoIdReleaseRequestsData, PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PostProjectsApiRunnersByIdGreenlightData, PostProjectsApiRunnersByIdGreenlightResponse, PostProjectsApiRunnersByIdHealthcheckData, PostProjectsApiRunnersByIdHealthcheckResponse, PostProjectsApiRunnersByIdLoginCheckData, PostProjectsApiRunnersByIdRegisterData, PostProjectsApiRunnersByIdRegisterResponse, PostProjectsApiRunnersByIdRegistrationTokenData, PostProjectsApiRunnersByIdRegistrationTokenResponse, PostProjectsApiRunnersData, PostProjectsApiRunnersResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdDesignsByDesignIdData, PutProjectsApiRefinementsByIdDesignsByDesignIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, TransitionWorkData, TransitionWorkResponse } from '../types.gen';
+import type { AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdDesignsByDesignIdData, DeleteProjectsApiRefinementsByIdDesignsByDesignIdResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteProjectsApiRunnersByIdData, DeleteProjectsApiRunnersByIdResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetProjectData, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiPinsData, GetProjectsApiPinsResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameData, GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponse, GetProjectsApiRefinementsByIdActiveProcessData, GetProjectsApiRefinementsByIdActiveProcessResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdDesignsByDesignIdData, GetProjectsApiRefinementsByIdDesignsByDesignIdResponse, GetProjectsApiRefinementsByIdDesignsData, GetProjectsApiRefinementsByIdDesignsResponse, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdBranchesData, GetProjectsApiRepositoriesByRepoIdBranchesResponse, GetProjectsApiRepositoriesByRepoIdCommitsData, GetProjectsApiRepositoriesByRepoIdCommitsResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiRepositoriesData, GetProjectsApiRepositoriesResponse, GetProjectsApiRunnersByIdData, GetProjectsApiRunnersByIdHealthData, GetProjectsApiRunnersByIdHealthResponse, GetProjectsApiRunnersByIdResponse, GetProjectsApiRunnersData, GetProjectsApiRunnersInstallShData, GetProjectsApiRunnersInstallShResponse, GetProjectsApiRunnersResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchProjectsApiRunnersByIdData, PatchProjectsApiRunnersByIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiGcTagsData, PostProjectsApiGcTagsResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesAdoptData, PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdDesignsData, PostProjectsApiRefinementsByIdDiscardData, PostProjectsApiRefinementsByIdDiscardResponse, PostProjectsApiRefinementsByIdEnsureContainerData, PostProjectsApiRefinementsByIdEnsureContainerResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRefinementsByIdRecreateContainerData, PostProjectsApiRefinementsByIdRecreateContainerResponse, PostProjectsApiRefinementsByIdStopContainerData, PostProjectsApiRefinementsByIdStopContainerResponse, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PostProjectsApiRunnersByIdGreenlightData, PostProjectsApiRunnersByIdGreenlightResponse, PostProjectsApiRunnersByIdHealthcheckData, PostProjectsApiRunnersByIdHealthcheckResponse, PostProjectsApiRunnersByIdLoginCheckData, PostProjectsApiRunnersByIdRegisterData, PostProjectsApiRunnersByIdRegisterResponse, PostProjectsApiRunnersByIdRegistrationTokenData, PostProjectsApiRunnersByIdRegistrationTokenResponse, PostProjectsApiRunnersData, PostProjectsApiRunnersResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdDesignsByDesignIdData, PutProjectsApiRefinementsByIdDesignsByDesignIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, TransitionWorkData, TransitionWorkResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
 
 /**
  * Catalogue
@@ -663,7 +663,7 @@ export const getProjectsApiRepositoriesByRepoIdCommitsRequest = <ThrowOnError ex
  *
  * One entry per terminal CI run of this commit, newest first, fed from qits-ci's build events. Queued and running builds do not appear; an empty list means no verdict yet, never that the commit is fine.
  */
-export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponse, ThrowOnError>({
+export const listCommitBuildsRequest = <ThrowOnError extends boolean = false>(options: Options<ListCommitBuildsData, ThrowOnError>): HttpRequest<ListCommitBuildsResponse> => (options?.client ?? client).requestOptions<ListCommitBuildsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/commits/{commitHash}/builds',
@@ -671,9 +671,9 @@ export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsRequest 
 });
 
 /**
- * Commit Changes
+ * The files one commit changed, against its first parent or a named parent
  */
-export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponse, ThrowOnError>({
+export const listCommitChangesRequest = <ThrowOnError extends boolean = false>(options: Options<ListCommitChangesData, ThrowOnError>): HttpRequest<ListCommitChangesResponse> => (options?.client ?? client).requestOptions<ListCommitChangesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/commits/{commitHash}/changes',
@@ -681,9 +681,9 @@ export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesRequest
 });
 
 /**
- * Commit File Diff
+ * The patch of one file in one commit, against its first parent or a named parent
  */
-export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponse, ThrowOnError>({
+export const getCommitFileDiffRequest = <ThrowOnError extends boolean = false>(options: Options<GetCommitFileDiffData, ThrowOnError>): HttpRequest<GetCommitFileDiffResponse> => (options?.client ?? client).requestOptions<GetCommitFileDiffResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/commits/{commitHash}/diff',
@@ -725,7 +725,7 @@ export const postProjectsApiRepositoriesByRepoIdPushRequest = <ThrowOnError exte
  *
  * Newest first. With no state the answer is the open requests — everything that can still move — plus the last 10 released, so that a release does not vanish off the page the moment it lands. Pass state=all for the whole history (WITHDRAWN included), or a state name (PENDING, READY, RELEASED, REJECTED, FAILED, CONFLICTED, WITHDRAWN) to narrow to one.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponse, ThrowOnError>({
+export const listRepositoryReleaseRequestsRequest = <ThrowOnError extends boolean = false>(options: Options<ListRepositoryReleaseRequestsData, ThrowOnError>): HttpRequest<ListRepositoryReleaseRequestsResponse> => (options?.client ?? client).requestOptions<ListRepositoryReleaseRequestsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests',
@@ -735,9 +735,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsRequest = <ThrowOn
 /**
  * Ask for a branch to be released once its builds are green
  *
- * Creates (or converges on) the repository's one open release request. A fresh request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. A repository has at most one unreleased request, whatever its archetype: a branch that already participates answers that request, and a branch nothing has asked about JOINS it as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary. Only when your branch is the request's sole asked-for source do your summary and requester replace the request's; otherwise the words of the ask that opened it stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
+ * Creates (or converges on) the repository's one open release request. A fresh request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. Every refold rebuilds release/<id> from the sources alone (never onto the previous fold), so main..release/<id> is the sources' own commits plus one merge, whose parents are the sources in source order: main, the branches as they were added, then the released tags oldest first, leaving out any source another one contains. A refold therefore need not descend from the fold before it. A repository has at most one unreleased request, whatever its archetype: a branch that already participates answers that request, and a branch nothing has asked about JOINS it as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary. Only when your branch is the request's sole asked-for source do your summary and requester replace the request's; otherwise the words of the ask that opened it stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse, ThrowOnError>({
+export const createReleaseRequestRequest = <ThrowOnError extends boolean = false>(options: Options<CreateReleaseRequestData, ThrowOnError>): HttpRequest<CreateReleaseRequestResponse> => (options?.client ?? client).requestOptions<CreateReleaseRequestResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests',
@@ -745,9 +745,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsRequest = <ThrowO
 });
 
 /**
- * Get
+ * One release request
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse, ThrowOnError>({
+export const getReleaseRequestRequest = <ThrowOnError extends boolean = false>(options: Options<GetReleaseRequestData, ThrowOnError>): HttpRequest<GetReleaseRequestResponse> => (options?.client ?? client).requestOptions<GetReleaseRequestResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}',
@@ -759,7 +759,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdRequest
  *
  * The trail across every fold the request has ever had, superseded ones included — what was refused, what was changed in answer to it and what was accepted in the end. Each entry names the mergedSha it judged, which is what says which fold it was about; compare it against the request's current mergedSha to see which entry still counts (at most one does, the newest at that sha). Rows are never edited and never deleted, so a change of mind is a further entry rather than a correction. An empty list is the ordinary answer for a request nobody has decided on and for one whose repository is not approval-gated; only an unknown request is a 404.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponse, ThrowOnError>({
+export const listReleaseRequestApprovalsRequest = <ThrowOnError extends boolean = false>(options: Options<ListReleaseRequestApprovalsData, ThrowOnError>): HttpRequest<ListReleaseRequestApprovalsResponse> => (options?.client ?? client).requestOptions<ListReleaseRequestApprovalsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approvals',
@@ -771,7 +771,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprova
  *
  * The person's half of the second gate: where the repository's releases have to be approved — today the project wrapper — a request that has passed every build gate still waits for this. mergedSha is required and names the fold being approved; a stale one answers 409 naming the fold the request is on now, because an approval is a statement about content and a push may have landed while the page was open. The gate is re-asked immediately, so a fold whose build is already green releases on the click. 409 also for a request that has concluded or is already being released, for one with no fold yet, and for a repository that needs no approval at all — approving what has no gate is a caller error, not a no-op. A person only: qits:admin, verified by this service from a browser session or a person's qits CLI token — asserted identity headers alone answer 403. A machine may ask for a release and withdraw one, and may not sign off the estate. qits:admin-agent is admitted too (qits-628 follow-up); remove it here if this door must stay human-only — the verification below still refuses a commissioned bearer today.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse, ThrowOnError>({
+export const approveReleaseRequestRequest = <ThrowOnError extends boolean = false>(options: Options<ApproveReleaseRequestData, ThrowOnError>): HttpRequest<ApproveReleaseRequestResponse> => (options?.client ?? client).requestOptions<ApproveReleaseRequestResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approve',
@@ -783,7 +783,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprov
  *
  * Read out of the released tag's own tree: deployable is whether it declares .config/qits/deployments.yml, and artifacts is what its release recipe declares plus the userflow bundle its QA pipeline publishes (at the fold's sha, not at the version). A request that has not released answers 200 with version null and a detail saying so; a git host that cannot be asked and a recipe that will not parse do the same. A repository that declares no recipe published nothing, and says so with an empty list and no detail at all.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponse, ThrowOnError>({
+export const getReleaseRequestArtifactsRequest = <ThrowOnError extends boolean = false>(options: Options<GetReleaseRequestArtifactsData, ThrowOnError>): HttpRequest<GetReleaseRequestArtifactsResponse> => (options?.client ?? client).requestOptions<GetReleaseRequestArtifactsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/artifacts',
@@ -795,7 +795,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifac
  *
  * Recorded durably, like an approval, and about one fold: foldSha names the fold being waived and a stale one answers 409 naming the fold the request is on now. A later re-fold leaves the waiver behind and the gate holds again. The gate is re-asked immediately and the request comes back as it then stands. 409 also for a request that is READY or has concluded, one with no fold yet, and a repository the automations gate does not hold; 400 for a blank foldSha or reason. A person only: qits:admin, verified by this service from a browser session or a person's qits CLI token — asserted identity headers alone answer 403. qits:admin-agent admitted too (qits-628 follow-up); remove it here if this door must stay human-only.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponse, ThrowOnError>({
+export const waiveReleaseRequestAutomationsRequest = <ThrowOnError extends boolean = false>(options: Options<WaiveReleaseRequestAutomationsData, ThrowOnError>): HttpRequest<WaiveReleaseRequestAutomationsResponse> => (options?.client ?? client).requestOptions<WaiveReleaseRequestAutomationsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/automations/waivers',
@@ -807,7 +807,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutoma
  *
  * kind is the automation's wire name — estate-pins, screenshot-baselines, … — and the ask is forwarded to qits-maintenance, which runs it on the request's current fold now, skipping carry-over and applicability (so a repository's first screenshot references come from here). 202 with the run's id; its outcome shows on the request's automations as every outcome does. qits-maintenance's refusals pass through with their status and sentence: 409 when one is already active for this request and kind, the request is not open or has no fold, or bumping is off; 404 for an unknown kind. 404 also for an unknown request or one that is not this repository's, and 503 where qits-maintenance is not configured or cannot be reached.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const rerunReleaseRequestAutomationRequest = <ThrowOnError extends boolean = false>(options: Options<RerunReleaseRequestAutomationData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/automations/{kind}/runs',
@@ -819,7 +819,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutoma
  *
  * Diffed against the newest release tag that does not contain the fold, resolved to one commit with merge-base — never mergedSha^1 (a re-fold's first parent is the previous fold, and a fast-forwarded fold is no merge commit at all) and never merge-base(mergedSha, main), which reports nothing once the release reaches main. base and baseTag name what was used; a repository that has never released is diffed against the empty tree. An empty list is never an error — detail says whether nothing has been folded yet, the fold is no longer in the repository's history, or the fold changed nothing. Over 2000 paths the answer is the first 2000 with truncated set and the total in detail.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponse, ThrowOnError>({
+export const listReleaseRequestChangesRequest = <ThrowOnError extends boolean = false>(options: Options<ListReleaseRequestChangesData, ThrowOnError>): HttpRequest<ListReleaseRequestChangesResponse> => (options?.client ?? client).requestOptions<ListReleaseRequestChangesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes',
@@ -831,7 +831,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * The unified diff of path, against the same base …/changes lists: the newest release tag that does not contain the fold, resolved with merge-base, or the empty tree for a repository that has never released. An empty diff is never an error — a binary file, a pure rename, a fold that is not there any more and a patch over ~1 MiB all answer their change type with no text.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponse, ThrowOnError>({
+export const getReleaseRequestChangeDiffRequest = <ThrowOnError extends boolean = false>(options: Options<GetReleaseRequestChangeDiffData, ThrowOnError>): HttpRequest<GetReleaseRequestChangeDiffResponse> => (options?.client ?? client).requestOptions<GetReleaseRequestChangeDiffResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes/diff',
@@ -843,7 +843,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * A wrapper's release is almost entirely 160000 gitlinks, and the fold's own patch for one is a pair of opaque Subproject commit lines. This answers what the release actually does: the sibling repository the path resolves to through the fold's own .gitmodules, the two pins, and that repository's commits and changed files between them. path addresses a gitlink of THIS fold and there is no repository parameter — the fold is re-diffed at that one path and must report a 160000-to-160000 modification, so the only repositories reachable here are the ones the request under review pins. Nothing is ever an error: nothing folded yet, a fold the repository no longer holds, a path the fold does not move, a path the manifest does not declare, a name no repository of this project answers to, a pin the sibling does not contain and a sibling that could not be read all answer 200 with the reason in detail. An added or removed gitlink names its one pin and is not expandable. Over 2000 paths the file list is capped with truncated set.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponse, ThrowOnError>({
+export const getReleaseRequestSubmoduleChangesRequest = <ThrowOnError extends boolean = false>(options: Options<GetReleaseRequestSubmoduleChangesData, ThrowOnError>): HttpRequest<GetReleaseRequestSubmoduleChangesResponse> => (options?.client ?? client).requestOptions<GetReleaseRequestSubmoduleChangesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes/submodule',
@@ -855,7 +855,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * The unified diff of file within the submodule at path, taken in the SIBLING repository between the two pins this fold moves between — the patch …/changes/submodule lists as a changed file. Same resolution and same authorisation as that read: path selects a gitlink of this fold and file selects a path inside it, so the pair cannot reach a repository the fold does not pin. An empty diff is never an error — a binary file, a pure rename, a chain that stopped for any of the reasons …/changes/submodule reports in detail, and a patch over ~1 MiB all answer their change type with no text.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponse, ThrowOnError>({
+export const getReleaseRequestSubmoduleChangeDiffRequest = <ThrowOnError extends boolean = false>(options: Options<GetReleaseRequestSubmoduleChangeDiffData, ThrowOnError>): HttpRequest<GetReleaseRequestSubmoduleChangeDiffResponse> => (options?.client ?? client).requestOptions<GetReleaseRequestSubmoduleChangeDiffResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes/submodule/diff',
@@ -867,7 +867,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * The fold minus every release tag that does not contain it — main only ever advances by merging released tags, so what is left is exactly what the request's sources contributed over what was already shipped. It stays the same answer after the release reaches main, which neither mergedSha^1 nor a live read of main does. The version bump is not in the list: the release commits the rewritten manifests ON TOP of the fold. An empty list is never an error — detail says whether nothing has been folded yet, the fold is no longer in the repository's history, or the fold genuinely added nothing.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsData, ThrowOnError>): HttpRequest<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponse, ThrowOnError>({
+export const listReleaseRequestCommitsRequest = <ThrowOnError extends boolean = false>(options: Options<ListReleaseRequestCommitsData, ThrowOnError>): HttpRequest<ListReleaseRequestCommitsResponse> => (options?.client ?? client).requestOptions<ListReleaseRequestCommitsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/commits',
@@ -879,7 +879,7 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommits
  *
  * The request is REJECTED carrying the decider's own sentence as its detail. This is NOT a withdrawal and the two must not be read as degrees of the same thing: a decline judges CONTENT and is answerable by a new fold — push a fix onto a participating branch, the request re-folds, the decision no longer names the fold it is on, and it is pending both gates again — while withdraw judges the ASK, is terminal, frees the branches and makes the next release ask mint a fresh request. Same body and same refusals as approve, mergedSha included. No unattended-gate ticket is filed: a person just said no, so somebody is watching by definition. A person only, verified exactly as approve verifies one — qits:admin-agent admitted too on the same terms as approve (qits-628 follow-up).
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse, ThrowOnError>({
+export const declineReleaseRequestRequest = <ThrowOnError extends boolean = false>(options: Options<DeclineReleaseRequestData, ThrowOnError>): HttpRequest<DeclineReleaseRequestResponse> => (options?.client ?? client).requestOptions<DeclineReleaseRequestResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/decline',
@@ -891,7 +891,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclin
  *
  * phase is QA, PUBLISH or DEPLOY — the three phases of a release pipeline. QA and PUBLISH ask qits-ci to re-fire that phase's run; DEPLOY re-posts the release onto qits-deployments, which is the door a redeploy has always gone through. Nothing about the request changes: no state moves, no gate is re-decided and no event is published here — the new run reports on the bus exactly as the first one did, so the answer is the request as it stands and the result arrives later. 409 carries qits-ci's OWN sentence where it refuses, because that sentence is the fact worth having: that the phase's newest run succeeded and its verdict is spent, that the phase has never run, or that it is running right now. DEPLOY is a 409 for a request that has not released (no version, so nothing to deploy) and for a repository that declares no deployment at all. 404 for an unknown request or one that is not this repository's, 400 for a word naming no phase, 503 where the sibling service is not configured.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponse, ThrowOnError>({
+export const rerunReleasePipelinePhaseRequest = <ThrowOnError extends boolean = false>(options: Options<RerunReleasePipelinePhaseData, ThrowOnError>): HttpRequest<RerunReleasePipelinePhaseResponse> => (options?.client ?? client).requestOptions<RerunReleasePipelinePhaseResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/pipeline/{phase}/rerun',
@@ -903,7 +903,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipeli
  *
  * The request is re-folded with the new source and, if the fold produces a new commit, the gates are re-armed onto it. Idempotent: a branch already on the request answers the request unchanged. A RELEASED or WITHDRAWN request answers 409. Implicit tag sources are not addable — they are derived from what the repository has in flight.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponse, ThrowOnError>({
+export const addReleaseRequestSourceRequest = <ThrowOnError extends boolean = false>(options: Options<AddReleaseRequestSourceData, ThrowOnError>): HttpRequest<AddReleaseRequestSourceResponse> => (options?.client ?? client).requestOptions<AddReleaseRequestSourceResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/sources',
@@ -915,7 +915,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSource
  *
  * Priority is per participating branch and the request answers with the max over them, so raising one branch raises the request. Nothing is re-folded and no event is published: the same branches are folded onto the same backing branch, so the sha the gates are evaluating has not moved. The value reaches the platform with the release itself, which reads the sources live. A branch the request does not name is a 404, a word naming no priority is a 400, and a RELEASED or WITHDRAWN request is a 409. Implicit tag sources carry no priority and cannot be addressed here.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponse, ThrowOnError>({
+export const setReleaseSourcePriorityRequest = <ThrowOnError extends boolean = false>(options: Options<SetReleaseSourcePriorityData, ThrowOnError>): HttpRequest<SetReleaseSourcePriorityResponse> => (options?.client ?? client).requestOptions<SetReleaseSourcePriorityResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/sources/priority',
@@ -927,7 +927,7 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSource
  *
  * The ask is moot — nothing should land this branch. WITHDRAWN is terminal and frees the branch: the next release ask mints a fresh request. A request already RELEASED or WITHDRAWN answers 409. A deleted branch withdraws its open request automatically; this route is the operator's spelling for every other reason.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawData, ThrowOnError>): HttpRequest<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponse, ThrowOnError>({
+export const withdrawReleaseRequestRequest = <ThrowOnError extends boolean = false>(options: Options<WithdrawReleaseRequestData, ThrowOnError>): HttpRequest<WithdrawReleaseRequestResponse> => (options?.client ?? client).requestOptions<WithdrawReleaseRequestResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/withdraw',
@@ -2083,25 +2083,25 @@ export const getProjectsApiRepositoriesByRepoIdCommitsResource = <ThrowOnError e
  *
  * One entry per terminal CI run of this commit, newest first, fed from qits-ci's build events. Queued and running builds do not appear; an empty list means no verdict yet, never that the commit is fine.
  */
-export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponse>(() => {
+export const listCommitBuildsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListCommitBuildsData, ThrowOnError> | undefined) => httpResource<ListCommitBuildsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsRequest(opts) : undefined;
+    return opts ? listCommitBuildsRequest(opts) : undefined;
 });
 
 /**
- * Commit Changes
+ * The files one commit changed, against its first parent or a named parent
  */
-export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponse>(() => {
+export const listCommitChangesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListCommitChangesData, ThrowOnError> | undefined) => httpResource<ListCommitChangesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesRequest(opts) : undefined;
+    return opts ? listCommitChangesRequest(opts) : undefined;
 });
 
 /**
- * Commit File Diff
+ * The patch of one file in one commit, against its first parent or a named parent
  */
-export const getProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponse>(() => {
+export const getCommitFileDiffResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCommitFileDiffData, ThrowOnError> | undefined) => httpResource<GetCommitFileDiffResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffRequest(opts) : undefined;
+    return opts ? getCommitFileDiffRequest(opts) : undefined;
 });
 
 /**
@@ -2133,27 +2133,27 @@ export const postProjectsApiRepositoriesByRepoIdPushResource = <ThrowOnError ext
  *
  * Newest first. With no state the answer is the open requests — everything that can still move — plus the last 10 released, so that a release does not vanish off the page the moment it lands. Pass state=all for the whole history (WITHDRAWN included), or a state name (PENDING, READY, RELEASED, REJECTED, FAILED, CONFLICTED, WITHDRAWN) to narrow to one.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponse>(() => {
+export const listRepositoryReleaseRequestsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListRepositoryReleaseRequestsData, ThrowOnError> | undefined) => httpResource<ListRepositoryReleaseRequestsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsRequest(opts) : undefined;
+    return opts ? listRepositoryReleaseRequestsRequest(opts) : undefined;
 });
 
 /**
  * Ask for a branch to be released once its builds are green
  *
- * Creates (or converges on) the repository's one open release request. A fresh request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. A repository has at most one unreleased request, whatever its archetype: a branch that already participates answers that request, and a branch nothing has asked about JOINS it as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary. Only when your branch is the request's sole asked-for source do your summary and requester replace the request's; otherwise the words of the ask that opened it stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
+ * Creates (or converges on) the repository's one open release request. A fresh request's sources are main plus the named branch, plus every released tag of the repository not yet merged to main; they are folded onto release/<id> and it is that MERGE the gates evaluate — mergedSha on the answer. Every refold rebuilds release/<id> from the sources alone (never onto the previous fold), so main..release/<id> is the sources' own commits plus one merge, whose parents are the sources in source order: main, the branches as they were added, then the released tags oldest first, leaving out any source another one contains. A refold therefore need not descend from the fold before it. A repository has at most one unreleased request, whatever its archetype: a branch that already participates answers that request, and a branch nothing has asked about JOINS it as a further source, so the answer may carry an id you did not create, sources you did not name and somebody else's summary. Only when your branch is the request's sole asked-for source do your summary and requester replace the request's; otherwise the words of the ask that opened it stand, and yours are recorded on your own source row. Poll until RELEASED, REJECTED, CONFLICTED or FAILED; detail says why, and conflict says what to resolve.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse>(() => {
+export const createReleaseRequestResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateReleaseRequestData, ThrowOnError> | undefined) => httpResource<CreateReleaseRequestResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsRequest(opts) : undefined;
+    return opts ? createReleaseRequestRequest(opts) : undefined;
 });
 
 /**
- * Get
+ * One release request
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse>(() => {
+export const getReleaseRequestResource = <ThrowOnError extends boolean = false>(options: () => Options<GetReleaseRequestData, ThrowOnError> | undefined) => httpResource<GetReleaseRequestResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdRequest(opts) : undefined;
+    return opts ? getReleaseRequestRequest(opts) : undefined;
 });
 
 /**
@@ -2161,9 +2161,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResourc
  *
  * The trail across every fold the request has ever had, superseded ones included — what was refused, what was changed in answer to it and what was accepted in the end. Each entry names the mergedSha it judged, which is what says which fold it was about; compare it against the request's current mergedSha to see which entry still counts (at most one does, the newest at that sha). Rows are never edited and never deleted, so a change of mind is a further entry rather than a correction. An empty list is the ordinary answer for a request nobody has decided on and for one whose repository is not approval-gated; only an unknown request is a 404.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponse>(() => {
+export const listReleaseRequestApprovalsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListReleaseRequestApprovalsData, ThrowOnError> | undefined) => httpResource<ListReleaseRequestApprovalsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsRequest(opts) : undefined;
+    return opts ? listReleaseRequestApprovalsRequest(opts) : undefined;
 });
 
 /**
@@ -2171,9 +2171,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprova
  *
  * The person's half of the second gate: where the repository's releases have to be approved — today the project wrapper — a request that has passed every build gate still waits for this. mergedSha is required and names the fold being approved; a stale one answers 409 naming the fold the request is on now, because an approval is a statement about content and a push may have landed while the page was open. The gate is re-asked immediately, so a fold whose build is already green releases on the click. 409 also for a request that has concluded or is already being released, for one with no fold yet, and for a repository that needs no approval at all — approving what has no gate is a caller error, not a no-op. A person only: qits:admin, verified by this service from a browser session or a person's qits CLI token — asserted identity headers alone answer 403. A machine may ask for a release and withdraw one, and may not sign off the estate. qits:admin-agent is admitted too (qits-628 follow-up); remove it here if this door must stay human-only — the verification below still refuses a commissioned bearer today.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse>(() => {
+export const approveReleaseRequestResource = <ThrowOnError extends boolean = false>(options: () => Options<ApproveReleaseRequestData, ThrowOnError> | undefined) => httpResource<ApproveReleaseRequestResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveRequest(opts) : undefined;
+    return opts ? approveReleaseRequestRequest(opts) : undefined;
 });
 
 /**
@@ -2181,9 +2181,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprov
  *
  * Read out of the released tag's own tree: deployable is whether it declares .config/qits/deployments.yml, and artifacts is what its release recipe declares plus the userflow bundle its QA pipeline publishes (at the fold's sha, not at the version). A request that has not released answers 200 with version null and a detail saying so; a git host that cannot be asked and a recipe that will not parse do the same. A repository that declares no recipe published nothing, and says so with an empty list and no detail at all.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponse>(() => {
+export const getReleaseRequestArtifactsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetReleaseRequestArtifactsData, ThrowOnError> | undefined) => httpResource<GetReleaseRequestArtifactsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsRequest(opts) : undefined;
+    return opts ? getReleaseRequestArtifactsRequest(opts) : undefined;
 });
 
 /**
@@ -2191,9 +2191,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifac
  *
  * Recorded durably, like an approval, and about one fold: foldSha names the fold being waived and a stale one answers 409 naming the fold the request is on now. A later re-fold leaves the waiver behind and the gate holds again. The gate is re-asked immediately and the request comes back as it then stands. 409 also for a request that is READY or has concluded, one with no fold yet, and a repository the automations gate does not hold; 400 for a blank foldSha or reason. A person only: qits:admin, verified by this service from a browser session or a person's qits CLI token — asserted identity headers alone answer 403. qits:admin-agent admitted too (qits-628 follow-up); remove it here if this door must stay human-only.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponse>(() => {
+export const waiveReleaseRequestAutomationsResource = <ThrowOnError extends boolean = false>(options: () => Options<WaiveReleaseRequestAutomationsData, ThrowOnError> | undefined) => httpResource<WaiveReleaseRequestAutomationsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversRequest(opts) : undefined;
+    return opts ? waiveReleaseRequestAutomationsRequest(opts) : undefined;
 });
 
 /**
@@ -2201,9 +2201,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutoma
  *
  * kind is the automation's wire name — estate-pins, screenshot-baselines, … — and the ask is forwarded to qits-maintenance, which runs it on the request's current fold now, skipping carry-over and applicability (so a repository's first screenshot references come from here). 202 with the run's id; its outcome shows on the request's automations as every outcome does. qits-maintenance's refusals pass through with their status and sentence: 409 when one is already active for this request and kind, the request is not open or has no fold, or bumping is off; 404 for an unknown kind. 404 also for an unknown request or one that is not this repository's, and 503 where qits-maintenance is not configured or cannot be reached.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const rerunReleaseRequestAutomationResource = <ThrowOnError extends boolean = false>(options: () => Options<RerunReleaseRequestAutomationData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsRequest(opts) : undefined;
+    return opts ? rerunReleaseRequestAutomationRequest(opts) : undefined;
 });
 
 /**
@@ -2211,9 +2211,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutoma
  *
  * Diffed against the newest release tag that does not contain the fold, resolved to one commit with merge-base — never mergedSha^1 (a re-fold's first parent is the previous fold, and a fast-forwarded fold is no merge commit at all) and never merge-base(mergedSha, main), which reports nothing once the release reaches main. base and baseTag name what was used; a repository that has never released is diffed against the empty tree. An empty list is never an error — detail says whether nothing has been folded yet, the fold is no longer in the repository's history, or the fold changed nothing. Over 2000 paths the answer is the first 2000 with truncated set and the total in detail.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponse>(() => {
+export const listReleaseRequestChangesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListReleaseRequestChangesData, ThrowOnError> | undefined) => httpResource<ListReleaseRequestChangesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesRequest(opts) : undefined;
+    return opts ? listReleaseRequestChangesRequest(opts) : undefined;
 });
 
 /**
@@ -2221,9 +2221,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * The unified diff of path, against the same base …/changes lists: the newest release tag that does not contain the fold, resolved with merge-base, or the empty tree for a repository that has never released. An empty diff is never an error — a binary file, a pure rename, a fold that is not there any more and a patch over ~1 MiB all answer their change type with no text.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponse>(() => {
+export const getReleaseRequestChangeDiffResource = <ThrowOnError extends boolean = false>(options: () => Options<GetReleaseRequestChangeDiffData, ThrowOnError> | undefined) => httpResource<GetReleaseRequestChangeDiffResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffRequest(opts) : undefined;
+    return opts ? getReleaseRequestChangeDiffRequest(opts) : undefined;
 });
 
 /**
@@ -2231,9 +2231,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * A wrapper's release is almost entirely 160000 gitlinks, and the fold's own patch for one is a pair of opaque Subproject commit lines. This answers what the release actually does: the sibling repository the path resolves to through the fold's own .gitmodules, the two pins, and that repository's commits and changed files between them. path addresses a gitlink of THIS fold and there is no repository parameter — the fold is re-diffed at that one path and must report a 160000-to-160000 modification, so the only repositories reachable here are the ones the request under review pins. Nothing is ever an error: nothing folded yet, a fold the repository no longer holds, a path the fold does not move, a path the manifest does not declare, a name no repository of this project answers to, a pin the sibling does not contain and a sibling that could not be read all answer 200 with the reason in detail. An added or removed gitlink names its one pin and is not expandable. Over 2000 paths the file list is capped with truncated set.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponse>(() => {
+export const getReleaseRequestSubmoduleChangesResource = <ThrowOnError extends boolean = false>(options: () => Options<GetReleaseRequestSubmoduleChangesData, ThrowOnError> | undefined) => httpResource<GetReleaseRequestSubmoduleChangesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleRequest(opts) : undefined;
+    return opts ? getReleaseRequestSubmoduleChangesRequest(opts) : undefined;
 });
 
 /**
@@ -2241,9 +2241,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * The unified diff of file within the submodule at path, taken in the SIBLING repository between the two pins this fold moves between — the patch …/changes/submodule lists as a changed file. Same resolution and same authorisation as that read: path selects a gitlink of this fold and file selects a path inside it, so the pair cannot reach a repository the fold does not pin. An empty diff is never an error — a binary file, a pure rename, a chain that stopped for any of the reasons …/changes/submodule reports in detail, and a patch over ~1 MiB all answer their change type with no text.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponse>(() => {
+export const getReleaseRequestSubmoduleChangeDiffResource = <ThrowOnError extends boolean = false>(options: () => Options<GetReleaseRequestSubmoduleChangeDiffData, ThrowOnError> | undefined) => httpResource<GetReleaseRequestSubmoduleChangeDiffResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffRequest(opts) : undefined;
+    return opts ? getReleaseRequestSubmoduleChangeDiffRequest(opts) : undefined;
 });
 
 /**
@@ -2251,9 +2251,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChanges
  *
  * The fold minus every release tag that does not contain it — main only ever advances by merging released tags, so what is left is exactly what the request's sources contributed over what was already shipped. It stays the same answer after the release reaches main, which neither mergedSha^1 nor a live read of main does. The version bump is not in the list: the release commits the rewritten manifests ON TOP of the fold. An empty list is never an error — detail says whether nothing has been folded yet, the fold is no longer in the repository's history, or the fold genuinely added nothing.
  */
-export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponse>(() => {
+export const listReleaseRequestCommitsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListReleaseRequestCommitsData, ThrowOnError> | undefined) => httpResource<ListReleaseRequestCommitsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsRequest(opts) : undefined;
+    return opts ? listReleaseRequestCommitsRequest(opts) : undefined;
 });
 
 /**
@@ -2261,9 +2261,9 @@ export const getProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommits
  *
  * The request is REJECTED carrying the decider's own sentence as its detail. This is NOT a withdrawal and the two must not be read as degrees of the same thing: a decline judges CONTENT and is answerable by a new fold — push a fix onto a participating branch, the request re-folds, the decision no longer names the fold it is on, and it is pending both gates again — while withdraw judges the ASK, is terminal, frees the branches and makes the next release ask mint a fresh request. Same body and same refusals as approve, mergedSha included. No unattended-gate ticket is filed: a person just said no, so somebody is watching by definition. A person only, verified exactly as approve verifies one — qits:admin-agent admitted too on the same terms as approve (qits-628 follow-up).
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse>(() => {
+export const declineReleaseRequestResource = <ThrowOnError extends boolean = false>(options: () => Options<DeclineReleaseRequestData, ThrowOnError> | undefined) => httpResource<DeclineReleaseRequestResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineRequest(opts) : undefined;
+    return opts ? declineReleaseRequestRequest(opts) : undefined;
 });
 
 /**
@@ -2271,9 +2271,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclin
  *
  * phase is QA, PUBLISH or DEPLOY — the three phases of a release pipeline. QA and PUBLISH ask qits-ci to re-fire that phase's run; DEPLOY re-posts the release onto qits-deployments, which is the door a redeploy has always gone through. Nothing about the request changes: no state moves, no gate is re-decided and no event is published here — the new run reports on the bus exactly as the first one did, so the answer is the request as it stands and the result arrives later. 409 carries qits-ci's OWN sentence where it refuses, because that sentence is the fact worth having: that the phase's newest run succeeded and its verdict is spent, that the phase has never run, or that it is running right now. DEPLOY is a 409 for a request that has not released (no version, so nothing to deploy) and for a repository that declares no deployment at all. 404 for an unknown request or one that is not this repository's, 400 for a word naming no phase, 503 where the sibling service is not configured.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponse>(() => {
+export const rerunReleasePipelinePhaseResource = <ThrowOnError extends boolean = false>(options: () => Options<RerunReleasePipelinePhaseData, ThrowOnError> | undefined) => httpResource<RerunReleasePipelinePhaseResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunRequest(opts) : undefined;
+    return opts ? rerunReleasePipelinePhaseRequest(opts) : undefined;
 });
 
 /**
@@ -2281,9 +2281,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipeli
  *
  * The request is re-folded with the new source and, if the fold produces a new commit, the gates are re-armed onto it. Idempotent: a branch already on the request answers the request unchanged. A RELEASED or WITHDRAWN request answers 409. Implicit tag sources are not addable — they are derived from what the repository has in flight.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponse>(() => {
+export const addReleaseRequestSourceResource = <ThrowOnError extends boolean = false>(options: () => Options<AddReleaseRequestSourceData, ThrowOnError> | undefined) => httpResource<AddReleaseRequestSourceResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesRequest(opts) : undefined;
+    return opts ? addReleaseRequestSourceRequest(opts) : undefined;
 });
 
 /**
@@ -2291,9 +2291,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSource
  *
  * Priority is per participating branch and the request answers with the max over them, so raising one branch raises the request. Nothing is re-folded and no event is published: the same branches are folded onto the same backing branch, so the sha the gates are evaluating has not moved. The value reaches the platform with the release itself, which reads the sources live. A branch the request does not name is a 404, a word naming no priority is a 400, and a RELEASED or WITHDRAWN request is a 409. Implicit tag sources carry no priority and cannot be addressed here.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponse>(() => {
+export const setReleaseSourcePriorityResource = <ThrowOnError extends boolean = false>(options: () => Options<SetReleaseSourcePriorityData, ThrowOnError> | undefined) => httpResource<SetReleaseSourcePriorityResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityRequest(opts) : undefined;
+    return opts ? setReleaseSourcePriorityRequest(opts) : undefined;
 });
 
 /**
@@ -2301,9 +2301,9 @@ export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSource
  *
  * The ask is moot — nothing should land this branch. WITHDRAWN is terminal and frees the branch: the next release ask mints a fresh request. A request already RELEASED or WITHDRAWN answers 409. A deleted branch withdraws its open request automatically; this route is the operator's spelling for every other reason.
  */
-export const postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponse>(() => {
+export const withdrawReleaseRequestResource = <ThrowOnError extends boolean = false>(options: () => Options<WithdrawReleaseRequestData, ThrowOnError> | undefined) => httpResource<WithdrawReleaseRequestResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawRequest(opts) : undefined;
+    return opts ? withdrawReleaseRequestRequest(opts) : undefined;
 });
 
 /**

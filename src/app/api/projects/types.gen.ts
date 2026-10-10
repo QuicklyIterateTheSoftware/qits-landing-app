@@ -354,6 +354,8 @@ export type CommitDto = {
     date?: string;
     message?: string;
     files?: Array<string>;
+    parents?: Array<string>;
+    fold?: boolean;
 };
 
 export type CommitFileChangeDto = {
@@ -824,6 +826,20 @@ export type EntryOutcome = {
     warning?: string;
 };
 
+export type FoldParentDto = {
+    sha?: string;
+    role?: string;
+    source?: string;
+    ref?: string;
+};
+
+export type FoldSourceDto = {
+    name?: string;
+    kind?: string;
+    ref?: string;
+    tipSha?: string;
+};
+
 export type FrontDeskLifecycle = 'ALWAYS_ON' | 'ON_DEMAND';
 
 export type HarnessCapabilityReport = {
@@ -1098,6 +1114,13 @@ export type ReleaseAutomationFailureDto = {
     excerpt?: string;
 };
 
+export type ReleaseGateCheckDto = {
+    name?: string;
+    state?: string;
+    detail?: string;
+    runId?: string;
+};
+
 export type ReleaseGateDto = {
     kind?: string;
     state?: string;
@@ -1115,6 +1138,9 @@ export type ReleasePhaseDto = {
 
 export type ReleasePipelineDto = {
     phases?: Array<ReleasePhaseDto>;
+    /**
+     * @deprecated
+     */
     gates?: Array<ReleasePipelineGateDto>;
 };
 
@@ -1123,6 +1149,17 @@ export type ReleasePipelineGateDto = {
     kind?: string;
     state?: string;
     detail?: string;
+};
+
+export type ReleaseQualityGateDto = {
+    kind?: string;
+    label?: string;
+    position?: string;
+    state?: string;
+    detail?: string;
+    checks?: Array<ReleaseGateCheckDto>;
+    runId?: string;
+    link?: string;
 };
 
 export type ReleaseRequestApprovalDto = {
@@ -1147,6 +1184,8 @@ export type ReleaseRequestCommitsDto = {
     mergedSha?: string;
     commits?: Array<CommitDto>;
     detail?: string;
+    foldParents?: Array<FoldParentDto>;
+    sources?: Array<FoldSourceDto>;
 };
 
 export type ReleaseRequestDto = {
@@ -1168,6 +1207,9 @@ export type ReleaseRequestDto = {
     approvedBy?: string;
     approvedAt?: Instant;
     approvalNote?: string;
+    /**
+     * @deprecated
+     */
     gates?: Array<ReleaseGateDto>;
     automations?: Array<ReleaseAutomationDto>;
     conflict?: MergeConflictDto;
@@ -1179,6 +1221,7 @@ export type ReleaseRequestDto = {
     createdAt?: Instant;
     updatedAt?: Instant;
     pipeline?: ReleasePipelineDto;
+    qualityGates?: Array<ReleaseQualityGateDto>;
 };
 
 export type ReleaseRequestSourceDto = {
@@ -3991,7 +4034,7 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsResponses = {
 
 export type GetProjectsApiRepositoriesByRepoIdCommitsResponse = GetProjectsApiRepositoriesByRepoIdCommitsResponses[keyof GetProjectsApiRepositoriesByRepoIdCommitsResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsData = {
+export type ListCommitBuildsData = {
     body?: never;
     path: {
         commitHash: string;
@@ -4001,7 +4044,7 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsData = {
     url: '/projects/api/repositories/{repoId}/commits/{commitHash}/builds';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsErrors = {
+export type ListCommitBuildsErrors = {
     /**
      * Not Authorized
      */
@@ -4012,16 +4055,16 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsErrors = 
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses = {
+export type ListCommitBuildsResponses = {
     /**
      * OK
      */
     200: Response33;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponse = GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses[keyof GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashBuildsResponses];
+export type ListCommitBuildsResponse = ListCommitBuildsResponses[keyof ListCommitBuildsResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesData = {
+export type ListCommitChangesData = {
     body?: never;
     path: {
         commitHash: string;
@@ -4033,7 +4076,7 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesData = {
     url: '/projects/api/repositories/{repoId}/commits/{commitHash}/changes';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesErrors = {
+export type ListCommitChangesErrors = {
     /**
      * Not Authorized
      */
@@ -4044,16 +4087,16 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesErrors =
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponses = {
+export type ListCommitChangesResponses = {
     /**
      * OK
      */
     200: CommitChangesDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponse = GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponses[keyof GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashChangesResponses];
+export type ListCommitChangesResponse = ListCommitChangesResponses[keyof ListCommitChangesResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffData = {
+export type GetCommitFileDiffData = {
     body?: never;
     path: {
         commitHash: string;
@@ -4066,7 +4109,7 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffData = {
     url: '/projects/api/repositories/{repoId}/commits/{commitHash}/diff';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffErrors = {
+export type GetCommitFileDiffErrors = {
     /**
      * Not Authorized
      */
@@ -4077,14 +4120,14 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponses = {
+export type GetCommitFileDiffResponses = {
     /**
      * OK
      */
     200: CommitFileDiffDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponse = GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponses[keyof GetProjectsApiRepositoriesByRepoIdCommitsByCommitHashDiffResponses];
+export type GetCommitFileDiffResponse = GetCommitFileDiffResponses[keyof GetCommitFileDiffResponses];
 
 export type PutProjectsApiRepositoriesByRepoIdMainBranchData = {
     body: SetMainBranchRequest;
@@ -4177,7 +4220,7 @@ export type PostProjectsApiRepositoriesByRepoIdPushResponses = {
 
 export type PostProjectsApiRepositoriesByRepoIdPushResponse = PostProjectsApiRepositoriesByRepoIdPushResponses[keyof PostProjectsApiRepositoriesByRepoIdPushResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsData = {
+export type ListRepositoryReleaseRequestsData = {
     body?: never;
     path: {
         repoId: string;
@@ -4188,7 +4231,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsData = {
     url: '/projects/api/repositories/{repoId}/release-requests';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsErrors = {
+export type ListRepositoryReleaseRequestsErrors = {
     /**
      * Not Authorized
      */
@@ -4199,16 +4242,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponses = {
+export type ListRepositoryReleaseRequestsResponses = {
     /**
      * OK
      */
     200: Response17;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsResponses];
+export type ListRepositoryReleaseRequestsResponse = ListRepositoryReleaseRequestsResponses[keyof ListRepositoryReleaseRequestsResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsData = {
+export type CreateReleaseRequestData = {
     body: CreateReleaseRequest;
     path: {
         repoId: string;
@@ -4217,7 +4260,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsData = {
     url: '/projects/api/repositories/{repoId}/release-requests';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsErrors = {
+export type CreateReleaseRequestErrors = {
     /**
      * Bad Request
      */
@@ -4232,16 +4275,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponses = {
+export type CreateReleaseRequestResponses = {
     /**
      * OK
      */
     200: Response20;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsResponses];
+export type CreateReleaseRequestResponse = CreateReleaseRequestResponses[keyof CreateReleaseRequestResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdData = {
+export type GetReleaseRequestData = {
     body?: never;
     path: {
         repoId: string;
@@ -4251,7 +4294,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdData = {
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdErrors = {
+export type GetReleaseRequestErrors = {
     /**
      * Not Authorized
      */
@@ -4262,16 +4305,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdErrors =
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses = {
+export type GetReleaseRequestResponses = {
     /**
      * OK
      */
     200: Response18;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdResponses];
+export type GetReleaseRequestResponse = GetReleaseRequestResponses[keyof GetReleaseRequestResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsData = {
+export type ListReleaseRequestApprovalsData = {
     body?: never;
     path: {
         repoId: string;
@@ -4281,7 +4324,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproval
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approvals';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsErrors = {
+export type ListReleaseRequestApprovalsErrors = {
     /**
      * Not Authorized
      */
@@ -4292,16 +4335,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproval
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponses = {
+export type ListReleaseRequestApprovalsResponses = {
     /**
      * OK
      */
     200: Response22;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprovalsResponses];
+export type ListReleaseRequestApprovalsResponse = ListReleaseRequestApprovalsResponses[keyof ListReleaseRequestApprovalsResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveData = {
+export type ApproveReleaseRequestData = {
     body: ApproveReleaseRequest;
     path: {
         repoId: string;
@@ -4311,7 +4354,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprove
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approve';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveErrors = {
+export type ApproveReleaseRequestErrors = {
     /**
      * Bad Request
      */
@@ -4326,16 +4369,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApprove
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponses = {
+export type ApproveReleaseRequestResponses = {
     /**
      * OK
      */
     200: Response21;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdApproveResponses];
+export type ApproveReleaseRequestResponse = ApproveReleaseRequestResponses[keyof ApproveReleaseRequestResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsData = {
+export type GetReleaseRequestArtifactsData = {
     body?: never;
     path: {
         repoId: string;
@@ -4345,7 +4388,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifact
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/artifacts';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsErrors = {
+export type GetReleaseRequestArtifactsErrors = {
     /**
      * Not Authorized
      */
@@ -4356,16 +4399,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifact
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses = {
+export type GetReleaseRequestArtifactsResponses = {
     /**
      * OK
      */
     200: ReleaseArtifactsDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdArtifactsResponses];
+export type GetReleaseRequestArtifactsResponse = GetReleaseRequestArtifactsResponses[keyof GetReleaseRequestArtifactsResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversData = {
+export type WaiveReleaseRequestAutomationsData = {
     body: WaiveReleaseRequestAutomations;
     path: {
         repoId: string;
@@ -4375,7 +4418,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomat
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/automations/waivers';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversErrors = {
+export type WaiveReleaseRequestAutomationsErrors = {
     /**
      * Bad Request
      */
@@ -4390,16 +4433,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomat
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponses = {
+export type WaiveReleaseRequestAutomationsResponses = {
     /**
      * OK
      */
     200: Response14;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsWaiversResponses];
+export type WaiveReleaseRequestAutomationsResponse = WaiveReleaseRequestAutomationsResponses[keyof WaiveReleaseRequestAutomationsResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsData = {
+export type RerunReleaseRequestAutomationData = {
     body?: never;
     path: {
         kind: string;
@@ -4410,7 +4453,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomat
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/automations/{kind}/runs';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsErrors = {
+export type RerunReleaseRequestAutomationErrors = {
     /**
      * Not Authorized
      */
@@ -4421,14 +4464,14 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomat
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdAutomationsByKindRunsResponses = {
+export type RerunReleaseRequestAutomationResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesData = {
+export type ListReleaseRequestChangesData = {
     body?: never;
     path: {
         repoId: string;
@@ -4438,7 +4481,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesD
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesErrors = {
+export type ListReleaseRequestChangesErrors = {
     /**
      * Not Authorized
      */
@@ -4449,16 +4492,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesE
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponses = {
+export type ListReleaseRequestChangesResponses = {
     /**
      * OK
      */
     200: ReleaseRequestChangesDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesResponses];
+export type ListReleaseRequestChangesResponse = ListReleaseRequestChangesResponses[keyof ListReleaseRequestChangesResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffData = {
+export type GetReleaseRequestChangeDiffData = {
     body?: never;
     path: {
         repoId: string;
@@ -4470,7 +4513,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesD
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes/diff';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffErrors = {
+export type GetReleaseRequestChangeDiffErrors = {
     /**
      * Not Authorized
      */
@@ -4481,16 +4524,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesD
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponses = {
+export type GetReleaseRequestChangeDiffResponses = {
     /**
      * OK
      */
     200: CommitFileDiffDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesDiffResponses];
+export type GetReleaseRequestChangeDiffResponse = GetReleaseRequestChangeDiffResponses[keyof GetReleaseRequestChangeDiffResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleData = {
+export type GetReleaseRequestSubmoduleChangesData = {
     body?: never;
     path: {
         repoId: string;
@@ -4502,7 +4545,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesS
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes/submodule';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleErrors = {
+export type GetReleaseRequestSubmoduleChangesErrors = {
     /**
      * Not Authorized
      */
@@ -4513,16 +4556,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesS
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponses = {
+export type GetReleaseRequestSubmoduleChangesResponses = {
     /**
      * OK
      */
     200: SubmoduleChangesDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleResponses];
+export type GetReleaseRequestSubmoduleChangesResponse = GetReleaseRequestSubmoduleChangesResponses[keyof GetReleaseRequestSubmoduleChangesResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffData = {
+export type GetReleaseRequestSubmoduleChangeDiffData = {
     body?: never;
     path: {
         repoId: string;
@@ -4535,7 +4578,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesS
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/changes/submodule/diff';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffErrors = {
+export type GetReleaseRequestSubmoduleChangeDiffErrors = {
     /**
      * Not Authorized
      */
@@ -4546,16 +4589,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesS
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponses = {
+export type GetReleaseRequestSubmoduleChangeDiffResponses = {
     /**
      * OK
      */
     200: CommitFileDiffDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdChangesSubmoduleDiffResponses];
+export type GetReleaseRequestSubmoduleChangeDiffResponse = GetReleaseRequestSubmoduleChangeDiffResponses[keyof GetReleaseRequestSubmoduleChangeDiffResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsData = {
+export type ListReleaseRequestCommitsData = {
     body?: never;
     path: {
         repoId: string;
@@ -4565,7 +4608,7 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsD
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/commits';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsErrors = {
+export type ListReleaseRequestCommitsErrors = {
     /**
      * Not Authorized
      */
@@ -4576,16 +4619,16 @@ export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsE
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponses = {
+export type ListReleaseRequestCommitsResponses = {
     /**
      * OK
      */
     200: ReleaseRequestCommitsDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponse = GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponses[keyof GetProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdCommitsResponses];
+export type ListReleaseRequestCommitsResponse = ListReleaseRequestCommitsResponses[keyof ListReleaseRequestCommitsResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineData = {
+export type DeclineReleaseRequestData = {
     body: DeclineReleaseRequest;
     path: {
         repoId: string;
@@ -4595,7 +4638,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDecline
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/decline';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineErrors = {
+export type DeclineReleaseRequestErrors = {
     /**
      * Bad Request
      */
@@ -4610,16 +4653,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDecline
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponses = {
+export type DeclineReleaseRequestResponses = {
     /**
      * OK
      */
     200: Response19;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdDeclineResponses];
+export type DeclineReleaseRequestResponse = DeclineReleaseRequestResponses[keyof DeclineReleaseRequestResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunData = {
+export type RerunReleasePipelinePhaseData = {
     body?: never;
     path: {
         phase: string;
@@ -4630,7 +4673,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelin
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/pipeline/{phase}/rerun';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunErrors = {
+export type RerunReleasePipelinePhaseErrors = {
     /**
      * Not Authorized
      */
@@ -4641,16 +4684,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelin
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponses = {
+export type RerunReleasePipelinePhaseResponses = {
     /**
      * OK
      */
     200: Response16;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdPipelineByPhaseRerunResponses];
+export type RerunReleasePipelinePhaseResponse = RerunReleasePipelinePhaseResponses[keyof RerunReleasePipelinePhaseResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesData = {
+export type AddReleaseRequestSourceData = {
     body: AddReleaseRequestSource;
     path: {
         repoId: string;
@@ -4660,7 +4703,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSources
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/sources';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesErrors = {
+export type AddReleaseRequestSourceErrors = {
     /**
      * Bad Request
      */
@@ -4675,16 +4718,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSources
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponses = {
+export type AddReleaseRequestSourceResponses = {
     /**
      * OK
      */
     200: Response23;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesResponses];
+export type AddReleaseRequestSourceResponse = AddReleaseRequestSourceResponses[keyof AddReleaseRequestSourceResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityData = {
+export type SetReleaseSourcePriorityData = {
     body: SetReleaseSourcePriority;
     path: {
         repoId: string;
@@ -4694,7 +4737,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSources
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/sources/priority';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityErrors = {
+export type SetReleaseSourcePriorityErrors = {
     /**
      * Bad Request
      */
@@ -4709,16 +4752,16 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSources
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponses = {
+export type SetReleaseSourcePriorityResponses = {
     /**
      * OK
      */
     200: Response15;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdSourcesPriorityResponses];
+export type SetReleaseSourcePriorityResponse = SetReleaseSourcePriorityResponses[keyof SetReleaseSourcePriorityResponses];
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawData = {
+export type WithdrawReleaseRequestData = {
     body: WithdrawReleaseRequest;
     path: {
         repoId: string;
@@ -4728,7 +4771,7 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdra
     url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/withdraw';
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawErrors = {
+export type WithdrawReleaseRequestErrors = {
     /**
      * Bad Request
      */
@@ -4743,14 +4786,14 @@ export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdra
     403: unknown;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponses = {
+export type WithdrawReleaseRequestResponses = {
     /**
      * OK
      */
     200: Response13;
 };
 
-export type PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponse = PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponses[keyof PostProjectsApiRepositoriesByRepoIdReleaseRequestsByRequestIdWithdrawResponses];
+export type WithdrawReleaseRequestResponse = WithdrawReleaseRequestResponses[keyof WithdrawReleaseRequestResponses];
 
 export type PostProjectsApiRepositoriesByRepoIdSyncData = {
     body?: never;
