@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CreateWorkspaceData, CreateWorkspaceResponse, DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse, DeleteWorkspacesApiWorkspacesByIdPromptDraftData, DeleteWorkspacesApiWorkspacesByIdPromptDraftResponse, DispatchAgentData, DispatchAgentResponse, EnsureEditorData, GetWorkspacesApiAgentDispatchesReferencesData, GetWorkspacesApiAgentDispatchesReferencesResponse, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptData, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponse, GetWorkspacesApiHistoryByIdAgentSessionsData, GetWorkspacesApiHistoryByIdAgentSessionsResponse, GetWorkspacesApiHistoryByIdData, GetWorkspacesApiHistoryByIdResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, GetWorkspacesApiPinsData, GetWorkspacesApiPinsResponse, GetWorkspacesApiServiceEventsData, GetWorkspacesApiServiceEventsResponse, GetWorkspacesApiWorkspacesByIdActiveProcessData, GetWorkspacesApiWorkspacesByIdActiveProcessResponse, GetWorkspacesApiWorkspacesByIdBootstrapRunsData, GetWorkspacesApiWorkspacesByIdBootstrapRunsResponse, GetWorkspacesApiWorkspacesByIdData, GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiWorkspacesByIdPromptAttachmentsData, GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponse, GetWorkspacesApiWorkspacesByIdPromptDraftData, GetWorkspacesApiWorkspacesByIdPromptDraftResponse, GetWorkspacesApiWorkspacesByIdResponse, GetWorkspacesApiWorkspacesData, GetWorkspacesApiWorkspacesResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, MergeWorkspaceData, MergeWorkspaceResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PostWorkspacesApiAgentDispatchesBlockedData, PostWorkspacesApiAgentDispatchesBlockedResponse, PostWorkspacesApiAgentDispatchesDeliveryData, PostWorkspacesApiAgentDispatchesDeliveryResponse, PostWorkspacesApiAgentDispatchesEntityData, PostWorkspacesApiAgentDispatchesEntityResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PostWorkspacesApiBranchesResolutionData, PostWorkspacesApiBranchesResolutionResponse, PostWorkspacesApiGcBranchesData, PostWorkspacesApiGcBranchesResponse, PostWorkspacesApiWorkspacesByIdDeleteContainerData, PostWorkspacesApiWorkspacesByIdDeleteContainerResponse, PostWorkspacesApiWorkspacesByIdDiscardData, PostWorkspacesApiWorkspacesByIdDiscardResponse, PostWorkspacesApiWorkspacesByIdEnsureContainerData, PostWorkspacesApiWorkspacesByIdEnsureContainerResponse, PostWorkspacesApiWorkspacesByIdIntegrateData, PostWorkspacesApiWorkspacesByIdIntegrateResponse, PostWorkspacesApiWorkspacesByIdPromptAttachmentsData, PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponse, PostWorkspacesApiWorkspacesByIdRecreateContainerData, PostWorkspacesApiWorkspacesByIdRecreateContainerResponse, PostWorkspacesApiWorkspacesByIdStopContainerData, PostWorkspacesApiWorkspacesByIdStopContainerResponse, PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse, PutWorkspacesApiWorkspacesByIdPromptDraftData, PutWorkspacesApiWorkspacesByIdPromptDraftResponse } from '../types.gen';
+import type { CreateAgentData, CreateAgentResponse, CreateRunnerData, CreateRunnerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeleteWorkspacesApiAgentsByIdPromptDraftData, DeleteWorkspacesApiAgentsByIdPromptDraftResponse, DeleteWorkspacesApiRunnersByIdData, DeleteWorkspacesApiRunnersByIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DispatchAgentData, DispatchAgentResponse, GetAgentData, GetAgentResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiAgentsByIdPromptDraftData, GetWorkspacesApiAgentsByIdPromptDraftResponse, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptData, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponse, GetWorkspacesApiHistoryByIdAgentSessionsData, GetWorkspacesApiHistoryByIdAgentSessionsResponse, GetWorkspacesApiHistoryByIdData, GetWorkspacesApiHistoryByIdResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, GetWorkspacesApiRunnersByIdData, GetWorkspacesApiRunnersByIdHealthData, GetWorkspacesApiRunnersByIdHealthResponse, GetWorkspacesApiRunnersByIdResponse, GetWorkspacesApiRunnersInstallShData, GetWorkspacesApiRunnersInstallShResponse, GetWorkspacesApiWorkspacesByIdActiveProcessData, GetWorkspacesApiWorkspacesByIdActiveProcessResponse, GetWorkspacesApiWorkspacesByIdData, GetWorkspacesApiWorkspacesByIdResponse, GetWorkspacesApiWorkspacesData, GetWorkspacesApiWorkspacesResponse, GreenlightRunnerData, GreenlightRunnerResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListRunnersData, ListRunnersResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PatchWorkspacesApiRunnersByIdData, PatchWorkspacesApiRunnersByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PostWorkspacesApiRunnersByIdHealthcheckData, PostWorkspacesApiRunnersByIdHealthcheckResponse, PostWorkspacesApiRunnersByIdLoginCheckData, PostWorkspacesApiRunnersByIdRegisterData, PostWorkspacesApiRunnersByIdRegisterResponse, PostWorkspacesApiWorkspacesByIdDeleteContainerData, PostWorkspacesApiWorkspacesByIdDeleteContainerResponse, PostWorkspacesApiWorkspacesByIdDiscardData, PostWorkspacesApiWorkspacesByIdDiscardResponse, PostWorkspacesApiWorkspacesByIdEnsureContainerData, PostWorkspacesApiWorkspacesByIdEnsureContainerResponse, PostWorkspacesApiWorkspacesByIdRecreateContainerData, PostWorkspacesApiWorkspacesByIdRecreateContainerResponse, PostWorkspacesApiWorkspacesByIdStopContainerData, PostWorkspacesApiWorkspacesByIdStopContainerResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, PutWorkspacesApiAgentsByIdPromptDraftData, PutWorkspacesApiAgentsByIdPromptDraftResponse, ResolveReleasedBranchData, ResolveReleasedBranchResponse, RotateRunnerRegistrationTokenData, RotateRunnerRegistrationTokenResponse, SweepBranchesData, SweepBranchesResponse } from '../types.gen';
 
 /**
  * Dispatch
@@ -19,7 +19,7 @@ export const dispatchAgentRequest = <ThrowOnError extends boolean = false>(optio
 /**
  * Blocked
  */
-export const postWorkspacesApiAgentDispatchesBlockedRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiAgentDispatchesBlockedData, ThrowOnError>): HttpRequest<PostWorkspacesApiAgentDispatchesBlockedResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiAgentDispatchesBlockedResponse, ThrowOnError>({
+export const markAgentDispatchBlockedRequest = <ThrowOnError extends boolean = false>(options: Options<MarkAgentDispatchBlockedData, ThrowOnError>): HttpRequest<MarkAgentDispatchBlockedResponse> => (options?.client ?? client).requestOptions<MarkAgentDispatchBlockedResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/agent-dispatches/blocked',
@@ -29,7 +29,7 @@ export const postWorkspacesApiAgentDispatchesBlockedRequest = <ThrowOnError exte
 /**
  * Deliver
  */
-export const postWorkspacesApiAgentDispatchesDeliveryRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiAgentDispatchesDeliveryData, ThrowOnError>): HttpRequest<PostWorkspacesApiAgentDispatchesDeliveryResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiAgentDispatchesDeliveryResponse, ThrowOnError>({
+export const deliverAgentTurnRequest = <ThrowOnError extends boolean = false>(options: Options<DeliverAgentTurnData, ThrowOnError>): HttpRequest<DeliverAgentTurnResponse> => (options?.client ?? client).requestOptions<DeliverAgentTurnResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/agent-dispatches/delivery',
@@ -39,7 +39,7 @@ export const postWorkspacesApiAgentDispatchesDeliveryRequest = <ThrowOnError ext
 /**
  * Entity
  */
-export const postWorkspacesApiAgentDispatchesEntityRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiAgentDispatchesEntityData, ThrowOnError>): HttpRequest<PostWorkspacesApiAgentDispatchesEntityResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiAgentDispatchesEntityResponse, ThrowOnError>({
+export const markAgentDispatchEntityRequest = <ThrowOnError extends boolean = false>(options: Options<MarkAgentDispatchEntityData, ThrowOnError>): HttpRequest<MarkAgentDispatchEntityResponse> => (options?.client ?? client).requestOptions<MarkAgentDispatchEntityResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/agent-dispatches/entity',
@@ -49,10 +49,130 @@ export const postWorkspacesApiAgentDispatchesEntityRequest = <ThrowOnError exten
 /**
  * References
  */
-export const getWorkspacesApiAgentDispatchesReferencesRequest = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiAgentDispatchesReferencesData, ThrowOnError>): HttpRequest<GetWorkspacesApiAgentDispatchesReferencesResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiAgentDispatchesReferencesResponse, ThrowOnError>({
+export const listAgentDispatchReferencesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListAgentDispatchReferencesData, ThrowOnError>): HttpRequest<ListAgentDispatchReferencesResponse> => (options?.client ?? client).requestOptions<ListAgentDispatchReferencesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/workspaces/api/agent-dispatches/references',
+    ...options
+});
+
+/**
+ * Agents, newest first, each filter optional
+ */
+export const listAgentsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListAgentsData, ThrowOnError>): HttpRequest<ListAgentsResponse> => (options?.client ?? client).requestOptions<ListAgentsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents',
+    ...options
+});
+
+/**
+ * Create
+ */
+export const createAgentRequest = <ThrowOnError extends boolean = false>(options: Options<CreateAgentData, ThrowOnError>): HttpRequest<CreateAgentResponse> => (options?.client ?? client).requestOptions<CreateAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents',
+    ...options
+});
+
+/**
+ * Get
+ */
+export const getAgentRequest = <ThrowOnError extends boolean = false>(options: Options<GetAgentData, ThrowOnError>): HttpRequest<GetAgentResponse> => (options?.client ?? client).requestOptions<GetAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}',
+    ...options
+});
+
+/**
+ * Discard
+ */
+export const discardAgentRequest = <ThrowOnError extends boolean = false>(options: Options<DiscardAgentData, ThrowOnError>): HttpRequest<DiscardAgentResponse> => (options?.client ?? client).requestOptions<DiscardAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/discard',
+    ...options
+});
+
+/**
+ * List
+ */
+export const getWorkspacesApiAgentsByIdPromptAttachmentsRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiAgentsByIdPromptAttachmentsData, ThrowOnError>): HttpRequest<GetWorkspacesApiAgentsByIdPromptAttachmentsResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}/prompt-attachments',
+    ...options
+});
+
+/**
+ * Add
+ */
+export const postWorkspacesApiAgentsByIdPromptAttachmentsRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiAgentsByIdPromptAttachmentsData, ThrowOnError>): HttpRequest<PostWorkspacesApiAgentsByIdPromptAttachmentsResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/prompt-attachments',
+    ...options
+});
+
+/**
+ * Delete
+ */
+export const deleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, ThrowOnError>): HttpRequest<DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse> => (options?.client ?? client).requestOptions<DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/workspaces/api/agents/{id}/prompt-attachments/{attachmentId}',
+    ...options
+});
+
+/**
+ * Update
+ */
+export const putWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdRequest = <ThrowOnError extends boolean = false>(options: Options<PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, ThrowOnError>): HttpRequest<PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse> => (options?.client ?? client).requestOptions<PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/workspaces/api/agents/{id}/prompt-attachments/{attachmentId}',
+    ...options
+});
+
+/**
+ * Content
+ */
+export const getWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}/prompt-attachments/{attachmentId}/content',
+    ...options
+});
+
+/**
+ * Delete
+ */
+export const deleteWorkspacesApiAgentsByIdPromptDraftRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspacesApiAgentsByIdPromptDraftData, ThrowOnError>): HttpRequest<DeleteWorkspacesApiAgentsByIdPromptDraftResponse> => (options?.client ?? client).requestOptions<DeleteWorkspacesApiAgentsByIdPromptDraftResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/workspaces/api/agents/{id}/prompt-draft',
+    ...options
+});
+
+/**
+ * Get
+ */
+export const getWorkspacesApiAgentsByIdPromptDraftRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiAgentsByIdPromptDraftData, ThrowOnError>): HttpRequest<GetWorkspacesApiAgentsByIdPromptDraftResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiAgentsByIdPromptDraftResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}/prompt-draft',
+    ...options
+});
+
+/**
+ * Save
+ */
+export const putWorkspacesApiAgentsByIdPromptDraftRequest = <ThrowOnError extends boolean = false>(options: Options<PutWorkspacesApiAgentsByIdPromptDraftData, ThrowOnError>): HttpRequest<PutWorkspacesApiAgentsByIdPromptDraftResponse> => (options?.client ?? client).requestOptions<PutWorkspacesApiAgentsByIdPromptDraftResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/workspaces/api/agents/{id}/prompt-draft',
     ...options
 });
 
@@ -79,7 +199,7 @@ export const postWorkspacesApiBranchesMergeRequest = <ThrowOnError extends boole
 /**
  * Resolve Released Branch
  */
-export const postWorkspacesApiBranchesResolutionRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiBranchesResolutionData, ThrowOnError>): HttpRequest<PostWorkspacesApiBranchesResolutionResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiBranchesResolutionResponse, ThrowOnError>({
+export const resolveReleasedBranchRequest = <ThrowOnError extends boolean = false>(options: Options<ResolveReleasedBranchData, ThrowOnError>): HttpRequest<ResolveReleasedBranchResponse> => (options?.client ?? client).requestOptions<ResolveReleasedBranchResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/branches/resolution',
@@ -87,19 +207,9 @@ export const postWorkspacesApiBranchesResolutionRequest = <ThrowOnError extends 
 });
 
 /**
- * Ensure
- */
-export const ensureEditorRequest = <ThrowOnError extends boolean = false>(options?: Options<EnsureEditorData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/editor/ensure',
-    ...options
-});
-
-/**
  * Sweep Branches
  */
-export const postWorkspacesApiGcBranchesRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiGcBranchesData, ThrowOnError>): HttpRequest<PostWorkspacesApiGcBranchesResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiGcBranchesResponse, ThrowOnError>({
+export const sweepBranchesRequest = <ThrowOnError extends boolean = false>(options: Options<SweepBranchesData, ThrowOnError>): HttpRequest<SweepBranchesResponse> => (options?.client ?? client).requestOptions<SweepBranchesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/gc/branches',
@@ -159,7 +269,7 @@ export const getWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptReques
 /**
  * The container images a launch by this service would pull right now
  */
-export const getWorkspacesApiPinsRequest = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiPinsData, ThrowOnError>): HttpRequest<GetWorkspacesApiPinsResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiPinsResponse, ThrowOnError>({
+export const listLaunchPinsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListLaunchPinsData, ThrowOnError>): HttpRequest<ListLaunchPinsResponse> => (options?.client ?? client).requestOptions<ListLaunchPinsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/workspaces/api/pins',
@@ -167,12 +277,122 @@ export const getWorkspacesApiPinsRequest = <ThrowOnError extends boolean = false
 });
 
 /**
- * List
+ * Every workspace runner, by name, with its connection, counts and login
  */
-export const getWorkspacesApiServiceEventsRequest = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiServiceEventsData, ThrowOnError>): HttpRequest<GetWorkspacesApiServiceEventsResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiServiceEventsResponse, ThrowOnError>({
+export const listRunnersRequest = <ThrowOnError extends boolean = false>(options?: Options<ListRunnersData, ThrowOnError>): HttpRequest<ListRunnersResponse> => (options?.client ?? client).requestOptions<ListRunnersResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
-    url: '/workspaces/api/service-events',
+    url: '/workspaces/api/runners',
+    ...options
+});
+
+/**
+ * Declare a workspace runner; answers its install line, once
+ */
+export const createRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<CreateRunnerData, ThrowOnError>): HttpRequest<CreateRunnerResponse> => (options?.client ?? client).requestOptions<CreateRunnerResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/runners',
+    ...options
+});
+
+/**
+ * The generic workspace runner install script the install line pipes to sh
+ */
+export const getWorkspacesApiRunnersInstallShRequest = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiRunnersInstallShData, ThrowOnError>): HttpRequest<GetWorkspacesApiRunnersInstallShResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiRunnersInstallShResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/runners/install.sh',
+    ...options
+});
+
+/**
+ * Decommission a workspace runner and give its credentials back
+ */
+export const deleteWorkspacesApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspacesApiRunnersByIdData, ThrowOnError>): HttpRequest<DeleteWorkspacesApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<DeleteWorkspacesApiRunnersByIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/workspaces/api/runners/{id}',
+    ...options
+});
+
+/**
+ * One workspace runner
+ */
+export const getWorkspacesApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiRunnersByIdData, ThrowOnError>): HttpRequest<GetWorkspacesApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiRunnersByIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/runners/{id}',
+    ...options
+});
+
+/**
+ * Change a workspace runner's slots, description or workspace memory limits
+ */
+export const patchWorkspacesApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<PatchWorkspacesApiRunnersByIdData, ThrowOnError>): HttpRequest<PatchWorkspacesApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<PatchWorkspacesApiRunnersByIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PATCH',
+    url: '/workspaces/api/runners/{id}',
+    ...options
+});
+
+/**
+ * Lift a workspace runner's quarantine
+ */
+export const greenlightRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<GreenlightRunnerData, ThrowOnError>): HttpRequest<GreenlightRunnerResponse> => (options?.client ?? client).requestOptions<GreenlightRunnerResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/runners/{id}/greenlight',
+    ...options
+});
+
+/**
+ * A workspace runner's newest health check, every check's data included
+ */
+export const getWorkspacesApiRunnersByIdHealthRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiRunnersByIdHealthData, ThrowOnError>): HttpRequest<GetWorkspacesApiRunnersByIdHealthResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiRunnersByIdHealthResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/runners/{id}/health',
+    ...options
+});
+
+/**
+ * Ask a connected workspace runner for a health check
+ */
+export const postWorkspacesApiRunnersByIdHealthcheckRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiRunnersByIdHealthcheckData, ThrowOnError>): HttpRequest<PostWorkspacesApiRunnersByIdHealthcheckResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiRunnersByIdHealthcheckResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/runners/{id}/healthcheck',
+    ...options
+});
+
+/**
+ * Ask a connected workspace runner to re-check its node's agent login
+ */
+export const postWorkspacesApiRunnersByIdLoginCheckRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiRunnersByIdLoginCheckData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/runners/{id}/login-check',
+    ...options
+});
+
+/**
+ * Register a workspace runner with its registration token; answers its client
+ */
+export const postWorkspacesApiRunnersByIdRegisterRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiRunnersByIdRegisterData, ThrowOnError>): HttpRequest<PostWorkspacesApiRunnersByIdRegisterResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiRunnersByIdRegisterResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/runners/{id}/register',
+    ...options
+});
+
+/**
+ * Replace a workspace runner's registration token; answers a new install line
+ */
+export const rotateRunnerRegistrationTokenRequest = <ThrowOnError extends boolean = false>(options: Options<RotateRunnerRegistrationTokenData, ThrowOnError>): HttpRequest<RotateRunnerRegistrationTokenResponse> => (options?.client ?? client).requestOptions<RotateRunnerRegistrationTokenResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/runners/{id}/registration-token',
     ...options
 });
 
@@ -207,16 +427,6 @@ export const getWorkspacesApiWorkspacesRequest = <ThrowOnError extends boolean =
 });
 
 /**
- * Create
- */
-export const createWorkspaceRequest = <ThrowOnError extends boolean = false>(options: Options<CreateWorkspaceData, ThrowOnError>): HttpRequest<CreateWorkspaceResponse> => (options?.client ?? client).requestOptions<CreateWorkspaceResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/workspaces',
-    ...options
-});
-
-/**
  * Get
  */
 export const getWorkspacesApiWorkspacesByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesByIdResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesByIdResponse, ThrowOnError>({
@@ -233,16 +443,6 @@ export const getWorkspacesApiWorkspacesByIdActiveProcessRequest = <ThrowOnError 
     responseStyle: 'data',
     method: 'GET',
     url: '/workspaces/api/workspaces/{id}/active-process',
-    ...options
-});
-
-/**
- * List
- */
-export const getWorkspacesApiWorkspacesByIdBootstrapRunsRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdBootstrapRunsData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesByIdBootstrapRunsResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesByIdBootstrapRunsResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/workspaces/{id}/bootstrap-runs',
     ...options
 });
 
@@ -277,106 +477,6 @@ export const postWorkspacesApiWorkspacesByIdEnsureContainerRequest = <ThrowOnErr
 });
 
 /**
- * Integrate
- */
-export const postWorkspacesApiWorkspacesByIdIntegrateRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdIntegrateData, ThrowOnError>): HttpRequest<PostWorkspacesApiWorkspacesByIdIntegrateResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiWorkspacesByIdIntegrateResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/workspaces/{id}/integrate',
-    ...options
-});
-
-/**
- * Merge
- */
-export const mergeWorkspaceRequest = <ThrowOnError extends boolean = false>(options: Options<MergeWorkspaceData, ThrowOnError>): HttpRequest<MergeWorkspaceResponse> => (options?.client ?? client).requestOptions<MergeWorkspaceResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/workspaces/{id}/merge',
-    ...options
-});
-
-/**
- * List
- */
-export const getWorkspacesApiWorkspacesByIdPromptAttachmentsRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdPromptAttachmentsData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments',
-    ...options
-});
-
-/**
- * Add
- */
-export const postWorkspacesApiWorkspacesByIdPromptAttachmentsRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdPromptAttachmentsData, ThrowOnError>): HttpRequest<PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments',
-    ...options
-});
-
-/**
- * Delete
- */
-export const deleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData, ThrowOnError>): HttpRequest<DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse> => (options?.client ?? client).requestOptions<DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments/{attachmentId}',
-    ...options
-});
-
-/**
- * Update
- */
-export const putWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdRequest = <ThrowOnError extends boolean = false>(options: Options<PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData, ThrowOnError>): HttpRequest<PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse> => (options?.client ?? client).requestOptions<PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments/{attachmentId}',
-    ...options
-});
-
-/**
- * Content
- */
-export const getWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments/{attachmentId}/content',
-    ...options
-});
-
-/**
- * Delete
- */
-export const deleteWorkspacesApiWorkspacesByIdPromptDraftRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspacesApiWorkspacesByIdPromptDraftData, ThrowOnError>): HttpRequest<DeleteWorkspacesApiWorkspacesByIdPromptDraftResponse> => (options?.client ?? client).requestOptions<DeleteWorkspacesApiWorkspacesByIdPromptDraftResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/workspaces/api/workspaces/{id}/prompt-draft',
-    ...options
-});
-
-/**
- * Get
- */
-export const getWorkspacesApiWorkspacesByIdPromptDraftRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdPromptDraftData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesByIdPromptDraftResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesByIdPromptDraftResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/workspaces/{id}/prompt-draft',
-    ...options
-});
-
-/**
- * Save
- */
-export const putWorkspacesApiWorkspacesByIdPromptDraftRequest = <ThrowOnError extends boolean = false>(options: Options<PutWorkspacesApiWorkspacesByIdPromptDraftData, ThrowOnError>): HttpRequest<PutWorkspacesApiWorkspacesByIdPromptDraftResponse> => (options?.client ?? client).requestOptions<PutWorkspacesApiWorkspacesByIdPromptDraftResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/workspaces/api/workspaces/{id}/prompt-draft',
-    ...options
-});
-
-/**
  * Recreate Container
  */
 export const postWorkspacesApiWorkspacesByIdRecreateContainerRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdRecreateContainerData, ThrowOnError>): HttpRequest<PostWorkspacesApiWorkspacesByIdRecreateContainerResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiWorkspacesByIdRecreateContainerResponse, ThrowOnError>({
@@ -407,33 +507,129 @@ export const dispatchAgentResource = <ThrowOnError extends boolean = false>(opti
 /**
  * Blocked
  */
-export const postWorkspacesApiAgentDispatchesBlockedResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiAgentDispatchesBlockedData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiAgentDispatchesBlockedResponse>(() => {
+export const markAgentDispatchBlockedResource = <ThrowOnError extends boolean = false>(options: () => Options<MarkAgentDispatchBlockedData, ThrowOnError> | undefined) => httpResource<MarkAgentDispatchBlockedResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiAgentDispatchesBlockedRequest(opts) : undefined;
+    return opts ? markAgentDispatchBlockedRequest(opts) : undefined;
 });
 
 /**
  * Deliver
  */
-export const postWorkspacesApiAgentDispatchesDeliveryResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiAgentDispatchesDeliveryData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiAgentDispatchesDeliveryResponse>(() => {
+export const deliverAgentTurnResource = <ThrowOnError extends boolean = false>(options: () => Options<DeliverAgentTurnData, ThrowOnError> | undefined) => httpResource<DeliverAgentTurnResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiAgentDispatchesDeliveryRequest(opts) : undefined;
+    return opts ? deliverAgentTurnRequest(opts) : undefined;
 });
 
 /**
  * Entity
  */
-export const postWorkspacesApiAgentDispatchesEntityResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiAgentDispatchesEntityData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiAgentDispatchesEntityResponse>(() => {
+export const markAgentDispatchEntityResource = <ThrowOnError extends boolean = false>(options: () => Options<MarkAgentDispatchEntityData, ThrowOnError> | undefined) => httpResource<MarkAgentDispatchEntityResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiAgentDispatchesEntityRequest(opts) : undefined;
+    return opts ? markAgentDispatchEntityRequest(opts) : undefined;
 });
 
 /**
  * References
  */
-export const getWorkspacesApiAgentDispatchesReferencesResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetWorkspacesApiAgentDispatchesReferencesData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiAgentDispatchesReferencesResponse>(() => {
+export const listAgentDispatchReferencesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListAgentDispatchReferencesData, ThrowOnError> | undefined) => httpResource<ListAgentDispatchReferencesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiAgentDispatchesReferencesRequest(opts) : undefined;
+    return opts ? listAgentDispatchReferencesRequest(opts) : undefined;
+});
+
+/**
+ * Agents, newest first, each filter optional
+ */
+export const listAgentsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListAgentsData, ThrowOnError> | undefined) => httpResource<ListAgentsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listAgentsRequest(opts) : undefined;
+});
+
+/**
+ * Create
+ */
+export const createAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateAgentData, ThrowOnError> | undefined) => httpResource<CreateAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createAgentRequest(opts) : undefined;
+});
+
+/**
+ * Get
+ */
+export const getAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<GetAgentData, ThrowOnError> | undefined) => httpResource<GetAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getAgentRequest(opts) : undefined;
+});
+
+/**
+ * Discard
+ */
+export const discardAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<DiscardAgentData, ThrowOnError> | undefined) => httpResource<DiscardAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? discardAgentRequest(opts) : undefined;
+});
+
+/**
+ * List
+ */
+export const getWorkspacesApiAgentsByIdPromptAttachmentsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiAgentsByIdPromptAttachmentsData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiAgentsByIdPromptAttachmentsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getWorkspacesApiAgentsByIdPromptAttachmentsRequest(opts) : undefined;
+});
+
+/**
+ * Add
+ */
+export const postWorkspacesApiAgentsByIdPromptAttachmentsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiAgentsByIdPromptAttachmentsData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiAgentsByIdPromptAttachmentsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? postWorkspacesApiAgentsByIdPromptAttachmentsRequest(opts) : undefined;
+});
+
+/**
+ * Delete
+ */
+export const deleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, ThrowOnError> | undefined) => httpResource<DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? deleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdRequest(opts) : undefined;
+});
+
+/**
+ * Update
+ */
+export const putWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, ThrowOnError> | undefined) => httpResource<PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? putWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdRequest(opts) : undefined;
+});
+
+/**
+ * Content
+ */
+export const getWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentRequest(opts) : undefined;
+});
+
+/**
+ * Delete
+ */
+export const deleteWorkspacesApiAgentsByIdPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkspacesApiAgentsByIdPromptDraftData, ThrowOnError> | undefined) => httpResource<DeleteWorkspacesApiAgentsByIdPromptDraftResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? deleteWorkspacesApiAgentsByIdPromptDraftRequest(opts) : undefined;
+});
+
+/**
+ * Get
+ */
+export const getWorkspacesApiAgentsByIdPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiAgentsByIdPromptDraftData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiAgentsByIdPromptDraftResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getWorkspacesApiAgentsByIdPromptDraftRequest(opts) : undefined;
+});
+
+/**
+ * Save
+ */
+export const putWorkspacesApiAgentsByIdPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<PutWorkspacesApiAgentsByIdPromptDraftData, ThrowOnError> | undefined) => httpResource<PutWorkspacesApiAgentsByIdPromptDraftResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? putWorkspacesApiAgentsByIdPromptDraftRequest(opts) : undefined;
 });
 
 /**
@@ -455,25 +651,17 @@ export const postWorkspacesApiBranchesMergeResource = <ThrowOnError extends bool
 /**
  * Resolve Released Branch
  */
-export const postWorkspacesApiBranchesResolutionResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiBranchesResolutionData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiBranchesResolutionResponse>(() => {
+export const resolveReleasedBranchResource = <ThrowOnError extends boolean = false>(options: () => Options<ResolveReleasedBranchData, ThrowOnError> | undefined) => httpResource<ResolveReleasedBranchResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiBranchesResolutionRequest(opts) : undefined;
-});
-
-/**
- * Ensure
- */
-export const ensureEditorResource = <ThrowOnError extends boolean = false>(options?: () => Options<EnsureEditorData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? ensureEditorRequest(opts) : undefined;
+    return opts ? resolveReleasedBranchRequest(opts) : undefined;
 });
 
 /**
  * Sweep Branches
  */
-export const postWorkspacesApiGcBranchesResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiGcBranchesData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiGcBranchesResponse>(() => {
+export const sweepBranchesResource = <ThrowOnError extends boolean = false>(options: () => Options<SweepBranchesData, ThrowOnError> | undefined) => httpResource<SweepBranchesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiGcBranchesRequest(opts) : undefined;
+    return opts ? sweepBranchesRequest(opts) : undefined;
 });
 
 /**
@@ -519,17 +707,105 @@ export const getWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResour
 /**
  * The container images a launch by this service would pull right now
  */
-export const getWorkspacesApiPinsResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetWorkspacesApiPinsData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiPinsResponse>(() => {
+export const listLaunchPinsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListLaunchPinsData, ThrowOnError> | undefined) => httpResource<ListLaunchPinsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiPinsRequest(opts) : undefined;
+    return opts ? listLaunchPinsRequest(opts) : undefined;
 });
 
 /**
- * List
+ * Every workspace runner, by name, with its connection, counts and login
  */
-export const getWorkspacesApiServiceEventsResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetWorkspacesApiServiceEventsData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiServiceEventsResponse>(() => {
+export const listRunnersResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListRunnersData, ThrowOnError> | undefined) => httpResource<ListRunnersResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiServiceEventsRequest(opts) : undefined;
+    return opts ? listRunnersRequest(opts) : undefined;
+});
+
+/**
+ * Declare a workspace runner; answers its install line, once
+ */
+export const createRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateRunnerData, ThrowOnError> | undefined) => httpResource<CreateRunnerResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createRunnerRequest(opts) : undefined;
+});
+
+/**
+ * The generic workspace runner install script the install line pipes to sh
+ */
+export const getWorkspacesApiRunnersInstallShResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetWorkspacesApiRunnersInstallShData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiRunnersInstallShResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getWorkspacesApiRunnersInstallShRequest(opts) : undefined;
+});
+
+/**
+ * Decommission a workspace runner and give its credentials back
+ */
+export const deleteWorkspacesApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkspacesApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<DeleteWorkspacesApiRunnersByIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? deleteWorkspacesApiRunnersByIdRequest(opts) : undefined;
+});
+
+/**
+ * One workspace runner
+ */
+export const getWorkspacesApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiRunnersByIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getWorkspacesApiRunnersByIdRequest(opts) : undefined;
+});
+
+/**
+ * Change a workspace runner's slots, description or workspace memory limits
+ */
+export const patchWorkspacesApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchWorkspacesApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<PatchWorkspacesApiRunnersByIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? patchWorkspacesApiRunnersByIdRequest(opts) : undefined;
+});
+
+/**
+ * Lift a workspace runner's quarantine
+ */
+export const greenlightRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<GreenlightRunnerData, ThrowOnError> | undefined) => httpResource<GreenlightRunnerResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? greenlightRunnerRequest(opts) : undefined;
+});
+
+/**
+ * A workspace runner's newest health check, every check's data included
+ */
+export const getWorkspacesApiRunnersByIdHealthResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiRunnersByIdHealthData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiRunnersByIdHealthResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getWorkspacesApiRunnersByIdHealthRequest(opts) : undefined;
+});
+
+/**
+ * Ask a connected workspace runner for a health check
+ */
+export const postWorkspacesApiRunnersByIdHealthcheckResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiRunnersByIdHealthcheckData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiRunnersByIdHealthcheckResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? postWorkspacesApiRunnersByIdHealthcheckRequest(opts) : undefined;
+});
+
+/**
+ * Ask a connected workspace runner to re-check its node's agent login
+ */
+export const postWorkspacesApiRunnersByIdLoginCheckResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiRunnersByIdLoginCheckData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? postWorkspacesApiRunnersByIdLoginCheckRequest(opts) : undefined;
+});
+
+/**
+ * Register a workspace runner with its registration token; answers its client
+ */
+export const postWorkspacesApiRunnersByIdRegisterResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiRunnersByIdRegisterData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiRunnersByIdRegisterResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? postWorkspacesApiRunnersByIdRegisterRequest(opts) : undefined;
+});
+
+/**
+ * Replace a workspace runner's registration token; answers a new install line
+ */
+export const rotateRunnerRegistrationTokenResource = <ThrowOnError extends boolean = false>(options: () => Options<RotateRunnerRegistrationTokenData, ThrowOnError> | undefined) => httpResource<RotateRunnerRegistrationTokenResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? rotateRunnerRegistrationTokenRequest(opts) : undefined;
 });
 
 /**
@@ -557,14 +833,6 @@ export const getWorkspacesApiWorkspacesResource = <ThrowOnError extends boolean 
 });
 
 /**
- * Create
- */
-export const createWorkspaceResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateWorkspaceData, ThrowOnError> | undefined) => httpResource<CreateWorkspaceResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? createWorkspaceRequest(opts) : undefined;
-});
-
-/**
  * Get
  */
 export const getWorkspacesApiWorkspacesByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdResponse>(() => {
@@ -578,14 +846,6 @@ export const getWorkspacesApiWorkspacesByIdResource = <ThrowOnError extends bool
 export const getWorkspacesApiWorkspacesByIdActiveProcessResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdActiveProcessData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdActiveProcessResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? getWorkspacesApiWorkspacesByIdActiveProcessRequest(opts) : undefined;
-});
-
-/**
- * List
- */
-export const getWorkspacesApiWorkspacesByIdBootstrapRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdBootstrapRunsData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdBootstrapRunsResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesByIdBootstrapRunsRequest(opts) : undefined;
 });
 
 /**
@@ -610,86 +870,6 @@ export const postWorkspacesApiWorkspacesByIdDiscardResource = <ThrowOnError exte
 export const postWorkspacesApiWorkspacesByIdEnsureContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiWorkspacesByIdEnsureContainerData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiWorkspacesByIdEnsureContainerResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? postWorkspacesApiWorkspacesByIdEnsureContainerRequest(opts) : undefined;
-});
-
-/**
- * Integrate
- */
-export const postWorkspacesApiWorkspacesByIdIntegrateResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiWorkspacesByIdIntegrateData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiWorkspacesByIdIntegrateResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiWorkspacesByIdIntegrateRequest(opts) : undefined;
-});
-
-/**
- * Merge
- */
-export const mergeWorkspaceResource = <ThrowOnError extends boolean = false>(options: () => Options<MergeWorkspaceData, ThrowOnError> | undefined) => httpResource<MergeWorkspaceResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? mergeWorkspaceRequest(opts) : undefined;
-});
-
-/**
- * List
- */
-export const getWorkspacesApiWorkspacesByIdPromptAttachmentsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdPromptAttachmentsData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesByIdPromptAttachmentsRequest(opts) : undefined;
-});
-
-/**
- * Add
- */
-export const postWorkspacesApiWorkspacesByIdPromptAttachmentsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiWorkspacesByIdPromptAttachmentsData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiWorkspacesByIdPromptAttachmentsRequest(opts) : undefined;
-});
-
-/**
- * Delete
- */
-export const deleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData, ThrowOnError> | undefined) => httpResource<DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? deleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdRequest(opts) : undefined;
-});
-
-/**
- * Update
- */
-export const putWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData, ThrowOnError> | undefined) => httpResource<PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? putWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdRequest(opts) : undefined;
-});
-
-/**
- * Content
- */
-export const getWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentRequest(opts) : undefined;
-});
-
-/**
- * Delete
- */
-export const deleteWorkspacesApiWorkspacesByIdPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkspacesApiWorkspacesByIdPromptDraftData, ThrowOnError> | undefined) => httpResource<DeleteWorkspacesApiWorkspacesByIdPromptDraftResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? deleteWorkspacesApiWorkspacesByIdPromptDraftRequest(opts) : undefined;
-});
-
-/**
- * Get
- */
-export const getWorkspacesApiWorkspacesByIdPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdPromptDraftData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdPromptDraftResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesByIdPromptDraftRequest(opts) : undefined;
-});
-
-/**
- * Save
- */
-export const putWorkspacesApiWorkspacesByIdPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<PutWorkspacesApiWorkspacesByIdPromptDraftData, ThrowOnError> | undefined) => httpResource<PutWorkspacesApiWorkspacesByIdPromptDraftResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? putWorkspacesApiWorkspacesByIdPromptDraftRequest(opts) : undefined;
 });
 
 /**

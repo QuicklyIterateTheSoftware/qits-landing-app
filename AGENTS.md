@@ -57,7 +57,7 @@ Where each platform application answers comes from code, not from the network: i
 - `api(app)`: the origin of calls, the event stream and the idp's sign-in pages. `app.config.ts`
   gives each generated client its `baseUrl` from it, synchronously, and, deployed,
   `credentials: 'include'` when it is cross-origin.
-- `page(app)`: the origin of an application opened as its own page (the Editor frame, a link).
+- `page(app)`: the origin of an application opened as its own page (a link).
 
 Deployed, both are `https://<label>.<this page's hostname>` (the app lives at the apex); on the
 server both are `''`, and the server calls nothing. Under `ng serve` (`environment.development.ts`,

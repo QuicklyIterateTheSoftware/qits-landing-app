@@ -13,10 +13,42 @@ export type AddAttachmentRequest = {
 
 export type AgentActivityState = 'IDLE' | 'BUSY' | 'WAITING' | 'ENDED';
 
-export type AgentLaunch = 'SCHEDULED' | 'SKIPPED_RUNNING';
+export type AgentDto = {
+    agentId?: string;
+    workspaceRowId?: number;
+    repositoryId?: string;
+    workId?: string;
+    entityId?: string;
+    ticketId?: string;
+    epicId?: string;
+    wrapperBranch?: string;
+    branches?: Array<Branch>;
+    state?: AgentState;
+    runState?: AgentRunState;
+    admin?: boolean;
+    harness?: AgentHarness;
+    sessionId?: string;
+    entityTitle?: string;
+    entityStatus?: string;
+    entityBlocked?: boolean;
+    activity?: AgentActivityState;
+    waitingSince?: Instant;
+    lastActivityAt?: Instant;
+    createdAt?: Instant;
+    obsoleteAt?: Instant;
+    removedAt?: Instant;
+};
+
+export type AgentHarness = 'CLAUDE' | 'KIMI';
+
+export type AgentLaunch = 'SCHEDULED' | 'SKIPPED_RUNNING' | 'QUEUED';
+
+export type AgentRunState = 'QUEUED' | 'RUNNING' | 'YIELDED';
+
+export type AgentState = 'ACTIVE' | 'OBSOLETE' | 'REMOVED';
 
 /**
- * The error envelope: a message, plus a reason on a 409.
+ * The error envelope: a message, plus a reason or a code on a 409.
  */
 export type ApiError = {
     /**
@@ -31,6 +63,18 @@ export type ApiError = {
      * The conflicted paths. Present only for CONFLICT and MERGE_CONFLICT.
      */
     conflicts?: Array<string>;
+    /**
+     * The refusal's own name, where it has one (e.g. RUNNER_OWNS_WORKSPACES). Absent otherwise.
+     */
+    code?: string;
+    /**
+     * The ACTIVE workspace row ids a runner still owns. Present only with RUNNER_OWNS_WORKSPACES.
+     */
+    workspaceIds?: Array<number>;
+    /**
+     * The ACTIVE workspaces a runner still owns, each with its repository and branch so a client can link it. Present only with RUNNER_OWNS_WORKSPACES.
+     */
+    workspaces?: Array<RunnerOwnedWorkspace>;
 };
 
 export type ArchivedSessionDto = {
@@ -48,25 +92,11 @@ export type ArchivedSubagentDto = {
     messageCount?: number;
 };
 
-export type BlockedMark = {
-    workspaceId?: number;
-    applied?: boolean;
-};
-
-export type BootstrapOutcome = 'SKIPPED' | 'SUCCEEDED' | 'FAILED';
-
-export type BootstrapRunDto = {
-    bootstrapCommandId?: string;
-    commandName?: string;
-    outcome?: BootstrapOutcome;
-    commandId?: string;
-    exitCode?: number;
-    ranAt?: Instant;
-};
-
-export type BranchResolution = {
-    resolved?: boolean;
-    workspaceId?: number;
+export type Branch = {
+    repositoryId?: string;
+    branch?: string;
+    sha?: string;
+    pushedAt?: Instant;
 };
 
 export type BranchSweepReport = {
@@ -77,35 +107,74 @@ export type BranchSweepReport = {
     errors?: Array<SweepError>;
 };
 
+export type Check = {
+    name?: string;
+    ok?: boolean;
+    detail?: string;
+};
+
+export type CheckReport = {
+    name?: string;
+    ok?: boolean;
+    detail?: string;
+    data?: JsonNode;
+};
+
 export type CleanupBranchRequest = {
     branch: string;
     result?: string;
 };
 
-export type CreateWorkspaceRequest = {
+export type CreateAgentRequest = {
     repositoryId: string;
-    id: string;
-    parent?: string;
-    branch?: string;
-    preamble?: string;
-    adoptExisting?: boolean;
-    branchTree?: boolean;
+    workId: string;
+    entityId?: string;
+    kind?: string;
+    wrapperBranch?: string;
     admin?: boolean;
+    harness?: AgentHarness;
+    instruction?: string;
+};
+
+export type CreateRunnerRequest = {
+    /**
+     * [a-z][a-z0-9-]{0,63}, unique
+     */
+    name: string;
+    /**
+     * Free text, at most 1024 characters
+     */
+    description?: string;
+    /**
+     * How many workspaces it may run at once; 0 drains it. Default 1
+     */
+    slots?: number;
+    /**
+     * The --memory its workspace containers get, a docker size: digits and an optional unit b, k, m or g (e.g. 12g), at least 6m. Absent or blank is the platform default
+     */
+    workspaceMemoryLimit?: string;
+    /**
+     * Their --memory-swap: memory plus swap, the same grammar and at least workspaceMemoryLimit, which it needs; or -1 for unlimited swap. Absent or blank is workspaceMemoryLimit when that is set (no swap), else the platform default
+     */
+    workspaceMemorySwapLimit?: string;
 };
 
 export type DeliverTurnRequest = {
-    repositoryId: string;
-    branch: string;
+    workId: string;
     text: string;
     compactFirst?: boolean;
-    workId?: string;
 };
 
 export type Delivery = {
-    workspaceId?: number;
+    agentId?: string;
     delivered?: boolean;
     launched?: boolean;
+    resumed?: boolean;
     detail?: string;
+};
+
+export type DiscardAgentRequest = {
+    force?: boolean;
 };
 
 export type DiscardWorkspaceRequest = {
@@ -113,30 +182,34 @@ export type DiscardWorkspaceRequest = {
 };
 
 export type Dispatch = {
-    workspace?: WorkspaceDto;
+    agent?: AgentDto;
     fresh?: boolean;
     agentLaunch?: AgentLaunch;
-    technicalProcessId?: string;
+    agentIdentity?: string;
 };
 
 export type DispatchAgentRequest = {
     repositoryId: string;
-    branch: string;
-    branchTree?: boolean;
-    preamble?: string;
-    ticketId?: string;
-    epicId?: string;
+    wrapperBranch: string;
+    workId: string;
     entityId?: string;
     entityTitle?: string;
     entityStatus?: string;
     entityBlocked?: boolean;
+    ticketId?: string;
+    epicId?: string;
+    admin?: boolean;
+    harness?: AgentHarness;
     instruction?: string;
-    gitRefs?: Array<string>;
-    workId?: string;
+};
+
+export type EntityMark = {
+    agentId?: string;
+    applied?: boolean;
 };
 
 export type Entry = {
-    workspace?: WorkspaceSubjectRefDto;
+    agent?: AgentDto;
 };
 
 export type Entry1 = {
@@ -147,11 +220,45 @@ export type Entry2 = {
     workspace?: WorkspaceHistoryDto;
 };
 
+export type Health = {
+    at?: Instant;
+    ok?: boolean;
+    detail?: string;
+    checks?: Array<Check>;
+};
+
+export type HealthCheckRequested = {
+    requestId?: string;
+};
+
 export type Instant = string;
 
-export type IntegrateRequest = {
-    summary: string;
+export type JsonNode = {
+    empty?: boolean;
+    valueNode?: boolean;
+    containerNode?: boolean;
+    missingNode?: boolean;
+    array?: boolean;
+    object?: boolean;
+    nodeType?: JsonNodeType;
+    pojo?: boolean;
+    number?: boolean;
+    integralNumber?: boolean;
+    floatingPointNumber?: boolean;
+    short?: boolean;
+    int?: boolean;
+    long?: boolean;
+    float?: boolean;
+    double?: boolean;
+    bigDecimal?: boolean;
+    bigInteger?: boolean;
+    textual?: boolean;
+    boolean?: boolean;
+    null?: boolean;
+    binary?: boolean;
 };
+
+export type JsonNodeType = 'ARRAY' | 'BINARY' | 'BOOLEAN' | 'MISSING' | 'NULL' | 'NUMBER' | 'OBJECT' | 'POJO' | 'STRING';
 
 export type LaunchPin = {
     image?: string;
@@ -164,20 +271,24 @@ export type LaunchPins = {
     pins?: Array<LaunchPin>;
 };
 
+export type Login = {
+    claude?: string;
+    kimi?: string;
+    checkedAt?: Instant;
+};
+
 export type MarkBlockedRequest = {
-    repositoryId: string;
-    branch: string;
+    workId: string;
     blocked?: boolean;
-    workId?: string;
+    blockSource?: string;
 };
 
 export type MarkEntityRequest = {
-    repositoryId: string;
-    branch: string;
+    workId: string;
     title?: string;
     status?: string;
     blocked: boolean;
-    workId?: string;
+    blockSource?: string;
 };
 
 export type MergeBranchRequest = {
@@ -186,13 +297,48 @@ export type MergeBranchRequest = {
     result?: string;
 };
 
-export type MergeWorkspaceRequest = {
-    target?: string;
+export type PatchRunnerRequest = {
+    /**
+     * 0 drains the runner; absent leaves it
+     */
+    slots?: number;
+    /**
+     * Blank clears it; absent leaves it
+     */
+    description?: string;
+    /**
+     * A docker size (e.g. 12g, at least 6m); blank clears it back to the platform default; absent leaves it. Reaches the next workspace launched on the runner, never a running one
+     */
+    workspaceMemoryLimit?: string;
+    /**
+     * Memory plus swap, a docker size at least the resulting workspaceMemoryLimit, which it needs; or -1 for unlimited swap. Blank clears it; absent leaves it
+     */
+    workspaceMemorySwapLimit?: string;
 };
 
 export type PromptAttachmentSource = 'SKETCH' | 'PASTE';
 
 export type Reason = 'CONFLICT' | 'MERGE_CONFLICT' | 'NOT_FAST_FORWARD' | 'ALREADY_INTEGRATED' | 'PUSH_REJECTED' | 'RELEASE_REQUIRED';
+
+export type RegisterRunnerRequest = {
+    /**
+     * What the runner says about itself — a JSON object, at most 16 KiB
+     */
+    capabilities?: JsonNode;
+};
+
+export type RegisteredRunner = {
+    clientId?: string;
+    secret?: string;
+    tokenUrl?: string;
+    audience?: string;
+    socketUrl?: string;
+};
+
+export type Resolution = {
+    resolved?: boolean;
+    agentIds?: Array<string>;
+};
 
 export type ResolveReleasedBranchRequest = {
     branch: string;
@@ -202,54 +348,34 @@ export type ResolveReleasedBranchRequest = {
 };
 
 export type Response = {
-    entries?: Array<Entry>;
+    agents?: Array<AgentDto>;
 };
 
 export type Response1 = {
-    commitHash?: string;
-    hasConflicts?: boolean;
-    output?: string;
-    cleanedUp?: boolean;
+    entries?: Array<Entry>;
 };
 
 export type Response10 = {
-    workspace?: WorkspaceDto;
-    technicalProcessId?: string;
+    workspace?: WorkspaceHistoryDetailDto;
 };
 
 export type Response11 = {
-    success?: boolean;
-};
-
-export type Response12 = {
-    workspace?: WorkspaceDto;
-};
-
-export type Response13 = {
-    technicalProcessId?: string;
-};
-
-export type Response14 = {
-    workspace?: WorkspaceHistoryDetailDto;
-};
-
-export type Response15 = {
     entries?: Array<Entry2>;
 };
 
-export type Response16 = {
+export type Response12 = {
     workspace?: WorkspaceHistoryDetailDto;
 };
 
-export type Response17 = {
+export type Response13 = {
     lines?: Array<string>;
 };
 
-export type Response18 = {
+export type Response14 = {
     sessions?: Array<ArchivedSessionDto>;
 };
 
-export type Response19 = {
+export type Response15 = {
     id?: string;
     mimeType?: string;
     label?: string;
@@ -257,84 +383,86 @@ export type Response19 = {
     createdAt?: Instant;
 };
 
-export type Response2 = {
-    success?: boolean;
-};
-
-export type Response20 = {
+export type Response16 = {
     attachments?: Array<WorkspacePromptAttachmentDataDto>;
 };
 
-export type Response21 = {
+export type Response17 = {
     draft?: WorkspacePromptDraftDto;
 };
 
-export type Response22 = {
+export type Response18 = {
     draft?: WorkspacePromptDraftDto;
+};
+
+export type Response2 = {
+    commitHash?: string;
+    hasConflicts?: boolean;
+    output?: string;
+    cleanedUp?: boolean;
 };
 
 export type Response3 = {
-    events?: Array<ServiceEventDto>;
+    success?: boolean;
 };
 
 export type Response4 = {
-    runs?: Array<BootstrapRunDto>;
-};
-
-export type Response5 = {
     workspace?: WorkspaceDto;
     technicalProcessId?: string;
 };
 
-export type Response6 = {
-    commitHash?: string;
-    hasConflicts?: boolean;
-    output?: string;
-};
-
-export type Response7 = {
+export type Response5 = {
     entries?: Array<Entry1>;
 };
 
+export type Response6 = {
+    workspace?: WorkspaceDto;
+};
+
+export type Response7 = {
+    workspace?: WorkspaceDto;
+    technicalProcessId?: string;
+};
+
 export type Response8 = {
-    commitSha?: string;
-    branch?: string;
-    targetBranch?: string;
+    success?: boolean;
 };
 
 export type Response9 = {
-    workspace?: WorkspaceDto;
+    technicalProcessId?: string;
+};
+
+export type RunnerOwnedWorkspace = {
+    /**
+     * The workspace row id
+     */
+    id?: number;
+    /**
+     * Its repository
+     */
+    repositoryId?: string;
+    /**
+     * Its branch, or null
+     */
+    branch?: string;
+};
+
+export type RunnerRegistrationDto = {
+    runner?: WorkspaceRunnerDto;
+    /**
+     * The runner's one-use registration token. Returned once
+     */
+    registrationToken?: string;
+    /**
+     * The one line that installs the runner on a docker host: it fetches the generic install script with the registration token and pipes it into sudo sh with this runner's values. Returned once
+     */
+    installLine?: string;
 };
 
 export type SavePromptDraftRequest = {
     content: string;
     serializedPrompt?: string;
 };
-
-export type ServiceEventDto = {
-    repoId?: string;
-    workspaceId?: string;
-    workspaceRowId?: number;
-    serviceId?: string;
-    serviceName?: string;
-    kind?: ServiceEventKind;
-    severity?: ServiceEventSeverity;
-    status?: ServiceStatus;
-    summary?: string;
-    logExcerpt?: string;
-    commandId?: string;
-    source?: string;
-    anchorFrom?: number;
-    anchorTo?: number;
-    sourceEpoch?: Instant;
-    timestamp?: Instant;
-};
-
-export type ServiceEventKind = 'STATUS_CHANGED';
-
-export type ServiceEventSeverity = 'INFO' | 'WARNING' | 'ERROR';
-
-export type ServiceStatus = 'STARTING' | 'READY' | 'RESTARTING' | 'CRASHED' | 'STOPPED';
 
 export type SweepBranchesRequest = {
     dryRun?: boolean;
@@ -359,6 +487,8 @@ export type SweptBranch = {
     repositoryName?: string;
     branch?: string;
 };
+
+export type Uuid = string;
 
 export type UpdateHistoryRequest = {
     preamble?: string;
@@ -411,6 +541,9 @@ export type WorkspaceDto = {
     daemonBuildTime?: Instant;
     daemonOutdated?: boolean;
     admin?: boolean;
+    placement?: WorkspacePlacement;
+    runner?: WorkspaceRunnerRefDto;
+    queuedAt?: Instant;
 };
 
 export type WorkspaceEventDto = {
@@ -435,6 +568,7 @@ export type WorkspaceHistoryDetailDto = {
     createdAt?: Instant;
     resolvedAt?: Instant;
     events?: Array<WorkspaceEventDto>;
+    placement?: WorkspacePlacement;
 };
 
 export type WorkspaceHistoryDto = {
@@ -445,6 +579,8 @@ export type WorkspaceHistoryDto = {
     createdAt?: Instant;
     resolvedAt?: Instant;
 };
+
+export type WorkspacePlacement = 'DIRECT' | 'RUNNER';
 
 export type WorkspacePromptAttachmentDataDto = {
     id?: string;
@@ -465,22 +601,56 @@ export type WorkspacePromptDraftDto = {
     updatedAt?: Instant;
 };
 
-export type WorkspaceRuntimeStatus = 'RUNNING' | 'STOPPED' | 'PROVISIONING' | 'FAILED';
+export type WorkspaceRunnerDto = {
+    id?: Uuid;
+    name?: string;
+    description?: string;
+    slots?: number;
+    workspaceMemoryLimit?: string;
+    workspaceMemorySwapLimit?: string;
+    version?: string;
+    arch?: string;
+    dotClaudeVolume?: string;
+    login?: Login;
+    registered?: boolean;
+    registeredAt?: Instant;
+    quarantined?: boolean;
+    quarantinedAt?: Instant;
+    quarantineReason?: string;
+    eligible?: boolean;
+    lastSeenAt?: Instant;
+    lastHealthCheckAt?: Instant;
+    lastHealthCheckOk?: boolean;
+    createdAt?: Instant;
+    connected?: boolean;
+    connectedSince?: Instant;
+    pinnedVersion?: string;
+    running?: number;
+    owned?: number;
+    queued?: number;
+    loginCommand?: string;
+    kimiLoginCommand?: string;
+    loginCommandPending?: boolean;
+    health?: Health;
+};
+
+export type WorkspaceRunnerHealthDto = {
+    at?: Instant;
+    ok?: boolean;
+    detail?: string;
+    requestId?: string;
+    dataOmitted?: boolean;
+    checks?: Array<CheckReport>;
+};
+
+export type WorkspaceRunnerRefDto = {
+    id?: Uuid;
+    name?: string;
+};
+
+export type WorkspaceRuntimeStatus = 'RUNNING' | 'STOPPED' | 'PROVISIONING' | 'FAILED' | 'QUEUED' | 'UNAVAILABLE';
 
 export type WorkspaceStatus = 'ACTIVE' | 'INTEGRATED' | 'ABANDONED';
-
-export type WorkspaceSubjectRefDto = {
-    workspaceRowId?: number;
-    repositoryId?: string;
-    workspaceId?: string;
-    branch?: string;
-    ticketId?: string;
-    epicId?: string;
-    status?: string;
-    resolvedAt?: Instant;
-    workId?: string;
-    entityId?: string;
-};
 
 export type DispatchAgentData = {
     body: DispatchAgentRequest;
@@ -491,7 +661,7 @@ export type DispatchAgentData = {
 
 export type DispatchAgentErrors = {
     /**
-     * A blank repository or branch, a branch name git will not take, or a `gitRefs` list that breaks the rules (every entry under `refs/heads/`, `*` only as a trailing `*`, at most 500 entries of at most 255 characters, no duplicates).
+     * A blank repository, wrapper branch or work item, a branch git will not take, or `admin: true` (admin agents come only from `POST /workspaces/api/agents`).
      */
     400: ApiError;
     /**
@@ -512,23 +682,23 @@ export type DispatchAgentError = DispatchAgentErrors[keyof DispatchAgentErrors];
 
 export type DispatchAgentResponses = {
     /**
-     * Dispatched. `fresh:false` means the branch already had a workspace and it was answered instead — the ordinary case on a re-press, and not an error.
+     * Dispatched. `fresh:false` means the work item already had an ACTIVE agent and it was answered — a re-press, not an error. `agentLaunch` is SCHEDULED (the agent has a workspace and starts, or hears the instruction, once its daemon answers), SKIPPED_RUNNING (it was already running; the instruction was not sent) or QUEUED (no workspace slot is free; `agent.workspaceRowId` is null until one is). `agentIdentity` is the subject of the agent's own credential; null while it holds none.
      */
     200: Dispatch;
 };
 
 export type DispatchAgentResponse = DispatchAgentResponses[keyof DispatchAgentResponses];
 
-export type PostWorkspacesApiAgentDispatchesBlockedData = {
+export type MarkAgentDispatchBlockedData = {
     body: MarkBlockedRequest;
     path?: never;
     query?: never;
     url: '/workspaces/api/agent-dispatches/blocked';
 };
 
-export type PostWorkspacesApiAgentDispatchesBlockedErrors = {
+export type MarkAgentDispatchBlockedErrors = {
     /**
-     * A blank repository or branch.
+     * A blank work item.
      */
     400: ApiError;
     /**
@@ -541,27 +711,27 @@ export type PostWorkspacesApiAgentDispatchesBlockedErrors = {
     403: unknown;
 };
 
-export type PostWorkspacesApiAgentDispatchesBlockedError = PostWorkspacesApiAgentDispatchesBlockedErrors[keyof PostWorkspacesApiAgentDispatchesBlockedErrors];
+export type MarkAgentDispatchBlockedError = MarkAgentDispatchBlockedErrors[keyof MarkAgentDispatchBlockedErrors];
 
-export type PostWorkspacesApiAgentDispatchesBlockedResponses = {
+export type MarkAgentDispatchBlockedResponses = {
     /**
-     * Answered. `workspaceId: null` means no workspace stands on that branch; `applied: false` with a non-null `workspaceId` means the daemon was not reachable or did not take the marker. Neither is an error — this door never creates a workspace, ensures a container or starts an agent.
+     * Answered. `agentId: null` means no agent works on the item; `applied` says whether the running harness took the marker live. Never creates or starts anything.
      */
-    200: BlockedMark;
+    200: EntityMark;
 };
 
-export type PostWorkspacesApiAgentDispatchesBlockedResponse = PostWorkspacesApiAgentDispatchesBlockedResponses[keyof PostWorkspacesApiAgentDispatchesBlockedResponses];
+export type MarkAgentDispatchBlockedResponse = MarkAgentDispatchBlockedResponses[keyof MarkAgentDispatchBlockedResponses];
 
-export type PostWorkspacesApiAgentDispatchesDeliveryData = {
+export type DeliverAgentTurnData = {
     body: DeliverTurnRequest;
     path?: never;
     query?: never;
     url: '/workspaces/api/agent-dispatches/delivery';
 };
 
-export type PostWorkspacesApiAgentDispatchesDeliveryErrors = {
+export type DeliverAgentTurnErrors = {
     /**
-     * A blank repository, branch or text.
+     * A blank work item or text.
      */
     400: ApiError;
     /**
@@ -574,27 +744,27 @@ export type PostWorkspacesApiAgentDispatchesDeliveryErrors = {
     403: unknown;
 };
 
-export type PostWorkspacesApiAgentDispatchesDeliveryError = PostWorkspacesApiAgentDispatchesDeliveryErrors[keyof PostWorkspacesApiAgentDispatchesDeliveryErrors];
+export type DeliverAgentTurnError = DeliverAgentTurnErrors[keyof DeliverAgentTurnErrors];
 
-export type PostWorkspacesApiAgentDispatchesDeliveryResponses = {
+export type DeliverAgentTurnResponses = {
     /**
-     * Answered. `workspaceId: null` means no workspace stands on that branch — nothing was said and nothing was created, which is a normal outcome and not an error.
+     * Answered. `agentId: null` means no agent works on the item: nothing was said and nothing created — a normal outcome. Otherwise one of `delivered` (said at the running agent's next turn boundary), `launched` (its first turn, once it starts) or `resumed` (a yielded agent resumes to hear it).
      */
     200: Delivery;
 };
 
-export type PostWorkspacesApiAgentDispatchesDeliveryResponse = PostWorkspacesApiAgentDispatchesDeliveryResponses[keyof PostWorkspacesApiAgentDispatchesDeliveryResponses];
+export type DeliverAgentTurnResponse = DeliverAgentTurnResponses[keyof DeliverAgentTurnResponses];
 
-export type PostWorkspacesApiAgentDispatchesEntityData = {
+export type MarkAgentDispatchEntityData = {
     body: MarkEntityRequest;
     path?: never;
     query?: never;
     url: '/workspaces/api/agent-dispatches/entity';
 };
 
-export type PostWorkspacesApiAgentDispatchesEntityErrors = {
+export type MarkAgentDispatchEntityErrors = {
     /**
-     * A blank repository or branch, or a missing or non-boolean `blocked`.
+     * A blank work item, or a missing or non-boolean `blocked`.
      */
     400: ApiError;
     /**
@@ -607,18 +777,18 @@ export type PostWorkspacesApiAgentDispatchesEntityErrors = {
     403: unknown;
 };
 
-export type PostWorkspacesApiAgentDispatchesEntityError = PostWorkspacesApiAgentDispatchesEntityErrors[keyof PostWorkspacesApiAgentDispatchesEntityErrors];
+export type MarkAgentDispatchEntityError = MarkAgentDispatchEntityErrors[keyof MarkAgentDispatchEntityErrors];
 
-export type PostWorkspacesApiAgentDispatchesEntityResponses = {
+export type MarkAgentDispatchEntityResponses = {
     /**
-     * Answered. `workspaceId: null` means no workspace stands on that branch and nothing was stored; otherwise the facts are stored on the workspace, and `applied` says whether its daemon also took them live. Never creates a workspace, ensures a container or starts an agent.
+     * Answered. `agentId: null` means no agent works on the item and nothing was stored; otherwise the facts are stored on the agent (the cleanup sweep reads the status), and `applied` says whether its running harness took them live.
      */
-    200: BlockedMark;
+    200: EntityMark;
 };
 
-export type PostWorkspacesApiAgentDispatchesEntityResponse = PostWorkspacesApiAgentDispatchesEntityResponses[keyof PostWorkspacesApiAgentDispatchesEntityResponses];
+export type MarkAgentDispatchEntityResponse = MarkAgentDispatchEntityResponses[keyof MarkAgentDispatchEntityResponses];
 
-export type GetWorkspacesApiAgentDispatchesReferencesData = {
+export type ListAgentDispatchReferencesData = {
     body?: never;
     path?: never;
     query?: {
@@ -629,7 +799,7 @@ export type GetWorkspacesApiAgentDispatchesReferencesData = {
     url: '/workspaces/api/agent-dispatches/references';
 };
 
-export type GetWorkspacesApiAgentDispatchesReferencesErrors = {
+export type ListAgentDispatchReferencesErrors = {
     /**
      * Not Authorized
      */
@@ -640,14 +810,461 @@ export type GetWorkspacesApiAgentDispatchesReferencesErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiAgentDispatchesReferencesResponses = {
+export type ListAgentDispatchReferencesResponses = {
+    /**
+     * OK
+     */
+    200: Response1;
+};
+
+export type ListAgentDispatchReferencesResponse = ListAgentDispatchReferencesResponses[keyof ListAgentDispatchReferencesResponses];
+
+export type ListAgentsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        state?: AgentState;
+        workId?: string;
+        workspaceId?: number;
+    };
+    url: '/workspaces/api/agents';
+};
+
+export type ListAgentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListAgentsResponses = {
     /**
      * OK
      */
     200: Response;
 };
 
-export type GetWorkspacesApiAgentDispatchesReferencesResponse = GetWorkspacesApiAgentDispatchesReferencesResponses[keyof GetWorkspacesApiAgentDispatchesReferencesResponses];
+export type ListAgentsResponse = ListAgentsResponses[keyof ListAgentsResponses];
+
+export type CreateAgentData = {
+    body: CreateAgentRequest;
+    path?: never;
+    query?: never;
+    url: '/workspaces/api/agents';
+};
+
+export type CreateAgentErrors = {
+    /**
+     * No work item, or a wrapper branch git will not take.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such repository.
+     */
+    404: ApiError;
+};
+
+export type CreateAgentError = CreateAgentErrors[keyof CreateAgentErrors];
+
+export type CreateAgentResponses = {
+    /**
+     * The agent: created, or the item's ACTIVE agent (`fresh:false`). Same answer as the dispatch door.
+     */
+    200: Dispatch;
+};
+
+export type CreateAgentResponse = CreateAgentResponses[keyof CreateAgentResponses];
+
+export type GetAgentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}';
+};
+
+export type GetAgentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+};
+
+export type GetAgentError = GetAgentErrors[keyof GetAgentErrors];
+
+export type GetAgentResponses = {
+    /**
+     * The agent, in any state.
+     */
+    200: AgentDto;
+};
+
+export type GetAgentResponse = GetAgentResponses[keyof GetAgentResponses];
+
+export type DiscardAgentData = {
+    body: DiscardAgentRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/discard';
+};
+
+export type DiscardAgentErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * AGENT_HAS_LEFTOVER_WORK (uncommitted or unpushed work, named) or AGENT_DAEMON_UNREACHABLE; nothing was removed. Send `force: true` to remove anyway.
+     */
+    409: ApiError;
+};
+
+export type DiscardAgentError = DiscardAgentErrors[keyof DiscardAgentErrors];
+
+export type DiscardAgentResponses = {
+    /**
+     * Removed: worktrees, credential and draft gone.
+     */
+    200: AgentDto;
+};
+
+export type DiscardAgentResponse = DiscardAgentResponses[keyof DiscardAgentResponses];
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-attachments';
+};
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace.
+     */
+    404: ApiError;
+};
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsError = GetWorkspacesApiAgentsByIdPromptAttachmentsErrors[keyof GetWorkspacesApiAgentsByIdPromptAttachmentsErrors];
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsResponses = {
+    /**
+     * The attachments, oldest first.
+     */
+    200: Response16;
+};
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsResponse = GetWorkspacesApiAgentsByIdPromptAttachmentsResponses[keyof GetWorkspacesApiAgentsByIdPromptAttachmentsResponses];
+
+export type PostWorkspacesApiAgentsByIdPromptAttachmentsData = {
+    body: AddAttachmentRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-attachments';
+};
+
+export type PostWorkspacesApiAgentsByIdPromptAttachmentsErrors = {
+    /**
+     * Not valid base64, not a PNG or JPEG, or an unknown source.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace.
+     */
+    404: ApiError;
+    /**
+     * The image exceeds the configured per-image byte cap.
+     */
+    413: ApiError;
+};
+
+export type PostWorkspacesApiAgentsByIdPromptAttachmentsError = PostWorkspacesApiAgentsByIdPromptAttachmentsErrors[keyof PostWorkspacesApiAgentsByIdPromptAttachmentsErrors];
+
+export type PostWorkspacesApiAgentsByIdPromptAttachmentsResponses = {
+    /**
+     * Attached; the row without its bytes.
+     */
+    201: Response15;
+};
+
+export type PostWorkspacesApiAgentsByIdPromptAttachmentsResponse = PostWorkspacesApiAgentsByIdPromptAttachmentsResponses[keyof PostWorkspacesApiAgentsByIdPromptAttachmentsResponses];
+
+export type DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData = {
+    body?: never;
+    path: {
+        attachmentId: string;
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-attachments/{attachmentId}';
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace, or no such attachment on it.
+     */
+    404: ApiError;
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdError = DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors[keyof DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors];
+
+export type DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses = {
+    /**
+     * Removed.
+     */
+    204: void;
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse = DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses[keyof DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses];
+
+export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData = {
+    body: AddAttachmentRequest;
+    path: {
+        attachmentId: string;
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-attachments/{attachmentId}';
+};
+
+export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors = {
+    /**
+     * Not valid base64, not a PNG or JPEG, or an unknown source.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace, or no such attachment on it.
+     */
+    404: ApiError;
+    /**
+     * The image exceeds the configured limit.
+     */
+    413: unknown;
+};
+
+export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdError = PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors[keyof PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors];
+
+export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses = {
+    /**
+     * Updated; the same row id is preserved.
+     */
+    200: Response15;
+};
+
+export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse = PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses[keyof PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses];
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData = {
+    body?: never;
+    path: {
+        attachmentId: string;
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-attachments/{attachmentId}/content';
+};
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace, or no such attachment on it.
+     */
+    404: ApiError;
+};
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentError = GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentErrors[keyof GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentErrors];
+
+export type GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentResponses = {
+    /**
+     * The stored PNG or JPEG bytes.
+     */
+    200: unknown;
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptDraftData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-draft';
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptDraftErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace.
+     */
+    404: ApiError;
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptDraftError = DeleteWorkspacesApiAgentsByIdPromptDraftErrors[keyof DeleteWorkspacesApiAgentsByIdPromptDraftErrors];
+
+export type DeleteWorkspacesApiAgentsByIdPromptDraftResponses = {
+    /**
+     * There is no draft for this workspace.
+     */
+    204: void;
+};
+
+export type DeleteWorkspacesApiAgentsByIdPromptDraftResponse = DeleteWorkspacesApiAgentsByIdPromptDraftResponses[keyof DeleteWorkspacesApiAgentsByIdPromptDraftResponses];
+
+export type GetWorkspacesApiAgentsByIdPromptDraftData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-draft';
+};
+
+export type GetWorkspacesApiAgentsByIdPromptDraftErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace, or it has no saved draft.
+     */
+    404: ApiError;
+};
+
+export type GetWorkspacesApiAgentsByIdPromptDraftError = GetWorkspacesApiAgentsByIdPromptDraftErrors[keyof GetWorkspacesApiAgentsByIdPromptDraftErrors];
+
+export type GetWorkspacesApiAgentsByIdPromptDraftResponses = {
+    /**
+     * The saved draft.
+     */
+    200: Response18;
+};
+
+export type GetWorkspacesApiAgentsByIdPromptDraftResponse = GetWorkspacesApiAgentsByIdPromptDraftResponses[keyof GetWorkspacesApiAgentsByIdPromptDraftResponses];
+
+export type PutWorkspacesApiAgentsByIdPromptDraftData = {
+    body: SavePromptDraftRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt-draft';
+};
+
+export type PutWorkspacesApiAgentsByIdPromptDraftErrors = {
+    /**
+     * The content is not a well-formed JSON document.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such ACTIVE workspace.
+     */
+    404: ApiError;
+    /**
+     * The draft exceeds the configured byte cap.
+     */
+    413: ApiError;
+};
+
+export type PutWorkspacesApiAgentsByIdPromptDraftError = PutWorkspacesApiAgentsByIdPromptDraftErrors[keyof PutWorkspacesApiAgentsByIdPromptDraftErrors];
+
+export type PutWorkspacesApiAgentsByIdPromptDraftResponses = {
+    /**
+     * The persisted draft, with its fresh updatedAt.
+     */
+    200: Response17;
+};
+
+export type PutWorkspacesApiAgentsByIdPromptDraftResponse = PutWorkspacesApiAgentsByIdPromptDraftResponses[keyof PutWorkspacesApiAgentsByIdPromptDraftResponses];
 
 export type PostWorkspacesApiBranchesCleanupData = {
     body: CleanupBranchRequest;
@@ -683,7 +1300,7 @@ export type PostWorkspacesApiBranchesCleanupResponses = {
     /**
      * Removed.
      */
-    200: Response2;
+    200: Response3;
 };
 
 export type PostWorkspacesApiBranchesCleanupResponse = PostWorkspacesApiBranchesCleanupResponses[keyof PostWorkspacesApiBranchesCleanupResponses];
@@ -726,12 +1343,12 @@ export type PostWorkspacesApiBranchesMergeResponses = {
     /**
      * Merged.
      */
-    200: Response1;
+    200: Response2;
 };
 
 export type PostWorkspacesApiBranchesMergeResponse = PostWorkspacesApiBranchesMergeResponses[keyof PostWorkspacesApiBranchesMergeResponses];
 
-export type PostWorkspacesApiBranchesResolutionData = {
+export type ResolveReleasedBranchData = {
     body: ResolveReleasedBranchRequest;
     path?: never;
     query?: {
@@ -740,9 +1357,9 @@ export type PostWorkspacesApiBranchesResolutionData = {
     url: '/workspaces/api/branches/resolution';
 };
 
-export type PostWorkspacesApiBranchesResolutionErrors = {
+export type ResolveReleasedBranchErrors = {
     /**
-     * A blank branch, or the repository's main workspace — refused on both belts: the row has no parent, or the branch is the repository's default branch.
+     * A blank branch, or an old-model main workspace (refused on both belts: no parent, or the repository's default branch).
      */
     400: ApiError;
     /**
@@ -759,54 +1376,25 @@ export type PostWorkspacesApiBranchesResolutionErrors = {
     404: ApiError;
 };
 
-export type PostWorkspacesApiBranchesResolutionError = PostWorkspacesApiBranchesResolutionErrors[keyof PostWorkspacesApiBranchesResolutionErrors];
+export type ResolveReleasedBranchError = ResolveReleasedBranchErrors[keyof ResolveReleasedBranchErrors];
 
-export type PostWorkspacesApiBranchesResolutionResponses = {
+export type ResolveReleasedBranchResponses = {
     /**
-     * Resolved, or `resolved:false` when no active workspace stood on the branch — the ordinary case, and what a repeated call answers.
+     * Resolved, or `resolved:false` when nothing owned the branch — the ordinary case, and what a repeated call answers. `agentIds` are the agents marked OBSOLETE.
      */
-    200: BranchResolution;
+    200: Resolution;
 };
 
-export type PostWorkspacesApiBranchesResolutionResponse = PostWorkspacesApiBranchesResolutionResponses[keyof PostWorkspacesApiBranchesResolutionResponses];
+export type ResolveReleasedBranchResponse = ResolveReleasedBranchResponses[keyof ResolveReleasedBranchResponses];
 
-export type EnsureEditorData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/workspaces/api/editor/ensure';
-};
-
-export type EnsureEditorErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type EnsureEditorResponses = {
-    /**
-     * The editor was already there.
-     */
-    200: unknown;
-    /**
-     * The editor was started by this call.
-     */
-    201: unknown;
-};
-
-export type PostWorkspacesApiGcBranchesData = {
+export type SweepBranchesData = {
     body: SweepBranchesRequest;
     path?: never;
     query?: never;
     url: '/workspaces/api/gc/branches';
 };
 
-export type PostWorkspacesApiGcBranchesErrors = {
+export type SweepBranchesErrors = {
     /**
      * Bad Request
      */
@@ -821,14 +1409,14 @@ export type PostWorkspacesApiGcBranchesErrors = {
     403: unknown;
 };
 
-export type PostWorkspacesApiGcBranchesResponses = {
+export type SweepBranchesResponses = {
     /**
      * OK
      */
     200: BranchSweepReport;
 };
 
-export type PostWorkspacesApiGcBranchesResponse = PostWorkspacesApiGcBranchesResponses[keyof PostWorkspacesApiGcBranchesResponses];
+export type SweepBranchesResponse = SweepBranchesResponses[keyof SweepBranchesResponses];
 
 export type GetWorkspacesApiHistoryData = {
     body?: never;
@@ -854,7 +1442,7 @@ export type GetWorkspacesApiHistoryResponses = {
     /**
      * OK
      */
-    200: Response15;
+    200: Response11;
 };
 
 export type GetWorkspacesApiHistoryResponse = GetWorkspacesApiHistoryResponses[keyof GetWorkspacesApiHistoryResponses];
@@ -883,7 +1471,7 @@ export type GetWorkspacesApiHistoryByIdResponses = {
     /**
      * OK
      */
-    200: Response16;
+    200: Response12;
 };
 
 export type GetWorkspacesApiHistoryByIdResponse = GetWorkspacesApiHistoryByIdResponses[keyof GetWorkspacesApiHistoryByIdResponses];
@@ -912,7 +1500,7 @@ export type PatchWorkspacesApiHistoryByIdResponses = {
     /**
      * OK
      */
-    200: Response14;
+    200: Response10;
 };
 
 export type PatchWorkspacesApiHistoryByIdResponse = PatchWorkspacesApiHistoryByIdResponses[keyof PatchWorkspacesApiHistoryByIdResponses];
@@ -941,7 +1529,7 @@ export type GetWorkspacesApiHistoryByIdAgentSessionsResponses = {
     /**
      * OK
      */
-    200: Response18;
+    200: Response14;
 };
 
 export type GetWorkspacesApiHistoryByIdAgentSessionsResponse = GetWorkspacesApiHistoryByIdAgentSessionsResponses[keyof GetWorkspacesApiHistoryByIdAgentSessionsResponses];
@@ -971,19 +1559,19 @@ export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptRespons
     /**
      * OK
      */
-    200: Response17;
+    200: Response13;
 };
 
 export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponse = GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponses[keyof GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponses];
 
-export type GetWorkspacesApiPinsData = {
+export type ListLaunchPinsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/workspaces/api/pins';
 };
 
-export type GetWorkspacesApiPinsErrors = {
+export type ListLaunchPinsErrors = {
     /**
      * Not Authorized
      */
@@ -994,31 +1582,23 @@ export type GetWorkspacesApiPinsErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiPinsResponses = {
+export type ListLaunchPinsResponses = {
     /**
      * The effective launch pins, image order
      */
     200: LaunchPins;
 };
 
-export type GetWorkspacesApiPinsResponse = GetWorkspacesApiPinsResponses[keyof GetWorkspacesApiPinsResponses];
+export type ListLaunchPinsResponse = ListLaunchPinsResponses[keyof ListLaunchPinsResponses];
 
-export type GetWorkspacesApiServiceEventsData = {
+export type ListRunnersData = {
     body?: never;
     path?: never;
-    query?: {
-        page?: number;
-        pageSize?: number;
-        repoId?: string;
-        severity?: ServiceEventSeverity;
-        since?: Instant;
-        source?: string;
-        workspaceId?: string;
-    };
-    url: '/workspaces/api/service-events';
+    query?: never;
+    url: '/workspaces/api/runners';
 };
 
-export type GetWorkspacesApiServiceEventsErrors = {
+export type ListRunnersErrors = {
     /**
      * Not Authorized
      */
@@ -1029,14 +1609,439 @@ export type GetWorkspacesApiServiceEventsErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiServiceEventsResponses = {
+export type ListRunnersResponses = {
     /**
-     * OK
+     * Every runner, by name
      */
-    200: Response3;
+    200: Array<WorkspaceRunnerDto>;
 };
 
-export type GetWorkspacesApiServiceEventsResponse = GetWorkspacesApiServiceEventsResponses[keyof GetWorkspacesApiServiceEventsResponses];
+export type ListRunnersResponse = ListRunnersResponses[keyof ListRunnersResponses];
+
+export type CreateRunnerData = {
+    body: CreateRunnerRequest;
+    path?: never;
+    query?: never;
+    url: '/workspaces/api/runners';
+};
+
+export type CreateRunnerErrors = {
+    /**
+     * A malformed name, slots, description or memory limit, or a swap limit that does not fit the memory limit
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * The name is taken
+     */
+    409: unknown;
+    /**
+     * qits-idp refused the registration token
+     */
+    502: unknown;
+    /**
+     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED: it knows no public domain to address a runner by
+     */
+    503: ApiError;
+};
+
+export type CreateRunnerError = CreateRunnerErrors[keyof CreateRunnerErrors];
+
+export type CreateRunnerResponses = {
+    /**
+     * The runner, its registration token and the install line carrying it
+     */
+    201: RunnerRegistrationDto;
+};
+
+export type CreateRunnerResponse = CreateRunnerResponses[keyof CreateRunnerResponses];
+
+export type GetWorkspacesApiRunnersInstallShData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/workspaces/api/runners/install.sh';
+};
+
+export type GetWorkspacesApiRunnersInstallShErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * RUNNER_PLANE_UNCONFIGURED, or the script cannot be rendered
+     */
+    503: unknown;
+};
+
+export type GetWorkspacesApiRunnersInstallShResponses = {
+    /**
+     * A POSIX sh script, carrying no secret
+     */
+    200: string;
+};
+
+export type GetWorkspacesApiRunnersInstallShResponse = GetWorkspacesApiRunnersInstallShResponses[keyof GetWorkspacesApiRunnersInstallShResponses];
+
+export type DeleteWorkspacesApiRunnersByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}';
+};
+
+export type DeleteWorkspacesApiRunnersByIdErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * RUNNER_OWNS_WORKSPACES: an ACTIVE workspace is placed on it; workspaceIds and workspaces name them
+     */
+    409: ApiError;
+};
+
+export type DeleteWorkspacesApiRunnersByIdError = DeleteWorkspacesApiRunnersByIdErrors[keyof DeleteWorkspacesApiRunnersByIdErrors];
+
+export type DeleteWorkspacesApiRunnersByIdResponses = {
+    /**
+     * Gone
+     */
+    204: void;
+};
+
+export type DeleteWorkspacesApiRunnersByIdResponse = DeleteWorkspacesApiRunnersByIdResponses[keyof DeleteWorkspacesApiRunnersByIdResponses];
+
+export type GetWorkspacesApiRunnersByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}';
+};
+
+export type GetWorkspacesApiRunnersByIdErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type GetWorkspacesApiRunnersByIdResponses = {
+    /**
+     * The runner
+     */
+    200: WorkspaceRunnerDto;
+};
+
+export type GetWorkspacesApiRunnersByIdResponse = GetWorkspacesApiRunnersByIdResponses[keyof GetWorkspacesApiRunnersByIdResponses];
+
+export type PatchWorkspacesApiRunnersByIdData = {
+    body: PatchRunnerRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}';
+};
+
+export type PatchWorkspacesApiRunnersByIdErrors = {
+    /**
+     * Negative slots, an overlong description, a malformed memory limit, or limits that would not fit together once applied
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type PatchWorkspacesApiRunnersByIdResponses = {
+    /**
+     * The runner as it now is
+     */
+    200: WorkspaceRunnerDto;
+};
+
+export type PatchWorkspacesApiRunnersByIdResponse = PatchWorkspacesApiRunnersByIdResponses[keyof PatchWorkspacesApiRunnersByIdResponses];
+
+export type GreenlightRunnerData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}/greenlight';
+};
+
+export type GreenlightRunnerErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type GreenlightRunnerResponses = {
+    /**
+     * The runner as it now is
+     */
+    200: WorkspaceRunnerDto;
+};
+
+export type GreenlightRunnerResponse = GreenlightRunnerResponses[keyof GreenlightRunnerResponses];
+
+export type GetWorkspacesApiRunnersByIdHealthData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}/health';
+};
+
+export type GetWorkspacesApiRunnersByIdHealthErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type GetWorkspacesApiRunnersByIdHealthResponses = {
+    /**
+     * The newest health check
+     */
+    200: WorkspaceRunnerHealthDto;
+    /**
+     * No health check has settled yet
+     */
+    204: void;
+};
+
+export type GetWorkspacesApiRunnersByIdHealthResponse = GetWorkspacesApiRunnersByIdHealthResponses[keyof GetWorkspacesApiRunnersByIdHealthResponses];
+
+export type PostWorkspacesApiRunnersByIdHealthcheckData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}/healthcheck';
+};
+
+export type PostWorkspacesApiRunnersByIdHealthcheckErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * RUNNER_UNAVAILABLE: the runner is not connected
+     */
+    409: ApiError;
+};
+
+export type PostWorkspacesApiRunnersByIdHealthcheckError = PostWorkspacesApiRunnersByIdHealthcheckErrors[keyof PostWorkspacesApiRunnersByIdHealthcheckErrors];
+
+export type PostWorkspacesApiRunnersByIdHealthcheckResponses = {
+    /**
+     * Sent, or one is pending already; its requestId
+     */
+    202: HealthCheckRequested;
+};
+
+export type PostWorkspacesApiRunnersByIdHealthcheckResponse = PostWorkspacesApiRunnersByIdHealthcheckResponses[keyof PostWorkspacesApiRunnersByIdHealthcheckResponses];
+
+export type PostWorkspacesApiRunnersByIdLoginCheckData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}/login-check';
+};
+
+export type PostWorkspacesApiRunnersByIdLoginCheckErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * RUNNER_UNAVAILABLE: the runner is not connected
+     */
+    409: ApiError;
+};
+
+export type PostWorkspacesApiRunnersByIdLoginCheckError = PostWorkspacesApiRunnersByIdLoginCheckErrors[keyof PostWorkspacesApiRunnersByIdLoginCheckErrors];
+
+export type PostWorkspacesApiRunnersByIdLoginCheckResponses = {
+    /**
+     * Sent
+     */
+    202: unknown;
+};
+
+export type PostWorkspacesApiRunnersByIdRegisterData = {
+    body: RegisterRunnerRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}/register';
+};
+
+export type PostWorkspacesApiRunnersByIdRegisterErrors = {
+    /**
+     * Capabilities that are not a JSON object
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * The token is not this runner's
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * The runner is already registered
+     */
+    409: unknown;
+    /**
+     * qits-idp refused the runner's client
+     */
+    502: unknown;
+    /**
+     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
+     */
+    503: unknown;
+};
+
+export type PostWorkspacesApiRunnersByIdRegisterResponses = {
+    /**
+     * The runner's own client and where to use it
+     */
+    200: RegisteredRunner;
+};
+
+export type PostWorkspacesApiRunnersByIdRegisterResponse = PostWorkspacesApiRunnersByIdRegisterResponses[keyof PostWorkspacesApiRunnersByIdRegisterResponses];
+
+export type RotateRunnerRegistrationTokenData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/runners/{id}/registration-token';
+};
+
+export type RotateRunnerRegistrationTokenErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+    /**
+     * The runner is already registered
+     */
+    409: unknown;
+    /**
+     * qits-idp refused the registration token
+     */
+    502: unknown;
+    /**
+     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
+     */
+    503: unknown;
+};
+
+export type RotateRunnerRegistrationTokenResponses = {
+    /**
+     * The runner, its new registration token and the install line carrying it
+     */
+    200: RunnerRegistrationDto;
+};
+
+export type RotateRunnerRegistrationTokenResponse = RotateRunnerRegistrationTokenResponses[keyof RotateRunnerRegistrationTokenResponses];
 
 export type ListOpenWorkspacesData = {
     body?: never;
@@ -1118,41 +2123,10 @@ export type GetWorkspacesApiWorkspacesResponses = {
     /**
      * OK
      */
-    200: Response7;
+    200: Response5;
 };
 
 export type GetWorkspacesApiWorkspacesResponse = GetWorkspacesApiWorkspacesResponses[keyof GetWorkspacesApiWorkspacesResponses];
-
-export type CreateWorkspaceData = {
-    body: CreateWorkspaceRequest;
-    path?: never;
-    query?: never;
-    url: '/workspaces/api/workspaces';
-};
-
-export type CreateWorkspaceErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type CreateWorkspaceResponses = {
-    /**
-     * OK
-     */
-    200: Response12;
-};
-
-export type CreateWorkspaceResponse = CreateWorkspaceResponses[keyof CreateWorkspaceResponses];
 
 export type GetWorkspacesApiWorkspacesByIdData = {
     body?: never;
@@ -1184,7 +2158,7 @@ export type GetWorkspacesApiWorkspacesByIdResponses = {
     /**
      * The workspace.
      */
-    200: Response9;
+    200: Response6;
 };
 
 export type GetWorkspacesApiWorkspacesByIdResponse = GetWorkspacesApiWorkspacesByIdResponses[keyof GetWorkspacesApiWorkspacesByIdResponses];
@@ -1213,45 +2187,10 @@ export type GetWorkspacesApiWorkspacesByIdActiveProcessResponses = {
     /**
      * OK
      */
-    200: Response13;
+    200: Response9;
 };
 
 export type GetWorkspacesApiWorkspacesByIdActiveProcessResponse = GetWorkspacesApiWorkspacesByIdActiveProcessResponses[keyof GetWorkspacesApiWorkspacesByIdActiveProcessResponses];
-
-export type GetWorkspacesApiWorkspacesByIdBootstrapRunsData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/bootstrap-runs';
-};
-
-export type GetWorkspacesApiWorkspacesByIdBootstrapRunsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace.
-     */
-    404: ApiError;
-};
-
-export type GetWorkspacesApiWorkspacesByIdBootstrapRunsError = GetWorkspacesApiWorkspacesByIdBootstrapRunsErrors[keyof GetWorkspacesApiWorkspacesByIdBootstrapRunsErrors];
-
-export type GetWorkspacesApiWorkspacesByIdBootstrapRunsResponses = {
-    /**
-     * The last run of each bootstrap step.
-     */
-    200: Response4;
-};
-
-export type GetWorkspacesApiWorkspacesByIdBootstrapRunsResponse = GetWorkspacesApiWorkspacesByIdBootstrapRunsResponses[keyof GetWorkspacesApiWorkspacesByIdBootstrapRunsResponses];
 
 export type PostWorkspacesApiWorkspacesByIdDeleteContainerData = {
     body?: never;
@@ -1312,7 +2251,7 @@ export type PostWorkspacesApiWorkspacesByIdDiscardResponses = {
     /**
      * OK
      */
-    200: Response11;
+    200: Response8;
 };
 
 export type PostWorkspacesApiWorkspacesByIdDiscardResponse = PostWorkspacesApiWorkspacesByIdDiscardResponses[keyof PostWorkspacesApiWorkspacesByIdDiscardResponses];
@@ -1335,407 +2274,22 @@ export type PostWorkspacesApiWorkspacesByIdEnsureContainerErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * The workspace was stopped while it was starting and that start's process is still open. `code` is WORKSPACE_STOPPED_DURING_START and the message names the process; retry once it has ended.
+     */
+    409: ApiError;
 };
+
+export type PostWorkspacesApiWorkspacesByIdEnsureContainerError = PostWorkspacesApiWorkspacesByIdEnsureContainerErrors[keyof PostWorkspacesApiWorkspacesByIdEnsureContainerErrors];
 
 export type PostWorkspacesApiWorkspacesByIdEnsureContainerResponses = {
     /**
-     * OK
+     * The start this call made, or the start under way that it joined.
      */
-    200: Response10;
+    200: Response7;
 };
 
 export type PostWorkspacesApiWorkspacesByIdEnsureContainerResponse = PostWorkspacesApiWorkspacesByIdEnsureContainerResponses[keyof PostWorkspacesApiWorkspacesByIdEnsureContainerResponses];
-
-export type PostWorkspacesApiWorkspacesByIdIntegrateData = {
-    body: IntegrateRequest;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/integrate';
-};
-
-export type PostWorkspacesApiWorkspacesByIdIntegrateErrors = {
-    /**
-     * No summary, an oversized one, or a workspace with no branch to integrate.
-     */
-    400: ApiError;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such workspace.
-     */
-    404: ApiError;
-    /**
-     * Nothing landed and the target is unchanged — including when the parent is the default branch, which only the release flow writes. `reason` says which refusal.
-     */
-    409: ApiError;
-};
-
-export type PostWorkspacesApiWorkspacesByIdIntegrateError = PostWorkspacesApiWorkspacesByIdIntegrateErrors[keyof PostWorkspacesApiWorkspacesByIdIntegrateErrors];
-
-export type PostWorkspacesApiWorkspacesByIdIntegrateResponses = {
-    /**
-     * Merged into the parent branch.
-     */
-    200: Response8;
-};
-
-export type PostWorkspacesApiWorkspacesByIdIntegrateResponse = PostWorkspacesApiWorkspacesByIdIntegrateResponses[keyof PostWorkspacesApiWorkspacesByIdIntegrateResponses];
-
-export type MergeWorkspaceData = {
-    body: MergeWorkspaceRequest;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/merge';
-};
-
-export type MergeWorkspaceErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such workspace.
-     */
-    404: ApiError;
-    /**
-     * The target is the repository's default branch. Use /integrate, or ask qits-projects for a release request.
-     */
-    409: ApiError;
-};
-
-export type MergeWorkspaceError = MergeWorkspaceErrors[keyof MergeWorkspaceErrors];
-
-export type MergeWorkspaceResponses = {
-    /**
-     * Merged.
-     */
-    200: Response6;
-};
-
-export type MergeWorkspaceResponse = MergeWorkspaceResponses[keyof MergeWorkspaceResponses];
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments';
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace.
-     */
-    404: ApiError;
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsError = GetWorkspacesApiWorkspacesByIdPromptAttachmentsErrors[keyof GetWorkspacesApiWorkspacesByIdPromptAttachmentsErrors];
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponses = {
-    /**
-     * The attachments, oldest first.
-     */
-    200: Response20;
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponse = GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponses[keyof GetWorkspacesApiWorkspacesByIdPromptAttachmentsResponses];
-
-export type PostWorkspacesApiWorkspacesByIdPromptAttachmentsData = {
-    body: AddAttachmentRequest;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments';
-};
-
-export type PostWorkspacesApiWorkspacesByIdPromptAttachmentsErrors = {
-    /**
-     * Not valid base64, not a PNG or JPEG, or an unknown source.
-     */
-    400: ApiError;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace.
-     */
-    404: ApiError;
-    /**
-     * The image exceeds the configured per-image byte cap.
-     */
-    413: ApiError;
-};
-
-export type PostWorkspacesApiWorkspacesByIdPromptAttachmentsError = PostWorkspacesApiWorkspacesByIdPromptAttachmentsErrors[keyof PostWorkspacesApiWorkspacesByIdPromptAttachmentsErrors];
-
-export type PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponses = {
-    /**
-     * Attached; the row without its bytes.
-     */
-    201: Response19;
-};
-
-export type PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponse = PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponses[keyof PostWorkspacesApiWorkspacesByIdPromptAttachmentsResponses];
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData = {
-    body?: never;
-    path: {
-        attachmentId: string;
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments/{attachmentId}';
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace, or no such attachment on it.
-     */
-    404: ApiError;
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdError = DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdErrors[keyof DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdErrors];
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponses = {
-    /**
-     * Removed.
-     */
-    204: void;
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse = DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponses[keyof DeleteWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponses];
-
-export type PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdData = {
-    body: AddAttachmentRequest;
-    path: {
-        attachmentId: string;
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments/{attachmentId}';
-};
-
-export type PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdErrors = {
-    /**
-     * Not valid base64, not a PNG or JPEG, or an unknown source.
-     */
-    400: ApiError;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace, or no such attachment on it.
-     */
-    404: ApiError;
-    /**
-     * The image exceeds the configured limit.
-     */
-    413: unknown;
-};
-
-export type PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdError = PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdErrors[keyof PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdErrors];
-
-export type PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponses = {
-    /**
-     * Updated; the same row id is preserved.
-     */
-    200: Response19;
-};
-
-export type PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponse = PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponses[keyof PutWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdResponses];
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentData = {
-    body?: never;
-    path: {
-        attachmentId: string;
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-attachments/{attachmentId}/content';
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace, or no such attachment on it.
-     */
-    404: ApiError;
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentError = GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentErrors[keyof GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentErrors];
-
-export type GetWorkspacesApiWorkspacesByIdPromptAttachmentsByAttachmentIdContentResponses = {
-    /**
-     * The stored PNG or JPEG bytes.
-     */
-    200: unknown;
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptDraftData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-draft';
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptDraftErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace.
-     */
-    404: ApiError;
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptDraftError = DeleteWorkspacesApiWorkspacesByIdPromptDraftErrors[keyof DeleteWorkspacesApiWorkspacesByIdPromptDraftErrors];
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptDraftResponses = {
-    /**
-     * There is no draft for this workspace.
-     */
-    204: void;
-};
-
-export type DeleteWorkspacesApiWorkspacesByIdPromptDraftResponse = DeleteWorkspacesApiWorkspacesByIdPromptDraftResponses[keyof DeleteWorkspacesApiWorkspacesByIdPromptDraftResponses];
-
-export type GetWorkspacesApiWorkspacesByIdPromptDraftData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-draft';
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptDraftErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace, or it has no saved draft.
-     */
-    404: ApiError;
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptDraftError = GetWorkspacesApiWorkspacesByIdPromptDraftErrors[keyof GetWorkspacesApiWorkspacesByIdPromptDraftErrors];
-
-export type GetWorkspacesApiWorkspacesByIdPromptDraftResponses = {
-    /**
-     * The saved draft.
-     */
-    200: Response22;
-};
-
-export type GetWorkspacesApiWorkspacesByIdPromptDraftResponse = GetWorkspacesApiWorkspacesByIdPromptDraftResponses[keyof GetWorkspacesApiWorkspacesByIdPromptDraftResponses];
-
-export type PutWorkspacesApiWorkspacesByIdPromptDraftData = {
-    body: SavePromptDraftRequest;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/workspaces/api/workspaces/{id}/prompt-draft';
-};
-
-export type PutWorkspacesApiWorkspacesByIdPromptDraftErrors = {
-    /**
-     * The content is not a well-formed JSON document.
-     */
-    400: ApiError;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such ACTIVE workspace.
-     */
-    404: ApiError;
-    /**
-     * The draft exceeds the configured byte cap.
-     */
-    413: ApiError;
-};
-
-export type PutWorkspacesApiWorkspacesByIdPromptDraftError = PutWorkspacesApiWorkspacesByIdPromptDraftErrors[keyof PutWorkspacesApiWorkspacesByIdPromptDraftErrors];
-
-export type PutWorkspacesApiWorkspacesByIdPromptDraftResponses = {
-    /**
-     * The persisted draft, with its fresh updatedAt.
-     */
-    200: Response21;
-};
-
-export type PutWorkspacesApiWorkspacesByIdPromptDraftResponse = PutWorkspacesApiWorkspacesByIdPromptDraftResponses[keyof PutWorkspacesApiWorkspacesByIdPromptDraftResponses];
 
 export type PostWorkspacesApiWorkspacesByIdRecreateContainerData = {
     body?: never;
@@ -1761,7 +2315,7 @@ export type PostWorkspacesApiWorkspacesByIdRecreateContainerResponses = {
     /**
      * OK
      */
-    200: Response5;
+    200: Response4;
 };
 
 export type PostWorkspacesApiWorkspacesByIdRecreateContainerResponse = PostWorkspacesApiWorkspacesByIdRecreateContainerResponses[keyof PostWorkspacesApiWorkspacesByIdRecreateContainerResponses];

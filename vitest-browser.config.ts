@@ -59,31 +59,6 @@ const parkPointer: BrowserCommand<[]> = async (context) => {
 };
 
 /**
- * `stubOrigin`: answers every request to `origin` with a plain grey page, from Playwright, without
- * touching the network. A frame pointed at another application (the editor's) then shows the same
- * pixels on every run, and no remote page is ever loaded. Asking again for the same origin replaces
- * the earlier stub.
- */
-const STUB_PAGE =
-  '<!doctype html><html><body style="margin:0;height:100vh;background:#e5e7eb"></body></html>';
-const stubOrigin: BrowserCommand<[origin: string]> = async (context, origin) => {
-  if (context.provider.name !== 'playwright') return;
-  type Route = { fulfill(response: { contentType: string; body: string }): Promise<void> };
-  const playwrightPage = (
-    context as unknown as {
-      page: {
-        unroute(url: string): Promise<void>;
-        route(url: string, handler: (route: Route) => Promise<void>): Promise<void>;
-      };
-    }
-  ).page;
-  await playwrightPage.unroute(`${origin}/**`);
-  await playwrightPage.route(`${origin}/**`, (route) =>
-    route.fulfill({ contentType: 'text/html', body: STUB_PAGE }),
-  );
-};
-
-/**
  * `stubFigure`: answers every request matching `pattern` (a Playwright URL glob) with a plain grey
  * 480x160 SVG, from Playwright, without touching the network. An image a page loads from a backend
  * (an epic's dossier figure, whose bytes no golden master records) then shows the same pixels on
@@ -138,7 +113,7 @@ export default defineConfig({
   plugins: [chromiumFlags, screenshotReferences()],
   test: {
     browser: {
-      commands: { goldenMaster, parkPointer, stubOrigin, stubFigure },
+      commands: { goldenMaster, parkPointer, stubFigure },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A
       // reference that does not match writes its actual and diff images to .vitest-attachments/.
       screenshotFailures: false,

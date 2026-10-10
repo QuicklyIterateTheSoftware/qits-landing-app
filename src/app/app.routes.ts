@@ -136,13 +136,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'projects/:slug/editor',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/editor/project-editor.page').then(
-            (m) => m.ProjectEditorPage,
-          ),
-      },
-      {
         path: 'projects/:slug/repositories',
         loadComponent: () =>
           import('./routes/projects/[slug]/repositories/project-repositories.page').then(

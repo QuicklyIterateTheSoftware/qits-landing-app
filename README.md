@@ -59,9 +59,8 @@ origin (`https://projects.<domain>/projects/api/…`), with the session cookie
 on its own host only and answers credentialed CORS for every host under the platform's domain (epic
 qits-528). The origins come from code: `https://<label>.<this page's hostname>`
 (`core/platform/platform-origins.ts`, wired in `app.config.ts`). A visitor without a session goes to
-`<idp origin>/idp/login?return_host=<this host>&return_path=<path>`. The Editor frame opens
-`https://workspaces.<domain>`; under `ng serve` that domain is `platformDomain` in
-`environment.development.ts`.
+`<idp origin>/idp/login?return_host=<this host>&return_path=<path>`. Under `ng serve` the domain
+is `platformDomain` in `environment.development.ts`.
 
 ### Signing in under `ng serve`
 

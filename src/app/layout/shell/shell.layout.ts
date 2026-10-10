@@ -161,7 +161,6 @@ export class ShellLayout {
               path: `/projects/${slug}/work/${tab.segment}`,
             })),
           },
-          { label: 'Editor', path: `/projects/${slug}/editor` },
           { label: 'Repositories', path: `/projects/${slug}/repositories` },
           { label: 'Observability', path: `/projects/${slug}/observability` },
           { label: 'Events', path: `/projects/${slug}/events` },

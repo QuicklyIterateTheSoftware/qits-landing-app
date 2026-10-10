@@ -153,7 +153,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Work' }))
       .toHaveAttribute('aria-current', 'page');
-    await expect.element(navigation.getByRole('link', { name: 'Editor' })).toBeVisible();
+    await expect.element(navigation.getByRole('link', { name: 'Repositories' })).toBeVisible();
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toHaveTextContent(project.name);
