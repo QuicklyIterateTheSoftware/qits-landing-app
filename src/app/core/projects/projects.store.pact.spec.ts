@@ -10,7 +10,7 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { assertPactPart } from '../../../testing/pact-part';
-import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
@@ -66,7 +66,8 @@ const given = (
     state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes,
+    // A field under a recorded `null` (no conflict) is bound in a state that has it.
+    consumes: heldBy(masters, state, operationId, consumes),
   });
 
 /**
@@ -182,6 +183,26 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(kept?.status).toBe('loaded');
       expect(kept?.requests.length).toBeGreaterThan(0);
       expect(kept?.requests.every((r) => typeof r.updatedAt === 'string')).toBe(true);
+    }));
+
+  it('show-release-request: a request’s page finds its repository among requests in every state', () =>
+    given(
+      'show-release-request',
+      'a project with release requests in every state',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with release requests in every state',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      const kept = store.releaseRequests()[projectId];
+      expect(kept?.requests.find((r) => r.id === op.params['requestId'])?.repoId).toBe(
+        op.params['repositoryId'],
+      );
     }));
 
   it('show-project-release-requests: a project without any shows none', () =>

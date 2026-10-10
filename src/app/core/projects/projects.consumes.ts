@@ -27,11 +27,10 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * Requests entry shows the newest one (`updatedAt`). The Release Requests page lists them all, with
  * priority, version, merged commit, requester, detail and whether a person must approve or nobody
  * is watching. A request's own page finds its repository (`repoId`) here, because every read of
- * one request is addressed by repository. The menu draws each request's lifecycle as a line
- * (`lifecycleSummary`) from its gates; TODO(qits-112): bind `automations[]` and `pipeline` too
- * (counts, phases) once @qits/projects-golden-masters records them on this answer.
- * qits-projects answers the open requests plus the last
- * few FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
+ * one request is addressed by repository. The menu and the page draw each request's lifecycle as a
+ * line (`lifecycleSummary`, `attentionOf`): its merge, automations, phases and quality gates.
+ * qits-projects answers the open requests plus the last few FINALIZED ones; the menu keeps the
+ * pending ones ({@link isPendingRelease}).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
@@ -51,6 +50,34 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].approvalState',
   'requests[].updatedAt',
   'requests[].mergedToMainAt',
+  'requests[].backingBranch',
+  'requests[].sources[]',
+  'requests[].conflict.conflicts[]',
+  'requests[].approvedBy',
+  'requests[].approvedAt',
+  'requests[].approvalNote',
+  'requests[].releasedSha',
+  'requests[].automations[].kind',
+  'requests[].automations[].label',
+  'requests[].automations[].state',
+  'requests[].automations[].detail',
+  'requests[].pipeline.phases[].phase',
+  'requests[].pipeline.phases[].state',
+  'requests[].pipeline.phases[].runId',
+  'requests[].pipeline.phases[].detail',
+  'requests[].pipeline.gates[].between',
+  'requests[].pipeline.gates[].kind',
+  'requests[].pipeline.gates[].state',
+  'requests[].pipeline.gates[].detail',
+  'requests[].qualityGates[].kind',
+  'requests[].qualityGates[].label',
+  'requests[].qualityGates[].position',
+  'requests[].qualityGates[].state',
+  'requests[].qualityGates[].detail',
+  'requests[].qualityGates[].checks[].name',
+  'requests[].qualityGates[].checks[].state',
+  'requests[].qualityGates[].checks[].detail',
+  'requests[].qualityGates[].runId',
 ] as const;
 
 /** One release request, cut to what the menu, the sidebar and the page read. */

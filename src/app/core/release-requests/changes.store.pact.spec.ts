@@ -10,7 +10,7 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { assertPactPart } from '../../../testing/pact-part';
-import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
   GET_FILE_DIFF,
   GET_SUBMODULE_CHANGES,
@@ -22,11 +22,7 @@ import { ChangesStore } from './changes.store';
 /**
  * `ChangesStore`'s part of qits-landing-app's pact with qits-projects-service, in
  * `pacts/qits-landing-app_qits-projects-service.json` (see `projects.store.pact.spec.ts`).
- *
- * TODO(qits-112): skipped until qits-projects-service releases the provider states for a release
- * request's changes (`external/rr-detail-states`) and for a commit's changes
- * (`external/rr-commit-states`) in `@qits/projects-golden-masters`. Then pin that version, set the
- * state names and operationIds below to the recorded ones, and drop the skip.
+
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -61,7 +57,8 @@ const given = (
     state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes,
+    // A field under a recorded `null` (a file that is no submodule pin) is bound where it is set.
+    consumes: heldBy(masters, state, operationId, consumes),
   });
 
 function storeAt(url: string) {
@@ -76,6 +73,9 @@ function storeAt(url: string) {
   return TestBed.inject(ChangesStore);
 }
 
+/** The commit a recorded commit path names: the recording writes its sha into the path. */
+const commitOf = (path: string) => /\/commits\/([0-9a-f]{40})\//.exec(path)![1];
+
 /** Waits until the read under `key` has an answer. */
 async function answered(store: InstanceType<typeof ChangesStore>, key: string) {
   for (let i = 0; i < 100 && store.read(key)?.status === 'loading'; i++) {
@@ -84,7 +84,7 @@ async function answered(store: InstanceType<typeof ChangesStore>, key: string) {
   return store.read(key);
 }
 
-describe.skip('qits-landing-app → qits-projects-service pact: changes', () => {
+describe('qits-landing-app → qits-projects-service pact: changes', () => {
   beforeAll(() => {
     dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
     pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -113,7 +113,7 @@ describe.skip('qits-landing-app → qits-projects-service pact: changes', () => 
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
       const { params } = masters.operation(STATES.fold, 'listReleaseRequestChanges');
-      const key = store.releaseChanges(params['repoId'], params['requestId'], 'fold');
+      const key = store.releaseChanges(params['repositoryId'], params['requestId'], 'fold');
       expect((await answered(store, key))?.status).toBe('loaded');
     }));
 
@@ -127,7 +127,7 @@ describe.skip('qits-landing-app → qits-projects-service pact: changes', () => 
       const store = storeAt(server.url);
       const { params, query } = masters.operation(STATES.fold, 'getReleaseRequestChangeDiff');
       const key = store.releaseFileDiff(
-        params['repoId'],
+        params['repositoryId'],
         params['requestId'],
         'fold',
         query['path'],
@@ -148,7 +148,7 @@ describe.skip('qits-landing-app → qits-projects-service pact: changes', () => 
         'getReleaseRequestSubmoduleChanges',
       );
       const key = store.submoduleChanges(
-        params['repoId'],
+        params['repositoryId'],
         params['requestId'],
         'fold',
         query['path'],
@@ -169,7 +169,7 @@ describe.skip('qits-landing-app → qits-projects-service pact: changes', () => 
         'getReleaseRequestSubmoduleChangeDiff',
       );
       const key = store.submoduleFileDiff(
-        params['repoId'],
+        params['repositoryId'],
         params['requestId'],
         'fold',
         query['path'],
@@ -186,8 +186,8 @@ describe.skip('qits-landing-app → qits-projects-service pact: changes', () => 
       LIST_COMMIT_CHANGES,
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
-      const { params } = masters.operation(STATES.commit, 'listCommitChanges');
-      const key = store.commitChanges(params['repoId'], params['commitHash']);
+      const { params, path } = masters.operation(STATES.commit, 'listCommitChanges');
+      const key = store.commitChanges(params['repositoryId'], commitOf(path));
       expect((await answered(store, key))?.status).toBe('loaded');
     }));
 
@@ -195,8 +195,8 @@ describe.skip('qits-landing-app → qits-projects-service pact: changes', () => 
     given('show-commit-changes', STATES.commit, 'getCommitFileDiff', GET_FILE_DIFF).executeTest(
       async (server) => {
         const store = storeAt(server.url);
-        const { params, query } = masters.operation(STATES.commit, 'getCommitFileDiff');
-        const key = store.commitFileDiff(params['repoId'], params['commitHash'], query['path']);
+        const { params, path, query } = masters.operation(STATES.commit, 'getCommitFileDiff');
+        const key = store.commitFileDiff(params['repositoryId'], commitOf(path), query['path']);
         expect((await answered(store, key))?.status).toBe('loaded');
       },
     ));
