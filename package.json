@@ -50,7 +50,7 @@
     "@hey-api/openapi-ts": "0.99.0",
     "@pact-foundation/pact": "17.1.4",
     "@qits/ci-golden-masters": "2026.1010.110847",
-    "@qits/events-golden-masters": "2026.1002.210125",
+    "@qits/events-golden-masters": "2026.1010.121628",
     "@qits/githost-golden-masters": "2026.1002.190746",
     "@qits/maintenance-golden-masters": "2026.1008.191446",
     "@qits/projects-golden-masters": "2026.1010.101501",
