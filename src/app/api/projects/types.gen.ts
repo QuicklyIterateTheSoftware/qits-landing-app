@@ -727,6 +727,7 @@ export type EntityDispatchDto = {
     archetype?: string;
     phase?: string;
     mode?: DispatchMode;
+    agentId?: string;
     workspaceRowId?: number;
     repositoryId?: string;
     branch?: string;
@@ -747,6 +748,7 @@ export type EntityDispatchStateDto = {
     blockSource?: string;
     blockReason?: string;
     blockedBy?: string;
+    waitingOn?: string;
 };
 
 export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA';
@@ -780,6 +782,7 @@ export type EntitySummary = {
     blockSource?: string;
     blockReason?: string;
     blockedBy?: string;
+    waitingOn?: string;
 };
 
 export type EntityTransition = {
@@ -1194,6 +1197,7 @@ export type ReleaseRequestCommitsDto = {
 
 export type ReleaseRequestDto = {
     id?: string;
+    qualifiedId?: string;
     repoId?: string;
     repoName?: string;
     backingBranch?: string;
@@ -1219,6 +1223,7 @@ export type ReleaseRequestDto = {
     conflict?: MergeConflictDto;
     version?: string;
     supersededBy?: string;
+    supersededByQualifiedId?: string;
     releasedSha?: string;
     mergedToMainAt?: Instant;
     retryable?: boolean;
@@ -1603,6 +1608,7 @@ export type TransitionedEntity = {
     blockSource?: string;
     blockReason?: string;
     blockedBy?: string;
+    waitingOn?: string;
 };
 
 export type Uuid = string;
@@ -1644,6 +1650,10 @@ export type WorkAgentWaitingReport = {
      * The reporting session, for the log
      */
     sessionId?: string;
+    /**
+     * The label of the declared wait the session is waiting on (qits-1153). While the latest frame carries it, the entity reads as waiting on it and is not derived blocked; absent is a wait for a person
+     */
+    waitingOn?: string;
     /**
      * When the session stamped the frame, epoch milliseconds; absent reads as now. A frame older than the entity's last activity is ignored
      */
@@ -2107,6 +2117,7 @@ export type WorkWorkspaces = {
 };
 
 export type WorkspaceReferenceDto = {
+    agentId?: string;
     workspaceRowId?: number;
     repositoryId?: string;
     workspaceId?: string;
@@ -2439,14 +2450,14 @@ export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses = {
 
 export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse = GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses[keyof GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses];
 
-export type PostProjectsApiGcTagsData = {
+export type CollectTagsData = {
     body: CollectTagsRequest;
     path?: never;
     query?: never;
     url: '/projects/api/gc/tags';
 };
 
-export type PostProjectsApiGcTagsErrors = {
+export type CollectTagsErrors = {
     /**
      * A pin source is missing or malformed
      */
@@ -2461,23 +2472,23 @@ export type PostProjectsApiGcTagsErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiGcTagsResponses = {
+export type CollectTagsResponses = {
     /**
      * What was judged, deleted, kept and failed
      */
     200: TagCollectionReportDto;
 };
 
-export type PostProjectsApiGcTagsResponse = PostProjectsApiGcTagsResponses[keyof PostProjectsApiGcTagsResponses];
+export type CollectTagsResponse = CollectTagsResponses[keyof CollectTagsResponses];
 
-export type GetProjectsApiPinsData = {
+export type ListLaunchPinsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/projects/api/pins';
 };
 
-export type GetProjectsApiPinsErrors = {
+export type ListLaunchPinsErrors = {
     /**
      * Not Authorized
      */
@@ -2488,14 +2499,14 @@ export type GetProjectsApiPinsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiPinsResponses = {
+export type ListLaunchPinsResponses = {
     /**
      * The effective launch pins, image order
      */
     200: LaunchPins;
 };
 
-export type GetProjectsApiPinsResponse = GetProjectsApiPinsResponses[keyof GetProjectsApiPinsResponses];
+export type ListLaunchPinsResponse = ListLaunchPinsResponses[keyof ListLaunchPinsResponses];
 
 export type ListProjectsData = {
     body?: never;
@@ -2917,7 +2928,7 @@ export type ListProjectRepositoriesResponses = {
 
 export type ListProjectRepositoriesResponse = ListProjectRepositoriesResponses[keyof ListProjectRepositoriesResponses];
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesData = {
+export type CreateProjectRepositoryData = {
     body: CreateProjectRepositoryRequest;
     path: {
         projectId: string;
@@ -2926,7 +2937,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesData = {
     url: '/projects/api/projects/{projectId}/repositories';
 };
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesErrors = {
+export type CreateProjectRepositoryErrors = {
     /**
      * Neither or both of url/name, an archetype that is not a component of a project (PROJECT, SERVICE_TEMPLATE, FORK), a name that carries no role suffix when no archetype is stated, a name already taken in the project, or a wrapper commit the git host refused
      */
@@ -2941,16 +2952,16 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesResponses = {
+export type CreateProjectRepositoryResponses = {
     /**
      * The repository exists and the wrapper names it
      */
     200: Response8;
 };
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesResponse = PostProjectsApiProjectsByProjectIdRepositoriesResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesResponses];
+export type CreateProjectRepositoryResponse = CreateProjectRepositoryResponses[keyof CreateProjectRepositoryResponses];
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptData = {
+export type AdoptRepositoryData = {
     body: AdoptProjectRepositoryRequest;
     path: {
         projectId: string;
@@ -2959,7 +2970,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptData = {
     url: '/projects/api/projects/{projectId}/repositories/adopt';
 };
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptErrors = {
+export type AdoptRepositoryErrors = {
     /**
      * An id or name outside the adoptable shape, archetype PROJECT (the wrapper's, which this route does not own), or an unusable url
      */
@@ -2978,14 +2989,14 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptErrors = {
     404: unknown;
 };
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponses = {
+export type AdoptRepositoryResponses = {
     /**
      * The repository is registered under this project, with that name as its alias
      */
     200: Response11;
 };
 
-export type PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponse = PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesAdoptResponses];
+export type AdoptRepositoryResponse = AdoptRepositoryResponses[keyof AdoptRepositoryResponses];
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData = {
     body?: never;
@@ -3020,7 +3031,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses = 
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse = PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses];
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameData = {
+export type ResolveRepositoryNameData = {
     body?: never;
     path: {
         projectId: string;
@@ -3030,7 +3041,7 @@ export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameData = 
     url: '/projects/api/projects/{projectId}/repositories/by-name/{repoName}';
 };
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameErrors = {
+export type ResolveRepositoryNameErrors = {
     /**
      * Not Authorized
      */
@@ -3045,14 +3056,14 @@ export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameErrors 
     404: unknown;
 };
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponses = {
+export type ResolveRepositoryNameResponses = {
     /**
      * The name resolves
      */
     200: Response1;
 };
 
-export type GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponse = GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponses[keyof GetProjectsApiProjectsByProjectIdRepositoriesByNameByRepoNameResponses];
+export type ResolveRepositoryNameResponse = ResolveRepositoryNameResponses[keyof ResolveRepositoryNameResponses];
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileData = {
     body?: never;
@@ -3732,14 +3743,14 @@ export type PostProjectsApiRefinementsByIdStopContainerResponses = {
 
 export type PostProjectsApiRefinementsByIdStopContainerResponse = PostProjectsApiRefinementsByIdStopContainerResponses[keyof PostProjectsApiRefinementsByIdStopContainerResponses];
 
-export type GetProjectsApiRepositoriesData = {
+export type ListRepositoriesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/projects/api/repositories';
 };
 
-export type GetProjectsApiRepositoriesErrors = {
+export type ListRepositoriesErrors = {
     /**
      * Not Authorized
      */
@@ -3750,14 +3761,14 @@ export type GetProjectsApiRepositoriesErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesResponses = {
+export type ListRepositoriesResponses = {
     /**
      * OK
      */
     200: Response29;
 };
 
-export type GetProjectsApiRepositoriesResponse = GetProjectsApiRepositoriesResponses[keyof GetProjectsApiRepositoriesResponses];
+export type ListRepositoriesResponse = ListRepositoriesResponses[keyof ListRepositoriesResponses];
 
 export type DeleteProjectsApiRepositoriesByRepoIdData = {
     body?: never;
