@@ -88,7 +88,10 @@ describe('ReleaseMenu (screenshots)', () => {
   it('is a closed lightning button with the pending count', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
+      await goldenMaster(
+        'a project with release requests in every state',
+        'listProjectReleaseRequests',
+      ),
     );
     await answered(fixture);
     await expect
@@ -97,18 +100,23 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(frame).toMatchScreenshot('closed');
   });
 
-  it('lists the pending release requests with their gates', async () => {
+  it('lists the pending release requests with their phases, cog and gates', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
+      await goldenMaster(
+        'a project with release requests in every state',
+        'listProjectReleaseRequests',
+      ),
     );
     await answered(fixture);
     await open(fixture);
     http.expectNone(`/projects/api/projects/${projectId}/release-requests`);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
-    expect(panel.getByRole('listitem').elements()).toHaveLength(5);
-    await expect.element(panel).toHaveTextContent('CI · FAILED');
-    await expect.element(panel).not.toHaveTextContent('Finalized release');
+    expect(panel.getByRole('listitem').elements()).toHaveLength(6);
+    await expect.element(panel).toHaveTextContent('P1 Pre-run · PENDING');
+    await expect.element(panel).toHaveTextContent('P2 Test · waiting for pre-run');
+    await expect.element(panel.getByRole('img', { name: /^4 pre-run steps: Merge/ })).toBeVisible();
+    await expect.element(panel).not.toHaveTextContent('FINALIZED');
     await expect.element(frame).toMatchScreenshot('open');
   });
 

@@ -23,16 +23,25 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
 
 /**
  * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request with its
- * repository, summary, state and gates. qits-projects answers the open requests plus the last few
- * FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
+ * repository, summary and state, then its two phases (qits-1133): P1 Pre-run (`preRun.state`, null
+ * on rows older than the pre-run) and P2 Test (the `ci` quality gate), the rest of its quality
+ * gates, and a cog counting the merge plus every automation kind that applies to it (`automations`,
+ * null until qits-projects has asked qits-maintenance). qits-projects answers the open requests plus
+ * the last few FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
   'requests[].repoName',
   'requests[].summary',
   'requests[].state',
-  'requests[].gates[].kind',
-  'requests[].gates[].state',
+  'requests[].preRun.state',
+  'requests[].qualityGates[].kind',
+  'requests[].qualityGates[].label',
+  'requests[].qualityGates[].state',
+  'requests[].automations[].kind',
+  'requests[].automations[].label',
+  'requests[].automations[].state',
+  'requests[].automations[].detail',
 ] as const;
 
 /** One release request, cut to what the menu reads. */
