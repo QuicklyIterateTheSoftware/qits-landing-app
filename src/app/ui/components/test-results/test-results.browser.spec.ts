@@ -39,7 +39,7 @@ describe('TestResultsView (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view.getByRole('list', { name: 'Failing tests' })).toBeVisible();
-    await expect.element(view).toHaveTextContent('1 errored');
+    await expect.element(view).toMatchTextContent('1 errored');
     await expect.element(view).toMatchScreenshot('failing');
   });
 });

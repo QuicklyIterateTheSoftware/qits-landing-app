@@ -87,11 +87,11 @@ describe('WorkSchedulePage (screenshots)', () => {
     await answered();
     await answerCriteria(recorded.entities);
     await answered();
-    await expect.element(locator.getByRole('heading', { level: 1 })).toHaveTextContent('Schedule');
-    await expect.element(locator).toHaveTextContent('Refined epic');
-    await expect.element(locator).toHaveTextContent('Ready for dev ticket');
-    await expect.element(locator).toHaveTextContent('It does what it says.');
-    await expect.element(locator).not.toHaveTextContent('Implementing ticket');
+    await expect.element(locator.getByRole('heading', { level: 1 })).toMatchTextContent('Schedule');
+    await expect.element(locator).toMatchTextContent('Refined epic');
+    await expect.element(locator).toMatchTextContent('Ready for dev ticket');
+    await expect.element(locator).toMatchTextContent('It does what it says.');
+    await expect.element(locator).not.toMatchTextContent('Implementing ticket');
     await expect.element(locator).toMatchScreenshot('lists');
   });
 
@@ -118,7 +118,7 @@ describe('WorkSchedulePage (screenshots)', () => {
         { status: 409, statusText: 'Conflict' },
       );
     await answered();
-    await expect.element(locator.getByRole('alert')).toHaveTextContent('PERSON_APPROVAL');
+    await expect.element(locator.getByRole('alert')).toMatchTextContent('PERSON_APPROVAL');
     expect(element.querySelectorAll('[role=alert]:not(.hidden)').length).toBe(1);
     await expect.element(locator).toMatchScreenshot('refused');
   });
@@ -127,8 +127,8 @@ describe('WorkSchedulePage (screenshots)', () => {
     const { locator, work, answered } = await shown();
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
-    await expect.element(locator).toHaveTextContent('Nothing to schedule.');
-    await expect.element(locator).toHaveTextContent('Nothing scheduled.');
+    await expect.element(locator).toMatchTextContent('Nothing to schedule.');
+    await expect.element(locator).toMatchTextContent('Nothing scheduled.');
     await expect.element(locator).toMatchScreenshot('empty');
   });
 

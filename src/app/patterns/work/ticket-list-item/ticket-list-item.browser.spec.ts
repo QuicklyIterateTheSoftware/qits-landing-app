@@ -71,7 +71,7 @@ describe('TicketListItem (screenshots)', () => {
   async function shown(view: WorkListView, state: string, qualifiedId: string, title: string) {
     const { element } = await openRecordedWork(http, view, qualifiedId, state);
     const locator = page.elementLocator(element);
-    await expect.element(locator).toHaveTextContent(title);
+    await expect.element(locator).toMatchTextContent(title);
     return locator;
   }
 

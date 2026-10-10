@@ -91,22 +91,24 @@ describe('WorkCampaignsPage (screenshots)', () => {
 
   it('shows a campaign with its members, in campaign order, each with its status', async () => {
     const element = await recorded(CAMPAIGN, { members: CAMPAIGN, described: [CAMPAIGN] });
-    await expect.element(element.getByRole('heading', { level: 1 })).toHaveTextContent('Campaigns');
+    await expect
+      .element(element.getByRole('heading', { level: 1 }))
+      .toMatchTextContent('Campaigns');
     const title = element.getByRole('link', { name: 'Card campaign' });
     await expect
       .element(title)
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-1$/));
-    await expect.element(element).toHaveTextContent('Seeded work.');
+    await expect.element(element).toMatchTextContent('Seeded work.');
     const text = element.element().textContent ?? '';
     const order = ['Refined epic', 'Refined ticket', 'Reported ticket', 'Done ticket'].map((t) =>
       text.indexOf(t),
     );
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
-    await expect.element(element).not.toHaveTextContent('Ticket outside the campaign');
+    await expect.element(element).not.toMatchTextContent('Ticket outside the campaign');
     await expect.element(element.getByRole('link', { name: 'Done ticket' })).toBeVisible();
-    await expect.element(element).toHaveTextContent('reported');
-    await expect.element(element).toHaveTextContent('done');
+    await expect.element(element).toMatchTextContent('reported');
+    await expect.element(element).toMatchTextContent('done');
     await expect
       .element(element.getByRole('link', { name: 'Reported ticket' }))
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-4$/));
@@ -182,7 +184,7 @@ describe('WorkCampaignsPage (screenshots)', () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
-    await expect.element(element).toHaveTextContent('No campaigns');
+    await expect.element(element).toMatchTextContent('No campaigns');
     await expect.element(element).toMatchScreenshot('empty');
   });
 

@@ -57,8 +57,8 @@
     "@qits/workspaces-golden-masters": "2026.1003.183318",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
-    "@types/node": "^20.17.19",
-    "@vitest/browser-playwright": "^4.1.11",
+    "@types/node": "^26.6.5",
+    "@vitest/browser-playwright": "^5.0.3",
     "eslint": "10.11.0",
     "jsdom": "^28.0.0",
     "playwright": "1.63.0",
@@ -67,6 +67,6 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "8.71.0",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   }
 }

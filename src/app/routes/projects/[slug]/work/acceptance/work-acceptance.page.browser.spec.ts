@@ -67,11 +67,11 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await answered();
     await expect
       .element(element.getByRole('heading', { level: 1 }))
-      .toHaveTextContent('Acceptance');
-    await expect.element(element).toHaveTextContent('Verified epic');
-    await expect.element(element).toHaveTextContent('Verified ticket');
-    await expect.element(element).not.toHaveTextContent('Verifying ticket');
-    await expect.element(element).not.toHaveTextContent('Done ticket');
+      .toMatchTextContent('Acceptance');
+    await expect.element(element).toMatchTextContent('Verified epic');
+    await expect.element(element).toMatchTextContent('Verified ticket');
+    await expect.element(element).not.toMatchTextContent('Verifying ticket');
+    await expect.element(element).not.toMatchTextContent('Done ticket');
     expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(2);
     await expect.element(element).toMatchScreenshot('acceptance');
   });
@@ -80,7 +80,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
-    await expect.element(element).toHaveTextContent('Nothing here');
+    await expect.element(element).toMatchTextContent('Nothing here');
     await expect.element(element).toMatchScreenshot('empty');
   });
 

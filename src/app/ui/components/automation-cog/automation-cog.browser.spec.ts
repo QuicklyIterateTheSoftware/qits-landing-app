@@ -26,7 +26,7 @@ describe('AutomationCog (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     expect(view.getByRole('img').elements()).toHaveLength(8);
-    await expect.element(view).toHaveTextContent('2/3');
+    await expect.element(view).toMatchTextContent('2/3');
     await expect.element(view).toMatchScreenshot('states');
   });
 });

@@ -183,7 +183,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   it('says so when the project lists no such request', async () => {
     const { element } = await render('no-such-request');
     const view = page.elementLocator(element);
-    await expect.element(view).toHaveTextContent('has no open or recently finalized release');
+    await expect.element(view).toMatchTextContent('has no open or recently finalized release');
     await expect.element(view).toMatchScreenshot('not-found');
   });
 
@@ -192,14 +192,14 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const graph = page.elementLocator(element).getByRole('region', {
       name: 'What this release folds in',
     });
-    await expect.element(graph).toHaveTextContent('feature/export');
+    await expect.element(graph).toMatchTextContent('feature/export');
     await expect.element(graph).toMatchScreenshot('refolded-graph');
   });
 
   it('shows a pending request: head, facts and its lifecycle', async () => {
     const { view } = await shown('a release request awaiting approval');
-    await expect.element(view).toHaveTextContent('Release the export across the suite');
-    await expect.element(view).toHaveTextContent('asked by contract-seeder');
+    await expect.element(view).toMatchTextContent('Release the export across the suite');
+    await expect.element(view).toMatchTextContent('asked by contract-seeder');
     await expect.element(view).toMatchScreenshot('pending');
   });
 
@@ -212,7 +212,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   it('counts the commits its fold brought in on the Commits tab', async () => {
     const { view } = await shown('a release request awaiting approval');
     const tabs = view.getByRole('navigation', { name: 'Release request views' });
-    await expect.element(tabs.getByRole('link', { name: /Commits/ })).toHaveTextContent('3');
+    await expect.element(tabs.getByRole('link', { name: /Commits/ })).toMatchTextContent('3');
   });
 
   it('reads and counts the runs once the CI runs tab opens', async () => {
@@ -220,16 +220,16 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const tabs = view.getByRole('navigation', { name: 'Release request views' });
     // The request names its QA run, its CI verdicts and its two automations' runs; qits-ci's list
     // tells what its QA run is (the recorded release run, still running).
-    await expect.element(tabs.getByRole('link', { name: /Builds/ })).toHaveTextContent(/\d/);
+    await expect.element(tabs.getByRole('link', { name: /Builds/ })).toMatchTextContent(/\d/);
     const builds = view.getByRole('heading', { name: 'Builds' });
     await expect.element(builds).toBeVisible();
-    await expect.element(view).toHaveTextContent('2026.101.120000');
-    await expect.element(view).toHaveTextContent('running');
+    await expect.element(view).toMatchTextContent('2026.101.120000');
+    await expect.element(view).toMatchTextContent('running');
   });
 
   it('shows a released request with its version and what it published', async () => {
     const { view } = await shown('a released release request');
-    await expect.element(view).toHaveTextContent('2026.101.100500');
+    await expect.element(view).toMatchTextContent('2026.101.100500');
     await expect.element(view.getByRole('heading', { name: 'What it published' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('released');
   });
@@ -237,7 +237,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   it('shows the paths a conflicted request could not fold', async () => {
     const recorded = await goldenMaster('a conflicted release request', 'getReleaseRequest');
     const { view } = await shown('a conflicted release request');
-    await expect.element(view).toHaveTextContent(recorded.request.conflict.conflicts[0].path);
+    await expect.element(view).toMatchTextContent(recorded.request.conflict.conflicts[0].path);
     await expect.element(view).toMatchScreenshot('conflicted');
   });
 });

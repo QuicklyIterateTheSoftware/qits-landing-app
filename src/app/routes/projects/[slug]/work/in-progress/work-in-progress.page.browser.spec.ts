@@ -71,16 +71,16 @@ describe('WorkInProgressPage (screenshots)', () => {
     const { element, project } = await shown();
     await expect
       .element(element.getByRole('heading', { level: 1 }))
-      .toHaveTextContent('In Progress');
-    await expect.element(element).toHaveTextContent('Ready for dev ticket');
-    await expect.element(element).toHaveTextContent('Implementing epic');
-    await expect.element(element).toHaveTextContent('Implemented epic');
-    await expect.element(element).toHaveTextContent('Verifying ticket');
-    await expect.element(element).not.toHaveTextContent('Reported ticket');
+      .toMatchTextContent('In Progress');
+    await expect.element(element).toMatchTextContent('Ready for dev ticket');
+    await expect.element(element).toMatchTextContent('Implementing epic');
+    await expect.element(element).toMatchTextContent('Implemented epic');
+    await expect.element(element).toMatchTextContent('Verifying ticket');
+    await expect.element(element).not.toMatchTextContent('Reported ticket');
     // Refined work waits on the Schedule tab.
-    await expect.element(element).not.toHaveTextContent('Refined ticket');
-    await expect.element(element).not.toHaveTextContent('Verified ticket');
-    await expect.element(element).not.toHaveTextContent('Done ticket');
+    await expect.element(element).not.toMatchTextContent('Refined ticket');
+    await expect.element(element).not.toMatchTextContent('Verified ticket');
+    await expect.element(element).not.toMatchTextContent('Done ticket');
     // Every card leads to its item's page, below work/detail. The Workspace links are hidden: this
     // page alone loads no open workspaces (the layout does).
     const hrefs = [...element.element().querySelectorAll('a[href]')]
@@ -93,9 +93,9 @@ describe('WorkInProgressPage (screenshots)', () => {
 
   it('nests an epic’s features and tasks in its lane', async () => {
     const { element } = await shown(true, 'an epic with features and tasks');
-    await expect.element(element).toHaveTextContent('Nested epic');
-    await expect.element(element).toHaveTextContent('Shipped feature');
-    await expect.element(element).toHaveTextContent('Open task');
+    await expect.element(element).toMatchTextContent('Nested epic');
+    await expect.element(element).toMatchTextContent('Shipped feature');
+    await expect.element(element).toMatchTextContent('Open task');
     await expect.element(element).toMatchScreenshot('nested');
   });
 

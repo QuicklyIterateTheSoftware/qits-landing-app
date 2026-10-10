@@ -96,8 +96,8 @@ describe('ProjectPickerPage (screenshots)', () => {
     http.expectNone('/githost/api/loc');
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);
-    await expect.element(picker).toHaveTextContent('Work 3');
-    await expect.element(picker).toHaveTextContent('Components 1');
+    await expect.element(picker).toMatchTextContent('Work 3');
+    await expect.element(picker).toMatchTextContent('Components 1');
     await expect.element(picker).toMatchScreenshot('loaded');
   });
 
@@ -111,7 +111,7 @@ describe('ProjectPickerPage (screenshots)', () => {
     list.flush({ ...recorded, entries: [] });
     await answered(fixture);
     const picker = page.elementLocator(fixture.nativeElement);
-    await expect.element(picker).toHaveTextContent('There are no projects yet.');
+    await expect.element(picker).toMatchTextContent('There are no projects yet.');
     await expect.element(picker).toMatchScreenshot('empty');
   });
 

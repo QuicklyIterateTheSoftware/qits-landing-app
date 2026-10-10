@@ -30,7 +30,7 @@ describe('CoverageSummary (screenshots)', () => {
     const fixture = TestBed.createComponent(Summary);
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
-    await expect.element(view).toHaveTextContent('−6.0 vs 2026.1009.122548');
+    await expect.element(view).toMatchTextContent('−6.0 vs 2026.1009.122548');
     await expect.element(view).toMatchScreenshot('diff');
   });
 });

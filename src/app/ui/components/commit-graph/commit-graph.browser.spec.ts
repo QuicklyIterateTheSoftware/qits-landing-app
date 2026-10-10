@@ -72,7 +72,7 @@ describe('CommitGraphView (screenshots)', () => {
     const fixture = TestBed.createComponent(Graph);
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
-    await expect.element(view).toHaveTextContent('feature/export');
+    await expect.element(view).toMatchTextContent('feature/export');
     await expect.element(view).toMatchScreenshot('graph');
     await view.getByRole('button', { name: '22 earlier folds' }).click();
     expect(fixture.componentInstance.more).toBe('fold');
@@ -83,7 +83,7 @@ describe('CommitGraphView (screenshots)', () => {
     fixture.componentInstance.expanded = new Set(['feat2']);
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
-    await expect.element(view).toHaveTextContent('The changes of feat2');
+    await expect.element(view).toMatchTextContent('The changes of feat2');
     await expect.element(view).toMatchScreenshot('opened');
     await view.getByRole('button', { name: /the rounding/ }).click();
     expect(fixture.componentInstance.toggled).toBe('fix1');
@@ -202,7 +202,7 @@ describe('CommitGraphView on a chain of folds (screenshots)', () => {
     const fixture = TestBed.createComponent(Folded);
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
-    await expect.element(view).toHaveTextContent('22 earlier folds');
+    await expect.element(view).toMatchTextContent('22 earlier folds');
     await expect.element(view).toMatchScreenshot('folds');
     await page.viewport(800, 600);
   });

@@ -116,7 +116,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect
       .element(panel.getByRole('link', { name: /contract-frontend/ }).first())
       .toHaveAttribute('title', 'Look: CI build');
-    await expect.element(panel).not.toHaveTextContent('Finalized release');
+    await expect.element(panel).not.toMatchTextContent('Finalized release');
     await expect.element(frame).toMatchScreenshot('open');
   });
 
@@ -127,7 +127,7 @@ describe('ReleaseMenu (screenshots)', () => {
     );
     await answered(fixture);
     await open(fixture);
-    await expect.element(frame).toHaveTextContent('No pending release requests');
+    await expect.element(frame).toMatchTextContent('No pending release requests');
     await expect.element(frame).toMatchScreenshot('empty');
   });
 

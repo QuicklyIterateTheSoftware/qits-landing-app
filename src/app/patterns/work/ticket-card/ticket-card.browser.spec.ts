@@ -78,7 +78,7 @@ describe('TicketCard (screenshots)', () => {
   ) {
     const { element } = await openRecordedWork(http, 'board', qualifiedId, state, campaigns);
     const locator = page.elementLocator(element);
-    await expect.element(locator).toHaveTextContent(title);
+    await expect.element(locator).toMatchTextContent(title);
     return { element, locator };
   }
 
@@ -115,7 +115,7 @@ describe('TicketCard (screenshots)', () => {
     );
     await openWorkspaces(http, harness);
     const locator = page.elementLocator(element);
-    await expect.element(locator).toHaveTextContent('Invoice totals are off');
+    await expect.element(locator).toMatchTextContent('Invoice totals are off');
     const link = locator.getByRole('link', { name: 'Workspace', exact: true });
     await expect
       .element(link)

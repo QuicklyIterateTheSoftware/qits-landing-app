@@ -79,8 +79,8 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     await answered(fixture);
     const view = page.elementLocator(element);
     expect(view.getByRole('listitem').elements()).toHaveLength(6);
-    await expect.element(view).toHaveTextContent('Finalized release');
-    await expect.element(view).toHaveTextContent('The sources cannot be folded.');
+    await expect.element(view).toMatchTextContent('Finalized release');
+    await expect.element(view).toMatchTextContent('The sources cannot be folded.');
     await expect.element(view).toMatchScreenshot('requests');
   });
 
@@ -91,7 +91,7 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     );
     await answered(fixture);
     const view = page.elementLocator(element);
-    await expect.element(view).toHaveTextContent('Nothing is open in this project');
+    await expect.element(view).toMatchTextContent('Nothing is open in this project');
     await expect.element(view).toMatchScreenshot('empty');
   });
 

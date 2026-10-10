@@ -102,7 +102,7 @@ describe('ShellLayout (screenshots)', () => {
 
   it('shows the sidebar beside the page on a wide screen', async () => {
     const { layout } = await render();
-    await expect.element(layout).toHaveTextContent('Page content');
+    await expect.element(layout).toMatchTextContent('Page content');
     await expect.element(layout).toMatchScreenshot('wide');
   });
 
@@ -159,7 +159,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(navigation.getByRole('link', { name: 'Editor' })).toBeVisible();
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toHaveTextContent(project.name);
+      .toMatchTextContent(project.name);
     await expect.element(layout).toMatchScreenshot('project');
   });
 
@@ -178,7 +178,7 @@ describe('ShellLayout (screenshots)', () => {
       .toHaveAttribute('aria-current', 'page');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
-    await expect.element(breadcrumb).toHaveTextContent('Acceptance');
+    await expect.element(breadcrumb).toMatchTextContent('Acceptance');
     await expect.element(layout).toMatchScreenshot('work-tab');
   });
 
@@ -203,7 +203,7 @@ describe('ShellLayout (screenshots)', () => {
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toHaveTextContent('Campaigns');
+      .toMatchTextContent('Campaigns');
   });
 
   it('shows the newest release request below Release Requests, between Work and Editor', async () => {
@@ -215,8 +215,8 @@ describe('ShellLayout (screenshots)', () => {
     const entry = navigation.getByRole('link', { name: /^Release Requests/ });
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
     // Recorded: every request changed at the same instant, so the first listed is the newest.
-    await expect.element(entry).toHaveTextContent('contract-service');
-    await expect.element(entry).toHaveTextContent('pending');
+    await expect.element(entry).toMatchTextContent('contract-service');
+    await expect.element(entry).toMatchTextContent('pending');
     const labels = navigation
       .getByRole('link')
       .elements()
@@ -231,7 +231,7 @@ describe('ShellLayout (screenshots)', () => {
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toHaveTextContent(`${project.name}›Release Requests`);
+      .toMatchTextContent(`${project.name}›Release Requests`);
     await expect.element(layout).toMatchScreenshot('release-requests');
   });
 
@@ -240,7 +240,7 @@ describe('ShellLayout (screenshots)', () => {
     const entry = page
       .getByRole('navigation', { name: 'qits' })
       .getByRole('link', { name: 'Release Requests' });
-    await expect.element(entry).toHaveTextContent(/^Release Requests$/);
+    await expect.element(entry).toMatchTextContent(/^Release Requests$/);
   });
 
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {
