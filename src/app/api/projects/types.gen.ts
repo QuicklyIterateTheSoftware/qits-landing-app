@@ -1151,6 +1151,10 @@ export type ReleasePipelineGateDto = {
     detail?: string;
 };
 
+export type ReleasePreRunDto = {
+    state?: string;
+};
+
 export type ReleaseQualityGateDto = {
     kind?: string;
     label?: string;
@@ -1222,6 +1226,7 @@ export type ReleaseRequestDto = {
     updatedAt?: Instant;
     pipeline?: ReleasePipelineDto;
     qualityGates?: Array<ReleaseQualityGateDto>;
+    preRun?: ReleasePreRunDto;
 };
 
 export type ReleaseRequestSourceDto = {

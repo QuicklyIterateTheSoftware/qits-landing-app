@@ -30,7 +30,8 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * one request is addressed by repository. The menu and the page draw each request's lifecycle as a
  * line (`lifecycleSummary`, `attentionOf`): its merge, automations, phases and quality gates.
  * qits-projects answers the open requests plus the last few FINALIZED ones; the menu keeps the
- * pending ones ({@link isPendingRelease}).
+ * pending ones ({@link isPendingRelease}). The line counts the sources and the conflicts; each
+ * binds one field (`name`, `path`), because a pact cannot bind an element with none.
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
@@ -51,8 +52,8 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].updatedAt',
   'requests[].mergedToMainAt',
   'requests[].backingBranch',
-  'requests[].sources[]',
-  'requests[].conflict.conflicts[]',
+  'requests[].sources[].name',
+  'requests[].conflict.conflicts[].path',
   'requests[].approvedBy',
   'requests[].approvedAt',
   'requests[].approvalNote',
