@@ -17,9 +17,12 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  * or, for a loaded request, in "a project with release requests in every state", which lists the
  * request every detail state records.
  *
- * qits-ci has no golden masters yet, so its calls (the repository's runs, a run's reports) answer
- * with an error, which a spec may send.
+ * qits-ci's calls (the repository's runs, a run's reports) answer with an error unless a spec
+ * answers the runs with qits-ci's recording ({@link CI_RUNS}).
  */
+
+/** qits-ci's recorded runs of a repository: a release request's QA, release and automation runs. */
+const CI_RUNS = 'a repository with the runs of a release request';
 
 /** Every detail state records its request in this list. */
 const EVERY_STATE = 'a project with release requests in every state';
@@ -64,7 +67,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  /** Answers every open call to qits-ci with an error (it records no golden masters yet); how many. */
+  /** Answers every open call to qits-ci with an error; how many. */
   function failCi(): number {
     const calls = http.match((r) => r.url.startsWith('/ci/'));
     for (const call of calls) call.flush(null, { status: 500, statusText: 'Server Error' });
@@ -74,9 +77,10 @@ describe('ReleaseRequestPage (screenshots)', () => {
   /**
    * The page of `state`'s recorded request on `tab`, with every read answered as `state` records
    * it: the request, its fold's commits, the CI verdicts on the fold (when there is one) and, once
-   * released, what it published.
+   * released, what it published. qits-ci's runs answer with its recording when `ciRuns` is set,
+   * else with an error, as its reports always do.
    */
-  async function shown(state: string, tab?: string, width = 900) {
+  async function shown(state: string, tab?: string, width = 900, ciRuns = false) {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
     const recorded = await goldenMaster(state, 'getReleaseRequest');
     const { fixture, element, repoId, id } = await render(
@@ -104,6 +108,12 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await answered(fixture);
     // The runs, then the reports of the runs the request names, each asked once the one before
     // has answered.
+    if (ciRuns) {
+      http
+        .expectOne((r) => /^\/ci\/api\/runs(\?|$)/.test(r.url))
+        .flush(await goldenMaster(CI_RUNS, 'listRuns', 'qits-ci'));
+      await answered(fixture);
+    }
     for (let round = 0; round < 3; round++) {
       failCi();
       await answered(fixture);
@@ -160,7 +170,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
-    // TODO(qits-112): qits-ci has no golden masters yet, so its runs answer with an error.
+    // The runs fail too; the page says nothing of them while the request has not loaded.
     http
       .expectOne((r) => r.url.startsWith('/ci/api/runs'))
       .flush(null, { status: 500, statusText: 'Server Error' });
@@ -205,10 +215,17 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await expect.element(tabs.getByRole('link', { name: /Commits/ })).toHaveTextContent('3');
   });
 
-  // Skipped: the runs come from qits-ci, which publishes no golden masters yet. Its state "a
-  // repository with the runs of a release request" (qits-ci-service `external/landing-runs-state`)
-  // is not released.
-  it.skip('reads and counts the runs once the CI runs tab opens', () => {});
+  it('reads and counts the runs once the CI runs tab opens', async () => {
+    const { view } = await shown('a release request awaiting approval', 'runs', 900, true);
+    const tabs = view.getByRole('navigation', { name: 'Release request views' });
+    // The request names its QA run, its CI verdicts and its two automations' runs; qits-ci's list
+    // tells what its QA run is (the recorded release run, still running).
+    await expect.element(tabs.getByRole('link', { name: /Builds/ })).toHaveTextContent(/\d/);
+    const builds = view.getByRole('heading', { name: 'Builds' });
+    await expect.element(builds).toBeVisible();
+    await expect.element(view).toHaveTextContent('2026.101.120000');
+    await expect.element(view).toHaveTextContent('running');
+  });
 
   it('shows a released request with its version and what it published', async () => {
     const { view } = await shown('a released release request');

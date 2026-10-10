@@ -1,9 +1,6 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import {
-  getCiApiRunsByRunIdReports as listRunReports,
-  getCiApiRunsByRunIdReportsByReportId as getRunReport,
-} from '../../api/ci';
+import { getRunReport, listRunReports } from '../../api/ci';
 import {
   GET_RUN_REPORT,
   LIST_RUN_REPORTS,

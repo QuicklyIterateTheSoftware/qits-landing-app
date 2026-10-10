@@ -1,0 +1,1154 @@
+{
+  "consumer": {
+    "name": "qits-landing-app"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "getRunReport"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-release-request-reports",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-release-request-reports: getRunReport",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a run with reports: failing tests and coverage",
+          "params": {
+            "baselineRequestId": "00000000-0000-4000-8000-000000000001",
+            "baselineRunId": "00000000-0000-4000-8000-000000000002",
+            "coverageReportId": "00000000-0000-4000-8000-000000000003",
+            "entityChangesReportId": "00000000-0000-4000-8000-000000000004",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+            "reportId": "00000000-0000-4000-8000-000000000006",
+            "repositoryId": "00000000-0000-4000-8000-000000000007",
+            "runId": "00000000-0000-4000-8000-000000000008"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}/reports/${reportId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000008/reports/00000000-0000-4000-8000-000000000006"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": "00000000-0000-4000-8000-000000000006",
+            "kind": "test-results",
+            "kindVersion": 1,
+            "payload": {
+              "failures": [
+                {
+                  "coordinates": {
+                    "className": "eu.wohlben.qits.contract.BillingServiceTest",
+                    "commitSha": "0000000000000000000000000000000000000003",
+                    "file": "service/src/test/java/eu/wohlben/qits/contract/BillingServiceTest.java",
+                    "language": "java",
+                    "lineEnd": 58,
+                    "lineStart": 42,
+                    "repository": {
+                      "name": "contract-service",
+                      "projectId": "contract-project"
+                    },
+                    "testName": "refundsTheFullAmount",
+                    "tool": "surefire"
+                  },
+                  "durationMs": 37,
+                  "failureType": "org.opentest4j.AssertionFailedError",
+                  "message": "expected: <100.00> but was: <90.00>",
+                  "shape": "ASSERTION",
+                  "stackTrace": "org.opentest4j.AssertionFailedError: expected: <100.00> but was: <90.00>\n\tat eu.wohlben.qits.contract.BillingServiceTest.refundsTheFullAmount(BillingServiceTest.java:51)"
+                }
+              ],
+              "suites": [
+                {
+                  "durationMs": 44400,
+                  "errored": 0,
+                  "failed": 1,
+                  "language": "java",
+                  "module": "service",
+                  "skipped": 2,
+                  "tests": 128,
+                  "tool": "surefire"
+                }
+              ],
+              "totals": {
+                "durationMs": 44400,
+                "errored": 0,
+                "failed": 1,
+                "passed": 125,
+                "skipped": 2,
+                "tests": 128
+              },
+              "truncated": false
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.kindVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.failures": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.className": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.commitSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.file": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.language": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.lineEnd": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.lineStart": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.repository.projectId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.testName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].coordinates.tool": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].durationMs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.failures[*].failureType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].shape": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.failures[*].stackTrace": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.suites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.payload.suites[*].durationMs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.suites[*].errored": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.suites[*].failed": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.suites[*].language": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.suites[*].module": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.suites[*].skipped": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.suites[*].tests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.suites[*].tool": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.payload.totals.durationMs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.totals.errored": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.totals.failed": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.totals.passed": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.totals.skipped": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.totals.tests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.payload.truncated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "listRunReports"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-release-request-reports",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-release-request-reports: listRunReports",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a run with reports: failing tests and coverage",
+          "params": {
+            "baselineRequestId": "00000000-0000-4000-8000-000000000001",
+            "baselineRunId": "00000000-0000-4000-8000-000000000002",
+            "coverageReportId": "00000000-0000-4000-8000-000000000003",
+            "entityChangesReportId": "00000000-0000-4000-8000-000000000004",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+            "reportId": "00000000-0000-4000-8000-000000000006",
+            "repositoryId": "00000000-0000-4000-8000-000000000007",
+            "runId": "00000000-0000-4000-8000-000000000008"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}/reports",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000008/reports"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "baseline": {
+              "version": "2026.101.120000"
+            },
+            "reports": [
+              {
+                "highlights": [
+                  {
+                    "delta": null,
+                    "metric": "coverage.diff",
+                    "severity": "warn",
+                    "text": "diff coverage 60.0% (6/10 changed lines)",
+                    "value": 60
+                  },
+                  {
+                    "delta": -1.2,
+                    "metric": "coverage.total",
+                    "severity": "info",
+                    "text": "coverage 81.3% (-1.2)",
+                    "value": 81.3
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000003",
+                "kind": "coverage",
+                "kindVersion": 1,
+                "stepIndex": 1
+              },
+              {
+                "highlights": [
+                  {
+                    "delta": null,
+                    "metric": "entities.tables.changed",
+                    "severity": "warn",
+                    "text": "Entities changed since 2026.101.120000: +0 ~1 −0 tables",
+                    "value": 1
+                  },
+                  {
+                    "delta": null,
+                    "metric": "entities.tables.changed",
+                    "severity": "warn",
+                    "text": "Entities changed since 2026.101.120000: +0 ~1 −0 tables",
+                    "value": 1
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000004",
+                "kind": "entity-changes",
+                "kindVersion": 1,
+                "stepIndex": 1
+              }
+            ],
+            "runId": "00000000-0000-4000-8000-000000000008"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.baseline.version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reports": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.highlights": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "arrayContains",
+                              "variants": [
+                                {
+                                  "index": 0,
+                                  "rules": {
+                                    "$.metric": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.severity": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.text": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.value": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "number"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "index": 1,
+                                  "rules": {
+                                    "$.delta": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "number"
+                                        }
+                                      ]
+                                    },
+                                    "$.metric": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.severity": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.text": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "type"
+                                        }
+                                      ]
+                                    },
+                                    "$.value": {
+                                      "combine": "AND",
+                                      "matchers": [
+                                        {
+                                          "match": "number"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kindVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.stepIndex": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.highlights": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.highlights[*].metric": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.highlights[*].severity": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.highlights[*].text": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.highlights[*].value": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            },
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kindVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.stepIndex": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.runId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "listRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-release-request-runs",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-release-request-runs: listRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with the runs of a release request",
+          "params": {
+            "automationRunId": "00000000-0000-4000-8000-000000000001",
+            "qaCancelledRunId": "00000000-0000-4000-8000-000000000002",
+            "qaFailedRunId": "00000000-0000-4000-8000-000000000003",
+            "qaSucceededRunId": "00000000-0000-4000-8000-000000000004",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+            "releaseRunId": "00000000-0000-4000-8000-000000000006",
+            "repositoryId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/ci/api/runs",
+        "query": {
+          "limit": [
+            "100"
+          ],
+          "repositoryId": [
+            "00000000-0000-4000-8000-000000000007"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "runs": [
+              {
+                "branch": "main",
+                "commitSha": "0000000000000000000000000000000000000005",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000001",
+                "phase": null,
+                "releaseRequestId": null,
+                "status": "SUCCESS",
+                "triggerEventName": "ReleaseRequestAutomation"
+              },
+              {
+                "branch": "2026.101.120000",
+                "commitSha": "0000000000000000000000000000000000000004",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": null,
+                "id": "00000000-0000-4000-8000-000000000006",
+                "phase": "RELEASE",
+                "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+                "status": "RUNNING",
+                "triggerEventName": "SCMRelease"
+              },
+              {
+                "branch": "release/00000000-0000-4000-8000-000000000005",
+                "commitSha": "0000000000000000000000000000000000000003",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000004",
+                "phase": "RELEASE_REQUEST",
+                "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+                "status": "SUCCESS",
+                "triggerEventName": "ReleaseRequestChanged"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.runs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.releaseRequestId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.releaseRequestId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "qits-ci-service"
+  }
+}

@@ -11,7 +11,12 @@ declare module 'vitest/browser' {
       state: string,
       operationId: string,
       provider?:
-        'qits-projects' | 'qits-githost' | 'qits-events' | 'qits-maintenance' | 'qits-workspaces',
+        | 'qits-projects'
+        | 'qits-githost'
+        | 'qits-events'
+        | 'qits-maintenance'
+        | 'qits-workspaces'
+        | 'qits-ci',
     ) => Promise<T>;
     /** Moves the mouse to the page's top-left corner, so no element is hovered. */
     parkPointer: () => Promise<void>;

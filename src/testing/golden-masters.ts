@@ -40,6 +40,9 @@ export const workspacesGoldenMasters = goldenMasters(
   'qits-workspaces',
 );
 
+/** qits-ci's golden masters (epic qits-112), from its npm package. */
+export const ciGoldenMasters = goldenMasters('@qits/ci-golden-masters', 'qits-ci');
+
 /** The body qits-projects recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const goldenMaster = <T = any>(state: string, operationId: string): T =>
   projectsGoldenMasters.body<T>(state, operationId);
@@ -59,6 +62,10 @@ export const maintenanceGoldenMaster = <T = any>(state: string, operationId: str
 /** The body qits-workspaces recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const workspacesGoldenMaster = <T = any>(state: string, operationId: string): T =>
   workspacesGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  ciGoldenMasters.body<T>(state, operationId);
 
 /**
  * The paths of `consumes` that the recording of `operationId` in `state` holds. A field under a

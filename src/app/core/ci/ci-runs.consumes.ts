@@ -1,4 +1,4 @@
-import type { GetCiApiRunsResponses } from '../../api/ci';
+import type { ListRunsResponses } from '../../api/ci';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -24,5 +24,5 @@ export const LIST_REPOSITORY_RUNS = [
 
 /** One run, cut to what the page reads. */
 export type CiRun = NonNullable<
-  Consumed<GetCiApiRunsResponses[200], typeof LIST_REPOSITORY_RUNS>['runs']
+  Consumed<ListRunsResponses[200], typeof LIST_REPOSITORY_RUNS>['runs']
 >[number];

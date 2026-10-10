@@ -33,6 +33,13 @@ export type CancelRunRequest = {
     reason?: string;
 };
 
+export type CheckReport = {
+    name?: string;
+    ok?: boolean;
+    detail?: string;
+    data?: JsonNode;
+};
+
 export type CiBaselineAnswer = {
     baseline?: CiReportBaselineDto;
 };
@@ -199,6 +206,15 @@ export type CiRunnerDto = {
     lastHealthcheck?: CiRunnerHealthcheckDto;
 };
 
+export type CiRunnerHealthDto = {
+    at?: Instant;
+    ok?: boolean;
+    detail?: string;
+    requestId?: string;
+    dataOmitted?: boolean;
+    checks?: Array<CheckReport>;
+};
+
 export type CiRunnerHealthcheckDto = {
     at?: Instant;
     result?: string;
@@ -254,6 +270,7 @@ export type DaemonPinDto = {
 
 export type HealthCheckQueued = {
     runId?: string;
+    requestId?: string;
 };
 
 export type Instant = string;
@@ -874,6 +891,43 @@ export type PostCiApiRunnersByIdGreenlightResponses = {
 
 export type PostCiApiRunnersByIdGreenlightResponse = PostCiApiRunnersByIdGreenlightResponses[keyof PostCiApiRunnersByIdGreenlightResponses];
 
+export type GetCiApiRunnersByIdHealthData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/ci/api/runners/{id}/health';
+};
+
+export type GetCiApiRunnersByIdHealthErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such runner
+     */
+    404: unknown;
+};
+
+export type GetCiApiRunnersByIdHealthResponses = {
+    /**
+     * The newest node health report
+     */
+    200: CiRunnerHealthDto;
+    /**
+     * The runner has never reported
+     */
+    204: void;
+};
+
+export type GetCiApiRunnersByIdHealthResponse = GetCiApiRunnersByIdHealthResponses[keyof GetCiApiRunnersByIdHealthResponses];
+
 export type PostCiApiRunnersByIdHealthcheckData = {
     body?: never;
     path: {
@@ -908,7 +962,7 @@ export type PostCiApiRunnersByIdHealthcheckErrors = {
 
 export type PostCiApiRunnersByIdHealthcheckResponses = {
     /**
-     * The health check's run id
+     * The health check's run id, and the node health request's id when the runner is connected
      */
     202: HealthCheckQueued;
 };
@@ -1009,7 +1063,7 @@ export type PostCiApiRunnersByIdRegistrationTokenResponses = {
 
 export type PostCiApiRunnersByIdRegistrationTokenResponse = PostCiApiRunnersByIdRegistrationTokenResponses[keyof PostCiApiRunnersByIdRegistrationTokenResponses];
 
-export type GetCiApiRunsData = {
+export type ListRunsData = {
     body?: never;
     path?: never;
     query: {
@@ -1025,7 +1079,7 @@ export type GetCiApiRunsData = {
     url: '/ci/api/runs';
 };
 
-export type GetCiApiRunsErrors = {
+export type ListRunsErrors = {
     /**
      * The repository id is missing or invalid, or the limit is not a positive integer
      */
@@ -1040,14 +1094,14 @@ export type GetCiApiRunsErrors = {
     403: unknown;
 };
 
-export type GetCiApiRunsResponses = {
+export type ListRunsResponses = {
     /**
      * The repository's runs with their step boundaries, without step output
      */
     200: ListRunsResponse;
 };
 
-export type GetCiApiRunsResponse = GetCiApiRunsResponses[keyof GetCiApiRunsResponses];
+export type ListRunsResponse2 = ListRunsResponses[keyof ListRunsResponses];
 
 export type GetCiApiRunsActiveData = {
     body?: never;
@@ -1355,16 +1409,16 @@ export type PostCiApiRunsByRunIdCancelResponses = {
     202: unknown;
 };
 
-export type GetCiApiRunsByRunIdReportsData = {
+export type GetCiApiRunsByRunIdGateReportsData = {
     body?: never;
     path: {
         runId: string;
     };
     query?: never;
-    url: '/ci/api/runs/{runId}/reports';
+    url: '/ci/api/runs/{runId}/gate/reports';
 };
 
-export type GetCiApiRunsByRunIdReportsErrors = {
+export type GetCiApiRunsByRunIdGateReportsErrors = {
     /**
      * Not Authorized
      */
@@ -1379,16 +1433,49 @@ export type GetCiApiRunsByRunIdReportsErrors = {
     404: unknown;
 };
 
-export type GetCiApiRunsByRunIdReportsResponses = {
+export type GetCiApiRunsByRunIdGateReportsResponses = {
+    /**
+     * The gate run's reports; runId null and [] when no green QA run gated the request
+     */
+    200: CiRunReportsDto;
+};
+
+export type GetCiApiRunsByRunIdGateReportsResponse = GetCiApiRunsByRunIdGateReportsResponses[keyof GetCiApiRunsByRunIdGateReportsResponses];
+
+export type ListRunReportsData = {
+    body?: never;
+    path: {
+        runId: string;
+    };
+    query?: never;
+    url: '/ci/api/runs/{runId}/reports';
+};
+
+export type ListRunReportsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such run
+     */
+    404: unknown;
+};
+
+export type ListRunReportsResponses = {
     /**
      * The run's reports; an empty list when it has none
      */
     200: CiRunReportsDto;
 };
 
-export type GetCiApiRunsByRunIdReportsResponse = GetCiApiRunsByRunIdReportsResponses[keyof GetCiApiRunsByRunIdReportsResponses];
+export type ListRunReportsResponse = ListRunReportsResponses[keyof ListRunReportsResponses];
 
-export type GetCiApiRunsByRunIdReportsByReportIdData = {
+export type GetRunReportData = {
     body?: never;
     path: {
         reportId: string;
@@ -1398,7 +1485,7 @@ export type GetCiApiRunsByRunIdReportsByReportIdData = {
     url: '/ci/api/runs/{runId}/reports/{reportId}';
 };
 
-export type GetCiApiRunsByRunIdReportsByReportIdErrors = {
+export type GetRunReportErrors = {
     /**
      * Not Authorized
      */
@@ -1413,14 +1500,14 @@ export type GetCiApiRunsByRunIdReportsByReportIdErrors = {
     404: unknown;
 };
 
-export type GetCiApiRunsByRunIdReportsByReportIdResponses = {
+export type GetRunReportResponses = {
     /**
      * The report
      */
     200: CiReportDto;
 };
 
-export type GetCiApiRunsByRunIdReportsByReportIdResponse = GetCiApiRunsByRunIdReportsByReportIdResponses[keyof GetCiApiRunsByRunIdReportsByReportIdResponses];
+export type GetRunReportResponse = GetRunReportResponses[keyof GetRunReportResponses];
 
 export type PostCiApiRunsByRunIdRetryData = {
     body?: never;

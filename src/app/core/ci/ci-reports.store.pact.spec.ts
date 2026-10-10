@@ -7,20 +7,15 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as ciClient } from '../../api/ci/client.gen';
 import { provideHeyApiClient } from '../../api/ci/client/client.gen';
-import { addGoldenInteraction, goldenMasters, type GoldenMasters } from '@qits/angular/testing';
+import { addGoldenInteraction } from '@qits/angular/testing';
+import { ciGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
 import { GET_RUN_REPORT, LIST_RUN_REPORTS } from './ci-reports.consumes';
 import { CiReportsStore, reportKey } from './ci-reports.store';
 
 /**
  * `CiReportsStore`'s part of qits-landing-app's pact with qits-ci-service
- * (`pacts/qits-landing-app_qits-ci-service.json`).
- *
- * TODO(qits-112): skipped. qits-ci-service publishes no golden masters yet; it needs the
- * operationIds `listRunReports` (`GET /ci/api/runs/{runId}/reports`) and `getRunReport`
- * (`GET /ci/api/runs/{runId}/reports/{reportId}`), and the state "a run with reports: failing
- * tests and coverage" (a test-results report with a failure, a coverage report with a diff, and
- * one report of another kind). Then add the package and drop the skip.
+ * (`pacts/qits-landing-app_qits-ci-service.json`), against qits-ci's golden masters.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-ci-service';
@@ -28,13 +23,11 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const STATE = 'a run with reports: failing tests and coverage';
 const OPERATIONS = ['listRunReports', 'getRunReport'];
 
-describe.skip('qits-landing-app → qits-ci-service pact: run reports', () => {
-  let masters: GoldenMasters;
+describe('qits-landing-app → qits-ci-service pact: run reports', () => {
   let dir = '';
   let pact: PactV4;
 
   beforeAll(() => {
-    masters = goldenMasters('@qits/ci-golden-masters', 'qits-ci');
     dir = mkdtempSync(join(tmpdir(), 'qits-landing-ci-reports-pact-'));
     pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
   });

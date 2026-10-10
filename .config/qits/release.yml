@@ -44,3 +44,4 @@ contracts:
     qits-events-service: { packages: [maven] }
     qits-maintenance-service: { packages: [maven] }
     qits-workspaces-service: { packages: [maven] }
+    qits-ci-service: { packages: [maven] }

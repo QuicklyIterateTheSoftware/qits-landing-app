@@ -5,6 +5,7 @@ import { defineConfig } from 'vitest/config';
 import { screenshotReferences } from '@qits/angular/screenshots';
 import { pactedGoldenMasters } from '@qits/angular/testing';
 import {
+  ciGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
   maintenanceGoldenMasters,
@@ -32,6 +33,7 @@ const READERS = {
     workspacesGoldenMasters,
     pactWith('qits-workspaces-service'),
   ),
+  'qits-ci': pactedGoldenMasters(ciGoldenMasters, pactWith('qits-ci-service')),
 };
 
 /**

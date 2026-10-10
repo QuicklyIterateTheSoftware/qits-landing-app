@@ -1,7 +1,4 @@
-import type {
-  GetCiApiRunsByRunIdReportsByReportIdResponses,
-  GetCiApiRunsByRunIdReportsResponses,
-} from '../../api/ci';
+import type { GetRunReportResponses, ListRunReportsResponses } from '../../api/ci';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -28,10 +25,7 @@ export const LIST_RUN_REPORTS = [
 export const GET_RUN_REPORT = ['id', 'kind', 'kindVersion', 'payload'] as const;
 
 /** The reports answer. */
-export type RunReports = Consumed<
-  GetCiApiRunsByRunIdReportsResponses[200],
-  typeof LIST_RUN_REPORTS
->;
+export type RunReports = Consumed<ListRunReportsResponses[200], typeof LIST_RUN_REPORTS>;
 
 /** One report's summary. */
 export type ReportSummary = NonNullable<RunReports['reports']>[number];
@@ -40,7 +34,4 @@ export type ReportSummary = NonNullable<RunReports['reports']>[number];
 export type ReportHighlight = NonNullable<ReportSummary['highlights']>[number];
 
 /** One report, with its payload. */
-export type RunReport = Consumed<
-  GetCiApiRunsByRunIdReportsByReportIdResponses[200],
-  typeof GET_RUN_REPORT
->;
+export type RunReport = Consumed<GetRunReportResponses[200], typeof GET_RUN_REPORT>;

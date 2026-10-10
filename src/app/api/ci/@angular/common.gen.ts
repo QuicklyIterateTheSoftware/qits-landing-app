@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { DeleteCiApiRunnersByIdData, DeleteCiApiRunnersByIdResponse, GetCiApiDaemonData, GetCiApiDaemonResponse, GetCiApiRepositoriesByRepoIdReleasePhaseData, GetCiApiRepositoriesByRepoIdReleasePhaseResponse, GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData, GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse, GetCiApiRepositoriesData, GetCiApiRepositoriesResponse, GetCiApiRepositoriesSummaryData, GetCiApiRepositoriesSummaryResponse, GetCiApiRunnersByIdData, GetCiApiRunnersByIdResponse, GetCiApiRunnersData, GetCiApiRunnersInstallShData, GetCiApiRunnersInstallShResponse, GetCiApiRunnersResponse, GetCiApiRunsActiveData, GetCiApiRunsActiveResponse, GetCiApiRunsByRunIdBaselineData, GetCiApiRunsByRunIdBaselineReportsByKindData, GetCiApiRunsByRunIdBaselineReportsByKindResponse, GetCiApiRunsByRunIdBaselineResponse, GetCiApiRunsByRunIdData, GetCiApiRunsByRunIdReportsByReportIdData, GetCiApiRunsByRunIdReportsByReportIdResponse, GetCiApiRunsByRunIdReportsData, GetCiApiRunsByRunIdReportsResponse, GetCiApiRunsByRunIdResponse, GetCiApiRunsData, GetCiApiRunsFinishedData, GetCiApiRunsFinishedResponse, GetCiApiRunsQueueData, GetCiApiRunsQueueResponse, GetCiApiRunsResponse, PatchCiApiRunnersByIdData, PatchCiApiRunnersByIdResponse, PostCiApiEventsTriggerData, PostCiApiEventsTriggerResponse, PostCiApiRunnersByIdGreenlightData, PostCiApiRunnersByIdGreenlightResponse, PostCiApiRunnersByIdHealthcheckData, PostCiApiRunnersByIdHealthcheckResponse, PostCiApiRunnersByIdRegisterData, PostCiApiRunnersByIdRegisterResponse, PostCiApiRunnersByIdRegistrationTokenData, PostCiApiRunnersByIdRegistrationTokenResponse, PostCiApiRunnersData, PostCiApiRunnersResponse, PostCiApiRunsByRunIdCancelData, PostCiApiRunsByRunIdRetryData, PostCiApiRunsByRunIdRetryResponse, PostCiApiRunsCancellationsData, PostCiApiRunsCancellationsResponse, PostCiApiRunsRerunData, PostCiApiRunsRerunResponse, PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData, PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse } from '../types.gen';
+import type { DeleteCiApiRunnersByIdData, DeleteCiApiRunnersByIdResponse, GetCiApiDaemonData, GetCiApiDaemonResponse, GetCiApiRepositoriesByRepoIdReleasePhaseData, GetCiApiRepositoriesByRepoIdReleasePhaseResponse, GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData, GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse, GetCiApiRepositoriesData, GetCiApiRepositoriesResponse, GetCiApiRepositoriesSummaryData, GetCiApiRepositoriesSummaryResponse, GetCiApiRunnersByIdData, GetCiApiRunnersByIdHealthData, GetCiApiRunnersByIdHealthResponse, GetCiApiRunnersByIdResponse, GetCiApiRunnersData, GetCiApiRunnersInstallShData, GetCiApiRunnersInstallShResponse, GetCiApiRunnersResponse, GetCiApiRunsActiveData, GetCiApiRunsActiveResponse, GetCiApiRunsByRunIdBaselineData, GetCiApiRunsByRunIdBaselineReportsByKindData, GetCiApiRunsByRunIdBaselineReportsByKindResponse, GetCiApiRunsByRunIdBaselineResponse, GetCiApiRunsByRunIdData, GetCiApiRunsByRunIdGateReportsData, GetCiApiRunsByRunIdGateReportsResponse, GetCiApiRunsByRunIdResponse, GetCiApiRunsFinishedData, GetCiApiRunsFinishedResponse, GetCiApiRunsQueueData, GetCiApiRunsQueueResponse, GetRunReportData, GetRunReportResponse, ListRunReportsData, ListRunReportsResponse, ListRunsData, ListRunsResponse2, PatchCiApiRunnersByIdData, PatchCiApiRunnersByIdResponse, PostCiApiEventsTriggerData, PostCiApiEventsTriggerResponse, PostCiApiRunnersByIdGreenlightData, PostCiApiRunnersByIdGreenlightResponse, PostCiApiRunnersByIdHealthcheckData, PostCiApiRunnersByIdHealthcheckResponse, PostCiApiRunnersByIdRegisterData, PostCiApiRunnersByIdRegisterResponse, PostCiApiRunnersByIdRegistrationTokenData, PostCiApiRunnersByIdRegistrationTokenResponse, PostCiApiRunnersData, PostCiApiRunnersResponse, PostCiApiRunsByRunIdCancelData, PostCiApiRunsByRunIdRetryData, PostCiApiRunsByRunIdRetryResponse, PostCiApiRunsCancellationsData, PostCiApiRunsCancellationsResponse, PostCiApiRunsRerunData, PostCiApiRunsRerunResponse, PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData, PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse } from '../types.gen';
 
 /**
  * The daemon binary this instance is configured to launch
@@ -137,7 +137,17 @@ export const postCiApiRunnersByIdGreenlightRequest = <ThrowOnError extends boole
 });
 
 /**
- * Queue a health check for a runner
+ * A runner's newest node health report, every check's data included
+ */
+export const getCiApiRunnersByIdHealthRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunnersByIdHealthData, ThrowOnError>): HttpRequest<GetCiApiRunnersByIdHealthResponse> => (options?.client ?? client).requestOptions<GetCiApiRunnersByIdHealthResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/ci/api/runners/{id}/health',
+    ...options
+});
+
+/**
+ * Queue a health check for a runner, and ask a connected one for its node report
  */
 export const postCiApiRunnersByIdHealthcheckRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunnersByIdHealthcheckData, ThrowOnError>): HttpRequest<PostCiApiRunnersByIdHealthcheckResponse> => (options?.client ?? client).requestOptions<PostCiApiRunnersByIdHealthcheckResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -169,7 +179,7 @@ export const postCiApiRunnersByIdRegistrationTokenRequest = <ThrowOnError extend
 /**
  * List a repository's CI runs, newest first
  */
-export const getCiApiRunsRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsData, ThrowOnError>): HttpRequest<GetCiApiRunsResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsResponse, ThrowOnError>({
+export const listRunsRequest = <ThrowOnError extends boolean = false>(options: Options<ListRunsData, ThrowOnError>): HttpRequest<ListRunsResponse2> => (options?.client ?? client).requestOptions<ListRunsResponse2, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs',
@@ -269,9 +279,19 @@ export const postCiApiRunsByRunIdCancelRequest = <ThrowOnError extends boolean =
 });
 
 /**
+ * The release reports of the green QA run that gated this run's release request, without payloads
+ */
+export const getCiApiRunsByRunIdGateReportsRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdGateReportsData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdGateReportsResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdGateReportsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/ci/api/runs/{runId}/gate/reports',
+    ...options
+});
+
+/**
  * A run's release reports, without payloads, and its baseline
  */
-export const getCiApiRunsByRunIdReportsRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdReportsData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdReportsResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdReportsResponse, ThrowOnError>({
+export const listRunReportsRequest = <ThrowOnError extends boolean = false>(options: Options<ListRunReportsData, ThrowOnError>): HttpRequest<ListRunReportsResponse> => (options?.client ?? client).requestOptions<ListRunReportsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/{runId}/reports',
@@ -281,7 +301,7 @@ export const getCiApiRunsByRunIdReportsRequest = <ThrowOnError extends boolean =
 /**
  * One release report of a run, with its payload
  */
-export const getCiApiRunsByRunIdReportsByReportIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdReportsByReportIdData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdReportsByReportIdResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdReportsByReportIdResponse, ThrowOnError>({
+export const getRunReportRequest = <ThrowOnError extends boolean = false>(options: Options<GetRunReportData, ThrowOnError>): HttpRequest<GetRunReportResponse> => (options?.client ?? client).requestOptions<GetRunReportResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/{runId}/reports/{reportId}',
@@ -413,7 +433,15 @@ export const postCiApiRunnersByIdGreenlightResource = <ThrowOnError extends bool
 });
 
 /**
- * Queue a health check for a runner
+ * A runner's newest node health report, every check's data included
+ */
+export const getCiApiRunnersByIdHealthResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunnersByIdHealthData, ThrowOnError> | undefined) => httpResource<GetCiApiRunnersByIdHealthResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getCiApiRunnersByIdHealthRequest(opts) : undefined;
+});
+
+/**
+ * Queue a health check for a runner, and ask a connected one for its node report
  */
 export const postCiApiRunnersByIdHealthcheckResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunnersByIdHealthcheckData, ThrowOnError> | undefined) => httpResource<PostCiApiRunnersByIdHealthcheckResponse>(() => {
     const opts = options ? options() : undefined;
@@ -439,9 +467,9 @@ export const postCiApiRunnersByIdRegistrationTokenResource = <ThrowOnError exten
 /**
  * List a repository's CI runs, newest first
  */
-export const getCiApiRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsResponse>(() => {
+export const listRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListRunsData, ThrowOnError> | undefined) => httpResource<ListRunsResponse2>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsRequest(opts) : undefined;
+    return opts ? listRunsRequest(opts) : undefined;
 });
 
 /**
@@ -519,19 +547,27 @@ export const postCiApiRunsByRunIdCancelResource = <ThrowOnError extends boolean 
 });
 
 /**
+ * The release reports of the green QA run that gated this run's release request, without payloads
+ */
+export const getCiApiRunsByRunIdGateReportsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdGateReportsData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdGateReportsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getCiApiRunsByRunIdGateReportsRequest(opts) : undefined;
+});
+
+/**
  * A run's release reports, without payloads, and its baseline
  */
-export const getCiApiRunsByRunIdReportsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdReportsData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdReportsResponse>(() => {
+export const listRunReportsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListRunReportsData, ThrowOnError> | undefined) => httpResource<ListRunReportsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsByRunIdReportsRequest(opts) : undefined;
+    return opts ? listRunReportsRequest(opts) : undefined;
 });
 
 /**
  * One release report of a run, with its payload
  */
-export const getCiApiRunsByRunIdReportsByReportIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdReportsByReportIdData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdReportsByReportIdResponse>(() => {
+export const getRunReportResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRunReportData, ThrowOnError> | undefined) => httpResource<GetRunReportResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsByRunIdReportsByReportIdRequest(opts) : undefined;
+    return opts ? getRunReportRequest(opts) : undefined;
 });
 
 /**

@@ -1,6 +1,6 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import { getCiApiRuns as listRepositoryRuns } from '../../api/ci';
+import { listRuns as listRepositoryRuns } from '../../api/ci';
 import { LIST_REPOSITORY_RUNS, type CiRun } from './ci-runs.consumes';
 
 /** How many of a repository's newest runs are read. */
