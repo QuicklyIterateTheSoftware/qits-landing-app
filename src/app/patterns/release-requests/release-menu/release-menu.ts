@@ -141,7 +141,8 @@ export function requestTone(state: string | undefined): keyof typeof CHIP {
 }
 
 /**
- * The top bar's lightning menu: the open project's pending release requests, each with its state,
+ * The top bar's lightning menu: the open project's pending release requests, each named by its
+ * logical id (`<repository>-rr-<n>`) and shown with its state,
  * its two phases in order (P1 Pre-run, then P2 Test, {@link phases}), a cog counting what its
  * pre-run does ({@link preRunSteps}) and its later quality gates. Shown only while a project is
  * open, like the settings gear beside it.
@@ -194,7 +195,7 @@ export function requestTone(state: string | undefined): keyof typeof CHIP {
             <li class="flex flex-col gap-1 border-b border-gray-100 px-3 py-2 last:border-b-0">
               <div class="flex items-baseline justify-between gap-2">
                 <span class="truncate text-sm font-semibold text-gray-900">{{
-                  request.repoName
+                  request.qualifiedId ?? request.repoName
                 }}</span>
                 <span
                   class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"

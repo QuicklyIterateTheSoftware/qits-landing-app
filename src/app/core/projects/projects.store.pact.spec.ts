@@ -91,6 +91,7 @@ const OPEN_ENDED: Rule = { combine: 'AND', matchers: [{ match: 'type', min: 0 }]
  */
 const REQUEST_RULES: Rules = {
   '$.id': { combine: 'AND', matchers: [{ match: 'regex', regex: UUID }] },
+  '$.qualifiedId': TYPE,
   '$.repoName': TYPE,
   '$.summary': TYPE,
   '$.state': TYPE,

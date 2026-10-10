@@ -22,8 +22,9 @@ export const LIST_PROJECTS = [
 export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as const;
 
 /**
- * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request with its
- * repository, summary and state, then its two phases (qits-1133): P1 Pre-run (`preRun.state`, null
+ * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request by its
+ * logical id (`qualifiedId`, `<repository>-rr-<n>`; the repository's name where an older answer has
+ * none), with its summary and state, then its two phases (qits-1133): P1 Pre-run (`preRun.state`, null
  * on rows older than the pre-run) and P2 Test (the `ci` quality gate), the rest of its quality
  * gates, and a cog counting the merge plus every automation kind that applies to it (`automations`,
  * null until qits-projects has asked qits-maintenance). qits-projects answers the open requests plus
@@ -31,6 +32,7 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
+  'requests[].qualifiedId',
   'requests[].repoName',
   'requests[].summary',
   'requests[].state',

@@ -2400,7 +2400,8 @@
         {
           "name": "no project with the given id",
           "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repoName": "contract-service"
           }
         }
       ],
@@ -2566,6 +2567,7 @@
                 "preRun": {
                   "state": "PENDING"
                 },
+                "qualifiedId": "contract-suite-app-rr-1",
                 "qualityGates": [
                   {
                     "kind": "automations",
@@ -2604,6 +2606,14 @@
                             {
                               "match": "regex",
                               "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },

@@ -163,7 +163,8 @@ describe('ReleaseMenu', () => {
     expect(items).toHaveLength(6);
     // The first: its pre-run PENDING, so Test waits although an earlier fold's CI passed.
     const first = items[0].textContent!.replace(/\s+/g, ' ');
-    expect(first).toContain('contract-suite-app');
+    // Named by its logical id, which holds the repository's name.
+    expect(first).toContain('contract-suite-app-rr-1');
     expect(first.indexOf('P1 Pre-run · PENDING')).toBeGreaterThan(-1);
     expect(first.indexOf(`P2 Test · ${WAITING_FOR_PRE_RUN}`)).toBeGreaterThan(
       first.indexOf('P1 Pre-run · PENDING'),
