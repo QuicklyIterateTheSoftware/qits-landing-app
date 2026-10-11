@@ -6,7 +6,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { consume } from '@qits/angular';
-import { addGoldenInteraction } from '@qits/angular/testing';
+import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing';
 import { getWork, listProjectWork, listWorkMembers } from '../../api/projects';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
@@ -87,6 +87,34 @@ const givenMove = (slug: InteractionSlug, state: string) =>
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
     consumes: SET_WORK_STATUS,
   });
+
+/**
+ * **A drop's move, which no golden master records yet** (qits-248). The service's own recording of
+ * a drop with an outcome arrives with the release that makes `outcome` required, and this app
+ * releases before it — so the drop is composed here from a recorded move (`RECORDED_MOVE`'s, the
+ * same door, method, path and status) with the drop's own request body and the target's word
+ * (`DROPPED`) in the answer.
+ *
+ * Only the REQUEST carries the new fields; the interaction's `consumes` (passed by the caller,
+ * `SET_WORK_STATUS`) still binds `status` alone, so the provider deployed today — which ignores the
+ * unknown body fields and answers the move as it always did — satisfies this interaction as well as
+ * the next one. `supersededBy`, where given, is a param of `RECORDED_MOVE`'s own seed (never the
+ * dropped item itself), so the provider's verification resolves it against an entity that exists.
+ */
+const RECORDED_MOVE = 'a reported ticket';
+const dropOf = (state: string, body: Readonly<Record<string, string>>): GoldenMasters => ({
+  operation: (s, operationId) => {
+    if (s !== state || operationId !== 'setWorkStatus') return masters.operation(s, operationId);
+    const move = masters.operation(RECORDED_MOVE, 'setWorkStatus');
+    const params =
+      state === RECORDED_MOVE ? move.params : masters.operation(state, 'getWork').params;
+    return { ...move, state, params, body: { ...body } };
+  },
+  body: (s, operationId) =>
+    s === state && operationId === 'setWorkStatus'
+      ? { ...masters.body(RECORDED_MOVE, 'setWorkStatus'), status: body['target'] }
+      : masters.body(s, operationId),
+});
 
 /** A dispatch press: Dispatch (`FLOW`) or the next phase's button (`PHASE`). */
 const givenDispatch = (state: string) =>
@@ -365,6 +393,49 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       expect(store.transitioning()[id]).toBeUndefined();
     }),
   );
+
+  // The Drop form's Confirm (qits-248): the move carries an outcome and, where it needs one, a
+  // reference. No golden master records a drop with an outcome yet (`dropOf`'s header), so these
+  // two compose one from a recorded move instead of `givenMove`.
+  it('drop-work-item: a reported ticket dropped as WONT_DO, no reference', () => {
+    const drop = dropOf(RECORDED_MOVE, { target: 'DROPPED', outcome: 'WONT_DO' });
+    return addGoldenInteraction(pact, drop, {
+      provider: PROVIDER,
+      state: RECORDED_MOVE,
+      operationId: 'setWorkStatus',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'drop-work-item' },
+      consumes: SET_WORK_STATUS,
+    }).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { id, qualifiedId, projectId } = movedIn(RECORDED_MOVE, 'setWorkStatus');
+      const entry = { id, qualifiedId } as WorkEntry;
+      const result = await store.drop(projectId, entry, 'WONT_DO');
+      expect(result.status).toBe('DROPPED');
+      expect(store.transitioning()[id]).toBeUndefined();
+    });
+  });
+
+  it('drop-work-item: a ticket dropped as DUPLICATE, with its reference', () => {
+    const state = 'an improvement ticket in detail';
+    const supersededBy = masters.operation(state, 'getWork').params['bugTicketId'];
+    const drop = dropOf(state, { target: 'DROPPED', outcome: 'DUPLICATE', supersededBy });
+    return addGoldenInteraction(pact, drop, {
+      provider: PROVIDER,
+      state,
+      operationId: 'setWorkStatus',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'drop-work-item' },
+      consumes: SET_WORK_STATUS,
+    }).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const params = drop.operation(state, 'setWorkStatus').params;
+      const entry = {
+        id: params['improvementTicketId'],
+        qualifiedId: params['qualifiedId'],
+      } as WorkEntry;
+      const result = await store.drop(params['projectId'], entry, 'DUPLICATE', supersededBy);
+      expect(result.status).toBe('DROPPED');
+    });
+  });
 
   // The Schedule tab's Schedule: the ticked REFINED epics and tickets to READY_FOR_DEV, all at once,
   // with the viewer's session (qits-887). Unscheduling (READY_FOR_DEV back to REFINED) is the same

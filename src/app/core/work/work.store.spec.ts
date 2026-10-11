@@ -442,6 +442,66 @@ describe('WorkStore', () => {
       http.expectOne('/projects/api/work/qits-1/status').flush({ status: 'REFINED' });
       await moved;
     });
+
+    // The Drop action's own move (qits-248): the same status door, carrying an outcome and, where
+    // the outcome asks for one, a reference. The form that asks for them is `work-drop.spec.ts`;
+    // this is `WorkStore.drop` itself.
+    describe('drop', () => {
+      it('sends the outcome, and no reference for an outcome that forbids one', async () => {
+        const store = await loaded();
+        const moved = store.drop(ID, ticket, 'OBSOLETE');
+        expect(store.transitioning()['t-1']).toBe('running');
+        await settle();
+        const request = http.expectOne('/projects/api/work/qits-1/status');
+        expect(request.request.body).toEqual({ target: 'DROPPED', outcome: 'OBSOLETE' });
+        request.flush({ status: 'DROPPED' });
+        expect(await moved).toEqual({ status: 'DROPPED' });
+        expect(statusOf(store, 't-1')).toBe('DROPPED');
+        expect(store.transitioning()).toEqual({});
+      });
+
+      it('sends the reference alongside an outcome that requires one', async () => {
+        const store = await loaded();
+        const moved = store.drop(ID, ticket, 'DUPLICATE', 'qits-378');
+        await settle();
+        const request = http.expectOne('/projects/api/work/qits-1/status');
+        expect(request.request.body).toEqual({
+          target: 'DROPPED',
+          outcome: 'DUPLICATE',
+          supersededBy: 'qits-378',
+        });
+        request.flush({ status: 'DROPPED' });
+        await moved;
+      });
+
+      it('surfaces a 400 naming the rule, and keeps the status', async () => {
+        const store = await loaded();
+        const moved = store.drop(ID, ticket, 'DUPLICATE');
+        await settle();
+        http
+          .expectOne('/projects/api/work/qits-1/status')
+          .flush(
+            { message: 'DUPLICATE needs a reference naming what it duplicates' },
+            { status: 400, statusText: 'Bad Request' },
+          );
+        const result = await moved;
+        expect(result.refusal).toBe('DUPLICATE needs a reference naming what it duplicates');
+        expect(statusOf(store, 't-1')).toBe('REPORTED');
+        expect(store.transitioning()['t-1']).toBe('error');
+        expect(store.refusals()['t-1']).toBe(
+          'DUPLICATE needs a reference naming what it duplicates',
+        );
+      });
+
+      it('does not repeat a running drop', async () => {
+        const store = await loaded();
+        const moved = store.drop(ID, ticket, 'OBSOLETE');
+        await store.drop(ID, ticket, 'OBSOLETE');
+        await settle();
+        http.expectOne('/projects/api/work/qits-1/status').flush({ status: 'DROPPED' });
+        await moved;
+      });
+    });
   });
 
   describe('dispatch', () => {

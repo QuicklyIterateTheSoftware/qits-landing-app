@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   PLATFORM_ID,
+  signal,
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -32,6 +33,7 @@ import { FeatureDetail } from '$patterns/work/detail/feature-detail/feature-deta
 import { TaskDetail } from '$patterns/work/detail/task-detail/task-detail';
 import { TicketDetail } from '$patterns/work/detail/ticket-detail/ticket-detail';
 import { WorkDetailStore } from '$core/work/work-detail.store';
+import { WorkDrop } from '$patterns/work/detail/work-drop/work-drop';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
 
@@ -60,7 +62,9 @@ const notBuiltYet = (): void => undefined;
  *
  * Wired: every Status move (`WorkStore.transition`, the item's entry takes the answered status),
  * Dispatch (`WorkStore.dispatch`, the whole flow) and the next phase's button (that phase alone).
- * Every other press is a placeholder for now (`notBuiltYet`); see `callbackOf`.
+ * Drop opens its own form instead of moving at once (`app-work-drop`, qits-248): it asks for the
+ * outcome and, where the outcome needs one, a reference, then sends `WorkStore.drop`. Every other
+ * press is a placeholder for now (`notBuiltYet`); see `callbackOf`.
  *
  * The body is picked with `@switch`: which archetype it is is known only in the browser (the server
  * loads no work), so the server render and the browser's first render both draw none.
@@ -76,12 +80,22 @@ const notBuiltYet = (): void => undefined;
     FeatureDetail,
     TaskDetail,
     TicketDetail,
+    WorkDrop,
     WorkWorkspaces,
   ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout [title]="title()" [actions]="actions()">
+        @if (dropping(); as entry) {
+          <app-work-drop
+            class="mb-6"
+            [projectId]="projectId()"
+            [entry]="entry"
+            (dropped)="dropping.set(null)"
+            (cancelled)="dropping.set(null)"
+          />
+        }
         <ui-spinner [state]="work.state()" class="min-h-48">
           <p class="m-0 text-sm text-charcoal-brown-600" [class.hidden]="!entry()">
             {{ facts() }}
@@ -175,6 +189,12 @@ export class WorkItemPage {
     () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
   );
 
+  /** The open project's id, for `WorkStore.drop` (and every other write the page makes). */
+  protected readonly projectId = computed(() => this.selected.project()?.id ?? '');
+
+  /** The item the Drop form is open for; null while it is closed. */
+  protected readonly dropping = signal<WorkEntry | null>(null);
+
   /** The actions for the item's archetype and status, from the archetype registry. */
   protected readonly actions = computed((): readonly ActionGroup[] => {
     const entry = this.entry();
@@ -217,6 +237,9 @@ export class WorkItemPage {
       case 'move': {
         const target = action.move.to as WorkStatus | undefined;
         if (!projectId || !target) return notBuiltYet;
+        // DROP opens its own form (the outcome, and its reference) instead of moving at once;
+        // `app-work-drop` sends it (qits-248).
+        if (action.move.kind === 'DROP') return () => this.dropping.set(entry);
         return () => void this.store.transition(projectId, entry, target);
       }
       case 'dispatch':

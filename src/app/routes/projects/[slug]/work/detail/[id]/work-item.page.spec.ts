@@ -330,11 +330,18 @@ describe('WorkItemPage', () => {
   });
 
   it('drops an epic through the status door, and offers to reopen it', async () => {
-    const { harness, entity, groups, press } = await shown('Implementing epic');
+    const { harness, entity, element, groups, press } = await shown('Implementing epic');
     press('Drop');
+    harness.fixture.detectChanges();
+    // The Drop form (qits-248): an outcome, then Confirm drop sends the move.
+    const select = element.querySelector<HTMLSelectElement>('select[aria-label="Outcome"]')!;
+    select.value = 'OBSOLETE';
+    select.dispatchEvent(new Event('change'));
+    harness.fixture.detectChanges();
+    press('Confirm drop');
     await settle();
     const request = http.expectOne(`/projects/api/work/${entity.qualifiedId}/status`);
-    expect(request.request.body).toEqual({ target: 'DROPPED' });
+    expect(request.request.body).toEqual({ target: 'DROPPED', outcome: 'OBSOLETE' });
     // The recorded answer of "an implementing epic" (a move to IMPLEMENTED), with the status this
     // move answers instead.
     const answer = goldenMaster('an implementing epic', 'setWorkStatus');

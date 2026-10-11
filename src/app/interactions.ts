@@ -48,6 +48,11 @@ export const INTERACTIONS = {
   /** `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). */
   'move-work-item': 'A status action on the work item page moves the item',
   /**
+   * `work-item.page.ts` via `app-work-drop`: Confirm drop on the Drop form sends the move with its
+   * outcome (and, where the outcome needs one, its reference) — qits-248.
+   */
+  'drop-work-item': 'Confirm drop on the work item page moves the item to DROPPED with its outcome',
+  /**
    * `work-schedule.page.ts` via `WorkDetailStore.loadCriteria`: the Schedule tab reads each listed
    * epic's and ticket's acceptance criteria.
    */

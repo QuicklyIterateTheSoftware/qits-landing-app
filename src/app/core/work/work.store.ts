@@ -26,6 +26,7 @@ import {
   type WorkEntry,
 } from './work.consumes';
 import { FINISH_DELAY_MS } from './finish-delay';
+import type { DropMove, WorkOutcome } from './work-outcome';
 
 /** How a finish (a move to DONE) is going: running, or failed. Absent when none is. */
 export type FinishState = 'running' | 'error';
@@ -150,6 +151,11 @@ interface WorkState {
  *   `refusals` why a move failed (the 409's message: a quality gate, say).
  * - `transitionAll(projectId, entries, target)` moves several items at once, each as `transition`
  *   does (the Schedule tab's Schedule and Unschedule). Each move succeeds or fails on its own.
+ * - `drop(projectId, entry, outcome, supersededBy)` is the Drop action's own move, into DROPPED:
+ *   the same door and the same `transitioning`/`refusals` state as `transition`, but it also sends
+ *   `outcome` and, for the outcomes that need one, `supersededBy` (qits-248; `work-outcome.ts`).
+ *   The answer, including a refusal, is also returned, so the form that asked for the outcome can
+ *   show it without reading the store's state.
  * - `dispatch(entry, mode)` presses dispatch (`dispatchWork`): `FLOW` runs every
  *   phase left, `PHASE` the next one. The answer names the phase it started (`dispatched`); the
  *   status the platform moves the item to arrives as an event, like any other move.
@@ -243,19 +249,23 @@ export const WorkStore = signalStore(
 
     /**
      * Moves an entity to `target` through the status door, and writes the answered status into its
-     * entry. The answered status, or why the move failed.
+     * entry. The answered status, or why the move failed. `extra` carries a DROP move's `outcome`
+     * and `supersededBy` (qits-248); the deployed service ignores them until it releases the
+     * field, and the next one requires `outcome` on every move into DROPPED.
      */
     async function move(
       projectId: string,
       entry: WorkEntry,
       target: WorkStatus,
+      extra?: Pick<DropMove, 'outcome' | 'supersededBy'>,
     ): Promise<{ readonly status?: WorkStatus; readonly refusal?: string }> {
       const id = entry.id;
       const qualifiedId = workRef(entry);
       if (!id || !qualifiedId) return {};
+      const body: DropMove = { target, ...extra };
       // `keepalive`: a finish sent as the page is left must still arrive.
       const { data, error, response } = await consume(
-        setWorkStatus({ path: { qualifiedId }, body: { target }, keepalive: true }),
+        setWorkStatus({ path: { qualifiedId }, body, keepalive: true }),
         SET_WORK_STATUS,
       );
       const status = error === undefined ? data?.status : undefined;
@@ -282,6 +292,23 @@ export const WorkStore = signalStore(
       const { status, refusal } = await move(projectId, entry, target);
       setTransitioning(id, status ? undefined : 'error');
       setRefusal(id, status ? undefined : refusal);
+    }
+
+    /** The Drop action: moves `entry` to DROPPED with the outcome (and reference) it was given. */
+    async function drop(
+      projectId: string,
+      entry: WorkEntry,
+      outcome: WorkOutcome,
+      supersededBy?: string,
+    ): Promise<{ readonly status?: WorkStatus; readonly refusal?: string }> {
+      const id = entry.id;
+      if (!id || store.transitioning()[id] === 'running') return {};
+      setTransitioning(id, 'running');
+      setRefusal(id, undefined);
+      const result = await move(projectId, entry, 'DROPPED', { outcome, supersededBy });
+      setTransitioning(id, result.status ? undefined : 'error');
+      setRefusal(id, result.status ? undefined : result.refusal);
+      return result;
     }
 
     async function finish(projectId: string, entry: WorkEntry): Promise<void> {
@@ -370,6 +397,8 @@ export const WorkStore = signalStore(
       finish,
       /** Moves `entry` to `target` (a Status action); a running move is not repeated. */
       transition,
+      /** Drops `entry` with an outcome (and reference); a running move is not repeated. */
+      drop,
       /** Moves every one of `entries` to `target`, all at once, each as `transition` does. */
       async transitionAll(
         projectId: string,
