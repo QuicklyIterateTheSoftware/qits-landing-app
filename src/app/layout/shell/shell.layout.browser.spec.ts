@@ -206,7 +206,7 @@ describe('ShellLayout (screenshots)', () => {
       .toMatchTextContent('Campaigns');
   });
 
-  it('shows the newest release request below Release Requests, between Work and Editor', async () => {
+  it('shows the newest release request below Release Requests, between Work and Repositories', async () => {
     const { project, layout } = await renderProject(
       '/release-requests',
       'a project with pending release requests',
@@ -221,14 +221,7 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((a) => a.firstChild?.textContent?.trim());
-    expect(labels).toEqual([
-      'Work',
-      'Release Requests',
-      'Editor',
-      'Repositories',
-      'Observability',
-      'Events',
-    ]);
+    expect(labels).toEqual(['Work', 'Release Requests', 'Repositories', 'Observability', 'Events']);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(`${project.name}›Release Requests`);
