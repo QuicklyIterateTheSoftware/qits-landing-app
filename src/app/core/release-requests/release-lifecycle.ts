@@ -1,5 +1,11 @@
 import type { ReleaseRequest } from './release-request.consumes';
-import { approvalDecision, gateSentence, gateToneOf } from './release-pipeline';
+import {
+  approvalDecision,
+  automationSetAside,
+  CHECKED_BY_QA,
+  gateSentence,
+  gateToneOf,
+} from './release-pipeline';
 import { hasReleased, releaseConflict, shortShaOrNone } from './release-request-model';
 
 /**
@@ -112,6 +118,7 @@ export function stepStateOf(word: string | undefined): StepState {
       return 'pending';
     case 'NOT_REQUIRED':
     case 'NOT_APPLICABLE':
+    case 'DEFERRED':
     case 'WAIVED':
     case 'SKIPPED':
       return 'skipped';
@@ -610,7 +617,8 @@ interface PreTestStep {
 /**
  * The phase before the tests (P1) as its steps: the merge of the sources (where an upstream
  * version bump on `maintenance/dependencies` also comes in), then every automation the answer
- * lists, the ones that do not apply (`NOT_APPLICABLE`) with their reason. Without automation rows
+ * lists, the ones that do not apply (`NOT_APPLICABLE`) or that QA checks instead (`DEFERRED`)
+ * with their reason. Without automation rows
  * (an answer that carries none), the automations gate stands for them.
  */
 export function preTestSteps(request: ReleaseRequest, fold: Stage): readonly PreTestStep[] {
@@ -627,12 +635,13 @@ export function preTestSteps(request: ReleaseRequest, fold: Stage): readonly Pre
   const rows = request.automations;
   if (rows && rows.length > 0) {
     for (const row of rows) {
+      const deferred = row.state === 'DEFERRED';
       steps.push({
         label: row.label ?? row.kind ?? 'automation',
         state: stepStateOf(row.state),
-        word: wordOf(row.state),
-        detail: row.detail?.trim() || null,
-        notApplicable: row.state === 'NOT_APPLICABLE',
+        word: deferred ? CHECKED_BY_QA : wordOf(row.state),
+        detail: row.detail?.trim() || (deferred ? CHECKED_BY_QA : null),
+        notApplicable: automationSetAside(row),
       });
     }
   } else {

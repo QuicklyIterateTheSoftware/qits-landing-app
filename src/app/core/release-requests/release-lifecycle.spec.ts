@@ -188,6 +188,7 @@ describe('release lifecycle', () => {
 
   it('reads a not applicable automation as skipped, never as unknown', () => {
     expect(stepStateOf('NOT_APPLICABLE')).toBe('skipped');
+    expect(stepStateOf('DEFERRED')).toBe('skipped');
   });
 
   it('reads the backend’s words as states, an unknown one as unknown', () => {
@@ -251,6 +252,21 @@ describe('lifecycle summary', () => {
         'Skipped: Screenshot baselines — no frontend',
     );
     expect(points[2].title).toContain('Tests passed: pending');
+  });
+
+  it('counts a deferred automation apart, as checked by QA', () => {
+    const [cog] = lifecycleSummary({
+      ...pending,
+      automations: [
+        { kind: 'a', label: 'Estate pins', state: 'FRESH' },
+        { kind: 'b', label: 'Entity diagram', state: 'DEFERRED' },
+      ],
+    });
+    expect([cog.state, cog.count]).toEqual(['passed', undefined]);
+    expect(cog.title).toBe(
+      'Merge and automations\nMerge: folded\nEstate pins: fresh\n' +
+        'Skipped: Entity diagram — checked by QA',
+    );
   });
 
   it('leaves out deployment when nothing deploys; a finalized request is all green', () => {
