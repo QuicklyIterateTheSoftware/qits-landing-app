@@ -1,9 +1,12 @@
 import { goldenMaster } from '../../../testing/golden-masters';
 import type { ReleaseRequestEntry } from './projects.consumes';
 import {
+  findReleaseRequest,
   gateTone,
   latestReleaseRequest,
   nobodyWatching,
+  releaseRequestName,
+  releaseRequestRef,
   requestBadge,
   requestTone,
   shortSha,
@@ -64,5 +67,23 @@ describe('release requests', () => {
     expect(utcMinute('not a date')).toBe('');
     expect(shortSha('0000000000000000000000000000000000000004')).toBe('0000000');
     expect(shortSha(null)).toBe('');
+  });
+
+  it('finds a request by its uuid or its logical id, and names and links it by its logical id', () => {
+    const requests = recorded();
+    const first = requests[0];
+    expect(findReleaseRequest(requests, first.id!)).toBe(first);
+    expect(findReleaseRequest(requests, first.qualifiedId!)).toBe(first);
+    expect(findReleaseRequest(requests, 'no-such-request')).toBeUndefined();
+    expect(releaseRequestName(requests, first.id!)).toBe(first.qualifiedId);
+    expect(releaseRequestRef(first)).toBe(first.qualifiedId);
+  });
+
+  it('falls back to the uuid where a request has no logical id', () => {
+    const id = '00000000-0000-4000-8000-000000000009';
+    const requests: ReleaseRequestEntry[] = [{ id }];
+    expect(releaseRequestName(requests, id)).toBe('00000000');
+    expect(releaseRequestRef(requests[0])).toBe(id);
+    expect(releaseRequestName([], 'other-rr-1')).toBe('other-rr-1');
   });
 });

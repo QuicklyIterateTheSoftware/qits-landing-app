@@ -23,7 +23,7 @@ import {
   affectsReleaseRequests,
   RELEASE_REQUEST_EVENTS,
 } from '$core/projects/release-request-events';
-import { requestBadge } from '$core/projects/release-requests';
+import { findReleaseRequest, requestBadge } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import type {
@@ -80,7 +80,9 @@ const UNATTENDED_TITLE =
  *
  * Every read of a request is addressed by its repository, and the URL names only the request, so
  * the page finds the repository in the project's list of requests (`ProjectsStore`: the open
- * requests plus the last finalized). A request not in that list is "not found" here.
+ * requests plus the last finalized), by the request's uuid or its logical id (`qualifiedId`,
+ * `<repository>-rr-<n>`). The head names the request by its logical id. A request not in that list
+ * is "not found" here.
  *
  * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
  * reports of its test run and release run (failing tests first, coverage, the rest), the release
@@ -155,7 +157,7 @@ const UNATTENDED_TITLE =
                 <ui-chip label="nobody watching" tone="waiting" [title]="unattendedTitle" />
               }
               <span class="font-semibold break-all text-charcoal-brown-800">{{
-                request.repoName
+                entry()?.qualifiedId ?? request.repoName
               }}</span>
               @if (watching()) {
                 <span class="text-xs whitespace-nowrap text-charcoal-brown-500" role="status"
@@ -473,7 +475,7 @@ export class ReleaseRequestPage {
     return releaseTabs({ commits: commits?.length, runs: runCount });
   });
 
-  /** The request id in the URL. */
+  /** The request id in the URL: its uuid or its logical id (`<repository>-rr-<n>`). */
   protected readonly requestId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('requestId') ?? '')),
     { initialValue: '' },
@@ -491,13 +493,18 @@ export class ReleaseRequestPage {
 
   protected readonly listState = computed(() => this.listed()?.status);
 
-  /** The request's repository, once the project's list names it; `''` before and if not. */
-  protected readonly repoId = computed(() => {
-    const id = this.requestId();
-    return this.listed()?.requests.find((request) => request.id === id)?.repoId ?? '';
-  });
+  /** The request in the project's list, found by uuid or logical id; undefined before and if not. */
+  protected readonly entry = computed(() =>
+    findReleaseRequest(this.listed()?.requests ?? [], this.requestId()),
+  );
 
-  protected readonly view = computed(() => this.store.byId()[this.requestId()]);
+  /** The request's repository, once the project's list names it; `''` before and if not. */
+  protected readonly repoId = computed(() => this.entry()?.repoId ?? '');
+
+  /** The request's uuid, which every read of it uses; `''` until the list names it. */
+  private readonly uuid = computed(() => this.entry()?.id ?? '');
+
+  protected readonly view = computed(() => this.store.byId()[this.uuid()]);
 
   protected readonly row = computed(() => this.view()?.request.value);
 
@@ -721,7 +728,7 @@ export class ReleaseRequestPage {
     });
     effect(() => {
       const repoId = this.repoId();
-      const requestId = this.requestId();
+      const requestId = this.uuid();
       if (browser && repoId && requestId) {
         untracked(() => void this.store.load(repoId, requestId));
       }
@@ -771,7 +778,7 @@ export class ReleaseRequestPage {
       .subscribe(() => {
         const repoId = this.repoId();
         if (!repoId) return;
-        void this.store.refresh(repoId, this.requestId());
+        void this.store.refresh(repoId, this.uuid());
         for (const run of this.reportRuns()) this.reports.refreshRun(run.runId);
         void this.ci.refresh(repoId);
       });

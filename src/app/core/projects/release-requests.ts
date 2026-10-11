@@ -94,3 +94,32 @@ export function utcMinute(instant: string | undefined): string {
 export function shortSha(sha: string | null | undefined): string {
   return sha ? sha.slice(0, 7) : '';
 }
+
+/** True when `id` has the shape of a uuid. */
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * The request that `id` names, by its uuid or its logical id (`qualifiedId`, `<repository>-rr-<n>`).
+ * Undefined when no request in `requests` has that id.
+ */
+export function findReleaseRequest(
+  requests: readonly ReleaseRequestEntry[],
+  id: string,
+): ReleaseRequestEntry | undefined {
+  return requests.find((request) => request.id === id || request.qualifiedId === id);
+}
+
+/**
+ * The name of the request that `id` (a uuid or a logical id) names: its logical id when it has
+ * one. Otherwise a uuid is cut to its first eight characters, and any other id shows whole.
+ */
+export function releaseRequestName(requests: readonly ReleaseRequestEntry[], id: string): string {
+  const request = findReleaseRequest(requests, id);
+  if (request?.qualifiedId) return request.qualifiedId;
+  return UUID.test(id) ? id.slice(0, 8) : id;
+}
+
+/** The id that a link to `request` uses: its logical id when it has one, else its uuid. */
+export function releaseRequestRef(request: ReleaseRequestEntry): string {
+  return request.qualifiedId || request.id || '';
+}

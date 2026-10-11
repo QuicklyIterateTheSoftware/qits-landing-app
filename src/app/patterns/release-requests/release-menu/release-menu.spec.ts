@@ -103,9 +103,10 @@ describe('ReleaseMenu', () => {
     const rest = pending.filter((r) => attentionOf(r).length === 0);
     expect(links.map((a) => a.getAttribute('href'))).toEqual([
       ...needs.map(
-        (r) => `/projects/${recorded.slug}/release-requests/${r.id}#${attentionOf(r)[0].anchor}`,
+        (r) =>
+          `/projects/${recorded.slug}/release-requests/${r.qualifiedId}#${attentionOf(r)[0].anchor}`,
       ),
-      ...rest.map((r) => `/projects/${recorded.slug}/release-requests/${r.id}`),
+      ...rest.map((r) => `/projects/${recorded.slug}/release-requests/${r.qualifiedId}`),
     ]);
     expect(needs.length).toBe(2);
     // Each row is named by its logical id (`<repository>-rr-<n>`).

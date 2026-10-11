@@ -61,11 +61,25 @@ describe('releaseRequestSubpage', () => {
   const list = `${project}/release-requests`;
   const id = '00000000-0000-4000-8000-000000000002';
 
-  it('names a request by the start of its id', () => {
-    expect(releaseRequestSubpage(`${list}/${id}?x=1`, project)).toEqual({
-      label: '00000000',
+  const requests = [{ id, qualifiedId: 'contract-service-rr-2' }, { id: `${id.slice(0, -1)}3` }];
+
+  it('names a request by its logical id, opened by uuid or by logical id', () => {
+    expect(releaseRequestSubpage(`${list}/${id}?x=1`, project, requests)).toEqual({
+      label: 'contract-service-rr-2',
       path: `${list}/${id}`,
     });
+    expect(releaseRequestSubpage(`${list}/contract-service-rr-2#x`, project, requests)).toEqual({
+      label: 'contract-service-rr-2',
+      path: `${list}/contract-service-rr-2`,
+    });
+  });
+
+  it('names a request without a logical id by the start of its uuid', () => {
+    expect(releaseRequestSubpage(`${list}/${id.slice(0, -1)}3`, project, requests)?.label).toBe(
+      '00000000',
+    );
+    expect(releaseRequestSubpage(`${list}/${id}`, project)?.label).toBe('00000000');
+    expect(releaseRequestSubpage(`${list}/other-rr-9`, project)?.label).toBe('other-rr-9');
   });
 
   it('has no crumb for the list itself or for other pages', () => {

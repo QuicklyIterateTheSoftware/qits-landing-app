@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ProjectsStore } from '$core/projects/projects.store';
-import { latestReleaseRequest, requestBadge } from '$core/projects/release-requests';
+import {
+  latestReleaseRequest,
+  releaseRequestName,
+  requestBadge,
+} from '$core/projects/release-requests';
+import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { SelectedProject } from '$core/projects/selected-project';
 import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
@@ -240,8 +245,10 @@ export class ShellLayout {
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
     // Release Requests › <request id>.
     const url = this.selected.url();
+    const requests = this.projects.releaseRequests()[project.id ?? '']?.requests ?? [];
     const sub =
-      workSubpage(url, `/projects/${slug}`) ?? releaseRequestSubpage(url, `/projects/${slug}`);
+      workSubpage(url, `/projects/${slug}`) ??
+      releaseRequestSubpage(url, `/projects/${slug}`, requests);
     return sub ? [...crumbs, section, sub] : [...crumbs, section];
   });
 
@@ -333,12 +340,19 @@ export function workSubpage(url: string, project: string): NavLink | undefined {
 
 /**
  * The crumb of one release request below the project at `project` (`/projects/<slug>`):
- * `<project>/release-requests/<id>` is the id's first eight characters. Undefined for the list
- * itself and anything outside it.
+ * `<project>/release-requests/<id>` names the request by its logical id (`<repository>-rr-<n>`),
+ * found in `requests` by uuid or logical id; a request without one by its uuid's first eight
+ * characters. Undefined for the list itself and anything outside it.
  */
-export function releaseRequestSubpage(url: string, project: string): NavLink | undefined {
+export function releaseRequestSubpage(
+  url: string,
+  project: string,
+  requests: readonly ReleaseRequestEntry[] = [],
+): NavLink | undefined {
   const prefix = `${project}/${RELEASE_REQUESTS}/`;
   if (!url.startsWith(prefix)) return undefined;
   const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
-  return id ? { label: decodeURIComponent(id).slice(0, 8), path: `${prefix}${id}` } : undefined;
+  return id
+    ? { label: releaseRequestName(requests, decodeURIComponent(id)), path: `${prefix}${id}` }
+    : undefined;
 }

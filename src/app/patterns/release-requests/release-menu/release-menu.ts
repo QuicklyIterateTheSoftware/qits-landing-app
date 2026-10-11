@@ -17,7 +17,7 @@ import {
 } from '$core/projects/release-request-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { requestTone } from '$core/projects/release-requests';
+import { releaseRequestRef, requestTone } from '$core/projects/release-requests';
 import { attentionOf, lifecycleSummary } from '$core/release-requests/release-lifecycle';
 import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
@@ -100,7 +100,7 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
             >
               <a
                 class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-gray-50"
-                [routerLink]="['/projects', slug(), 'release-requests', request.id ?? '']"
+                [routerLink]="['/projects', slug(), 'release-requests', ref(request)]"
                 [fragment]="row.attention[0]?.anchor"
                 [attr.title]="
                   row.attention[0] ? row.attention[0].action + ': ' + row.attention[0].label : null
@@ -137,6 +137,7 @@ export class ReleaseMenu {
   private readonly store = inject(ProjectsStore);
   private readonly selected = inject(SelectedProject);
   protected readonly requestTone = requestTone;
+  protected readonly ref = releaseRequestRef;
 
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);

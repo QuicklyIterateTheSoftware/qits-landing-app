@@ -11,7 +11,13 @@ import {
 import { RouterLink } from '@angular/router';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { ProjectsStore } from '$core/projects/projects.store';
-import { nobodyWatching, requestBadge, shortSha, utcMinute } from '$core/projects/release-requests';
+import {
+  nobodyWatching,
+  releaseRequestRef,
+  requestBadge,
+  shortSha,
+  utcMinute,
+} from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
@@ -27,10 +33,12 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  * finalized, so a released row is still in flight.
  *
  * Each row shows the request's state (or "awaiting approval"), its priority, "nobody watching"
- * for a stopped request a machine asked for, the repository, the summary, when it last changed, its
+ * for a stopped request a machine asked for, its logical id (`<repository>-rr-<n>`; the repository
+ * where an older answer has none), the summary, when it last changed, its
  * version, its merged commit, who asked, the service's detail, and its lifecycle as a line (cog,
- * phase chips, gate shields). A request that needs a person is ringed, with a link to that check. The repository and
- * summary link to the request's own page, `release-requests/<id>`. A request that can still be
+ * phase chips, gate shields). A request that needs a person is ringed, with a link to that check. The logical id
+ * and summary link to the request's own page, `release-requests/<logical id>` (its uuid where it
+ * has no logical id). A request that can still be
  * called off has Withdraw.
  *
  * The requests come from `ProjectsStore`, the same answer the top bar's release menu and the
@@ -76,12 +84,12 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   />
                   <a
                     class="font-semibold break-all text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="request.id ?? ''"
-                    >{{ request.repoName }}</a
+                    [routerLink]="ref(request)"
+                    >{{ request.qualifiedId ?? request.repoName }}</a
                   >
                   <a
                     class="min-w-48 flex-1 break-words text-gray-900 no-underline hover:underline"
-                    [routerLink]="request.id ?? ''"
+                    [routerLink]="ref(request)"
                     >{{ request.summary }}</a
                   >
                   <span class="text-xs whitespace-nowrap text-gray-500">{{
@@ -102,7 +110,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   @if (needs[0]; as first) {
                     <a
                       class="inline-flex items-center gap-1 font-semibold text-sunflower-gold-900 no-underline hover:underline"
-                      [routerLink]="request.id ?? ''"
+                      [routerLink]="ref(request)"
                       [fragment]="first.anchor"
                     >
                       <svg
@@ -151,6 +159,7 @@ export class ReleaseRequestsPage {
   protected readonly badgeOf = requestBadge;
   protected readonly when = utcMinute;
   protected readonly sha = shortSha;
+  protected readonly ref = releaseRequestRef;
 
   private readonly answer = computed(() => {
     const id = this.selected.project()?.id;

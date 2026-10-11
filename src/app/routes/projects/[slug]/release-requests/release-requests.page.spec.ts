@@ -57,20 +57,27 @@ describe('ReleaseRequestsPage', () => {
 
   it('lists every request, finalized ones too, each linking to its own page', async () => {
     const { element, request, answered } = await render();
-    request.flush(
-      goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
+    const listed = goldenMaster(
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
     );
+    request.flush(listed);
     await answered();
     const rows = element.querySelectorAll('li');
     expect(rows).toHaveLength(6);
     const first = rows[0];
-    expect(first.textContent).toContain('contract-service');
+    const qualifiedId = listed.requests[0].qualifiedId!;
+    expect(qualifiedId).toMatch(/^contract-service-rr-\d+$/);
+    expect(first.querySelector('a')?.textContent?.trim()).toBe(qualifiedId);
     expect(first.textContent).toContain('Waiting on its gates');
     expect(first.textContent).toContain('2026-01-01 00:00 UTC');
     expect(first.querySelector('ui-lifecycle-line [title="Test: pending"]')).not.toBeNull();
-    expect(first.querySelector('a')?.getAttribute('href')).toBe(
-      `/projects/${project.slug}/release-requests/00000000-0000-4000-8000-000000000002`,
-    );
+    // Every link of the row opens the request by its logical id.
+    for (const link of Array.from(first.querySelectorAll('a'))) {
+      expect(link.getAttribute('href')).toBe(
+        `/projects/${project.slug}/release-requests/${qualifiedId}`,
+      );
+    }
     expect(rows[5].textContent).toContain('finalized');
     expect(rows[5].textContent).toContain('2026.101.100001');
     // The CONFLICTED request carries the service's detail; the others hide the line.
