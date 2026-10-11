@@ -2,6 +2,8 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
+  addWorkComment,
+  editWorkComment,
   getWork,
   listWorkComments,
   listWorkDossier,
@@ -14,6 +16,7 @@ import {
   LIST_DOSSIER_PAGES,
   LIST_WORK_COMMENTS,
   LIST_WORK_DOSSIER_ASSETS,
+  WORK_COMMENT,
   type CommentEntry,
   type DossierPage,
   type EntityDetail,
@@ -33,6 +36,25 @@ export interface WorkDetail {
    * content`). Empty for other archetypes.
    */
   readonly figures: Readonly<Record<string, string>>;
+}
+
+/** What a comment write answered: nothing when it went through, else why not, for a person. */
+export interface CommentOutcome {
+  readonly refusal?: string;
+}
+
+/**
+ * Why a comment write failed: the HTTP status and the service's `message` when it sent one (its
+ * OpenAPI document gives error answers no body, so it is read defensively), or "the service is
+ * unreachable" when nothing answered.
+ */
+export function commentRefusal(error: unknown, httpStatus: number | undefined): string {
+  if (!httpStatus) return 'the service is unreachable';
+  const message =
+    error !== null && typeof error === 'object' && 'message' in error ? error.message : undefined;
+  return typeof message === 'string' && message.trim()
+    ? `${httpStatus} ${message}`
+    : `${httpStatus}`;
 }
 
 const LOADING: WorkDetail = { status: 'loading', comments: [], pages: [], figures: {} };
@@ -64,6 +86,11 @@ interface WorkDetailState {
  *   does, in the browser.
  * - `refresh(ref)` reads again and keeps the old data until the answer is in.
  * - `of(ref)`: the data, or undefined before `load`.
+ * - `addComment(ref, body)` comments on the item (`addWorkComment`, ported from
+ *   qits-projects-frontend's thread: only the body travels, the author is the session's), and
+ *   `editComment(ref, commentId, body)` rewrites one comment's body (`editWorkComment`). The answered
+ *   comment goes into the loaded thread (a new one last, an edited one in its place), so it shows
+ *   without a second read. A refusal comes back as `refusal`, and the thread stays as it was.
  * - `loadCriteria(ref)` reads the item's acceptance criteria alone (`getWork`), once, and again
  *   after an error: the Schedule tab shows them for each item it lists. `criteriaOf(ref)`: them,
  *   or undefined before `loadCriteria`.
@@ -123,6 +150,33 @@ export const WorkDetailStore = signalStore(
       return { ...dossier, status: 'loaded', comments };
     }
 
+    /** Puts `comment` into `ref`'s loaded thread: in place of the one with its id, else last. */
+    function putComment(ref: string, comment: CommentEntry): void {
+      const current = store.byRef()[ref];
+      if (!current || current.status !== 'loaded') return;
+      const known = current.comments.some((c) => c.id === comment.id);
+      const comments = known
+        ? current.comments.map((c) => (c.id === comment.id ? comment : c))
+        : [...current.comments, comment];
+      set(ref, { ...current, comments });
+    }
+
+    /** A comment write's answer as an outcome; the answered comment is put in the thread. */
+    function written(
+      answer: {
+        readonly data?: { readonly comment?: CommentEntry };
+        readonly error?: unknown;
+        readonly response?: { readonly status: number };
+      },
+      ref: string,
+    ): CommentOutcome {
+      const { data, error, response } = answer;
+      const comment = error === undefined ? data?.comment : undefined;
+      if (!comment) return { refusal: commentRefusal(error, response?.status) };
+      putComment(ref, comment);
+      return {};
+    }
+
     return {
       async load(ref: string): Promise<void> {
         const current = store.byRef()[ref];
@@ -137,6 +191,37 @@ export const WorkDetailStore = signalStore(
       },
       of(ref: string): WorkDetail | undefined {
         return store.byRef()[ref];
+      },
+      /** Sends the body as typed, trimmed; a blank one is not sent. */
+      async addComment(ref: string, body: string): Promise<CommentOutcome> {
+        const text = body.trim();
+        if (!ref || !text) return { refusal: 'a comment needs some text' };
+        return written(
+          await consume(
+            addWorkComment({ path: { qualifiedId: ref }, body: { body: text } }),
+            WORK_COMMENT,
+          ),
+          ref,
+        );
+      },
+      /**
+       * A JSON merge patch of the body alone, sent as plain `application/json` as the old UI sent it:
+       * the door reads either spelling, and the golden master records that one.
+       */
+      async editComment(ref: string, commentId: string, body: string): Promise<CommentOutcome> {
+        const text = body.trim();
+        if (!ref || !commentId || !text) return { refusal: 'a comment needs some text' };
+        return written(
+          await consume(
+            editWorkComment({
+              path: { qualifiedId: ref, commentId },
+              body: { body: text },
+              headers: { 'Content-Type': 'application/json' },
+            }),
+            WORK_COMMENT,
+          ),
+          ref,
+        );
       },
       async loadCriteria(ref: string): Promise<void> {
         const current = store.criteria()[ref];

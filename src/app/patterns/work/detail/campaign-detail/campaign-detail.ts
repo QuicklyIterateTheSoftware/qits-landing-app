@@ -23,7 +23,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Members</h2>
       <app-work-list [tree]="members()" [base]="base()" view="campaign" epicBoards />
     </section>
-    <app-work-comments [comments]="detail()?.comments ?? []" />
+    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
   `,
 })
 export class CampaignDetail {

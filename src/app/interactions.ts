@@ -41,6 +41,10 @@ export const INTERACTIONS = {
    * its dossier (an epic's pages and figures, a ticket's pages).
    */
   'show-work-item': 'The work item page shows the item’s description, dossier and comments',
+  /** `work-comments.ts` via `WorkDetailStore.addComment`: Comment under the item's thread. */
+  'comment-on-work-item': 'Comment on the work item page adds a comment to the item’s thread',
+  /** `work-comments.ts` via `WorkDetailStore.editComment`: Save on a comment being edited. */
+  'edit-comment': 'Save on an edited comment rewrites its text',
   /** `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). */
   'move-work-item': 'A status action on the work item page moves the item',
   /**

@@ -23,7 +23,11 @@ import {
   LIST_DOSSIER_PAGES,
   LIST_WORK_COMMENTS,
   LIST_WORK_DOSSIER_ASSETS,
+  WORK_COMMENT,
 } from './work-detail.consumes';
+import { WorkDetailStore } from './work-detail.store';
+import type { InteractionSlug } from '../../interactions';
+import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /**
  * `WorkDetailStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
@@ -40,6 +44,11 @@ import {
  *
  * The Schedule tab's criteria read (`loadCriteria`) is the same `getWork`, binding only the
  * acceptance criteria, of an epic and of a REFINED ticket.
+ *
+ * The thread's two writes, `addWorkComment` and `editWorkComment`, drive the store's own
+ * `addComment` and `editComment` against "a ticket with a comment", with the body the recording
+ * sent: the request qits-projects-frontend's thread made (only the body travels; the edit is a merge
+ * patch sent as plain `application/json`).
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -49,7 +58,11 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'listWorkComments',
   'listWorkDossier',
   'listWorkDossierAssets',
+  'addWorkComment',
+  'editWorkComment',
 ];
+
+const COMMENTED = 'a ticket with a comment';
 
 const EPIC = 'an epic in detail';
 const TICKETS = [
@@ -86,10 +99,28 @@ const givenCriteria = (state: string) =>
     consumes: GET_WORK_CRITERIA,
   });
 
+/** A comment write on the thread: Comment, or Save on an edited comment. */
+const givenWrite = (slug: InteractionSlug, operationId: string) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state: COMMENTED,
+    operationId,
+    trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
+    consumes: WORK_COMMENT,
+  });
+
+/** What the recording of `operationId` sent as the comment's body. */
+const sentBody = (operationId: string) =>
+  (masters.operation(COMMENTED, operationId).body as { body: string }).body;
+
 /** Runs `call` against the mock server at `url`, in an injection context. */
 function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
-    providers: [provideHttpClient(withFetch()), provideHeyApiClient(projectsClient)],
+    providers: [
+      provideHttpClient(withFetch()),
+      provideHeyApiClient(projectsClient),
+      provideTestPlatformOrigins(),
+    ],
   });
   projectsClient.setConfig({ baseUrl: url });
   return TestBed.runInInjectionContext(call);
@@ -187,4 +218,23 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
       expect(data?.pages).toBeDefined();
     }),
   );
+
+  it('comment-on-work-item: says something on the thread', () =>
+    givenWrite('comment-on-work-item', 'addWorkComment').executeTest(async (server) => {
+      const ref = refOf(COMMENTED, 'addWorkComment');
+      const outcome = await at(server.url, () =>
+        TestBed.inject(WorkDetailStore).addComment(ref, sentBody('addWorkComment')),
+      );
+      expect(outcome.refusal).toBeUndefined();
+    }));
+
+  it('edit-comment: rewrites a comment as a merge patch', () =>
+    givenWrite('edit-comment', 'editWorkComment').executeTest(async (server) => {
+      const ref = refOf(COMMENTED, 'editWorkComment');
+      const commentId = param(COMMENTED, 'editWorkComment', 'commentId');
+      const outcome = await at(server.url, () =>
+        TestBed.inject(WorkDetailStore).editComment(ref, commentId, sentBody('editWorkComment')),
+      );
+      expect(outcome.refusal).toBeUndefined();
+    }));
 });

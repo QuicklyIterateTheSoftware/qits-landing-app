@@ -880,6 +880,136 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "addWorkComment"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "comment-on-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "comment-on-work-item: addWorkComment",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a ticket with a comment",
+          "params": {
+            "commentId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1",
+            "ticketId": "00000000-0000-4000-8000-000000000003"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "body": "The range 2026-07-01 to 2026-09-30 reproduces it."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}/comments",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/work/contract-00000001-1/comments"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "comment": {
+              "author": "dev",
+              "body": "The range 2026-07-01 to 2026-09-30 reproduces it.",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000004"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.comment.author": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.comment.body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.comment.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.comment.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "declineReleaseRequest"
           },
           "qits-trigger": {
@@ -2239,6 +2369,136 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "editWorkComment"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "edit-comment",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "edit-comment: editWorkComment",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a ticket with a comment",
+          "params": {
+            "commentId": "00000000-0000-4000-8000-000000000001",
+            "projectId": "00000000-0000-4000-8000-000000000002",
+            "qualifiedId": "contract-00000001-1",
+            "ticketId": "00000000-0000-4000-8000-000000000003"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "body": "It answers 500 when the range holds no invoice at all."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}/comments/${commentId}",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "PATCH",
+        "path": "/projects/api/work/contract-00000001-1/comments/00000000-0000-4000-8000-000000000001"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "comment": {
+              "author": "dana.weber",
+              "body": "It answers 500 when the range holds no invoice at all.",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000001"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.comment.author": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.comment.body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.comment.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.comment.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }

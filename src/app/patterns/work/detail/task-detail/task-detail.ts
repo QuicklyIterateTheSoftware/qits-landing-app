@@ -31,7 +31,7 @@ import {
   template: `
     <app-work-fields [fields]="fields()" />
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
-    <app-work-comments [comments]="detail()?.comments ?? []" />
+    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
   `,
 })
 export class TaskDetail {

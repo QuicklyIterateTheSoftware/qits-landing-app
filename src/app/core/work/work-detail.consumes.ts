@@ -65,6 +65,18 @@ export type CommentEntry = NonNullable<
 >;
 
 /**
+ * `addWorkComment` and `editWorkComment`, by qualified id: the comment as the write left it. The
+ * store puts it in the thread in place of a second read: a new one at the end, an edited one in its
+ * place. The same fields as {@link LIST_WORK_COMMENTS}, so it draws the same.
+ */
+export const WORK_COMMENT = [
+  'comment.id',
+  'comment.author',
+  'comment.body',
+  'comment.createdAt',
+] as const;
+
+/**
  * `listWorkDossier`, by qualified id: an epic's or a ticket's dossier, each page's title and
  * Markdown body.
  */

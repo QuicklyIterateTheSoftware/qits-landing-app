@@ -22,7 +22,7 @@ import { WorkFields, type WorkField } from '$patterns/work/detail/work-fields/wo
     <app-work-fields [fields]="fields()" />
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
     <app-work-dossier [pages]="detail()?.pages ?? []" />
-    <app-work-comments [comments]="detail()?.comments ?? []" />
+    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
   `,
 })
 export class TicketDetail {

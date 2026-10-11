@@ -157,4 +157,71 @@ describe('WorkDetailStore', () => {
       expect(store.criteriaOf(ref)?.status).toBe('loaded');
     });
   });
+
+  describe('comments', () => {
+    const COMMENTED = 'a ticket with a comment';
+
+    /** A loaded bug ticket; the writes are answered with "a ticket with a comment"'s recordings. */
+    async function loaded() {
+      const { store, ref, load } = await started(BUG);
+      http
+        .expectOne(`/projects/api/work/${ref}/dossier`)
+        .flush(goldenMaster(BUG, 'listWorkDossier'));
+      await load;
+      return { store, ref };
+    }
+
+    it('adds a comment: only the trimmed body travels, and the answer goes last in the thread', async () => {
+      const { store, ref } = await loaded();
+      const before = store.of(ref)!.comments.length;
+      const adding = store.addComment(ref, '  Seen it too.  ');
+      await settle();
+      const request = http.expectOne(`/projects/api/work/${ref}/comments`);
+      expect(request.request.method).toBe('POST');
+      expect(request.request.body).toEqual({ body: 'Seen it too.' });
+      const answer = goldenMaster(COMMENTED, 'addWorkComment');
+      request.flush(answer);
+      expect(await adding).toEqual({});
+      const comments = store.of(ref)!.comments;
+      expect(comments.length).toBe(before + 1);
+      expect(comments.at(-1)?.id).toBe(answer.comment.id);
+      expect(comments.at(-1)?.body).toBe(answer.comment.body);
+    });
+
+    it('edits a comment in its place, as a merge patch sent as plain JSON', async () => {
+      const { store, ref } = await loaded();
+      const first = store.of(ref)!.comments[0];
+      const editing = store.editComment(ref, first.id!, 'Better words.');
+      await settle();
+      const request = http.expectOne(`/projects/api/work/${ref}/comments/${first.id}`);
+      expect(request.request.method).toBe('PATCH');
+      expect(request.request.body).toEqual({ body: 'Better words.' });
+      expect(request.request.headers.get('Content-Type')).toBe('application/json');
+      // The recording's answer, under this thread's first comment id, so it replaces that one.
+      const recorded = goldenMaster(COMMENTED, 'editWorkComment');
+      request.flush({ comment: { ...recorded.comment, id: first.id } });
+      expect(await editing).toEqual({});
+      const comments = store.of(ref)!.comments;
+      expect(comments[0].body).toBe(recorded.comment.body);
+      expect(comments.filter((c) => c.id === first.id).length).toBe(1);
+    });
+
+    it('says a refusal plainly and leaves the thread as it was', async () => {
+      const { store, ref } = await loaded();
+      const before = store.of(ref)!.comments;
+      const adding = store.addComment(ref, 'Not mine to say.');
+      await settle();
+      http
+        .expectOne(`/projects/api/work/${ref}/comments`)
+        .flush({ message: 'Not your project' }, { status: 403, statusText: 'Forbidden' });
+      expect(await adding).toEqual({ refusal: '403 Not your project' });
+      expect(store.of(ref)!.comments).toBe(before);
+    });
+
+    it('sends nothing for a blank body', async () => {
+      const { store, ref } = await loaded();
+      expect((await store.addComment(ref, '   ')).refusal).toBeTruthy();
+      http.expectNone(`/projects/api/work/${ref}/comments`);
+    });
+  });
 });

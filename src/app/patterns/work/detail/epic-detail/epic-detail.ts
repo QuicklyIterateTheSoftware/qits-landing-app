@@ -42,7 +42,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
       }
     </section>
     <app-work-dossier [pages]="detail()?.pages ?? []" [figures]="detail()?.figures ?? {}" />
-    <app-work-comments [comments]="detail()?.comments ?? []" />
+    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
   `,
 })
 export class EpicDetail {

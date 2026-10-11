@@ -30,7 +30,7 @@ import {
         <app-feature-list-row [node]="node()" [base]="base()" />
       </div>
     </section>
-    <app-work-comments [comments]="detail()?.comments ?? []" />
+    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
   `,
 })
 export class FeatureDetail {
