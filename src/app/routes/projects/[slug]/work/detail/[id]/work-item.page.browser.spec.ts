@@ -531,7 +531,12 @@ describe('WorkItemPage (screenshots)', () => {
     it('done work: nothing', async () => {
       const element = await render(EVERY_STATUS, 'Done epic');
       await expect.element(element.getByRole('heading', { level: 1 })).toMatchTextContent('Done');
-      expect(element.getByRole('button').elements()).toHaveLength(0);
+      // No action: the thread's own buttons (Comment, Edit) are not actions.
+      const actions = element
+        .getByRole('button')
+        .elements()
+        .filter((button) => !button.closest('app-work-comments'));
+      expect(actions).toHaveLength(0);
     });
 
     it('a scheduled feature: its own moves, nothing to dispatch', async () => {
