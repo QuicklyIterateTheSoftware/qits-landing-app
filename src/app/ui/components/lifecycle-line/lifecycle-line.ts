@@ -37,12 +37,23 @@ const TONES: Readonly<Record<StepState, ChipTone>> = {
     @for (point of points(); track point.key) {
       @switch (point.kind) {
         @case ('chip') {
-          <span
-            class="rounded px-1.5 text-[0.6875rem] leading-4"
-            [class]="chip(point.state)"
-            [title]="point.title"
-            >{{ point.label }}</span
-          >
+          @if (point.key === 'finalized') {
+            <span
+              class="text-xs leading-4"
+              [class.grayscale]="point.state !== 'passed'"
+              [class.opacity-40]="point.state !== 'passed'"
+              [title]="point.title"
+              [attr.aria-label]="point.title"
+              >✅</span
+            >
+          } @else {
+            <span
+              class="rounded px-1.5 text-[0.6875rem] leading-4"
+              [class]="chip(point.state)"
+              [title]="point.title"
+              >{{ point.label }}</span
+            >
+          }
         }
         @case ('cog') {
           <ui-automation-cog

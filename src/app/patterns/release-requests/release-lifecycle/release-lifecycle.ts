@@ -104,7 +104,19 @@ const RAIL: Readonly<Record<StepState, string>> = {
               @if (stage.key === 'gates' || stage.key === 'deploy-gates') {
                 <ui-gate-shield [state]="shield(stage.steps)" [label]="stage.label" />
               }
-              <h3 class="m-0 text-sm font-semibold">{{ stage.label }}</h3>
+              @if (stage.key === 'finalized') {
+                <h3
+                  class="m-0 text-sm"
+                  [class.grayscale]="stage.state !== 'passed'"
+                  [class.opacity-40]="stage.state !== 'passed'"
+                  [title]="stage.label"
+                  [attr.aria-label]="stage.label"
+                >
+                  ✅
+                </h3>
+              } @else {
+                <h3 class="m-0 text-sm font-semibold">{{ stage.label }}</h3>
+              }
               <ui-chip [label]="stageWord(stage.state)" [tone]="tone(stage.state)" />
               @if (stage.current) {
                 <span class="text-xs font-semibold text-ocean-deep-700">now</span>
