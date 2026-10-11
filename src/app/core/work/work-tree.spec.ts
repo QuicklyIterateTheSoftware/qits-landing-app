@@ -252,6 +252,26 @@ describe('WorkGraph', () => {
     expect(new WorkGraph(mixed).tree('backlog').map(shape)).toEqual(['~epic(odd)']);
   });
 
+  it('gives the work with these ids in these phases, with ancestors as context', () => {
+    const work = [
+      entry('reported', 'TICKET', 'REPORTED'),
+      entry('refined', 'EPIC', 'REFINED'),
+      entry('f', 'FEATURE', 'REPORTED', 'refined'),
+      entry('busy', 'TICKET', 'IMPLEMENTING'),
+      entry('verified', 'TICKET', 'VERIFIED'),
+      entry('done', 'EPIC', 'DONE'),
+      entry('idle', 'TICKET', 'REPORTED'),
+    ];
+    const graph = new WorkGraph(work);
+    const ids = new Set(['reported', 'f', 'busy', 'verified', 'done']);
+    expect(graph.treeOf(ids, ['backlog', 'schedule']).map(shape)).toEqual([
+      'reported',
+      '~refined(f)',
+    ]);
+    expect(graph.treeOf(ids, ['acceptance', 'archive']).map(shape)).toEqual(['verified', 'done']);
+    expect(graph.treeOf(new Set(), ['backlog'])).toEqual([]);
+  });
+
   it('keeps an entity whose parent is not in the list as a root (an orphan)', () => {
     const orphan = [
       entry('lost', 'TASK', undefined, 'missing-epic'),

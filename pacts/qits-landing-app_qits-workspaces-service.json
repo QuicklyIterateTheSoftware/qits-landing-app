@@ -8,6 +8,99 @@
         "references": {
           "qits-call": {
             "app": "qits-workspaces-service",
+            "operationId": "listAgents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-work",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-work: listAgents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with agents bound to work items",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/workspaces/api/agents",
+        "query": {
+          "state": [
+            "ACTIVE"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "agents": [
+              {
+                "workId": "00000000-0000-4000-8000-000000000001"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.agents": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.workId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
             "operationId": "listOpenWorkspaces"
           },
           "qits-trigger": {

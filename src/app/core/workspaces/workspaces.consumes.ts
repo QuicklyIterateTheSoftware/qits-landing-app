@@ -1,4 +1,5 @@
 import type {
+  ListAgentsResponses,
   ListOpenWorkspacesResponses,
   ListWorkItemWorkspacesResponses,
 } from '../../api/workspaces';
@@ -41,3 +42,15 @@ export type WorkspaceHistoryEntry = NonNullable<
     Consumed<ListWorkItemWorkspacesResponses[200], typeof LIST_WORK_ITEM_WORKSPACES>['entries']
   >[number]['workspace']
 >;
+
+/**
+ * `WorkspacesStore.loadAgents()`: the platform's ACTIVE agents (`listAgents`, `state=ACTIVE`). The
+ * In Progress tab reads only which work items have one: the item's id (`workId`, qits-projects'
+ * entity id).
+ */
+export const LIST_ACTIVE_AGENTS = ['agents[].workId'] as const;
+
+/** One active agent, cut to what the store reads. */
+export type ActiveAgent = NonNullable<
+  Consumed<ListAgentsResponses[200], typeof LIST_ACTIVE_AGENTS>['agents']
+>[number];

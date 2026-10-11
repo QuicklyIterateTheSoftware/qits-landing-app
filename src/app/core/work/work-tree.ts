@@ -231,9 +231,27 @@ export class WorkGraph {
 
   /** The tree of every entity in `phase`, with their ancestors as context, in tree order. */
   tree(phase: Phase): readonly WorkNode[] {
+    return this.treeWhere((entry) => this.phaseOf(entry) === phase, phase === 'board');
+  }
+
+  /**
+   * The tree of the entities whose id is in `ids` and whose phase is one of `phases`, with their
+   * ancestors as context, in tree order. The In Progress tab draws the work an agent is on before
+   * and after the board with it, whatever its status.
+   */
+  treeOf(ids: ReadonlySet<string>, phases: readonly Phase[]): readonly WorkNode[] {
+    const wanted = new Set<Phase | undefined>(phases);
+    return this.treeWhere(
+      (entry) => !!entry.id && ids.has(entry.id) && wanted.has(this.phaseOf(entry)),
+      false,
+    );
+  }
+
+  /** Every entity `matches` takes, with its ancestors as context; with `board`, board columns. */
+  private treeWhere(matches: (entry: WorkEntry) => boolean, board: boolean): readonly WorkNode[] {
     const included = new Set<string>();
     for (const entry of this.entries) {
-      if (!entry.id || entry.archetype === 'CAMPAIGN' || this.phaseOf(entry) !== phase) continue;
+      if (!entry.id || entry.archetype === 'CAMPAIGN' || !matches(entry)) continue;
       for (let id: string | undefined = entry.id; id; id = this.parentOf.get(id)) {
         included.add(id);
       }
@@ -241,19 +259,24 @@ export class WorkGraph {
     const roots = this.entries
       .filter((entry) => entry.id && included.has(entry.id) && !this.parentOf.has(entry.id))
       .sort(byNumber);
-    return roots.map((root) => this.node(root, phase, included));
+    return roots.map((root) => this.node(root, matches, board, included));
   }
 
-  private node(entry: WorkEntry, phase: Phase, included: ReadonlySet<string>): WorkNode {
+  private node(
+    entry: WorkEntry,
+    matches: (entry: WorkEntry) => boolean,
+    board: boolean,
+    included: ReadonlySet<string>,
+  ): WorkNode {
     const children = (this.childrenOf.get(entry.id!) ?? [])
       .filter((id) => included.has(id))
       .map((id) => this.byId.get(id)!)
       .sort(byNumber)
-      .map((child) => this.node(child, phase, included));
-    const context = this.phaseOf(entry) !== phase;
+      .map((child) => this.node(child, matches, board, included));
+    const context = !matches(entry);
     const campaigns = this.campaignsOf(entry);
     const tasks = this.tasksBelow(entry);
-    if (phase !== 'board') return { entry, children, context, campaigns, tasks };
+    if (!board) return { entry, children, context, campaigns, tasks };
     const column = context ? undefined : this.columnOf(entry);
     return { entry, children, context, column, campaigns, tasks };
   }

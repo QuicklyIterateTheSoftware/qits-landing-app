@@ -9,7 +9,11 @@ import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
-import { LIST_OPEN_WORKSPACES, LIST_WORK_ITEM_WORKSPACES } from './workspaces.consumes';
+import {
+  LIST_ACTIVE_AGENTS,
+  LIST_OPEN_WORKSPACES,
+  LIST_WORK_ITEM_WORKSPACES,
+} from './workspaces.consumes';
 import { WorkspacesStore } from './workspaces.store';
 
 /**
@@ -20,7 +24,8 @@ import { WorkspacesStore } from './workspaces.store';
  * open workspaces the cards link to, and one item's workspaces in every state for its page — an
  * item with three (ACTIVE, INTEGRATED, ABANDONED), and one with none. It binds only
  * `LIST_OPEN_WORKSPACES` and `LIST_WORK_ITEM_WORKSPACES`, the lists the store passes to
- * `consume(...)`. qits-workspaces' states share their ids with qits-projects' "… in detail" states.
+ * `consume(...)`, and `LIST_ACTIVE_AGENTS`: the ACTIVE agents, whose work the In Progress tab
+ * shows. qits-workspaces' states share their ids with qits-projects' "… in detail" states.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-workspaces-service';
@@ -29,6 +34,7 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
 const NO_OPEN = 'no work item has an open workspace';
+const AGENTS = 'a project with agents bound to work items';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-workspaces-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -120,5 +126,21 @@ describe('qits-landing-app → qits-workspaces-service pact', () => {
       const ref = param(NONE, 'listWorkItemWorkspaces', 'improvementTicketId');
       await store.loadHistory(ref);
       expect(store.historyOf(ref)).toEqual({ status: 'loaded', entries: [] });
+    }));
+
+  it('show-agent-work: the store holds the items an active agent is on', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: AGENTS,
+      operationId: 'listAgents',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-agent-work' },
+      consumes: LIST_ACTIVE_AGENTS,
+    }).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      await store.loadAgents();
+      expect(store.agentsStatus()).toBe('loaded');
+      // The mock server answers each id with a value of the recorded shape, not the recorded one.
+      expect(store.agentWorkIds().length).toBe(1);
+      expect(store.agentSet().has(store.agentWorkIds()[0])).toBe(true);
     }));
 });

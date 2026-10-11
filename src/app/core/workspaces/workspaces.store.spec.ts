@@ -103,4 +103,47 @@ describe('WorkspacesStore', () => {
     expect(store.historyOf(ref)).toEqual({ status: 'loaded', entries: [] });
     expect(store.historyOf('contract-404')).toEqual({ status: 'error', entries: [] });
   });
+
+  describe('agents', () => {
+    const AGENTS = 'a project with agents bound to work items';
+    const LIST = '/workspaces/api/agents?state=ACTIVE';
+
+    it('knows which items an active agent is on, and reads them once', async () => {
+      const loading = store.loadAgents();
+      await settle();
+      http.expectOne(LIST).flush(workspacesGoldenMaster(AGENTS, 'listAgents'));
+      await loading;
+      expect(store.agentsStatus()).toBe('loaded');
+      expect(store.agentSet().has(params(AGENTS, 'listAgents')['bugTicketId'])).toBe(true);
+      await store.loadAgents();
+      await settle();
+      http.expectNone(LIST);
+    });
+
+    it('holds no item when the read is refused, and reads again on the next call', async () => {
+      const loading = store.loadAgents();
+      await settle();
+      http.expectOne(LIST).flush(null, { status: 403, statusText: 'Forbidden' });
+      await loading;
+      expect(store.agentsStatus()).toBe('error');
+      expect(store.agentWorkIds()).toEqual([]);
+      void store.loadAgents();
+      await settle();
+      http.expectOne(LIST).flush(workspacesGoldenMaster(AGENTS, 'listAgents'));
+      await settle();
+      expect(store.agentsStatus()).toBe('loaded');
+    });
+
+    it('reads the agents again on a refresh, once they are loaded', async () => {
+      const loading = store.loadAgents();
+      await settle();
+      http.expectOne(LIST).flush(workspacesGoldenMaster(AGENTS, 'listAgents'));
+      await loading;
+      const refreshing = store.refresh();
+      await settle();
+      http.expectOne(LIST).flush({ agents: [] });
+      await refreshing;
+      expect(store.agentWorkIds()).toEqual([]);
+    });
+  });
 });

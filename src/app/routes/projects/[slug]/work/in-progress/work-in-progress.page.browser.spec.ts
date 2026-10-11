@@ -6,13 +6,17 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
 import { client as projectsClient } from '../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
 import { WorkInProgressPage } from './work-in-progress.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of a project's In Progress page (the board), answered with qits-projects' golden
  * masters: the project list as recorded, and "a project with work in every status" (one epic and
- * one ticket per status, DROPPED included) or "an epic with features and tasks" for its work.
+ * one ticket per status, DROPPED included) or "an epic with features and tasks" for its work. The
+ * active agents are qits-workspaces' "a project with agents bound to work items": its agent is on
+ * an item these projects do not hold, so no agent section shows (`work-in-progress.page.spec.ts`
+ * covers them).
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -30,6 +34,7 @@ describe('WorkInProgressPage (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -50,6 +55,15 @@ describe('WorkInProgressPage (screenshots)', () => {
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
+    http
+      .expectOne('/workspaces/api/agents?state=ACTIVE')
+      .flush(
+        await goldenMaster(
+          'a project with agents bound to work items',
+          'listAgents',
+          'qits-workspaces',
+        ),
+      );
     // SelectedWork's effect asks for the work once the project is known; let it run.
     TestBed.tick();
     await settle();

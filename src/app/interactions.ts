@@ -132,6 +132,11 @@ export const INTERACTIONS = {
   'show-open-workspaces': 'The work pages link each work item that has an active workspace',
   /** `work-item.page.ts` via `WorkspacesStore`: the item's workspaces in every state. */
   'show-work-item-workspaces': 'The work item page lists the item’s workspaces, newest first',
+  /**
+   * `work-in-progress.page.ts` via `WorkspacesStore.loadAgents`: the ACTIVE agents, so the In
+   * Progress tab shows every work item an agent is on, whatever its status.
+   */
+  'show-agent-work': 'The In Progress tab shows every work item an active agent is on',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
