@@ -96,7 +96,7 @@ describe('EpicBoard (screenshots)', () => {
       campaigns,
     );
     const locator = page.elementLocator(element);
-    await expect.element(locator).toHaveTextContent(title);
+    await expect.element(locator).toMatchTextContent(title);
     return { element, locator, harness };
   }
 
@@ -203,9 +203,9 @@ describe('EpicBoard (screenshots)', () => {
       'Done task': 'Verified',
     });
     // Not refined yet, not scheduled yet, or dropped: not on the board.
-    await expect.element(locator).not.toHaveTextContent('Reported task');
-    await expect.element(locator).not.toHaveTextContent('Refined task');
-    await expect.element(locator).not.toHaveTextContent('Dropped task');
+    await expect.element(locator).not.toMatchTextContent('Reported task');
+    await expect.element(locator).not.toMatchTextContent('Refined task');
+    await expect.element(locator).not.toMatchTextContent('Dropped task');
     // The done one is drawn muted.
     const done = [...element.querySelectorAll('ui-board-card')].filter((card) =>
       card.classList.contains('opacity-60'),
@@ -315,7 +315,7 @@ describe('EpicBoard (screenshots)', () => {
       'Epic with mixed features',
       { members: PAST_THE_BOARD, described: [PAST_THE_BOARD] },
     );
-    await expect.element(locator).toHaveTextContent('Campaign in flight');
+    await expect.element(locator).toMatchTextContent('Campaign in flight');
     expect(columnsOf(element)).toEqual({
       'Verified task': 'Verified',
       'Verified task of an implemented feature': 'Verified',

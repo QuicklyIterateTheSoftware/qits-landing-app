@@ -80,17 +80,17 @@ describe('WorkList (screenshots)', () => {
 
   it('the Backlog', async () => {
     const { locator: list } = await shown('backlog', EVERY_STATUS);
-    await expect.element(list).toHaveTextContent('Reported epic');
-    await expect.element(list).toHaveTextContent('Reported ticket');
+    await expect.element(list).toMatchTextContent('Reported epic');
+    await expect.element(list).toMatchTextContent('Reported ticket');
     await expect.element(list).toMatchScreenshot('backlog');
   });
 
   it('Acceptance: verified work, each item with its finish button', async () => {
     const { element, locator: list } = await shown('acceptance', EVERY_STATUS);
-    await expect.element(list).toHaveTextContent('Verified epic');
-    await expect.element(list).toHaveTextContent('Verified ticket');
-    await expect.element(list).not.toHaveTextContent('Verifying ticket');
-    await expect.element(list).not.toHaveTextContent('Done ticket');
+    await expect.element(list).toMatchTextContent('Verified epic');
+    await expect.element(list).toMatchTextContent('Verified ticket');
+    await expect.element(list).not.toMatchTextContent('Verifying ticket');
+    await expect.element(list).not.toMatchTextContent('Done ticket');
     const host = element.getBoundingClientRect();
     for (const id of ['contract-00000001-13', 'contract-00000001-14']) {
       const button = element.querySelector(`button[aria-label="Mark ${id} done"]`) as HTMLElement;
@@ -106,14 +106,14 @@ describe('WorkList (screenshots)', () => {
 
   it('the Archive: Done and Dropped mixed', async () => {
     const { locator: list } = await shown('archive', EVERY_STATUS);
-    await expect.element(list).toHaveTextContent('Done ticket');
-    await expect.element(list).toHaveTextContent('Dropped epic');
+    await expect.element(list).toMatchTextContent('Done ticket');
+    await expect.element(list).toMatchTextContent('Dropped epic');
     await expect.element(list).toMatchScreenshot('archive');
   });
 
   it('an empty list says so', async () => {
     const { locator: list } = await shown('archive', 'an epic with features and tasks');
-    await expect.element(list).toHaveTextContent('Nothing here');
+    await expect.element(list).toMatchTextContent('Nothing here');
     await expect.element(list).toMatchScreenshot('empty');
   });
 
@@ -157,8 +157,8 @@ describe('WorkList (screenshots)', () => {
     await finish(element, harness, 'contract-00000001-13');
     // The ticket below the finished epic stays where the list puts it.
     expect(order(element)).toEqual(['contract-00000001-14']);
-    await expect.element(locator).not.toHaveTextContent('Verified epic');
-    await expect.element(locator).toHaveTextContent('contract-00000001-13 finished');
+    await expect.element(locator).not.toMatchTextContent('Verified epic');
+    await expect.element(locator).toMatchTextContent('contract-00000001-13 finished');
     await expect.element(locator.getByRole('button', { name: 'Undo' })).toBeVisible();
     http.expectNone(() => true);
     await expect.element(locator).toMatchScreenshot('finish-pending');
@@ -172,8 +172,8 @@ describe('WorkList (screenshots)', () => {
     sent[0].flush(await goldenMaster(VERIFIED_EPIC, 'setWorkStatus'));
     await flushMicrotasks();
     harness.fixture.detectChanges();
-    await expect.element(locator).not.toHaveTextContent('finished');
-    await expect.element(locator).not.toHaveTextContent('Verified epic');
+    await expect.element(locator).not.toMatchTextContent('finished');
+    await expect.element(locator).not.toMatchTextContent('Verified epic');
     expect(order(element)).toEqual(['contract-00000001-14']);
     await expect.element(locator).toMatchScreenshot('finish-sent');
   });
@@ -188,8 +188,8 @@ describe('WorkList (screenshots)', () => {
     harness.fixture.detectChanges();
     await commands.parkPointer();
     http.expectNone(() => true);
-    await expect.element(locator).toHaveTextContent('Verified ticket');
-    await expect.element(locator).not.toHaveTextContent('finished');
+    await expect.element(locator).toMatchTextContent('Verified ticket');
+    await expect.element(locator).not.toMatchTextContent('finished');
     expect(order(element)).toEqual(['contract-00000001-13', 'contract-00000001-14']);
     await expect.element(locator).toMatchScreenshot('finish-undone');
   });

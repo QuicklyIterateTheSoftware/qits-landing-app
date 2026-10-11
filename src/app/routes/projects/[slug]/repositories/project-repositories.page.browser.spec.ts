@@ -80,9 +80,9 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('heading', { name: 'components/' })).toBeVisible();
     await expect.element(view.getByRole('heading', { name: 'contract/' })).toBeVisible();
-    await expect.element(view).toHaveTextContent('Succeeded');
-    await expect.element(view).toHaveTextContent('Auth needed');
-    await expect.element(view).toHaveTextContent('No twin');
+    await expect.element(view).toMatchTextContent('Succeeded');
+    await expect.element(view).toMatchTextContent('Auth needed');
+    await expect.element(view).toMatchTextContent('No twin');
     await expect.element(view).toMatchScreenshot('tree');
   });
 
@@ -95,7 +95,7 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     await commands.parkPointer();
     await answered(fixture);
     const view = page.elementLocator(element);
-    await expect.element(view).toHaveTextContent('https://githost.example.test/git/');
+    await expect.element(view).toMatchTextContent('https://githost.example.test/git/');
     await expect.element(view).toMatchScreenshot('opened');
   });
 

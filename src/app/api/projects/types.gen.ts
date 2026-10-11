@@ -1541,10 +1541,6 @@ export type TagCollectionPinSources = {
      */
     dependencies: unknown;
     /**
-     * GET /configuration/api/pins
-     */
-    configuredImages: unknown;
-    /**
      * GET /workspaces/api/pins
      */
     workspaceLaunches: unknown;
@@ -2076,7 +2072,7 @@ export type WorkPatch = {
      */
     implementedAt?: Instant | null;
     /**
-     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further.
+     * A feature's or task's implementing marker (ISO-8601 instant): when its implementation was started. Cannot be cleared. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING, and moves the item's status to IMPLEMENTING when it is not already there or further. On a task it also stamps the task's feature the first time, and moves an epic still READY_FOR_DEV to IMPLEMENTING.
      */
     implementingAt?: Instant;
     /**
@@ -6729,7 +6725,7 @@ export type SetWorkStatusErrors = {
      */
     401: unknown;
     /**
-     * An agent moving an epic, or an entity outside its own project; nothing is written
+     * A platform service moving an epic, or an agent moving an entity outside its own project; nothing is written
      */
     403: unknown;
     /**
@@ -6737,7 +6733,7 @@ export type SetWorkStatusErrors = {
      */
     404: unknown;
     /**
-     * A move the lifecycle does not allow, a target naming no status, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, or PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person
+     * A move the lifecycle does not allow, a target naming no status, an agent superseding an epic, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, or PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person
      */
     409: unknown;
 };

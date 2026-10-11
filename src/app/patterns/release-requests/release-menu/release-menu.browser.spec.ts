@@ -88,10 +88,7 @@ describe('ReleaseMenu (screenshots)', () => {
   it('is a closed lightning button with the pending count', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await goldenMaster(
-        'a project with release requests in every state',
-        'listProjectReleaseRequests',
-      ),
+      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
     );
     await answered(fixture);
     await expect
@@ -100,23 +97,26 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(frame).toMatchScreenshot('closed');
   });
 
-  it('lists the pending release requests with their phases, cog and gates', async () => {
+  it('lists the pending release requests with their lifecycle in a line', async () => {
     const { fixture, frame, requests } = await render();
     requests.flush(
-      await goldenMaster(
-        'a project with release requests in every state',
-        'listProjectReleaseRequests',
-      ),
+      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
     );
     await answered(fixture);
     await open(fixture);
     http.expectNone(`/projects/api/projects/${projectId}/release-requests`);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
-    expect(panel.getByRole('listitem').elements()).toHaveLength(6);
-    await expect.element(panel).toHaveTextContent('P1 Pre-run · PENDING');
-    await expect.element(panel).toHaveTextContent('P2 Test · waiting for pre-run');
-    await expect.element(panel.getByRole('img', { name: /^4 pre-run steps: Merge/ })).toBeVisible();
-    await expect.element(panel).not.toHaveTextContent('FINALIZED');
+    expect(panel.getByRole('listitem').elements()).toHaveLength(5);
+    // The lifecycle line: phase chips and the quality gates' shield, labelled as the service names
+    // each gate; the two needing a person come first, marked, with a red broken shield.
+    await expect.element(panel.getByTitle('Test: failed').first()).toBeVisible();
+    await expect
+      .element(panel.getByRole('img', { name: /CI build: failed/ }).first())
+      .toHaveAttribute('data-shield', 'failed');
+    await expect
+      .element(panel.getByRole('link', { name: /contract-frontend/ }).first())
+      .toHaveAttribute('title', 'Look: CI build');
+    await expect.element(panel).not.toMatchTextContent('Finalized release');
     await expect.element(frame).toMatchScreenshot('open');
   });
 
@@ -127,7 +127,7 @@ describe('ReleaseMenu (screenshots)', () => {
     );
     await answered(fixture);
     await open(fixture);
-    await expect.element(frame).toHaveTextContent('No pending release requests');
+    await expect.element(frame).toMatchTextContent('No pending release requests');
     await expect.element(frame).toMatchScreenshot('empty');
   });
 

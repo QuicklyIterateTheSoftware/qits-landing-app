@@ -66,11 +66,11 @@ describe('WorkRefinementPage (screenshots)', () => {
     await answered();
     await expect
       .element(element.getByRole('heading', { level: 1 }))
-      .toHaveTextContent('Refinement');
-    await expect.element(element).toHaveTextContent('Reported epic');
-    await expect.element(element).toHaveTextContent('Reported ticket');
-    await expect.element(element).not.toHaveTextContent('Refined ticket');
-    await expect.element(element).not.toHaveTextContent('Done ticket');
+      .toMatchTextContent('Refinement');
+    await expect.element(element).toMatchTextContent('Reported epic');
+    await expect.element(element).toMatchTextContent('Reported ticket');
+    await expect.element(element).not.toMatchTextContent('Refined ticket');
+    await expect.element(element).not.toMatchTextContent('Done ticket');
     await expect.element(element).toMatchScreenshot('backlog');
   });
 
@@ -78,7 +78,7 @@ describe('WorkRefinementPage (screenshots)', () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
-    await expect.element(element).toHaveTextContent('Nothing here');
+    await expect.element(element).toMatchTextContent('Nothing here');
     await expect.element(element).toMatchScreenshot('empty');
   });
 

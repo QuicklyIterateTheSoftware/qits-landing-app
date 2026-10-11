@@ -1576,7 +1576,7 @@ export const startWorkRefinement = <ThrowOnError extends boolean = false>(option
 /**
  * Move a work entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Answers the entity in the merged shape, with statusBefore.
  */
 export const setWorkStatus = <ThrowOnError extends boolean = false>(options: Options<SetWorkStatusData, ThrowOnError>): RequestResult<SetWorkStatusResponses, SetWorkStatusErrors, ThrowOnError> => (options.client ?? client).post<SetWorkStatusResponses, SetWorkStatusErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],

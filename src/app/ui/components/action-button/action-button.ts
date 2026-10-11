@@ -62,8 +62,9 @@ const JOINS = {
     <ng-template #button let-describedBy="describedBy">
       <button
         type="button"
-        class="relative inline-flex h-8 cursor-pointer items-center border px-3 text-sm font-semibold whitespace-nowrap focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-deep-600"
+        class="relative inline-flex h-8 cursor-pointer items-center disabled:cursor-not-allowed disabled:opacity-60 border px-3 text-sm font-semibold whitespace-nowrap focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-deep-600"
         [class]="classes()"
+        [disabled]="action().disabled ?? false"
         [attr.data-variant]="action().variant"
         [attr.aria-describedby]="describedBy"
         (click)="action().callback()"

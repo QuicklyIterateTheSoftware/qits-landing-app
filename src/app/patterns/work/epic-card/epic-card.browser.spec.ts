@@ -95,7 +95,7 @@ describe('EpicCard (screenshots)', () => {
       campaigns,
     );
     const locator = page.elementLocator(element);
-    await expect.element(locator).toHaveTextContent(title);
+    await expect.element(locator).toMatchTextContent(title);
     return { element, locator, harness };
   }
 
@@ -137,8 +137,8 @@ describe('EpicCard (screenshots)', () => {
 
   it('a started feature and task: both in Implementing', async () => {
     const { element, locator } = await shown(EVERY_STATUS, 'contract-00000001-19', 'Started epic');
-    await expect.element(locator).toHaveTextContent('Started feature');
-    await expect.element(locator).toHaveTextContent('Started task');
+    await expect.element(locator).toMatchTextContent('Started feature');
+    await expect.element(locator).toMatchTextContent('Started task');
     // The task's card sits under the Implementing header.
     const task = [...element.querySelectorAll('ui-board-card')].find((card) =>
       card.textContent?.includes('Started task'),
@@ -156,9 +156,9 @@ describe('EpicCard (screenshots)', () => {
 
   it('several features with their tasks, in a mixed state: expanded, then collapsed', async () => {
     const { element, locator, harness } = await shown(NESTED, 'contract-00000001-1', 'Nested epic');
-    await expect.element(locator).toHaveTextContent('Shipped feature');
-    await expect.element(locator).toHaveTextContent('Open feature');
-    await expect.element(locator).toHaveTextContent('First shipped task');
+    await expect.element(locator).toMatchTextContent('Shipped feature');
+    await expect.element(locator).toMatchTextContent('Open feature');
+    await expect.element(locator).toMatchTextContent('First shipped task');
     await expect.element(locator).toMatchScreenshot('features-mixed-expanded');
     await toggle(element, harness);
     // Two open tasks in Ready for Dev, one implemented: a tile in each of those columns, none
@@ -189,7 +189,7 @@ describe('EpicCard (screenshots)', () => {
     );
     await toggle(element, harness);
     expect(tiles(element)).toEqual([]);
-    await expect.element(locator).toHaveTextContent('No tasks');
+    await expect.element(locator).toMatchTextContent('No tasks');
     await expect.element(locator).toMatchScreenshot('verifying-collapsed');
   });
 
@@ -202,7 +202,7 @@ describe('EpicCard (screenshots)', () => {
     // The board's four tasks are cards (READY_FOR_DEV to VERIFYING; the REPORTED and the REFINED
     // one are not on the board); the verified and the done one are counted in the tile.
     expect(element.querySelectorAll('ui-board-card')).toHaveLength(4);
-    await expect.element(locator).not.toHaveTextContent('Verified task');
+    await expect.element(locator).not.toMatchTextContent('Verified task');
     const row = element.querySelector('ui-board-row')!;
     const tile = row.querySelector('ui-board-count')!;
     expect(tile.querySelector('.sr-only')?.textContent?.trim()).toBe('2 verified');
@@ -237,7 +237,7 @@ describe('EpicCard (screenshots)', () => {
       'Epic with mixed features',
       { members: CAMPAIGN, described: [CAMPAIGN] },
     );
-    await expect.element(locator).toHaveTextContent('Campaign in flight');
+    await expect.element(locator).toMatchTextContent('Campaign in flight');
     // The lane grows to its whole id, up the left strip.
     const lane = element.querySelector('ui-board-lane')!.getBoundingClientRect();
     const id = element.querySelector('[lane-gutter]')!.getBoundingClientRect();

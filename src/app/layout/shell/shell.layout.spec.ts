@@ -1,4 +1,4 @@
-import { workspaceCrumb, workSubpage } from './shell.layout';
+import { releaseRequestSubpage, workspaceCrumb, workSubpage } from './shell.layout';
 
 describe('workspaceCrumb', () => {
   const project = '/projects/qits';
@@ -53,5 +53,24 @@ describe('workSubpage', () => {
     expect(workSubpage(`${project}/work-archive`, project)).toBeUndefined();
     expect(workSubpage(`${project}/workspaces`, project)).toBeUndefined();
     expect(workSubpage(`${project}/setup`, project)).toBeUndefined();
+  });
+});
+
+describe('releaseRequestSubpage', () => {
+  const project = '/projects/qits';
+  const list = `${project}/release-requests`;
+  const id = '00000000-0000-4000-8000-000000000002';
+
+  it('names a request by the start of its id', () => {
+    expect(releaseRequestSubpage(`${list}/${id}?x=1`, project)).toEqual({
+      label: '00000000',
+      path: `${list}/${id}`,
+    });
+  });
+
+  it('has no crumb for the list itself or for other pages', () => {
+    expect(releaseRequestSubpage(list, project)).toBeUndefined();
+    expect(releaseRequestSubpage(`${list}/`, project)).toBeUndefined();
+    expect(releaseRequestSubpage(`${project}/work/detail/${id}`, project)).toBeUndefined();
   });
 });

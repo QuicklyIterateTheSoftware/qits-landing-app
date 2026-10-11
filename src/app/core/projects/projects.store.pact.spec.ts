@@ -11,7 +11,7 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { assertPactPart } from '../../../testing/pact-part';
-import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { NOTHING } from '@qits/angular';
 import {
   GET_PROJECT,
@@ -78,34 +78,54 @@ interface GeneratedPact {
 }
 
 const UUID = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$';
-const TYPE: Rule = { combine: 'AND', matchers: [{ match: 'type' }] };
 const OPEN_ENDED: Rule = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
+const TYPE_OR_NULL: Rule = { combine: 'OR', matchers: [{ match: 'type' }, { match: 'null' }] };
 
 /**
  * What `listProjectReleaseRequests` asks of the one representative request, path by path (relative
- * to the request): exactly the fields of `LIST_PROJECT_RELEASE_REQUESTS`, with `qualityGates` and
- * `automations` open-ended (`type`, min 0, no max) — both grow as qits-maintenance learns automation
- * kinds and qits-projects gates, so neither may be pinned to the length it was recorded with (the
- * trap qits-1075 hit with the archetype flows). `automations[*].detail` is null for a kind with
- * nothing to say (a FRESH one) and a reason for a NOT_APPLICABLE or WAITING one: type-or-null.
+ * to the request), made from `LIST_PROJECT_RELEASE_REQUESTS`: the id by its form, every other field
+ * by type or null (most are null on some request: no version before the tag, no conflict, no
+ * approver), and every array open-ended (`type`, min 0, no max). Arrays grow as qits-maintenance
+ * learns automation kinds and qits-projects gates and phases, so none may be pinned to the length
+ * it was recorded with (the trap qits-1075 hit with the archetype flows).
  */
-const REQUEST_RULES: Rules = {
-  '$.id': { combine: 'AND', matchers: [{ match: 'regex', regex: UUID }] },
-  '$.qualifiedId': TYPE,
-  '$.repoName': TYPE,
-  '$.summary': TYPE,
-  '$.state': TYPE,
-  '$.preRun.state': TYPE,
-  '$.qualityGates': OPEN_ENDED,
-  '$.qualityGates[*].kind': TYPE,
-  '$.qualityGates[*].label': TYPE,
-  '$.qualityGates[*].state': TYPE,
-  '$.automations': OPEN_ENDED,
-  '$.automations[*].kind': TYPE,
-  '$.automations[*].label': TYPE,
-  '$.automations[*].state': TYPE,
-  '$.automations[*].detail': { combine: 'OR', matchers: [{ match: 'type' }, { match: 'null' }] },
-};
+const REQUEST_RULES: Rules = Object.fromEntries(
+  LIST_PROJECT_RELEASE_REQUESTS.flatMap((path) => {
+    const leaf = `$.${path.replace(/^requests\[\]\./, '')}`.replaceAll('[]', '[*]');
+    const arrays = [...leaf.matchAll(/\[\*\]/g)].map((m) => leaf.slice(0, m.index));
+    const rule: Rule =
+      leaf === '$.id'
+        ? { combine: 'AND', matchers: [{ match: 'regex', regex: UUID }] }
+        : TYPE_OR_NULL;
+    return [...arrays.map((array) => [array, OPEN_ENDED] as const), [leaf, rule] as const];
+  }),
+);
+
+/** How many leaves `value` sets (not null): an element with more says more of its shape. */
+function filled(value: unknown): number {
+  if (value === null) return 0;
+  if (typeof value !== 'object') return 1;
+  return Object.values(value).reduce((sum: number, inner) => sum + filled(inner), 0);
+}
+
+/**
+ * `value` (at body path `path`, relative to a request) as the expectation every answered request is
+ * held to: each array cut to its fullest element (the most leaves set), and each null leaf that
+ * {@link REQUEST_RULES} matches by type or null made `""`, so the expectation itself never holds a
+ * null an answer could fill. Every such field is a string where it is set.
+ */
+function representative(value: unknown, path: string): unknown {
+  if (Array.isArray(value)) {
+    if (value.length === 0) return value;
+    const fullest = value.reduce((best, next) => (filled(next) > filled(best) ? next : best));
+    return [representative(fullest, `${path}[*]`)];
+  }
+  if (value === null) return REQUEST_RULES[path] === TYPE_OR_NULL ? '' : null;
+  if (typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, inner]) => [key, representative(inner, `${path}.${key}`)]),
+  );
+}
 
 /**
  * `addGoldenInteraction` pins every array of the `listProjectReleaseRequests` answer to the length
@@ -115,18 +135,17 @@ const REQUEST_RULES: Rules = {
  * `automations` on another row. This reshapes `requests` to "contains at least one request shaped
  * like this one" under {@link REQUEST_RULES}.
  *
- * Why `arrayContaining` and not "every request is like this one": `automations` is null until
- * qits-projects has asked qits-maintenance about a request, and `preRun` is null on a row older
- * than the pre-run (qits-1133), and pact-jvm cannot match a nullable array or object — an
- * `OR(type, null)` rule is honoured on a leaf (`detail`) but not on `$.requests[*].automations`,
- * where it fails both the array and the null (tried against qits-projects-service 2026.1010.101501's
- * ConsumerPactVerificationTest). A request whose `automations` or `preRun` is null is therefore left
- * to the store's own `?? []` / null handling, which the plain specs cover.
+ * Why `arrayContaining` and not "every request is like this one": `automations`, `pipeline` and
+ * `conflict` are null on some requests, and pact-jvm cannot match a nullable array or object — an
+ * `OR(type, null)` rule is honoured on a leaf but not on `$.requests[*].automations`, where it fails
+ * both the array and the null (tried against qits-projects-service 2026.1010.101501's
+ * ConsumerPactVerificationTest). A request whose arrays or objects are null is therefore left to
+ * the store's own `?? []` / null handling, which the plain specs cover.
  *
- * The representative holds no null on a path an open-ended array repeats (pact-jvm verifies every
- * element past the expected ones against element 0, and `null` only ever excuses that element): it
- * is the first recorded request whose `automations` is filled, cut to its first quality gate and its
- * first automation with a `detail`.
+ * The representative is the first recorded request whose `automations` is filled (else the first),
+ * shaped by {@link representative}: pact-jvm verifies every element of an open-ended array past the
+ * expected ones against element 0, and `OR(type, null)` excuses a null in the answer but not one in
+ * the expectation (a recorded `detail: null` fails an answered "Run in flight").
  *
  * Runs on the pact this spec just generated, between the mock server answering (with qits-projects'
  * real recording, unchanged) and `assertPactPart`: it loosens only what the committed pact asks a
@@ -134,27 +153,13 @@ const REQUEST_RULES: Rules = {
  */
 function openEndedReleaseRequests(generated: string): void {
   const written = JSON.parse(readFileSync(generated, 'utf8')) as GeneratedPact;
-  const consumed = LIST_PROJECT_RELEASE_REQUESTS.map((path) =>
-    `$.${path.replace(/^requests\[\]\./, '')}`.replaceAll('[]', '[*]'),
-  ).sort();
-  const keys = Object.keys(REQUEST_RULES);
-  const leaves = keys.filter((key) => !keys.some((k) => k.startsWith(`${key}[`))).sort();
-  if (JSON.stringify(consumed) !== JSON.stringify(leaves)) {
-    throw new Error('LIST_PROJECT_RELEASE_REQUESTS changed: update REQUEST_RULES');
-  }
   for (const interaction of written.interactions) {
     const call = interaction.comments?.references?.['qits-call']?.operationId;
     const content = interaction.response.body?.content;
     if (call !== 'listProjectReleaseRequests' || !content?.requests.length) continue;
-    const recorded = content.requests.find((request) => request.automations?.length);
-    const automation = recorded?.automations?.find((kind) => kind.detail != null);
-    const gate = recorded?.qualityGates?.[0];
-    if (!recorded?.preRun || !automation || !gate) {
-      throw new Error(
-        'no recorded request holds every consumed field: update openEndedReleaseRequests',
-      );
-    }
-    content.requests = [{ ...recorded, qualityGates: [gate], automations: [automation] }];
+    const recorded =
+      content.requests.find((request) => request.automations?.length) ?? content.requests[0];
+    content.requests = [representative(recorded, '$') as ReleaseRequestDto];
     const rules = (interaction.response.matchingRules.body ??= {});
     for (const key of Object.keys(rules)) if (key.startsWith('$.requests')) delete rules[key];
     rules['$.requests'] = {
@@ -182,7 +187,8 @@ const given = (
     state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes,
+    // A field under a recorded `null` (no conflict) is bound in a state that has it.
+    consumes: heldBy(masters, state, operationId, consumes),
   });
 
 /**
@@ -281,6 +287,63 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       ).toBe(true);
     }));
 
+  it('show-project-release-requests: the page reads every request, with its details', () =>
+    given(
+      'show-project-release-requests',
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with pending release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      const kept = store.releaseRequests()[projectId];
+      expect(kept?.status).toBe('loaded');
+      expect(kept?.requests.length).toBeGreaterThan(0);
+      expect(kept?.requests.every((r) => typeof r.updatedAt === 'string')).toBe(true);
+    }));
+
+  it('show-release-request: a request’s page finds its repository among requests in every state', () =>
+    given(
+      'show-release-request',
+      'a project with release requests in every state',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with release requests in every state',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      const kept = store.releaseRequests()[projectId];
+      expect(kept?.requests.find((r) => r.id === op.params['requestId'])?.repoId).toBe(
+        op.params['repositoryId'],
+      );
+    }));
+
+  it('show-project-release-requests: a project without any shows none', () =>
+    given(
+      'show-project-release-requests',
+      'a project with no release requests',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a project with no release requests',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      expect(store.releaseRequests()[projectId]?.requests).toEqual([]);
+    }));
+
   it('open-release-requests: a project without any lists none', () =>
     given(
       'open-release-requests',
@@ -295,6 +358,10 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       );
       const projectId = op.params['projectId'];
       await store.loadReleaseRequests(projectId);
-      expect(store.releaseRequests()[projectId]).toEqual({ status: 'loaded', pending: [] });
+      expect(store.releaseRequests()[projectId]).toEqual({
+        status: 'loaded',
+        requests: [],
+        pending: [],
+      });
     }));
 });

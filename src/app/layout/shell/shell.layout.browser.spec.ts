@@ -48,8 +48,9 @@ class TallPage {
 /**
  * Screenshots of the layout in a real browser: the wide sidebar, and the narrow burger closed and
  * open, with no project open; and the sidebar of an open project. The open project is qits-projects'
- * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu)
- * are the recorded "a project with no release requests". The event stream never connects.
+ * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu and
+ * the sidebar's Release Requests entry) are the recorded "a project with no release requests", or
+ * "a project with pending release requests" where a case says so. The event stream never connects.
  */
 describe('ShellLayout (screenshots)', () => {
   let http: HttpTestingController;
@@ -64,6 +65,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/work/campaigns', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
+          { path: 'projects/:slug/release-requests', component: TestPage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -100,7 +102,7 @@ describe('ShellLayout (screenshots)', () => {
 
   it('shows the sidebar beside the page on a wide screen', async () => {
     const { layout } = await render();
-    await expect.element(layout).toHaveTextContent('Page content');
+    await expect.element(layout).toMatchTextContent('Page content');
     await expect.element(layout).toMatchScreenshot('wide');
   });
 
@@ -123,8 +125,11 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('narrow-open');
   });
 
-  /** The layout at `path` below the recorded project, which is open; its menus answered. */
-  async function renderProject(path: string) {
+  /**
+   * The layout at `path` below the recorded project, which is open; its menus answered, the
+   * release requests from the recorded `requests` state.
+   */
+  async function renderProject(path: string, requests = 'a project with no release requests') {
     const fixture = TestBed.createComponent(ShellLayout);
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
@@ -138,9 +143,7 @@ describe('ShellLayout (screenshots)', () => {
     await settle();
     http
       .expectOne(`/projects/api/projects/${project.id}/release-requests`)
-      .flush(
-        await goldenMaster('a project with no release requests', 'listProjectReleaseRequests'),
-      );
+      .flush(await goldenMaster(requests, 'listProjectReleaseRequests'));
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -156,7 +159,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(navigation.getByRole('link', { name: 'Repositories' })).toBeVisible();
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toHaveTextContent(project.name);
+      .toMatchTextContent(project.name);
     await expect.element(layout).toMatchScreenshot('project');
   });
 
@@ -175,7 +178,7 @@ describe('ShellLayout (screenshots)', () => {
       .toHaveAttribute('aria-current', 'page');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
-    await expect.element(breadcrumb).toHaveTextContent('Acceptance');
+    await expect.element(breadcrumb).toMatchTextContent('Acceptance');
     await expect.element(layout).toMatchScreenshot('work-tab');
   });
 
@@ -200,7 +203,44 @@ describe('ShellLayout (screenshots)', () => {
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toHaveTextContent('Campaigns');
+      .toMatchTextContent('Campaigns');
+  });
+
+  it('shows the newest release request below Release Requests, between Work and Editor', async () => {
+    const { project, layout } = await renderProject(
+      '/release-requests',
+      'a project with pending release requests',
+    );
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const entry = navigation.getByRole('link', { name: /^Release Requests/ });
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    // Recorded: every request changed at the same instant, so the first listed is the newest.
+    await expect.element(entry).toMatchTextContent('contract-service');
+    await expect.element(entry).toMatchTextContent('pending');
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((a) => a.firstChild?.textContent?.trim());
+    expect(labels).toEqual([
+      'Work',
+      'Release Requests',
+      'Editor',
+      'Repositories',
+      'Observability',
+      'Events',
+    ]);
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toMatchTextContent(`${project.name}›Release Requests`);
+    await expect.element(layout).toMatchScreenshot('release-requests');
+  });
+
+  it('shows no line below Release Requests for a project without any', async () => {
+    await renderProject('/work');
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Release Requests' });
+    await expect.element(entry).toMatchTextContent(/^Release Requests$/);
   });
 
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {

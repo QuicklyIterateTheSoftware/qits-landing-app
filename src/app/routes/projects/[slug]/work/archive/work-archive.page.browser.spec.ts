@@ -64,10 +64,10 @@ describe('WorkArchivePage (screenshots)', () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
-    await expect.element(element.getByRole('heading', { level: 1 })).toHaveTextContent('Archive');
-    await expect.element(element).toHaveTextContent('Done ticket');
-    await expect.element(element).toHaveTextContent('Dropped epic');
-    await expect.element(element).not.toHaveTextContent('Reported ticket');
+    await expect.element(element.getByRole('heading', { level: 1 })).toMatchTextContent('Archive');
+    await expect.element(element).toMatchTextContent('Done ticket');
+    await expect.element(element).toMatchTextContent('Dropped epic');
+    await expect.element(element).not.toMatchTextContent('Reported ticket');
     await expect.element(element).toMatchScreenshot('archive');
   });
 
@@ -75,7 +75,7 @@ describe('WorkArchivePage (screenshots)', () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
-    await expect.element(element).toHaveTextContent('Nothing here');
+    await expect.element(element).toMatchTextContent('Nothing here');
     await expect.element(element).toMatchScreenshot('empty');
   });
 

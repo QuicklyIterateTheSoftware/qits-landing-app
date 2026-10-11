@@ -131,9 +131,9 @@ describe('ProjectCard (screenshots)', () => {
   // 3 repositories" (or a projects state with githost's ids), and pact interactions for them.
   it.skip('shows the component count and the lines of counted repositories', async () => {
     const card = await shown('a repository with counted lines');
-    await expect.element(card).toHaveTextContent('Work 3');
-    await expect.element(card).toHaveTextContent('Components 4');
-    await expect.element(card).toHaveTextContent('Java');
+    await expect.element(card).toMatchTextContent('Work 3');
+    await expect.element(card).toMatchTextContent('Components 4');
+    await expect.element(card).toMatchTextContent('Java');
     await expect.element(card).toMatchScreenshot('loaded');
   });
 
@@ -143,8 +143,8 @@ describe('ProjectCard (screenshots)', () => {
   // 3 repositories" (or a projects state with githost's ids), and pact interactions for them.
   it.skip('shows the counted repositories of a list where some were never counted', async () => {
     const card = await shown('two repositories, one counted');
-    await expect.element(card).toHaveTextContent('Java');
-    await expect.element(card).not.toHaveTextContent('Counting lines');
+    await expect.element(card).toMatchTextContent('Java');
+    await expect.element(card).not.toMatchTextContent('Counting lines');
     await expect.element(card).toMatchScreenshot('lines-partial');
   });
 
@@ -154,7 +154,7 @@ describe('ProjectCard (screenshots)', () => {
   // 3 repositories" (or a projects state with githost's ids), and pact interactions for them.
   it.skip('shows the older count of a repository whose tip is not counted yet', async () => {
     const card = await shown('a repository counted at an older commit');
-    await expect.element(card).toHaveTextContent('Java');
+    await expect.element(card).toMatchTextContent('Java');
     await expect.element(card).toMatchScreenshot('lines-stale');
   });
 
@@ -174,8 +174,8 @@ describe('ProjectCard (screenshots)', () => {
   // 3 repositories" (or a projects state with githost's ids), and pact interactions for them.
   it.skip('shows no lines for repositories without a commit, and no work', async () => {
     const card = await shown('a repository with no commit', 'a project with no work');
-    await expect.element(card).toHaveTextContent('Work 0');
-    await expect.element(card).toHaveTextContent('No lines yet');
+    await expect.element(card).toMatchTextContent('Work 0');
+    await expect.element(card).toMatchTextContent('No lines yet');
     await expect.element(card).toMatchScreenshot('lines-empty');
   });
 
@@ -203,7 +203,7 @@ describe('ProjectCard (screenshots)', () => {
     const card = page.elementLocator(fixture.nativeElement);
     // One error icon each on the work tile, the components tile and the languages table.
     expect(card.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(3);
-    await expect.element(card).not.toHaveTextContent(/unavailable/i);
+    await expect.element(card).not.toMatchTextContent(/unavailable/i);
     await expect.element(card).toMatchScreenshot('unavailable');
   });
 });

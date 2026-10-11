@@ -22,31 +22,68 @@ export const LIST_PROJECTS = [
 export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as const;
 
 /**
- * `loadReleaseRequests(projectId)`: the top bar's release menu lists each pending request by its
- * logical id (`qualifiedId`, `<repository>-rr-<n>`; the repository's name where an older answer has
- * none), with its summary and state, then its two phases (qits-1133): P1 Pre-run (`preRun.state`, null
- * on rows older than the pre-run) and P2 Test (the `ci` quality gate), the rest of its quality
- * gates, and a cog counting the merge plus every automation kind that applies to it (`automations`,
- * null until qits-projects has asked qits-maintenance). qits-projects answers the open requests plus
- * the last few FINALIZED ones; the menu keeps the pending ones ({@link isPendingRelease}).
+ * `loadReleaseRequests(projectId)`: one answer serves three readers. The top bar's release menu
+ * lists each pending request by its logical id (`qualifiedId`, `<repository>-rr-<n>`; the
+ * repository's name where an older answer has none), with its summary, state and gates. The sidebar's Release
+ * Requests entry shows the newest one (`updatedAt`). The Release Requests page lists them all, with
+ * priority, version, merged commit, requester, detail and whether a person must approve or nobody
+ * is watching. A request's own page finds its repository (`repoId`) here, because every read of
+ * one request is addressed by repository. The menu and the page draw each request's lifecycle as a
+ * line (`lifecycleSummary`, `attentionOf`): its merge, automations, phases and quality gates.
+ * qits-projects answers the open requests plus the last few FINALIZED ones; the menu keeps the
+ * pending ones ({@link isPendingRelease}). The line counts the sources and the conflicts; each
+ * binds one field (`name`, `path`), because a pact cannot bind an element with none.
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
+  'requests[].repoId',
   'requests[].qualifiedId',
   'requests[].repoName',
   'requests[].summary',
   'requests[].state',
-  'requests[].preRun.state',
-  'requests[].qualityGates[].kind',
-  'requests[].qualityGates[].label',
-  'requests[].qualityGates[].state',
+  'requests[].gates[].kind',
+  'requests[].gates[].state',
+  'requests[].priority',
+  'requests[].version',
+  'requests[].mergedSha',
+  'requests[].requester',
+  'requests[].detail',
+  'requests[].unattended',
+  'requests[].approvalRequired',
+  'requests[].approvalState',
+  'requests[].updatedAt',
+  'requests[].mergedToMainAt',
+  'requests[].backingBranch',
+  'requests[].sources[].name',
+  'requests[].conflict.conflicts[].path',
+  'requests[].approvedBy',
+  'requests[].approvedAt',
+  'requests[].approvalNote',
+  'requests[].releasedSha',
   'requests[].automations[].kind',
   'requests[].automations[].label',
   'requests[].automations[].state',
   'requests[].automations[].detail',
+  'requests[].pipeline.phases[].phase',
+  'requests[].pipeline.phases[].state',
+  'requests[].pipeline.phases[].runId',
+  'requests[].pipeline.phases[].detail',
+  'requests[].pipeline.gates[].between',
+  'requests[].pipeline.gates[].kind',
+  'requests[].pipeline.gates[].state',
+  'requests[].pipeline.gates[].detail',
+  'requests[].qualityGates[].kind',
+  'requests[].qualityGates[].label',
+  'requests[].qualityGates[].position',
+  'requests[].qualityGates[].state',
+  'requests[].qualityGates[].detail',
+  'requests[].qualityGates[].checks[].name',
+  'requests[].qualityGates[].checks[].state',
+  'requests[].qualityGates[].checks[].detail',
+  'requests[].qualityGates[].runId',
 ] as const;
 
-/** One release request, cut to what the menu reads. */
+/** One release request, cut to what the menu, the sidebar and the page read. */
 export type ReleaseRequestEntry = NonNullable<
   Consumed<
     ListProjectReleaseRequestsResponses[200],

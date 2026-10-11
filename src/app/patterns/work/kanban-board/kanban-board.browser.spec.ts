@@ -81,19 +81,19 @@ describe('KanbanBoard (screenshots)', () => {
       'Started feature',
       'Started task',
     ]) {
-      await expect.element(locator).toHaveTextContent(title);
+      await expect.element(locator).toMatchTextContent(title);
     }
     // Nor Backlog, Schedule, Acceptance nor Archive work on the board.
-    await expect.element(locator).not.toHaveTextContent('Reported ticket');
-    await expect.element(locator).not.toHaveTextContent('Refined ticket');
-    await expect.element(locator).not.toHaveTextContent('Verified ticket');
-    await expect.element(locator).not.toHaveTextContent('Done ticket');
+    await expect.element(locator).not.toMatchTextContent('Reported ticket');
+    await expect.element(locator).not.toMatchTextContent('Refined ticket');
+    await expect.element(locator).not.toMatchTextContent('Verified ticket');
+    await expect.element(locator).not.toMatchTextContent('Done ticket');
     await expect.element(locator).toMatchScreenshot('every-status');
   });
 
   it('a board with an epic’s features and tasks', async () => {
     const { locator } = await shown(NESTED);
-    await expect.element(locator).toHaveTextContent('Open task');
+    await expect.element(locator).toMatchTextContent('Open task');
     await expect.element(locator).toMatchScreenshot('nested');
   });
 

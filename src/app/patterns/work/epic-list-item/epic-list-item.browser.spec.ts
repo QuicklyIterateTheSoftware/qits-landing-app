@@ -72,7 +72,7 @@ describe('EpicListItem (screenshots)', () => {
   async function shown(view: WorkListView, state: string, qualifiedId: string, title: string) {
     const { element, harness } = await openRecordedWork(http, view, qualifiedId, state);
     const locator = page.elementLocator(element);
-    await expect.element(locator).toHaveTextContent(title);
+    await expect.element(locator).toMatchTextContent(title);
     return { element, locator, harness };
   }
 
@@ -112,13 +112,13 @@ describe('EpicListItem (screenshots)', () => {
       'contract-00000001-1',
       'Verified epic',
     );
-    await expect.element(locator).not.toHaveTextContent('Second shipped task');
+    await expect.element(locator).not.toMatchTextContent('Second shipped task');
     await expect.element(locator).toMatchScreenshot('verified-tasks-open-expanded');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
-    await expect.element(locator).toHaveTextContent('0 / 2 ✅');
+    await expect.element(locator).toMatchTextContent('0 / 2 ✅');
     await expect.element(locator).toMatchScreenshot('verified-tasks-open-collapsed');
   });
 
@@ -131,13 +131,13 @@ describe('EpicListItem (screenshots)', () => {
     );
     // The Archive starts every epic collapsed; a done one counts its verified tasks. Finishing the
     // epic moved none of its IMPLEMENTED tasks (qits-763), but the epic takes them to the Archive.
-    await expect.element(locator).toHaveTextContent('0 / 2 ✅');
+    await expect.element(locator).toMatchTextContent('0 / 2 ✅');
     await expect.element(locator).toMatchScreenshot('all-done-collapsed');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
-    await expect.element(locator).toHaveTextContent('Second shipped task');
+    await expect.element(locator).toMatchTextContent('Second shipped task');
     await expect.element(locator).toMatchScreenshot('all-done-expanded');
   });
 });

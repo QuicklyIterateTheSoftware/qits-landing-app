@@ -103,7 +103,7 @@ describe('WorkLayout (screenshots)', () => {
     await answered();
     const element = locate();
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
-    await expect.element(tabs.nth(3)).toHaveTextContent('9');
+    await expect.element(tabs.nth(3)).toMatchTextContent('9');
     expect(tabs.elements().map((a) => a.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
       'Campaigns 0',
       'Refinement 2',
@@ -122,7 +122,7 @@ describe('WorkLayout (screenshots)', () => {
     ]);
     await expect.element(tabs.nth(3)).toHaveAttribute('aria-current', 'page');
     await expect.element(tabs.nth(0)).not.toHaveAttribute('aria-current');
-    await expect.element(element).toHaveTextContent('Page content');
+    await expect.element(element).toMatchTextContent('Page content');
     await expect.element(element).toMatchScreenshot('tabs');
   });
 

@@ -31,9 +31,12 @@ export type Project = ListedProject & { readonly id: string };
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
-/** A project's pending release requests, as `loadReleaseRequests(projectId)` left them. */
+/** A project's release requests, as `loadReleaseRequests(projectId)` left them. */
 export interface ProjectReleaseRequests {
   readonly status: Exclude<Status, 'idle'>;
+  /** Every request of the answer, in qits-projects' order. */
+  readonly requests: readonly ReleaseRequestEntry[];
+  /** The ones still open ({@link isPendingRelease}), in the same order. */
   readonly pending: readonly ReleaseRequestEntry[];
 }
 
@@ -41,7 +44,7 @@ interface ProjectsState {
   /** The state of the list. A detail fetch does not change it. */
   readonly status: Status;
   readonly selectedId: string | null;
-  /** Each project's pending release requests, by project id. Not asked for yet: no key. */
+  /** Each project's release requests, by project id. Not asked for yet: no key. */
   readonly releaseRequests: Readonly<Record<string, ProjectReleaseRequests>>;
 }
 
@@ -57,7 +60,8 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * - `refresh()` fetches the list again.
  * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when a project
- *   opens, and keeps the pending ones (`isPendingRelease`); `refreshReleaseRequests(projectId)`
+ *   opens, and keeps all of them and, apart, the pending ones (`isPendingRelease`);
+ *   `refreshReleaseRequests(projectId)`
  *   fetches them again when a domain event says they changed.
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
@@ -112,13 +116,15 @@ export const ProjectsStore = signalStore(
       const previous = store.releaseRequests()[projectId];
       if (error !== undefined || !data) {
         if (previous?.status !== 'loaded') {
-          setReleaseRequests(projectId, { status: 'error', pending: [] });
+          setReleaseRequests(projectId, { status: 'error', requests: [], pending: [] });
         }
         return;
       }
+      const requests = data.requests ?? [];
       setReleaseRequests(projectId, {
         status: 'loaded',
-        pending: (data.requests ?? []).filter(isPendingRelease),
+        requests,
+        pending: requests.filter(isPendingRelease),
       });
     }
 
@@ -132,7 +138,7 @@ export const ProjectsStore = signalStore(
       async loadReleaseRequests(projectId: string): Promise<void> {
         const current = store.releaseRequests()[projectId];
         if (current && current.status !== 'error') return;
-        setReleaseRequests(projectId, { status: 'loading', pending: [] });
+        setReleaseRequests(projectId, { status: 'loading', requests: [], pending: [] });
         await fetchReleaseRequests(projectId);
       },
       /**

@@ -5,6 +5,7 @@ import { defineConfig } from 'vitest/config';
 import { screenshotReferences } from '@qits/angular/screenshots';
 import { pactedGoldenMasters } from '@qits/angular/testing';
 import {
+  ciGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
   maintenanceGoldenMasters,
@@ -32,6 +33,7 @@ const READERS = {
     workspacesGoldenMasters,
     pactWith('qits-workspaces-service'),
   ),
+  'qits-ci': pactedGoldenMasters(ciGoldenMasters, pactWith('qits-ci-service')),
 };
 
 /**
@@ -112,8 +114,12 @@ export default defineConfig({
   // `qits-angular screenshots --check` (after the run, in `test:browser`) finds the ones no test uses.
   plugins: [chromiumFlags, screenshotReferences()],
   test: {
+    // Vitest 5 moved the default to .vitest/attachments; keep the ignored path the docs name.
+    attachmentsDir: '.vitest-attachments',
     browser: {
       commands: { goldenMaster, parkPointer, stubFigure },
+      // Vitest 5 made text locators exact by default. The specs locate by substring, as in vitest 4.
+      locators: { exact: false },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A
       // reference that does not match writes its actual and diff images to .vitest-attachments/.
       screenshotFailures: false,

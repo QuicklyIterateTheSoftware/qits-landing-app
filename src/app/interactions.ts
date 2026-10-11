@@ -61,9 +61,57 @@ export const INTERACTIONS = {
   'show-project-loc': 'The project cards show how many lines of code each project has',
   /**
    * `release-menu.ts`: the top bar's lightning menu, for the open project — fetched when the
-   * project opens, and again when domain events say its requests changed.
+   * project opens, and again when domain events say its requests changed. The sidebar's Release
+   * Requests entry shows the newest request from the same answer.
    */
   'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
+  /**
+   * `release-requests.page.ts`: the Release Requests page lists every request of the open project
+   * qits-projects answers (the open ones and the last finalized ones).
+   */
+  'show-project-release-requests':
+    'The Release Requests page lists the project’s open and recently finalized release requests',
+  /**
+   * `release-request.page.ts` via `ReleaseRequestStore`: a request's page reads the request, the
+   * commits its fold brought in, the CI verdicts on the fold and, once released, what it published.
+   */
+  'show-release-request': 'A release request’s page shows the request, its fold and its release',
+  /**
+   * `release-request.page.ts` via `CiRunsStore`: a request's page reads its repository's newest CI
+   * runs, to link the runs of the request.
+   */
+  'show-release-request-runs': 'A release request’s page links the CI runs of the request',
+  /**
+   * `commit-changes.ts`: a commit under "What this release folds in", opened: its changed files
+   * and one file's patch.
+   */
+  'show-commit-changes': 'Opening a commit on a release request shows the files it changed',
+  /**
+   * `run-reports.ts` via `CiReportsStore`: the Overview of a release request shows the reports of
+   * its test run (and its release run): tests with the failing ones first, coverage, and the rest
+   * by their highlights.
+   */
+  'show-release-request-reports': 'A release request’s overview shows its test and release reports',
+  /** `release-sources.ts`: the priority select of a branch on a request's page. */
+  'set-release-source-priority': 'Choosing a branch’s priority on a release request sets it',
+  /** `release-pipeline-panel.ts`: Approve on a request awaiting a person's approval. */
+  'approve-release-request': 'Approve on a release request signs its fold off',
+  /** `release-pipeline-panel.ts`: Decline on a request awaiting a person's approval. */
+  'decline-release-request': 'Decline on a release request refuses its fold',
+  /** `release-pipeline-panel.ts`: run a failed or stuck phase of the release pipeline again. */
+  'rerun-release-phase': 'Running a release pipeline phase again on a release request',
+  /** `release-automations.ts`: Re-run on one automation of a request. */
+  'rerun-release-automation': 'Re-run on a release request’s automation dispatches it again',
+  /** `release-automations.ts`: waive the automations gate for the request's fold. */
+  'waive-release-automations': 'Waiving a release request’s automations gate for its fold',
+  /** `release-request.page.ts`: Withdraw calls a release request off. */
+  'withdraw-release-request': 'Withdraw on a release request calls it off',
+  /**
+   * `release-request-changes.ts`: the Changes tab lists the fold's changed files and shows one
+   * file's diff; a submodule expands into its own commits and files.
+   */
+  'show-release-request-changes':
+    'The Changes tab of a release request shows what its fold changed',
   /** `notifications-menu.ts`: the top bar's notifications menu, on its first opening. */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */

@@ -1531,7 +1531,7 @@ export const startWorkRefinementRequest = <ThrowOnError extends boolean = false>
 /**
  * Move a work entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Answers the entity in the merged shape, with statusBefore.
  */
 export const setWorkStatusRequest = <ThrowOnError extends boolean = false>(options: Options<SetWorkStatusData, ThrowOnError>): HttpRequest<SetWorkStatusResponse> => (options?.client ?? client).requestOptions<SetWorkStatusResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -2799,7 +2799,7 @@ export const startWorkRefinementResource = <ThrowOnError extends boolean = false
 /**
  * Move a work entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin alone. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Answers the entity in the merged shape, with statusBefore.
  */
 export const setWorkStatusResource = <ThrowOnError extends boolean = false>(options: () => Options<SetWorkStatusData, ThrowOnError> | undefined) => httpResource<SetWorkStatusResponse>(() => {
     const opts = options ? options() : undefined;

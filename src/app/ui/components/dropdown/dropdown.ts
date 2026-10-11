@@ -28,7 +28,8 @@ let nextDropdownId = 0;
  * The panel is always rendered and shown or hidden by class, so a server-rendered page hydrates
  * without leftovers. The button carries `aria-haspopup`, `aria-expanded` and `aria-controls`.
  * Opening moves the focus into the panel; Escape closes it and returns the focus to the button; a
- * click outside or the button itself closes it too.
+ * click outside or the button itself closes it too. A link in the panel calls `close()` as it
+ * navigates.
  */
 @Component({
   selector: 'ui-dropdown',
@@ -90,6 +91,11 @@ export class Dropdown {
       this.opened.emit();
       queueMicrotask(() => this.panel().nativeElement.focus());
     }
+  }
+
+  /** Closes the panel; the focus stays where it is. */
+  close(): void {
+    this.open.set(false);
   }
 
   protected closeIfOutside(event: Event): void {

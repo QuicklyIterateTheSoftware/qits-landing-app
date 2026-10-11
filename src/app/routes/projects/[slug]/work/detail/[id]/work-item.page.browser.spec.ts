@@ -291,7 +291,7 @@ describe('WorkItemPage (screenshots)', () => {
       const features = element.getByRole('region', { name: 'Features' });
       await expect.element(features.getByRole('link', { name: 'CSV export' })).toBeVisible();
       const dossier = element.getByRole('region', { name: 'Dossier' });
-      await expect.element(dossier).toHaveTextContent('Data flow');
+      await expect.element(dossier).toMatchTextContent('Data flow');
       await expect
         .element(dossier.getByRole('img', { name: 'Export data flow' }))
         .toHaveAttribute(
@@ -300,7 +300,7 @@ describe('WorkItemPage (screenshots)', () => {
         );
       await expect
         .element(element.getByRole('region', { name: 'Comments' }))
-        .toHaveTextContent('Agreed. Start with the CSV export.');
+        .toMatchTextContent('Agreed. Start with the CSV export.');
       await figuresLoaded(element);
       await shootParts(element, 'detail-epic');
     });
@@ -349,11 +349,11 @@ describe('WorkItemPage (screenshots)', () => {
         .toBeVisible();
       await expect
         .element(element.getByRole('region', { name: 'Tasks' }))
-        .toHaveTextContent('Render one invoice as PDF');
-      await expect.element(element).toHaveTextContent('Render one invoice as an A4 PDF');
+        .toMatchTextContent('Render one invoice as PDF');
+      await expect.element(element).toMatchTextContent('Render one invoice as an A4 PDF');
       await expect
         .element(element.getByRole('region', { name: 'Comments' }))
-        .toHaveTextContent('Started on the renderer.');
+        .toMatchTextContent('Started on the renderer.');
       await shootParts(element, 'detail-feature');
     });
 
@@ -364,7 +364,7 @@ describe('WorkItemPage (screenshots)', () => {
         true,
         campaignReads('a task in detail', CAMPAIGN),
       );
-      await expect.element(element).toHaveTextContent('Implemented1 Jan 2026, 00:00');
+      await expect.element(element).toMatchTextContent('Implemented1 Jan 2026, 00:00');
       await expect
         .element(
           element.getByRole('link', { name: 'contract-00000001-4 · Stream invoices as CSV' }),
@@ -407,10 +407,10 @@ describe('WorkItemPage (screenshots)', () => {
           true,
           campaignReads(state, campaigns.length ? campaigns[0] : state),
         );
-        await expect.element(element).toHaveTextContent(`Type${type}`);
+        await expect.element(element).toMatchTextContent(`Type${type}`);
         await expect
           .element(element.getByRole('region', { name: 'Dossier' }))
-          .toHaveTextContent(dossier);
+          .toMatchTextContent(dossier);
         await shootParts(element, `detail-${type}-ticket`);
       },
     );
@@ -420,10 +420,10 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(element.getByRole('heading', { name: 'Done when' })).toBeVisible();
       await expect
         .element(element.getByRole('region', { name: 'Members' }))
-        .toHaveTextContent('Tax rates per country');
+        .toMatchTextContent('Tax rates per country');
       await expect
         .element(element.getByRole('group', { name: 'Agent' }))
-        .toHaveTextContent('Start campaign');
+        .toMatchTextContent('Start campaign');
       await shootParts(element, 'detail-campaign');
     });
 
@@ -465,7 +465,7 @@ describe('WorkItemPage (screenshots)', () => {
       // The campaign's own reads are recorded: the page loads whole.
       await expect
         .element(element)
-        .toHaveTextContent('Ships two tickets and three epics, one after the other.');
+        .toMatchTextContent('Ships two tickets and three epics, one after the other.');
       expect(element.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(0);
       await shootParts(element, 'detail-campaign-done-verified-implementing');
     });
@@ -484,9 +484,9 @@ describe('WorkItemPage (screenshots)', () => {
       const region = workspacesOf(element);
       const rows = region.getByRole('listitem');
       expect(rows.elements()).toHaveLength(3);
-      await expect.element(rows.nth(0)).toHaveTextContent(/^active/);
-      await expect.element(rows.nth(1)).toHaveTextContent(/^integrated.*Closed/);
-      await expect.element(rows.nth(2)).toHaveTextContent(/^abandoned.*Closed/);
+      await expect.element(rows.nth(0)).toMatchTextContent(/^active/);
+      await expect.element(rows.nth(1)).toMatchTextContent(/^integrated.*Closed/);
+      await expect.element(rows.nth(2)).toMatchTextContent(/^abandoned.*Closed/);
       await expect
         .element(rows.nth(0).getByRole('link'))
         .toHaveAttribute('href', '/projects/contract-00000001/workspaces/contract-00000001-10');
@@ -500,7 +500,7 @@ describe('WorkItemPage (screenshots)', () => {
         true,
       );
       const region = workspacesOf(element);
-      await expect.element(region).toHaveTextContent('No workspaces yet');
+      await expect.element(region).toMatchTextContent('No workspaces yet');
       expect(region.getByRole('listitem').elements()).toHaveLength(0);
       await expect.element(region).toMatchScreenshot('workspaces-none');
     });
@@ -512,10 +512,10 @@ describe('WorkItemPage (screenshots)', () => {
       await agentButtons(element, ['Dispatch', 'Refine']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark refined Drop Block');
+        .toMatchTextContent('Mark refined Drop Block');
       await expect
         .element(element.getByRole('group', { name: 'Plan' }))
-        .toHaveTextContent('Edit Reshape Refinement room');
+        .toMatchTextContent('Edit Reshape Refinement room');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-reported-ticket');
     });
 
@@ -523,14 +523,14 @@ describe('WorkItemPage (screenshots)', () => {
       const element = await render(EVERY_STATUS, 'Verified ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Status Mark done Back to verifying Drop');
+        .toMatchTextContent('Status Mark done Back to verifying Drop');
       expect(element.getByRole('group').elements()).toHaveLength(1);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-verified-ticket');
     });
 
     it('done work: nothing', async () => {
       const element = await render(EVERY_STATUS, 'Done epic');
-      await expect.element(element.getByRole('heading', { level: 1 })).toHaveTextContent('Done');
+      await expect.element(element.getByRole('heading', { level: 1 })).toMatchTextContent('Done');
       expect(element.getByRole('button').elements()).toHaveLength(0);
     });
 
@@ -538,7 +538,7 @@ describe('WorkItemPage (screenshots)', () => {
       const element = await render('an epic with features and tasks', 'Open feature');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark implementing Skip to implemented Back to refined Drop');
+        .toMatchTextContent('Mark implementing Skip to implemented Back to refined Drop');
       expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-scheduled-feature');
     });
@@ -552,7 +552,7 @@ describe('WorkItemPage (screenshots)', () => {
       await agentButtons(element, ['Dispatch', 'Verify']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark verifying Skip to verified Back to implementing Drop Block');
+        .toMatchTextContent('Mark verifying Skip to verified Back to implementing Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-implemented-ticket');
 
       // The next phase: one phase, PHASE.
@@ -568,8 +568,8 @@ describe('WorkItemPage (screenshots)', () => {
       await answered();
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark verified Back to implemented Drop Block');
-      await expect.element(element).toHaveTextContent('ticket · verifying');
+        .toMatchTextContent('Mark verified Back to implemented Drop Block');
+      await expect.element(element).toMatchTextContent('ticket · verifying');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-verifying-ticket');
     });
 
@@ -583,7 +583,7 @@ describe('WorkItemPage (screenshots)', () => {
       await userEvent.hover(element.getByRole('button', { name: 'Dispatch' }));
       await expect
         .element(element.getByRole('tooltip'))
-        .toHaveTextContent('Runsimplement → IMPLEMENTEDverify → VERIFIED');
+        .toMatchTextContent('Runsimplement → IMPLEMENTEDverify → VERIFIED');
       await expect.element(element).toMatchScreenshot('actions-implementing-epic-runs');
     });
 
@@ -593,7 +593,7 @@ describe('WorkItemPage (screenshots)', () => {
       await agentButtons(element, ['Dispatch']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Status Mark ready for dev Back to reported Drop Block');
+        .toMatchTextContent('Status Mark ready for dev Back to reported Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-refined-epic');
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
@@ -607,7 +607,7 @@ describe('WorkItemPage (screenshots)', () => {
       await agentButtons(element, ['Dispatch', 'Implement']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark implementing Skip to implemented Back to refined Drop Block');
+        .toMatchTextContent('Mark implementing Skip to implemented Back to refined Drop Block');
     });
 
     it('a ready for dev epic: the implement phase, and the move to IMPLEMENTING', async () => {
@@ -627,7 +627,7 @@ describe('WorkItemPage (screenshots)', () => {
       // IMPLEMENTING has no move back (qits-887).
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark implemented Drop Block');
+        .toMatchTextContent('Mark implemented Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-implementing-epic');
     });
 
@@ -635,7 +635,7 @@ describe('WorkItemPage (screenshots)', () => {
       const element = await render(EVERY_STATUS, 'Dropped ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Status Reopen');
+        .toMatchTextContent('Status Reopen');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-dropped-ticket');
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
@@ -647,7 +647,7 @@ describe('WorkItemPage (screenshots)', () => {
       await answered();
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toHaveTextContent('Mark refined Drop Block');
+        .toMatchTextContent('Mark refined Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-reopened-ticket');
     });
   });
