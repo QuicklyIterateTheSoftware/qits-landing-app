@@ -8,6 +8,7 @@ import { describeRefusal, shortShaOrNone } from '$core/release-requests/release-
 import {
   automationRerunnable,
   automationSentence,
+  automationSetAside,
   failureLine,
   movedFold,
 } from '$core/release-requests/release-pipeline';
@@ -17,19 +18,25 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 
 /**
  * A request's automations (qits-978), ported from qits-projects-frontend's `release-automations`:
- * each row's label, state and detail, a link to its CI run, Re-run for a failed, unknown or fresh
- * one, and for a failed one the step it stopped at with the log's excerpt.
+ * each row's label, state and detail, a link to its CI run, Re-run for a failed, unknown, fresh or
+ * deferred one, and for a failed one the step it stopped at with the log's excerpt. Re-run does
+ * not look at the request's state: a REJECTED request is where a stale output is regenerated.
  *
  * An automation that does not apply to this repository (`NOT_APPLICABLE`) is greyed, with the
- * service's reason.
+ * service's reason. So is one QA checks instead of a run before it (`DEFERRED`, "checked by QA",
+ * qits-1178): QA fails when its output is stale, and Re-run is how it is regenerated.
  *
  * Below the rows, "Waive for this fold" asks for a reason and waives the automations gate for the
  * fold on show (`qits:admin` only). A 403 hides it for the rest of the visit. A 409 that names
  * another fold says the fold moved.
  *
- * Re-run answers 202 and no request: the row moves on the next refresh (a domain event). A 409 is
- * "one is already running".
+ * Re-run answers 202 and no request: the row moves on the next refresh (a domain event), and the
+ * row says what happens next. A 409 is "one is already running".
  */
+/** What a re-run the service took says: the output comes back as a commit, and QA follows. */
+export const ASKED =
+  'asked — the request folds again when the output is committed; QA then runs again';
+
 @Component({
   selector: 'app-release-automations',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,7 +53,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
             [class]="
               row.state === 'FAILED'
                 ? 'border-cinnabar-200 bg-cinnabar-50'
-                : row.state === 'NOT_APPLICABLE'
+                : setAside(row)
                   ? 'border-dashed border-charcoal-brown-200 bg-white text-charcoal-brown-400'
                   : 'border-charcoal-brown-200 bg-white'
             "
@@ -122,6 +129,7 @@ export class ReleaseAutomations {
   protected readonly fold = computed(() => shortShaOrNone(this.request().mergedSha));
   protected readonly sentence = automationSentence;
   protected readonly rerunnable = automationRerunnable;
+  protected readonly setAside = automationSetAside;
   protected readonly failed = failureLine;
 
   /** Shown until a waiver is refused 403: this viewer is not an admin. */
@@ -154,7 +162,10 @@ export class ReleaseAutomations {
     this.setMessage(kind, null);
     const outcome = await this.store.rerunAutomation(request.repoId ?? '', request.id ?? '', kind);
     this.rerunning.set(null);
-    if (outcome.status >= 200 && outcome.status < 300) return;
+    if (outcome.status >= 200 && outcome.status < 300) {
+      this.setMessage(kind, ASKED);
+      return;
+    }
     this.setMessage(
       kind,
       outcome.status === 409

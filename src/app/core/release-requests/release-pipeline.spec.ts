@@ -2,6 +2,7 @@ import type { ReleaseRequest } from './release-request.consumes';
 import {
   automationRerunnable,
   automationSentence,
+  automationSetAside,
   automationsName,
   drawPipeline,
   failureLine,
@@ -274,12 +275,27 @@ describe('release pipeline', () => {
       expect(automationSentence({})).toBe('unknown');
     });
 
-    it('offers Re-run on a failed, unknown or fresh row, never on a running one', () => {
+    it('words a deferred row as checked by QA, with its detail when it has one', () => {
+      expect(automationSentence({ state: 'DEFERRED' })).toBe('checked by QA');
+      expect(automationSentence({ state: 'DEFERRED', detail: 'QA diffs docs/database' })).toBe(
+        'checked by QA — QA diffs docs/database',
+      );
+    });
+
+    it('sets aside the rows that do not apply and the ones QA checks', () => {
       expect(
-        ['FAILED', 'UNKNOWN', 'FRESH', 'RUNNING', 'PENDING'].map((state) =>
-          automationRerunnable({ state }),
+        ['NOT_APPLICABLE', 'DEFERRED', 'FRESH', 'FAILED'].map((state) =>
+          automationSetAside({ state }),
         ),
-      ).toEqual([true, true, true, false, false]);
+      ).toEqual([true, true, false, false]);
+    });
+
+    it('offers Re-run on a failed, unknown, fresh or deferred row, never on a running one', () => {
+      expect(
+        ['FAILED', 'UNKNOWN', 'FRESH', 'DEFERRED', 'RUNNING', 'PENDING', 'NOT_APPLICABLE'].map(
+          (state) => automationRerunnable({ state }),
+        ),
+      ).toEqual([true, true, true, true, false, false, false]);
     });
 
     it('names the step, the image by its short name and the exit code of a failure', () => {
@@ -295,6 +311,7 @@ describe('release pipeline', () => {
       expect(automationsName([{ state: 'FRESH' }, { state: 'NOT_APPLICABLE' }])).toBe(
         '✓ Automations',
       );
+      expect(automationsName([{ state: 'FRESH' }, { state: 'DEFERRED' }])).toBe('✓ Automations');
       expect(automationsName([{ state: 'FAILED' }, { state: 'RUNNING' }])).toBe('✗ Automations');
       expect(automationsName([{ state: 'RUNNING' }])).toBe('Automations');
     });

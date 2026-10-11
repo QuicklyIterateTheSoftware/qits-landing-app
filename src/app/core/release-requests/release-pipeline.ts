@@ -347,7 +347,23 @@ const AUTOMATION_SETTLED_STATES: ReadonlySet<string> = new Set([
   'FRESH',
   'WAIVED',
   'NOT_APPLICABLE',
+  'DEFERRED',
 ]);
+
+/**
+ * Automation states that are no part of the pre-run on this fold: the kind does not apply to the
+ * repository (`NOT_APPLICABLE`), or QA checks its output instead of a run before it (`DEFERRED`,
+ * qits-1178). The page greys both.
+ */
+const AUTOMATION_SET_ASIDE_STATES: ReadonlySet<string> = new Set(['NOT_APPLICABLE', 'DEFERRED']);
+
+/** The automation is no part of the pre-run on this fold. */
+export function automationSetAside(row: ReleaseAutomation): boolean {
+  return AUTOMATION_SET_ASIDE_STATES.has(row.state ?? '');
+}
+
+/** What a `DEFERRED` automation says: QA checks the output, and fails when it is stale. */
+export const CHECKED_BY_QA = 'checked by QA';
 
 /** The automations gate's name in the plain gates list: ✓ when settled, ✗ when one failed. */
 export function automationsName(rows: readonly ReleaseAutomation[]): string {
@@ -357,8 +373,16 @@ export function automationsName(rows: readonly ReleaseAutomation[]): string {
   return rows.some((row) => row.state === 'FAILED') ? '✗ Automations' : 'Automations';
 }
 
-/** Automation states a person may run again. */
-const AUTOMATION_RERUNNABLE_STATES: ReadonlySet<string> = new Set(['FAILED', 'UNKNOWN', 'FRESH']);
+/**
+ * Automation states a person may run again. `DEFERRED` is one: when QA finds the output stale,
+ * running the kind here is how it is regenerated (qits-1182).
+ */
+const AUTOMATION_RERUNNABLE_STATES: ReadonlySet<string> = new Set([
+  'FAILED',
+  'UNKNOWN',
+  'FRESH',
+  'DEFERRED',
+]);
 
 /** The automation may be run again. */
 export function automationRerunnable(row: ReleaseAutomation): boolean {
@@ -367,7 +391,10 @@ export function automationRerunnable(row: ReleaseAutomation): boolean {
 
 /** An automation's state and detail as one sentence. */
 export function automationSentence(row: ReleaseAutomation): string {
-  const word = (row.state || 'unknown').toLowerCase().replace(/_/g, ' ');
+  const word =
+    row.state === 'DEFERRED'
+      ? CHECKED_BY_QA
+      : (row.state || 'unknown').toLowerCase().replace(/_/g, ' ');
   const detail = row.detail?.trim() || null;
   if (!detail) return word;
   switch (row.state) {
