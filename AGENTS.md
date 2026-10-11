@@ -239,9 +239,8 @@ step image that has Chromium, so a changed pixel fails the release request.
   `src/testing/browser/renderer.txt` (the one the references were made with), and a `playwright`
   package that is not the image's version. `playwright` is pinned exactly to that version.
 - **References** are in `__screenshots__/` beside the spec, named `<name>-chromium-linux.png`, and
-  are committed. QA checks them (qits-1179): the QA step in
-  `.config/qits/release-archetypes/app.yml` declares `check-outputs: [screenshot-baselines]`, so
-  after its script it runs the platform's own baselines job (`UPDATE_SNAPSHOT=all` on
+  are committed. QA checks them (qits-1179, qits-1178): the QA step of qits-ci's packaged `app`
+  recipe declares `check-outputs: [screenshot-baselines]`, so after its script it runs the platform's own baselines job (`UPDATE_SNAPSHOT=all` on
   `test:browser`, then `screenshots:prune`). When that changes, adds or deletes any reference or
   `renderer.txt`, QA fails with one line, `qits-ci: stale outputs: screenshot-baselines`, and the
   command to regenerate. A failing spec still fails QA as a test failure. Locally, a mismatch writes
