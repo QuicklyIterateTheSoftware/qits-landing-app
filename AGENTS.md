@@ -239,16 +239,23 @@ step image that has Chromium, so a changed pixel fails the release request.
   `src/testing/browser/renderer.txt` (the one the references were made with), and a `playwright`
   package that is not the image's version. `playwright` is pinned exactly to that version.
 - **References** are in `__screenshots__/` beside the spec, named `<name>-chromium-linux.png`, and
-  are committed. CI only compares (`CI=true`): a mismatch or a missing reference fails, and nothing
-  is written. A mismatch writes the actual image and the diff to `.vitest-attachments/` (ignored).
-- **References are made by the platform, never by hand.** A qits-maintenance task, which an agent
-  triggers for its release request, regenerates them (with `renderer.txt`) in the renderer image and
-  joins the commit to that release request. Do not commit reference screenshots made anywhere else.
+  are committed. QA checks them (qits-1179): the QA step in
+  `.config/qits/release-archetypes/app.yml` declares `check-outputs: [screenshot-baselines]`, so
+  after its script it runs the platform's own baselines job (`UPDATE_SNAPSHOT=all` on
+  `test:browser`, then `screenshots:prune`). When that changes, adds or deletes any reference or
+  `renderer.txt`, QA fails with one line, `qits-ci: stale outputs: screenshot-baselines`, and the
+  command to regenerate. A failing spec still fails QA as a test failure. Locally, a mismatch writes
+  the actual image and the diff to `.vitest-attachments/` (ignored).
+- **References are made by the platform, never by hand.** Regenerate them for your release request
+  with `qits release-request regenerate --kind screenshot-baselines` (plus `--project qits` and
+  `--repository qits-landing-app`), or "run again" on the request page. The automation renders them
+  (with `renderer.txt`) in the renderer image and commits them to `maintenance/automations/…`; the
+  request folds again, and QA runs again. Do not commit reference screenshots made anywhere else.
 - **No reference without a test.** Vitest never deletes a reference, so a deleted spec or a renamed
   screenshot leaves an orphan. `screenshotReferences()` (`@qits/angular/screenshots`, in
   `vitest-browser.config.ts`) records every reference each spec asks for during the run, and
-  `qits-angular screenshots --check` fails on a reference no test uses: after the run in
-  `test:browser` (judged by name, for every spec whose tests all passed), and in `lint` (only the
-  references of deleted specs, which need no run). The fix is never a hand deletion: the baselines
-  job runs `npm run screenshots:prune` after its update run, so its commit deletes the orphans too.
-  Trigger it as for a changed screenshot.
+  `qits-angular screenshots --check` fails on a reference no test uses after the run in
+  `test:browser` (judged by name, for every spec whose tests all passed; in an update run it only
+  lists them). The fix is never a hand deletion: the baselines job runs `npm run screenshots:prune`
+  after its update run, so QA reports an orphan as stale and its regeneration deletes it. Trigger it
+  as for a changed screenshot.

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "prettier --check . && eslint . && qits-angular screenshots --check",
+    "lint": "prettier --check . && eslint .",
     "generate:api": "openapi-ts",
     "serve:ssr": "node dist/qits-landing-app/server/server.mjs",
     "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser && qits-angular screenshots --check",
