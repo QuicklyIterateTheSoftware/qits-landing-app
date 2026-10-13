@@ -214,6 +214,20 @@ export const WorkStore = signalStore(
       patchState(store, { byProject: { ...store.byProject(), [projectId]: value } });
     }
 
+    /**
+     * Stores a fetch's `work` with the settled statuses laid over it. Laid over here, as it is
+     * stored, and not as the list answers: a finish that settles while the fetch still awaits its
+     * campaign reads would otherwise be overwritten by the old status (qits-1223).
+     */
+    function commit(projectId: string, work: ProjectWork, startedAt: number): void {
+      if (work.status !== 'loaded') {
+        set(projectId, work);
+        return;
+      }
+      const entries = withSettled(work.entries, startedAt);
+      set(projectId, { ...work, entries, count: entries.filter(countsAsWork).length });
+    }
+
     function setFinishing(entityId: string, value: FinishState | undefined): void {
       const { [entityId]: _, ...rest } = store.finishing();
       patchState(store, { finishing: value ? { ...rest, [entityId]: value } : rest });
@@ -333,13 +347,20 @@ export const WorkStore = signalStore(
       );
     }
 
-    async function fetch(projectId: string): Promise<ProjectWork> {
+    /** `fetch`'s result, and the clock step it started at: {@link commit} needs both. */
+    interface Fetched {
+      readonly work: ProjectWork;
+      readonly startedAt: number;
+    }
+
+    async function fetch(projectId: string): Promise<Fetched> {
       const startedAt = ++clock;
       const { data, error } = await consume(
         listProjectWork({ path: { project: projectId } }),
         LIST_PROJECT_WORK,
       );
-      const entries = withSettled(data?.entities ?? [], startedAt);
+      // As answered: `commit` lays the settled statuses over them once the campaign reads are in.
+      const entries = data?.entities ?? [];
       const campaignList = entries.flatMap((e) => {
         const qualifiedId = workRef(e);
         return e.archetype === 'CAMPAIGN' && e.id && qualifiedId ? [{ id: e.id, qualifiedId }] : [];
@@ -370,7 +391,7 @@ export const WorkStore = signalStore(
           return description ? [[campaignList[i].id, description]] : [];
         }),
       );
-      return failed
+      const work: ProjectWork = failed
         ? { ...NO_WORK, status: 'error' }
         : {
             status: 'loaded',
@@ -379,6 +400,7 @@ export const WorkStore = signalStore(
             campaigns,
             campaignDescriptions,
           };
+      return { work, startedAt };
     }
 
     return {
@@ -386,12 +408,15 @@ export const WorkStore = signalStore(
         const current = store.byProject()[projectId];
         if (current && current.status !== 'error') return;
         set(projectId, { ...NO_WORK, status: 'loading' });
-        set(projectId, await fetch(projectId));
+        const { work, startedAt } = await fetch(projectId);
+        commit(projectId, work, startedAt);
       },
       /** Fetches again; the old work stays until the answer is in, and stays if it fails. */
       async refresh(projectId: string): Promise<void> {
-        const next = await fetch(projectId);
-        if (next.status === 'loaded' || !store.byProject()[projectId]) set(projectId, next);
+        const { work, startedAt } = await fetch(projectId);
+        if (work.status === 'loaded' || !store.byProject()[projectId]) {
+          commit(projectId, work, startedAt);
+        }
       },
       /** Moves `entry` to DONE now. */
       finish,

@@ -293,6 +293,55 @@ describe('WorkStore', () => {
       expect(statusOf(store, 'e-1')).toBe('DONE');
     });
 
+    it('applies a finish settled during a refresh’s campaign reads, not the stale snapshot', async () => {
+      const store = TestBed.inject(WorkStore);
+      const state = 'a campaign with a done, a verified and an implementing epic';
+      const list = goldenMaster(state, 'listProjectWork');
+      const members = goldenMaster(state, 'listWorkMembers');
+      const campaign = goldenMaster(state, 'getWork');
+      const verifiedEpic = list.entities.find(
+        (e: WorkEntry) => e.archetype === 'EPIC' && e.status === 'VERIFIED',
+      ) as WorkEntry;
+
+      // Load once, so there is work to refresh.
+      const loadedFirst = store.load(ID);
+      await drain();
+      http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
+      await drain();
+      http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`).flush(members);
+      http.expectOne(`/projects/api/work/${campaign.qualifiedId}`).flush(campaign);
+      await loadedFirst;
+      expect(statusOf(store, verifiedEpic.id as string)).toBe('VERIFIED');
+
+      // Refresh starts, and the work list answers with the epic still VERIFIED.
+      const refreshed = store.refresh(ID);
+      await drain();
+      http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
+      await drain();
+      const membersReq = http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`);
+      const describedReq = http.expectOne(`/projects/api/work/${campaign.qualifiedId}`);
+
+      // While the campaign's member and description reads are still on their way, the epic's own
+      // finish completes.
+      store.finishLater(ID, verifiedEpic);
+      await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
+      await drain();
+      http
+        .expectOne(`/projects/api/work/${verifiedEpic.qualifiedId}/status`)
+        .flush({ status: 'DONE' });
+      await drain();
+      expect(store.pendingFinishes()).toEqual({});
+      expect(statusOf(store, verifiedEpic.id as string)).toBe('DONE');
+
+      // The campaign reads answer, still carrying the list's snapshot (VERIFIED).
+      membersReq.flush(members);
+      describedReq.flush(campaign);
+      await refreshed;
+
+      // The refresh must not undo the finish with the stale status it fetched before it settled.
+      expect(statusOf(store, verifiedEpic.id as string)).toBe('DONE');
+    });
+
     it('asks once for an item already waiting', async () => {
       const store = await loaded();
       store.finishLater(ID, ticket);
