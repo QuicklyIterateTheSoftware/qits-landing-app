@@ -10,7 +10,9 @@ import { catchError, from, Observable, switchMap, throwError } from 'rxjs';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { FetchEventSource } from '$core/events/fetch-event-source';
 import { HOST_LABELS, PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
+import { WEB_SOCKET, type WebSocketLike } from '$core/platform/web-socket';
 import { DevTokens } from './dev-tokens';
+import { DevWebSocket } from './dev-web-socket';
 import { Session, SignInCallback } from './session';
 
 /**
@@ -20,6 +22,8 @@ import { Session, SignInCallback } from './session';
  * - `Session` is {@link BearerSession}: signed in means holding a valid (or refreshable) token.
  * - `/auth/callback` finishes the sign-in through {@link DevTokens}.
  * - The event stream is read with `fetch()` and the bearer, since `EventSource` cannot send one.
+ * - A WebSocket offers the bearer as a subprotocol ({@link DevWebSocket}), since it cannot send a
+ *   header either.
  * - {@link devBearerInterceptor} puts the bearer on every call to a platform host.
  */
 export function provideDevBearer(): Provider[] {
@@ -32,6 +36,19 @@ export function provideDevBearer(): Provider[] {
       useFactory: () => {
         const tokens = inject(DevTokens);
         return (url: string) => new FetchEventSource(url, () => tokens.accessToken());
+      },
+    },
+    {
+      provide: WEB_SOCKET,
+      useFactory: () => {
+        const tokens = inject(DevTokens);
+        return (url: string, protocols?: string[]) =>
+          new DevWebSocket(
+            url,
+            () => tokens.accessToken(),
+            (to, offered) => new WebSocket(to, offered) as WebSocketLike,
+            protocols,
+          );
       },
     },
   ];

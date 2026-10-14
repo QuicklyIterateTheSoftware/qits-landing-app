@@ -64,7 +64,9 @@ describe('WorkspaceLink', () => {
   it('links the workspace page of an item with an active workspace', async () => {
     const link = await render(params['bugTicketId']);
     expect(link.classList.contains('hidden')).toBe(false);
-    expect(link.querySelector('a')?.getAttribute('href')).toBe('/projects/qits/workspaces/qits-7');
+    expect(link.querySelector('a')?.getAttribute('href')).toBe(
+      '/projects/qits/work/detail/qits-7/agent',
+    );
     expect(link.textContent?.trim()).toBe('Workspace');
   });
 

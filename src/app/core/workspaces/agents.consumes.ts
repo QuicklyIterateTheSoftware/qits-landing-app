@@ -1,0 +1,139 @@
+import type {
+  GetWorkspaceActiveProcessResponses,
+  GetWorkspaceResponses,
+  ListAgentsResponses,
+  ListWorkspacesResponses,
+} from '../../api/workspaces';
+import type { Consumed } from '@qits/angular';
+
+/**
+ * What `AgentsStore` reads from qits-workspaces' answers for the workspace pages (epic qits-1230).
+ * The store passes each list to `consume(...)`, so it cannot read any other field, and its pact spec
+ * passes the same lists as `consumes`. To read another field, add it here.
+ */
+
+/**
+ * `AgentsStore.loadProject(repositoryId)`, the project's Workspaces page: the wrapper's slots
+ * (`listWorkspaces`, ACTIVE only), each with its label, container state, placement and runner.
+ */
+export const LIST_PROJECT_SLOTS = [
+  'entries[].workspace.id',
+  'entries[].workspace.workspaceId',
+  'entries[].workspace.runtimeStatus',
+  'entries[].workspace.placement',
+  'entries[].workspace.runner.name',
+  'entries[].workspace.queuedAt',
+  'entries[].workspace.admin',
+] as const;
+
+/** One slot of the project's list, cut to what the store reads. */
+export type ProjectSlot = NonNullable<
+  NonNullable<
+    Consumed<ListWorkspacesResponses[200], typeof LIST_PROJECT_SLOTS>['entries']
+  >[number]['workspace']
+>;
+
+/**
+ * `AgentsStore.loadProject(repositoryId)`: every agent (`listAgents`, unfiltered, newest first),
+ * of which the page keeps the wrapper's that are not removed — as qits-workspaces-frontend's
+ * overview did. Each with its item, its slot, its run state and what it waits on (qits-1229).
+ */
+export const LIST_PROJECT_AGENTS = [
+  'agents[].agentId',
+  'agents[].workspaceRowId',
+  'agents[].repositoryId',
+  'agents[].entityId',
+  'agents[].entityTitle',
+  'agents[].state',
+  'agents[].runState',
+  'agents[].admin',
+  'agents[].activity',
+  'agents[].waitingOn',
+  'agents[].waitingOnSince',
+] as const;
+
+/** One agent of the project's list, cut to what the store reads. */
+export type ProjectAgent = NonNullable<
+  Consumed<ListAgentsResponses[200], typeof LIST_PROJECT_AGENTS>['agents']
+>[number];
+
+/**
+ * `AgentsStore.loadSlot(id)` and `loadItem(workId)`: one slot (`getWorkspace`) and its status
+ * strip — the container (and its error), the placement and runner, the daemon.
+ */
+export const GET_SLOT = [
+  'workspace.id',
+  'workspace.workspaceId',
+  'workspace.runtimeStatus',
+  'workspace.runtimeError',
+  'workspace.placement',
+  'workspace.runner.name',
+  'workspace.queuedAt',
+  'workspace.admin',
+  'workspace.daemonConnectedAt',
+  'workspace.daemonVersion',
+  'workspace.daemonOutdated',
+] as const;
+
+/** One slot, cut to what the store reads. */
+export type SlotDetail = NonNullable<
+  Consumed<GetWorkspaceResponses[200], typeof GET_SLOT>['workspace']
+>;
+
+/** `AgentsStore.loadSlot(id)`: the agents a slot hosts (`listAgents?workspaceId=`). */
+export const LIST_SLOT_AGENTS = [
+  'agents[].agentId',
+  'agents[].entityId',
+  'agents[].entityTitle',
+  'agents[].state',
+  'agents[].runState',
+  'agents[].admin',
+  'agents[].harness',
+  'agents[].activity',
+  'agents[].waitingOn',
+  'agents[].waitingOnSince',
+  'agents[].wrapperBranch',
+] as const;
+
+/** One agent a slot hosts, cut to what the store reads. */
+export type SlotAgent = NonNullable<
+  Consumed<ListAgentsResponses[200], typeof LIST_SLOT_AGENTS>['agents']
+>[number];
+
+/**
+ * `AgentsStore.loadSlot(id)` and `loadItem(workId)`: the technical process starting the slot's
+ * container, if one is live (`getWorkspaceActiveProcess`); its log is read from its own stream.
+ */
+export const GET_ACTIVE_PROCESS = ['technicalProcessId'] as const;
+
+/** What the active-process read answers, cut to what the store reads. */
+export type ActiveProcess = Consumed<
+  GetWorkspaceActiveProcessResponses[200],
+  typeof GET_ACTIVE_PROCESS
+>;
+
+/**
+ * `AgentsStore.loadItem(workId)`, a work item's agent page: the item's agents (`listAgents?workId=`,
+ * newest first), with what each works on, where, how it runs and what it waits on.
+ */
+export const LIST_ITEM_AGENTS = [
+  'agents[].agentId',
+  'agents[].workspaceRowId',
+  'agents[].entityId',
+  'agents[].entityTitle',
+  'agents[].entityStatus',
+  'agents[].entityBlocked',
+  'agents[].state',
+  'agents[].runState',
+  'agents[].admin',
+  'agents[].harness',
+  'agents[].activity',
+  'agents[].waitingOn',
+  'agents[].waitingOnSince',
+  'agents[].wrapperBranch',
+] as const;
+
+/** One agent of an item, cut to what the store reads. */
+export type ItemAgent = NonNullable<
+  Consumed<ListAgentsResponses[200], typeof LIST_ITEM_AGENTS>['agents']
+>[number];

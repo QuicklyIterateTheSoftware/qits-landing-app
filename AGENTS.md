@@ -45,6 +45,23 @@ a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BAC
 notifications menu puts every new event at the top of its list once it is loaded. The bumps menu
 (the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
 (`listPendingBumps`) on its first opening and again after `BUMP_EVENTS`, at most once a second.
+The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
+qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
+name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A container
+start's log is not a domain event: `ProcessLog` reads that one process's own stream on
+qits-workspaces' origin (`/workspaces/api/technical-processes/{id}/events`), through `EVENT_SOURCE`.
+
+An agent's terminal (`…/agent/terminal`, `AgentTerminalPage`) is a WebSocket, not a domain event:
+the slot's daemon, through qits-workspaces' container proxy, at
+`wss://workspaces.<domain>/workspaces/container/<slot row id>/terminal/commands/<command id>`
+(`terminalSocketUrl`), opened through `WEB_SOCKET` (`core/platform/web-socket.ts`; specs fake it).
+`AgentTerminalStore` finds the command: the daemon's `getAgentWorktree` and `listCommands`, through
+the same proxy (the generated client in `api/workspace-daemon/`, each call's `baseUrl` the
+container's prefix). `TerminalSocket` sends `{"type":"data"}` and `{"type":"resize"}` frames, treats
+a server close with 1000 as final and reconnects after any other (0.5, 1, 2, 4, 4 s, then `lost`
+until the button, `visibilitychange` or `online`). The screen is xterm.js
+(`ui/components/terminal-screen/`), loaded lazily in the browser only; its stylesheet is imported in
+`src/styles.css`.
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
@@ -86,11 +103,20 @@ Under `ng serve` the cookie never reaches localhost, so `environment.development
 - `EVENT_SOURCE` becomes `FetchEventSource` (`core/events/fetch-event-source.ts`): `fetch()` plus
   a small SSE parser, because `EventSource` cannot send a header and the edge reads no query token.
   Specs keep faking `EVENT_SOURCE` as before.
+- `WEB_SOCKET` (`core/platform/web-socket.ts`; deployed, the browser's `WebSocket`, with the
+  cookie) becomes `DevWebSocket` (`dev-web-socket.ts`): a browser WebSocket cannot send a header
+  either, so it offers the bearer as a subprotocol, `new WebSocket(url, ['qits.bearer', <access
+token>, ...protocols])`, with the token from `DevTokens.accessToken()` (refreshed first when it
+  is about to end); the socket opens once the token is at hand. qits-edge (qits-1246) takes that
+  offer only from `http://localhost[:port]` or `http://127.0.0.1[:port]` (not https, not `[::1]`):
+  it moves the token into `Authorization: Bearer`, forwards neither entry, and answers the
+  handshake with `Sec-WebSocket-Protocol: qits.bearer`. Any other origin is a 403; a missing or
+  bad token a 401. Specs fake `WEB_SOCKET`.
 
 The environment file is the ONLY importer of this code, so the deployed bundle holds none of it.
-Keep it that way: never import `dev-bearer.ts`, `dev-tokens.ts` or `fetch-event-source.ts` from
-anywhere else. `npm run build` then `grep -r qits-landing-dev dist/qits-landing-app/browser` must
-find nothing.
+Keep it that way: never import `dev-bearer.ts`, `dev-tokens.ts`, `dev-web-socket.ts` or `fetch-event-source.ts`
+from anywhere else. `npm run build` then `grep -r qits-landing-dev dist/qits-landing-app/browser` and
+`grep -r qits.bearer dist/qits-landing-app/browser` must find nothing.
 
 ## Telemetry
 
@@ -123,11 +149,12 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                    | Pact file                                             | Golden masters                    |
-| ----------------------- | -------------------------------------- | ----------------------------------------------------- | --------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`     | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`   |
-| qits-githost-service    | `core/loc/loc.store*.ts`               | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`    |
-| qits-workspaces-service | `core/workspaces/workspaces.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters` |
+| Provider                | Store and pact spec                             | Pact file                                             | Golden masters                          |
+| ----------------------- | ----------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`              | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
+| qits-githost-service    | `core/loc/loc.store*.ts`                        | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon   | `core/workspaces/agent-terminal.store*.ts`      | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

@@ -119,7 +119,7 @@ describe('TicketCard (screenshots)', () => {
     const link = locator.getByRole('link', { name: 'Workspace', exact: true });
     await expect
       .element(link)
-      .toHaveAttribute('href', `/projects/contract-00000001/workspaces/${qualifiedId}`);
+      .toHaveAttribute('href', `/projects/contract-00000001/work/detail/${qualifiedId}/agent`);
     await expect.element(locator).toMatchScreenshot('workspace');
   });
 

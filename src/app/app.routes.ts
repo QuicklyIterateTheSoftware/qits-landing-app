@@ -45,8 +45,12 @@ import { sessionGuard } from '$core/auth/session.guard';
  * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`),
  * one request at `release-requests/<requestId>` (`ReleaseRequestPage`).
  *
- * A work item's workspace is at `projects/<slug>/workspaces/<qualified id>` (`WorkspacePage`),
- * where the workspace links on cards lead.
+ * The workspaces (epic qits-1230): `projects/<slug>/workspaces` lists the project's slots and
+ * agents (`ProjectWorkspacesPage`), `workspaces/<slot id>` is one slot (`WorkspaceSlotPage`). A
+ * work item's agent is at `work/detail/<qualified id>/agent` (`WorkAgentLayout`), where the
+ * Workspace links on cards and on the item's page lead: a layout, whose children are the agent's
+ * tabs (`agent/terminal`, `AgentTerminalPage`), with an empty default. A literal page below `workspaces` (`runners`) goes before
+ * `workspaces/:slotId`, so it wins over a slot id.
  *
  * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
  * outside the shell, so the guard does not run on it.
@@ -79,6 +83,24 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/work/detail/[id]/work-item.page').then(
             (m) => m.WorkItemPage,
           ),
+      },
+      {
+        path: 'projects/:slug/work/detail/:id/agent',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout').then(
+            (m) => m.WorkAgentLayout,
+          ),
+        // The agent's tabs (`AGENT_TABS`); the bare URL shows the agent alone.
+        children: [
+          { path: '', children: [] },
+          {
+            path: 'terminal',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/detail/[id]/agent/terminal/agent-terminal.page').then(
+                (m) => m.AgentTerminalPage,
+              ),
+          },
+        ],
       },
       {
         path: 'projects/:slug/work',
@@ -132,10 +154,17 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'projects/:slug/workspaces/:id',
+        path: 'projects/:slug/workspaces',
         loadComponent: () =>
-          import('./routes/projects/[slug]/workspaces/[id]/workspace.page').then(
-            (m) => m.WorkspacePage,
+          import('./routes/projects/[slug]/workspaces/project-workspaces.page').then(
+            (m) => m.ProjectWorkspacesPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/workspaces/:slotId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page').then(
+            (m) => m.WorkspaceSlotPage,
           ),
       },
       {

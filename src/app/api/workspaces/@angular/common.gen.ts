@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CreateAgentData, CreateAgentResponse, CreateRunnerData, CreateRunnerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeleteWorkspacesApiAgentsByIdPromptDraftData, DeleteWorkspacesApiAgentsByIdPromptDraftResponse, DeleteWorkspacesApiRunnersByIdData, DeleteWorkspacesApiRunnersByIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DispatchAgentData, DispatchAgentResponse, GetAgentData, GetAgentResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiAgentsByIdPromptDraftData, GetWorkspacesApiAgentsByIdPromptDraftResponse, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptData, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponse, GetWorkspacesApiHistoryByIdAgentSessionsData, GetWorkspacesApiHistoryByIdAgentSessionsResponse, GetWorkspacesApiHistoryByIdData, GetWorkspacesApiHistoryByIdResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, GetWorkspacesApiRunnersByIdData, GetWorkspacesApiRunnersByIdHealthData, GetWorkspacesApiRunnersByIdHealthResponse, GetWorkspacesApiRunnersByIdResponse, GetWorkspacesApiRunnersInstallShData, GetWorkspacesApiRunnersInstallShResponse, GetWorkspacesApiWorkspacesByIdActiveProcessData, GetWorkspacesApiWorkspacesByIdActiveProcessResponse, GetWorkspacesApiWorkspacesByIdData, GetWorkspacesApiWorkspacesByIdResponse, GetWorkspacesApiWorkspacesData, GetWorkspacesApiWorkspacesResponse, GreenlightRunnerData, GreenlightRunnerResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListRunnersData, ListRunnersResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PatchWorkspacesApiRunnersByIdData, PatchWorkspacesApiRunnersByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PostWorkspacesApiRunnersByIdHealthcheckData, PostWorkspacesApiRunnersByIdHealthcheckResponse, PostWorkspacesApiRunnersByIdLoginCheckData, PostWorkspacesApiRunnersByIdRegisterData, PostWorkspacesApiRunnersByIdRegisterResponse, PostWorkspacesApiWorkspacesByIdDeleteContainerData, PostWorkspacesApiWorkspacesByIdDeleteContainerResponse, PostWorkspacesApiWorkspacesByIdDiscardData, PostWorkspacesApiWorkspacesByIdDiscardResponse, PostWorkspacesApiWorkspacesByIdEnsureContainerData, PostWorkspacesApiWorkspacesByIdEnsureContainerResponse, PostWorkspacesApiWorkspacesByIdRecreateContainerData, PostWorkspacesApiWorkspacesByIdRecreateContainerResponse, PostWorkspacesApiWorkspacesByIdStopContainerData, PostWorkspacesApiWorkspacesByIdStopContainerResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, PutWorkspacesApiAgentsByIdPromptDraftData, PutWorkspacesApiAgentsByIdPromptDraftResponse, ResolveReleasedBranchData, ResolveReleasedBranchResponse, RotateRunnerRegistrationTokenData, RotateRunnerRegistrationTokenResponse, SweepBranchesData, SweepBranchesResponse } from '../types.gen';
+import type { CancelAgentWaitData, CancelAgentWaitResponse, CreateAgentData, CreateAgentResponse, CreateAgentWaitData, CreateAgentWaitResponse, CreateRunnerData, CreateRunnerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeleteWorkspacesApiAgentsByIdPromptDraftData, DeleteWorkspacesApiAgentsByIdPromptDraftResponse, DeleteWorkspacesApiRunnersByIdData, DeleteWorkspacesApiRunnersByIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DispatchAgentData, DispatchAgentResponse, GetAgentData, GetAgentResponse, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessResponse, GetWorkspaceData, GetWorkspaceResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiAgentsByIdPromptDraftData, GetWorkspacesApiAgentsByIdPromptDraftResponse, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptData, GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponse, GetWorkspacesApiHistoryByIdAgentSessionsData, GetWorkspacesApiHistoryByIdAgentSessionsResponse, GetWorkspacesApiHistoryByIdData, GetWorkspacesApiHistoryByIdResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, GetWorkspacesApiRunnersByIdData, GetWorkspacesApiRunnersByIdHealthData, GetWorkspacesApiRunnersByIdHealthResponse, GetWorkspacesApiRunnersByIdResponse, GetWorkspacesApiRunnersInstallShData, GetWorkspacesApiRunnersInstallShResponse, GreenlightRunnerData, GreenlightRunnerResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentsResponse, ListAgentWaitsData, ListAgentWaitsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListRunnersData, ListRunnersResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, ListWorkspacesData, ListWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PatchWorkspacesApiRunnersByIdData, PatchWorkspacesApiRunnersByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PostWorkspacesApiRunnersByIdHealthcheckData, PostWorkspacesApiRunnersByIdHealthcheckResponse, PostWorkspacesApiRunnersByIdLoginCheckData, PostWorkspacesApiRunnersByIdRegisterData, PostWorkspacesApiRunnersByIdRegisterResponse, PostWorkspacesApiWorkspacesByIdDeleteContainerData, PostWorkspacesApiWorkspacesByIdDeleteContainerResponse, PostWorkspacesApiWorkspacesByIdDiscardData, PostWorkspacesApiWorkspacesByIdDiscardResponse, PostWorkspacesApiWorkspacesByIdEnsureContainerData, PostWorkspacesApiWorkspacesByIdEnsureContainerResponse, PostWorkspacesApiWorkspacesByIdRecreateContainerData, PostWorkspacesApiWorkspacesByIdRecreateContainerResponse, PostWorkspacesApiWorkspacesByIdStopContainerData, PostWorkspacesApiWorkspacesByIdStopContainerResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, PutWorkspacesApiAgentsByIdPromptDraftData, PutWorkspacesApiAgentsByIdPromptDraftResponse, ResolveReleasedBranchData, ResolveReleasedBranchResponse, RotateRunnerRegistrationTokenData, RotateRunnerRegistrationTokenResponse, SweepBranchesData, SweepBranchesResponse } from '../types.gen';
 
 /**
  * Dispatch
@@ -73,6 +73,36 @@ export const createAgentRequest = <ThrowOnError extends boolean = false>(options
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/agents',
+    ...options
+});
+
+/**
+ * The agent's waits, optionally of one state
+ */
+export const listAgentWaitsRequest = <ThrowOnError extends boolean = false>(options: Options<ListAgentWaitsData, ThrowOnError>): HttpRequest<ListAgentWaitsResponse> => (options?.client ?? client).requestOptions<ListAgentWaitsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{agentId}/waits',
+    ...options
+});
+
+/**
+ * Declare what the agent waits on
+ */
+export const createAgentWaitRequest = <ThrowOnError extends boolean = false>(options: Options<CreateAgentWaitData, ThrowOnError>): HttpRequest<CreateAgentWaitResponse> => (options?.client ?? client).requestOptions<CreateAgentWaitResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{agentId}/waits',
+    ...options
+});
+
+/**
+ * Cancel one of the agent's waits
+ */
+export const cancelAgentWaitRequest = <ThrowOnError extends boolean = false>(options: Options<CancelAgentWaitData, ThrowOnError>): HttpRequest<CancelAgentWaitResponse> => (options?.client ?? client).requestOptions<CancelAgentWaitResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/workspaces/api/agents/{agentId}/waits/{waitId}',
     ...options
 });
 
@@ -417,9 +447,9 @@ export const listWorkItemWorkspacesRequest = <ThrowOnError extends boolean = fal
 });
 
 /**
- * List
+ * A repository's ACTIVE workspaces
  */
-export const getWorkspacesApiWorkspacesRequest = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiWorkspacesData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesResponse, ThrowOnError>({
+export const listWorkspacesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListWorkspacesData, ThrowOnError>): HttpRequest<ListWorkspacesResponse> => (options?.client ?? client).requestOptions<ListWorkspacesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/workspaces/api/workspaces',
@@ -429,7 +459,7 @@ export const getWorkspacesApiWorkspacesRequest = <ThrowOnError extends boolean =
 /**
  * Get
  */
-export const getWorkspacesApiWorkspacesByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesByIdResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesByIdResponse, ThrowOnError>({
+export const getWorkspaceRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspaceData, ThrowOnError>): HttpRequest<GetWorkspaceResponse> => (options?.client ?? client).requestOptions<GetWorkspaceResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/workspaces/api/workspaces/{id}',
@@ -439,7 +469,7 @@ export const getWorkspacesApiWorkspacesByIdRequest = <ThrowOnError extends boole
 /**
  * Active Process
  */
-export const getWorkspacesApiWorkspacesByIdActiveProcessRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiWorkspacesByIdActiveProcessData, ThrowOnError>): HttpRequest<GetWorkspacesApiWorkspacesByIdActiveProcessResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiWorkspacesByIdActiveProcessResponse, ThrowOnError>({
+export const getWorkspaceActiveProcessRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspaceActiveProcessData, ThrowOnError>): HttpRequest<GetWorkspaceActiveProcessResponse> => (options?.client ?? client).requestOptions<GetWorkspaceActiveProcessResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/workspaces/api/workspaces/{id}/active-process',
@@ -550,6 +580,30 @@ export const listAgentsResource = <ThrowOnError extends boolean = false>(options
 export const createAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateAgentData, ThrowOnError> | undefined) => httpResource<CreateAgentResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? createAgentRequest(opts) : undefined;
+});
+
+/**
+ * The agent's waits, optionally of one state
+ */
+export const listAgentWaitsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListAgentWaitsData, ThrowOnError> | undefined) => httpResource<ListAgentWaitsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listAgentWaitsRequest(opts) : undefined;
+});
+
+/**
+ * Declare what the agent waits on
+ */
+export const createAgentWaitResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateAgentWaitData, ThrowOnError> | undefined) => httpResource<CreateAgentWaitResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createAgentWaitRequest(opts) : undefined;
+});
+
+/**
+ * Cancel one of the agent's waits
+ */
+export const cancelAgentWaitResource = <ThrowOnError extends boolean = false>(options: () => Options<CancelAgentWaitData, ThrowOnError> | undefined) => httpResource<CancelAgentWaitResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? cancelAgentWaitRequest(opts) : undefined;
 });
 
 /**
@@ -825,27 +879,27 @@ export const listWorkItemWorkspacesResource = <ThrowOnError extends boolean = fa
 });
 
 /**
- * List
+ * A repository's ACTIVE workspaces
  */
-export const getWorkspacesApiWorkspacesResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetWorkspacesApiWorkspacesData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesResponse>(() => {
+export const listWorkspacesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListWorkspacesData, ThrowOnError> | undefined) => httpResource<ListWorkspacesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesRequest(opts) : undefined;
+    return opts ? listWorkspacesRequest(opts) : undefined;
 });
 
 /**
  * Get
  */
-export const getWorkspacesApiWorkspacesByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdResponse>(() => {
+export const getWorkspaceResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspaceData, ThrowOnError> | undefined) => httpResource<GetWorkspaceResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesByIdRequest(opts) : undefined;
+    return opts ? getWorkspaceRequest(opts) : undefined;
 });
 
 /**
  * Active Process
  */
-export const getWorkspacesApiWorkspacesByIdActiveProcessResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiWorkspacesByIdActiveProcessData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiWorkspacesByIdActiveProcessResponse>(() => {
+export const getWorkspaceActiveProcessResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspaceActiveProcessData, ThrowOnError> | undefined) => httpResource<GetWorkspaceActiveProcessResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiWorkspacesByIdActiveProcessRequest(opts) : undefined;
+    return opts ? getWorkspaceActiveProcessRequest(opts) : undefined;
 });
 
 /**

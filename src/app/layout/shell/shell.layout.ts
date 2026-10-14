@@ -215,6 +215,7 @@ export class ShellLayout {
               path: `/projects/${slug}/work/${tab.segment}`,
             })),
           },
+          { label: 'Workspaces', path: `/projects/${slug}/${WORKSPACES}` },
           {
             label: 'Release Requests',
             path: `/projects/${slug}/${RELEASE_REQUESTS}`,
@@ -229,8 +230,9 @@ export class ShellLayout {
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
    * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
-   * Work › <item id>, Release Requests › <request id>). A work item's workspace page has no section: "Workspace <item id>" follows
-   * the project. The last crumb is the current page and is not a link.
+   * Work › <item id>, Release Requests › <request id>, Workspaces › ws-<slot id>), and below an
+   * item, its agent (Work › <item id> › Agent). The last crumb is the current page and is not a
+   * link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
     const projects: NavLink = { label: 'Projects', path: '/projects' };
@@ -238,8 +240,6 @@ export class ShellLayout {
     const slug = this.selected.slug();
     if (!project || !slug) return [projects];
     const crumbs = [projects, { label: project.name ?? slug, path: `/projects/${slug}` }];
-    const workspace = workspaceCrumb(this.selected.url(), `/projects/${slug}`);
-    if (workspace) return [...crumbs, workspace];
     const section = this.section();
     if (!section) return crumbs;
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
@@ -248,8 +248,11 @@ export class ShellLayout {
     const requests = this.projects.releaseRequests()[project.id ?? '']?.requests ?? [];
     const sub =
       workSubpage(url, `/projects/${slug}`) ??
-      releaseRequestSubpage(url, `/projects/${slug}`, requests);
-    return sub ? [...crumbs, section, sub] : [...crumbs, section];
+      releaseRequestSubpage(url, `/projects/${slug}`, requests) ??
+      slotSubpage(url, `/projects/${slug}`);
+    if (!sub) return [...crumbs, section];
+    const agent = agentSubpage(url, `/projects/${slug}`);
+    return agent ? [...crumbs, section, sub, agent] : [...crumbs, section, sub];
   });
 
   /** The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear. */
@@ -306,15 +309,31 @@ function within(url: string, path: string): boolean {
   return url === path || /^[/?#]/.test(url.startsWith(path) ? url.slice(path.length) : 'x');
 }
 
+/** The workspaces section's segment below a project: `/projects/<slug>/workspaces`. */
+export const WORKSPACES = 'workspaces';
+
 /**
- * The crumb of a work item's workspace page below the project at `project` (`/projects/<slug>`):
- * `<project>/workspaces/<item id>` is "Workspace <item id>". Undefined for any other URL.
+ * The crumb of one workspace slot below the project at `project` (`/projects/<slug>`):
+ * `<project>/workspaces/<slot id>` is "ws-<slot id>". Undefined for the list itself, a page whose
+ * segment is not a slot id, and anything outside it.
  */
-export function workspaceCrumb(url: string, project: string): NavLink | undefined {
-  const prefix = `${project}/workspaces/`;
+export function slotSubpage(url: string, project: string): NavLink | undefined {
+  const prefix = `${project}/${WORKSPACES}/`;
   if (!url.startsWith(prefix)) return undefined;
   const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
-  return id ? { label: `Workspace ${decodeURIComponent(id)}`, path: `${prefix}${id}` } : undefined;
+  return /^\d+$/.test(id) ? { label: `ws-${id}`, path: `${prefix}${id}` } : undefined;
+}
+
+/**
+ * The crumb of a work item's agent page below the project at `project` (`/projects/<slug>`):
+ * `<project>/work/detail/<item id>/agent` (and its tabs below) is "Agent". Undefined for any other
+ * URL.
+ */
+export function agentSubpage(url: string, project: string): NavLink | undefined {
+  const prefix = `${project}/work/${WORK_DETAIL}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const [id, segment] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  return id && segment === 'agent' ? { label: 'Agent', path: `${prefix}${id}/agent` } : undefined;
 }
 
 /**

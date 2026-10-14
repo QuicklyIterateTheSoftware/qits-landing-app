@@ -173,7 +173,7 @@ export class WorkItemPage {
   });
 
   protected readonly workspaceLink = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/workspaces/${this.id()}`,
+    () => `/projects/${this.selected.slug() ?? ''}/work/detail/${this.id()}/agent`,
   );
 
   protected readonly title = computed(() => this.entry()?.title ?? this.id());

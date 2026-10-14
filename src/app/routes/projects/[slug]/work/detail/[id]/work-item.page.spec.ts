@@ -168,7 +168,7 @@ describe('WorkItemPage', () => {
     /** Each link in the children's region but the Workspace links: its text and where it leads. */
     const children = () =>
       [...element.querySelectorAll(CHILDREN)]
-        .filter((a) => !a.getAttribute('href')?.includes('/workspaces/'))
+        .filter((a) => !a.getAttribute('href')?.endsWith('/agent'))
         .map((a) => [a.textContent?.trim(), a.getAttribute('href')?.split('/').pop()]);
     const groups = () =>
       [...element.querySelectorAll('[role=group]')].map((g) => ({
@@ -180,7 +180,7 @@ describe('WorkItemPage', () => {
     /** Where each shown Workspace link in the children's region leads. */
     const workspaceLinks = () =>
       [...element.querySelectorAll(CHILDREN)]
-        .filter((a) => a.getAttribute('href')?.includes('/workspaces/'))
+        .filter((a) => a.getAttribute('href')?.endsWith('/agent'))
         .filter((a) => !a.closest('.hidden'))
         .map((a) => a.getAttribute('href'));
     /** Each workspace in the item's history: its state, branch and dates, as one line. */
@@ -235,7 +235,7 @@ describe('WorkItemPage', () => {
     // The members with an ACTIVE workspace: the export epic, a CSV task, the PDF feature, the bug.
     expect(workspaceLinks()).toEqual(
       ['2', '5', '6', '10'].map(
-        (n) => `/projects/contract-00000001/workspaces/contract-00000001-${n}`,
+        (n) => `/projects/contract-00000001/work/detail/contract-00000001-${n}/agent`,
       ),
     );
   });
@@ -246,7 +246,7 @@ describe('WorkItemPage', () => {
       'a bug ticket in detail',
       true,
     );
-    const link = '/projects/contract-00000001/workspaces/contract-00000001-10';
+    const link = '/projects/contract-00000001/work/detail/contract-00000001-10/agent';
     const branch = 'ticket/invoice-totals-are-off-by-one-cent';
     const opened = 'Opened 1 Jan 2026, 00:00';
     expect(history()).toEqual([

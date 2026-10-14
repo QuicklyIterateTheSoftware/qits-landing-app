@@ -1,19 +1,40 @@
-import { releaseRequestSubpage, workspaceCrumb, workSubpage } from './shell.layout';
+import { agentSubpage, releaseRequestSubpage, slotSubpage, workSubpage } from './shell.layout';
 
-describe('workspaceCrumb', () => {
+describe('slotSubpage', () => {
   const project = '/projects/qits';
 
-  it('names a work item’s workspace page', () => {
-    expect(workspaceCrumb(`${project}/workspaces/qits-111?x=1`, project)).toEqual({
-      label: 'Workspace qits-111',
-      path: `${project}/workspaces/qits-111`,
+  it('names a workspace slot by its label', () => {
+    expect(slotSubpage(`${project}/workspaces/12?x=1`, project)).toEqual({
+      label: 'ws-12',
+      path: `${project}/workspaces/12`,
     });
   });
 
-  it('is undefined anywhere else', () => {
-    expect(workspaceCrumb(`${project}/workspaces/`, project)).toBeUndefined();
-    expect(workspaceCrumb(`${project}/work/detail/qits-111`, project)).toBeUndefined();
-    expect(workspaceCrumb('/projects/other/workspaces/qits-111', project)).toBeUndefined();
+  it('is undefined for the list, a literal page below it, and anywhere else', () => {
+    expect(slotSubpage(`${project}/workspaces`, project)).toBeUndefined();
+    expect(slotSubpage(`${project}/workspaces/`, project)).toBeUndefined();
+    expect(slotSubpage(`${project}/workspaces/runners`, project)).toBeUndefined();
+    expect(slotSubpage(`${project}/work/detail/qits-111`, project)).toBeUndefined();
+    expect(slotSubpage('/projects/other/workspaces/12', project)).toBeUndefined();
+  });
+});
+
+describe('agentSubpage', () => {
+  const project = '/projects/qits';
+
+  it('names a work item’s agent page, and its tabs', () => {
+    expect(agentSubpage(`${project}/work/detail/qits-111/agent`, project)).toEqual({
+      label: 'Agent',
+      path: `${project}/work/detail/qits-111/agent`,
+    });
+    expect(agentSubpage(`${project}/work/detail/qits-111/agent/terminal?x=1`, project)?.path).toBe(
+      `${project}/work/detail/qits-111/agent`,
+    );
+  });
+
+  it('is undefined for the item itself and anywhere else', () => {
+    expect(agentSubpage(`${project}/work/detail/qits-111`, project)).toBeUndefined();
+    expect(agentSubpage(`${project}/workspaces/12`, project)).toBeUndefined();
   });
 });
 

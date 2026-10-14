@@ -16,7 +16,8 @@ declare module 'vitest/browser' {
         | 'qits-events'
         | 'qits-maintenance'
         | 'qits-workspaces'
-        | 'qits-ci',
+        | 'qits-ci'
+        | 'qits-workspace-daemon',
     ) => Promise<T>;
     /** Moves the mouse to the page's top-left corner, so no element is hovered. */
     parkPointer: () => Promise<void>;

@@ -10,6 +10,7 @@ import {
   githostGoldenMasters,
   maintenanceGoldenMasters,
   projectsGoldenMasters,
+  workspaceDaemonGoldenMasters,
   workspacesGoldenMasters,
 } from './src/testing/golden-masters';
 
@@ -34,6 +35,10 @@ const READERS = {
     pactWith('qits-workspaces-service'),
   ),
   'qits-ci': pactedGoldenMasters(ciGoldenMasters, pactWith('qits-ci-service')),
+  'qits-workspace-daemon': pactedGoldenMasters(
+    workspaceDaemonGoldenMasters,
+    pactWith('qits-workspace-daemon'),
+  ),
 };
 
 /**

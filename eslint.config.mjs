@@ -8,10 +8,14 @@ export default tseslint.config(
   ...qits.configs.recommended,
   {
     files: ['**/*.ts'],
-    // EVENT_SOURCE is a transport seam (a fake stream that never connects); its payloads still go
-    // through assertRecorded.
+    // EVENT_SOURCE and WEB_SOCKET are transport seams (a fake stream or socket that never
+    // connects); EVENT_SOURCE's payloads still go through assertRecorded, and a socket's frames are
+    // raw terminal text, which no golden master records.
     rules: {
-      'qits/browser-spec-data-from-golden-masters': ['error', { allowTokens: ['EVENT_SOURCE'] }],
+      'qits/browser-spec-data-from-golden-masters': [
+        'error',
+        { allowTokens: ['EVENT_SOURCE', 'WEB_SOCKET'] },
+      ],
     },
   },
   ...climbBans(),

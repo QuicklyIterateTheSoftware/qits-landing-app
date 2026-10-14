@@ -489,7 +489,10 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(rows.nth(2)).toMatchTextContent(/^abandoned.*Closed/);
       await expect
         .element(rows.nth(0).getByRole('link'))
-        .toHaveAttribute('href', '/projects/contract-00000001/workspaces/contract-00000001-10');
+        .toHaveAttribute(
+          'href',
+          '/projects/contract-00000001/work/detail/contract-00000001-10/agent',
+        );
       await expect.element(region).toMatchScreenshot('workspaces-history');
     });
 

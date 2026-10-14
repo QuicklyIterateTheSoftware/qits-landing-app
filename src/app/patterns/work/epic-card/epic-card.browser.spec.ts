@@ -257,7 +257,8 @@ describe('EpicCard (screenshots)', () => {
     await openWorkspaces(http, harness);
     const shownLinks = () =>
       [...element.querySelectorAll('app-workspace-link:not(.hidden) a')].map((a) =>
-        a.getAttribute('href')?.split('/').pop(),
+        // `/projects/<slug>/work/detail/<qualified id>/agent`: the item's id.
+        a.getAttribute('href')?.split('/').at(-2),
       );
     // In the order drawn: the lane's tag, the CSV task's bubble, then the PDF feature's title line.
     expect(shownLinks()).toEqual([
