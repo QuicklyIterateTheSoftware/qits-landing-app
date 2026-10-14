@@ -80,6 +80,20 @@ hint channel (`WorkspaceHints`, `/workspaces/api/workspaces/{id}/events` through
 `commands` reads the harness again, `prompt-draft` adopts another device's draft. There is no
 speech input.
 
+An agent's files (`…/agent/files`, `AgentFilesPage`) are its worktree on the slot's daemon, through
+the same proxy (`AgentFilesStore`: `listFiles`, `readFile`, `detect`): the whole eager tree in one
+read, every gitignored directory as a dimmed stub opened one level per read, and the detection
+(frameworks, the source-to-test graph), applied only while its `generation` is the tree's. The open
+file is the URL's `path` (and `lines`, the anchored range). The tree model and the filters are pure
+functions in `core/workspaces/file-*.ts` (search and manual rules open the tree fully, a framework
+narrows to its members; rules run framework → ignore list → manual, last match wins; an ignore list
+reads the tree's own `.gitignore`/`.dockerignore` files, each scoped to its directory; a test one
+link from its source leaves the tree except while searching, and the viewer links them both ways).
+The slot's `files` hint reads the tree, the detection and the open file again. Lines picked in the
+viewer go to `PickedContext` (`core/workspaces/picked-context.ts`), which the Chat tab's prompt
+composer lists, inserts, saves in the draft (`{"text":…,"picked":[…]}`) and appends to what it
+sends when not pressed in.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -166,12 +180,12 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                                          | Pact file                                             | Golden masters                          |
-| ----------------------- | ------------------------------------------------------------ | ----------------------------------------------------- | --------------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`                           | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
-| qits-githost-service    | `core/loc/loc.store*.ts`                                     | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat}.store*.ts`       | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
+| Provider                | Store and pact spec                                                | Pact file                                             | Golden masters                          |
+| ----------------------- | ------------------------------------------------------------------ | ----------------------------------------------------- | --------------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`                                 | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
+| qits-githost-service    | `core/loc/loc.store*.ts`                                           | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt}.store*.ts`       | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat,agent-files}.store*.ts` | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

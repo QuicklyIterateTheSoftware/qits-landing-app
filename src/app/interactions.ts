@@ -178,6 +178,19 @@ export const INTERACTIONS = {
     'Refining rough notes rewrites them into a prompt in the agent’s container',
   /** `agent-chat.page.ts` via `AgentChatStore.terminate`: Terminate ends a running chat. */
   'terminate-agent-chat': 'Terminating an agent’s live chat ends its harness',
+  /**
+   * `agent-files.page.ts` via `AgentFilesStore.list` and `detect`: the agent's Files tab shows its
+   * worktree's tree, with the frameworks it can be narrowed to and the tests linked to each source
+   * (epic qits-1230); read again on the slot's `files` hint.
+   */
+  'show-agent-files': 'An agent’s Files tab shows the tree of its worktree',
+  /** `agent-files.page.ts` via `AgentFilesStore.list(…, path)`: opening a gitignored directory. */
+  'open-agent-directory': 'Opening a gitignored directory in the Files tab lists it',
+  /**
+   * `agent-files.page.ts` via `AgentFilesStore.read`: opening a file (from the tree, a test link or
+   * a picked reference) shows its text; turning an ignore list on reads its ignore files.
+   */
+  'open-agent-file': 'Opening a file in the Files tab shows its text',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

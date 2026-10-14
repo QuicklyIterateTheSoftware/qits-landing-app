@@ -6,10 +6,11 @@ export interface AgentTab {
 }
 
 /**
- * The agent page's tabs (epic qits-1230), in the order they show, as qits-workspaces-frontend's
- * (Files comes with its slice): a tab is an entry here and a child route in `app.routes.ts`.
+ * The agent page's tabs (epic qits-1230), in the order they show, as qits-workspaces-frontend's:
+ * a tab is an entry here and a child route in `app.routes.ts`.
  */
 export const AGENT_TABS: readonly AgentTab[] = [
   { segment: 'chat', label: 'Chat' },
+  { segment: 'files', label: 'Files' },
   { segment: 'terminal', label: 'Terminal' },
 ];

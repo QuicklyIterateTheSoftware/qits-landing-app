@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as workspacesClient } from '../../../../../../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../../../../../../api/workspaces/client/client.gen';
@@ -11,6 +11,7 @@ import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { SelectedWork } from '$core/work/selected-work';
 import { AgentsStore } from '$core/workspaces/agents.store';
+import { PickedContext } from '$core/workspaces/picked-context';
 import {
   workspaceDaemonGoldenMaster,
   workspaceDaemonGoldenMasters,
@@ -88,7 +89,13 @@ describe('AgentChatPage', () => {
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
         provideRouter([
-          { path: 'agent/:id', children: [{ path: 'chat', component: AgentChatPage }] },
+          {
+            path: 'agent/:id',
+            children: [
+              { path: 'chat', component: AgentChatPage },
+              { path: 'files', children: [] },
+            ],
+          },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -251,6 +258,25 @@ describe('AgentChatPage', () => {
     expect(streams).toEqual([]);
     expect(text()).toContain('This agent has no workspace yet.');
     expect(button('Refine into prompt')).toBeUndefined();
+  });
+
+  it('opens a picked reference’s lines in the Files tab', async () => {
+    const picked = TestBed.inject(PickedContext);
+    picked.use(agentId);
+    // Lines 3-4 of the daemon's recorded source file, as the Files tab picks them.
+    const file = workspaceDaemonGoldenMaster(
+      'a workspace daemon with an agent whose worktree holds files',
+      'readFile',
+    );
+    picked.add({ path: file.path, startLine: 3, endLine: 4, excerpt: 'class Login {' });
+    await open();
+    http.expectOne(LOG).flush(workspaceDaemonGoldenMaster(TURNS, 'getCommandLog'));
+    await answerDraft();
+    element().querySelector<HTMLButtonElement>(`[aria-label="Open ${file.path}:3-4"]`)!.click();
+    await settle();
+    expect(TestBed.inject(Router).url).toBe(
+      `/agent/${ITEM}/files?path=${encodeURIComponent(file.path)}&lines=3-4`,
+    );
   });
 
   it('shows no speech control', async () => {

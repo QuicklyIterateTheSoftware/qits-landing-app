@@ -5,6 +5,12 @@ import { TestBed } from '@angular/core/testing';
 import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
 import { draftText } from '$core/workspaces/agent-prompt.store';
+import {
+  PickedContext,
+  referenceText,
+  serializePrompt,
+  type CodeReference,
+} from '$core/workspaces/picked-context';
 import { WorkspaceHints } from '$core/workspaces/workspace-hints';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../api/workspaces/client/client.gen';
@@ -36,6 +42,7 @@ const WORK_ID = 'w-1';
     [workspaceRowId]="rowId()"
     preamble="contract-00000001-10: Fix the login"
     (sent)="sent.push($event)"
+    (openReference)="opened.push($event)"
   />`,
 })
 class Host {
@@ -43,6 +50,27 @@ class Host {
   readonly workId = WORK_ID;
   readonly rowId = signal(1);
   readonly sent: AgentDelivery[] = [];
+  readonly opened: CodeReference[] = [];
+}
+
+/** Lines 4-6 of the daemon's recorded source file, as the Files tab picks them. */
+const LOGIN = workspaceDaemonGoldenMaster(
+  'a workspace daemon with an agent whose worktree holds files',
+  'readFile',
+);
+const PICK: CodeReference = {
+  path: LOGIN.path,
+  startLine: 4,
+  endLine: 6,
+  excerpt: LOGIN.content.split('\n').slice(3, 6).join('\n'),
+};
+
+/** A pick made in the Files tab before the Chat tab opened. */
+function pickedInFiles(): PickedContext {
+  const picked = TestBed.inject(PickedContext);
+  picked.use(agentId);
+  picked.add(PICK);
+  return picked;
 }
 
 /** Lets the generated client's awaits and the fake timers run. */
@@ -252,6 +280,69 @@ describe('PromptComposer', () => {
     await settle();
     fixture.detectChanges();
     expect(prompt().value).toBe(draftText(answer.draft.content));
+  });
+
+  it('restores the draft and keeps what was picked since, saving them together', async () => {
+    pickedInFiles();
+    const { element, prompt } = await render();
+    const recorded = workspacesGoldenMaster(SAVED, 'getAgentPromptDraft');
+    expect(prompt().value).toBe(draftText(recorded.draft.content));
+    expect(element.querySelector('[aria-label="Picked context"]')?.textContent).toContain(
+      'src/main/java/app/Login.java:4-6',
+    );
+    await vi.advanceTimersByTimeAsync(DRAFT_DEBOUNCE_MS);
+    await settle();
+    const request = http.expectOne(DRAFT);
+    const text = draftText(recorded.draft.content);
+    expect(JSON.parse(request.request.body.content)).toEqual({ text, picked: [PICK] });
+    expect(request.request.body.serializedPrompt).toBe(serializePrompt({ text, picked: [PICK] }));
+    request.flush(workspacesGoldenMaster(SAVED, 'saveAgentPromptDraft'));
+    await settle();
+  });
+
+  it('puts a pick in the prompt on a press, opens it on ↗, and drops it on ✕', async () => {
+    const picked = pickedInFiles();
+    const { fixture, element, prompt } = await render('none');
+    const row = element.querySelector<HTMLButtonElement>(
+      '[aria-label="Picked context"] li button',
+    )!;
+    row.click();
+    fixture.detectChanges();
+    expect(prompt().value).toBe(referenceText(PICK));
+    element.querySelector<HTMLButtonElement>(`[aria-label="Open ${PICK.path}:4-6"]`)!.click();
+    expect(fixture.componentInstance.opened).toEqual([PICK]);
+    element.querySelector<HTMLButtonElement>(`[aria-label="Remove ${PICK.path}:4-6"]`)!.click();
+    fixture.detectChanges();
+    expect(picked.any()).toBe(false);
+    expect(element.querySelector('[aria-label="Picked context"]')).toBeNull();
+    await vi.advanceTimersByTimeAsync(DRAFT_DEBOUNCE_MS);
+    await settle();
+    const request = http.expectOne(DRAFT);
+    expect(JSON.parse(request.request.body.content)).toEqual({
+      text: referenceText(PICK),
+      picked: [],
+    });
+    request.flush(workspacesGoldenMaster(SAVED, 'saveAgentPromptDraft'));
+    await settle();
+  });
+
+  it('sends the picks never pressed in after the prompt, and empties them', async () => {
+    const picked = pickedInFiles();
+    const { prompt, type, button } = await render('none');
+    type(prompt(), 'Trim the e-mail too.');
+    button('Send to the agent')!.click();
+    await settle();
+    http.expectOne(DRAFT).flush(workspacesGoldenMaster(SAVED, 'saveAgentPromptDraft'));
+    await settle();
+    const delivery = http.expectOne(DELIVERY);
+    expect(delivery.request.body.text).toBe(
+      `Trim the e-mail too.\n\nContext picked in the worktree:\n\n${referenceText(PICK)}`,
+    );
+    delivery.flush(workspacesGoldenMaster(WORKING, 'deliverAgentTurn'));
+    await settle();
+    http.expectOne(DRAFT).flush(null, { status: 204, statusText: 'No Content' });
+    await settle();
+    expect(picked.any()).toBe(false);
   });
 
   it('shows no speech control', async () => {

@@ -13,10 +13,15 @@ import {
   SAVE_PROMPT_DRAFT,
   type AgentDelivery,
 } from './agent-prompt.consumes';
+import { draftReferences, serializePrompt, type CodeReference } from './picked-context';
 
-/** A draft as the Chat tab composes it: the prompt's text, and when the service last wrote it. */
+/**
+ * A draft as the Chat tab composes it: the prompt's text, the line ranges picked for it in the
+ * Files tab, and when the service last wrote it.
+ */
 export interface PromptDraft {
   readonly text: string;
+  readonly picked: readonly CodeReference[];
   readonly updatedAt: string | null;
 }
 
@@ -26,11 +31,19 @@ export type PromptOutcome<T> =
 
 /**
  * A draft's `content`: the composition, as this client writes it. qits-workspaces validates only
- * that it is JSON. `picked` is the context picked in the worktree, which the landing app's Chat tab
- * does not pick (there is no Files tab yet), so it is written empty.
+ * that it is JSON. `picked` is the context picked in the worktree (the Files tab's line ranges).
  */
-export function draftContent(text: string): string {
-  return JSON.stringify({ text, picked: [] });
+export function draftContent(text: string, picked: readonly CodeReference[] = []): string {
+  return JSON.stringify({ text, picked });
+}
+
+/** The picked references of a draft's `content`; none when it cannot be read. */
+export function draftPicked(content: string | undefined): readonly CodeReference[] {
+  try {
+    return draftReferences(JSON.parse(content ?? ''));
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -57,8 +70,9 @@ const failed = (response: { readonly status: number } | undefined) =>
  * container recreate.
  *
  * - `readDraft`: the saved draft, or `null` when there never was one (a 404).
- * - `saveDraft`: write it; the answer's `updatedAt` is the tab's own echo on the `prompt-draft`
- *   hint.
+ * - `saveDraft`: write it, with its picks; `serializedPrompt` is what the agent would be handed
+ *   (the picks never pressed into the text appended). The answer's `updatedAt` is the tab's own
+ *   echo on the `prompt-draft` hint.
  * - `discardDraft`: throw it away (a 204 whether or not there was one).
  * - `deliver`: send a prompt to the item's agent (`POST /workspaces/api/agent-dispatches/delivery`,
  *   `compactFirst: false`), which resumes a yielded agent to hear it: the browser never starts a
@@ -78,20 +92,34 @@ export const AgentPromptStore = signalStore(
       return {
         ok: true,
         value: draft
-          ? { text: draftText(draft.content), updatedAt: draft.updatedAt ?? null }
+          ? {
+              text: draftText(draft.content),
+              picked: draftPicked(draft.content),
+              updatedAt: draft.updatedAt ?? null,
+            }
           : null,
       };
     },
-    async saveDraft(agentId: string, text: string): Promise<PromptOutcome<PromptDraft>> {
+    async saveDraft(
+      agentId: string,
+      text: string,
+      picked: readonly CodeReference[] = [],
+    ): Promise<PromptOutcome<PromptDraft>> {
       const answer = await consume(
         saveAgentPromptDraft({
           path: { id: agentId },
-          body: { content: draftContent(text), serializedPrompt: text.trim() },
+          body: {
+            content: draftContent(text, picked),
+            serializedPrompt: serializePrompt({ text, picked }),
+          },
         }),
         SAVE_PROMPT_DRAFT,
       );
       if (answer.error !== undefined || !answer.data) return failed(answer.response);
-      return { ok: true, value: { text, updatedAt: answer.data.draft?.updatedAt ?? null } };
+      return {
+        ok: true,
+        value: { text, picked, updatedAt: answer.data.draft?.updatedAt ?? null },
+      };
     },
     async discardDraft(agentId: string): Promise<PromptOutcome<void>> {
       const answer = await consume(

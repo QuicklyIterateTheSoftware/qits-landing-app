@@ -4,11 +4,12 @@ import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 
 /**
- * The topics of a slot's hint channel the agent's Chat tab reads (`WorkspaceChangeHint.Topic`,
- * lowercased, `_` to `-`): the container's commands changed (a harness started or ended), and a
- * prompt draft was written (this tab's own save, or another device's).
+ * The topics of a slot's hint channel the agent's tabs read (`WorkspaceChangeHint.Topic`,
+ * lowercased, `_` to `-`): the container's commands changed (a harness started or ended), a
+ * prompt draft was written (this tab's own save, or another device's), and the working tree
+ * changed on disk (the Files tab reads its tree and its open file again).
  */
-export const HINT_TOPICS = ['commands', 'prompt-draft'] as const;
+export const HINT_TOPICS = ['commands', 'prompt-draft', 'files'] as const;
 
 /** One of {@link HINT_TOPICS}. */
 export type HintTopic = (typeof HINT_TOPICS)[number];

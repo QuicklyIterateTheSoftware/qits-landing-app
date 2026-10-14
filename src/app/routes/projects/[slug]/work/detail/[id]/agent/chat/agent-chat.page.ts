@@ -11,7 +11,7 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
@@ -21,6 +21,8 @@ import { AgentHarnessStore } from '$core/workspaces/agent-harness.store';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { buildConversation, EMPTY_CONVERSATION } from '$core/workspaces/chat-model';
+import { formatRange } from '$core/workspaces/file-range';
+import type { CodeReference } from '$core/workspaces/picked-context';
 import { ChatSocket, chatSocketUrl, type ChatLink } from '$core/workspaces/chat-socket';
 import { WorkspaceHints } from '$core/workspaces/workspace-hints';
 import { Conversation } from '$patterns/workspaces/conversation/conversation';
@@ -56,7 +58,8 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
  *   transcript (`AgentChatStore.loadTranscript`), read again every {@link TRANSCRIPT_POLL_MS} while
  *   the harness runs, and once more when it stops.
  * - Otherwise, and below a terminal's transcript: the prompt composer (`PromptComposer`), whose
- *   draft lives on the service and whose prompt the delivery door hands to the agent.
+ *   draft lives on the service and whose prompt the delivery door hands to the agent, with the line
+ *   ranges picked in the Files tab; a pick's ↗ opens it there (`agent/files?path=…&lines=…`).
  *
  * In the browser only: the server renders the tab without reading or connecting.
  */
@@ -172,6 +175,7 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
               [workspaceRowId]="rowId()"
               [preamble]="preamble()"
               (sent)="onSent($event)"
+              (openReference)="openReference($event)"
             />
           }
         }
@@ -188,6 +192,8 @@ export class AgentChatPage {
   private readonly origins = inject(PlatformOrigins);
   private readonly openSocket = inject(WEB_SOCKET);
   private readonly document = inject(DOCUMENT);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   /** The work item's qualified id, the agent layout's `:id`. */
   private readonly id = toSignal(
@@ -358,6 +364,14 @@ export class AgentChatPage {
   protected onSent(delivery: AgentDelivery): void {
     this.lastSent.set(deliveryNote(delivery));
     this.reload();
+  }
+
+  /** A picked reference's ↗: its lines, open in the Files tab. */
+  protected openReference(reference: CodeReference): void {
+    void this.router.navigate(['..', 'files'], {
+      relativeTo: this.route,
+      queryParams: { path: reference.path, lines: formatRange(reference) },
+    });
   }
 
   protected onKey(event: KeyboardEvent): void {

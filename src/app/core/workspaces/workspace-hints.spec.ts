@@ -51,10 +51,12 @@ describe('WorkspaceHints', () => {
     hint('commands');
     hint('prompt-draft');
     hint('prompt-draft');
+    hint('files');
     hint('ping');
     hint('telemetry');
     expect(channel.hints('commands')()).toBe(1);
     expect(channel.hints('prompt-draft')()).toBe(2);
+    expect(channel.hints('files')()).toBe(1);
   });
 
   it('moves every counter on the first frame after the stream erred: the gap is read again', () => {

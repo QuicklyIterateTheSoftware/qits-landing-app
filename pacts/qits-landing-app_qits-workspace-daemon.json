@@ -8,6 +8,315 @@
         "references": {
           "qits-call": {
             "app": "qits-workspace-daemon",
+            "operationId": "listFiles"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-agent-directory",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-agent-directory: listFiles",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent whose worktree has an ignored directory",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}/files",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files",
+        "query": {
+          "path": [
+            "node_modules"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "generation": "59bb15ec43e0e8bf5300b596f5aa2f1cf0a9cbc751e53b8bc7516aaf09146d5f",
+            "lazyDirs": [
+              {
+                "childCount": 1,
+                "path": "node_modules/left-pad"
+              }
+            ],
+            "paths": [
+              "node_modules/.package-lock.json"
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.generation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.lazyDirs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.lazyDirs[*].childCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.lazyDirs[*].path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.paths": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.paths[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "readFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-agent-file",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-agent-file: readFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent whose worktree has an ignored directory",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}/files/content",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files/content",
+        "query": {
+          "path": [
+            "node_modules/missing.js"
+          ]
+        }
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "readFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-agent-file",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-agent-file: readFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent whose worktree holds files",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}/files/content",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files/content",
+        "query": {
+          "path": [
+            "src/main/java/app/Login.java"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "binary": false,
+            "content": "package app;\n\nclass Login {\n  String user(String name) {\n    return name.strip();\n  }\n}\n",
+            "path": "src/main/java/app/Login.java"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.binary": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.content": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
             "operationId": "refinePrompt"
           },
           "qits-trigger": {
@@ -552,6 +861,371 @@
             "$.entries[*].command.status": {
               "combine": "AND",
               "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "detect"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-files",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-files: detect",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent whose worktree holds files",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}/detection",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/detection"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "frameworks": [
+              {
+                "frameworkId": "java-quarkus",
+                "label": "Java / Quarkus",
+                "memberPaths": [
+                  "pom.xml",
+                  "pom.xml",
+                  "pom.xml"
+                ],
+                "root": ""
+              }
+            ],
+            "generation": "59bb15ec43e0e8bf5300b596f5aa2f1cf0a9cbc751e53b8bc7516aaf09146d5f",
+            "links": [
+              {
+                "path": "src/main/java/app/Login.java",
+                "tests": [
+                  {
+                    "path": "src/test/java/app/LoginTest.java"
+                  }
+                ]
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.frameworks": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.frameworks[*].frameworkId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.frameworks[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.frameworks[*].memberPaths": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.frameworks[*].memberPaths[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.frameworks[*].root": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.generation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.links": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.links[*].path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.links[*].tests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.links[*].tests[*].path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "listFiles"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-files",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-files: listFiles",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent whose worktree holds files",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}/files",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "generation": "59bb15ec43e0e8bf5300b596f5aa2f1cf0a9cbc751e53b8bc7516aaf09146d5f",
+            "lazyDirs": [
+              {
+                "childCount": 2,
+                "path": "node_modules"
+              }
+            ],
+            "paths": [
+              ".gitignore",
+              ".gitignore",
+              ".gitignore",
+              ".gitignore",
+              ".gitignore",
+              ".gitignore",
+              ".gitignore"
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.generation": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.lazyDirs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.lazyDirs[*].childCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.lazyDirs[*].path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.paths": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 7,
+                  "min": 7
+                }
+              ]
+            },
+            "$.paths[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
                 {
                   "match": "type"
                 }

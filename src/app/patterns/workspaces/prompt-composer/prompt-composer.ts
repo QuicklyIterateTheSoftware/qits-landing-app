@@ -16,6 +16,13 @@ import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
 import { AgentChatStore } from '$core/workspaces/agent-chat.store';
 import { AgentPromptStore } from '$core/workspaces/agent-prompt.store';
 import { relativeSince } from '$core/workspaces/agent-labels';
+import {
+  PickedContext,
+  referenceLabel,
+  referenceText,
+  serializePrompt,
+  type CodeReference,
+} from '$core/workspaces/picked-context';
 import { WorkspaceHints } from '$core/workspaces/workspace-hints';
 import { ActionButton } from '$ui/components/action-button/action-button';
 import type { Action } from '$ui/components/action-button/action';
@@ -54,6 +61,10 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
  * - **Flush, then send.** The draft is written first and a failed write stops the send; the prompt
  *   goes through the delivery door (`AgentPromptStore.deliver`), which resumes a yielded agent to
  *   hear it. A delivered prompt empties the box and the draft.
+ * - **Picked context.** The line ranges picked in the agent's Files tab (`PickedContext`) are listed
+ *   under the prompt: pressing one puts its label and lines in the prompt, ↗ opens it in the Files
+ *   tab (`openReference`), ✕ drops it. They are saved with the draft (`picked`) and restored from
+ *   it, joined by any picked since; the ones never pressed in are appended to what is sent.
  * - **Another device's draft** comes in on the slot's `prompt-draft` hint (`WorkspaceHints`, when
  *   the page provides it): adopted only when nothing here is unsaved, and never this tab's own echo
  *   (the `updatedAt` its save answered).
@@ -108,6 +119,48 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
       ></textarea>
     </label>
 
+    @if (picked.any()) {
+      <section class="flex flex-col gap-1.5 text-sm" aria-label="Picked context">
+        <h3 class="m-0 text-sm font-semibold text-charcoal-brown-700">Picked context</h3>
+        <p class="m-0 text-xs text-charcoal-brown-600">
+          Press a row to put it in the prompt. Anything left unpressed is appended when it is sent.
+        </p>
+        <ul class="m-0 flex list-none flex-col gap-1 p-0">
+          @for (reference of picked.references(); track label(reference)) {
+            <li class="flex items-start gap-1.5">
+              <button
+                type="button"
+                class="flex min-w-0 grow cursor-pointer flex-col items-start gap-0.5 rounded-md border border-charcoal-brown-200 bg-white px-2 py-1 text-left font-sans text-xs hover:border-ocean-deep-400"
+                (click)="insert(reference)"
+              >
+                <code class="font-mono text-ocean-deep-800">{{ label(reference) }}</code>
+                <span class="w-full truncate font-mono text-charcoal-brown-600">{{
+                  reference.excerpt
+                }}</span>
+              </button>
+              <button
+                type="button"
+                class="cursor-pointer rounded border border-charcoal-brown-200 bg-white px-1.5 py-0.5 text-xs text-charcoal-brown-600"
+                [attr.aria-label]="'Open ' + label(reference)"
+                title="Open these lines in the Files tab"
+                (click)="openReference.emit(reference)"
+              >
+                ↗
+              </button>
+              <button
+                type="button"
+                class="cursor-pointer rounded border border-charcoal-brown-200 bg-white px-1.5 py-0.5 text-xs text-charcoal-brown-600"
+                [attr.aria-label]="'Remove ' + label(reference)"
+                (click)="drop(reference)"
+              >
+                ✕
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
     <div class="flex items-center gap-3">
       <ui-action-button [action]="sendAction()" />
       <span class="text-sm text-charcoal-brown-600">{{ saveLabel() }}</span>
@@ -125,6 +178,7 @@ export class PromptComposer {
   private readonly prompts = inject(AgentPromptStore);
   private readonly chats = inject(AgentChatStore);
   private readonly hints = inject(WorkspaceHints, { optional: true });
+  protected readonly picked = inject(PickedContext);
 
   /** Whose draft this is. */
   readonly agentId = input.required<string>();
@@ -140,6 +194,9 @@ export class PromptComposer {
 
   /** A prompt was delivered. */
   readonly sent = output<AgentDelivery>();
+
+  /** A picked reference's ↗: open its lines in the Files tab. */
+  readonly openReference = output<CodeReference>();
 
   /** The prompt box: the draft. */
   protected readonly text = signal('');
@@ -178,10 +235,15 @@ export class PromptComposer {
     }
   });
 
+  /** What the agent is handed: the prompt, and the picks never pressed into it. */
+  private readonly composed = computed(() =>
+    serializePrompt({ text: this.text(), picked: this.picked.references() }).trim(),
+  );
+
   protected readonly sendAction = computed((): Action => ({
     label: this.sending() ? 'Sending…' : 'Send to the agent',
     variant: 'success',
-    disabled: !this.text().trim() || this.sending(),
+    disabled: !this.composed() || this.sending(),
     callback: () => void this.send(),
   }));
 
@@ -209,6 +271,7 @@ export class PromptComposer {
     effect(() => {
       const agentId = this.agentId();
       untracked(() => {
+        this.picked.use(agentId);
         if (this.loadedFor === agentId) return;
         this.loadedFor = agentId;
         void this.restore(agentId);
@@ -231,6 +294,22 @@ export class PromptComposer {
 
   protected ago(iso: string): string {
     return relativeSince(iso);
+  }
+
+  protected label(reference: CodeReference): string {
+    return referenceLabel(reference);
+  }
+
+  /** Put a picked reference in the prompt: its label, then its lines, fenced. */
+  protected insert(reference: CodeReference): void {
+    this.append(referenceText(reference));
+  }
+
+  /** Drop a pick; the draft carries the picks, so it is saved again. */
+  protected drop(reference: CodeReference): void {
+    this.picked.remove(referenceLabel(reference));
+    this.restoredAt.set(null);
+    this.scheduleSave();
   }
 
   protected onType(value: string): void {
@@ -262,6 +341,7 @@ export class PromptComposer {
   protected async discard(): Promise<void> {
     this.clearTimer();
     this.text.set('');
+    this.picked.clear();
     this.restoredAt.set(null);
     this.save.set('clean');
     const outcome = await this.prompts.discardDraft(this.agentId());
@@ -275,7 +355,7 @@ export class PromptComposer {
 
   /** Write the draft, then send it as the agent's next prompt. */
   protected async send(): Promise<void> {
-    const text = this.text().trim();
+    const text = this.composed();
     if (!text || this.sending()) return;
     this.sending.set(true);
     this.sendProblem.set(null);
@@ -297,6 +377,7 @@ export class PromptComposer {
       this.sent.emit(outcome.value);
       this.clearTimer();
       this.text.set('');
+      this.picked.clear();
       this.restoredAt.set(null);
       this.save.set('clean');
       // The prompt is said; a stale draft left behind shows as restored next time, never lost.
@@ -308,11 +389,14 @@ export class PromptComposer {
 
   /** Append to the prompt (never replace what was typed), and empty the notes. */
   private promote(prompt: string): void {
-    const fragment = prompt.trim();
-    this.text.update((current) =>
-      current.trim() ? `${current.trimEnd()}\n\n${fragment}` : fragment,
-    );
+    this.append(prompt);
     this.notes.set('');
+  }
+
+  /** Append a fragment to the prompt, after a blank line. */
+  private append(fragment: string): void {
+    const text = fragment.trim();
+    this.text.update((current) => (current.trim() ? `${current.trimEnd()}\n\n${text}` : text));
     this.restoredAt.set(null);
     this.scheduleSave();
   }
@@ -326,10 +410,17 @@ export class PromptComposer {
       return;
     }
     // Typed while the read was out: the box wins.
-    if (!outcome.value || this.save() !== 'clean') return;
+    if (this.save() !== 'clean') return;
+    if (!outcome.value) {
+      // Picked in the Files tab before there was a draft: the draft starts with them.
+      if (this.picked.any()) this.scheduleSave();
+      return;
+    }
     this.text.set(outcome.value.text);
     this.lastWrittenAt = outcome.value.updatedAt;
     this.restoredAt.set(outcome.value.updatedAt);
+    // Picked in the Files tab since the draft was saved: the draft is behind.
+    if (this.picked.restore(outcome.value.picked)) this.scheduleSave();
   }
 
   /** A `prompt-draft` hint: adopt another device's draft when nothing here is unsaved. */
@@ -339,6 +430,7 @@ export class PromptComposer {
     if (!outcome.ok || !outcome.value || this.save() !== 'clean') return;
     if (outcome.value.updatedAt === this.lastWrittenAt) return;
     this.text.set(outcome.value.text);
+    this.picked.replace(outcome.value.picked);
     this.lastWrittenAt = outcome.value.updatedAt;
     this.restoredAt.set(outcome.value.updatedAt);
   }
@@ -352,7 +444,11 @@ export class PromptComposer {
   private async write(): Promise<void> {
     this.clearTimer();
     this.save.set('saving');
-    const outcome = await this.prompts.saveDraft(this.agentId(), this.text());
+    const outcome = await this.prompts.saveDraft(
+      this.agentId(),
+      this.text(),
+      this.picked.references(),
+    );
     if (!outcome.ok) {
       this.save.set('dirty');
       this.saveProblem.set(`The draft is not saved: ${why(outcome.status)}.`);

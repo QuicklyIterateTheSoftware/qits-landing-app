@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { workspacesGoldenMaster, workspacesGoldenMasters } from '../../../testing/golden-masters';
-import { AgentPromptStore, draftContent, draftText } from './agent-prompt.store';
+import { AgentPromptStore, draftContent, draftPicked, draftText } from './agent-prompt.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -29,6 +29,15 @@ describe('draftContent and draftText', () => {
     expect(draftText('not json')).toBe('');
     expect(draftText('{"text":3}')).toBe('');
     expect(draftText(undefined)).toBe('');
+  });
+
+  it('carry the picked line ranges, and read none from a blob without them', () => {
+    const picked = [{ path: 'pom.xml', startLine: 2, endLine: 4, excerpt: '<project>' }];
+    const content = draftContent('Look here.', picked);
+    expect(draftText(content)).toBe('Look here.');
+    expect(draftPicked(content)).toEqual(picked);
+    expect(draftPicked('not json')).toEqual([]);
+    expect(draftPicked(undefined)).toEqual([]);
   });
 });
 
@@ -58,7 +67,11 @@ describe('AgentPromptStore', () => {
     http.expectOne(DRAFT).flush(answer);
     expect(await done).toEqual({
       ok: true,
-      value: { text: draftText(answer.draft.content), updatedAt: answer.draft.updatedAt },
+      value: {
+        text: draftText(answer.draft.content),
+        picked: [],
+        updatedAt: answer.draft.updatedAt,
+      },
     });
   });
 
@@ -91,7 +104,11 @@ describe('AgentPromptStore', () => {
     request.flush(answer);
     expect(await done).toEqual({
       ok: true,
-      value: { text: 'Check the rounding, then the totals.', updatedAt: answer.draft.updatedAt },
+      value: {
+        text: 'Check the rounding, then the totals.',
+        picked: [],
+        updatedAt: answer.draft.updatedAt,
+      },
     });
   });
 
