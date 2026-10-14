@@ -173,6 +173,89 @@ describe('ProjectsStore', () => {
     http.expectOne(`/projects/api/projects/${id}/release-requests`);
   });
 
+  it('coalesces refreshes asked for while a fetch is in flight into one follow-up fetch', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const url = `/projects/api/projects/${id}/release-requests`;
+    const done = store.loadReleaseRequests(id);
+    await settle();
+    // Consumes the in-flight request, so it no longer counts towards `http`'s open requests.
+    const firstRequest = http.expectOne(url);
+
+    const refresh1 = store.refreshReleaseRequests(id);
+    const refresh2 = store.refreshReleaseRequests(id);
+    const refresh3 = store.refreshReleaseRequests(id);
+    await settle();
+    // None of the three refreshes started a second call while the first was still in flight.
+    http.expectNone(url);
+
+    firstRequest.flush(
+      goldenMaster('a project with release requests in every state', 'listProjectReleaseRequests'),
+    );
+    await settle();
+    // Exactly one follow-up fetch for the three refreshes, not three.
+    http
+      .expectOne(url)
+      .flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));
+
+    await Promise.all([done, refresh1, refresh2, refresh3]);
+    expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', requests: [], pending: [] });
+    http.expectNone(url);
+  });
+
+  it('never has two release-request fetches in flight for the same project at once', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const url = `/projects/api/projects/${id}/release-requests`;
+    const loadDone = store.loadReleaseRequests(id);
+    const refreshDone = store.refreshReleaseRequests(id);
+    await settle();
+    // Only the load's fetch is in flight; the concurrent refresh shares it rather than starting
+    // its own.
+    const firstRequest = http.expectOne(url);
+    http.expectNone(url);
+
+    firstRequest.flush(
+      goldenMaster('a project with release requests in every state', 'listProjectReleaseRequests'),
+    );
+    await settle();
+    // The refresh that arrived while the first fetch was in flight is coalesced into one
+    // follow-up, not run alongside it.
+    http
+      .expectOne(url)
+      .flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));
+
+    await Promise.all([loadDone, refreshDone]);
+    expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', requests: [], pending: [] });
+    http.expectNone(url);
+  });
+
+  it('starts a new fetch on a refresh after the previous one has settled', async () => {
+    const store = await loadedStore();
+    const id = project().id;
+    const url = `/projects/api/projects/${id}/release-requests`;
+    const done = store.loadReleaseRequests(id);
+    await settle();
+    http
+      .expectOne(url)
+      .flush(
+        goldenMaster(
+          'a project with release requests in every state',
+          'listProjectReleaseRequests',
+        ),
+      );
+    await done;
+    expect(store.releaseRequests()[id]?.requests).toHaveLength(7);
+
+    const refreshDone = store.refreshReleaseRequests(id);
+    await settle();
+    http
+      .expectOne(url)
+      .flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));
+    await refreshDone;
+    expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', requests: [], pending: [] });
+  });
+
   it('has a session unless the list answers 401', async () => {
     const store = await loadedStore();
     const answered = store.hasSession();

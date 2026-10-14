@@ -61,8 +61,11 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when a project
  *   opens, and keeps all of them and, apart, the pending ones (`isPendingRelease`);
- *   `refreshReleaseRequests(projectId)`
- *   fetches them again when a domain event says they changed.
+ *   `refreshReleaseRequests(projectId)` fetches them again when a domain event says they changed.
+ *   Both share one in-flight guard per project (`runReleaseRequestsFetch`): at most one
+ *   `listProjectReleaseRequests` call runs for a project at a time, and any refresh asked for while
+ *   one is already running is coalesced into exactly one follow-up fetch afterwards, rather than
+ *   piling up a call per event.
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
  * The store is the only user of the generated qits-projects client, so its pact
@@ -128,6 +131,37 @@ export const ProjectsStore = signalStore(
       });
     }
 
+    // Bookkeeping for the in-flight guard below. Plain, non-signal state: it is not data the
+    // templates render, so it stays out of `ProjectsState` rather than going through `patchState`.
+    /** The fetch currently running for a project, by project id; absent once it settles. */
+    const releaseRequestFetches = new Map<string, Promise<void>>();
+    /** Projects whose fetch was asked for again while the one in `releaseRequestFetches` ran. */
+    const staleReleaseRequests = new Set<string>();
+
+    /**
+     * Runs `fetchReleaseRequests(projectId)`, coalescing calls so at most one is ever in flight
+     * for a project. A call made while one is already running does not start a second: it marks
+     * the project stale and returns the running fetch's promise. That promise resolves only once
+     * the project is no longer stale, re-running the fetch first if it was marked stale meanwhile —
+     * so a burst of calls during a fetch becomes exactly one fetch, then exactly one follow-up
+     * fetch, and every caller's promise reflects the data that follow-up lands.
+     */
+    function runReleaseRequestsFetch(projectId: string): Promise<void> {
+      const running = releaseRequestFetches.get(projectId);
+      if (running) {
+        staleReleaseRequests.add(projectId);
+        return running;
+      }
+      const fetch = (async () => {
+        do {
+          staleReleaseRequests.delete(projectId);
+          await fetchReleaseRequests(projectId);
+        } while (staleReleaseRequests.has(projectId));
+      })().finally(() => releaseRequestFetches.delete(projectId));
+      releaseRequestFetches.set(projectId, fetch);
+      return fetch;
+    }
+
     return {
       async load(): Promise<void> {
         if (store.status() === 'idle' || store.status() === 'error') await refreshList();
@@ -135,19 +169,28 @@ export const ProjectsStore = signalStore(
       refresh(id?: string): Promise<void> {
         return id === undefined ? refreshList() : select(id);
       },
-      async loadReleaseRequests(projectId: string): Promise<void> {
+      /**
+       * Fetches a project's release requests if nothing is loaded for it yet (or the last fetch
+       * failed); otherwise this means "load if not loaded", so it just waits for whichever fetch
+       * (initial or in-flight) is already under way rather than starting a new one.
+       */
+      loadReleaseRequests(projectId: string): Promise<void> {
         const current = store.releaseRequests()[projectId];
-        if (current && current.status !== 'error') return;
+        if (current && current.status !== 'error') {
+          return releaseRequestFetches.get(projectId) ?? Promise.resolve();
+        }
         setReleaseRequests(projectId, { status: 'loading', requests: [], pending: [] });
-        await fetchReleaseRequests(projectId);
+        return runReleaseRequestsFetch(projectId);
       },
       /**
        * Fetches a project's release requests again, keeping the ones shown until the answer
        * arrives. A failed refresh keeps the last good list rather than emptying the menu.
+       * Shares `runReleaseRequestsFetch`'s guard with `loadReleaseRequests`: calling this while a
+       * fetch for the project is already running never starts a second one, only queues one
+       * follow-up fetch after it.
        */
-      async refreshReleaseRequests(projectId: string): Promise<void> {
-        if (store.releaseRequests()[projectId]?.status === 'loading') return;
-        await fetchReleaseRequests(projectId);
+      refreshReleaseRequests(projectId: string): Promise<void> {
+        return runReleaseRequestsFetch(projectId);
       },
       /** False only when the edge answers 401: no valid `qits-session` cookie. */
       async hasSession(): Promise<boolean> {
