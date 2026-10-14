@@ -77,7 +77,8 @@ bearer token instead and calls the platform's applications directly, at
    minutes and is refreshed a minute before it ends, one refresh at a time (the idp rotates the
    refresh token and revokes the family when one is reused). A 401 gets one refresh and one retry;
    after that you go back to sign in. The event stream is read with `fetch()`, since `EventSource`
-   cannot send a header.
+   cannot send a header. A WebSocket (an agent's terminal) offers the token as a subprotocol,
+   `['qits.bearer', <token>]`, which the edge takes from a loopback origin only (qits-1246).
 4. The tokens live in memory and in this tab's `sessionStorage`: a reload keeps you signed in, a
    new tab signs in again. To sign out, clear the tab's session storage (or close the tab).
 

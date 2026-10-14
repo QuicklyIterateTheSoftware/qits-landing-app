@@ -91,11 +91,20 @@ Under `ng serve` the cookie never reaches localhost, so `environment.development
 - `EVENT_SOURCE` becomes `FetchEventSource` (`core/events/fetch-event-source.ts`): `fetch()` plus
   a small SSE parser, because `EventSource` cannot send a header and the edge reads no query token.
   Specs keep faking `EVENT_SOURCE` as before.
+- `WEB_SOCKET` (`core/platform/web-socket.ts`; deployed, the browser's `WebSocket`, with the
+  cookie) becomes `DevWebSocket` (`dev-web-socket.ts`): a browser WebSocket cannot send a header
+  either, so it offers the bearer as a subprotocol, `new WebSocket(url, ['qits.bearer', <access
+token>, ...protocols])`, with the token from `DevTokens.accessToken()` (refreshed first when it
+  is about to end); the socket opens once the token is at hand. qits-edge (qits-1246) takes that
+  offer only from `http://localhost[:port]` or `http://127.0.0.1[:port]` (not https, not `[::1]`):
+  it moves the token into `Authorization: Bearer`, forwards neither entry, and answers the
+  handshake with `Sec-WebSocket-Protocol: qits.bearer`. Any other origin is a 403; a missing or
+  bad token a 401. Specs fake `WEB_SOCKET`.
 
 The environment file is the ONLY importer of this code, so the deployed bundle holds none of it.
-Keep it that way: never import `dev-bearer.ts`, `dev-tokens.ts` or `fetch-event-source.ts` from
-anywhere else. `npm run build` then `grep -r qits-landing-dev dist/qits-landing-app/browser` must
-find nothing.
+Keep it that way: never import `dev-bearer.ts`, `dev-tokens.ts`, `dev-web-socket.ts` or `fetch-event-source.ts`
+from anywhere else. `npm run build` then `grep -r qits-landing-dev dist/qits-landing-app/browser` and
+`grep -r qits.bearer dist/qits-landing-app/browser` must find nothing.
 
 ## Telemetry
 
