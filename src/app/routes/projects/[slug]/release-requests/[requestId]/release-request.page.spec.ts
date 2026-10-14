@@ -22,19 +22,14 @@ const notFound = (element: HTMLElement) =>
 /** The failure note with its Retry: always rendered, hidden by class unless the read failed. */
 const failure = (element: HTMLElement) => element.querySelector('ui-load-failure') as HTMLElement;
 
-/** The recorded request this spec opens. */
-const STATE = 'a release request awaiting approval';
+/** The state whose recorded project answers the read of one of its requests. */
+const STATE = 'a project with release requests in every state';
 
 describe('ReleaseRequestPage', () => {
   let http: HttpTestingController;
   const projects = goldenMaster('a project exists', 'listProjects');
   const project = projects.entries[0].project;
-  // TODO(qits-1203): the project's answer (getProjectReleaseRequest) is the same shape as
-  // getReleaseRequest's, so until @qits/projects-golden-masters carries its recording this spec
-  // answers it with the request's own recording, as it is. Swap to
-  // goldenMaster('a project with release requests in every state', 'getProjectReleaseRequest')
-  // once the package is bumped.
-  const recorded = goldenMaster(STATE, 'getReleaseRequest');
+  const recorded = goldenMaster(STATE, 'getProjectReleaseRequest');
   const request = recorded.request;
 
   beforeEach(() => {

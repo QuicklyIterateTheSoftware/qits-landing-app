@@ -16,14 +16,19 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  * exists"); the page reads the one request through it (getProjectReleaseRequest), by the
  * reference its URL names, and every read after it by the repository that answer names.
  *
- * TODO(qits-1203): until @qits/projects-golden-masters carries getProjectReleaseRequest's
- * recording, the project's read is answered with the state's getReleaseRequest recording, as it
- * is: the same shape (`{ request }`), and pacted, so `goldenMaster` serves it. Swap to the
- * project's own recording once the package is bumped and the pact holds it.
+ * The specs about the read itself (loading, failure, Retry) answer it with qits-projects' own
+ * recording of it ({@link EVERY_STATE}). qits-projects records that read in that one state only,
+ * so the specs of a request in a given state (pending, refolded, released, conflicted) answer it
+ * with that state's getReleaseRequest recording, as it is: the same `{ request }` shape, and pacted
+ * per state for this reason (`release-request.store.pact.spec.ts`), with the state's commits,
+ * verdicts and artifacts recorded beside it.
  *
  * qits-ci's calls (the repository's runs, a run's reports) answer with an error unless a spec
  * answers the runs with qits-ci's recording ({@link CI_RUNS}).
  */
+
+/** The state whose recorded project answers the read of one of its requests. */
+const EVERY_STATE = 'a project with release requests in every state';
 
 /** qits-ci's recorded runs of a repository: a release request's QA, release and automation runs. */
 const CI_RUNS = 'a repository with the runs of a release request';
@@ -83,7 +88,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
    */
   async function shown(state: string, tab?: string, width = 900, ciRuns = false) {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
-    // TODO(qits-1203): the project's answer, from the request's own recording (see above).
+    // The project's answer, from the state's own recording of the request (see above).
     const recorded = await goldenMaster(state, 'getReleaseRequest');
     const { id, repoId } = recorded.request;
     const { fixture, element, read } = await render(id, width, tab);
@@ -156,7 +161,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   }
 
   it('marks the request as loading, then says it could not be read, with Retry', async () => {
-    const recorded = await goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+    const recorded = await goldenMaster(EVERY_STATE, 'getProjectReleaseRequest');
     const { fixture, element, read } = await render(recorded.request.qualifiedId);
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
@@ -171,7 +176,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   });
 
   it('reads the request again on Retry', async () => {
-    const recorded = await goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+    const recorded = await goldenMaster(EVERY_STATE, 'getProjectReleaseRequest');
     const ref = recorded.request.qualifiedId;
     const { fixture, element, read } = await render(ref);
     read.flush(null, { status: 500, statusText: 'Server Error' });
@@ -179,7 +184,6 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await view.getByRole('button', { name: 'Retry' }).click();
     await answered(fixture);
-    // TODO(qits-1203): the project's answer, from the request's own recording (see above).
     http.expectOne((r) => r.url.endsWith(`/release-requests/${ref}`)).flush(recorded);
     await answered(fixture);
     await expect.element(view).toMatchTextContent('Release the export across the suite');

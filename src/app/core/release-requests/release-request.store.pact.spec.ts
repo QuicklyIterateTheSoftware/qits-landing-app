@@ -20,6 +20,7 @@ import { assertPactPart } from '../../../testing/pact-part';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
   CHANGED_RELEASE_REQUEST,
+  GET_PROJECT_RELEASE_REQUEST,
   GET_RELEASE_ARTIFACTS,
   GET_RELEASE_REQUEST,
   LIST_COMMIT_BUILDS,
@@ -41,6 +42,7 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 /** The provider states this spec uses. */
 const STATES = {
+  everyState: 'a project with release requests in every state',
   awaitingApproval: 'a release request awaiting approval',
   buildRuns: 'a release request awaiting approval while its build runs',
   released: 'a released release request',
@@ -52,6 +54,7 @@ const STATES = {
 
 /** The operations this spec owns in that file. */
 const OPERATIONS = [
+  'getProjectReleaseRequest',
   'getReleaseRequest',
   'listReleaseRequestCommits',
   'listCommitBuilds',
@@ -133,6 +136,23 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
     }
   });
 
+  it('show-release-request: the request, read through its project by its logical id', () =>
+    given(
+      'show-release-request',
+      STATES.everyState,
+      'getProjectReleaseRequest',
+      GET_PROJECT_RELEASE_REQUEST,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { params } = masters.operation(STATES.everyState, 'getProjectReleaseRequest');
+      const ref = params['requestQualifiedId'];
+      await store.load(params['projectId'], ref);
+      const view = store.of(ref);
+      expect(view?.request.value?.id).toBe(params['requestId']);
+      expect(view?.request.value?.repoId).toBe(params['repositoryId']);
+      expect(view?.qualifiedId).toBe(ref);
+    }));
+
   // The page's reads, once per state the screenshot specs show. Each runs on its own: the mock
   // server matches a provider-state path by type, so a second read in the same test would get the
   // first one's answer.
@@ -142,12 +162,12 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
     [STATES.conflicted, 'CONFLICTED', false, false],
     [STATES.refolded, 'READY', true, false],
   ] as const)('show-release-request: %s', (state, expected, folded, released) => {
-    // TODO(qits-1203): the page now reads the request through its project
-    // (`store.load(projectId, ref)`, getProjectReleaseRequest), whose recording the installed
-    // @qits/projects-golden-masters does not carry yet. Until the package is bumped this keeps
-    // getReleaseRequest's interaction, made on its own: the screenshot specs answer the project's
-    // read with these recordings (the same shape), and `goldenMaster` serves only pacted ones.
-    // Then: pact getProjectReleaseRequest with GET_PROJECT_RELEASE_REQUEST through `store.load`.
+    // The page reads the request through its project (getProjectReleaseRequest, pacted above),
+    // which qits-projects records in one state only. The screenshot specs show these four states,
+    // and answer the project's read with each state's getReleaseRequest recording (the same
+    // `{ request }` shape); `goldenMaster` serves only pacted recordings, so this keeps
+    // getReleaseRequest's interaction per state, made on its own. Drop it once qits-projects
+    // records getProjectReleaseRequest in these states.
     it('the request', () =>
       given('show-release-request', state, 'getReleaseRequest', GET_RELEASE_REQUEST).executeTest(
         async (server) => {

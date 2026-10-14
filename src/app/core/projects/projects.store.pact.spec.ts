@@ -307,26 +307,6 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(kept?.requests.every((r) => typeof r.updatedAt === 'string')).toBe(true);
     }));
 
-  it('show-release-request: a request’s page finds its repository among requests in every state', () =>
-    given(
-      'show-release-request',
-      'a project with release requests in every state',
-      'listProjectReleaseRequests',
-      LIST_PROJECT_RELEASE_REQUESTS,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const op = masters.operation(
-        'a project with release requests in every state',
-        'listProjectReleaseRequests',
-      );
-      const projectId = op.params['projectId'];
-      await store.loadReleaseRequests(projectId);
-      const kept = store.releaseRequests()[projectId];
-      expect(kept?.requests.find((r) => r.id === op.params['requestId'])?.repoId).toBe(
-        op.params['repositoryId'],
-      );
-    }));
-
   it('show-project-release-requests: a project without any shows none', () =>
     given(
       'show-project-release-requests',
