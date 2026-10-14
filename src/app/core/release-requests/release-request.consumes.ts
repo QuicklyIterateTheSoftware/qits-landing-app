@@ -3,6 +3,7 @@ import type {
   GetReleaseRequestArtifactsResponses,
   ListReleaseRequestCommitsResponses,
   GetReleaseRequestResponses,
+  GetProjectReleaseRequestResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
@@ -91,6 +92,13 @@ export const GET_RELEASE_REQUEST = [
 ] as const;
 
 /**
+ * The request read through its project by the reference the page's URL names (its uuid or its
+ * logical id): the same fields as {@link GET_RELEASE_REQUEST}, plus the logical id the page's head
+ * names it by.
+ */
+export const GET_PROJECT_RELEASE_REQUEST = [...GET_RELEASE_REQUEST, 'request.qualifiedId'] as const;
+
+/**
  * The commits the request's fold brought in (`mergedSha^1..mergedSha`), with their parents and
  * which of them are fold merges, and each source's tip: what the branch graph lays out.
  */
@@ -127,6 +135,11 @@ export const GET_RELEASE_ARTIFACTS = [
 /** One release request, cut to what its page reads. */
 export type ReleaseRequest = NonNullable<
   Consumed<GetReleaseRequestResponses[200], typeof GET_RELEASE_REQUEST>['request']
+>;
+
+/** One release request as its project answers it: {@link ReleaseRequest} and its logical id. */
+export type ProjectReleaseRequest = NonNullable<
+  Consumed<GetProjectReleaseRequestResponses[200], typeof GET_PROJECT_RELEASE_REQUEST>['request']
 >;
 
 /** One source branch of a request. */

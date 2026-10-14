@@ -95,14 +95,17 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     await expect.element(view).toMatchScreenshot('empty');
   });
 
-  it('marks the page as loading, then as failed to load', async () => {
+  it('marks the page as loading, then says it failed, with Retry', async () => {
     const { fixture, element, request } = await render();
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
     request.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
-    await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
+    await expect
+      .element(view.getByRole('alert'))
+      .toMatchTextContent('This project’s release requests could not be read.');
+    await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('error');
   });
 });

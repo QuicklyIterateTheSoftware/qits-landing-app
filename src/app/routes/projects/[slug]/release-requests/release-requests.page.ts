@@ -21,6 +21,7 @@ import {
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
+import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
 import { attentionOf, lifecycleSummary } from '$core/release-requests/release-lifecycle';
@@ -42,12 +43,20 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  * called off has Withdraw.
  *
  * The requests come from `ProjectsStore`, the same answer the top bar's release menu and the
- * sidebar entry read; domain events refresh it there.
+ * sidebar entry read; domain events refresh it there. A read that fails says so, with Retry.
  */
 @Component({
   selector: 'app-release-requests-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LifecycleLine, PageLayoutComponent, ReleaseWithdraw, RouterLink, Spinner],
+  imports: [
+    Chip,
+    LifecycleLine,
+    LoadFailure,
+    PageLayoutComponent,
+    ReleaseWithdraw,
+    RouterLink,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -56,7 +65,12 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
           The open requests plus the last finalized ones, across all of this project’s repositories.
           A request stays open until its release is finalized.
         </p>
-        <ui-spinner [state]="state()" class="min-h-48">
+        <ui-load-failure
+          message="This project’s release requests could not be read."
+          [class.hidden]="state() !== 'error'"
+          (retry)="retry()"
+        />
+        <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="state() === 'error'">
           <ul class="m-0 flex list-none flex-col gap-2 p-0">
             @for (request of requests(); track request.id) {
               @let badge = badgeOf(request);
@@ -172,6 +186,12 @@ export class ReleaseRequestsPage {
     const status = this.answer()?.status;
     return status === 'loaded' || status === 'error' ? status : 'loading';
   });
+
+  /** Reads the list again after a failed read. */
+  protected retry(): void {
+    const id = this.selected.project()?.id;
+    if (id) void this.store.loadReleaseRequests(id);
+  }
 
   protected watched(request: ReleaseRequestEntry): boolean {
     return !nobodyWatching(request);

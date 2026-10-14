@@ -18,12 +18,11 @@ import { debounceTime, filter, map } from 'rxjs';
 import { CiReportsStore } from '$core/ci/ci-reports.store';
 import { CiRunsStore } from '$core/ci/ci-runs.store';
 import { DomainEvents } from '$core/events/domain-events';
-import { ProjectsStore } from '$core/projects/projects.store';
 import {
   affectsReleaseRequests,
   RELEASE_REQUEST_EVENTS,
 } from '$core/projects/release-request-events';
-import { findReleaseRequest, requestBadge } from '$core/projects/release-requests';
+import { requestBadge } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import type {
@@ -52,6 +51,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
 import { CommitGraphView, type GraphEntry } from '$ui/components/commit-graph/commit-graph';
 import { branchGraph, guessedGraph, hasParents } from '$core/release-requests/branch-graph';
+import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { CommitChangesView } from '$patterns/release-requests/commit-changes/commit-changes';
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
@@ -78,11 +78,12 @@ const UNATTENDED_TITLE =
  * One release request, whole, at `/projects/<slug>/release-requests/<requestId>` (ported from
  * qits-projects-frontend's `release-request-detail-page`).
  *
- * Every read of a request is addressed by its repository, and the URL names only the request, so
- * the page finds the repository in the project's list of requests (`ProjectsStore`: the open
- * requests plus the last finalized), by the request's uuid or its logical id (`qualifiedId`,
- * `<repository>-rr-<n>`). The head names the request by its logical id. A request not in that list
- * is "not found" here.
+ * The URL names only the request, by its uuid or its logical id (`qualifiedId`,
+ * `<repository>-rr-<n>`), so the page reads that one request through its project
+ * (`ReleaseRequestStore.load(projectId, ref)`, `getProjectReleaseRequest`), whatever its state or
+ * age. The answer names the repository every later read and change is addressed by. The head names
+ * the request by its logical id. A request the project does not have (404) is "not found" here; a
+ * read that fails otherwise says so, with Retry.
  *
  * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
  * reports of its test run and release run (failing tests first, coverage, the rest), the release
@@ -118,6 +119,7 @@ const UNATTENDED_TITLE =
     ReleaseLaneHeader,
     ReleaseWithdraw,
     RouterLink,
+    LoadFailure,
     Spinner,
   ],
   host: { class: 'block' },
@@ -139,13 +141,19 @@ const UNATTENDED_TITLE =
             >← Release requests</a
           >
         </p>
-        <p
-          class="m-0 text-sm text-charcoal-brown-600"
-          [class.hidden]="!(listState() === 'loaded' && !repoId())"
-        >
-          This project has no open or recently finalized release request {{ requestId() }}.
+        <p class="m-0 text-sm text-charcoal-brown-600" [class.hidden]="!missing()">
+          This project has no release request {{ requestId() }}.
         </p>
-        <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="!!listed() && !repoId()">
+        <ui-load-failure
+          message="This release request could not be read."
+          [class.hidden]="state() !== 'error'"
+          (retry)="retry()"
+        />
+        <ui-spinner
+          [state]="state()"
+          class="min-h-48"
+          [class.hidden]="missing() || state() === 'error'"
+        >
           @if (row(); as request) {
             @let badge = badgeOf(request);
             <div class="flex flex-wrap items-center gap-2">
@@ -157,7 +165,7 @@ const UNATTENDED_TITLE =
                 <ui-chip label="nobody watching" tone="waiting" [title]="unattendedTitle" />
               }
               <span class="font-semibold break-all text-charcoal-brown-800">{{
-                entry()?.qualifiedId ?? request.repoName
+                view()?.qualifiedId ?? request.repoName
               }}</span>
               @if (watching()) {
                 <span class="text-xs whitespace-nowrap text-charcoal-brown-500" role="status"
@@ -440,7 +448,6 @@ const UNATTENDED_TITLE =
 })
 export class ReleaseRequestPage {
   private readonly selected = inject(SelectedProject);
-  private readonly projects = inject(ProjectsStore);
   private readonly repositories = inject(RepositoriesStore);
   private readonly store = inject(ReleaseRequestStore);
   private readonly ci = inject(CiRunsStore);
@@ -485,34 +492,26 @@ export class ReleaseRequestPage {
 
   private readonly projectId = computed(() => this.selected.project()?.id);
 
-  /** The project's list of requests, where the page finds the request's repository. */
-  protected readonly listed = computed(() => {
-    const id = this.projectId();
-    return id ? this.projects.releaseRequests()[id] : undefined;
-  });
-
-  protected readonly listState = computed(() => this.listed()?.status);
-
-  /** The request in the project's list, found by uuid or logical id; undefined before and if not. */
-  protected readonly entry = computed(() =>
-    findReleaseRequest(this.listed()?.requests ?? [], this.requestId()),
-  );
-
-  /** The request's repository, once the project's list names it; `''` before and if not. */
-  protected readonly repoId = computed(() => this.entry()?.repoId ?? '');
-
-  /** The request's uuid, which every read of it uses; `''` until the list names it. */
-  private readonly uuid = computed(() => this.entry()?.id ?? '');
-
-  protected readonly view = computed(() => this.store.byId()[this.uuid()]);
+  /** The request's data, kept under the reference the URL names. */
+  protected readonly view = computed(() => this.store.byId()[this.requestId()]);
 
   protected readonly row = computed(() => this.view()?.request.value);
 
+  /** The request's repository, from its answer; `''` until it is read. */
+  protected readonly repoId = computed(() => this.row()?.repoId ?? '');
+
+  /** The project has no such request: qits-projects answered 404. */
+  protected readonly missing = computed(() => this.view()?.request.status === 'missing');
+
   protected readonly state = computed((): LoadState => {
-    if (this.listState() === 'error') return 'error';
     const status = this.view()?.request.status;
     return status === 'loaded' || status === 'error' ? status : 'loading';
   });
+
+  /** Reads the request again after a failed read. */
+  protected retry(): void {
+    void this.store.retry(this.requestId(), 'request');
+  }
 
   protected readonly commitsState = computed(() => this.view()?.commits.status ?? 'loading');
 
@@ -721,17 +720,12 @@ export class ReleaseRequestPage {
     effect(() => {
       const id = this.projectId();
       if (!browser || !id) return;
-      untracked(() => {
-        void this.projects.loadReleaseRequests(id);
-        void this.repositories.load(id);
-      });
+      untracked(() => void this.repositories.load(id));
     });
     effect(() => {
-      const repoId = this.repoId();
-      const requestId = this.uuid();
-      if (browser && repoId && requestId) {
-        untracked(() => void this.store.load(repoId, requestId));
-      }
+      const id = this.projectId();
+      const ref = this.requestId();
+      if (browser && id && ref) untracked(() => void this.store.load(id, ref));
     });
     // A link to a check (`#check-…`, from the lightning menu or the list) scrolls to it once the
     // request is drawn.
@@ -778,7 +772,7 @@ export class ReleaseRequestPage {
       .subscribe(() => {
         const repoId = this.repoId();
         if (!repoId) return;
-        void this.store.refresh(repoId, this.uuid());
+        void this.store.refresh(this.requestId());
         for (const run of this.reportRuns()) this.reports.refreshRun(run.runId);
         void this.ci.refresh(repoId);
       });

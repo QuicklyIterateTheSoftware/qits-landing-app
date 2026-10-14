@@ -93,4 +93,23 @@ describe('ReleaseRequestsPage', () => {
     expect(element.querySelectorAll('li')).toHaveLength(0);
     expect(empty(element)?.classList.contains('hidden')).toBe(false);
   });
+
+  it('says the list could not be read, and reads it again on Retry', async () => {
+    const { element, request, answered } = await render();
+    request.flush(null, { status: 500, statusText: 'Server Error' });
+    await answered();
+    const failure = element.querySelector('ui-load-failure')!;
+    expect(failure.classList.contains('hidden')).toBe(false);
+    expect(failure.textContent).toContain('could not be read');
+    expect(element.querySelector('ui-spinner')?.classList.contains('hidden')).toBe(true);
+    failure.querySelector('button')!.click();
+    await settle();
+    const again = http.expectOne(`/projects/api/projects/${project.id}/release-requests`);
+    again.flush(
+      goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
+    );
+    await answered();
+    expect(failure.classList.contains('hidden')).toBe(true);
+    expect(element.querySelectorAll('li')).toHaveLength(6);
+  });
 });

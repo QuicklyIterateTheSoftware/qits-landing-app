@@ -7,21 +7,20 @@ import { client as projectsClient } from '../../../../../api/projects/client.gen
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
 import { client as ciClient } from '../../../../../api/ci/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
-import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { goldenMaster } from '../../../../../../testing/golden-masters';
 import { ReleaseRequestPage } from './release-request.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-/** The "not found" note: always rendered, hidden by class while the list names the request. */
+/** The "not found" note: always rendered, hidden by class unless the project has no such one. */
 const notFound = (element: HTMLElement) =>
   Array.from(element.querySelectorAll('p')).find((p) =>
-    p.textContent?.includes('has no open or recently finalized'),
+    p.textContent?.includes('has no release request'),
   );
 
-/** Every detail state records its request in this list. */
-const EVERY_STATE = 'a project with release requests in every state';
+/** The failure note with its Retry: always rendered, hidden by class unless the read failed. */
+const failure = (element: HTMLElement) => element.querySelector('ui-load-failure') as HTMLElement;
 
 /** The recorded request this spec opens. */
 const STATE = 'a release request awaiting approval';
@@ -30,11 +29,13 @@ describe('ReleaseRequestPage', () => {
   let http: HttpTestingController;
   const projects = goldenMaster('a project exists', 'listProjects');
   const project = projects.entries[0].project;
-  const listed = goldenMaster(EVERY_STATE, 'listProjectReleaseRequests');
+  // TODO(qits-1203): the project's answer (getProjectReleaseRequest) is the same shape as
+  // getReleaseRequest's, so until @qits/projects-golden-masters carries its recording this spec
+  // answers it with the request's own recording, as it is. Swap to
+  // goldenMaster('a project with release requests in every state', 'getProjectReleaseRequest')
+  // once the package is bumped.
   const recorded = goldenMaster(STATE, 'getReleaseRequest');
-  const entry: ReleaseRequestEntry = listed.requests.find(
-    (r: ReleaseRequestEntry) => r.id === recorded.request.id,
-  );
+  const request = recorded.request;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -67,11 +68,11 @@ describe('ReleaseRequestPage', () => {
     http.verify();
   });
 
-  /** The page at `/projects/<slug>/release-requests/<id>`, with the project's lists answered. */
-  async function render(id: string) {
+  /** The page at `/projects/<slug>/release-requests/<ref>`, its project's repositories answered. */
+  async function render(ref: string) {
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}`,
+      `/projects/${project.slug}/release-requests/${encodeURIComponent(ref)}`,
     );
     await settle();
     http.expectOne('/projects/api/projects').flush(projects);
@@ -83,7 +84,6 @@ describe('ReleaseRequestPage', () => {
       await settle();
     };
     await answered();
-    http.expectOne(`/projects/api/projects/${project.id}/release-requests`).flush(listed);
     http
       .expectOne(`/projects/api/projects/${project.id}/repositories`)
       .flush(goldenMaster('a project with 3 repositories', 'listProjectRepositories'));
@@ -91,30 +91,58 @@ describe('ReleaseRequestPage', () => {
     return { element: harness.routeNativeElement as HTMLElement, answered };
   }
 
-  /** Answers the read of the request, which the page addresses by its uuid. */
-  async function answerRequest(answered: () => Promise<void>) {
-    http
-      .expectOne(`/projects/api/repositories/${entry.repoId}/release-requests/${entry.id}`)
-      .flush(recorded);
+  /** The read of the one request, through its project, by the reference the URL names. */
+  const read = (ref: string) =>
+    http.expectOne(`/projects/api/projects/${project.id}/release-requests/${ref}`);
+
+  it('reads a request by its logical id, alone, and names it so', async () => {
+    expect(request.qualifiedId).toMatch(/-rr-\d+$/);
+    const { element, answered } = await render(request.qualifiedId);
+    read(request.qualifiedId).flush(recorded);
     await answered();
-  }
-
-  it('finds a request by its logical id and names it so', async () => {
-    expect(entry.qualifiedId).toMatch(/-rr-\d+$/);
-    const { element, answered } = await render(entry.qualifiedId!);
-    await answerRequest(answered);
-    expect(element.textContent).toContain(entry.qualifiedId);
+    expect(element.textContent).toContain(request.qualifiedId);
+    expect(element.textContent).toContain(request.summary);
     expect(notFound(element)?.classList.contains('hidden')).toBe(true);
+    expect(failure(element).classList.contains('hidden')).toBe(true);
+    // The project's whole list is never read: the request's own answer names its repository.
+    expect(http.match(`/projects/api/projects/${project.id}/release-requests`)).toHaveLength(0);
+    // ...and the reads after it are addressed by that repository and the request's uuid.
+    http.expectOne(
+      `/projects/api/repositories/${request.repoId}/release-requests/${request.id}/commits`,
+    );
   });
 
-  it('finds a request by its uuid and names it by its logical id', async () => {
-    const { element, answered } = await render(entry.id!);
-    await answerRequest(answered);
-    expect(element.textContent).toContain(entry.qualifiedId);
+  it('reads a request by its uuid and names it by its logical id', async () => {
+    const { element, answered } = await render(request.id);
+    read(request.id).flush(recorded);
+    await answered();
+    expect(element.textContent).toContain(request.qualifiedId);
   });
 
-  it('says so when the project lists no such request', async () => {
-    const { element } = await render('no-such-request');
-    expect(notFound(element)?.classList.contains('hidden')).toBe(false);
+  it('says so when the project has no such request, without claiming it is not open', async () => {
+    const { element, answered } = await render('no-such-request');
+    read('no-such-request').flush(null, { status: 404, statusText: 'Not Found' });
+    await answered();
+    const note = notFound(element)!;
+    expect(note.classList.contains('hidden')).toBe(false);
+    expect(note.textContent).toContain('no-such-request');
+    expect(element.textContent).not.toContain('open or recently finalized');
+    expect(failure(element).classList.contains('hidden')).toBe(true);
+    expect(element.querySelector('ui-spinner')?.classList.contains('hidden')).toBe(true);
+  });
+
+  it('says the request could not be read, and reads it again on Retry', async () => {
+    const { element, answered } = await render(request.qualifiedId);
+    read(request.qualifiedId).flush(null, { status: 500, statusText: 'Server Error' });
+    await answered();
+    expect(failure(element).classList.contains('hidden')).toBe(false);
+    expect(failure(element).textContent).toContain('This release request could not be read.');
+    expect(notFound(element)?.classList.contains('hidden')).toBe(true);
+    failure(element).querySelector('button')!.click();
+    await answered();
+    read(request.qualifiedId).flush(recorded);
+    await answered();
+    expect(failure(element).classList.contains('hidden')).toBe(true);
+    expect(element.textContent).toContain(request.summary);
   });
 });

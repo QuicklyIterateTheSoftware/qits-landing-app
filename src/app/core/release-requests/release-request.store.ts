@@ -2,7 +2,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
   listCommitBuilds,
-  getReleaseRequest,
+  getProjectReleaseRequest,
   getReleaseRequestArtifacts as getReleaseArtifacts,
   listReleaseRequestCommits,
   approveReleaseRequest,
@@ -15,8 +15,8 @@ import {
 } from '../../api/projects';
 import { NOTHING } from '@qits/angular';
 import {
+  GET_PROJECT_RELEASE_REQUEST,
   GET_RELEASE_ARTIFACTS,
-  GET_RELEASE_REQUEST,
   LIST_COMMIT_BUILDS,
   CHANGED_RELEASE_REQUEST,
   LIST_RELEASE_REQUEST_COMMITS,
@@ -51,11 +51,23 @@ function messageOf(error: unknown): string | undefined {
   return typeof message === 'string' && message.trim() ? message : undefined;
 }
 
+/**
+ * The read of the request itself: a {@link Read}, or `missing` when its project has no such
+ * request (404).
+ */
+export type RequestRead =
+  Read<ReleaseRequest> | { readonly status: 'missing'; readonly value?: undefined };
+
+const MISSING: RequestRead = { status: 'missing' };
+
 /** One release request's page data, as `load` and `refresh` left it. */
 export interface ReleaseRequestView {
-  readonly repoId: string;
-  /** The request itself. */
-  readonly request: Read<ReleaseRequest>;
+  /** The project the request is read through. */
+  readonly projectId: string;
+  /** The request itself. Its `repoId` and `id` address every read and change after it. */
+  readonly request: RequestRead;
+  /** The request's logical id (`<repository>-rr-<n>`), from the project's answer. */
+  readonly qualifiedId?: string;
   /** The commits its fold brought in, read once per fold. */
   readonly commits: Read<ReleaseCommits>;
   /** The CI verdicts on its fold, read once per fold; none while nothing is folded. */
@@ -67,24 +79,28 @@ export interface ReleaseRequestView {
 }
 
 interface ReleaseRequestState {
-  /** Each request's page data, by request id. */
+  /** Each request's page data, by the reference its page was opened with (uuid or logical id). */
   readonly byId: Readonly<Record<string, ReleaseRequestView>>;
 }
 
 /**
  * One release request's page data, from qits-projects (ported from qits-projects-frontend's
- * `release-request-detail-page`). Every read is addressed by repository and request id.
+ * `release-request-detail-page`). The page's URL names only the request, by its uuid or its
+ * logical id (`ref`), so the request is read through its project
+ * (`getProjectReleaseRequest`), which answers both; its answer names the repository every read
+ * after it is addressed by. The data is kept by that `ref`.
  *
- * - `load(repoId, requestId)` reads the request, once, and again after an error. Then, for its
- *   fold, the commits it brought in and the CI verdicts on it; and once a tag is cut (RELEASED or
- *   FINALIZED), what it published.
- * - `refresh(repoId, requestId)` reads the request again and keeps the old data until the answer
- *   is in. The commits and the verdicts are read again only when the fold moved, the artifacts only
- *   the first time the request is released: each is a fact about the fold or the tag, so an answer
- *   that names the same fold costs one read.
- * - `retry(requestId, part)` reads one failed part again.
- * - `put(request)` replaces the request with an answer a change gave back (approve, priority…).
- * - `of(requestId)`: the data, or undefined before `load`.
+ * - `load(projectId, ref)` reads the request, once, and again after an error or a "no such
+ *   request". Then, for its fold, the commits it brought in and the CI verdicts on it; and once a
+ *   tag is cut (RELEASED or FINALIZED), what it published. A 404 leaves the request `missing`.
+ * - `refresh(ref)` reads the request again and keeps the old data until the answer is in. The
+ *   commits and the verdicts are read again only when the fold moved, the artifacts only the first
+ *   time the request is released: each is a fact about the fold or the tag, so an answer that
+ *   names the same fold costs one read.
+ * - `retry(ref, part)` reads one failed part again.
+ * - `put(request)` replaces the request with an answer a change gave back (approve, priority…),
+ *   under every `ref` that shows it.
+ * - `of(ref)`: the data, or undefined before `load`.
  * - The changes a person makes: `approve` and `decline` (the fold the reader saw travels with the
  *   decision; a moved fold is refused 409), `withdraw`, `rerunPhase`, `setSourcePriority`,
  *   `rerunAutomation` and `waiveAutomations`. Each answers a {@link ChangeOutcome}; a change that
@@ -101,65 +117,76 @@ export const ReleaseRequestStore = signalStore(
     /** The newest read of each request, so an older answer arriving late is dropped. */
     const reads = new Map<string, number>();
 
-    function set(requestId: string, change: Partial<ReleaseRequestView>): void {
-      const current = store.byId()[requestId];
-      if (!current && change.repoId === undefined) return;
+    function set(ref: string, change: Partial<ReleaseRequestView>): void {
+      const current = store.byId()[ref];
+      if (!current && change.projectId === undefined) return;
       patchState(store, {
         byId: {
           ...store.byId(),
-          [requestId]: { ...EMPTY, ...current, ...change } as ReleaseRequestView,
+          [ref]: { ...EMPTY, ...current, ...change } as ReleaseRequestView,
         },
       });
     }
 
-    async function readCommits(repoId: string, requestId: string, fold: string): Promise<void> {
-      set(requestId, { commits: LOADING });
+    /** The repository and uuid of the request shown under `ref`; empty before it is read. */
+    function addressOf(ref: string): { readonly repoId: string; readonly requestId: string } {
+      const request = store.byId()[ref]?.request.value;
+      return { repoId: request?.repoId ?? '', requestId: request?.id ?? '' };
+    }
+
+    async function readCommits(ref: string, fold: string): Promise<void> {
+      const { repoId, requestId } = addressOf(ref);
+      if (!repoId || !requestId) return;
+      set(ref, { commits: LOADING });
       const { data, error } = await consume(
         listReleaseRequestCommits({ path: { repoId, requestId } }),
         LIST_RELEASE_REQUEST_COMMITS,
       );
-      if (store.byId()[requestId]?.fold !== fold) return;
-      set(requestId, { commits: error !== undefined || !data ? FAILED : loaded(data) });
+      if (store.byId()[ref]?.fold !== fold) return;
+      set(ref, { commits: error !== undefined || !data ? FAILED : loaded(data) });
     }
 
-    async function readBuilds(repoId: string, requestId: string, fold: string): Promise<void> {
+    async function readBuilds(ref: string, fold: string): Promise<void> {
       if (!fold) {
-        set(requestId, { builds: loaded([]) });
+        set(ref, { builds: loaded([]) });
         return;
       }
-      set(requestId, { builds: LOADING });
+      const { repoId } = addressOf(ref);
+      if (!repoId) return;
+      set(ref, { builds: LOADING });
       const { data, error } = await consume(
         listCommitBuilds({ path: { repoId, commitHash: fold } }),
         LIST_COMMIT_BUILDS,
       );
-      if (store.byId()[requestId]?.fold !== fold) return;
-      set(requestId, {
+      if (store.byId()[ref]?.fold !== fold) return;
+      set(ref, {
         builds: error !== undefined || !data ? FAILED : loaded(data.builds ?? []),
       });
     }
 
-    async function readArtifacts(repoId: string, requestId: string): Promise<void> {
-      set(requestId, { artifacts: LOADING });
+    async function readArtifacts(ref: string): Promise<void> {
+      const { repoId, requestId } = addressOf(ref);
+      if (!repoId || !requestId) return;
+      set(ref, { artifacts: LOADING });
       const { data, error } = await consume(
         getReleaseArtifacts({ path: { repoId, requestId } }),
         GET_RELEASE_ARTIFACTS,
       );
-      set(requestId, { artifacts: error !== undefined || !data ? FAILED : loaded(data) });
+      set(ref, { artifacts: error !== undefined || !data ? FAILED : loaded(data) });
     }
 
     /** The reads that follow an answer: per new fold, and once after the tag. */
-    async function follow(repoId: string, request: ReleaseRequest): Promise<void> {
-      const requestId = request.id ?? '';
-      const view = store.byId()[requestId];
+    async function follow(ref: string, request: ReleaseRequest): Promise<void> {
+      const view = store.byId()[ref];
       if (!view) return;
       const fold = request.mergedSha ?? '';
       const reads: Promise<void>[] = [];
       if (view.fold !== fold) {
-        set(requestId, { fold });
-        reads.push(readCommits(repoId, requestId, fold), readBuilds(repoId, requestId, fold));
+        set(ref, { fold });
+        reads.push(readCommits(ref, fold), readBuilds(ref, fold));
       }
       if (hasReleased(request) && view.artifacts === undefined) {
-        reads.push(readArtifacts(repoId, requestId));
+        reads.push(readArtifacts(ref));
       }
       await Promise.all(reads);
     }
@@ -177,68 +204,83 @@ export const ReleaseRequestStore = signalStore(
       return { request };
     }
 
-    /** Puts an answer a change gave back in place of the request, then reads what follows it. */
+    /**
+     * Puts an answer a change gave back in place of the request, under every `ref` that shows it,
+     * then reads what follows it.
+     */
     async function put(request: ReleaseRequest): Promise<void> {
-      const requestId = request.id ?? '';
-      const view = store.byId()[requestId];
-      if (!view) return;
-      // A read in flight began before the change, so its answer is older: drop it.
-      reads.set(requestId, (reads.get(requestId) ?? 0) + 1);
-      set(requestId, { request: loaded(request) });
-      await follow(view.repoId, request);
+      const refs = Object.entries(store.byId())
+        .filter(([, view]) => !!request.id && view.request.value?.id === request.id)
+        .map(([ref]) => ref);
+      await Promise.all(
+        refs.map((ref) => {
+          // A read in flight began before the change, so its answer is older: drop it.
+          reads.set(ref, (reads.get(ref) ?? 0) + 1);
+          set(ref, { request: loaded(request) });
+          return follow(ref, request);
+        }),
+      );
     }
 
-    async function read(repoId: string, requestId: string): Promise<void> {
-      const seq = (reads.get(requestId) ?? 0) + 1;
-      reads.set(requestId, seq);
-      const { data, error } = await consume(
-        getReleaseRequest({ path: { repoId, requestId } }),
-        GET_RELEASE_REQUEST,
+    async function read(ref: string): Promise<void> {
+      const projectId = store.byId()[ref]?.projectId;
+      if (!projectId) return;
+      const seq = (reads.get(ref) ?? 0) + 1;
+      reads.set(ref, seq);
+      const { data, error, response } = await consume(
+        getProjectReleaseRequest({ path: { projectId, ref } }),
+        GET_PROJECT_RELEASE_REQUEST,
       );
-      if (reads.get(requestId) !== seq) return;
+      if (reads.get(ref) !== seq) return;
       const request = error === undefined ? data?.request : undefined;
       if (!request) {
+        // The project has no such request (any more): say so, whether or not it was on show.
+        if (response?.status === 404) {
+          set(ref, { ...EMPTY, request: MISSING, fold: undefined, artifacts: undefined });
+          return;
+        }
         // A failed refresh keeps the request on show; a failed first read shows the failure.
-        if (store.byId()[requestId]?.request.status !== 'loaded') {
-          set(requestId, { request: FAILED });
+        if (store.byId()[ref]?.request.status !== 'loaded') {
+          set(ref, { request: FAILED });
         }
         return;
       }
-      set(requestId, { request: loaded(request) });
-      await follow(repoId, request);
+      const { qualifiedId, ...shown } = request;
+      set(ref, { request: loaded(shown), qualifiedId });
+      await follow(ref, shown);
     }
 
     return {
-      async load(repoId: string, requestId: string): Promise<void> {
-        const current = store.byId()[requestId];
-        if (!repoId || !requestId) return;
-        if (current && current.request.status !== 'error') return;
-        set(requestId, { ...EMPTY, repoId });
-        await read(repoId, requestId);
+      async load(projectId: string, ref: string): Promise<void> {
+        if (!projectId || !ref) return;
+        const current = store.byId()[ref];
+        const status = current?.request.status;
+        if (current?.projectId === projectId && status !== 'error' && status !== 'missing') return;
+        set(ref, { ...EMPTY, projectId, fold: undefined, artifacts: undefined });
+        await read(ref);
       },
-      async refresh(repoId: string, requestId: string): Promise<void> {
-        if (!store.byId()[requestId]) return;
-        await read(repoId, requestId);
+      async refresh(ref: string): Promise<void> {
+        if (!store.byId()[ref]) return;
+        await read(ref);
       },
       /** Reads one failed part again: the request, its commits, its verdicts or its artifacts. */
       async retry(
-        requestId: string,
+        ref: string,
         part: 'request' | 'commits' | 'builds' | 'artifacts',
       ): Promise<void> {
-        const view = store.byId()[requestId];
+        const view = store.byId()[ref];
         if (!view) return;
-        const { repoId } = view;
         const fold = view.fold ?? '';
         if (part === 'request') {
-          set(requestId, { request: LOADING });
-          await read(repoId, requestId);
-        } else if (part === 'commits') await readCommits(repoId, requestId, fold);
-        else if (part === 'builds') await readBuilds(repoId, requestId, fold);
-        else await readArtifacts(repoId, requestId);
+          set(ref, { request: LOADING });
+          await read(ref);
+        } else if (part === 'commits') await readCommits(ref, fold);
+        else if (part === 'builds') await readBuilds(ref, fold);
+        else await readArtifacts(ref);
       },
       put,
-      of(requestId: string): ReleaseRequestView | undefined {
-        return store.byId()[requestId];
+      of(ref: string): ReleaseRequestView | undefined {
+        return store.byId()[ref];
       },
       async approve(repoId: string, requestId: string, mergedSha: string, note?: string) {
         const trimmed = note?.trim();
@@ -317,7 +359,7 @@ export const ReleaseRequestStore = signalStore(
   }),
 );
 
-const EMPTY: Omit<ReleaseRequestView, 'repoId'> = {
+const EMPTY: Omit<ReleaseRequestView, 'projectId'> = {
   request: LOADING,
   commits: LOADING,
   builds: LOADING,

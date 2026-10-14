@@ -13,9 +13,13 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of one release request's page. The open project is the recorded one ("a project
- * exists"); the request is found in the recorded list "a project with pending release requests",
- * or, for a loaded request, in "a project with release requests in every state", which lists the
- * request every detail state records.
+ * exists"); the page reads the one request through it (getProjectReleaseRequest), by the
+ * reference its URL names, and every read after it by the repository that answer names.
+ *
+ * TODO(qits-1203): until @qits/projects-golden-masters carries getProjectReleaseRequest's
+ * recording, the project's read is answered with the state's getReleaseRequest recording, as it
+ * is: the same shape (`{ request }`), and pacted, so `goldenMaster` serves it. Swap to the
+ * project's own recording once the package is bumped and the pact holds it.
  *
  * qits-ci's calls (the repository's runs, a run's reports) answer with an error unless a spec
  * answers the runs with qits-ci's recording ({@link CI_RUNS}).
@@ -23,9 +27,6 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 
 /** qits-ci's recorded runs of a repository: a release request's QA, release and automation runs. */
 const CI_RUNS = 'a repository with the runs of a release request';
-
-/** Every detail state records its request in this list. */
-const EVERY_STATE = 'a project with release requests in every state';
 
 /** The page's clock: two hours after the recordings' instants, so "2 hours ago" stays put. */
 const NOW = new Date('2026-01-01T02:00:00Z');
@@ -82,16 +83,13 @@ describe('ReleaseRequestPage (screenshots)', () => {
    */
   async function shown(state: string, tab?: string, width = 900, ciRuns = false) {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
+    // TODO(qits-1203): the project's answer, from the request's own recording (see above).
     const recorded = await goldenMaster(state, 'getReleaseRequest');
-    const { fixture, element, repoId, id } = await render(
-      recorded.request.id,
-      EVERY_STATE,
-      width,
-      tab,
-    );
-    const base = `/projects/api/repositories/${repoId}/release-requests/${id}`;
-    http.expectOne(base).flush(recorded);
+    const { id, repoId } = recorded.request;
+    const { fixture, element, read } = await render(id, width, tab);
+    read.flush(recorded);
     await answered(fixture);
+    const base = `/projects/api/repositories/${repoId}/release-requests/${id}`;
     http.expectOne(`${base}/commits`).flush(await goldenMaster(state, 'listReleaseRequestCommits'));
     if (recorded.request.mergedSha) {
       http
@@ -130,60 +128,79 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await settle();
   }
 
-  /** The page for `requestId` (default: the first recorded request), with the lists answered. */
-  async function render(
-    requestId?: string,
-    listState = 'a project with pending release requests',
-    width = 900,
-    tab?: string,
-  ) {
+  /**
+   * The page for `ref` (a uuid or a logical id), with the project's repositories answered; `read`
+   * is its read of the request, still open.
+   */
+  async function render(ref: string, width = 900, tab?: string) {
     await page.viewport(width, 700);
     const projects = await goldenMaster('a project exists', 'listProjects');
     const project = projects.entries[0].project;
-    const listed = await goldenMaster(listState, 'listProjectReleaseRequests');
-    const id = requestId ?? listed.requests[0].id;
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}` +
+      `/projects/${project.slug}/release-requests/${encodeURIComponent(ref)}` +
         (tab ? `?tab=${tab}` : ''),
     );
     await settle();
     http.expectOne('/projects/api/projects').flush(projects);
     await navigated;
     await answered(harness.fixture);
-    http.expectOne(`/projects/api/projects/${project.id}/release-requests`).flush(listed);
     http
       .expectOne(`/projects/api/projects/${project.id}/repositories`)
       .flush(await goldenMaster('a project with 3 repositories', 'listProjectRepositories'));
     await answered(harness.fixture);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = `${width}px`;
-    const repoId = listed.requests.find((r: { id: string }) => r.id === id)?.repoId;
-    return { fixture: harness.fixture, element, repoId, id };
+    const read = http.expectOne(`/projects/api/projects/${project.id}/release-requests/${ref}`);
+    return { fixture: harness.fixture, element, read };
   }
 
-  it('marks the request as loading, then as failed to load', async () => {
-    const { fixture, element, repoId, id } = await render();
-    const request = http.expectOne(
-      `/projects/api/repositories/${repoId}/release-requests/${encodeURIComponent(id)}`,
-    );
+  it('marks the request as loading, then says it could not be read, with Retry', async () => {
+    const recorded = await goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+    const { fixture, element, read } = await render(recorded.request.qualifiedId);
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
-    // The runs fail too; the page says nothing of them while the request has not loaded.
-    http
-      .expectOne((r) => r.url.startsWith('/ci/api/runs'))
-      .flush(null, { status: 500, statusText: 'Server Error' });
-    request.flush(null, { status: 500, statusText: 'Server Error' });
+    read.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
-    await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
+    await expect
+      .element(view.getByRole('alert'))
+      .toMatchTextContent('This release request could not be read.');
+    await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('error');
   });
 
-  it('says so when the project lists no such request', async () => {
-    const { element } = await render('no-such-request');
+  it('reads the request again on Retry', async () => {
+    const recorded = await goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+    const ref = recorded.request.qualifiedId;
+    const { fixture, element, read } = await render(ref);
+    read.flush(null, { status: 500, statusText: 'Server Error' });
+    await answered(fixture);
     const view = page.elementLocator(element);
-    await expect.element(view).toMatchTextContent('has no open or recently finalized release');
+    await view.getByRole('button', { name: 'Retry' }).click();
+    await answered(fixture);
+    // TODO(qits-1203): the project's answer, from the request's own recording (see above).
+    http.expectOne((r) => r.url.endsWith(`/release-requests/${ref}`)).flush(recorded);
+    await answered(fixture);
+    await expect.element(view).toMatchTextContent('Release the export across the suite');
+    expect(element.querySelector('ui-load-failure')?.classList.contains('hidden')).toBe(true);
+    // The reads after it answer with errors: only the request is this spec's subject.
+    for (let round = 0; round < 3; round++) {
+      for (const call of http.match(() => true)) {
+        call.flush(null, { status: 500, statusText: 'Server Error' });
+      }
+      await answered(fixture);
+    }
+  });
+
+  it('says so when the project has no such request', async () => {
+    const { fixture, element, read } = await render('no-such-request');
+    read.flush(null, { status: 404, statusText: 'Not Found' });
+    await answered(fixture);
+    const view = page.elementLocator(element);
+    await expect
+      .element(view)
+      .toMatchTextContent('This project has no release request no-such-request.');
     await expect.element(view).toMatchScreenshot('not-found');
   });
 
