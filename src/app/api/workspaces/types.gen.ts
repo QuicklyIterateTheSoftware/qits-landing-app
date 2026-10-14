@@ -1317,7 +1317,7 @@ export type GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentResp
     200: unknown;
 };
 
-export type DeleteWorkspacesApiAgentsByIdPromptDraftData = {
+export type DeleteAgentPromptDraftData = {
     body?: never;
     path: {
         id: string;
@@ -1326,7 +1326,7 @@ export type DeleteWorkspacesApiAgentsByIdPromptDraftData = {
     url: '/workspaces/api/agents/{id}/prompt-draft';
 };
 
-export type DeleteWorkspacesApiAgentsByIdPromptDraftErrors = {
+export type DeleteAgentPromptDraftErrors = {
     /**
      * Not Authorized
      */
@@ -1341,18 +1341,18 @@ export type DeleteWorkspacesApiAgentsByIdPromptDraftErrors = {
     404: ApiError;
 };
 
-export type DeleteWorkspacesApiAgentsByIdPromptDraftError = DeleteWorkspacesApiAgentsByIdPromptDraftErrors[keyof DeleteWorkspacesApiAgentsByIdPromptDraftErrors];
+export type DeleteAgentPromptDraftError = DeleteAgentPromptDraftErrors[keyof DeleteAgentPromptDraftErrors];
 
-export type DeleteWorkspacesApiAgentsByIdPromptDraftResponses = {
+export type DeleteAgentPromptDraftResponses = {
     /**
      * There is no draft for this workspace.
      */
     204: void;
 };
 
-export type DeleteWorkspacesApiAgentsByIdPromptDraftResponse = DeleteWorkspacesApiAgentsByIdPromptDraftResponses[keyof DeleteWorkspacesApiAgentsByIdPromptDraftResponses];
+export type DeleteAgentPromptDraftResponse = DeleteAgentPromptDraftResponses[keyof DeleteAgentPromptDraftResponses];
 
-export type GetWorkspacesApiAgentsByIdPromptDraftData = {
+export type GetAgentPromptDraftData = {
     body?: never;
     path: {
         id: string;
@@ -1361,7 +1361,7 @@ export type GetWorkspacesApiAgentsByIdPromptDraftData = {
     url: '/workspaces/api/agents/{id}/prompt-draft';
 };
 
-export type GetWorkspacesApiAgentsByIdPromptDraftErrors = {
+export type GetAgentPromptDraftErrors = {
     /**
      * Not Authorized
      */
@@ -1376,18 +1376,18 @@ export type GetWorkspacesApiAgentsByIdPromptDraftErrors = {
     404: ApiError;
 };
 
-export type GetWorkspacesApiAgentsByIdPromptDraftError = GetWorkspacesApiAgentsByIdPromptDraftErrors[keyof GetWorkspacesApiAgentsByIdPromptDraftErrors];
+export type GetAgentPromptDraftError = GetAgentPromptDraftErrors[keyof GetAgentPromptDraftErrors];
 
-export type GetWorkspacesApiAgentsByIdPromptDraftResponses = {
+export type GetAgentPromptDraftResponses = {
     /**
      * The saved draft.
      */
     200: Response18;
 };
 
-export type GetWorkspacesApiAgentsByIdPromptDraftResponse = GetWorkspacesApiAgentsByIdPromptDraftResponses[keyof GetWorkspacesApiAgentsByIdPromptDraftResponses];
+export type GetAgentPromptDraftResponse = GetAgentPromptDraftResponses[keyof GetAgentPromptDraftResponses];
 
-export type PutWorkspacesApiAgentsByIdPromptDraftData = {
+export type SaveAgentPromptDraftData = {
     body: SavePromptDraftRequest;
     path: {
         id: string;
@@ -1396,7 +1396,7 @@ export type PutWorkspacesApiAgentsByIdPromptDraftData = {
     url: '/workspaces/api/agents/{id}/prompt-draft';
 };
 
-export type PutWorkspacesApiAgentsByIdPromptDraftErrors = {
+export type SaveAgentPromptDraftErrors = {
     /**
      * The content is not a well-formed JSON document.
      */
@@ -1419,16 +1419,16 @@ export type PutWorkspacesApiAgentsByIdPromptDraftErrors = {
     413: ApiError;
 };
 
-export type PutWorkspacesApiAgentsByIdPromptDraftError = PutWorkspacesApiAgentsByIdPromptDraftErrors[keyof PutWorkspacesApiAgentsByIdPromptDraftErrors];
+export type SaveAgentPromptDraftError = SaveAgentPromptDraftErrors[keyof SaveAgentPromptDraftErrors];
 
-export type PutWorkspacesApiAgentsByIdPromptDraftResponses = {
+export type SaveAgentPromptDraftResponses = {
     /**
      * The persisted draft, with its fresh updatedAt.
      */
     200: Response17;
 };
 
-export type PutWorkspacesApiAgentsByIdPromptDraftResponse = PutWorkspacesApiAgentsByIdPromptDraftResponses[keyof PutWorkspacesApiAgentsByIdPromptDraftResponses];
+export type SaveAgentPromptDraftResponse = SaveAgentPromptDraftResponses[keyof SaveAgentPromptDraftResponses];
 
 export type PostWorkspacesApiBranchesCleanupData = {
     body: CleanupBranchRequest;
@@ -1611,7 +1611,7 @@ export type GetWorkspacesApiHistoryResponses = {
 
 export type GetWorkspacesApiHistoryResponse = GetWorkspacesApiHistoryResponses[keyof GetWorkspacesApiHistoryResponses];
 
-export type GetWorkspacesApiHistoryByIdData = {
+export type GetWorkspaceHistoryData = {
     body?: never;
     path: {
         id: number;
@@ -1620,7 +1620,7 @@ export type GetWorkspacesApiHistoryByIdData = {
     url: '/workspaces/api/history/{id}';
 };
 
-export type GetWorkspacesApiHistoryByIdErrors = {
+export type GetWorkspaceHistoryErrors = {
     /**
      * Not Authorized
      */
@@ -1631,14 +1631,14 @@ export type GetWorkspacesApiHistoryByIdErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiHistoryByIdResponses = {
+export type GetWorkspaceHistoryResponses = {
     /**
      * OK
      */
     200: Response12;
 };
 
-export type GetWorkspacesApiHistoryByIdResponse = GetWorkspacesApiHistoryByIdResponses[keyof GetWorkspacesApiHistoryByIdResponses];
+export type GetWorkspaceHistoryResponse = GetWorkspaceHistoryResponses[keyof GetWorkspaceHistoryResponses];
 
 export type PatchWorkspacesApiHistoryByIdData = {
     body: UpdateHistoryRequest;
@@ -1669,7 +1669,7 @@ export type PatchWorkspacesApiHistoryByIdResponses = {
 
 export type PatchWorkspacesApiHistoryByIdResponse = PatchWorkspacesApiHistoryByIdResponses[keyof PatchWorkspacesApiHistoryByIdResponses];
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsData = {
+export type ListWorkspaceAgentSessionsData = {
     body?: never;
     path: {
         id: number;
@@ -1678,7 +1678,7 @@ export type GetWorkspacesApiHistoryByIdAgentSessionsData = {
     url: '/workspaces/api/history/{id}/agent-sessions';
 };
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsErrors = {
+export type ListWorkspaceAgentSessionsErrors = {
     /**
      * Not Authorized
      */
@@ -1689,16 +1689,16 @@ export type GetWorkspacesApiHistoryByIdAgentSessionsErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsResponses = {
+export type ListWorkspaceAgentSessionsResponses = {
     /**
      * OK
      */
     200: Response14;
 };
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsResponse = GetWorkspacesApiHistoryByIdAgentSessionsResponses[keyof GetWorkspacesApiHistoryByIdAgentSessionsResponses];
+export type ListWorkspaceAgentSessionsResponse = ListWorkspaceAgentSessionsResponses[keyof ListWorkspaceAgentSessionsResponses];
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptData = {
+export type GetWorkspaceAgentTranscriptData = {
     body?: never;
     path: {
         id: number;
@@ -1708,7 +1708,7 @@ export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptData = 
     url: '/workspaces/api/history/{id}/agent-sessions/{sessionId}/transcript';
 };
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptErrors = {
+export type GetWorkspaceAgentTranscriptErrors = {
     /**
      * Not Authorized
      */
@@ -1719,14 +1719,14 @@ export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptErrors 
     403: unknown;
 };
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponses = {
+export type GetWorkspaceAgentTranscriptResponses = {
     /**
      * OK
      */
     200: Response13;
 };
 
-export type GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponse = GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponses[keyof GetWorkspacesApiHistoryByIdAgentSessionsBySessionIdTranscriptResponses];
+export type GetWorkspaceAgentTranscriptResponse = GetWorkspaceAgentTranscriptResponses[keyof GetWorkspaceAgentTranscriptResponses];
 
 export type ListLaunchPinsData = {
     body?: never;
@@ -1858,7 +1858,7 @@ export type GetWorkspacesApiRunnersInstallShResponses = {
 
 export type GetWorkspacesApiRunnersInstallShResponse = GetWorkspacesApiRunnersInstallShResponses[keyof GetWorkspacesApiRunnersInstallShResponses];
 
-export type DeleteWorkspacesApiRunnersByIdData = {
+export type DeleteRunnerData = {
     body?: never;
     path: {
         id: string;
@@ -1867,7 +1867,7 @@ export type DeleteWorkspacesApiRunnersByIdData = {
     url: '/workspaces/api/runners/{id}';
 };
 
-export type DeleteWorkspacesApiRunnersByIdErrors = {
+export type DeleteRunnerErrors = {
     /**
      * Not Authorized
      */
@@ -1886,16 +1886,16 @@ export type DeleteWorkspacesApiRunnersByIdErrors = {
     409: ApiError;
 };
 
-export type DeleteWorkspacesApiRunnersByIdError = DeleteWorkspacesApiRunnersByIdErrors[keyof DeleteWorkspacesApiRunnersByIdErrors];
+export type DeleteRunnerError = DeleteRunnerErrors[keyof DeleteRunnerErrors];
 
-export type DeleteWorkspacesApiRunnersByIdResponses = {
+export type DeleteRunnerResponses = {
     /**
      * Gone
      */
     204: void;
 };
 
-export type DeleteWorkspacesApiRunnersByIdResponse = DeleteWorkspacesApiRunnersByIdResponses[keyof DeleteWorkspacesApiRunnersByIdResponses];
+export type DeleteRunnerResponse = DeleteRunnerResponses[keyof DeleteRunnerResponses];
 
 export type GetWorkspacesApiRunnersByIdData = {
     body?: never;
@@ -1930,7 +1930,7 @@ export type GetWorkspacesApiRunnersByIdResponses = {
 
 export type GetWorkspacesApiRunnersByIdResponse = GetWorkspacesApiRunnersByIdResponses[keyof GetWorkspacesApiRunnersByIdResponses];
 
-export type PatchWorkspacesApiRunnersByIdData = {
+export type PatchRunnerData = {
     body: PatchRunnerRequest;
     path: {
         id: string;
@@ -1939,7 +1939,7 @@ export type PatchWorkspacesApiRunnersByIdData = {
     url: '/workspaces/api/runners/{id}';
 };
 
-export type PatchWorkspacesApiRunnersByIdErrors = {
+export type PatchRunnerErrors = {
     /**
      * Negative slots, an overlong description, a malformed memory limit, or limits that would not fit together once applied
      */
@@ -1958,14 +1958,14 @@ export type PatchWorkspacesApiRunnersByIdErrors = {
     404: unknown;
 };
 
-export type PatchWorkspacesApiRunnersByIdResponses = {
+export type PatchRunnerResponses = {
     /**
      * The runner as it now is
      */
     200: WorkspaceRunnerDto;
 };
 
-export type PatchWorkspacesApiRunnersByIdResponse = PatchWorkspacesApiRunnersByIdResponses[keyof PatchWorkspacesApiRunnersByIdResponses];
+export type PatchRunnerResponse = PatchRunnerResponses[keyof PatchRunnerResponses];
 
 export type GreenlightRunnerData = {
     body?: never;
@@ -2000,7 +2000,7 @@ export type GreenlightRunnerResponses = {
 
 export type GreenlightRunnerResponse = GreenlightRunnerResponses[keyof GreenlightRunnerResponses];
 
-export type GetWorkspacesApiRunnersByIdHealthData = {
+export type GetRunnerHealthData = {
     body?: never;
     path: {
         id: string;
@@ -2009,7 +2009,7 @@ export type GetWorkspacesApiRunnersByIdHealthData = {
     url: '/workspaces/api/runners/{id}/health';
 };
 
-export type GetWorkspacesApiRunnersByIdHealthErrors = {
+export type GetRunnerHealthErrors = {
     /**
      * Not Authorized
      */
@@ -2024,7 +2024,7 @@ export type GetWorkspacesApiRunnersByIdHealthErrors = {
     404: unknown;
 };
 
-export type GetWorkspacesApiRunnersByIdHealthResponses = {
+export type GetRunnerHealthResponses = {
     /**
      * The newest health check
      */
@@ -2035,9 +2035,9 @@ export type GetWorkspacesApiRunnersByIdHealthResponses = {
     204: void;
 };
 
-export type GetWorkspacesApiRunnersByIdHealthResponse = GetWorkspacesApiRunnersByIdHealthResponses[keyof GetWorkspacesApiRunnersByIdHealthResponses];
+export type GetRunnerHealthResponse = GetRunnerHealthResponses[keyof GetRunnerHealthResponses];
 
-export type PostWorkspacesApiRunnersByIdHealthcheckData = {
+export type RequestRunnerHealthcheckData = {
     body?: never;
     path: {
         id: string;
@@ -2046,7 +2046,7 @@ export type PostWorkspacesApiRunnersByIdHealthcheckData = {
     url: '/workspaces/api/runners/{id}/healthcheck';
 };
 
-export type PostWorkspacesApiRunnersByIdHealthcheckErrors = {
+export type RequestRunnerHealthcheckErrors = {
     /**
      * Not Authorized
      */
@@ -2065,18 +2065,18 @@ export type PostWorkspacesApiRunnersByIdHealthcheckErrors = {
     409: ApiError;
 };
 
-export type PostWorkspacesApiRunnersByIdHealthcheckError = PostWorkspacesApiRunnersByIdHealthcheckErrors[keyof PostWorkspacesApiRunnersByIdHealthcheckErrors];
+export type RequestRunnerHealthcheckError = RequestRunnerHealthcheckErrors[keyof RequestRunnerHealthcheckErrors];
 
-export type PostWorkspacesApiRunnersByIdHealthcheckResponses = {
+export type RequestRunnerHealthcheckResponses = {
     /**
      * Sent, or one is pending already; its requestId
      */
     202: HealthCheckRequested;
 };
 
-export type PostWorkspacesApiRunnersByIdHealthcheckResponse = PostWorkspacesApiRunnersByIdHealthcheckResponses[keyof PostWorkspacesApiRunnersByIdHealthcheckResponses];
+export type RequestRunnerHealthcheckResponse = RequestRunnerHealthcheckResponses[keyof RequestRunnerHealthcheckResponses];
 
-export type PostWorkspacesApiRunnersByIdLoginCheckData = {
+export type RequestRunnerLoginCheckData = {
     body?: never;
     path: {
         id: string;
@@ -2085,7 +2085,7 @@ export type PostWorkspacesApiRunnersByIdLoginCheckData = {
     url: '/workspaces/api/runners/{id}/login-check';
 };
 
-export type PostWorkspacesApiRunnersByIdLoginCheckErrors = {
+export type RequestRunnerLoginCheckErrors = {
     /**
      * Not Authorized
      */
@@ -2104,9 +2104,9 @@ export type PostWorkspacesApiRunnersByIdLoginCheckErrors = {
     409: ApiError;
 };
 
-export type PostWorkspacesApiRunnersByIdLoginCheckError = PostWorkspacesApiRunnersByIdLoginCheckErrors[keyof PostWorkspacesApiRunnersByIdLoginCheckErrors];
+export type RequestRunnerLoginCheckError = RequestRunnerLoginCheckErrors[keyof RequestRunnerLoginCheckErrors];
 
-export type PostWorkspacesApiRunnersByIdLoginCheckResponses = {
+export type RequestRunnerLoginCheckResponses = {
     /**
      * Sent
      */
@@ -2420,7 +2420,7 @@ export type PostWorkspacesApiWorkspacesByIdDiscardResponses = {
 
 export type PostWorkspacesApiWorkspacesByIdDiscardResponse = PostWorkspacesApiWorkspacesByIdDiscardResponses[keyof PostWorkspacesApiWorkspacesByIdDiscardResponses];
 
-export type PostWorkspacesApiWorkspacesByIdEnsureContainerData = {
+export type EnsureWorkspaceContainerData = {
     body?: never;
     path: {
         id: number;
@@ -2429,7 +2429,7 @@ export type PostWorkspacesApiWorkspacesByIdEnsureContainerData = {
     url: '/workspaces/api/workspaces/{id}/ensure-container';
 };
 
-export type PostWorkspacesApiWorkspacesByIdEnsureContainerErrors = {
+export type EnsureWorkspaceContainerErrors = {
     /**
      * Not Authorized
      */
@@ -2444,18 +2444,18 @@ export type PostWorkspacesApiWorkspacesByIdEnsureContainerErrors = {
     409: ApiError;
 };
 
-export type PostWorkspacesApiWorkspacesByIdEnsureContainerError = PostWorkspacesApiWorkspacesByIdEnsureContainerErrors[keyof PostWorkspacesApiWorkspacesByIdEnsureContainerErrors];
+export type EnsureWorkspaceContainerError = EnsureWorkspaceContainerErrors[keyof EnsureWorkspaceContainerErrors];
 
-export type PostWorkspacesApiWorkspacesByIdEnsureContainerResponses = {
+export type EnsureWorkspaceContainerResponses = {
     /**
      * The start this call made, or the start under way that it joined.
      */
     200: Response7;
 };
 
-export type PostWorkspacesApiWorkspacesByIdEnsureContainerResponse = PostWorkspacesApiWorkspacesByIdEnsureContainerResponses[keyof PostWorkspacesApiWorkspacesByIdEnsureContainerResponses];
+export type EnsureWorkspaceContainerResponse = EnsureWorkspaceContainerResponses[keyof EnsureWorkspaceContainerResponses];
 
-export type PostWorkspacesApiWorkspacesByIdRecreateContainerData = {
+export type RecreateWorkspaceContainerData = {
     body?: never;
     path: {
         id: number;
@@ -2464,7 +2464,7 @@ export type PostWorkspacesApiWorkspacesByIdRecreateContainerData = {
     url: '/workspaces/api/workspaces/{id}/recreate-container';
 };
 
-export type PostWorkspacesApiWorkspacesByIdRecreateContainerErrors = {
+export type RecreateWorkspaceContainerErrors = {
     /**
      * Not Authorized
      */
@@ -2475,16 +2475,16 @@ export type PostWorkspacesApiWorkspacesByIdRecreateContainerErrors = {
     403: unknown;
 };
 
-export type PostWorkspacesApiWorkspacesByIdRecreateContainerResponses = {
+export type RecreateWorkspaceContainerResponses = {
     /**
      * OK
      */
     200: Response4;
 };
 
-export type PostWorkspacesApiWorkspacesByIdRecreateContainerResponse = PostWorkspacesApiWorkspacesByIdRecreateContainerResponses[keyof PostWorkspacesApiWorkspacesByIdRecreateContainerResponses];
+export type RecreateWorkspaceContainerResponse = RecreateWorkspaceContainerResponses[keyof RecreateWorkspaceContainerResponses];
 
-export type PostWorkspacesApiWorkspacesByIdStopContainerData = {
+export type StopWorkspaceContainerData = {
     body?: never;
     path: {
         id: number;
@@ -2493,7 +2493,7 @@ export type PostWorkspacesApiWorkspacesByIdStopContainerData = {
     url: '/workspaces/api/workspaces/{id}/stop-container';
 };
 
-export type PostWorkspacesApiWorkspacesByIdStopContainerErrors = {
+export type StopWorkspaceContainerErrors = {
     /**
      * Not Authorized
      */
@@ -2504,11 +2504,11 @@ export type PostWorkspacesApiWorkspacesByIdStopContainerErrors = {
     403: unknown;
 };
 
-export type PostWorkspacesApiWorkspacesByIdStopContainerResponses = {
+export type StopWorkspaceContainerResponses = {
     /**
      * OK
      */
     200: WorkspaceDto;
 };
 
-export type PostWorkspacesApiWorkspacesByIdStopContainerResponse = PostWorkspacesApiWorkspacesByIdStopContainerResponses[keyof PostWorkspacesApiWorkspacesByIdStopContainerResponses];
+export type StopWorkspaceContainerResponse = StopWorkspaceContainerResponses[keyof StopWorkspaceContainerResponses];

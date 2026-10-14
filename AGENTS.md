@@ -55,13 +55,30 @@ An agent's terminal (`…/agent/terminal`, `AgentTerminalPage`) is a WebSocket, 
 the slot's daemon, through qits-workspaces' container proxy, at
 `wss://workspaces.<domain>/workspaces/container/<slot row id>/terminal/commands/<command id>`
 (`terminalSocketUrl`), opened through `WEB_SOCKET` (`core/platform/web-socket.ts`; specs fake it).
-`AgentTerminalStore` finds the command: the daemon's `getAgentWorktree` and `listCommands`, through
+`AgentHarnessStore` finds the command: the daemon's `getAgentWorktree` and `listCommands`, through
 the same proxy (the generated client in `api/workspace-daemon/`, each call's `baseUrl` the
-container's prefix). `TerminalSocket` sends `{"type":"data"}` and `{"type":"resize"}` frames, treats
-a server close with 1000 as final and reconnects after any other (0.5, 1, 2, 4, 4 s, then `lost`
-until the button, `visibilitychange` or `online`). The screen is xterm.js
+container's prefix). `TerminalSocket` sends `{"type":"data"}` and `{"type":"resize"}` frames. Its
+reconnects are `ReconnectingSocket`'s (`core/workspaces/reconnecting-socket.ts`), which the chat
+shares: a server close with 1000 is final, any other reconnects (0.5, 1, 2, 4, 4 s, then `lost`
+until a button, `visibilitychange` or `online`). The screen is xterm.js
 (`ui/components/terminal-screen/`), loaded lazily in the browser only; its stylesheet is imported in
 `src/styles.css`.
+
+An agent's chat (`…/agent/chat`, `AgentChatPage`) shows the conversation and a prompt box. A harness
+running as a `CHAT` is the daemon's other socket, `…/workspaces/container/<slot row
+id>/chat/commands/<command id>` (`ChatSocket`): it replays the whole conversation on every open (the
+lines are rebuilt, never diffed), streams one JSON object per line, and takes
+`{"type":"user","text":…}`, queued while the socket is away; the turn shows when the daemon echoes
+it. A harness in a terminal shows its transcript instead (`AgentChatStore.loadTranscript`: the
+daemon's `getCommandLog`, `channel=TRANSCRIPT`, read again every 3 s while it runs). The lines
+become items in `core/workspaces/chat-model.ts`, drawn by `patterns/workspaces/conversation/`.
+`patterns/workspaces/prompt-composer/` keeps the prompt as the agent's draft on qits-workspaces
+(`AgentPromptStore`: `GET|PUT|DELETE /workspaces/api/agents/{id}/prompt-draft`, a 404 is no draft;
+saved 750 ms after typing stops), refines rough notes in the container (`refinePrompt`) and sends
+the prompt through `POST /workspaces/api/agent-dispatches/delivery`. The tab also reads the slot's
+hint channel (`WorkspaceHints`, `/workspaces/api/workspaces/{id}/events` through `EVENT_SOURCE`):
+`commands` reads the harness again, `prompt-draft` adopts another device's draft. There is no
+speech input.
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
@@ -149,12 +166,12 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                             | Pact file                                             | Golden masters                          |
-| ----------------------- | ----------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`              | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
-| qits-githost-service    | `core/loc/loc.store*.ts`                        | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon   | `core/workspaces/agent-terminal.store*.ts`      | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
+| Provider                | Store and pact spec                                          | Pact file                                             | Golden masters                          |
+| ----------------------- | ------------------------------------------------------------ | ----------------------------------------------------- | --------------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`                           | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
+| qits-githost-service    | `core/loc/loc.store*.ts`                                     | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat}.store*.ts`       | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

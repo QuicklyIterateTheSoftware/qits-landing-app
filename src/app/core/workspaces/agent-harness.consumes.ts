@@ -2,14 +2,14 @@ import type { GetAgentWorktreeResponses, ListCommandsResponses } from '../../api
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `AgentTerminalStore` reads from qits-workspace-daemon's answers, through qits-workspaces'
+ * What `AgentHarnessStore` reads from qits-workspace-daemon's answers, through qits-workspaces'
  * container proxy (epic qits-1230). The store passes each list to `consume(...)`, so it cannot read
  * any other field, and its pact spec passes the same lists as `consumes`. To read another field,
  * add it here.
  */
 
 /**
- * `AgentTerminalStore.load(workspaceRowId, agentId)`: the agent's worktree (`getAgentWorktree`),
+ * `AgentHarnessStore.load(workspaceRowId, agentId)`: the agent's worktree (`getAgentWorktree`),
  * for the harness's last command, the one the terminal socket attaches to. A 404 (the daemon has
  * not started the agent since it came up) binds the status only.
  */
@@ -19,7 +19,7 @@ export const GET_AGENT_WORKTREE = ['commandId'] as const;
 export type AgentWorktree = Consumed<GetAgentWorktreeResponses[200], typeof GET_AGENT_WORKTREE>;
 
 /**
- * `AgentTerminalStore.load(workspaceRowId, agentId)`: the container's commands (`listCommands`),
+ * `AgentHarnessStore.load(workspaceRowId, agentId)`: the container's commands (`listCommands`),
  * for whether the harness's command still runs, and as a terminal or as a chat.
  */
 export const LIST_COMMANDS = [

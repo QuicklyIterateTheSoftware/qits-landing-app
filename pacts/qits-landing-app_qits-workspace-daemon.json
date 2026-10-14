@@ -8,6 +8,577 @@
         "references": {
           "qits-call": {
             "app": "qits-workspace-daemon",
+            "operationId": "refinePrompt"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "refine-agent-prompt",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "refine-agent-prompt: refinePrompt",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with a signed-in harness",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "preamble": "Fix the login",
+            "transcript": "uh so the login um it fails when the name has spaces"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/prompt-refinements",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/container/1/prompt-refinements"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "prompt": "Fix the login form so a user name with surrounding spaces still signs in."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.prompt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "getAgentWorktree"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-chat",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-chat: getAgentWorktree",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent running",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "commandId": "00000000-0000-4000-8000-000000000100"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.commandId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "getCommandLog"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-chat",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-chat: getCommandLog",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent that has taken turns",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/commands/${commandId}/log",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/commands/00000000-0000-4000-8000-000000000100/log",
+        "query": {
+          "channel": [
+            "TRANSCRIPT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "lines": [
+              {
+                "content": "{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Fix the login\"}]}}",
+                "sequence": 1099511627776
+              },
+              {
+                "content": "{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Fix the login\"}]}}",
+                "sequence": 1099511627776
+              },
+              {
+                "content": "{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Fix the login\"}]}}",
+                "sequence": 1099511627776
+              },
+              {
+                "content": "{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Fix the login\"}]}}",
+                "sequence": 1099511627776
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.lines": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$.lines[*].content": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.lines[*].sequence": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "listCommands"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-chat",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-chat: listCommands",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent chatting",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/commands",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/commands"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "command": {
+                  "id": "00000000-0000-4000-8000-000000000100",
+                  "kind": "CHAT",
+                  "status": "RUNNING"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.entries[*].command.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].command.kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entries[*].command.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "listCommands"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-chat",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-chat: listCommands",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent running",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/commands",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/commands"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "command": {
+                  "id": "00000000-0000-4000-8000-000000000100",
+                  "kind": "TERMINAL",
+                  "status": "RUNNING"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.entries[*].command.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].command.kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entries[*].command.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
             "operationId": "getAgentWorktree"
           },
           "qits-trigger": {
@@ -257,6 +828,67 @@
             }
           }
         },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "terminateCommand"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "terminate-agent-chat",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "terminate-agent-chat: terminateCommand",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent chatting",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {},
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/commands/${commandId}/terminate",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/container/1/commands/00000000-0000-4000-8000-000000000100/terminate"
+      },
+      "response": {
         "status": 200
       },
       "type": "Synchronous/HTTP"

@@ -8,13 +8,14 @@ import {
   workspaceDaemonGoldenMasters,
 } from '../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
-import { AgentTerminalStore, containerBase } from './agent-terminal.store';
+import { AgentHarnessStore, containerBase } from './agent-harness.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const RUNNING = 'a workspace daemon with an agent running';
 const NOT_STARTED = 'a workspace daemon with a signed-in harness';
+const CHATTING = 'a workspace daemon with an agent chatting';
 const ORIGIN = 'https://workspaces.qits.example';
 
 const { agentId, workspaceRowId, commandId } = workspaceDaemonGoldenMasters.operation(
@@ -24,10 +25,10 @@ const { agentId, workspaceRowId, commandId } = workspaceDaemonGoldenMasters.oper
 const ROW = Number(workspaceRowId);
 const BASE = `${ORIGIN}/workspaces/container/${ROW}`;
 
-/** `AgentTerminalStore` on qits-workspace-daemon's recorded states (epic qits-1230). */
-describe('AgentTerminalStore', () => {
+/** `AgentHarnessStore` on qits-workspace-daemon's recorded states (epic qits-1230). */
+describe('AgentHarnessStore', () => {
   let http: HttpTestingController;
-  let store: InstanceType<typeof AgentTerminalStore>;
+  let store: InstanceType<typeof AgentHarnessStore>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -39,7 +40,7 @@ describe('AgentTerminalStore', () => {
       ],
     });
     http = TestBed.inject(HttpTestingController);
-    store = TestBed.inject(AgentTerminalStore);
+    store = TestBed.inject(AgentHarnessStore);
   });
 
   afterEach(() => http.verify());
@@ -66,21 +67,25 @@ describe('AgentTerminalStore', () => {
       status: 'loaded',
       kind: 'terminal',
       commandId,
+      running: true,
     });
   });
 
   it('calls a harness that runs as a chat a chat', async () => {
     const done = store.load(ROW, agentId);
     await answerWorktree(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
-    // The recorded list, with its one command a CHAT instead of a TERMINAL.
-    const list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands');
-    list.entries[0].command.kind = 'CHAT';
-    http.expectOne(`${BASE}/commands`).flush(list);
+    // "chatting" records the same command id, RUNNING as a CHAT.
+    http.expectOne(`${BASE}/commands`).flush(workspaceDaemonGoldenMaster(CHATTING, 'listCommands'));
     await done;
-    expect(store.harnessOf(ROW, agentId)?.kind).toBe('chat');
+    expect(store.harnessOf(ROW, agentId)).toEqual({
+      status: 'loaded',
+      kind: 'chat',
+      commandId,
+      running: true,
+    });
   });
 
-  it('shows no harness when its command is not running', async () => {
+  it('keeps a stopped harness’s kind and command, for its transcript', async () => {
     const done = store.load(ROW, agentId);
     await answerWorktree(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
     // The recorded list, with its one command EXITED.
@@ -90,8 +95,25 @@ describe('AgentTerminalStore', () => {
     await done;
     expect(store.harnessOf(ROW, agentId)).toEqual({
       status: 'loaded',
+      kind: 'terminal',
+      commandId,
+      running: false,
+    });
+  });
+
+  it('shows no harness when its command is gone from the list', async () => {
+    const done = store.load(ROW, agentId);
+    await answerWorktree(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
+    // The recorded list, emptied: the container restarted and has run nothing since.
+    const list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands');
+    list.entries = [];
+    http.expectOne(`${BASE}/commands`).flush(list);
+    await done;
+    expect(store.harnessOf(ROW, agentId)).toEqual({
+      status: 'loaded',
       kind: 'none',
       commandId: null,
+      running: false,
     });
   });
 

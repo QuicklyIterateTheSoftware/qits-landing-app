@@ -16,7 +16,7 @@ import { map } from 'rxjs';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { SelectedWork } from '$core/work/selected-work';
-import { AgentTerminalStore } from '$core/workspaces/agent-terminal.store';
+import { AgentHarnessStore } from '$core/workspaces/agent-harness.store';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import {
   EMPTY_TERMINAL_FRAMES,
@@ -41,7 +41,7 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
  * qits-workspaces-frontend's Terminal tab.
  *
  * The agent is the layout's (`AgentsStore.itemOf`, by the item's id); its harness's command comes
- * from its slot's daemon (`AgentTerminalStore`), read again after a lifecycle event about the agent
+ * from its slot's daemon (`AgentHarnessStore`), read again after a lifecycle event about the agent
  * or its slot (a restart is a new command). The screen attaches to that command's PTY socket on
  * qits-workspaces' origin (`terminalSocketUrl`, through `WEB_SOCKET`): deployed with the session
  * cookie, under `ng serve` with the bearer as a subprotocol. A socket that closes says so on the
@@ -125,7 +125,7 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
 export class AgentTerminalPage {
   private readonly work = inject(SelectedWork);
   private readonly agents = inject(AgentsStore);
-  private readonly harnesses = inject(AgentTerminalStore);
+  private readonly harnesses = inject(AgentHarnessStore);
   private readonly origins = inject(PlatformOrigins);
   private readonly openSocket = inject(WEB_SOCKET);
   private readonly document = inject(DOCUMENT);
@@ -157,7 +157,7 @@ export class AgentTerminalPage {
     const harness = this.harness();
     if (!harness || harness.status === 'loading') return 'loading';
     if (harness.status === 'error') return 'error';
-    if (harness.status === 'missing') return 'none';
+    if (harness.status === 'missing' || !harness.running) return 'none';
     return harness.kind;
   });
 

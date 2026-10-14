@@ -153,10 +153,31 @@ export const INTERACTIONS = {
    */
   'show-work-item-agent': 'A work item’s agent page shows its agent and what it waits on',
   /**
-   * `agent-terminal.page.ts` via `AgentTerminalStore.load`: the agent's Terminal tab finds its
+   * `agent-terminal.page.ts` via `AgentHarnessStore.load`: the agent's Terminal tab finds its
    * harness's command on the slot's daemon, to attach the terminal to (epic qits-1230).
    */
   'show-agent-terminal': 'An agent’s Terminal tab attaches to the agent’s running harness',
+  /**
+   * `agent-chat.page.ts` via `AgentHarnessStore.load`, `AgentChatStore.loadTranscript` and
+   * `AgentPromptStore.readDraft` (`prompt-composer.ts`): the agent's Chat tab finds its harness on
+   * the slot's daemon, shows its conversation (a terminal's transcript; a chat's socket) and
+   * restores the saved prompt draft (epic qits-1230).
+   */
+  'show-agent-chat': 'An agent’s Chat tab shows its conversation and the saved prompt draft',
+  /** `prompt-composer.ts` via `AgentPromptStore.saveDraft`: typing in the prompt box saves it. */
+  'save-prompt-draft': 'Typing a prompt for an agent saves it as the agent’s draft',
+  /** `prompt-composer.ts` via `AgentPromptStore.discardDraft`: the restored draft's Discard. */
+  'discard-prompt-draft': 'Discarding a restored prompt draft deletes it',
+  /**
+   * `prompt-composer.ts` via `AgentPromptStore.deliver`, then `discardDraft`: Send to the agent
+   * delivers the prompt to the item's agent and empties the draft.
+   */
+  'send-agent-prompt': 'Sending a prompt delivers it to the work item’s agent',
+  /** `prompt-composer.ts` via `AgentChatStore.refine`: rough notes rewritten into a prompt. */
+  'refine-agent-prompt':
+    'Refining rough notes rewrites them into a prompt in the agent’s container',
+  /** `agent-chat.page.ts` via `AgentChatStore.terminate`: Terminate ends a running chat. */
+  'terminate-agent-chat': 'Terminating an agent’s live chat ends its harness',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

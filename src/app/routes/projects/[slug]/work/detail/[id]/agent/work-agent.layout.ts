@@ -31,7 +31,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * awaited), its branch, and its slot — a link to the slot's page and its status strip — with the
  * log of the start bringing the slot's container up while one runs.
  *
- * A layout: the agent's tabs (`AGENT_TABS`: `terminal`; `chat` and `files` to come) are its child
+ * A layout: the agent’s tabs (`AGENT_TABS`: `chat` and `terminal`; `files` to come) are its child
  * routes, in a row of links below the header, shown once the agent is known; the empty child shows
  * the header alone.
  *
