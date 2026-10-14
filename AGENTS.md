@@ -94,6 +94,20 @@ viewer go to `PickedContext` (`core/workspaces/picked-context.ts`), which the Ch
 composer lists, inserts, saves in the draft (`{"text":…,"picked":[…]}`) and appends to what it
 sends when not pressed in.
 
+The workspace pages' writes (qits-1243) go through `AgentActionsStore`
+(`core/workspaces/agent-actions.store.ts`): the Workspaces page's "New agent" form
+(`patterns/workspaces/create-agent-form/`: a ticket or an epic of the project from `SelectedWork`, a
+harness, admin mode; `createAgent`, then the item's agent page), a slot's container verbs on the slot
+and agent pages (`patterns/workspaces/container-actions/`: `ensure-`, `stop-`, `recreate-container`)
+and Discard on the agent page (`patterns/workspaces/agent-discard/`: confirmed, then `force` after the
+service's 409). A refusal is shown in the service's words: the store reads the error body's `message`
+and `code` (`consume`'s error paths, `REFUSAL`), and the pact binds them on each recorded refusal.
+After a write the page reads its data again. The Terminal tab also shows the sign-in notice
+(`AgentSignInStore`: the daemon's `availableAgents`, `authenticated: false`; Open the sign-in terminal
+is `openSignInTerminal`, whose command the screen attaches to until it ends) and the plugins on the
+shared agent home (`AgentPluginsStore`: `listPlugins`, `installPlugin`). No recording holds a
+successful recreate or a forced discard, so their success paths are covered by plain specs only.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -180,12 +194,12 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                                                | Pact file                                             | Golden masters                          |
-| ----------------------- | ------------------------------------------------------------------ | ----------------------------------------------------- | --------------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`                                 | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
-| qits-githost-service    | `core/loc/loc.store*.ts`                                           | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt}.store*.ts`       | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat,agent-files}.store*.ts` | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
+| Provider                | Store and pact spec                                                                            | Pact file                                             | Golden masters                          |
+| ----------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`                                                             | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
+| qits-githost-service    | `core/loc/loc.store*.ts`                                                                       | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions}.store*.ts`                     | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts` | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

@@ -8,6 +8,144 @@
         "references": {
           "qits-call": {
             "app": "qits-workspace-daemon",
+            "operationId": "installPlugin"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "install-agent-plugin",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "install-agent-plugin: installPlugin",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with plugins installed",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {},
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-plugins/pyright-lsp/install",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/container/1/agent-plugins/pyright-lsp/install"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "installed": [
+              {
+                "enabled": true,
+                "pluginId": "jdtls-lsp@claude-plugins-official"
+              },
+              {
+                "enabled": true,
+                "pluginId": "jdtls-lsp@claude-plugins-official"
+              },
+              {
+                "enabled": true,
+                "pluginId": "jdtls-lsp@claude-plugins-official"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.installed": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.installed[*].enabled": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.installed[*].pluginId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
             "operationId": "listFiles"
           },
           "qits-trigger": {
@@ -292,6 +430,106 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "openSignInTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-sign-in-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-sign-in-terminal: openSignInTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with a harness nobody signed in",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "agentType": "CLAUDE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agents/sign-in",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/container/1/agents/sign-in"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "command": {
+              "id": "00000000-0000-4000-8000-000000000100"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.command.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             }
@@ -1226,6 +1464,358 @@
                 {
                   "match": "type"
                 },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "listPlugins"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-plugins",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-plugins: listPlugins",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with plugins installed",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-plugins",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-plugins"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "installed": [
+              {
+                "enabled": true,
+                "pluginId": "jdtls-lsp@claude-plugins-official"
+              },
+              {
+                "enabled": true,
+                "pluginId": "jdtls-lsp@claude-plugins-official"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.installed": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.installed[*].enabled": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.installed[*].pluginId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "availableAgents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-sign-in",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-sign-in: availableAgents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with a harness nobody signed in",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agents/available",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agents/available"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "capabilities": [
+              {
+                "authDetail": "Nobody is signed in on the shared credential volume. Open the sign-in terminal to sign in once for every container.",
+                "authenticated": false,
+                "harness": "CLAUDE"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.capabilities": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.capabilities[*].authDetail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.capabilities[*].authenticated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.capabilities[*].harness": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "availableAgents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-sign-in",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-sign-in: availableAgents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with a signed-in harness",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agents/available",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agents/available"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "capabilities": [
+              {
+                "authDetail": "Signed in on the shared credential volume.",
+                "authenticated": true,
+                "harness": "CLAUDE"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.capabilities": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.capabilities[*].authDetail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.capabilities[*].authenticated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.capabilities[*].harness": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "type"
                 }

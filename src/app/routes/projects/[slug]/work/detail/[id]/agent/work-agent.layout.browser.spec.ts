@@ -22,12 +22,16 @@ import { goldenMaster } from '../../../../../../../../testing/browser/golden-mas
  * `localhost` while a start is live. The start's log stream opens but sends nothing here: the log's
  * segments are `ui-segment-log`'s own screenshots.
  *
+ * Its Discard is refused as qits-workspaces' "an agent with leftover work" refuses it (409
+ * `AGENT_HAS_LEFTOVER_WORK`, the same agent), and the page offers to discard it anyway.
+ *
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
  */
 
 const ITEM = 'contract-00000001-10';
 const WORK = 'a bug ticket in detail';
 const STARTING = 'an agent whose workspace is starting';
+const LEFTOVER = 'an agent with leftover work';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -132,6 +136,34 @@ describe('WorkAgentLayout (screenshots)', () => {
       `https://workspaces.test/workspaces/api/technical-processes/${process.technicalProcessId}/events`,
     ]);
     await expect.element(view).toMatchScreenshot('starting');
+  });
+
+  it('shows a refused discard in the service’s words, and offers force', async () => {
+    const { harness, element } = await render();
+    const agents = await goldenMaster(STARTING, 'listAgents', 'qits-workspaces');
+    const agent = agents.agents[0];
+    http.expectOne(`/workspaces/api/agents?workId=${agent.workId}`).flush(agents);
+    await answered(harness);
+    http
+      .expectOne(`/workspaces/api/workspaces/${agent.workspaceRowId}`)
+      .flush(await goldenMaster(STARTING, 'getWorkspace', 'qits-workspaces'));
+    http
+      .expectOne(`/workspaces/api/workspaces/${agent.workspaceRowId}/active-process`)
+      .flush(await goldenMaster(STARTING, 'getWorkspaceActiveProcess', 'qits-workspaces'));
+    await answered(harness);
+    const view = page.elementLocator(element);
+    await view.getByRole('button', { name: 'Discard', exact: true }).click();
+    harness.fixture.detectChanges();
+    await view.getByRole('button', { name: 'Confirm discard?' }).click();
+    await settle();
+    const refusal = await goldenMaster(LEFTOVER, 'discardAgent', 'qits-workspaces');
+    const request = http.expectOne(`/workspaces/api/agents/${agent.agentId}/discard`);
+    expect(request.request.body).toEqual({ force: false });
+    request.flush(refusal, { status: 409, statusText: 'Conflict' });
+    await answered(harness);
+    await expect.element(view).toMatchTextContent(refusal.message);
+    await expect.element(view.getByRole('button', { name: 'Discard anyway' })).toBeVisible();
+    await expect.element(view).toMatchScreenshot('discard-refused');
   });
 
   it('marks the agent as failed to load', async () => {

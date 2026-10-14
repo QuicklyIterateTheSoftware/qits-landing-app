@@ -191,6 +191,46 @@ export const INTERACTIONS = {
    * a picked reference) shows its text; turning an ignore list on reads its ignore files.
    */
   'open-agent-file': 'Opening a file in the Files tab shows its text',
+  /**
+   * `create-agent-form.ts` (the Workspaces page) via `AgentActionsStore.createAgent`: Create agent
+   * makes an agent for a ticket or an epic, in the chosen harness and posture, and opens it; an
+   * item that already has one opens that one (epic qits-1230).
+   */
+  'create-agent': 'Create agent on the Workspaces page starts an agent on a work item',
+  /**
+   * `agent-discard.ts` (a slot's page, an item's agent page) via `AgentActionsStore.discardAgent`:
+   * Discard, confirmed, removes the agent; a refusal (leftover work, a daemon that does not answer)
+   * is shown with the service's reason.
+   */
+  'discard-agent': 'Discarding an agent removes it, or says why the service refused',
+  /**
+   * `agent-discard.ts` via `AgentActionsStore.discardAgent(…, true)`: after a refusal, Discard
+   * anyway removes the agent with `force`, throwing its leftover work away.
+   */
+  'force-discard-agent': 'Discard anyway removes a refused agent and its leftover work',
+  /** `container-actions.ts` via `AgentActionsStore.ensureContainer`: Start on a slot's container. */
+  'start-workspace-container': 'Start on a workspace slot brings its container up',
+  /** `container-actions.ts` via `AgentActionsStore.stopContainer`: Stop on a slot's container. */
+  'stop-workspace-container': 'Stop on a workspace slot stops its container',
+  /**
+   * `container-actions.ts` via `AgentActionsStore.recreateContainer`: Recreate, confirmed, replaces
+   * a slot's container (refused unless its working tree is provably clean).
+   */
+  'recreate-workspace-container': 'Recreate on a workspace slot replaces its container',
+  /**
+   * `agent-terminal.page.ts` via `AgentSignInStore.loadReport`: the Terminal tab reads the slot
+   * daemon's harness report, and says so when nobody signed the agent's harness in.
+   */
+  'show-agent-sign-in': 'An agent’s Terminal tab says when nobody signed its harness in',
+  /**
+   * `sign-in-notice.ts` via `AgentSignInStore.open`: Open the sign-in terminal starts the harness's
+   * sign-in in the slot's container, which the Terminal tab then attaches to.
+   */
+  'open-sign-in-terminal': 'Opening the sign-in terminal starts a harness sign-in in the container',
+  /** `plugins-section.ts` via `AgentPluginsStore.load`: the plugins on the shared agent home. */
+  'show-agent-plugins': 'An agent’s Terminal tab lists the plugins on the shared agent home',
+  /** `plugins-section.ts` via `AgentPluginsStore.install`: Install on a plugin not installed yet. */
+  'install-agent-plugin': 'Install on a plugin installs it on the shared agent home',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

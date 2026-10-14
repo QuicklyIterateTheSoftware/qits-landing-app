@@ -8,6 +8,525 @@
         "references": {
           "qits-call": {
             "app": "qits-workspaces-service",
+            "operationId": "createAgent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "create-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "create-agent: createAgent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace slot hosting agents",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "bugTicketQualifiedId": "contract-00000001-10",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "improvementTicketQualifiedId": "contract-00000001-11",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "admin": false,
+            "entityId": "{bugTicketQualifiedId}",
+            "kind": "TICKET",
+            "repositoryId": "{repositoryId}",
+            "workId": "{bugTicketId}"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/workspaces/api/agents"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "agent": {
+              "agentId": "00000000-0000-4000-8000-0000000000a1"
+            },
+            "fresh": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.agent.agentId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.fresh": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "createAgent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "create-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "create-agent: createAgent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a wrapper repository and a ticket to dispatch",
+          "params": {
+            "repositoryId": "00000000-0000-4000-8000-000000000014",
+            "ticketId": "00000000-0000-4000-8000-000000000001",
+            "ticketQualifiedId": "contract-00000001-10",
+            "wrapperBranch": "ticket/contract-00000001-10"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "admin": false,
+            "entityId": "{ticketQualifiedId}",
+            "harness": "CLAUDE",
+            "instruction": "Fix contract-00000001-10.",
+            "kind": "TICKET",
+            "repositoryId": "{repositoryId}",
+            "workId": "{ticketId}"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/workspaces/api/agents"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "agent": {
+              "agentId": "00000000-0000-4000-8000-000000000100"
+            },
+            "fresh": true
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.agent.agentId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.fresh": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "discardAgent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "discard-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "discard-agent: discardAgent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an agent waiting for a workspace slot",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a5",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "force": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/agents/${agentId}/discard",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/agents/00000000-0000-4000-8000-0000000000a5/discard"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "state": "REMOVED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "discardAgent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "discard-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "discard-agent: discardAgent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an agent whose workspace daemon is not connected",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "force": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/agents/${agentId}/discard",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/discard"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "AGENT_DAEMON_UNREACHABLE",
+            "message": "The agent's workspace daemon does not answer, so its worktrees cannot be checked; discard with force to remove the agent anyway."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "discardAgent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "discard-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "discard-agent: discardAgent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an agent with leftover work",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "force": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/agents/${agentId}/discard",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/discard"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "AGENT_HAS_LEFTOVER_WORK",
+            "message": "The agent's worktrees hold work that never reached the git host: uncommitted changes in qits-ci-service; 1 unpushed commit(s) in wrapper on ticket/contract-00000001-10. Discard with force to throw it away."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
             "operationId": "deleteAgentPromptDraft"
           },
           "qits-trigger": {
@@ -51,6 +570,92 @@
       },
       "response": {
         "status": 204
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "recreateWorkspaceContainer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "recreate-workspace-container",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "recreate-workspace-container: recreateWorkspaceContainer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an agent whose workspace daemon is not connected",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/workspaces/${workspaceId}/recreate-container",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/workspaces/1/recreate-container"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "Cannot recreate workspace 'ws-contract': its working tree must be clean, but its reported state is unknown. Commit or discard changes, and ensure its daemon is connected, first."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 400
       },
       "type": "Synchronous/HTTP"
     },
@@ -2604,6 +3209,377 @@
                       }
                     }
                   ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "ensureWorkspaceContainer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "start-workspace-container",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "start-workspace-container: ensureWorkspaceContainer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a stopped workspace slot on a runner in service",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/workspaces/${workspaceId}/ensure-container",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/workspaces/1/ensure-container"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "technicalProcessId": "00000000-0000-4000-8000-000000000100"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.technicalProcessId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "ensureWorkspaceContainer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "start-workspace-container",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "start-workspace-container: ensureWorkspaceContainer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace slot on a disconnected runner",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/workspaces/${workspaceId}/ensure-container",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/workspaces/1/ensure-container"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "RUNNER_UNAVAILABLE",
+            "message": "Workspace 1 is on a runner that is offline; it cannot start until the runner is back"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "stopWorkspaceContainer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "stop-workspace-container",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "stop-workspace-container: stopWorkspaceContainer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace slot on a disconnected runner",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/workspaces/${workspaceId}/stop-container",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/workspaces/1/stop-container"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "RUNNER_UNAVAILABLE",
+            "message": "Workspace 1 is on a runner that is offline; it cannot stop until the runner is back"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "stopWorkspaceContainer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "stop-workspace-container",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "stop-workspace-container: stopWorkspaceContainer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace slot running on a runner in service",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/workspaces/${workspaceId}/stop-container",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/workspaces/1/stop-container"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "runtimeStatus": "STOPPED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.runtimeStatus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             }

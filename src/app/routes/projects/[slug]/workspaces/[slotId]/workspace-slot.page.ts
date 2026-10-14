@@ -16,14 +16,16 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentRow } from '$patterns/workspaces/agent-row/agent-row';
+import { ContainerActions } from '$patterns/workspaces/container-actions/container-actions';
 import { SlotStatus } from '$patterns/workspaces/slot-status/slot-status';
 import { StartingLog } from '$patterns/workspaces/starting-log/starting-log';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
- * One workspace slot, at `/projects/<slug>/workspaces/<slot id>` (epic qits-1230): the read part of
+ * One workspace slot, at `/projects/<slug>/workspaces/<slot id>` (epic qits-1230), ported from
  * qits-workspaces-frontend's workspace page. A slot hosts agents and runs one working agent at a
- * time. Its status strip (container, runner, daemon, how many agents), the log of the start
+ * time. Its status strip (container, runner, daemon, how many agents) with the container's verbs
+ * (`app-container-actions`: start or stop, recreate; read again after each), the log of the start
  * bringing its container up while one runs, and the agents it hosts — each a link to its work
  * item's agent page.
  *
@@ -33,7 +35,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-workspace-slot-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AgentRow, PageLayoutComponent, SlotStatus, Spinner, StartingLog],
+  imports: [AgentRow, ContainerActions, PageLayoutComponent, SlotStatus, Spinner, StartingLog],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -56,6 +58,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 [slot]="slot"
                 [hosted]="agentsLoaded() ? agents().length : undefined"
               />
+              <app-container-actions [slot]="slot" (changed)="reload()" />
               @if (processId(); as processId) {
                 <app-starting-log [processId]="processId" />
               }
@@ -129,7 +132,12 @@ export class WorkspaceSlotPage {
     this.store.follow(
       inject(DestroyRef),
       () => ({ workspaceId: String(this.slotId()) }),
-      () => void this.store.loadSlot(this.slotId()),
+      () => this.reload(),
     );
+  }
+
+  /** Reads the slot and its agents again (after a lifecycle event, a container verb). */
+  protected reload(): void {
+    void this.store.loadSlot(this.slotId());
   }
 }

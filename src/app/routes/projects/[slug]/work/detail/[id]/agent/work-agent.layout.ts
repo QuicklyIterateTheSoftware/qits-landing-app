@@ -18,6 +18,8 @@ import { activityLabel, agentWaitLabel, runStateLabel } from '$core/workspaces/a
 import { AGENT_TABS } from '$core/workspaces/agent-tabs';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { AgentDiscard } from '$patterns/workspaces/agent-discard/agent-discard';
+import { ContainerActions } from '$patterns/workspaces/container-actions/container-actions';
 import { SlotStatus } from '$patterns/workspaces/slot-status/slot-status';
 import { StartingLog } from '$patterns/workspaces/starting-log/starting-log';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
@@ -25,11 +27,13 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
  * A work item's agent, at `/projects/<slug>/work/detail/<qualified id>/agent` (epic qits-1230):
- * where the item's Workspace links lead. The read part of qits-workspaces-frontend's agent page,
- * without its tabs: what the agent works on, how it runs (its lifecycle and run state, what it is
+ * where the item's Workspace links lead, ported from qits-workspaces-frontend's agent page. What the
+ * agent works on, how it runs (its lifecycle and run state, what it is
  * doing), what it waits on and since when (qits-1229; "waiting on you" only when a person is
- * awaited), its branch, and its slot — a link to the slot's page and its status strip — with the
- * log of the start bringing the slot's container up while one runs.
+ * awaited), its branch, Discard (`app-agent-discard`: confirmed, and with force after the service
+ * refused), and its slot — a link to the slot's page, its status strip and its container's verbs
+ * (`app-container-actions`) — with the log of the start bringing the slot's container up while one
+ * runs. After a discard or a container verb the agent is read again.
  *
  * A layout: the agent’s tabs (`AGENT_TABS`: `chat`, `files` and `terminal`) are its child
  * routes, in a row of links below the header, shown once the agent is known; the empty child shows
@@ -44,7 +48,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   selector: 'app-work-agent-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AgentDiscard,
     Chip,
+    ContainerActions,
     PageLayoutComponent,
     RouterLink,
     RouterLinkActive,
@@ -108,6 +114,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                     <code class="font-mono text-xs">{{ branch }}</code>
                   </p>
                 }
+                @if (agent.agentId && agent.state !== 'REMOVED') {
+                  <app-agent-discard [agentId]="agent.agentId" (discarded)="reload()" />
+                }
               </section>
 
               <section class="flex flex-col gap-3" aria-labelledby="agent-workspace">
@@ -125,6 +134,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   >
                   @if (slot(); as slot) {
                     <app-slot-status [slot]="slot" />
+                    <app-container-actions [slot]="slot" (changed)="reload()" />
                   }
                 } @else if (agent.state !== 'REMOVED') {
                   <p class="m-0 text-sm text-charcoal-brown-600">
@@ -237,11 +247,14 @@ export class WorkAgentLayout {
         agentId: this.agent()?.agentId,
         workspaceId: this.agent()?.workspaceRowId?.toString(),
       }),
-      () => {
-        const id = this.workId();
-        if (id) void this.store.loadItem(id);
-      },
+      () => this.reload(),
     );
+  }
+
+  /** Reads the agent and its slot again (after a lifecycle event, a discard, a container verb). */
+  protected reload(): void {
+    const id = this.workId();
+    if (id) void this.store.loadItem(id);
   }
 
   protected slotLink(rowId: number): string {

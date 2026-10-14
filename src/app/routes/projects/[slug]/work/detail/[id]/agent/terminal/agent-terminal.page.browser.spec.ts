@@ -27,6 +27,10 @@ import { AgentTerminalPage } from './agent-terminal.page';
  * not removed). Its harness is qits-workspace-daemon's "a workspace daemon with an agent running",
  * which names the same agent in slot 1: a RUNNING TERMINAL command.
  *
+ * The slot's daemon reports the harness signed in ("a workspace daemon with a signed-in harness"),
+ * or nobody signed in ("… a harness nobody signed in", the sign-in notice), and the plugins on the
+ * shared agent home ("a workspace daemon with plugins installed"); all three name slot 1.
+ *
  * The socket is a fake (`WEB_SOCKET`): it opens when told and delivers a few lines of shell output,
  * raw terminal text that no golden master records. The event streams never connect.
  */
@@ -35,6 +39,9 @@ const ITEM = 'contract-00000001-10';
 const WORK = 'a bug ticket in detail';
 const SLOT = 'a workspace slot hosting agents';
 const RUNNING = 'a workspace daemon with an agent running';
+const SIGNED_IN = 'a workspace daemon with a signed-in harness';
+const SIGNED_OUT = 'a workspace daemon with a harness nobody signed in';
+const PLUGINS = 'a workspace daemon with plugins installed';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
 /** A socket the spec drives by hand. */
@@ -128,7 +135,7 @@ describe('AgentTerminalPage (screenshots)', () => {
   }
 
   /** Opens the Terminal tab and answers the project, its work, the agent, its slot and harness. */
-  async function render() {
+  async function render(report = SIGNED_IN) {
     await page.viewport(900, 900);
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
@@ -161,6 +168,12 @@ describe('AgentTerminalPage (screenshots)', () => {
       .flush(await goldenMaster(SLOT, 'getWorkspaceActiveProcess', 'qits-workspaces'));
     await answered(harness);
     const base = `https://workspaces.test/workspaces/container/${slot}`;
+    http
+      .expectOne(`${base}/agents/available`)
+      .flush(await goldenMaster(report, 'availableAgents', 'qits-workspace-daemon'));
+    http
+      .expectOne(`${base}/agent-plugins`)
+      .flush(await goldenMaster(PLUGINS, 'listPlugins', 'qits-workspace-daemon'));
     http
       .expectOne(`${base}/agent-worktrees/${agent.agentId}`)
       .flush(await goldenMaster(RUNNING, 'getAgentWorktree', 'qits-workspace-daemon'));
@@ -211,4 +224,28 @@ describe('AgentTerminalPage (screenshots)', () => {
     await expect.element(view.getByRole('button', { name: 'Try to attach again' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('lost');
   }, 30_000);
+
+  it('says nobody signed the harness in, and offers the sign-in terminal', async () => {
+    const { harness, element } = await render(SIGNED_OUT);
+    sockets[0].open();
+    await answered(harness);
+    const view = page.elementLocator(element);
+    const notice = page.elementLocator(element.querySelector('app-sign-in-notice')!);
+    await expect.element(notice).toMatchTextContent('Nobody has signed Claude Code in');
+    await expect
+      .element(notice.getByRole('button', { name: 'Open the sign-in terminal' }))
+      .toBeVisible();
+    await expect.element(notice).toMatchScreenshot('sign-in-notice');
+    await expect.element(view.getByRole('heading', { name: 'Plugins' })).toBeVisible();
+  });
+
+  it('lists the plugins on the shared agent home', async () => {
+    const { harness, element } = await render();
+    sockets[0].open();
+    await answered(harness);
+    const plugins = page.elementLocator(element.querySelector('app-plugins-section')!);
+    await expect.element(plugins).toMatchTextContent('installed, switched off');
+    await expect.element(plugins.getByRole('button', { name: 'Install' }).first()).toBeVisible();
+    await expect.element(plugins).toMatchScreenshot('plugins');
+  });
 });

@@ -50,6 +50,9 @@ class FakeSocket implements WebSocketLike {
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const RUNNING = 'a workspace daemon with an agent running';
+const SIGNED_IN = 'a workspace daemon with a signed-in harness';
+const SIGNED_OUT = 'a workspace daemon with a harness nobody signed in';
+const PLUGINS = 'a workspace daemon with plugins installed';
 const ORIGIN = 'https://workspaces.qits.example';
 const ITEM = 'contract-00000001-10';
 const { agentId, workspaceRowId, commandId } = workspaceDaemonGoldenMasters.operation(
@@ -108,9 +111,18 @@ describe('AgentTerminalPage', () => {
 
   const text = () => (harness.routeNativeElement as HTMLElement).textContent ?? '';
 
-  async function open(list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands')) {
+  async function open(
+    list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands'),
+    report = SIGNED_IN,
+  ) {
     await harness.navigateByUrl(`/agent/${ITEM}/terminal`);
     await settle();
+    http
+      .expectOne(`${BASE}/agents/available`)
+      .flush(workspaceDaemonGoldenMaster(report, 'availableAgents'));
+    http
+      .expectOne(`${BASE}/agent-plugins`)
+      .flush(workspaceDaemonGoldenMaster(PLUGINS, 'listPlugins'));
     http
       .expectOne(`${BASE}/agent-worktrees/${agentId}`)
       .flush(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
@@ -191,5 +203,83 @@ describe('AgentTerminalPage', () => {
     await open();
     await harness.navigateByUrl(`/agent/${ITEM}`);
     expect(sockets[0].closed).toBe(true);
+  });
+
+  const button = (label: string) =>
+    Array.from((harness.routeNativeElement as HTMLElement).querySelectorAll('button')).find((b) =>
+      b.textContent?.includes(label),
+    )!;
+
+  it('shows no sign-in notice while the harness is signed in, and lists the plugins', async () => {
+    await open();
+    expect(text()).not.toContain('Nobody has signed');
+    expect(text()).toContain('Plugins');
+    expect(text()).toContain('Java language server');
+    expect(text()).toContain('installed, switched off');
+  });
+
+  it('says nobody signed the harness in, and attaches to the sign-in terminal it opens', async () => {
+    await open(undefined, SIGNED_OUT);
+    expect(text()).toContain('Nobody has signed Claude Code in');
+    sockets[0].open();
+    button('Open the sign-in terminal').click();
+    await settle();
+    const request = http.expectOne(`${BASE}/agents/sign-in`);
+    expect(request.request.body).toEqual({ agentType: 'CLAUDE' });
+    const terminal = workspaceDaemonGoldenMaster(SIGNED_OUT, 'openSignInTerminal');
+    request.flush(terminal);
+    await settle();
+    harness.detectChanges();
+    expect(text()).toContain('The sign-in terminal.');
+    expect(text()).not.toContain('Nobody has signed');
+    expect(sockets[0].closed).toBe(true);
+    // The daemon's recordings freeze both commands' ids to the same value; the socket is new.
+    expect(sockets[1].url).toBe(
+      `wss://workspaces.qits.example/workspaces/container/${workspaceRowId}/terminal/commands/${terminal.command.id}`,
+    );
+    // The sign-in ends: the terminal goes, the report is read again, and the harness is back.
+    sockets[1].open();
+    sockets[1].serverClose(1000);
+    harness.detectChanges();
+    await settle();
+    http
+      .expectOne(`${BASE}/agents/available`)
+      .flush(workspaceDaemonGoldenMaster(SIGNED_IN, 'availableAgents'));
+    await settle();
+    harness.detectChanges();
+    expect(text()).not.toContain('The sign-in terminal.');
+    expect(sockets[2].url).toContain(`/terminal/commands/${commandId}`);
+  });
+
+  it('says why the sign-in terminal did not open', async () => {
+    await open(undefined, SIGNED_OUT);
+    button('Open the sign-in terminal').click();
+    await settle();
+    // No refused sign-in is recorded; an error answer is only a status and its message.
+    http
+      .expectOne(`${BASE}/agents/sign-in`)
+      .flush({ message: 'Coding agents are not wired yet.' }, { status: 503, statusText: 'No' });
+    await settle();
+    harness.detectChanges();
+    expect(text()).toContain('The sign-in terminal did not open — 503 Coding agents are not wired');
+  });
+
+  it('installs a plugin and shows the refreshed list', async () => {
+    await open();
+    const install = Array.from(
+      (harness.routeNativeElement as HTMLElement).querySelectorAll('li'),
+    ).find((li) => li.textContent?.includes('Python language server'))!;
+    install.querySelector('button')!.click();
+    await settle();
+    http
+      .expectOne(`${BASE}/agent-plugins/pyright-lsp/install`)
+      .flush(workspaceDaemonGoldenMaster(PLUGINS, 'installPlugin'));
+    await settle();
+    harness.detectChanges();
+    const row = Array.from((harness.routeNativeElement as HTMLElement).querySelectorAll('li')).find(
+      (li) => li.textContent?.includes('Python language server'),
+    )!;
+    expect(row.textContent).toContain('installed');
+    expect(row.querySelector('button')).toBeNull();
   });
 });
