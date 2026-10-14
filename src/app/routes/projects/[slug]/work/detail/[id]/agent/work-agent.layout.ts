@@ -10,11 +10,12 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { activityLabel, agentWaitLabel, runStateLabel } from '$core/workspaces/agent-labels';
+import { AGENT_TABS } from '$core/workspaces/agent-tabs';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { SlotStatus } from '$patterns/workspaces/slot-status/slot-status';
@@ -30,8 +31,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * awaited), its branch, and its slot — a link to the slot's page and its status strip — with the
  * log of the start bringing the slot's container up while one runs.
  *
- * A layout: the agent's tabs (`terminal`, `chat`, `files`) come as its child routes, below the
- * header; the empty child shows nothing for now.
+ * A layout: the agent's tabs (`AGENT_TABS`: `terminal`; `chat` and `files` to come) are its child
+ * routes, in a row of links below the header, shown once the agent is known; the empty child shows
+ * the header alone.
  *
  * The item comes from the project's work (`SelectedWork`, by the URL's qualified id), its agent
  * from `AgentsStore.loadItem` by the item's id: its newest agent that is not removed. Read again
@@ -41,7 +43,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-work-agent-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, RouterLink, RouterOutlet, SlotStatus, Spinner, StartingLog],
+  imports: [
+    Chip,
+    PageLayoutComponent,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    SlotStatus,
+    Spinner,
+    StartingLog,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -128,12 +139,30 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             </div>
           }
         </ui-spinner>
-        <router-outlet />
+        @if (agent()) {
+          <nav class="mt-8" aria-label="Agent">
+            <ul class="m-0 flex list-none gap-1 overflow-x-auto border-b border-gray-200 p-0">
+              @for (tab of tabs; track tab.segment) {
+                <li class="shrink-0">
+                  <a
+                    class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:border-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
+                    [routerLink]="tab.segment"
+                    routerLinkActive=""
+                    ariaCurrentWhenActive="page"
+                    >{{ tab.label }}</a
+                  >
+                </li>
+              }
+            </ul>
+          </nav>
+          <div class="pt-4"><router-outlet /></div>
+        }
       </app-page-layout>
     </div>
   `,
 })
 export class WorkAgentLayout {
+  protected readonly tabs = AGENT_TABS;
   private readonly selected = inject(SelectedProject);
   private readonly work = inject(SelectedWork);
   private readonly store = inject(AgentsStore);

@@ -152,6 +152,11 @@ export const INTERACTIONS = {
    * waits on, and its slot while the container comes up.
    */
   'show-work-item-agent': 'A work item’s agent page shows its agent and what it waits on',
+  /**
+   * `agent-terminal.page.ts` via `AgentTerminalStore.load`: the agent's Terminal tab finds its
+   * harness's command on the slot's daemon, to attach the terminal to (epic qits-1230).
+   */
+  'show-agent-terminal': 'An agent’s Terminal tab attaches to the agent’s running harness',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

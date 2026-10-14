@@ -49,7 +49,7 @@ import { sessionGuard } from '$core/auth/session.guard';
  * agents (`ProjectWorkspacesPage`), `workspaces/<slot id>` is one slot (`WorkspaceSlotPage`). A
  * work item's agent is at `work/detail/<qualified id>/agent` (`WorkAgentLayout`), where the
  * Workspace links on cards and on the item's page lead: a layout, whose children are the agent's
- * tabs, with an empty default for now. A literal page below `workspaces` (`runners`) goes before
+ * tabs (`agent/terminal`, `AgentTerminalPage`), with an empty default. A literal page below `workspaces` (`runners`) goes before
  * `workspaces/:slotId`, so it wins over a slot id.
  *
  * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
@@ -90,8 +90,17 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout').then(
             (m) => m.WorkAgentLayout,
           ),
-        // The agent's tabs come here; none yet.
-        children: [{ path: '', children: [] }],
+        // The agent's tabs (`AGENT_TABS`); the bare URL shows the agent alone.
+        children: [
+          { path: '', children: [] },
+          {
+            path: 'terminal',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/work/detail/[id]/agent/terminal/agent-terminal.page').then(
+                (m) => m.AgentTerminalPage,
+              ),
+          },
+        ],
       },
       {
         path: 'projects/:slug/work',

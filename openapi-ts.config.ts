@@ -20,12 +20,21 @@ const services = [
   'qits-maintenance/qits-maintenance-service',
   'qits-workspaces/qits-workspaces-service',
   'qits-ci/qits-ci-service',
+  // The workspace daemon (epic qits-1230): its paths are its own (`/commands`), reached through
+  // qits-workspaces' container proxy, so a call sets its `baseUrl` to the container's prefix.
+  'qits-workspaces/qits-workspace-daemon',
 ];
+
+/** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */
+const output = (service: string) =>
+  service.endsWith('/qits-workspace-daemon')
+    ? 'workspace-daemon'
+    : service.split('/')[0].replace(/^qits-/, '');
 
 export default defineConfig(
   services.map((service) => ({
     input: `${siblings}/${service}/docs/openapi.yml`,
-    output: `src/app/api/${service.split('/')[0].replace(/^qits-/, '')}`,
+    output: `src/app/api/${output(service)}`,
     plugins: ['@hey-api/client-angular', '@hey-api/typescript', '@hey-api/sdk', '@angular/common'],
   })),
 );

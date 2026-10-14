@@ -51,6 +51,18 @@ name their wrapper, slot, item or agent, at most once a second (`AgentsStore.fol
 start's log is not a domain event: `ProcessLog` reads that one process's own stream on
 qits-workspaces' origin (`/workspaces/api/technical-processes/{id}/events`), through `EVENT_SOURCE`.
 
+An agent's terminal (`…/agent/terminal`, `AgentTerminalPage`) is a WebSocket, not a domain event:
+the slot's daemon, through qits-workspaces' container proxy, at
+`wss://workspaces.<domain>/workspaces/container/<slot row id>/terminal/commands/<command id>`
+(`terminalSocketUrl`), opened through `WEB_SOCKET` (`core/platform/web-socket.ts`; specs fake it).
+`AgentTerminalStore` finds the command: the daemon's `getAgentWorktree` and `listCommands`, through
+the same proxy (the generated client in `api/workspace-daemon/`, each call's `baseUrl` the
+container's prefix). `TerminalSocket` sends `{"type":"data"}` and `{"type":"resize"}` frames, treats
+a server close with 1000 as final and reconnects after any other (0.5, 1, 2, 4, 4 s, then `lost`
+until the button, `visibilitychange` or `online`). The screen is xterm.js
+(`ui/components/terminal-screen/`), loaded lazily in the browser only; its stylesheet is imported in
+`src/styles.css`.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -137,11 +149,12 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                             | Pact file                                             | Golden masters                    |
-| ----------------------- | ----------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`              | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`   |
-| qits-githost-service    | `core/loc/loc.store*.ts`                        | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`    |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters` |
+| Provider                | Store and pact spec                             | Pact file                                             | Golden masters                          |
+| ----------------------- | ----------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`              | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
+| qits-githost-service    | `core/loc/loc.store*.ts`                        | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon   | `core/workspaces/agent-terminal.store*.ts`      | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

@@ -1,0 +1,280 @@
+{
+  "consumer": {
+    "name": "qits-landing-app"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "getAgentWorktree"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-terminal: getAgentWorktree",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with a signed-in harness",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "getAgentWorktree"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-terminal: getAgentWorktree",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent running",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "commandId": "00000000-0000-4000-8000-000000000100"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.commandId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspace-daemon",
+            "operationId": "listCommands"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-agent-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-agent-terminal: listCommands",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace daemon with an agent running",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "commandId": "00000000-0000-4000-8000-000000000100",
+            "workspaceRowId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/container/${workspaceRowId}/commands",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/container/1/commands"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "command": {
+                  "id": "00000000-0000-4000-8000-000000000100",
+                  "kind": "TERMINAL",
+                  "status": "RUNNING"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.entries[*].command.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].command.kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entries[*].command.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "qits-workspace-daemon"
+  }
+}
