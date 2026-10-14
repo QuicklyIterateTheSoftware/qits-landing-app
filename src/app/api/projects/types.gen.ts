@@ -310,7 +310,7 @@ export type CatalogEntryRequest = {
 export type CatalogListResponse = {
     entries?: Array<AgentMcpCatalogEntryDto>;
     /**
-     * Keys an entry may not claim — the platform's own servers.
+     * Keys an entry may not claim: the platform's own server and the retired ones.
      */
     reservedKeys?: Array<string>;
     /**
@@ -769,6 +769,7 @@ export type EntitySummary = {
     assignee?: string;
     createdBy?: string;
     supersededBy?: string;
+    outcome?: WorkOutcome;
     repositoryId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
@@ -799,6 +800,7 @@ export type EntityTransition = {
     implementedAt?: Instant;
     dependsOn?: string;
     acceptanceCriteria?: Array<string>;
+    outcome?: WorkOutcome;
 };
 
 export type Entry = {
@@ -965,7 +967,7 @@ export type ListResponse2 = {
 
 export type McpAttachmentRequest = {
     /**
-     * repository, observability or actions
+     * qits, the one built-in server
      */
     server?: string;
     narrowProject?: boolean;
@@ -1047,6 +1049,13 @@ export type ProjectDto = {
     description?: string;
     dns?: ProjectDnsRecordDto;
     frontDeskLifecycle?: FrontDeskLifecycle;
+};
+
+/**
+ * One release request, as getReleaseRequest answers it.
+ */
+export type ProjectReleaseRequest = {
+    request?: ReleaseRequestDto;
 };
 
 export type RefinementDto = {
@@ -1483,7 +1492,7 @@ export type SurfaceListResponse = {
      */
     surfaces?: Array<AgentSurfaceConfigurationDto>;
     /**
-     * The MCP servers this platform can attach — the reserved keys.
+     * The MCP servers this platform can attach: qits.
      */
     builtInServers?: Array<string>;
 };
@@ -1590,6 +1599,7 @@ export type TransitionedEntity = {
     assignee?: string;
     createdBy?: string;
     supersededBy?: string;
+    outcome?: WorkOutcome;
     repositoryId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
@@ -2035,6 +2045,8 @@ export type WorkMemberMove = {
     position: number;
 };
 
+export type WorkOutcome = 'DUPLICATE' | 'RESOLVED_ELSEWHERE' | 'SUPERSEDED' | 'OBSOLETE' | 'INVALID' | 'WONT_DO';
+
 /**
  * A JSON merge patch (RFC 7396) of one work entity. An absent property is left as it is; an explicit null clears it. At least one property must be named. status, archetype, membership, supersededBy and blocked are refused with the door that moves them; slug and createdBy are server-owned; any other property is refused as unknown. A property the entity's archetype has no slot for is refused (impetus on an epic).
  */
@@ -2096,13 +2108,21 @@ export type WorkRefinementAnswer = {
 };
 
 /**
- * A lifecycle move: the status to move to.
+ * A lifecycle move: the status to move to, and — for a move into DROPPED — why the work is closed and what answers for it.
  */
 export type WorkStatusMove = {
     /**
      * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk (IMPLEMENTING has no move back, and READY_FOR_DEV none to REPORTED), or IMPLEMENTED from READY_FOR_DEV or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
      */
     target: string;
+    /**
+     * Why the work is closed: required with a move into DROPPED and refused with any other move. DUPLICATE — another item asks for the same thing; RESOLVED_ELSEWHERE — another item's change resolved it; SUPERSEDED — replaced by a successor; OBSOLETE — the subject went away by itself; INVALID — it never was a problem; WONT_DO — a decision was taken not to do it (scratch and probe items too). Reopening (DROPPED to REPORTED) clears it.
+     */
+    outcome?: WorkOutcome | null;
+    /**
+     * The item that answers for the drop, by qualified id (<projectSlug>-<n>) or UUID: required with outcome DUPLICATE, RESOLVED_ELSEWHERE or SUPERSEDED, refused with OBSOLETE, INVALID or WONT_DO and with any move not into DROPPED. It must name an item of the same project, never the item itself. Reopening clears it.
+     */
+    supersededBy?: string | null;
 };
 
 /**
@@ -2895,6 +2915,36 @@ export type ListProjectReleaseRequestsResponses = {
 
 export type ListProjectReleaseRequestsResponse = ListProjectReleaseRequestsResponses[keyof ListProjectReleaseRequestsResponses];
 
+export type GetProjectReleaseRequestData = {
+    body?: never;
+    path: {
+        projectId: string;
+        ref: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/release-requests/{ref}';
+};
+
+export type GetProjectReleaseRequestErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetProjectReleaseRequestResponses = {
+    /**
+     * OK
+     */
+    200: ProjectReleaseRequest;
+};
+
+export type GetProjectReleaseRequestResponse = GetProjectReleaseRequestResponses[keyof GetProjectReleaseRequestResponses];
+
 export type ListProjectRepositoriesData = {
     body?: never;
     path: {
@@ -3105,15 +3155,23 @@ export type ListProjectWorkData = {
     };
     query?: {
         archetype?: string;
+        /**
+         * Only the DROPPED items closed with this outcome: DUPLICATE, RESOLVED_ELSEWHERE, SUPERSEDED, OBSOLETE, INVALID or WONT_DO.
+         */
+        outcome?: WorkOutcome;
         parent?: string;
         status?: string;
+        /**
+         * Only the items naming this entity (qualified id or UUID) as their supersededBy.
+         */
+        supersededBy?: string;
     };
     url: '/projects/api/projects/{project}/work';
 };
 
 export type ListProjectWorkErrors = {
     /**
-     * An archetype or a status naming none
+     * An archetype, a status or an outcome naming none
      */
     400: unknown;
     /**
@@ -3125,7 +3183,7 @@ export type ListProjectWorkErrors = {
      */
     403: unknown;
     /**
-     * No such project, or no such parent
+     * No such project, no such parent, or no such supersededBy entity
      */
     404: unknown;
 };
@@ -3197,7 +3255,7 @@ export type GetProjectsApiRefinementsByIdActiveProcessResponses = {
 
 export type GetProjectsApiRefinementsByIdActiveProcessResponse = GetProjectsApiRefinementsByIdActiveProcessResponses[keyof GetProjectsApiRefinementsByIdActiveProcessResponses];
 
-export type GetProjectsApiRefinementsByIdDesignsData = {
+export type ListRefinementDesignsData = {
     body?: never;
     path: {
         id: number;
@@ -3206,7 +3264,7 @@ export type GetProjectsApiRefinementsByIdDesignsData = {
     url: '/projects/api/refinements/{id}/designs';
 };
 
-export type GetProjectsApiRefinementsByIdDesignsErrors = {
+export type ListRefinementDesignsErrors = {
     /**
      * Not Authorized
      */
@@ -3217,16 +3275,16 @@ export type GetProjectsApiRefinementsByIdDesignsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRefinementsByIdDesignsResponses = {
+export type ListRefinementDesignsResponses = {
     /**
      * OK
      */
     200: ListResponse1;
 };
 
-export type GetProjectsApiRefinementsByIdDesignsResponse = GetProjectsApiRefinementsByIdDesignsResponses[keyof GetProjectsApiRefinementsByIdDesignsResponses];
+export type ListRefinementDesignsResponse = ListRefinementDesignsResponses[keyof ListRefinementDesignsResponses];
 
-export type PostProjectsApiRefinementsByIdDesignsData = {
+export type AddRefinementDesignData = {
     body: NewDesign;
     path: {
         id: number;
@@ -3235,7 +3293,7 @@ export type PostProjectsApiRefinementsByIdDesignsData = {
     url: '/projects/api/refinements/{id}/designs';
 };
 
-export type PostProjectsApiRefinementsByIdDesignsErrors = {
+export type AddRefinementDesignErrors = {
     /**
      * Bad Request
      */
@@ -3250,14 +3308,14 @@ export type PostProjectsApiRefinementsByIdDesignsErrors = {
     403: unknown;
 };
 
-export type PostProjectsApiRefinementsByIdDesignsResponses = {
+export type AddRefinementDesignResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type DeleteProjectsApiRefinementsByIdDesignsByDesignIdData = {
+export type DeleteRefinementDesignData = {
     body?: never;
     path: {
         designId: string;
@@ -3267,7 +3325,7 @@ export type DeleteProjectsApiRefinementsByIdDesignsByDesignIdData = {
     url: '/projects/api/refinements/{id}/designs/{designId}';
 };
 
-export type DeleteProjectsApiRefinementsByIdDesignsByDesignIdErrors = {
+export type DeleteRefinementDesignErrors = {
     /**
      * Not Authorized
      */
@@ -3278,16 +3336,16 @@ export type DeleteProjectsApiRefinementsByIdDesignsByDesignIdErrors = {
     403: unknown;
 };
 
-export type DeleteProjectsApiRefinementsByIdDesignsByDesignIdResponses = {
+export type DeleteRefinementDesignResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type DeleteProjectsApiRefinementsByIdDesignsByDesignIdResponse = DeleteProjectsApiRefinementsByIdDesignsByDesignIdResponses[keyof DeleteProjectsApiRefinementsByIdDesignsByDesignIdResponses];
+export type DeleteRefinementDesignResponse = DeleteRefinementDesignResponses[keyof DeleteRefinementDesignResponses];
 
-export type GetProjectsApiRefinementsByIdDesignsByDesignIdData = {
+export type GetRefinementDesignData = {
     body?: never;
     path: {
         designId: string;
@@ -3297,7 +3355,7 @@ export type GetProjectsApiRefinementsByIdDesignsByDesignIdData = {
     url: '/projects/api/refinements/{id}/designs/{designId}';
 };
 
-export type GetProjectsApiRefinementsByIdDesignsByDesignIdErrors = {
+export type GetRefinementDesignErrors = {
     /**
      * Not Authorized
      */
@@ -3308,16 +3366,16 @@ export type GetProjectsApiRefinementsByIdDesignsByDesignIdErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRefinementsByIdDesignsByDesignIdResponses = {
+export type GetRefinementDesignResponses = {
     /**
      * OK
      */
     200: DesignDto;
 };
 
-export type GetProjectsApiRefinementsByIdDesignsByDesignIdResponse = GetProjectsApiRefinementsByIdDesignsByDesignIdResponses[keyof GetProjectsApiRefinementsByIdDesignsByDesignIdResponses];
+export type GetRefinementDesignResponse = GetRefinementDesignResponses[keyof GetRefinementDesignResponses];
 
-export type PutProjectsApiRefinementsByIdDesignsByDesignIdData = {
+export type UpdateRefinementDesignData = {
     body: UpdateDesign;
     path: {
         designId: string;
@@ -3327,7 +3385,7 @@ export type PutProjectsApiRefinementsByIdDesignsByDesignIdData = {
     url: '/projects/api/refinements/{id}/designs/{designId}';
 };
 
-export type PutProjectsApiRefinementsByIdDesignsByDesignIdErrors = {
+export type UpdateRefinementDesignErrors = {
     /**
      * Bad Request
      */
@@ -3342,14 +3400,14 @@ export type PutProjectsApiRefinementsByIdDesignsByDesignIdErrors = {
     403: unknown;
 };
 
-export type PutProjectsApiRefinementsByIdDesignsByDesignIdResponses = {
+export type UpdateRefinementDesignResponses = {
     /**
      * OK
      */
     200: DesignDto;
 };
 
-export type PutProjectsApiRefinementsByIdDesignsByDesignIdResponse = PutProjectsApiRefinementsByIdDesignsByDesignIdResponses[keyof PutProjectsApiRefinementsByIdDesignsByDesignIdResponses];
+export type UpdateRefinementDesignResponse = UpdateRefinementDesignResponses[keyof UpdateRefinementDesignResponses];
 
 export type PostProjectsApiRefinementsByIdDiscardData = {
     body?: never;
@@ -3954,7 +4012,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponses = {
 
 export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponse = DeleteProjectsApiRepositoriesByRepoIdBranchesResponses[keyof DeleteProjectsApiRepositoriesByRepoIdBranchesResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdBranchesData = {
+export type ListRepositoryBranchesData = {
     body?: never;
     path: {
         repoId: string;
@@ -3963,7 +4021,7 @@ export type GetProjectsApiRepositoriesByRepoIdBranchesData = {
     url: '/projects/api/repositories/{repoId}/branches';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdBranchesErrors = {
+export type ListRepositoryBranchesErrors = {
     /**
      * Not Authorized
      */
@@ -3974,14 +4032,14 @@ export type GetProjectsApiRepositoriesByRepoIdBranchesErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdBranchesResponses = {
+export type ListRepositoryBranchesResponses = {
     /**
      * OK
      */
     200: Response34;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdBranchesResponse = GetProjectsApiRepositoriesByRepoIdBranchesResponses[keyof GetProjectsApiRepositoriesByRepoIdBranchesResponses];
+export type ListRepositoryBranchesResponse = ListRepositoryBranchesResponses[keyof ListRepositoryBranchesResponses];
 
 export type MeasureCommitSubjectsData = {
     body?: never;
@@ -4015,7 +4073,7 @@ export type MeasureCommitSubjectsResponses = {
 
 export type MeasureCommitSubjectsResponse = MeasureCommitSubjectsResponses[keyof MeasureCommitSubjectsResponses];
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsData = {
+export type ListBranchCommitsData = {
     body?: never;
     path: {
         repoId: string;
@@ -4026,7 +4084,7 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsData = {
     url: '/projects/api/repositories/{repoId}/commits';
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsErrors = {
+export type ListBranchCommitsErrors = {
     /**
      * Not Authorized
      */
@@ -4037,14 +4095,14 @@ export type GetProjectsApiRepositoriesByRepoIdCommitsErrors = {
     403: unknown;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsResponses = {
+export type ListBranchCommitsResponses = {
     /**
      * OK
      */
     200: CommitLogDto;
 };
 
-export type GetProjectsApiRepositoriesByRepoIdCommitsResponse = GetProjectsApiRepositoriesByRepoIdCommitsResponses[keyof GetProjectsApiRepositoriesByRepoIdCommitsResponses];
+export type ListBranchCommitsResponse = ListBranchCommitsResponses[keyof ListBranchCommitsResponses];
 
 export type ListCommitBuildsData = {
     body?: never;
@@ -6717,7 +6775,7 @@ export type SetWorkStatusData = {
 
 export type SetWorkStatusErrors = {
     /**
-     * No target
+     * No target; a move into DROPPED without an outcome; an outcome or a supersededBy on a move not into DROPPED; DUPLICATE, RESOLVED_ELSEWHERE or SUPERSEDED without supersededBy; OBSOLETE, INVALID or WONT_DO with one; or a supersededBy naming no item, an item of another project, or the item itself. Each names the rule
      */
     400: unknown;
     /**
