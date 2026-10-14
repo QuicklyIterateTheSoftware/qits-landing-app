@@ -45,6 +45,11 @@ a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BAC
 notifications menu puts every new event at the top of its list once it is loaded. The bumps menu
 (the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
 (`listPendingBumps`) on its first opening and again after `BUMP_EVENTS`, at most once a second.
+The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
+qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
+name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A container
+start's log is not a domain event: `ProcessLog` reads that one process's own stream on
+qits-workspaces' origin (`/workspaces/api/technical-processes/{id}/events`), through `EVENT_SOURCE`.
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
@@ -123,11 +128,11 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                    | Pact file                                             | Golden masters                    |
-| ----------------------- | -------------------------------------- | ----------------------------------------------------- | --------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`     | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`   |
-| qits-githost-service    | `core/loc/loc.store*.ts`               | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`    |
-| qits-workspaces-service | `core/workspaces/workspaces.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters` |
+| Provider                | Store and pact spec                             | Pact file                                             | Golden masters                    |
+| ----------------------- | ----------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`              | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`   |
+| qits-githost-service    | `core/loc/loc.store*.ts`                        | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`    |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

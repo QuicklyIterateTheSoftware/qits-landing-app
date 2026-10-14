@@ -7,8 +7,9 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction } from '@qits/angular/testing';
 import { workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
+import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
   LIST_ACTIVE_AGENTS,
   LIST_OPEN_WORKSPACES,
@@ -18,9 +19,9 @@ import { WorkspacesStore } from './workspaces.store';
 
 /**
  * qits-landing-app's pact with qits-workspaces-service (epic qits-112), in
- * `pacts/qits-landing-app_qits-workspaces-service.json`.
+ * `pacts/qits-landing-app_qits-workspaces-service.json`, its part beside `agents.store.pact.spec.ts`'s.
  *
- * The store is the only user of the qits-workspaces client, so this file is the whole pact: the
+ * This store's part: the
  * open workspaces the cards link to, and one item's workspaces in every state for its page — an
  * item with three (ACTIVE, INTEGRATED, ABANDONED), and one with none. It binds only
  * `LIST_OPEN_WORKSPACES` and `LIST_WORK_ITEM_WORKSPACES`, the lists the store passes to
@@ -30,6 +31,16 @@ import { WorkspacesStore } from './workspaces.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-workspaces-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+
+/**
+ * The operations this spec owns in the shared file; `agents.store.pact.spec.ts` owns the workspace
+ * pages' part (and their `listAgents`).
+ */
+const OPERATIONS: readonly OwnedOperation[] = [
+  'listOpenWorkspaces',
+  'listWorkItemWorkspaces',
+  { operationId: 'listAgents', interactions: ['show-agent-work'] },
+];
 
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
@@ -60,7 +71,12 @@ describe('qits-landing-app → qits-workspaces-service pact', () => {
   afterAll(() => {
     workspacesClient.setConfig({ baseUrl: '' });
     try {
-      assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        OPERATIONS,
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

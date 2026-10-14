@@ -4,8 +4,8 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
 
 /**
- * A "Workspace" link to a work item's workspace page, `/projects/<slug>/workspaces/<qualified
- * id>`, shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
+ * A "Workspace" link to a work item's agent page, `/projects/<slug>/work/detail/<qualified
+ * id>/agent` (epic qits-1230), shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
  * it hides itself. The page loads the open workspaces once (`WorkspacesStore.load()`); the link
  * costs no request.
  *
@@ -23,7 +23,7 @@ import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
 export class WorkspaceLink {
   /** The item's id: qits-projects' entity id, which qits-workspaces binds a workspace to. */
   readonly workId = input.required<string | undefined>();
-  /** The item's qualified id, e.g. `qits-622`: the workspace page's address. */
+  /** The item's qualified id, e.g. `qits-622`: the agent page's address. */
   readonly qualifiedId = input.required<string | undefined>();
   readonly variant = input<TagLinkVariant>('tag');
 
@@ -38,6 +38,6 @@ export class WorkspaceLink {
   });
 
   protected readonly link = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/workspaces/${this.qualifiedId() ?? ''}`,
+    () => `/projects/${this.selected.slug() ?? ''}/work/detail/${this.qualifiedId() ?? ''}/agent`,
   );
 }

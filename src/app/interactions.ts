@@ -137,6 +137,21 @@ export const INTERACTIONS = {
    * Progress tab shows every work item an agent is on, whatever its status.
    */
   'show-agent-work': 'The In Progress tab shows every work item an active agent is on',
+  /**
+   * `project-workspaces.page.ts` via `AgentsStore.loadProject`: the project's Workspaces page
+   * lists the wrapper's slots and its agents (epic qits-1230).
+   */
+  'show-project-workspaces': 'The Workspaces page lists the project’s slots and their agents',
+  /**
+   * `workspace-slot.page.ts` via `AgentsStore.loadSlot`: one slot, its status strip (container,
+   * runner, daemon), the start running against it, and the agents it hosts.
+   */
+  'show-workspace-slot': 'A slot’s page shows its status and the agents it hosts',
+  /**
+   * `work-agent.layout.ts` via `AgentsStore.loadItem`: a work item's agent, how it runs, what it
+   * waits on, and its slot while the container comes up.
+   */
+  'show-work-item-agent': 'A work item’s agent page shows its agent and what it waits on',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

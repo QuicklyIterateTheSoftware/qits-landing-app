@@ -154,7 +154,7 @@ describe('ShellLayout (screenshots)', () => {
     const { project, layout } = await renderProject('/work');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
-      .element(navigation.getByRole('link', { name: 'Work' }))
+      .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'page');
     await expect.element(navigation.getByRole('link', { name: 'Repositories' })).toBeVisible();
     await expect
@@ -168,7 +168,7 @@ describe('ShellLayout (screenshots)', () => {
     const navigation = page.getByRole('navigation', { name: 'qits' });
     // Work holds the current page; the page itself is the current link.
     await expect
-      .element(navigation.getByRole('link', { name: 'Work' }))
+      .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'true');
     for (const label of ['Campaigns', 'Refinement', 'In Progress', 'Archive']) {
       await expect.element(navigation.getByRole('link', { name: label })).toBeVisible();
@@ -186,7 +186,7 @@ describe('ShellLayout (screenshots)', () => {
     await renderProject('/work/campaigns');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
-      .element(navigation.getByRole('link', { name: 'Work' }))
+      .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'true');
     const campaigns = navigation.getByRole('link', { name: 'Campaigns' });
     await expect.element(campaigns).toBeVisible();
@@ -221,7 +221,14 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((a) => a.firstChild?.textContent?.trim());
-    expect(labels).toEqual(['Work', 'Release Requests', 'Repositories', 'Observability', 'Events']);
+    expect(labels).toEqual([
+      'Work',
+      'Workspaces',
+      'Release Requests',
+      'Repositories',
+      'Observability',
+      'Events',
+    ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(`${project.name}›Release Requests`);

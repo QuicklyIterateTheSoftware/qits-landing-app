@@ -33,10 +33,14 @@ export type AgentDto = {
     entityBlocked?: boolean;
     activity?: AgentActivityState;
     waitingSince?: Instant;
+    waitingOn?: string;
+    waitingOnSince?: Instant;
     lastActivityAt?: Instant;
     createdAt?: Instant;
     obsoleteAt?: Instant;
     removedAt?: Instant;
+    startRefusal?: string;
+    startRefusedAt?: Instant;
 };
 
 export type AgentHarness = 'CLAUDE' | 'KIMI';
@@ -46,6 +50,8 @@ export type AgentLaunch = 'SCHEDULED' | 'SKIPPED_RUNNING' | 'QUEUED';
 export type AgentRunState = 'QUEUED' | 'RUNNING' | 'YIELDED';
 
 export type AgentState = 'ACTIVE' | 'OBSOLETE' | 'REMOVED';
+
+export type AgentWaitState = 'OPEN' | 'MATCHED' | 'TIMED_OUT' | 'CANCELLED';
 
 /**
  * The error envelope: a message, plus a reason or a code on a 409.
@@ -159,6 +165,12 @@ export type CreateRunnerRequest = {
     workspaceMemorySwapLimit?: string;
 };
 
+export type CreateWaitRequest = {
+    label?: string;
+    selection: EventSelection;
+    timeout?: string;
+};
+
 export type DeliverTurnRequest = {
     workId: string;
     text: string;
@@ -218,6 +230,26 @@ export type Entry1 = {
 
 export type Entry2 = {
     workspace?: WorkspaceHistoryDto;
+};
+
+/**
+ * qits-eventstream's EventSelection: the event name, matched exactly, and `when` groups (ORed) of conditions (ANDed). Empty `when` = every event of that name.
+ */
+export type EventSelection = {
+    event: string;
+    when?: Array<Array<EventSelectionCondition>>;
+};
+
+export type EventSelectionCondition = {
+    /**
+     * Dot path; `name[]` = some element of the array
+     */
+    path: string;
+    op: 'exact' | 'prefix' | 'exists';
+    /**
+     * A string for exact and prefix; true or false for exists (false = absent)
+     */
+    value?: string;
 };
 
 export type Health = {
@@ -493,6 +525,22 @@ export type Uuid = string;
 export type UpdateHistoryRequest = {
     preamble?: string;
     result?: string;
+};
+
+export type WaitList = {
+    waits?: Array<WaitView>;
+};
+
+export type WaitView = {
+    id?: string;
+    agentId?: string;
+    label?: string;
+    selection?: EventSelection;
+    state?: AgentWaitState;
+    createdAt?: Instant;
+    expiresAt?: Instant;
+    matchedEventId?: string;
+    closedAt?: Instant;
 };
 
 export type WorkItemWorkspaceDto = {
@@ -887,6 +935,122 @@ export type CreateAgentResponses = {
 
 export type CreateAgentResponse = CreateAgentResponses[keyof CreateAgentResponses];
 
+export type ListAgentWaitsData = {
+    body?: never;
+    path: {
+        agentId: string;
+    };
+    query?: {
+        state?: string;
+    };
+    url: '/workspaces/api/agents/{agentId}/waits';
+};
+
+export type ListAgentWaitsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent's credential reading another agent's waits.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+};
+
+export type ListAgentWaitsError = ListAgentWaitsErrors[keyof ListAgentWaitsErrors];
+
+export type ListAgentWaitsResponses = {
+    /**
+     * The agent's waits, newest first.
+     */
+    200: WaitList;
+};
+
+export type ListAgentWaitsResponse = ListAgentWaitsResponses[keyof ListAgentWaitsResponses];
+
+export type CreateAgentWaitData = {
+    body: CreateWaitRequest;
+    path: {
+        agentId: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{agentId}/waits';
+};
+
+export type CreateAgentWaitErrors = {
+    /**
+     * An invalid selection (the matcher's reason), or a bad timeout.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent's credential acting on another agent's waits.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+    /**
+     * AGENT_NOT_ACTIVE (the agent is OBSOLETE or REMOVED) or TOO_MANY_WAITS (8 are OPEN).
+     */
+    409: ApiError;
+};
+
+export type CreateAgentWaitError = CreateAgentWaitErrors[keyof CreateAgentWaitErrors];
+
+export type CreateAgentWaitResponses = {
+    /**
+     * The wait, OPEN.
+     */
+    201: WaitView;
+};
+
+export type CreateAgentWaitResponse = CreateAgentWaitResponses[keyof CreateAgentWaitResponses];
+
+export type CancelAgentWaitData = {
+    body?: never;
+    path: {
+        agentId: string;
+        waitId: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{agentId}/waits/{waitId}';
+};
+
+export type CancelAgentWaitErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent's credential cancelling another agent's wait.
+     */
+    403: ApiError;
+    /**
+     * No such agent, or no such wait of it.
+     */
+    404: ApiError;
+};
+
+export type CancelAgentWaitError = CancelAgentWaitErrors[keyof CancelAgentWaitErrors];
+
+export type CancelAgentWaitResponses = {
+    /**
+     * The wait: CANCELLED, or as it was when already closed. No turn is given.
+     */
+    200: WaitView;
+};
+
+export type CancelAgentWaitResponse = CancelAgentWaitResponses[keyof CancelAgentWaitResponses];
+
 export type GetAgentData = {
     body?: never;
     path: {
@@ -945,7 +1109,7 @@ export type DiscardAgentErrors = {
      */
     403: unknown;
     /**
-     * AGENT_HAS_LEFTOVER_WORK (uncommitted or unpushed work, named) or AGENT_DAEMON_UNREACHABLE; nothing was removed. Send `force: true` to remove anyway.
+     * AGENT_BUSY (harness still working in the background), AGENT_HAS_LEFTOVER_WORK (uncommitted or unpushed work, named) or AGENT_DAEMON_UNREACHABLE; nothing was removed. Send `force: true` to remove anyway.
      */
     409: ApiError;
 };
@@ -2099,7 +2263,7 @@ export type ListWorkItemWorkspacesResponses = {
 
 export type ListWorkItemWorkspacesResponse = ListWorkItemWorkspacesResponses[keyof ListWorkItemWorkspacesResponses];
 
-export type GetWorkspacesApiWorkspacesData = {
+export type ListWorkspacesData = {
     body?: never;
     path?: never;
     query?: {
@@ -2108,7 +2272,7 @@ export type GetWorkspacesApiWorkspacesData = {
     url: '/workspaces/api/workspaces';
 };
 
-export type GetWorkspacesApiWorkspacesErrors = {
+export type ListWorkspacesErrors = {
     /**
      * Not Authorized
      */
@@ -2119,16 +2283,16 @@ export type GetWorkspacesApiWorkspacesErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiWorkspacesResponses = {
+export type ListWorkspacesResponses = {
     /**
      * OK
      */
     200: Response5;
 };
 
-export type GetWorkspacesApiWorkspacesResponse = GetWorkspacesApiWorkspacesResponses[keyof GetWorkspacesApiWorkspacesResponses];
+export type ListWorkspacesResponse = ListWorkspacesResponses[keyof ListWorkspacesResponses];
 
-export type GetWorkspacesApiWorkspacesByIdData = {
+export type GetWorkspaceData = {
     body?: never;
     path: {
         id: number;
@@ -2137,7 +2301,7 @@ export type GetWorkspacesApiWorkspacesByIdData = {
     url: '/workspaces/api/workspaces/{id}';
 };
 
-export type GetWorkspacesApiWorkspacesByIdErrors = {
+export type GetWorkspaceErrors = {
     /**
      * Not Authorized
      */
@@ -2152,18 +2316,18 @@ export type GetWorkspacesApiWorkspacesByIdErrors = {
     404: ApiError;
 };
 
-export type GetWorkspacesApiWorkspacesByIdError = GetWorkspacesApiWorkspacesByIdErrors[keyof GetWorkspacesApiWorkspacesByIdErrors];
+export type GetWorkspaceError = GetWorkspaceErrors[keyof GetWorkspaceErrors];
 
-export type GetWorkspacesApiWorkspacesByIdResponses = {
+export type GetWorkspaceResponses = {
     /**
      * The workspace.
      */
     200: Response6;
 };
 
-export type GetWorkspacesApiWorkspacesByIdResponse = GetWorkspacesApiWorkspacesByIdResponses[keyof GetWorkspacesApiWorkspacesByIdResponses];
+export type GetWorkspaceResponse = GetWorkspaceResponses[keyof GetWorkspaceResponses];
 
-export type GetWorkspacesApiWorkspacesByIdActiveProcessData = {
+export type GetWorkspaceActiveProcessData = {
     body?: never;
     path: {
         id: number;
@@ -2172,7 +2336,7 @@ export type GetWorkspacesApiWorkspacesByIdActiveProcessData = {
     url: '/workspaces/api/workspaces/{id}/active-process';
 };
 
-export type GetWorkspacesApiWorkspacesByIdActiveProcessErrors = {
+export type GetWorkspaceActiveProcessErrors = {
     /**
      * Not Authorized
      */
@@ -2183,14 +2347,14 @@ export type GetWorkspacesApiWorkspacesByIdActiveProcessErrors = {
     403: unknown;
 };
 
-export type GetWorkspacesApiWorkspacesByIdActiveProcessResponses = {
+export type GetWorkspaceActiveProcessResponses = {
     /**
      * OK
      */
     200: Response9;
 };
 
-export type GetWorkspacesApiWorkspacesByIdActiveProcessResponse = GetWorkspacesApiWorkspacesByIdActiveProcessResponses[keyof GetWorkspacesApiWorkspacesByIdActiveProcessResponses];
+export type GetWorkspaceActiveProcessResponse = GetWorkspaceActiveProcessResponses[keyof GetWorkspaceActiveProcessResponses];
 
 export type PostWorkspacesApiWorkspacesByIdDeleteContainerData = {
     body?: never;
