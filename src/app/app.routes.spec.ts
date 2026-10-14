@@ -15,6 +15,9 @@ import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-ite
 import { WorkInProgressPage } from './routes/projects/[slug]/work/in-progress/work-in-progress.page';
 import { WorkRefinementPage } from './routes/projects/[slug]/work/refinement/work-refinement.page';
 import { WorkLayout } from './routes/projects/[slug]/work/work.layout';
+import { ProjectWorkspacesPage } from './routes/projects/[slug]/workspaces/project-workspaces.page';
+import { WorkspaceRunnersPage } from './routes/projects/[slug]/workspaces/runners/workspace-runners.page';
+import { WorkspaceSlotPage } from './routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page';
 import { ProjectPickerPage } from './routes/projects/project-picker.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
@@ -66,5 +69,33 @@ describe('work routes', () => {
 
   it('has no archive at work-archive any more: the catch-all answers it', async () => {
     expect(await opened('/projects/qits/work-archive')).toEqual([ProjectPickerPage]);
+  });
+});
+
+describe('workspaces routes', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(work),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+        },
+      ],
+    }),
+  );
+
+  it('opens the project’s workspaces at workspaces', async () => {
+    expect(await opened('/projects/x/workspaces')).toEqual([ProjectWorkspacesPage]);
+  });
+
+  it('opens the runners at workspaces/runners, not a slot called “runners”', async () => {
+    expect(await opened('/projects/x/workspaces/runners')).toEqual([WorkspaceRunnersPage]);
+  });
+
+  it('opens a slot at workspaces/<slot id>', async () => {
+    expect(await opened('/projects/x/workspaces/1')).toEqual([WorkspaceSlotPage]);
   });
 });

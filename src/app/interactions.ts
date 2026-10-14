@@ -231,6 +231,43 @@ export const INTERACTIONS = {
   'show-agent-plugins': 'An agent’s Terminal tab lists the plugins on the shared agent home',
   /** `plugins-section.ts` via `AgentPluginsStore.install`: Install on a plugin not installed yet. */
   'install-agent-plugin': 'Install on a plugin installs it on the shared agent home',
+  /**
+   * `workspace-runners.page.ts` via `RunnersStore.load`: the Runners page lists every runner with
+   * its connection, slots, health, quarantine and node login, read again every 5 s while the page
+   * is visible (there are no runner events) and after every write (epic qits-1230).
+   */
+  'show-runners': 'The Runners page lists the workspace runners with their health and login',
+  /** `runner-card.ts` via `RunnersStore.loadHealth`: Node details reads a runner's newest check. */
+  'show-runner-node-details': 'Node details on a runner shows its newest health check’s data',
+  /**
+   * `runner-card.ts` via `RunnersStore.requestHealthcheck`: Run health check queues a check on a
+   * connected runner; an offline one is refused with the service's reason.
+   */
+  'run-runner-healthcheck': 'Run health check on a runner queues a health check on its node',
+  /**
+   * `runner-card.ts` via `RunnersStore.requestLoginCheck`: Re-check asks the runner to probe its
+   * node's agent login again; an offline one is refused with the service's reason.
+   */
+  'recheck-runner-login': 'Re-check on a runner probes its node’s agent login again',
+  /**
+   * `register-runner-form.ts` via `RunnersStore.createRunner`: Register declares a runner and shows
+   * its one-time install line and registration token.
+   */
+  'register-runner': 'Register on the Runners page declares a runner and shows its install line',
+  /**
+   * `runner-card.ts` via `RunnersStore.rotateToken`: Rotate token replaces a runner's registration
+   * token and shows the new one-time install line.
+   */
+  'rotate-runner-token': 'Rotate token on a runner shows a new one-time install line',
+  /** `runner-card.ts` via `RunnersStore.patchRunner`: Save on a runner's slots and description. */
+  'edit-runner': 'Saving a runner’s slots, description or memory caps changes them',
+  /** `runner-card.ts` via `RunnersStore.greenlight`: Greenlight lifts a runner's quarantine. */
+  'greenlight-runner': 'Greenlight on a quarantined runner lifts its quarantine',
+  /**
+   * `runner-card.ts` via `RunnersStore.deleteRunner`: Delete, confirmed, decommissions a runner; a
+   * runner that still owns workspaces is refused, and the page names them.
+   */
+  'delete-runner': 'Deleting a runner decommissions it, or names the workspaces it still owns',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

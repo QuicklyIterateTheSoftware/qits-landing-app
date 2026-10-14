@@ -216,6 +216,181 @@
         "references": {
           "qits-call": {
             "app": "qits-workspaces-service",
+            "operationId": "deleteRunner"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "delete-runner",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "delete-runner: deleteRunner",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a workspace slot hosting agents",
+          "params": {
+            "agentId": "00000000-0000-4000-8000-0000000000a1",
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "bugTicketQualifiedId": "contract-00000001-10",
+            "epicId": "00000000-0000-4000-8000-000000000006",
+            "featureId": "00000000-0000-4000-8000-000000000007",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
+            "improvementTicketQualifiedId": "contract-00000001-11",
+            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "taskId": "00000000-0000-4000-8000-000000000011",
+            "workspaceId": "1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "DELETE",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "RUNNER_OWNS_WORKSPACES",
+            "message": "RUNNER_OWNS_WORKSPACES: runner localhost owns 1 active workspace(s) [1]; resolve them before deleting it",
+            "workspaceIds": [
+              1
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.workspaceIds": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.workspaceIds[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "deleteRunner"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "delete-runner",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "delete-runner: deleteRunner",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an unregistered runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "DELETE",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020"
+      },
+      "response": {
+        "status": 204
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
             "operationId": "discardAgent"
           },
           "qits-trigger": {
@@ -578,6 +753,362 @@
         "references": {
           "qits-call": {
             "app": "qits-workspaces-service",
+            "operationId": "patchRunner"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "edit-runner",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "edit-runner: patchRunner",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a runner in service",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "description": "The build machine under the desk",
+            "slots": 2,
+            "workspaceMemoryLimit": "8g",
+            "workspaceMemorySwapLimit": "8g"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "PATCH",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "description": "The build machine under the desk",
+            "slots": 2,
+            "workspaceMemoryLimit": "8g",
+            "workspaceMemorySwapLimit": "8g"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.slots": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.workspaceMemoryLimit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.workspaceMemorySwapLimit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "greenlightRunner"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "greenlight-runner",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "greenlight-runner: greenlightRunner",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a quarantined runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/greenlight",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/greenlight"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "quarantined": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.quarantined": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "requestRunnerLoginCheck"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "recheck-runner-login",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "recheck-runner-login: requestRunnerLoginCheck",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a runner in service",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/login-check",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/login-check"
+      },
+      "response": {
+        "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "requestRunnerLoginCheck"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "recheck-runner-login",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "recheck-runner-login: requestRunnerLoginCheck",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an unregistered runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/login-check",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/login-check"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "RUNNER_UNAVAILABLE",
+            "message": "Runner localhost is not connected, so it cannot check its login now"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
             "operationId": "recreateWorkspaceContainer"
           },
           "qits-trigger": {
@@ -656,6 +1187,357 @@
           }
         },
         "status": 400
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "createRunner"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "register-runner",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "register-runner: createRunner",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no runners",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "name": "{runnerName}",
+            "slots": 1
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "installLine": "curl -fsSL -H 'Authorization: Bearer qits_tok_contract-registration' https://workspaces.qits.runners.example.test/workspaces/api/runners/install.sh | sudo env QITS_WORKSPACES_RUNNER_URL='https://workspaces.qits.runners.example.test' QITS_WORKSPACES_RUNNER_ID='00000000-0000-4000-8000-000000000100' QITS_WORKSPACES_RUNNER_REGISTRATION_TOKEN='qits_tok_contract-registration' QITS_WORKSPACES_RUNNER_SLOTS='1' sh",
+            "registrationToken": "qits_tok_contract-registration",
+            "runner": {
+              "name": "localhost"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.installLine": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.registrationToken": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.runner.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "rotateRunnerRegistrationToken"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "rotate-runner-token",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "rotate-runner-token: rotateRunnerRegistrationToken",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an unregistered runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/registration-token",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/registration-token"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "installLine": "curl -fsSL -H 'Authorization: Bearer qits_tok_contract-registration' https://workspaces.qits.runners.example.test/workspaces/api/runners/install.sh | sudo env QITS_WORKSPACES_RUNNER_URL='https://workspaces.qits.runners.example.test' QITS_WORKSPACES_RUNNER_ID='00000000-0000-4000-8000-000000000020' QITS_WORKSPACES_RUNNER_REGISTRATION_TOKEN='qits_tok_contract-registration' QITS_WORKSPACES_RUNNER_SLOTS='1' sh",
+            "registrationToken": "qits_tok_contract-registration",
+            "runner": {
+              "name": "localhost"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.installLine": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.registrationToken": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.runner.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "requestRunnerHealthcheck"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "run-runner-healthcheck",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "run-runner-healthcheck: requestRunnerHealthcheck",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a runner in service",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/healthcheck",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/healthcheck"
+      },
+      "response": {
+        "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "requestRunnerHealthcheck"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "run-runner-healthcheck",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "run-runner-healthcheck: requestRunnerHealthcheck",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an unregistered runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/healthcheck",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/healthcheck"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "RUNNER_UNAVAILABLE",
+            "message": "Runner localhost is not connected, so it cannot run a health check now"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
       },
       "type": "Synchronous/HTTP"
     },
@@ -1943,6 +2825,969 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "getRunnerHealth"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-runner-node-details",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-runner-node-details: getRunnerHealth",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a runner in service",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/health",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/health"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "checks": [
+              {
+                "data": {
+                  "version": "27.1"
+                },
+                "name": "docker",
+                "ok": true
+              },
+              {
+                "data": {},
+                "name": "selfTest",
+                "ok": true
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.checks": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.data.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.ok": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.ok": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "getRunnerHealth"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-runner-node-details",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-runner-node-details: getRunnerHealth",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an unregistered runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/workspaces/api/runners/${runnerId}/health",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/api/runners/00000000-0000-4000-8000-000000000020/health"
+      },
+      "response": {
+        "status": 204
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "listRunners"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-runners",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-runners: listRunners",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a connected runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/workspaces/api/runners"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "connected": true,
+              "connectedSince": "2026-01-01T00:00:00Z",
+              "description": null,
+              "health": null,
+              "id": "00000000-0000-4000-8000-000000000020",
+              "kimiLoginCommand": null,
+              "lastHealthCheckAt": null,
+              "lastHealthCheckOk": null,
+              "lastSeenAt": "2026-01-01T00:00:00Z",
+              "login": null,
+              "loginCommand": null,
+              "loginCommandPending": false,
+              "name": "localhost",
+              "owned": 0,
+              "pinnedVersion": "2026.101.120000",
+              "quarantineReason": null,
+              "quarantined": false,
+              "quarantinedAt": null,
+              "queued": 0,
+              "registered": true,
+              "running": 0,
+              "slots": 1,
+              "version": null,
+              "workspaceMemoryLimit": null,
+              "workspaceMemorySwapLimit": null
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.connected": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.connectedSince": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.lastSeenAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.loginCommandPending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.owned": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.pinnedVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.quarantined": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.queued": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.registered": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.running": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.slots": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "listRunners"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-runners",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-runners: listRunners",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a runner in service",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/workspaces/api/runners"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "connected": true,
+              "connectedSince": "2026-01-01T00:00:00Z",
+              "description": null,
+              "health": {
+                "at": "2026-01-01T00:00:00Z",
+                "checks": [
+                  {
+                    "detail": "27.1",
+                    "name": "docker",
+                    "ok": true
+                  },
+                  {
+                    "detail": "27.1",
+                    "name": "docker",
+                    "ok": true
+                  }
+                ],
+                "detail": "2 checks passed",
+                "ok": true
+              },
+              "id": "00000000-0000-4000-8000-000000000020",
+              "kimiLoginCommand": "docker run --rm -it --user 1000 --entrypoint kimi -v qits-workspaces-runner-dot-claude-contract:/claude-home -e HOME=/claude-home -e KIMI_CODE_HOME=/claude-home/.kimi-code registry.qits.runners.example.test/qits/workspace:2026.101.120000 login",
+              "lastHealthCheckAt": "2026-01-01T00:00:00Z",
+              "lastHealthCheckOk": true,
+              "lastSeenAt": "2026-01-01T00:00:00Z",
+              "login": {
+                "checkedAt": "2026-01-01T00:00:00Z",
+                "claude": "PRESENT",
+                "kimi": "ABSENT"
+              },
+              "loginCommand": "docker run --rm -it --user 1000 --entrypoint claude -v qits-workspaces-runner-dot-claude-contract:/claude-home -e HOME=/claude-home -e CLAUDE_CONFIG_DIR=/claude-home/.claude registry.qits.runners.example.test/qits/workspace:2026.101.120000",
+              "loginCommandPending": false,
+              "name": "localhost",
+              "owned": 0,
+              "pinnedVersion": "2026.101.120000",
+              "quarantineReason": null,
+              "quarantined": false,
+              "quarantinedAt": null,
+              "queued": 0,
+              "registered": true,
+              "running": 0,
+              "slots": 1,
+              "version": "2026.101.120000",
+              "workspaceMemoryLimit": null,
+              "workspaceMemorySwapLimit": null
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.connected": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.connectedSince": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.health.at": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.health.checks": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.health.checks[*].detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.health.checks[*].name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.health.checks[*].ok": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.health.detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.health.ok": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.kimiLoginCommand": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastHealthCheckAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastHealthCheckOk": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastSeenAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.login.checkedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.login.claude": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.login.kimi": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.loginCommand": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.loginCommandPending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.owned": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.pinnedVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.quarantined": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.queued": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.registered": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.running": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.slots": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "listRunners"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-runners",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-runners: listRunners",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an unregistered runner",
+          "params": {
+            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "runnerName": "localhost"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/workspaces/api/runners"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "connected": false,
+              "connectedSince": null,
+              "description": null,
+              "health": null,
+              "id": "00000000-0000-4000-8000-000000000020",
+              "kimiLoginCommand": null,
+              "lastHealthCheckAt": null,
+              "lastHealthCheckOk": null,
+              "lastSeenAt": null,
+              "login": null,
+              "loginCommand": null,
+              "loginCommandPending": false,
+              "name": "localhost",
+              "owned": 0,
+              "pinnedVersion": "2026.101.120000",
+              "quarantineReason": null,
+              "quarantined": false,
+              "quarantinedAt": null,
+              "queued": 0,
+              "registered": false,
+              "running": 0,
+              "slots": 1,
+              "version": null,
+              "workspaceMemoryLimit": null,
+              "workspaceMemorySwapLimit": null
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.connected": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.loginCommandPending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.owned": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.pinnedVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.quarantined": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.queued": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.registered": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.running": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.slots": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
                             }
                           ]
                         }

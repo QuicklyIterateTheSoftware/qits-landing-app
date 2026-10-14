@@ -26,7 +26,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * an epic of the project, a harness, admin mode), then its agents — each a link to its work item's
  * agent page — with how each runs and what it waits on; then its slots, the workspaces agents run in — each a
  * link to the slot's page (`workspaces/<slot id>`) — with its container state, placement and how
- * many agents it hosts.
+ * many agents it hosts. Beside the slots' heading, Runners leads to the runners they are placed on
+ * (`workspaces/runners`).
  *
  * The slots are the project's wrapper's: qits-projects names the wrapper (`RepositoriesStore`), and
  * the page reads its slots and the project's agents (`AgentsStore.loadProject`: those in the
@@ -77,9 +78,15 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             </section>
 
             <section class="flex flex-col gap-3" aria-labelledby="workspaces-slots">
-              <h2 id="workspaces-slots" class="m-0 text-base font-semibold text-charcoal-brown-900">
-                Slots
-              </h2>
+              <div class="flex flex-wrap items-baseline gap-3">
+                <h2
+                  id="workspaces-slots"
+                  class="m-0 text-base font-semibold text-charcoal-brown-900"
+                >
+                  Slots
+                </h2>
+                <a class="text-sm text-ocean-deep-700" [routerLink]="runnersLink()">Runners</a>
+              </div>
               <p
                 class="m-0 text-sm text-charcoal-brown-500"
                 [class.hidden]="state() !== 'loaded' || slots().length"
@@ -165,6 +172,11 @@ export class ProjectWorkspacesPage {
   protected reload(): void {
     const wrapper = this.wrapperId();
     if (wrapper) void this.store.loadProject(wrapper, this.slug());
+  }
+
+  /** The platform's runners, which the slots are placed on. */
+  protected runnersLink(): string {
+    return `/projects/${this.slug() ?? ''}/workspaces/runners`;
   }
 
   protected slotLink(id: number | undefined): string {

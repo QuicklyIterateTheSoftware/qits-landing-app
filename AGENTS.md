@@ -108,6 +108,24 @@ is `openSignInTerminal`, whose command the screen attaches to until it ends) and
 shared agent home (`AgentPluginsStore`: `listPlugins`, `installPlugin`). No recording holds a
 successful recreate or a forced discard, so their success paths are covered by plain specs only.
 
+The platform's workspace runners are at `/projects/<slug>/workspaces/runners` (`WorkspaceRunnersPage`,
+qits-1244; the static route sits before `workspaces/:slotId`, and the Workspaces page links it beside
+the slots), through `RunnersStore` (`core/workspaces/runners.store.ts`): every runner
+(`listRunners`, read again every 5 s while the page is visible, as there are no runner events), each
+in `patterns/workspaces/runner-card/` with its connection, slot counts, memory caps, quarantine, the
+project's slots placed on it (`AgentsStore.loadProject`), its health check and checks (Run health
+check, `requestRunnerHealthcheck`; Node details, `getRunnerHealth`, 204 for a runner never checked),
+the node's agent login (Re-check, `requestRunnerLoginCheck`) and its login commands with Copy
+(`patterns/workspaces/copy-text/`). Its Actions are Edit (`patchRunner`), Rotate token
+(`rotateRunnerRegistrationToken`), Greenlight on a quarantined runner (`greenlightRunner`, which lifts
+the quarantine: nothing in the service or here puts a runner into quarantine, the service does after
+a failed check) and Delete, confirmed (`deleteRunner`; a 409 `RUNNER_OWNS_WORKSPACES` lists the
+workspaces it owns, linked when they are the project's). Register a runner
+(`patterns/workspaces/register-runner-form/`, `createRunner`) and Rotate token answer a one-time
+install line, which `patterns/workspaces/install-line-panel/` shows until it is closed and nothing
+holds after. Writes are offered to everyone; the service answers 403 to a credential without the role,
+which shows as a refusal like any other.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -198,7 +216,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | ----------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
 | qits-projects-service   | `core/projects/projects.store*.ts`                                                             | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
 | qits-githost-service    | `core/loc/loc.store*.ts`                                                                       | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions}.store*.ts`                     | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,runners}.store*.ts`             | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts` | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
