@@ -38,13 +38,36 @@ server. The stream is live only: no replay. An event is the same envelope as the
 its shape is bound by the list's pact (`LIST_EVENTS`, which reads `payload` for that reason;
 `payloadProjectId` reads the `projectId` most project-scoped events carry).
 
+It is also the app's one basis for staleness (qits-1270). The rule: one stream. Every store, menu
+or page holding platform state reads it again after the domain events that can change it, through
+`DomainEvents`; no polling, no timers, no second stream for staleness. A subscriber narrows by
+event name and by the ids the payload names (`payloadIds`: project, repository, request, run, work
+item, agent, slot; `payload` is a JSON string), and reads again only what the event can change:
+the one row it names, or the whole list when it can move the list (`changesReleaseRequestList`,
+`releaseRequestRefresh` in `core/projects/release-request-events.ts`). It subscribes with
+`refreshOn({ names, when?, debounceMs?, refresh })` (`core/events/refresh-on.ts`) from a
+constructor, or with `injectRefreshOn()` in a signalStore's `withMethods`, called later with the
+page's `DestroyRef`. A burst is debounced (a second by default) and `refresh` gets its events; the
+debounce timer lives in `core/events/`, the only place a refresh timer may. Each subscriber records
+its mapping, "store → events → what it reads again", in a doc comment beside it ("Staleness
+(qits-1270): …"). The lint rule (`eslint.config.mjs`, `stalenessBans`) refuses `EventSource`,
+importing `EVENT_SOURCE`, `setInterval`, rxjs `interval`/`timer` and a `setTimeout` whose callback
+calls a `refresh*`/`reload*`/`load*`/`fetch*`/`poll*`/`tick*` outside `core/events/`. Allowed by
+name: `ProcessLog` (a container start's byte stream), `dev-bearer.ts` and `dev-tokens.ts` (the
+`ng serve` bearer, not staleness), specs and `src/testing/`. Temporarily allowed (qits-1270):
+`WorkspaceHints` (the slot's hint channel, which no qits-events event replaces yet) and the agent
+chat's 3 s transcript poll (the daemon offers no transcript stream). The terminal and chat sockets
+are `WEB_SOCKET`, outside the rule.
+
 Users today: the lightning menu fetches the open project's release requests when the project opens
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
-(`core/projects/release-request-events.ts`; deployment events name no project, and count only while
-a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
+(`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a
+wrapper's READY → RELEASED → FINALIZED sends; deployment events name no project, and count only
+while a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
 notifications menu puts every new event at the top of its list once it is loaded. The bumps menu
 (the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
-(`listPendingBumps`) on its first opening and again after `BUMP_EVENTS`, at most once a second.
+(`listPendingBumps`) on its first opening and again after `BUMP_EVENTS` (`ReleaseRequestStateChanged`
+among them), at most once a second.
 The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
 name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A container

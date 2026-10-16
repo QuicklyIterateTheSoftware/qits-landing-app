@@ -2,15 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   effect,
   inject,
   untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { debounceTime, filter } from 'rxjs';
-import { DomainEvents } from '$core/events/domain-events';
+import { refreshOn } from '$core/events/refresh-on';
 import {
   affectsReleaseRequests,
   RELEASE_REQUEST_EVENTS,
@@ -25,7 +22,7 @@ import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** How long a burst of domain events waits before the requests are fetched again. */
-export const REFRESH_DEBOUNCE_MS = 1_000;
+export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 
 /**
  * The top bar's lightning menu: the open project's pending release requests, each named by its
@@ -42,6 +39,9 @@ export const REFRESH_DEBOUNCE_MS = 1_000;
  * carries their count right away (none when nothing is pending). They are fetched again when a
  * domain event says they may have changed ({@link RELEASE_REQUEST_EVENTS}, filtered to the open
  * project by `affectsReleaseRequests`), at most once a second, since one release sends several.
+ * Staleness (qits-1270): `RELEASE_REQUEST_EVENTS` about the open project → its pending requests
+ * (`ProjectsStore.refreshReleaseRequests`; the list answer is the only read, so a row change reads
+ * it too).
  * The button and the panel are `ui-dropdown`'s. Each request links to its page
  * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel.
  */
@@ -192,20 +192,17 @@ export class ReleaseMenu {
       const id = this.projectId();
       if (id !== undefined) untracked(() => void this.store.loadReleaseRequests(id));
     });
-    inject(DomainEvents)
-      .on(RELEASE_REQUEST_EVENTS)
-      .pipe(
-        filter((event) => {
-          const id = this.projectId();
-          return id !== undefined && affectsReleaseRequests(event, id, this.pending());
-        }),
-        debounceTime(REFRESH_DEBOUNCE_MS),
-        takeUntilDestroyed(inject(DestroyRef)),
-      )
-      .subscribe(() => {
+    refreshOn({
+      names: RELEASE_REQUEST_EVENTS,
+      when: (event) => {
+        const id = this.projectId();
+        return id !== undefined && affectsReleaseRequests(event, id, this.pending());
+      },
+      refresh: () => {
         const id = this.projectId();
         if (id !== undefined) void this.store.refreshReleaseRequests(id);
-      });
+      },
+    });
   }
 
   /** Fetches the open project's requests if nothing has yet (opening the menu after a failure). */

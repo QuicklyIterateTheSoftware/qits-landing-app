@@ -1,15 +1,13 @@
-import { DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import type { DestroyRef } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import { debounceTime, filter } from 'rxjs';
 import {
   getWorkspace,
   getWorkspaceActiveProcess,
   listAgents,
   listWorkspaces,
 } from '../../api/workspaces';
-import { DomainEvents } from '$core/events/domain-events';
+import { injectRefreshOn } from '$core/events/refresh-on';
 import {
   GET_ACTIVE_PROCESS,
   GET_SLOT,
@@ -108,13 +106,16 @@ const failedWith = (status: number | undefined): ReadStatus =>
  * Every load reads again when called again (a page calls it on arrival and on every relevant
  * lifecycle event), keeping the last good answer when a read again fails. `follow(destroy, scope,
  * refresh)` runs `refresh` after the lifecycle events (`WORKSPACE_EVENTS`) about `scope()`, at most
- * once a second: it is how the pages stay live, without polling.
+ * once a second (`refreshOn`): it is how the pages stay live, without polling.
+ *
+ * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the page's wrapper, slot, agent or item →
+ * whatever the page's `refresh` reads again (its `load…`).
  */
 export const AgentsStore = signalStore(
   { providedIn: 'root' },
   withState<AgentsState>({ projects: {}, slots: {}, slotAgents: {}, items: {} }),
   withMethods((store) => {
-    const events = inject(DomainEvents);
+    const refreshOn = injectRefreshOn();
 
     const setProject = (id: string, value: ProjectWorkspaces) =>
       patchState(store, { projects: { ...store.projects(), [id]: value } });
@@ -212,14 +213,15 @@ export const AgentsStore = signalStore(
         return store.items()[workId];
       },
       follow(destroy: DestroyRef, scope: () => WorkspaceEventIds, refresh: () => void): void {
-        events
-          .on(WORKSPACE_EVENTS)
-          .pipe(
-            filter((event) => concerns(event, scope())),
-            debounceTime(WORKSPACE_REFRESH_DEBOUNCE_MS),
-            takeUntilDestroyed(destroy),
-          )
-          .subscribe(() => refresh());
+        refreshOn(
+          {
+            names: WORKSPACE_EVENTS,
+            when: (event) => concerns(event, scope()),
+            debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+            refresh: () => refresh(),
+          },
+          destroy,
+        );
       },
     };
   }),

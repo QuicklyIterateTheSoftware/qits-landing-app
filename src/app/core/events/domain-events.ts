@@ -45,8 +45,15 @@ export const RECONNECT_MAX_MS = 30_000;
 const CLOSED = 2;
 
 /**
- * The app's ONE live connection to qits-events (epic qits-112): stores and menus subscribe to the
- * domain events they care about here, instead of each opening a stream of its own.
+ * The app's ONE live connection to qits-events (epic qits-112), and the one basis for staleness
+ * (qits-1270): every store, menu or page holding platform state reads it again after the domain
+ * events that can change it, subscribed here, instead of opening a stream of its own, polling or
+ * setting a timer. Each subscriber narrows by event name and by the ids the payload names
+ * (project, repository, request, run, work item…) and reads again only what the event can change:
+ * the row it names, or the list when it can move the list. `refreshOn` (`./refresh-on.ts`) is how
+ * it subscribes; beside each subscriber a doc comment records its mapping, events → what it reads
+ * again. The lint rule (`eslint.config.mjs`, `stalenessBans`) refuses the other ways outside
+ * `core/events/`.
  *
  * - `on(names)` gives the events of those names ({@link ALL}, `*`, is every event). The service
  *   keeps the union of the names every

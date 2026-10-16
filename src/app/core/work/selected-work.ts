@@ -1,16 +1,14 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
   computed,
-  DestroyRef,
+  type DestroyRef,
   effect,
   inject,
   Injectable,
   PLATFORM_ID,
   untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime } from 'rxjs';
-import { DomainEvents } from '$core/events/domain-events';
+import { injectRefreshOn, REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { WorkGraph } from './work-tree';
 import { WorkStore } from './work.store';
@@ -25,14 +23,14 @@ import { SelectedProject } from '$core/projects/selected-project';
 export const WORK_EVENTS = ['EntityTransitioned'];
 
 /** How long a burst of transitions waits before the work is fetched again. */
-export const WORK_REFRESH_DEBOUNCE_MS = 1_000;
+export const WORK_REFRESH_DEBOUNCE_MS = REFRESH_DEBOUNCE_MS;
 
 @Injectable({ providedIn: 'root' })
 export class SelectedWork {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(ProjectsStore);
   private readonly workStore = inject(WorkStore);
-  private readonly events = inject(DomainEvents);
+  private readonly refreshOn = injectRefreshOn();
 
   /**
    * The open project's work entities; empty until they are loaded. An item whose finish waits for
@@ -79,14 +77,20 @@ export class SelectedWork {
    * here or in another tab, or any agent's move), the work is fetched again, at most once a second.
    * Only the event's name is read, so nothing of its payload is relied on: the refetch is what
    * tells which items moved, and those leave the board with their animation.
+   *
+   * Staleness (qits-1270): `EntityTransitioned` → the open project's work (`WorkStore.refresh`).
    */
   followTransitions(destroy: DestroyRef): void {
-    this.events
-      .on(WORK_EVENTS)
-      .pipe(debounceTime(WORK_REFRESH_DEBOUNCE_MS), takeUntilDestroyed(destroy))
-      .subscribe(() => {
-        const id = this.selected.project()?.id;
-        if (id) void this.workStore.refresh(id);
-      });
+    this.refreshOn(
+      {
+        names: WORK_EVENTS,
+        debounceMs: WORK_REFRESH_DEBOUNCE_MS,
+        refresh: () => {
+          const id = this.selected.project()?.id;
+          if (id) void this.workStore.refresh(id);
+        },
+      },
+      destroy,
+    );
   }
 }

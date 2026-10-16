@@ -1,15 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime } from 'rxjs';
-import { DomainEvents } from '$core/events/domain-events';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { refreshOn } from '$core/events/refresh-on';
 import type { BumpEntry } from '$core/maintenance/maintenance.consumes';
 import { MaintenanceStore } from '$core/maintenance/maintenance.store';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
@@ -17,7 +8,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
  * The domain events after which bumps may have moved: a release or an artifact that makes a bump
- * owed, a build that ends a bump's run, and a release request that changes a bump's release.
+ * owed, a build that ends a bump's run, and a release request that changes or moves a bump's
+ * release (`ReleaseRequestStateChanged` is the only event a release's READY → RELEASED →
+ * FINALIZED sends for a repository with no deployment).
  */
 export const BUMP_EVENTS = [
   'SoftwareRelease',
@@ -25,10 +18,11 @@ export const BUMP_EVENTS = [
   'BuildSuccessful',
   'BuildFailed',
   'ReleaseRequestChanged',
+  'ReleaseRequestStateChanged',
 ] as const;
 
 /** How long a burst of domain events waits before the bumps are fetched again. */
-export const REFRESH_DEBOUNCE_MS = 1_000;
+export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 
 /** How many of a bump's changes a row names before it says how many more there are. */
 export const CHANGES_SHOWN = 3;
@@ -73,7 +67,9 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
  *
  * The bumps are fetched the first time the menu opens, never before (`MaintenanceStore.load`), and
  * again after domain events that move them ({@link BUMP_EVENTS}), at most once a second. The button
- * and the panel are `ui-dropdown`'s; the list scrolls inside the panel.
+ * and the panel are `ui-dropdown`'s; the list scrolls inside the panel. Staleness (qits-1270):
+ * `BUMP_EVENTS`, any of them (bumps are the platform's, so none is narrowed) → the pending bumps
+ * (`MaintenanceStore.refresh`).
  *
  * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): fetched
  * fresh from `/upstream-pools` every time the panel opens. A non-2xx answer, a network error or an
@@ -183,10 +179,7 @@ export class BumpsMenu {
   protected readonly pools = signal<readonly UpstreamPool[]>([]);
 
   constructor() {
-    inject(DomainEvents)
-      .on(BUMP_EVENTS)
-      .pipe(debounceTime(REFRESH_DEBOUNCE_MS), takeUntilDestroyed(inject(DestroyRef)))
-      .subscribe(() => void this.store.refresh());
+    refreshOn({ names: BUMP_EVENTS, refresh: () => this.store.refresh() });
   }
 
   /** Each time the panel opens: the bumps, as before, and a fresh read of the pools. */
