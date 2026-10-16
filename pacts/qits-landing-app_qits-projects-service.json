@@ -26590,6 +26590,140 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "backupSyncProject"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "sync-backups-after-sign-in",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "sync-backups-after-sign-in: backupSyncProject",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with repositories in components",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories/backup-sync",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories/backup-sync"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "scheduled": 3
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.scheduled": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "backupSyncProject"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "sync-backups-after-sign-in",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "sync-backups-after-sign-in: backupSyncProject",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no project with the given id",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repoName": "contract-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories/backup-sync",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories/backup-sync"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "waiveReleaseRequestAutomations"
           },
           "qits-trigger": {

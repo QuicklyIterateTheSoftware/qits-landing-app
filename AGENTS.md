@@ -71,9 +71,11 @@ the same `TerminalSocket` and `ui-terminal-screen` on another socket: qits-proje
 `AUTH_REQUIRED` last backup on any repository puts an alert with "Sign in to backup remote" above
 the tree; otherwise the action sits in the page header. It signs in through the wrapper when that
 has a backup remote, else through a repository that asked for it (the credential store is shared).
-When the session ends (a clean close, or Close) the page reads the repositories again
-(`RepositoriesStore.refresh`). The old panel also nudged a backup sync then; no recording holds
-`POST /projects/api/projects/{projectId}/repositories/backup-sync`, so this app does not call it yet.
+When the session ends (a clean close, or Close) the page does what the old panel did: it reads the
+repositories again (`RepositoriesStore.refresh`), nudges every backup (`RepositoriesStore.syncBackups`,
+`POST /projects/api/projects/{projectId}/repositories/backup-sync`, `backupSyncProject` in the pact)
+and, once the sync is accepted, reads them again after `BACKUP_REFRESH_DELAY_MS` (3 s). A refused
+sync is a quiet note under the terminal and nothing more.
 
 An agent's chat (`…/agent/chat`, `AgentChatPage`) shows the conversation and a prompt box. A harness
 running as a `CHAT` is the daemon's other socket, `…/workspaces/container/<slot row
