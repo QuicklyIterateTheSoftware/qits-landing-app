@@ -1,7 +1,11 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import { listProjectRepositories } from '../../api/projects';
 import {
+  listProjectRepositories,
+  postProjectsApiProjectsByProjectIdRepositoriesBackupSync,
+} from '../../api/projects';
+import {
+  BACKUP_SYNC_PROJECT,
   LIST_PROJECT_REPOSITORIES,
   type RepositoryEntry,
   type WrapperView,
@@ -27,7 +31,9 @@ interface RepositoriesState {
  * `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  * project card does in the browser, and the Repositories page for the open project.
  * `refresh(projectId)` fetches again whatever the store holds (the Repositories page, after the
- * backup sign-in terminal ends), keeping the answer on hand while it does.
+ * backup sign-in terminal ends), keeping the answer on hand while it does. `syncBackups(projectId)`
+ * asks qits-projects to push every repository to its backup remote; the outcomes land on each
+ * repository's `lastBackup` later, so the caller reads the list again after a while.
  */
 export const RepositoriesStore = signalStore(
   { providedIn: 'root' },
@@ -63,6 +69,15 @@ export const RepositoriesStore = signalStore(
         const next = await read(projectId);
         if (next.status === 'error' && store.byProject()[projectId]?.status === 'loaded') return;
         set(projectId, next);
+      },
+
+      /** How many repositories qits-projects scheduled a backup for, or null when it refused. */
+      async syncBackups(projectId: string): Promise<number | null> {
+        const { data, error } = await consume(
+          postProjectsApiProjectsByProjectIdRepositoriesBackupSync({ path: { projectId } }),
+          BACKUP_SYNC_PROJECT,
+        );
+        return error !== undefined || !data ? null : (data.scheduled ?? 0);
       },
     };
   }),

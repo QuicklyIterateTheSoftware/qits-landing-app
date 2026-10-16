@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   PLATFORM_ID,
@@ -32,9 +33,19 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
  * the sign-in terminal; otherwise it is a quieter action in the header. One sign-in fills the
  * shared credential store and so clears every repository's (`signInRepositoryId`: the wrapper's
  * backup remote first). The terminal is `app-remote-login-panel`; when its session ends the page
- * reads the repositories again (`RepositoriesStore.refresh`), which is what turns "Auth needed"
- * back into an outcome once the next backup runs.
+ * does what the old panel did: reads the repositories again (`RepositoriesStore.refresh`), nudges
+ * every backup (`RepositoriesStore.syncBackups`) and, once that is accepted, reads them again after
+ * `BACKUP_REFRESH_DELAY_MS`, which is what turns "Auth needed" back into an outcome. A refused sync
+ * is a quiet note: the backups still run on their own schedule.
  */
+/**
+ * How long to wait before reading again, after a backup sync has been accepted (from
+ * qits-projects-frontend's backup panel). The pushes run after the 202, so there is no answer to
+ * wait for: three seconds is long enough for a small repository's push to land. A single read,
+ * not a poll.
+ */
+export const BACKUP_REFRESH_DELAY_MS = 3000;
+
 @Component({
   selector: 'app-project-repositories-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +62,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Repositories" [actions]="headerActions()">
-        @if (needsSignIn() && !terminalOpen()) {
+        @if (needsSignIn() && !terminalRepoId()) {
           <div
             class="mb-4 flex flex-col items-start gap-2 rounded-md border border-sunflower-gold-300 bg-sunflower-gold-50 px-3 py-2.5 text-sm"
             role="alert"
@@ -72,13 +83,16 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
             }
           </div>
         }
-        @if (terminalOpen() && signInRepoId(); as repositoryId) {
+        @if (terminalRepoId(); as repositoryId) {
           <app-remote-login-panel
             class="mb-6"
             [repositoryId]="repositoryId"
-            (ended)="refresh()"
-            (closed)="terminalOpen.set(false)"
+            (ended)="signInEnded()"
+            (closed)="terminalRepoId.set(null)"
           />
+        }
+        @if (syncNote(); as note) {
+          <p class="m-0 mb-4 text-sm text-charcoal-brown-600" role="status">{{ note }}</p>
         }
         <ui-spinner [state]="state()" class="min-h-48">
           <div class="flex flex-col gap-6">
@@ -165,14 +179,22 @@ export class ProjectRepositoriesPage {
     return signInRepositoryId(repositories?.entries ?? [], repositories?.wrapper?.repositoryId);
   });
 
-  protected readonly terminalOpen = signal(false);
+  /**
+   * The repository the open terminal pushes through, or null while it is closed. Fixed when it
+   * opens: the re-reads after the session ends can change `signInRepoId`, and a new id would be a
+   * new socket, so a new `git push`.
+   */
+  protected readonly terminalRepoId = signal<string | null>(null);
 
   protected readonly signInAction = computed((): Action | null =>
     this.signInRepoId()
       ? {
           label: 'Sign in to backup remote',
           variant: this.needsSignIn() ? 'success' : 'muted',
-          callback: () => this.terminalOpen.set(true),
+          callback: () => {
+            this.syncNote.set('');
+            this.terminalRepoId.set(this.signInRepoId());
+          },
         }
       : null,
   );
@@ -180,8 +202,13 @@ export class ProjectRepositoriesPage {
   /** The sign-in, in the header while no backup asks for it (the alert offers it otherwise). */
   protected readonly headerActions = computed((): Action[] => {
     const action = this.signInAction();
-    return action && !this.needsSignIn() && !this.terminalOpen() ? [action] : [];
+    return action && !this.needsSignIn() && !this.terminalRepoId() ? [action] : [];
   });
+
+  /** What the nudge after the sign-in came to, for a person; empty before one. */
+  protected readonly syncNote = signal('');
+
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly state = computed((): LoadState => {
     const status = this.repositories()?.status;
@@ -196,11 +223,39 @@ export class ProjectRepositoriesPage {
       const id = this.selected.project()?.id;
       if (browser && id) untracked(() => void this.store.load(id));
     });
+    inject(DestroyRef).onDestroy(() => this.cancelRefresh());
   }
 
-  /** The sign-in ended (not necessarily well): read the backups' outcomes again. */
-  protected refresh(): void {
+  /**
+   * The sign-in ended, which says the terminal is gone, not that the sign-in worked. So the list is
+   * read again and a sync is nudged: if the credentials landed, the sync is what turns every "Auth
+   * needed" back into an outcome; if not, the badges come back unchanged.
+   */
+  protected async signInEnded(): Promise<void> {
     const id = this.selected.project()?.id;
-    if (id) void this.store.refresh(id);
+    if (!id) return;
+    void this.store.refresh(id);
+    const scheduled = await this.store.syncBackups(id);
+    if (scheduled === null) {
+      this.syncNote.set(
+        'Could not schedule the backups now; they run again on their own schedule.',
+      );
+      return;
+    }
+    this.syncNote.set(
+      `Scheduled ${scheduled} backup${scheduled === 1 ? '' : 's'}; this list reads again in a moment.`,
+    );
+    this.cancelRefresh();
+    this.refreshTimer = setTimeout(() => {
+      this.refreshTimer = null;
+      void this.store.refresh(id);
+    }, BACKUP_REFRESH_DELAY_MS);
+  }
+
+  private cancelRefresh(): void {
+    if (this.refreshTimer !== null) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 }

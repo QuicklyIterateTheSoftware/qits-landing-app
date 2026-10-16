@@ -19,6 +19,12 @@ export const INTERACTIONS = {
   /** `project-repositories.ts`: the Repositories page lists the open project's repositories. */
   'show-project-repositories-tree':
     'The Repositories page shows the project’s repositories in the wrapper’s directory tree',
+  /**
+   * `project-repositories.page.ts` via `RepositoriesStore.syncBackups`: when the backup sign-in
+   * terminal ends, the page nudges every repository's backup (qits-1268).
+   */
+  'sync-backups-after-sign-in':
+    'Ending the backup sign-in on the Repositories page schedules every repository’s backup',
   /** `project-card.ts`: each card counts the project's work from its planning tree. */
   'show-project-work': 'A project card shows how much work the project has',
   /**

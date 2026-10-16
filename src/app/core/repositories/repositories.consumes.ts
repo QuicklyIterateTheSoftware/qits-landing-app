@@ -1,4 +1,7 @@
-import type { ListProjectRepositoriesResponses } from '../../api/projects';
+import type {
+  ListProjectRepositoriesResponses,
+  PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses,
+} from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -40,3 +43,17 @@ export type RepositoryEntry = NonNullable<Answer['entries']>[number];
 
 /** The wrapper's view, cut to what the store reads: its id and its entries' paths. */
 export type WrapperView = NonNullable<Answer['wrapper']>;
+
+/**
+ * `RepositoriesStore.syncBackups(projectId)` (qits-projects' `backupSyncProject`): the Repositories
+ * page nudges every repository's backup after the backup sign-in ends, and reads how many were
+ * scheduled. A refusal (404 for a project it does not know, 403 without the role) binds the status
+ * only.
+ */
+export const BACKUP_SYNC_PROJECT = ['scheduled'] as const;
+
+/** A scheduled backup sync, cut to what the store reads. */
+export type BackupSync = Consumed<
+  PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponses[202],
+  typeof BACKUP_SYNC_PROJECT
+>;

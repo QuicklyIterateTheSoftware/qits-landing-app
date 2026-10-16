@@ -9,7 +9,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import type { RepositoryEntry, WrapperView } from '$core/repositories/repositories.consumes';
 import { goldenMaster } from '../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../testing/platform-origins';
-import { ProjectRepositoriesPage } from './project-repositories.page';
+import { BACKUP_REFRESH_DELAY_MS, ProjectRepositoriesPage } from './project-repositories.page';
 
 /** A socket the spec drives by hand. */
 class FakeSocket implements WebSocketLike {
@@ -45,7 +45,14 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 /** The recorded project's id: every state seeds its project under this frozen id. */
 const ID = '00000000-0000-4000-8000-000000000001';
 const LIST = `/projects/api/projects/${ID}/repositories`;
+const SYNC = `/projects/api/projects/${ID}/repositories/backup-sync`;
 const ORIGIN = 'https://projects.qits.example';
+/** qits-projects' answers to the sync: three scheduled, and its refusal of an unknown project. */
+const SYNCED = goldenMaster<{ scheduled: number }>(
+  'a project with repositories in components',
+  'backupSyncProject',
+);
+const REFUSED = goldenMaster('no project with the given id', 'backupSyncProject');
 
 /** Every backup state; billing-daemon's last backup is AUTH_REQUIRED. */
 type Answer = { entries: RepositoryEntry[]; wrapper: WrapperView };
@@ -109,7 +116,10 @@ describe('ProjectRepositoriesPage', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    http.verify();
+    vi.useRealTimers();
+  });
 
   async function render(answer: Answer) {
     const fixture = TestBed.createComponent(ProjectRepositoriesPage);
@@ -171,39 +181,79 @@ describe('ProjectRepositoriesPage', () => {
     expect(sockets[0].sent).toEqual([JSON.stringify({ type: 'resize', cols: 100, rows: 30 })]);
   });
 
-  it('reads the repositories again when the session ends with a clean close', async () => {
-    const { fixture, button, text } = await render(withWrapperTwin(recorded()));
-    button('Sign in to backup remote')!.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
+  /** Opens the sign-in terminal and attaches it. */
+  async function signIn(answer: Answer) {
+    const rendered = await render(answer);
+    rendered.button('Sign in to backup remote')!.click();
+    rendered.fixture.detectChanges();
+    await rendered.fixture.whenStable();
     sockets[0].open();
+    return rendered;
+  }
+
+  /** The re-read and the sync the end of a session starts, answered. */
+  async function answerEnd(sync: { status: number; body: object }, list = recorded()) {
+    await settle();
+    http.expectOne(LIST).flush(list);
+    const request = http.expectOne(SYNC);
+    expect(request.request.method).toBe('POST');
+    request.flush(sync.body, { status: sync.status, statusText: String(sync.status) });
+    await settle();
+    await settle();
+  }
+
+  it('re-reads, nudges a sync and re-reads after the delay when the session ends', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { fixture, button, text } = await signIn(withWrapperTwin(recorded()));
     sockets[0].serverClose(1000);
     fixture.detectChanges();
+    await answerEnd({ status: 202, body: SYNCED }, withWrapperTwin(recorded()));
+    fixture.detectChanges();
+    expect(text()).toContain('The sign-in has ended.');
+    expect(text()).toContain(`Scheduled ${SYNCED.scheduled} backups`);
+    http.expectNone(LIST);
+    vi.advanceTimersByTime(BACKUP_REFRESH_DELAY_MS);
     await settle();
     http.expectOne(LIST).flush(withoutAuthRequired(withWrapperTwin(recorded())));
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
-    expect(text()).toContain('The sign-in has ended.');
+    expect(text()).not.toContain('refused the platform’s credentials');
     // The pane stays until it is closed, so the exit note can be read; closing reads nothing more.
     button('Close')!.click();
     fixture.detectChanges();
     await settle();
     http.expectNone(LIST);
+    http.expectNone(SYNC);
     expect(text()).not.toContain('The sign-in has ended.');
   });
 
-  it('reads the repositories again when the terminal is closed mid-session', async () => {
-    const { fixture, button } = await render(withWrapperTwin(recorded()));
-    button('Sign in to backup remote')!.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-    sockets[0].open();
+  it('does the same when the terminal is closed mid-session', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { fixture, button } = await signIn(withWrapperTwin(recorded()));
     button('Close')!.click();
     fixture.detectChanges();
     expect(sockets[0].closed).toBe(true);
+    await answerEnd({ status: 202, body: SYNCED });
+    vi.advanceTimersByTime(BACKUP_REFRESH_DELAY_MS);
     await settle();
     http.expectOne(LIST).flush(recorded());
     await settle();
+  });
+
+  it('says so quietly when the sync is refused, and reads nothing more', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { fixture, text } = await signIn(withWrapperTwin(recorded()));
+    sockets[0].serverClose(1000);
+    fixture.detectChanges();
+    await answerEnd({ status: 404, body: REFUSED });
+    fixture.detectChanges();
+    expect(text()).toContain('Could not schedule the backups now');
+    vi.advanceTimersByTime(BACKUP_REFRESH_DELAY_MS * 2);
+    await settle();
+    http.expectNone(LIST);
+    // The re-read moved the fallback sign-in repository; the open terminal stays on its own.
+    expect(sockets).toHaveLength(1);
+    expect(text()).toContain('The sign-in has ended.');
   });
 });
