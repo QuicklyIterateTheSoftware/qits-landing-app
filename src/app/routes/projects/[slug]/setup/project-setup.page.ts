@@ -6,6 +6,8 @@ import { SelectedProject } from '$core/projects/selected-project';
 /**
  * A project's settings, at `/projects/<slug>/setup`, reached by the gear in the top bar. For now it
  * only names the project; the settings come later.
+ *
+ * Staleness (qits-1270): no event; the project's name is `ProjectsStore`'s list (see the store).
  */
 @Component({
   selector: 'app-project-setup-page',

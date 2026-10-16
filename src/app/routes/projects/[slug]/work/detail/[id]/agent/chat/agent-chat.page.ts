@@ -20,6 +20,7 @@ import { AgentChatStore } from '$core/workspaces/agent-chat.store';
 import { AgentHarnessStore } from '$core/workspaces/agent-harness.store';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
 import { AgentsStore } from '$core/workspaces/agents.store';
+import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
 import { buildConversation, EMPTY_CONVERSATION } from '$core/workspaces/chat-model';
 import { formatRange } from '$core/workspaces/file-range';
 import type { CodeReference } from '$core/workspaces/picked-context';
@@ -60,6 +61,16 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
  * - Otherwise, and below a terminal's transcript: the prompt composer (`PromptComposer`), whose
  *   draft lives on the service and whose prompt the delivery door hands to the agent, with the line
  *   ranges picked in the Files tab; a pick's ↗ opens it there (`agent/files?path=…&lines=…`).
+ *
+ * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
+ * (`workspaceId`) → the harness (`AgentHarnessStore.load`, quietly). `AgentStarted` and
+ * `AgentHarnessExited` carry the `commandId`, so through the harness they already decide which
+ * command's transcript is shown and whether it is polled: a start begins it, an exit stops the
+ * poll and reads the last lines once more. The slot's `commands` hint (`WorkspaceHints`) does the
+ * same for the agent's harness, and stays only until it is retired (those two events cover it).
+ * Two exceptions to the one-stream rule stay (qits-1270, lint-allowed by name): the hint channel
+ * (`prompt-draft` for the composer has no event) and the {@link TRANSCRIPT_POLL_MS} poll while a
+ * terminal harness runs (the daemon offers no transcript stream, and qits-events carries no turn).
  *
  * In the browser only: the server renders the tab without reading or connecting.
  */
@@ -342,6 +353,7 @@ export class AgentChatPage {
         workspaceId: this.rowId() ? String(this.rowId()) : undefined,
       }),
       () => this.reload(),
+      HARNESS_EVENTS,
     );
     destroy.onDestroy(() => {
       this.detach();

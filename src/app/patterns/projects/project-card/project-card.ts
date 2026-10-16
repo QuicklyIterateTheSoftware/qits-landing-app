@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -34,6 +35,11 @@ export const LANGUAGES_SHOWN = 4;
  *   (`LocStore`, one request for all cards). No grand total: the rows say it.
  * - A repository qits-githost counts only at an older commit (`STALE`) shows that count; one never
  *   counted is left out. The table shows its loading spinner only while nothing at all is counted.
+ *
+ * Staleness (qits-1270): "Components" → `RepositoriesStore.follow` (a commit to the project's
+ * wrapper on its main branch reads its repositories again). The lines of code are read once
+ * (`LocStore`): qits-githost emits no event when it has counted a commit, so none can say they
+ * moved. "Work" is `WorkStore`'s, which keeps its own mapping.
  */
 @Component({
   selector: 'app-project-card',
@@ -229,5 +235,6 @@ export class ProjectCard {
         void this.repositoriesStore.load(projectId);
       });
     });
+    this.repositoriesStore.follow(() => this.project().id, inject(DestroyRef));
   }
 }

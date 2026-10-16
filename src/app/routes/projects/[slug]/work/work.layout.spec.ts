@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { Subject } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
@@ -19,6 +19,12 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 @Component({ selector: 'app-test-page', template: `<p>Page content</p>` })
 class TestPage {}
+
+/** An `EntityTransitioned` payload moving one entity of `projectId`, as qits-projects sends it. */
+const transitioned = (projectId: string) =>
+  JSON.stringify({
+    entities: [{ entityId: 'e-1', projectId, status: 'REFINED', statusBefore: 'REPORTED' }],
+  });
 
 /** The open workspaces' read (`WorkspacesStore.load()`), and the state it is answered from. */
 const OPEN_WORKSPACES = '/workspaces/api/work/workspaces';
@@ -61,7 +67,14 @@ describe('WorkLayout', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(workspacesClient),
-        { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
+        {
+          provide: DomainEvents,
+          // By name, as the service subscribes: each store hears only the names it asks for.
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -182,17 +195,34 @@ describe('WorkLayout', () => {
     expect(links()[5].getAttribute('aria-current')).toBe('page');
   });
 
+  it('fetches nothing after a transition in another project', async () => {
+    const { answered, counts } = await shown('in-progress');
+    await answered('a project with work in every status');
+    vi.useFakeTimers();
+    events.next({ id: '1', name: 'EntityTransitioned', payload: transitioned('another-project') });
+    events.next({ id: '2', name: 'EntityTransitioned', payload: '{}' });
+    vi.advanceTimersByTime(WORK_REFRESH_DEBOUNCE_MS);
+    vi.useRealTimers();
+    await settle();
+    http.expectNone(entities);
+    expect(counts()).toEqual([0, 2, 4, 9, 2, 4]);
+    // The open workspaces are `WorkspacesStore.follow`'s, narrowed (or not) on their own.
+    for (const read of http.match(OPEN_WORKSPACES)) {
+      read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+    }
+  });
+
   it('fetches the work again after a transition, and the counts follow', async () => {
     const { counts, answered } = await shown('in-progress');
     await answered('a project with work in every status');
     vi.useFakeTimers();
-    events.next({ id: '1', name: 'EntityTransitioned', payload: '{}' });
+    events.next({ id: '1', name: 'EntityTransitioned', payload: transitioned(project.id) });
     vi.advanceTimersByTime(WORK_REFRESH_DEBOUNCE_MS);
     vi.useRealTimers();
     await settle();
     await answered('a project with no work');
     expect(counts()).toEqual([0, 0, 0, 0, 0, 0]);
-    // The open workspaces follow too: a dispatch opens one, an integration closes it.
-    http.expectOne(OPEN_WORKSPACES).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+    // The open workspaces follow qits-workspaces' agent events, not a work item's move (qits-1270).
+    http.expectNone(OPEN_WORKSPACES);
   });
 });

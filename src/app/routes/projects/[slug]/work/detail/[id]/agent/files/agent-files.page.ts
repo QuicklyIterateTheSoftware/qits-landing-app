@@ -93,6 +93,10 @@ const CHIP =
  *
  * The slot's `files` hint (`WorkspaceHints`) reads the tree, the detection and the open file again.
  *
+ * Staleness (qits-1270): no qits-events event says the worktree changed, so the `files` hint (a
+ * named, lint-allowed exception) is the trigger; the agent and its slot are the layout's
+ * (`AgentsStore.loadItem`, `WORKSPACE_EVENTS`), and a new slot moves the hint channel with it.
+ *
  * **What the tree shows.** A gitignored directory is a dimmed stub with its child count. A name
  * search (fuzzy, a glob with `*`, or a path with `/`) or a manual rule opens the tree fully; a
  * framework toggle narrows it to the framework's member paths and opens it to a framework-sensible

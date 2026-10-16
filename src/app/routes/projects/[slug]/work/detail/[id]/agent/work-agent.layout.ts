@@ -43,6 +43,12 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * from `AgentsStore.loadItem` by the item's id: its newest agent that is not removed. Read again
  * after a lifecycle event about the item, its agent or its slot (at most once a second). In the
  * browser only.
+ *
+ * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the item (`workId`), its agent (`agentId`) or
+ * its slot (`workspaceId`) → the item's agents and its slot's status (`AgentsStore.loadItem`,
+ * quietly). The item comes from `SelectedWork` (`EntityTransitioned`, its own mapping). Not
+ * announced (see `AgentsStore`): what the agent is doing and what it waits on (`activity`,
+ * `waitingOn`: the daemon's hooks write them, no event), the slot's container stopping.
  */
 @Component({
   selector: 'app-work-agent-layout',

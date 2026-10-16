@@ -44,6 +44,12 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  *
  * The requests come from `ProjectsStore`, the same answer the top bar's release menu and the
  * sidebar entry read; domain events refresh it there. A read that fails says so, with Retry.
+ *
+ * Staleness (qits-1270): `RELEASE_REQUEST_EVENTS` about the open project → its release requests
+ * (`ProjectsStore.refreshReleaseRequests`), through the release menu's subscription (`ReleaseMenu`,
+ * in the shell above this page, so it lives at least as long as the page). The page subscribes no
+ * second time: the same answer read twice per burst would only double the call. A refresh keeps
+ * the rows on show (no spinner).
  */
 @Component({
   selector: 'app-release-requests-page',

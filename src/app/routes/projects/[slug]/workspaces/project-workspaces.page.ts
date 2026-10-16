@@ -32,8 +32,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * The slots are the project's wrapper's: qits-projects names the wrapper (`RepositoriesStore`), and
  * the page reads its slots and the project's agents (`AgentsStore.loadProject`: those in the
  * wrapper or on the project's items) once it is known, and again after a lifecycle event about the
- * wrapper (at most once a second), and after an agent is created. In the browser only: the server
- * render has no session to send.
+ * wrapper or one of the agents it lists (at most once a second), and after an agent is created. In
+ * the browser only: the server render has no session to send.
+ *
+ * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the wrapper (`repositoryId`), or a listed
+ * agent's `agentId` (one of the project's items worked on outside the wrapper) → the wrapper's
+ * slots and the project's agents (`AgentsStore.loadProject`, quietly). Not announced (see
+ * `AgentsStore`): an agent's activity and wait, a queued agent's creation, a slot's runtime
+ * leaving RUNNING.
  */
 @Component({
   selector: 'app-project-workspaces-page',
@@ -163,7 +169,10 @@ export class ProjectWorkspacesPage {
     });
     this.store.follow(
       inject(DestroyRef),
-      () => ({ repositoryId: this.wrapperId() }),
+      () => [
+        { repositoryId: this.wrapperId() },
+        ...this.agents().map((agent) => ({ agentId: agent.agentId })),
+      ],
       () => this.reload(),
     );
   }

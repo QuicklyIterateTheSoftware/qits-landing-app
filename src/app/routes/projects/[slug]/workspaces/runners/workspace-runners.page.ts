@@ -1,4 +1,4 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,18 +16,12 @@ import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import type { RunnerRegistration } from '$core/workspaces/runners.consumes';
 import { RunnersStore } from '$core/workspaces/runners.store';
+import { SLOT_EVENTS } from '$core/workspaces/workspace-events';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { InstallLinePanel } from '$patterns/workspaces/install-line-panel/install-line-panel';
 import { RegisterRunnerForm } from '$patterns/workspaces/register-runner-form/register-runner-form';
 import { RunnerCard, type RunnerSlot } from '$patterns/workspaces/runner-card/runner-card';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
-
-/**
- * How often the runners are read again while the page is visible. There are no runner events on
- * qits-events, so this is how a runner connecting, a slot filling or a login landing reaches the
- * screen (as on qits-workspaces-frontend's runners page).
- */
-export const RUNNERS_POLL_MS = 5_000;
 
 /**
  * The Runners page, at `/projects/<slug>/workspaces/runners` (epic qits-1230), ported from
@@ -41,8 +35,15 @@ export const RUNNERS_POLL_MS = 5_000;
  * project's wrapper, as the Workspaces page reads them), each a link to its slot page.
  *
  * The runners are read in the browser only (the server render has no session to send), again
- * every {@link RUNNERS_POLL_MS} while the page is visible, on coming back to it, and after every
- * write.
+ * after every write and after the domain events that can change them, never by polling.
+ *
+ * Staleness (qits-1270): `RunnersStore.follow` — `RUNNER_EVENTS` naming a listed runner →
+ * `listRunners` (and its node details, when shown, on `RunnerHealthChecked`); `SLOT_EVENTS`, any →
+ * `listRunners` (the slot counts) — then the "ago" clock. `AgentsStore.follow` — `SLOT_EVENTS`
+ * naming the project's wrapper → its slots (`loadProject`). The gap, which used to be a 5 s poll:
+ * qits-workspaces sends no event about its runners (connection, quarantine, health and login
+ * checks, version), and qits-ci's runner events name qits-ci's runners, so those show only with a
+ * slot event, a write of this page's, or the next visit (see `RunnersStore`).
  */
 @Component({
   selector: 'app-workspace-runners-page',
@@ -106,7 +107,6 @@ export class WorkspaceRunnersPage {
   private readonly repositories = inject(RepositoriesStore);
   private readonly agents = inject(AgentsStore);
   private readonly store = inject(RunnersStore);
-  private readonly document = inject(DOCUMENT);
 
   protected readonly slug = computed(() => this.selected.slug());
   protected readonly runners = computed(() => this.store.runners());
@@ -133,10 +133,6 @@ export class WorkspaceRunnersPage {
     return (wrapper ? this.agents.projectOf(wrapper)?.slots : undefined) ?? [];
   });
 
-  private poll: ReturnType<typeof setInterval> | null = null;
-  /** A poll is in flight: the next tick does not stack another on it. */
-  private polling = false;
-
   constructor() {
     if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
     void this.read();
@@ -148,13 +144,14 @@ export class WorkspaceRunnersPage {
       const wrapper = this.wrapperId();
       if (wrapper) untracked(() => void this.agents.loadProject(wrapper, this.slug()));
     });
-    const onVisibility = () => this.onVisibilityChange();
-    this.document.addEventListener('visibilitychange', onVisibility);
-    inject(DestroyRef).onDestroy(() => {
-      this.document.removeEventListener('visibilitychange', onVisibility);
-      this.stopPolling();
-    });
-    this.sync();
+    const destroy = inject(DestroyRef);
+    this.store.follow(destroy, () => this.now.set(new Date()));
+    this.agents.follow(
+      destroy,
+      () => ({ repositoryId: this.wrapperId() }),
+      () => this.readSlots(),
+      SLOT_EVENTS,
+    );
   }
 
   protected workspacesLink(): string {
@@ -174,6 +171,11 @@ export class WorkspaceRunnersPage {
   /** Reads the runners again (after a write), and the project's slots with them. */
   protected reload(): void {
     void this.read();
+    this.readSlots();
+  }
+
+  /** Reads the project's slots again, as the Workspaces page reads them. */
+  private readSlots(): void {
     const wrapper = this.wrapperId();
     if (wrapper) void this.agents.loadProject(wrapper, this.slug());
   }
@@ -181,30 +183,5 @@ export class WorkspaceRunnersPage {
   private async read(): Promise<void> {
     await this.store.load();
     this.now.set(new Date());
-  }
-
-  private async tick(): Promise<void> {
-    if (this.polling) return;
-    this.polling = true;
-    try {
-      await this.read();
-    } finally {
-      this.polling = false;
-    }
-  }
-
-  private sync(): void {
-    if (this.document.hidden) this.stopPolling();
-    else this.poll ??= setInterval(() => void this.tick(), RUNNERS_POLL_MS);
-  }
-
-  private stopPolling(): void {
-    if (this.poll !== null) clearInterval(this.poll);
-    this.poll = null;
-  }
-
-  private onVisibilityChange(): void {
-    if (!this.document.hidden) void this.tick();
-    this.sync();
   }
 }

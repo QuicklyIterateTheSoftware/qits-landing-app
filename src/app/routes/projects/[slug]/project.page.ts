@@ -6,6 +6,9 @@ import { SelectedProject } from '$core/projects/selected-project';
 /**
  * One project's page, at `/projects/<slug>`. For now it only names the project; its content comes
  * later. Loading and failure show through `ui-spinner`, an unknown slug as an error.
+ *
+ * Staleness (qits-1270): no event. The name is `ProjectsStore`'s list, which no event moves
+ * (qits-projects emits none for a project renamed); see the store.
  */
 @Component({
   selector: 'app-project-page',

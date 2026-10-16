@@ -1,5 +1,8 @@
+import type { DestroyRef } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
+import { injectRefreshOn, payloadField } from '$core/events/refresh-on';
+import type { DomainEvent } from '$core/events/domain-events';
 import { listProjectRepositories } from '../../api/projects';
 import {
   LIST_PROJECT_REPOSITORIES,
@@ -28,11 +31,23 @@ interface RepositoriesState {
  * project card does in the browser, and the Repositories page for the open project.
  * `refresh(projectId)` fetches again whatever the store holds (the Repositories page, after the
  * backup sign-in terminal ends), keeping the answer on hand while it does.
+ * `follow(projectId, destroy)` keeps a project's answer current while a page or card shows it.
+ *
+ * Staleness (qits-1270): `SCMPublishCommit` to the project's wrapper repository on its main branch
+ * (`repoId` = `wrapper.repositoryId`, `branch` = the wrapper's `mainBranch`) → that project's list
+ * (`refresh(projectId)`), at most once a second. The wrapper's `.gitmodules` on main is what places
+ * a repository in the tree (`wrapper.entries`, `declared`), and qits-projects commits there when it
+ * creates or adopts one, so that commit is the one event that moves the list. Gaps: qits-projects
+ * emits no repository-created, -renamed or -deleted event (a repository created without a wrapper
+ * commit shows only on the next load), and none for a backup's outcome (`lastBackup`, read again
+ * after the sign-in terminal only) or a changed `mainBranch`/`backupUrl`.
  */
 export const RepositoriesStore = signalStore(
   { providedIn: 'root' },
   withState<RepositoriesState>({ byProject: {} }),
   withMethods((store) => {
+    const refreshOn = injectRefreshOn();
+
     function set(projectId: string, value: ProjectRepositories): void {
       patchState(store, { byProject: { ...store.byProject(), [projectId]: value } });
     }
@@ -47,6 +62,16 @@ export const RepositoriesStore = signalStore(
         : { status: 'loaded', entries: data.entries ?? [], wrapper: data.wrapper };
     }
 
+    /**
+     * Fetch again, without a `loading` in between: the page keeps showing the last answer. A
+     * failed refresh keeps a loaded answer too, since it is still the best one on hand.
+     */
+    async function refresh(projectId: string): Promise<void> {
+      const next = await read(projectId);
+      if (next.status === 'error' && store.byProject()[projectId]?.status === 'loaded') return;
+      set(projectId, next);
+    }
+
     return {
       async load(projectId: string): Promise<void> {
         const current = store.byProject()[projectId];
@@ -55,15 +80,37 @@ export const RepositoriesStore = signalStore(
         set(projectId, await read(projectId));
       },
 
+      refresh,
+
       /**
-       * Fetch again, without a `loading` in between: the page keeps showing the last answer. A
-       * failed refresh keeps a loaded answer too, since it is still the best one on hand.
+       * Reads the repositories of the project `projectId` names (read when an event arrives, so it
+       * follows a page that moves to another project; none: nothing) again after a commit to its
+       * wrapper's main branch (see the store's staleness note), until `destroy` is destroyed.
        */
-      async refresh(projectId: string): Promise<void> {
-        const next = await read(projectId);
-        if (next.status === 'error' && store.byProject()[projectId]?.status === 'loaded') return;
-        set(projectId, next);
+      follow(projectId: () => string | undefined, destroy: DestroyRef): void {
+        refreshOn(
+          {
+            names: ['SCMPublishCommit'],
+            when: (event) => {
+              const id = projectId();
+              return !!id && movesWrapper(event, store.byProject()[id]);
+            },
+            refresh: () => {
+              const id = projectId();
+              return id ? refresh(id) : undefined;
+            },
+          },
+          destroy,
+        );
       },
     };
   }),
 );
+
+/** Whether `event` is a commit to the main branch of the wrapper `repositories` names. */
+function movesWrapper(event: DomainEvent, repositories: ProjectRepositories | undefined): boolean {
+  const wrapperId = repositories?.wrapper?.repositoryId;
+  if (!wrapperId || payloadField(event, 'repoId') !== wrapperId) return false;
+  const wrapper = repositories.entries.find((entry) => entry.repository?.id === wrapperId);
+  return payloadField(event, 'branch') === (wrapper?.repository?.mainBranch || 'main');
+}

@@ -6,7 +6,8 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
 import { client as ciClient } from '../../../../../api/ci/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS, type EventSourceLike } from '$core/events/domain-events';
+import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { goldenMaster } from '../../../../../../testing/golden-masters';
 import { ReleaseRequestPage } from './release-request.page';
 
@@ -25,14 +26,34 @@ const failure = (element: HTMLElement) => element.querySelector('ui-load-failure
 /** The state whose recorded project answers the read of one of its requests. */
 const STATE = 'a project with release requests in every state';
 
+/** A stand-in for the browser's `EventSource`, so a spec can push frames. */
+class FakeSource implements EventSourceLike {
+  onmessage: ((event: MessageEvent<string>) => void) | null = null;
+  onerror: ((event: Event) => void) | null = null;
+  readyState = 1;
+  constructor(readonly url: string) {}
+  close(): void {
+    this.readyState = 2;
+  }
+  push(name: string, payload: object): void {
+    this.onmessage?.(
+      new MessageEvent('message', {
+        data: JSON.stringify({ name, payload: JSON.stringify(payload) }),
+      }),
+    );
+  }
+}
+
 describe('ReleaseRequestPage', () => {
   let http: HttpTestingController;
+  let sources: FakeSource[];
   const projects = goldenMaster('a project exists', 'listProjects');
   const project = projects.entries[0].project;
   const recorded = goldenMaster(STATE, 'getProjectReleaseRequest');
   const request = recorded.request;
 
   beforeEach(() => {
+    sources = [];
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
@@ -44,7 +65,11 @@ describe('ReleaseRequestPage', () => {
         provideHeyApiClient(ciClient),
         {
           provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+          useValue: (url: string) => {
+            const source = new FakeSource(url);
+            sources.push(source);
+            return source;
+          },
         },
       ],
     });
@@ -139,5 +164,62 @@ describe('ReleaseRequestPage', () => {
     await answered();
     expect(failure(element).classList.contains('hidden')).toBe(true);
     expect(element.textContent).toContain(request.summary);
+  });
+
+  describe('staleness (qits-1270)', () => {
+    /** The page with its request read, and the live stream it opened. */
+    async function shown() {
+      const page = await render(request.qualifiedId);
+      read(request.qualifiedId).flush(recorded);
+      await page.answered();
+      // The stream opens once its subscriptions have settled.
+      await new Promise((resolve) => setTimeout(resolve, REOPEN_DEBOUNCE_MS + 50));
+      const source = sources.filter((s) => s.readyState !== 2).at(-1)!;
+      return { ...page, source };
+    }
+
+    /** Lets a burst's debounce pass, then the generated client's awaits. */
+    async function after(push: () => void) {
+      vi.useFakeTimers();
+      push();
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+    }
+
+    afterEach(() => vi.useRealTimers());
+
+    it('subscribes to the release request events on the one stream', async () => {
+      const { source } = await shown();
+      expect(decodeURIComponent(source.url)).toContain('ReleaseRequestStateChanged');
+    });
+
+    it('reads the request again after an event that names it', async () => {
+      const { source, answered } = await shown();
+      await after(() =>
+        source.push('ReleaseRequestStateChanged', {
+          projectId: project.id,
+          releaseRequestId: request.id,
+          previousState: 'RELEASED',
+          state: 'FINALIZED',
+        }),
+      );
+      read(request.qualifiedId).flush(recorded);
+      await answered();
+    });
+
+    it('reads nothing after an event about another request of the project', async () => {
+      const { source } = await shown();
+      await after(() =>
+        source.push('ReleaseRequestStateChanged', {
+          projectId: project.id,
+          releaseRequestId: 'another-request',
+          state: 'FINALIZED',
+        }),
+      );
+      expect(
+        http.match(`/projects/api/projects/${project.id}/release-requests/${request.qualifiedId}`),
+      ).toHaveLength(0);
+    });
   });
 });

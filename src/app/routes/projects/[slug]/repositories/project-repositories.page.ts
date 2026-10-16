@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   PLATFORM_ID,
@@ -34,6 +35,12 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
  * backup remote first). The terminal is `app-remote-login-panel`; when its session ends the page
  * reads the repositories again (`RepositoriesStore.refresh`), which is what turns "Auth needed"
  * back into an outcome once the next backup runs.
+ *
+ * Staleness (qits-1270): `SCMPublishCommit` to the open project's wrapper on its main branch → the
+ * project's repositories (`RepositoriesStore.follow`; see the store for the gaps: no event for a
+ * repository created, renamed or deleted, nor for a backup's outcome). The cards show no branch,
+ * commit or version, so `SCMPublishCommit` on other repositories, `SCMPublishTag`,
+ * `SCMDeleteBranch` and `SCMRelease` change nothing here.
  */
 @Component({
   selector: 'app-project-repositories-page',
@@ -196,6 +203,7 @@ export class ProjectRepositoriesPage {
       const id = this.selected.project()?.id;
       if (browser && id) untracked(() => void this.store.load(id));
     });
+    this.store.follow(() => this.selected.project()?.id, inject(DestroyRef));
   }
 
   /** The sign-in ended (not necessarily well): read the backups' outcomes again. */

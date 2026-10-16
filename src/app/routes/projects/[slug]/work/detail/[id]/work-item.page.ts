@@ -14,7 +14,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
-import { SelectedWork } from '$core/work/selected-work';
+import { refreshOn } from '$core/events/refresh-on';
+import { SelectedWork, WORK_EVENTS } from '$core/work/selected-work';
 import { ArchetypesStore } from '$core/work/archetypes.store';
 import {
   lookOf,
@@ -34,6 +35,8 @@ import { TaskDetail } from '$patterns/work/detail/task-detail/task-detail';
 import { TicketDetail } from '$patterns/work/detail/ticket-detail/ticket-detail';
 import { WorkDetailStore } from '$core/work/work-detail.store';
 import { WorkDrop } from '$patterns/work/detail/work-drop/work-drop';
+import { AgentsStore } from '$core/workspaces/agents.store';
+import { ACTIVE_AGENT_EVENTS } from '$core/workspaces/workspace-events';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
 
@@ -65,6 +68,18 @@ const notBuiltYet = (): void => undefined;
  * Drop opens its own form instead of moving at once (`app-work-drop`, qits-248): it asks for the
  * outcome and, where the outcome needs one, a reference, then sends `WorkStore.drop`. Every other
  * press is a placeholder for now (`notBuiltYet`); see `callbackOf`.
+ *
+ * Staleness (qits-1270): `EntityTransitioned` naming the open project → the project's work
+ * (`SelectedWork.followTransitions`: the item's status, its children, its actions); naming this
+ * item among its `entities[].entityId` → the item's own data (`WorkDetailStore.refresh`: its
+ * started/implemented times move with its status). A child's or the parent's move changes only
+ * their rows in the work, which the first refetch reads. qits-projects sends no event for a
+ * comment, a dossier page or figure, an edit of the item's fields (description, criteria,
+ * assignee…), a block or unblock, or a campaign's members: those show on the next visit.
+ * `AgentPlaced`, `AgentRequeued`, `AgentObsolete`, `AgentRemoved` naming this item's `workId` →
+ * the item's workspaces (`WorkspacesStore.refreshHistory`, quietly; `AgentsStore.follow`); any of
+ * them → the open workspaces (`WorkspacesStore.follow`). An agent's creation is not announced: a
+ * queued agent's row shows once it is placed.
  *
  * The body is picked with `@switch`: which archetype it is is known only in the browser (the server
  * loads no work), so the server render and the browser's first render both draw none.
@@ -146,6 +161,7 @@ export class WorkItemPage {
   private readonly archetypes = inject(ArchetypesStore);
   private readonly details = inject(WorkDetailStore);
   private readonly workspaces = inject(WorkspacesStore);
+  private readonly agents = inject(AgentsStore);
 
   /** The qualified id in the URL. */
   protected readonly id = toSignal(
@@ -219,11 +235,34 @@ export class WorkItemPage {
         const id = this.id();
         if (id) untracked(() => void this.details.load(id));
       });
+      refreshOn(
+        {
+          names: WORK_EVENTS,
+          when: (_, ids) => {
+            const id = this.entryId();
+            return !!id && ids.workIds.includes(id);
+          },
+          refresh: () => {
+            const ref = this.id();
+            if (ref) void this.details.refresh(ref);
+          },
+        },
+        destroy,
+      );
       // By the item's id, which qits-workspaces binds a workspace to: known once the work is.
       effect(() => {
         const id = this.entryId();
         if (id) untracked(() => void this.workspaces.loadHistory(id));
       });
+      this.agents.follow(
+        destroy,
+        () => ({ workId: this.entryId() }),
+        () => {
+          const id = this.entryId();
+          if (id) void this.workspaces.refreshHistory(id);
+        },
+        ACTIVE_AGENT_EVENTS,
+      );
     }
   }
 

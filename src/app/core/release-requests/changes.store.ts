@@ -48,6 +48,10 @@ interface ChangesState {
  * (`changeKeys`); `read(key)` gives what is held under it. A component starts reads from an effect
  * (they write state) and reads by key in its computeds. The fold's methods take the fold (`mergedSha`), so a
  * re-folded request asks again.
+ *
+ * Staleness (qits-1270): no event can change an answer: each is keyed by an immutable fold or
+ * commit. A re-fold (`ReleaseRequestChanged`, `mergedSha`) reaches the request's page through
+ * `ReleaseRequestStore.refresh`, and the new fold is a new key.
  */
 export const ChangesStore = signalStore(
   { providedIn: 'root' },

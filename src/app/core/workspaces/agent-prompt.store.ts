@@ -77,6 +77,10 @@ const failed = (response: { readonly status: number } | undefined) =>
  * - `deliver`: send a prompt to the item's agent (`POST /workspaces/api/agent-dispatches/delivery`,
  *   `compactFirst: false`), which resumes a yielded agent to hear it: the browser never starts a
  *   harness itself.
+ *
+ * Staleness (qits-1270): none from qits-events, which by design never carries what a person wrote
+ * (no prompt draft event). Another device's draft comes in on the slot's `prompt-draft` hint
+ * (`WorkspaceHints`, a named, lint-allowed exception), read by the composer.
  */
 export const AgentPromptStore = signalStore(
   { providedIn: 'root' },

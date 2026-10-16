@@ -1,17 +1,20 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { DOCUMENT } from '@angular/common';
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { filter, Subject } from 'rxjs';
 import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../../../api/workspaces/client/client.gen';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { AgentsStore } from '$core/workspaces/agents.store';
+import { SLOT_EVENTS } from '$core/workspaces/workspace-events';
 import { workspacesGoldenMaster } from '../../../../../../testing/golden-masters';
-import { RUNNERS_POLL_MS, WorkspaceRunnersPage } from './workspace-runners.page';
+import { WorkspaceRunnersPage } from './workspace-runners.page';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
@@ -28,11 +31,22 @@ const PROJECT_SLOTS = workspacesGoldenMaster(SLOTS, 'listWorkspaces').entries.ma
 describe('WorkspaceRunnersPage', () => {
   let http: HttpTestingController;
   let loadProject: ReturnType<typeof vi.fn>;
+  let follow: ReturnType<typeof vi.fn>;
+  let events: Subject<DomainEvent>;
 
   function configure(platform: 'browser' | 'server') {
     loadProject = vi.fn();
+    follow = vi.fn();
+    events = new Subject<DomainEvent>();
     TestBed.configureTestingModule({
       providers: [
+        {
+          provide: DomainEvents,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
+        },
         { provide: PLATFORM_ID, useValue: platform },
         provideRouter([
           { path: 'projects/:slug/workspaces/runners', component: WorkspaceRunnersPage },
@@ -55,6 +69,7 @@ describe('WorkspaceRunnersPage', () => {
           provide: AgentsStore,
           useValue: {
             loadProject,
+            follow,
             projectOf: (id: string) =>
               id === WRAPPER ? { status: 'loaded', slots: PROJECT_SLOTS, agents: [] } : undefined,
           },
@@ -107,27 +122,53 @@ describe('WorkspaceRunnersPage', () => {
     ).toBe('/projects/qits/workspaces');
   });
 
-  it('reads the runners again every 5 s while the page is visible, and not while hidden', async () => {
-    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+  /** Sends `sent` as one burst, and lets it settle. */
+  async function burst(...sent: DomainEvent[]) {
+    vi.useFakeTimers();
+    sent.forEach((event) => events.next(event));
+    vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+    vi.useRealTimers();
+    await settle();
+  }
+
+  const runnerId = () => workspacesGoldenMaster(IN_SERVICE, 'listRunners')[0].id as string;
+
+  it('reads the runners again after a runner event naming one of them, never on a timer', async () => {
     configure('browser');
     const { harness } = await open();
     await answerRunners(harness);
-    vi.advanceTimersByTime(RUNNERS_POLL_MS);
-    await settle();
+    await burst({
+      name: 'RunnerDisconnected',
+      payload: JSON.stringify({ runnerId: runnerId(), runnerName: 'localhost' }),
+    });
     await answerRunners(harness);
-
-    const document = TestBed.inject(DOCUMENT);
-    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
-    document.dispatchEvent(new Event('visibilitychange'));
-    vi.advanceTimersByTime(RUNNERS_POLL_MS * 3);
-    await settle();
+    // qits-ci's runners are not these: their events read nothing.
+    await burst({
+      name: 'RunnerConnected',
+      payload: JSON.stringify({ runnerId: 'a-qits-ci-runner', runnerName: 'workstation' }),
+    });
     http.expectNone('/workspaces/api/runners');
+  });
 
-    Object.defineProperty(document, 'hidden', { configurable: true, value: false });
-    document.dispatchEvent(new Event('visibilitychange'));
-    await settle();
+  it('reads the runners again after a slot event (the counts)', async () => {
+    configure('browser');
+    const { harness } = await open();
     await answerRunners(harness);
-    delete (document as { hidden?: boolean }).hidden;
+    await burst({ name: 'WorkspaceRemoved', payload: JSON.stringify({ workspaceId: '7' }) });
+    await answerRunners(harness);
+  });
+
+  it('reads the project’s slots again after a slot event about its wrapper', async () => {
+    configure('browser');
+    const { harness } = await open();
+    await answerRunners(harness);
+    expect(follow).toHaveBeenCalledTimes(1);
+    const [, scope, refresh, names] = follow.mock.calls[0];
+    expect(names).toEqual(SLOT_EVENTS);
+    expect(scope()).toEqual({ repositoryId: WRAPPER });
+    loadProject.mockClear();
+    refresh([]);
+    expect(loadProject).toHaveBeenCalledWith(WRAPPER, 'qits');
   });
 
   it('shows a rotated token’s install line once, and drops it on Close', async () => {

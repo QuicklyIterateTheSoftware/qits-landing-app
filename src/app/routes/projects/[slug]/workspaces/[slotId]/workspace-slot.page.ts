@@ -31,6 +31,12 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  *
  * Read by `AgentsStore.loadSlot`, again after a lifecycle event about this slot (at most once a
  * second). A slot that resolved answers 404: "This workspace is gone". In the browser only.
+ *
+ * Staleness (qits-1270): `WORKSPACE_EVENTS` naming this slot (`workspaceId`, its row id) → the
+ * slot, its live start and the agents it hosts (`AgentsStore.loadSlot`, quietly). Not announced
+ * (see `AgentsStore`): the container stopping or a start beginning (and with it the start's log,
+ * which shows on a container verb of this page's or the next lifecycle event), the runner going
+ * offline, the hosted agents' activity.
  */
 @Component({
   selector: 'app-workspace-slot-page',

@@ -123,6 +123,7 @@ export type RefreshOn = (options: RefreshOnOptions, destroy: DestroyRef) => Subs
  * - Waits for a burst to pause (`options.debounceMs`, a second by default: one release sends
  *   several events) and runs `options.refresh` once, with the burst's events.
  * - Stops when `destroy` is destroyed (the injection context's `DestroyRef` when not given).
+ * - Always called in an injection context; outside one, use {@link injectRefreshOn}.
  * - On the server it does nothing: `DomainEvents.on` completes empty there.
  *
  * In a component or a service, call it from the constructor (an injection context). In a
@@ -130,7 +131,7 @@ export type RefreshOn = (options: RefreshOnOptions, destroy: DestroyRef) => Subs
  * hand it the page's `DestroyRef`.
  */
 export function refreshOn(options: RefreshOnOptions, destroy?: DestroyRef): Subscription {
-  if (!destroy) assertInInjectionContext(refreshOn);
+  assertInInjectionContext(refreshOn);
   return subscribe(inject(DomainEvents), options, destroy ?? inject(DestroyRef));
 }
 

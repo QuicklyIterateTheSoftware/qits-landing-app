@@ -56,6 +56,10 @@ const key = (workspaceRowId: number, agentId: string) => `${workspaceRowId}/${ag
  *
  * The daemon's paths are its own (`/commands`); every call gets the container's base as its
  * `baseUrl`, at qits-workspaces' origin (`PlatformOrigins.api('workspaces')`).
+ *
+ * Staleness (qits-1270): the Terminal and Chat tabs call `load` after `HARNESS_EVENTS` naming the
+ * agent or its slot (`AgentsStore.follow`; `AgentStarted` and `AgentHarnessExited` name the
+ * `commandId` too), and the Chat tab also on the slot's `commands` hint.
  */
 export const AgentHarnessStore = signalStore(
   { providedIn: 'root' },

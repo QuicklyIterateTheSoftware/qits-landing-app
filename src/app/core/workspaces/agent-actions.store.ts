@@ -104,6 +104,8 @@ export function sentence(text: string): string {
  *   (`…/workspaces/{id}/ensure-container|stop-container|recreate-container`). A slot on an offline
  *   runner is refused (409 `RUNNER_UNAVAILABLE`); a recreate needs a working tree the service can
  *   prove clean (400 otherwise).
+ *
+ * Staleness (qits-1270): holds no platform state; nothing to follow.
  */
 export const AgentActionsStore = signalStore(
   { providedIn: 'root' },

@@ -23,6 +23,50 @@ export const WORKSPACE_EVENTS = [
   'WorkspaceRemoved',
 ] as const;
 
+/**
+ * The lifecycle events that can change an agent's harness (which command its terminal or chat
+ * attaches to, and whether it runs): a start, a refused start, a yield or a resume, its exit, its
+ * removal, and its slot's container starting, failing or going. A placement is not among them: it
+ * gives the agent a slot, which the agent page reads (`loadItem`), and the tab follows that slot.
+ */
+export const HARNESS_EVENTS = [
+  'AgentStarted',
+  'AgentStartRefused',
+  'AgentYielded',
+  'AgentResumed',
+  'AgentHarnessExited',
+  'AgentRemoved',
+  'WorkspaceStarted',
+  'WorkspaceFailed',
+  'WorkspaceRemoved',
+] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
+
+/**
+ * The lifecycle events that move a runner's slot counts (its live containers, its ACTIVE
+ * workspaces): a slot started, failed or removed, and an agent placed (which may open a slot).
+ * None names its runner, so a runner list cannot narrow them by id.
+ */
+export const SLOT_EVENTS = [
+  'AgentPlaced',
+  'WorkspaceStarted',
+  'WorkspaceFailed',
+  'WorkspaceRemoved',
+] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
+
+/**
+ * The lifecycle events that move which work items have an ACTIVE placed agent (qits-workspaces'
+ * open work-item workspaces, `listOpenWorkspaces`), the ACTIVE agents (`listAgents?state=ACTIVE`)
+ * and an item's placed agents in every state (`listWorkItemWorkspaces`): placed, requeued (its
+ * slot taken back), obsolete (no longer ACTIVE), removed. An agent's creation is not announced:
+ * a queued agent shows only once it is placed.
+ */
+export const ACTIVE_AGENT_EVENTS = [
+  'AgentPlaced',
+  'AgentRequeued',
+  'AgentObsolete',
+  'AgentRemoved',
+] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
+
 /** How long a burst of lifecycle events waits before the page reads again: at most once a second. */
 export const WORKSPACE_REFRESH_DEBOUNCE_MS = 1_000;
 
@@ -58,11 +102,19 @@ export function workspaceEventIds(event: DomainEvent): WorkspaceEventIds {
 
 /**
  * Whether `event` is about what a page shows: any of `scope`'s ids it names matches. A page names
- * what it is about (a project's wrapper, a slot, an item and its agent's slot); an event that names
- * none of them is somebody else's.
+ * what it is about (a project's wrapper, a slot, an item and its agent's slot), or several such
+ * scopes (the wrapper and each agent it lists); an event that names none of them is somebody else's.
  */
-export function concerns(event: DomainEvent, scope: WorkspaceEventIds): boolean {
+export function concerns(
+  event: DomainEvent,
+  scope: WorkspaceEventIds | readonly WorkspaceEventIds[],
+): boolean {
   const ids = workspaceEventIds(event);
+  const scopes: readonly WorkspaceEventIds[] = Array.isArray(scope) ? scope : [scope];
+  return scopes.some((scope) => matches(ids, scope));
+}
+
+function matches(ids: WorkspaceEventIds, scope: WorkspaceEventIds): boolean {
   return (
     (!!scope.repositoryId && ids.repositoryId === scope.repositoryId) ||
     (!!scope.workspaceId && ids.workspaceId === scope.workspaceId) ||

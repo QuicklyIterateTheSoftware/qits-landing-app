@@ -1,5 +1,5 @@
 import { payloadProjectId, type DomainEvent } from '$core/events/domain-events';
-import { payloadField } from '$core/events/refresh-on';
+import { payloadField, payloadIds } from '$core/events/refresh-on';
 import type { ReleaseRequestEntry } from './projects.consumes';
 
 /**
@@ -79,4 +79,44 @@ export function releaseRequestRefresh(events: readonly DomainEvent[]): {
     else rows.add(id);
   }
   return { list, rows: [...rows] };
+}
+
+/** The fields of one request {@link affectsReleaseRequest} narrows by. */
+export interface ShownReleaseRequest {
+  readonly id?: string;
+  readonly repoId?: string;
+  readonly state?: string;
+  readonly version?: string | null;
+  readonly mergedSha?: string | null;
+  readonly releasedSha?: string | null;
+}
+
+/** Builds name a request when they are its own; one of its fold or tag may name none. */
+const BUILD_EVENTS = new Set(['BuildSuccessful', 'BuildFailed']);
+
+/**
+ * Whether `event` may have changed the one release request `request` (a request's page). An event
+ * that names a request (`releaseRequestId`: every state move and field change, `SCMRelease`, a
+ * build of the request) counts when it names this one. Of those that name none:
+ * - `SoftwareRelease` (an artifact published) counts when it is of the request's repository and,
+ *   once the request has a version, of that version;
+ * - a build counts when it is of the request's repository and its fold or its tag (`commitSha`);
+ * - a deployment names an application and a version, not a project or a repository: it counts
+ *   while the request is RELEASED and, once the request has a version, only for that version.
+ */
+export function affectsReleaseRequest(event: DomainEvent, request: ShownReleaseRequest): boolean {
+  const named = releaseRequestIdOf(event);
+  if (named !== undefined) return !!request.id && named === request.id;
+  const name = event.name ?? '';
+  const version = payloadField(event, 'version');
+  const ofVersion = !request.version || version === request.version;
+  if (DEPLOYMENT_EVENTS.has(name)) return request.state === 'RELEASED' && ofVersion;
+  const repoId = payloadIds(event).repositoryId;
+  if (!request.repoId || repoId !== request.repoId) return false;
+  if (name === 'SoftwareRelease') return ofVersion;
+  if (BUILD_EVENTS.has(name)) {
+    const sha = payloadField(event, 'commitSha');
+    return !!sha && (sha === request.mergedSha || sha === request.releasedSha);
+  }
+  return false;
 }

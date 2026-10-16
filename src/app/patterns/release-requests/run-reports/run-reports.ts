@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -35,6 +36,10 @@ const SEVERITY_CLASSES: Readonly<Record<string, string>> = {
  * (`CiReportsStore`): each report's title and highlights; the test results in full, failing tests
  * first (the section is `#failed-tests` when the tests failed); the coverage in full; any other
  * kind by its highlights, so a kind the backend adds shows without a change here.
+ *
+ * Staleness (qits-1270): `BUILD_EVENTS` naming this run (`runId`) → its list of reports
+ * (`CiReportsStore.followRun`), and any newly listed report of a full kind is then read. qits-ci
+ * sends no event when a report is submitted, so a report lands with the run's next status change.
  */
 @Component({
   selector: 'app-run-reports',
@@ -143,6 +148,7 @@ export class RunReports {
   }
 
   constructor() {
+    this.store.followRun(() => this.runId(), inject(DestroyRef));
     effect(() => {
       const runId = this.runId();
       const reports = this.run()?.value?.reports ?? [];

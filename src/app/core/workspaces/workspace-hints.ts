@@ -29,6 +29,13 @@ export const WORKSPACE_HINTS_PATH = (workspaceRowId: number) =>
  * whatever the gap missed is read again. The source is `EVENT_SOURCE`'s, so the session (or, under
  * `ng serve`, the bearer) goes with it. Provided by the page that watches; closed with it; never
  * connects on the server.
+ *
+ * Staleness (qits-1270): a second stream, allowed by name until qits-events can replace it. Per
+ * topic: `commands`, for the agent's harness, is covered today by `AgentStarted` and
+ * `AgentHarnessExited` (both name `agentId`, `workspaceId`, `commandId`), which the Chat tab also
+ * follows; `files` and `prompt-draft` have no event (the worktree changing on disk; a draft, which
+ * qits-workspaces keeps off the bus by design, so an id-only `AgentPromptDraftChanged` would be
+ * needed).
  */
 @Injectable()
 export class WorkspaceHints {

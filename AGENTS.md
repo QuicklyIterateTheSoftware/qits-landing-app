@@ -59,6 +59,22 @@ name: `ProcessLog` (a container start's byte stream), `dev-bearer.ts` and `dev-t
 chat's 3 s transcript poll (the daemon offers no transcript stream). The terminal and chat sockets
 are `WEB_SOCKET`, outside the rule.
 
+What follows what (each store's comment has the detail). A release request's page follows only
+events about that request (`affectsReleaseRequest`: its `releaseRequestId`; a `SoftwareRelease` or
+build of its repository at its version or fold; a deployment of its version while RELEASED). The
+Repositories page and the project cards read a project's repositories again after a
+`SCMPublishCommit` to the wrapper's main branch (`RepositoriesStore.follow`). The work pages read the
+open project's work again after `EntityTransitioned` naming it (`entities[].projectId`), and the work
+item page its own data when the event names the item (`entities[].entityId`). A request's CI runs and
+each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) by `repoId` and
+`runId` (`CiRunsStore.follow`, `CiReportsStore.followRun`). `WorkspacesStore` follows
+qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. The Runners page
+has no poll: it reads again after a runner event naming a listed runner and after any slot event
+(the counts). Known gaps, where no event exists yet (qits-1270's thread lists them): project and
+repository creation, work item edits, comments, dossier and membership, a submitted CI report, a
+backup outcome, lines-of-code counts, and qits-workspaces' runners (the `Runner*` events are
+qits-ci's own runners).
+
 Users today: the lightning menu fetches the open project's release requests when the project opens
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
 (`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a

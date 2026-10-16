@@ -1,9 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { DestroyRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { filter, Subject } from 'rxjs';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { workspacesGoldenMaster, workspacesGoldenMasters } from '../../../testing/golden-masters';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { WorkspacesStore } from './workspaces.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -20,10 +24,19 @@ const params = (state: string, operationId: string) =>
 describe('WorkspacesStore', () => {
   let http: HttpTestingController;
   let store: InstanceType<typeof WorkspacesStore>;
+  let events: Subject<DomainEvent>;
 
   beforeEach(() => {
+    events = new Subject<DomainEvent>();
     TestBed.configureTestingModule({
       providers: [
+        {
+          provide: DomainEvents,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
+        },
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(workspacesClient),
@@ -145,5 +158,59 @@ describe('WorkspacesStore', () => {
       await refreshing;
       expect(store.agentWorkIds()).toEqual([]);
     });
+  });
+
+  describe('follow', () => {
+    /** Sends `sent` as one burst, and lets it settle. */
+    async function burst(...sent: DomainEvent[]) {
+      vi.useFakeTimers();
+      sent.forEach((event) => events.next(event));
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+    }
+
+    it('reads the open workspaces again after an agent is placed, obsolete or removed', async () => {
+      await answerOpen(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      store.follow(TestBed.inject(DestroyRef));
+      await burst(
+        { name: 'AgentPlaced', payload: JSON.stringify({ agentId: 'a', workId: 'w' }) },
+        { name: 'AgentRemoved', payload: JSON.stringify({ agentId: 'b', workId: 'v' }) },
+      );
+      http.expectOne(OPEN).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      await settle();
+      expect(store.status()).toBe('loaded');
+    });
+
+    it('reads nothing after a work item’s move, or a harness event', async () => {
+      await answerOpen(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      store.follow(TestBed.inject(DestroyRef));
+      await burst(
+        { name: 'EntityTransitioned', payload: JSON.stringify({ entities: [] }) },
+        { name: 'AgentHarnessExited', payload: JSON.stringify({ agentId: 'a' }) },
+      );
+      http.expectNone(OPEN);
+    });
+  });
+
+  it('reads a loaded history again quietly, and nothing for one never read', async () => {
+    const ref = params(BOUND, 'listWorkItemWorkspaces')['bugTicketId'];
+    const done = store.loadHistory(ref);
+    await settle();
+    http
+      .expectOne(`/workspaces/api/work/${ref}/workspaces`)
+      .flush(workspacesGoldenMaster(BOUND, 'listWorkItemWorkspaces'));
+    await done;
+    const again = store.refreshHistory(ref);
+    expect(store.historyOf(ref)?.status).toBe('loaded');
+    await settle();
+    http
+      .expectOne(`/workspaces/api/work/${ref}/workspaces`)
+      .flush(null, { status: 503, statusText: 'Unavailable' });
+    await again;
+    expect(store.historyOf(ref)?.entries.length).toBe(3);
+    await store.refreshHistory('never-read');
+    await settle();
+    http.expectNone('/workspaces/api/work/never-read/workspaces');
   });
 });

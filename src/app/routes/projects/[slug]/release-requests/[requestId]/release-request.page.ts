@@ -12,14 +12,13 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { debounceTime, filter, map } from 'rxjs';
-import { CiReportsStore } from '$core/ci/ci-reports.store';
+import { map } from 'rxjs';
 import { CiRunsStore } from '$core/ci/ci-runs.store';
-import { DomainEvents } from '$core/events/domain-events';
+import { refreshOn } from '$core/events/refresh-on';
 import {
-  affectsReleaseRequests,
+  affectsReleaseRequest,
   RELEASE_REQUEST_EVENTS,
 } from '$core/projects/release-request-events';
 import { requestBadge } from '$core/projects/release-requests';
@@ -64,9 +63,6 @@ import { releaseTabOf, releaseTabs, type ReleaseTab } from '$core/release-reques
 import { ReleaseLaneHeader } from '$patterns/release-requests/release-lane-header/release-lane-header';
 import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/release-withdraw';
 
-/** At most one refresh a second: one release sends several events. */
-const REFRESH_DEBOUNCE_MS = 1_000;
-
 const PRIORITY_TITLE =
   'The highest priority among this request’s branches. Nothing is reordered by it yet.';
 
@@ -99,9 +95,18 @@ const UNATTENDED_TITLE =
  * Withdraw sits in the page's actions while the request can be called off.
  *
  * On a repository's request the lifecycle follows the facts; on the project's estate release (its
- * wrapper repository) it comes first, because there the open question is the approval. Domain
- * events about the project's release requests refresh the page (at most once a second), in place
- * of the old page's six-second poll.
+ * wrapper repository) it comes first, because there the open question is the approval.
+ *
+ * Staleness (qits-1270): `RELEASE_REQUEST_EVENTS` that name this request (`releaseRequestId`:
+ * `ReleaseRequestStateChanged`, `ReleaseRequestChanged`, `SCMRelease`, its builds), a
+ * `SoftwareRelease` of its repository and version, a build of its repository at its fold or tag,
+ * and while it is RELEASED a deployment of its version (`affectsReleaseRequest`) → this request
+ * (`ReleaseRequestStore.refresh`, which reads its commits and verdicts again only for a new fold
+ * and its artifacts once released), at most once a second. An event about another request of the
+ * project reads nothing. Its repository's CI runs follow their own build events
+ * (`CiRunsStore.follow`), each run's reports theirs (`RunReports`, `CiReportsStore.followRun`),
+ * and the project's repositories (which is the wrapper, where each is mounted) theirs
+ * (`RepositoriesStore.follow`).
  */
 @Component({
   selector: 'app-release-request-page',
@@ -451,7 +456,6 @@ export class ReleaseRequestPage {
   private readonly repositories = inject(RepositoriesStore);
   private readonly store = inject(ReleaseRequestStore);
   private readonly ci = inject(CiRunsStore);
-  private readonly reports = inject(CiReportsStore);
 
   protected readonly none = NONE;
   protected readonly badgeOf = requestBadge;
@@ -757,24 +761,16 @@ export class ReleaseRequestPage {
       const repoId = this.repoId();
       if (browser && repoId) untracked(() => void this.ci.load(repoId));
     });
-    if (!browser) return;
-    inject(DomainEvents)
-      .on(RELEASE_REQUEST_EVENTS)
-      .pipe(
-        filter((event) => {
-          const id = this.projectId();
-          const request = this.row();
-          return !!id && !!request && affectsReleaseRequests(event, id, [request]);
-        }),
-        debounceTime(REFRESH_DEBOUNCE_MS),
-        takeUntilDestroyed(inject(DestroyRef)),
-      )
-      .subscribe(() => {
-        const repoId = this.repoId();
-        if (!repoId) return;
-        void this.store.refresh(this.requestId());
-        for (const run of this.reportRuns()) this.reports.refreshRun(run.runId);
-        void this.ci.refresh(repoId);
-      });
+    refreshOn({
+      names: RELEASE_REQUEST_EVENTS,
+      when: (event) => {
+        const request = this.row();
+        return !!request && affectsReleaseRequest(event, request);
+      },
+      refresh: () => void this.store.refresh(this.requestId()),
+    });
+    const destroy = inject(DestroyRef);
+    this.ci.follow(() => this.repoId() || undefined, destroy);
+    this.repositories.follow(() => this.projectId(), destroy);
   }
 }

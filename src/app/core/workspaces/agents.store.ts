@@ -7,6 +7,7 @@ import {
   listAgents,
   listWorkspaces,
 } from '../../api/workspaces';
+import type { DomainEvent } from '$core/events/domain-events';
 import { injectRefreshOn } from '$core/events/refresh-on';
 import {
   GET_ACTIVE_PROCESS,
@@ -104,12 +105,21 @@ const failedWith = (status: number | undefined): ReadStatus =>
  *   status when it has a slot.
  *
  * Every load reads again when called again (a page calls it on arrival and on every relevant
- * lifecycle event), keeping the last good answer when a read again fails. `follow(destroy, scope,
- * refresh)` runs `refresh` after the lifecycle events (`WORKSPACE_EVENTS`) about `scope()`, at most
- * once a second (`refreshOn`): it is how the pages stay live, without polling.
+ * lifecycle event), keeping the last good answer when a read again fails, and without going back
+ * to `loading` (a read again never flashes the spinner). `follow(destroy, scope, refresh, names?)`
+ * runs `refresh` with the burst's events after the lifecycle events (`names`, `WORKSPACE_EVENTS`
+ * unless narrower) about `scope()` (one scope, or several: any id of any matches), at most once a
+ * second (`refreshOn`): it is how the pages stay live, without polling.
  *
- * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the page's wrapper, slot, agent or item →
- * whatever the page's `refresh` reads again (its `load…`).
+ * Staleness (qits-1270): `WORKSPACE_EVENTS` (or the page's narrower `names`) naming the page's
+ * wrapper, slot, agent or item → whatever the page's `refresh` reads again (its `load…`). Each
+ * page records its own mapping. What no lifecycle event announces, and so goes stale until the
+ * next event or a visit: an agent's activity and wait (`activity`, `waitingOn`, written by the
+ * daemon's hooks, no event); a queued agent's creation (no `AgentCreated`: it shows once placed);
+ * a slot's runtime leaving RUNNING, or a start beginning (stopped, its container gone, its runner
+ * offline, a start's PROVISIONING and its log: `WorkspaceStarted` says only that it turned
+ * RUNNING, `WorkspaceFailed` that a start failed); an agent of the project working outside the
+ * wrapper that the page does not list yet (the events name no project).
  */
 export const AgentsStore = signalStore(
   { providedIn: 'root' },
@@ -212,13 +222,18 @@ export const AgentsStore = signalStore(
       itemOf(workId: string): ItemAgents | undefined {
         return store.items()[workId];
       },
-      follow(destroy: DestroyRef, scope: () => WorkspaceEventIds, refresh: () => void): void {
+      follow(
+        destroy: DestroyRef,
+        scope: () => WorkspaceEventIds | readonly WorkspaceEventIds[],
+        refresh: (events: readonly DomainEvent[]) => void,
+        names: readonly string[] = WORKSPACE_EVENTS,
+      ): void {
         refreshOn(
           {
-            names: WORKSPACE_EVENTS,
+            names,
             when: (event) => concerns(event, scope()),
             debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
-            refresh: () => refresh(),
+            refresh: (events) => refresh(events),
           },
           destroy,
         );

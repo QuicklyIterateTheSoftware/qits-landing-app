@@ -6,7 +6,13 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import {
+  EVENT_SOURCE,
+  REOPEN_DEBOUNCE_MS,
+  type DomainEvent,
+  type EventSourceLike,
+} from '$core/events/domain-events';
+import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import {
   goldenMaster,
   workspacesGoldenMaster,
@@ -43,10 +49,25 @@ const noneShown = (element: HTMLElement) =>
     (p) => p.textContent?.trim() === 'No workspaces yet' && !p.classList.contains('hidden'),
   );
 
+/** A stand-in for the browser's `EventSource`, which lets a spec push frames. */
+class FakeSource implements EventSourceLike {
+  onmessage: ((event: MessageEvent<string>) => void) | null = null;
+  onerror: ((event: Event) => void) | null = null;
+  readyState = 1;
+  close(): void {
+    this.readyState = 2;
+  }
+  push(event: Partial<DomainEvent>): void {
+    this.onmessage?.(new MessageEvent('message', { data: JSON.stringify(event) }));
+  }
+}
+
 describe('WorkItemPage', () => {
   let http: HttpTestingController;
+  let sources: FakeSource[];
 
   beforeEach(() => {
+    sources = [];
     TestBed.configureTestingModule({
       providers: [
         provideRouter([{ path: 'projects/:slug/work/detail/:id', component: WorkItemPage }]),
@@ -56,7 +77,11 @@ describe('WorkItemPage', () => {
         provideHeyApiClient(workspacesClient),
         {
           provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+          useValue: () => {
+            const source = new FakeSource();
+            sources.push(source);
+            return source;
+          },
         },
       ],
     });
@@ -371,6 +396,107 @@ describe('WorkItemPage', () => {
     }
     await settle();
     http.expectNone(() => true);
+  });
+
+  describe('after EntityTransitioned', () => {
+    const project = () => goldenMaster('a project exists', 'listProjects').entries[0].project;
+
+    /** Sends `entities` as one transition, once the stream is open, and lets the burst settle. */
+    async function transition(entities: readonly object[]) {
+      // The stream opens a moment after the page subscribes (`REOPEN_DEBOUNCE_MS`).
+      await new Promise((resolve) => setTimeout(resolve, REOPEN_DEBOUNCE_MS + 10));
+      vi.useFakeTimers();
+      const live = sources.filter((source) => source.readyState !== 2);
+      live.forEach((source) =>
+        source.push({
+          id: 'e1',
+          name: 'EntityTransitioned',
+          payload: JSON.stringify({ entities }),
+        }),
+      );
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+      await settle();
+    }
+
+    /** Answers the work list's re-read, its campaigns, and any open-workspaces re-read. */
+    async function answerWork() {
+      const work = goldenMaster(WORK, 'listProjectWork');
+      http.expectOne(`/projects/api/projects/${project().id}/work`).flush(work);
+      await settle();
+      await settle();
+      await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
+        members: WORK,
+        described: [DETAIL],
+      });
+      for (const read of http.match(OPEN_WORKSPACES)) {
+        read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      }
+    }
+
+    it('reads the work and the item again when it names this item', async () => {
+      const { entity } = await shown('Reported ticket');
+      await transition([{ entityId: entity.id, projectId: project().id, status: 'REFINED' }]);
+      await answerWork();
+      await answerDetail(WORK, entity.qualifiedId, false);
+      await settle();
+    });
+
+    it('reads only the work again when it names another item of the project', async () => {
+      const { entity } = await shown('Reported ticket');
+      await transition([{ entityId: 'someone-else', projectId: project().id, status: 'DONE' }]);
+      await answerWork();
+      http.expectNone(`/projects/api/work/${entity.qualifiedId}/comments`);
+    });
+
+    it('reads nothing again when it names another project', async () => {
+      await shown('Reported ticket');
+      await transition([{ entityId: 'someone-else', projectId: 'another', status: 'DONE' }]);
+      http.expectNone(`/projects/api/projects/${project().id}/work`);
+      http.expectNone((r) => r.url.endsWith('/comments'));
+      for (const read of http.match(OPEN_WORKSPACES)) {
+        read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      }
+    });
+  });
+
+  describe('after qits-workspaces’ agent events (qits-1270)', () => {
+    /** Sends one `AgentRemoved` about `workId`, once the stream is open, and lets it settle. */
+    async function removed(workId: string) {
+      await new Promise((resolve) => setTimeout(resolve, REOPEN_DEBOUNCE_MS + 10));
+      vi.useFakeTimers();
+      sources
+        .filter((source) => source.readyState !== 2)
+        .forEach((source) =>
+          source.push({ id: 'a1', name: 'AgentRemoved', payload: JSON.stringify({ workId }) }),
+        );
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+      await settle();
+    }
+
+    const history = (id: string) => `/workspaces/api/work/${id}/workspaces`;
+
+    it('reads the item’s workspaces again, quietly, when an event names it', async () => {
+      const { entity } = await shown('Reported ticket');
+      await removed(entity.id);
+      for (const read of http.match(OPEN_WORKSPACES)) {
+        read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      }
+      http
+        .expectOne(history(entity.id))
+        .flush(workspacesGoldenMaster(NONE, 'listWorkItemWorkspaces'));
+      await settle();
+    });
+
+    it('reads only the open workspaces again when it names another item', async () => {
+      const { entity } = await shown('Reported ticket');
+      await removed('someone-else');
+      http.expectOne(OPEN_WORKSPACES).flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
+      http.expectNone(history(entity.id));
+    });
   });
 
   it('says so when the project has no such work item', async () => {

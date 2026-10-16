@@ -87,7 +87,9 @@ const INPUT =
  *   check) and Delete, confirmed; refused while the runner owns workspaces, which are listed.
  *
  * Every refusal is said in the service's words. Every write, a refusal included, emits `changed`,
- * so the page reads the list again.
+ * so the page reads the list again. A requested health or login check settles later, and shows with
+ * the page's next read (`RunnersStore.follow`): qits-workspaces announces no runner event, so until
+ * a slot event or another write that read may not come (qits-1270).
  */
 @Component({
   selector: 'app-runner-card',

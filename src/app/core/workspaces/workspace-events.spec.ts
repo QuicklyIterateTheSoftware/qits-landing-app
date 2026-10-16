@@ -35,6 +35,10 @@ describe('workspace lifecycle events', () => {
     expect(concerns(placed, { workId: 'w1' })).toBe(true);
     expect(concerns(placed, { repositoryId: 'r2', workspaceId: '13' })).toBe(false);
     expect(concerns(placed, {})).toBe(false);
+    // Several scopes: any id of any of them.
+    expect(concerns(placed, [{ repositoryId: 'r2' }, { agentId: 'a1' }])).toBe(true);
+    expect(concerns(placed, [{ repositoryId: 'r2' }, { agentId: 'a2' }])).toBe(false);
+    expect(concerns(placed, [])).toBe(false);
     // A queued agent's events name no slot: an unknown slot never matches a missing one.
     expect(concerns(event('AgentRequeued', { agentId: 'a2' }), { workspaceId: undefined })).toBe(
       false,

@@ -160,6 +160,10 @@ interface WorkState {
  *   phase left, `PHASE` the next one. The answer names the phase it started (`dispatched`); the
  *   status the platform moves the item to arrives as an event, like any other move.
  *   `dispatching` holds a running or failed press.
+ *
+ * Staleness (qits-1270): `SelectedWork.followTransitions` calls `refresh` for the open project
+ * after `EntityTransitioned` naming it; see there. A project card's count (`load` without the
+ * work section open) is read once.
  */
 export const WorkStore = signalStore(
   { providedIn: 'root' },

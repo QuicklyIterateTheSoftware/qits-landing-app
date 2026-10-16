@@ -79,6 +79,10 @@ const BLANK: SlotSignIn = {
  * - `open(rowId, harness)`: start the sign-in terminal (`openSignInTerminal`), once: a second press
  *   keeps the one that is open. The Terminal tab attaches its screen to the command.
  * - `finished(rowId)`: the terminal ended; drop it and read the report again.
+ *
+ * Staleness (qits-1270): the Terminal tab reads the report again after `WorkspaceStarted` or
+ * `AgentStartRefused` naming the slot. A sign-in completed elsewhere (another tab, slot, or the
+ * runner's login command) announces nothing on qits-events.
  */
 export const AgentSignInStore = signalStore(
   { providedIn: 'root' },

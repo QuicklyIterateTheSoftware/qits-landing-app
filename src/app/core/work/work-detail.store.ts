@@ -94,6 +94,14 @@ interface WorkDetailState {
  * - `loadCriteria(ref)` reads the item's acceptance criteria alone (`getWork`), once, and again
  *   after an error: the Schedule tab shows them for each item it lists. `criteriaOf(ref)`: them,
  *   or undefined before `loadCriteria`.
+ *
+ * Staleness (qits-1270): `EntityTransitioned` naming the item among its `entities[].entityId` →
+ * that item's page data (`refresh`), wired by the work item page while it shows the item. Nothing
+ * else of it has an event: qits-projects announces no comment added or edited (another tab's, or
+ * an agent's), no dossier page or figure written, moved or deleted, and no edit of the item's
+ * fields (description, acceptance criteria, impetus, assignee, depends-on, blocked), so those show
+ * on the next visit. The acceptance criteria (`loadCriteria`) change only by such an edit, and
+ * are read once.
  */
 export const WorkDetailStore = signalStore(
   { providedIn: 'root' },

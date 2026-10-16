@@ -8,7 +8,9 @@ import { client as workspaceDaemonClient } from '../../../../../../../../api/wor
 import { provideHeyApiClient } from '../../../../../../../../api/workspace-daemon/client/client.gen';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { SelectedWork } from '$core/work/selected-work';
+import type { DomainEvent } from '$core/events/domain-events';
 import { AgentsStore } from '$core/workspaces/agents.store';
+import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
 import { TERMINAL_BACKOFF_MS } from '$core/workspaces/terminal-socket';
 import {
   workspaceDaemonGoldenMaster,
@@ -69,9 +71,11 @@ describe('AgentTerminalPage', () => {
   let http: HttpTestingController;
   let sockets: FakeSocket[];
   let harness: RouterTestingHarness;
+  let followed: unknown[][];
 
   beforeEach(async () => {
     sockets = [];
+    followed = [];
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -88,7 +92,10 @@ describe('AgentTerminalPage', () => {
         },
         {
           provide: AgentsStore,
-          useValue: { itemOf: () => ({ status: 'loaded', agent: AGENT }), follow: () => undefined },
+          useValue: {
+            itemOf: () => ({ status: 'loaded', agent: AGENT }),
+            follow: (...args: unknown[]) => followed.push(args),
+          },
         },
         {
           provide: WEB_SOCKET,
@@ -281,5 +288,64 @@ describe('AgentTerminalPage', () => {
     )!;
     expect(row.textContent).toContain('installed');
     expect(row.querySelector('button')).toBeNull();
+  });
+
+  describe('after lifecycle events (qits-1270)', () => {
+    /** Runs the page's `follow` refresh with a burst of `names`. */
+    async function burst(...names: string[]) {
+      const [, scope, refresh, events] = followed[0] as [
+        unknown,
+        () => object,
+        (burst: readonly DomainEvent[]) => void,
+        readonly string[],
+      ];
+      expect(events).toEqual(HARNESS_EVENTS);
+      expect(scope()).toEqual({ agentId, workspaceId: String(workspaceRowId) });
+      refresh(names.map((name) => ({ name })));
+      await settle();
+    }
+
+    async function answerHarness() {
+      await settle();
+      http
+        .expectOne(`${BASE}/agent-worktrees/${agentId}`)
+        .flush(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
+      await settle();
+      http
+        .expectOne(`${BASE}/commands`)
+        .flush(workspaceDaemonGoldenMaster(RUNNING, 'listCommands'));
+      await settle();
+    }
+
+    it('reads only the harness again after its exit', async () => {
+      await open();
+      await burst('AgentHarnessExited');
+      http.expectNone(`${BASE}/agents/available`);
+      http.expectNone(`${BASE}/agent-plugins`);
+      await answerHarness();
+    });
+
+    it('reads the sign-in report and the plugins again after the container started', async () => {
+      await open();
+      await burst('WorkspaceStarted');
+      http
+        .expectOne(`${BASE}/agents/available`)
+        .flush(workspaceDaemonGoldenMaster(SIGNED_IN, 'availableAgents'));
+      http
+        .expectOne(`${BASE}/agent-plugins`)
+        .flush(workspaceDaemonGoldenMaster(PLUGINS, 'listPlugins'));
+      await answerHarness();
+    });
+
+    it('reads the sign-in report again after a refused start', async () => {
+      await open();
+      await burst('AgentStartRefused');
+      http
+        .expectOne(`${BASE}/agents/available`)
+        .flush(workspaceDaemonGoldenMaster(SIGNED_OUT, 'availableAgents'));
+      http.expectNone(`${BASE}/agent-plugins`);
+      await answerHarness();
+      harness.detectChanges();
+    });
   });
 });

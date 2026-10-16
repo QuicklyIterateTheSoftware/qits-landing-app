@@ -19,7 +19,9 @@ import { SelectedWork } from '$core/work/selected-work';
 import { AgentHarnessStore } from '$core/workspaces/agent-harness.store';
 import { AgentPluginsStore } from '$core/workspaces/agent-plugins.store';
 import { AgentSignInStore } from '$core/workspaces/agent-sign-in.store';
+import type { DomainEvent } from '$core/events/domain-events';
 import { AgentsStore } from '$core/workspaces/agents.store';
+import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
 import {
   EMPTY_TERMINAL_FRAMES,
   TerminalSocket,
@@ -56,6 +58,15 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
  * nobody signed in (`AgentSignInStore`), and offers the sign-in terminal, which the screen then
  * attaches to instead, until its command ends. Below it, the plugins on the shared agent home
  * (`app-plugins-section`, `AgentPluginsStore`).
+ *
+ * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
+ * (`workspaceId`) → the harness (`AgentHarnessStore.load`, quietly; a new command re-attaches the
+ * screen); of them, `WorkspaceStarted` (a new container, a new daemon) and `AgentStartRefused` (a
+ * daemon refusing a start, often a harness nobody signed in) → the sign-in report
+ * (`AgentSignInStore.loadReport`), and `WorkspaceStarted` → the plugins (`AgentPluginsStore.load`).
+ * Not announced: a sign-in finished or a plugin installed from another tab, slot or the runner's
+ * login command (the daemon emits nothing on qits-events for either); they show on the next visit
+ * or the next of those events.
  *
  * In the browser only: the server renders the tab without reading or connecting.
  */
@@ -245,7 +256,8 @@ export class AgentTerminalPage {
         agentId: this.agentId() || undefined,
         workspaceId: this.rowId() ? String(this.rowId()) : undefined,
       }),
-      () => this.reload(),
+      (events) => this.reload(events),
+      HARNESS_EVENTS,
     );
     destroy.onDestroy(() => this.detach());
   }
@@ -256,10 +268,17 @@ export class AgentTerminalPage {
     return route.parent ?? route;
   }
 
-  protected reload(): void {
+  /** Reads the harness again; after a burst that can have changed them, the sign-in and plugins. */
+  protected reload(events: readonly DomainEvent[] = []): void {
     const rowId = this.rowId();
     const agentId = this.agentId();
     if (rowId && agentId) void this.harnesses.load(rowId, agentId);
+    if (!rowId) return;
+    const started = events.some((event) => event.name === 'WorkspaceStarted');
+    if (started || events.some((event) => event.name === 'AgentStartRefused')) {
+      void this.signIn.loadReport(rowId);
+    }
+    if (started) void this.plugins.load(rowId);
   }
 
   protected rearm(): void {

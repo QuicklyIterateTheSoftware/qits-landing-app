@@ -10,6 +10,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * `ProjectsStore` holds the list and loads it in the browser only: the server render has no
  * `qits-session` cookie to send, so it renders the heading and a loading state. Loading and
  * failure are shown by `ui-spinner` over the list's place, never as text.
+ *
+ * Staleness (qits-1270): the list → no event (qits-projects emits none for a project created,
+ * renamed or deleted; see `ProjectsStore`). Each card keeps its own facts current (`ProjectCard`).
  */
 @Component({
   selector: 'app-project-picker-page',

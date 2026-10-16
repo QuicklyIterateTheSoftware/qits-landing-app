@@ -2,13 +2,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { DestroyRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { workspacesGoldenMaster, workspacesGoldenMasters } from '../../../testing/golden-masters';
 import { AgentsStore, ofProject } from './agents.store';
-import { WORKSPACE_REFRESH_DEBOUNCE_MS } from './workspace-events';
+import { HARNESS_EVENTS, WORKSPACE_REFRESH_DEBOUNCE_MS } from './workspace-events';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -33,7 +33,13 @@ describe('AgentsStore', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(workspacesClient),
-        { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
+        {
+          provide: DomainEvents,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -178,6 +184,34 @@ describe('AgentsStore', () => {
       events.next(about('13'));
       vi.advanceTimersByTime(WORKSPACE_REFRESH_DEBOUNCE_MS);
       expect(refreshed).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('narrows by the names it is given, hands the burst over, and takes several scopes', async () => {
+    vi.useFakeTimers();
+    try {
+      const bursts: (readonly DomainEvent[])[] = [];
+      store.follow(
+        TestBed.inject(DestroyRef),
+        () => [{ repositoryId: 'r1' }, { agentId: 'a2' }],
+        (burst) => bursts.push(burst),
+        HARNESS_EVENTS,
+      );
+      const exited = {
+        name: 'AgentHarnessExited',
+        payload: JSON.stringify({ agentId: 'a2', workspaceId: '9', commandId: 'c1' }),
+      };
+      // Placed is not a harness event; a foreign agent in a foreign wrapper is somebody else's.
+      events.next({ name: 'AgentPlaced', payload: JSON.stringify({ agentId: 'a2' }) });
+      events.next({
+        name: 'AgentStarted',
+        payload: JSON.stringify({ agentId: 'a3', repositoryId: 'r9' }),
+      });
+      events.next(exited);
+      vi.advanceTimersByTime(WORKSPACE_REFRESH_DEBOUNCE_MS);
+      expect(bursts).toEqual([[exited]]);
     } finally {
       vi.useRealTimers();
     }

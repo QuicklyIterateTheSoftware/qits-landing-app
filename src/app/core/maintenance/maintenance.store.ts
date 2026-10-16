@@ -18,6 +18,9 @@ interface MaintenanceState {
  *   qits-maintenance decides what is pending. The menu calls it on its first opening.
  * - `refresh()` fetches them again, keeping the list shown until the answer arrives; a failed
  *   refresh keeps the last good list. The menu calls it after domain events that move bumps.
+ *
+ * Staleness (qits-1270): `BUMP_EVENTS` → `refresh()`, wired by the bumps menu (`BumpsMenu`, the
+ * store's one reader, mounted in the shell for the app's lifetime).
  */
 export const MaintenanceStore = signalStore(
   { providedIn: 'root' },

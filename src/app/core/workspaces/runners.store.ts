@@ -1,3 +1,4 @@
+import type { DestroyRef } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
@@ -11,6 +12,8 @@ import {
   requestRunnerLoginCheck,
   rotateRunnerRegistrationToken,
 } from '../../api/workspaces';
+import type { DomainEvent } from '$core/events/domain-events';
+import { injectRefreshOn, payloadIds } from '$core/events/refresh-on';
 import { refusalOf, type ActionOutcome, type Refusal } from './agent-actions.store';
 import { REFUSAL } from './agent-actions.consumes';
 import {
@@ -27,6 +30,22 @@ import {
   type RunnerHealth,
   type RunnerRegistration,
 } from './runners.consumes';
+import { SLOT_EVENTS } from './workspace-events';
+
+/**
+ * The runner events on qits-events: a runner connected, disconnected, quarantined, reinstated, or
+ * health-checked, each naming `runnerId` and `runnerName`. Today only qits-ci sends them, about
+ * qits-ci's runners, whose ids are not qits-workspaces'; {@link RunnersStore.follow} counts one
+ * only when it names a runner it lists, so they move this page once qits-workspaces announces its
+ * own runners in the same vocabulary.
+ */
+export const RUNNER_EVENTS = [
+  'RunnerConnected',
+  'RunnerDisconnected',
+  'RunnerQuarantined',
+  'RunnerReinstated',
+  'RunnerHealthChecked',
+] as const;
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
@@ -76,6 +95,9 @@ export type DeleteOutcome = { readonly ok: true } | ({ readonly ok: false } & De
 /** The refusal a delete answers while the runner still owns an ACTIVE workspace. */
 export const RUNNER_OWNS_WORKSPACES = 'RUNNER_OWNS_WORKSPACES';
 
+const isRunnerEvent = (event: DomainEvent) =>
+  !!event.name && (RUNNER_EVENTS as readonly string[]).includes(event.name);
+
 const byName = (a: Runner, b: Runner) => (a.name ?? '').localeCompare(b.name ?? '');
 
 /** `{ ok: true }` with `value`, or the refusal read off the failed answer. */
@@ -94,10 +116,22 @@ function outcome<T>(result: {
  * estate's, not one project's.
  *
  * - `load()` reads every runner (`listRunners`), sorted by name, so a read again never reshuffles
- *   the rows. A failed read keeps the last good list (the page reads again every 5 s: there are no
- *   runner events).
+ *   the rows. A read again stays `loaded` while it runs, and a failed one keeps the last good list.
  * - `loadHealth(id)` reads a runner's node details (`getRunnerHealth`) once, and again after an
- *   error or when asked to; a runner never checked answers 204 (`none`).
+ *   error or when asked to (quietly, once read); a runner never checked answers 204 (`none`).
+ * - `follow(destroy, after?)`: while `destroy` lives, reads again after the events below (at most
+ *   once a second, `refreshOn`), then runs `after`.
+ *
+ * Staleness (qits-1270): `RUNNER_EVENTS` naming a listed runner's `runnerId` → `listRunners`, and
+ * a `RunnerHealthChecked` naming one whose node details were read → its `getRunnerHealth`;
+ * `SLOT_EVENTS` (`AgentPlaced`, `WorkspaceStarted`, `WorkspaceFailed`, `WorkspaceRemoved`; any,
+ * since none names its runner) → `listRunners` (the slot counts). The gap: qits-workspaces
+ * announces nothing about its runners — no event for a runner connecting or going offline, a
+ * quarantine or its lift, a health check or a login check settling, a version roll-over, a
+ * registration, an edit or a delete — and the runner events qits-ci sends are about qits-ci's
+ * runners. So a runner's connection, quarantine, health, login and version reach this page only
+ * with a slot event, after a write of the page's own, or on the next visit; a Run health check or
+ * a Re-check stays pending until one of those.
  * - The writes answer an {@link ActionOutcome}, a refusal in the service's words:
  *   `createRunner` and `rotateToken` (the one-time install line), `patchRunner` (slots,
  *   description, memory caps), `greenlight` (lifts a quarantine — nothing here quarantines a
@@ -110,38 +144,67 @@ export const RunnersStore = signalStore(
   { providedIn: 'root' },
   withState<RunnersState>({ status: 'idle', runners: [], health: {} }),
   withMethods((store) => {
+    const refreshOn = injectRefreshOn();
+
     function setHealth(id: string, value: RunnerHealthRead): void {
       patchState(store, { health: { ...store.health(), [id]: value } });
     }
 
+    async function load(): Promise<void> {
+      if (store.status() !== 'loaded') patchState(store, { status: 'loading' });
+      const { data, error } = await consume(listRunners(), LIST_RUNNERS);
+      if (error !== undefined || !data) {
+        if (store.status() !== 'loaded') patchState(store, { status: 'error', runners: [] });
+        return;
+      }
+      patchState(store, { status: 'loaded', runners: [...data].sort(byName) });
+    }
+
+    async function loadHealth(id: string, again = false): Promise<void> {
+      const current = store.health()[id];
+      if (!id || (current && current.status !== 'error' && !again)) return;
+      if (!current || current.status === 'error') setHealth(id, { status: 'loading', checks: [] });
+      const { data, error, response } = await consume(
+        getRunnerHealth({ path: { id } }),
+        GET_RUNNER_HEALTH,
+      );
+      if (error !== undefined) {
+        // A read again that fails keeps the node details on show.
+        if (store.health()[id]?.status !== 'loaded') setHealth(id, { status: 'error', checks: [] });
+        return;
+      }
+      if (response?.status === 204 || !data) {
+        setHealth(id, { status: 'none', checks: [] });
+        return;
+      }
+      setHealth(id, { status: 'loaded', checks: data.checks ?? [] });
+    }
+
     return {
-      async load(): Promise<void> {
-        if (store.status() !== 'loaded') patchState(store, { status: 'loading' });
-        const { data, error } = await consume(listRunners(), LIST_RUNNERS);
-        if (error !== undefined || !data) {
-          if (store.status() !== 'loaded') patchState(store, { status: 'error', runners: [] });
-          return;
-        }
-        patchState(store, { status: 'loaded', runners: [...data].sort(byName) });
-      },
-      async loadHealth(id: string, again = false): Promise<void> {
-        const current = store.health()[id];
-        if (!id || (current && current.status !== 'error' && !again)) return;
-        if (!current || current.status === 'error')
-          setHealth(id, { status: 'loading', checks: [] });
-        const { data, error, response } = await consume(
-          getRunnerHealth({ path: { id } }),
-          GET_RUNNER_HEALTH,
+      load,
+      loadHealth,
+      follow(destroy: DestroyRef, after?: () => void): void {
+        refreshOn(
+          {
+            names: [...RUNNER_EVENTS, ...SLOT_EVENTS],
+            when: (event, ids) =>
+              !isRunnerEvent(event) ||
+              (!!ids.runnerId && store.runners().some((runner) => runner.id === ids.runnerId)),
+            refresh: async (events) => {
+              const checked = new Set(
+                events
+                  .filter((event) => event.name === 'RunnerHealthChecked')
+                  .flatMap((event) => {
+                    const id = payloadIds(event).runnerId;
+                    return id && store.health()[id] ? [id] : [];
+                  }),
+              );
+              await Promise.all([load(), ...[...checked].map((id) => loadHealth(id, true))]);
+              after?.();
+            },
+          },
+          destroy,
         );
-        if (error !== undefined) {
-          setHealth(id, { status: 'error', checks: [] });
-          return;
-        }
-        if (response?.status === 204 || !data) {
-          setHealth(id, { status: 'none', checks: [] });
-          return;
-        }
-        setHealth(id, { status: 'loaded', checks: data.checks ?? [] });
       },
       healthOf(id: string): RunnerHealthRead | undefined {
         return store.health()[id];

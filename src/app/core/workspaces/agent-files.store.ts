@@ -39,6 +39,10 @@ const failed = (response: { readonly status: number } | undefined) =>
  *
  * Nothing is kept: the tab holds what it shows, and reads again on the slot's `files` hint. Every
  * call gets the container's base as its `baseUrl`, at qits-workspaces' origin.
+ *
+ * Staleness (qits-1270): none from qits-events. The worktree changes on disk with no domain event
+ * (the lifecycle events say when a harness starts and stops, not what it wrote), so the slot's
+ * `files` hint (`WorkspaceHints`, a named, lint-allowed exception) stays its trigger.
  */
 export const AgentFilesStore = signalStore(
   { providedIn: 'root' },

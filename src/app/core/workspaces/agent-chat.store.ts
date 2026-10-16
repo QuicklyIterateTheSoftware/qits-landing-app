@@ -36,6 +36,11 @@ const key = (workspaceRowId: number, commandId: string) => `${workspaceRowId}/${
  *   harness installed in the container; `preamble` says what the work is about.
  *
  * Every call gets the container's base as its `baseUrl`, at qits-workspaces' origin.
+ *
+ * Staleness (qits-1270): no qits-events event carries a turn, so a terminal harness's transcript
+ * is the Chat tab's `TRANSCRIPT_POLL_MS` poll while the harness runs (a named, lint-allowed
+ * exception), started and stopped by the harness, which `HARNESS_EVENTS` keep current; a running
+ * chat's turns come down its socket.
  */
 export const AgentChatStore = signalStore(
   { providedIn: 'root' },

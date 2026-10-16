@@ -19,6 +19,10 @@ interface ArchetypesState {
  *   page does, in the browser.
  * - `of(archetype)`: that archetype's entry, or undefined until the registry is in (or when it
  *   does not name the archetype).
+ *
+ * Staleness (qits-1270): none. The registry is qits-projects' static configuration (its archetype
+ * definitions, changed only by a release of the service), so no event can change it; it is read
+ * once per app.
  */
 export const ArchetypesStore = signalStore(
   { providedIn: 'root' },

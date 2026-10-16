@@ -35,6 +35,9 @@ const BLANK: SlotPlugins = { status: 'loading', installed: [], pending: null, pr
  *   answer.
  * - `install(rowId, pluginId)`: install one by its bare id (`installPlugin`); its answer is the
  *   refreshed set, which replaces the list without a read.
+ *
+ * Staleness (qits-1270): the Terminal tab reads the set again after `WorkspaceStarted` naming the
+ * slot (a new daemon). An install from another slot or tab announces nothing on qits-events.
  */
 export const AgentPluginsStore = signalStore(
   { providedIn: 'root' },

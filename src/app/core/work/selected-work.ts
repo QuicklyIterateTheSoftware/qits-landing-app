@@ -74,17 +74,25 @@ export class SelectedWork {
 
   /**
    * Keeps the open project's work current while `destroy` lives: on `EntityTransitioned` (a finish
-   * here or in another tab, or any agent's move), the work is fetched again, at most once a second.
-   * Only the event's name is read, so nothing of its payload is relied on: the refetch is what
-   * tells which items moved, and those leave the board with their animation.
+   * here or in another tab, or any agent's move) naming the open project in one of its
+   * `entities[].projectId`, the work is fetched again, at most once a second. Nothing else of the
+   * payload is relied on: the refetch is what tells which items moved, and those leave the board
+   * with their animation.
    *
-   * Staleness (qits-1270): `EntityTransitioned` → the open project's work (`WorkStore.refresh`).
+   * Staleness (qits-1270): `EntityTransitioned` whose `entities[].projectId` names the open
+   * project → the open project's work (`WorkStore.refresh`: the list, its campaigns' members and
+   * descriptions). qits-projects sends no event for a work item created, edited, deleted, reshaped
+   * or blocked, nor for a campaign's members changing: those reach the lists on the next load.
    */
   followTransitions(destroy: DestroyRef): void {
     this.refreshOn(
       {
         names: WORK_EVENTS,
         debounceMs: WORK_REFRESH_DEBOUNCE_MS,
+        when: (_, ids) => {
+          const id = this.selected.project()?.id;
+          return !!id && ids.projectIds.includes(id);
+        },
         refresh: () => {
           const id = this.selected.project()?.id;
           if (id) void this.workStore.refresh(id);

@@ -1,9 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { DestroyRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { filter, Subject } from 'rxjs';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { workspacesGoldenMaster, workspacesGoldenMasters } from '../../../testing/golden-masters';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { RunnersStore, type NewRunner, type RunnerChange } from './runners.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -25,13 +29,22 @@ const RUNNER = `/workspaces/api/runners/${ID}`;
 describe('RunnersStore', () => {
   let http: HttpTestingController;
   let store: InstanceType<typeof RunnersStore>;
+  let events: Subject<DomainEvent>;
 
   beforeEach(() => {
+    events = new Subject<DomainEvent>();
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(workspacesClient),
+        {
+          provide: DomainEvents,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -211,5 +224,87 @@ describe('RunnersStore', () => {
     await settle();
     http.expectOne(RUNNER).error(new ProgressEvent('error'));
     expect(await done).toMatchObject({ ok: false, status: 0 });
+  });
+
+  describe('follow', () => {
+    const event = (name: string, payload: object): DomainEvent => ({
+      name,
+      payload: JSON.stringify(payload),
+    });
+
+    /** The runners listed, then `follow`ed; `after` counts the reads again it ran after. */
+    async function following() {
+      const first = store.load();
+      await settle();
+      http
+        .expectOne('/workspaces/api/runners')
+        .flush(workspacesGoldenMaster(IN_SERVICE, 'listRunners'));
+      await first;
+      const after = vi.fn();
+      store.follow(TestBed.inject(DestroyRef), after);
+      return after;
+    }
+
+    /** Sends `sent` as one burst, and lets it settle. */
+    async function burst(...sent: DomainEvent[]) {
+      vi.useFakeTimers();
+      sent.forEach((e) => events.next(e));
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+    }
+
+    it('reads the runners again after a runner event naming a listed runner', async () => {
+      const after = await following();
+      await burst(
+        event('RunnerDisconnected', { runnerId: ID, runnerName: 'localhost' }),
+        event('RunnerConnected', { runnerId: ID, runnerName: 'localhost' }),
+      );
+      http
+        .expectOne('/workspaces/api/runners')
+        .flush(workspacesGoldenMaster(IN_SERVICE, 'listRunners'));
+      await settle();
+      expect(after).toHaveBeenCalledTimes(1);
+      expect(store.status()).toBe('loaded');
+    });
+
+    it('reads nothing for a runner it does not list (qits-ci’s), or another name', async () => {
+      const after = await following();
+      await burst(
+        event('RunnerConnected', { runnerId: 'a-qits-ci-runner', runnerName: 'workstation' }),
+        event('RunnerQuarantined', { runnerName: 'localhost' }),
+        event('BuildFailed', { runnerId: ID }),
+      );
+      http.expectNone('/workspaces/api/runners');
+      expect(after).not.toHaveBeenCalled();
+    });
+
+    it('reads the runners again after any slot event: the counts are the estate’s', async () => {
+      await following();
+      await burst(event('WorkspaceStarted', { workspaceId: '9', repositoryId: 'elsewhere' }));
+      http
+        .expectOne('/workspaces/api/runners')
+        .flush(workspacesGoldenMaster(IN_SERVICE, 'listRunners'));
+      await settle();
+    });
+
+    it('reads shown node details again after a health check of that runner', async () => {
+      await following();
+      const details = store.loadHealth(ID);
+      await settle();
+      http
+        .expectOne(`${RUNNER}/health`)
+        .flush(workspacesGoldenMaster(IN_SERVICE, 'getRunnerHealth'));
+      await details;
+      await burst(event('RunnerHealthChecked', { runnerId: ID, result: 'PASSED' }));
+      expect(store.healthOf(ID)?.status).toBe('loaded');
+      http
+        .expectOne('/workspaces/api/runners')
+        .flush(workspacesGoldenMaster(IN_SERVICE, 'listRunners'));
+      http.expectOne(`${RUNNER}/health`).flush(null, { status: 503, statusText: 'Unavailable' });
+      await settle();
+      // A read again that fails keeps the details on show.
+      expect(store.healthOf(ID)?.status).toBe('loaded');
+    });
   });
 });

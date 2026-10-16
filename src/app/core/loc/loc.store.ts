@@ -41,6 +41,10 @@ interface LocState {
  *   numbers are lines people wrote as code. A repository qits-githost does not hold, or holds
  *   without a commit (`EMPTY`), adds nothing.
  *
+ * Staleness (qits-1270): no event → read once. qits-githost emits no event when it has counted a
+ * commit; `SCMPublishCommit` only says a count is about to go `STALE`, and reading then would bring
+ * back the same older count. So nothing reads it again; a gap until qits-githost announces a count.
+ *
  * The store is the only user of the generated qits-githost client, so its pact
  * (`loc.store.pact.spec.ts`) is the whole of what this app relies on from qits-githost.
  */

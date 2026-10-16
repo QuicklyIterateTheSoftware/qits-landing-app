@@ -68,6 +68,15 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  *   piling up a call per event.
  * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
+ * Staleness (qits-1270):
+ * - The release requests: `RELEASE_REQUEST_EVENTS` about the open project →
+ *   `refreshReleaseRequests(projectId)`, wired once by the top bar's release menu
+ *   (`ReleaseMenu`), which the shell keeps mounted while any project page is open; the sidebar
+ *   note and the Release Requests page read the same answer. The list answer is the only read
+ *   this store has, so a row-only event (`ReleaseRequestChanged`) reads the whole list too.
+ * - The projects (the list, a project's name and slug): no event. qits-projects emits none for a
+ *   project created, renamed or deleted, so they are read once (and again only by `refresh()`).
+ *
  * The store is the only user of the generated qits-projects client, so its pact
  * (`projects.store.pact.spec.ts`), with `WorkStore`'s and `RepositoriesStore`'s, is what this app
  * relies on from qits-projects. Every

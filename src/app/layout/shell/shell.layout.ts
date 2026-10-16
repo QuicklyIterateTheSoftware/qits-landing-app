@@ -182,6 +182,10 @@ export class ShellLayout {
    * sidebar's Release Requests entry: its repository and version, and its state. The requests are
    * the ones the top bar's release menu fetches when the project opens (`ProjectsStore`); until
    * they are there, and for a project without any, there is no line.
+   *
+   * Staleness (qits-1270): the release menu's `RELEASE_REQUEST_EVENTS` subscription refreshes
+   * that answer (`ProjectsStore.refreshReleaseRequests`), so a request FINALIZED by
+   * `ReleaseRequestStateChanged` moves this line too.
    */
   private readonly latestRelease = computed((): NavNote | undefined => {
     const id = this.selected.project()?.id;
