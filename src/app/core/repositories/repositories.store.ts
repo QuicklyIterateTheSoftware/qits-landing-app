@@ -26,6 +26,8 @@ interface RepositoriesState {
  *
  * `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  * project card does in the browser, and the Repositories page for the open project.
+ * `refresh(projectId)` fetches again whatever the store holds (the Repositories page, after the
+ * backup sign-in terminal ends), keeping the answer on hand while it does.
  */
 export const RepositoriesStore = signalStore(
   { providedIn: 'root' },
@@ -35,21 +37,32 @@ export const RepositoriesStore = signalStore(
       patchState(store, { byProject: { ...store.byProject(), [projectId]: value } });
     }
 
+    async function read(projectId: string): Promise<ProjectRepositories> {
+      const { data, error } = await consume(
+        listProjectRepositories({ path: { projectId } }),
+        LIST_PROJECT_REPOSITORIES,
+      );
+      return error !== undefined || !data
+        ? { status: 'error', entries: [] }
+        : { status: 'loaded', entries: data.entries ?? [], wrapper: data.wrapper };
+    }
+
     return {
       async load(projectId: string): Promise<void> {
         const current = store.byProject()[projectId];
         if (current && current.status !== 'error') return;
         set(projectId, { status: 'loading', entries: [] });
-        const { data, error } = await consume(
-          listProjectRepositories({ path: { projectId } }),
-          LIST_PROJECT_REPOSITORIES,
-        );
-        set(
-          projectId,
-          error !== undefined || !data
-            ? { status: 'error', entries: [] }
-            : { status: 'loaded', entries: data.entries ?? [], wrapper: data.wrapper },
-        );
+        set(projectId, await read(projectId));
+      },
+
+      /**
+       * Fetch again, without a `loading` in between: the page keeps showing the last answer. A
+       * failed refresh keeps a loaded answer too, since it is still the best one on hand.
+       */
+      async refresh(projectId: string): Promise<void> {
+        const next = await read(projectId);
+        if (next.status === 'error' && store.byProject()[projectId]?.status === 'loaded') return;
+        set(projectId, next);
       },
     };
   }),

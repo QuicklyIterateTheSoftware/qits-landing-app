@@ -64,6 +64,17 @@ until a button, `visibilitychange` or `online`). The screen is xterm.js
 (`ui/components/terminal-screen/`), loaded lazily in the browser only; its stylesheet is imported in
 `src/styles.css`.
 
+The Repositories page's backup sign-in (qits-1268, from qits-projects-frontend's backup panel) is
+the same `TerminalSocket` and `ui-terminal-screen` on another socket: qits-projects'
+`wss://projects.<domain>/projects/api/repositories/<repo id>/remote-login` (`remoteLoginSocketUrl`,
+`core/repositories/remote-login.ts`), drawn by `patterns/repositories/remote-login-panel/`. An
+`AUTH_REQUIRED` last backup on any repository puts an alert with "Sign in to backup remote" above
+the tree; otherwise the action sits in the page header. It signs in through the wrapper when that
+has a backup remote, else through a repository that asked for it (the credential store is shared).
+When the session ends (a clean close, or Close) the page reads the repositories again
+(`RepositoriesStore.refresh`). The old panel also nudged a backup sync then; no recording holds
+`POST /projects/api/projects/{projectId}/repositories/backup-sync`, so this app does not call it yet.
+
 An agent's chat (`…/agent/chat`, `AgentChatPage`) shows the conversation and a prompt box. A harness
 running as a `CHAT` is the daemon's other socket, `…/workspaces/container/<slot row
 id>/chat/commands/<command id>` (`ChatSocket`): it replays the whole conversation on every open (the

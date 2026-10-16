@@ -65,4 +65,36 @@ describe('RepositoriesStore', () => {
     await settle();
     http.expectOne(`/projects/api/projects/${ID}/repositories`);
   });
+
+  it('refreshes a loaded project without a loading in between', async () => {
+    const store = TestBed.inject(RepositoriesStore);
+    const answer = goldenMaster(STATE, 'listProjectRepositories');
+    const loaded = store.load(ID);
+    await settle();
+    http.expectOne(`/projects/api/projects/${ID}/repositories`).flush(answer);
+    await loaded;
+    const refreshed = store.refresh(ID);
+    expect(store.byProject()[ID]?.status).toBe('loaded');
+    await settle();
+    // The same recording again: what changed between the two reads is the server's business.
+    http.expectOne(`/projects/api/projects/${ID}/repositories`).flush(answer);
+    await refreshed;
+    expect(store.byProject()[ID]?.entries).toEqual(answer.entries);
+  });
+
+  it('keeps a loaded answer when a refresh fails', async () => {
+    const store = TestBed.inject(RepositoriesStore);
+    const answer = goldenMaster(STATE, 'listProjectRepositories');
+    const loaded = store.load(ID);
+    await settle();
+    http.expectOne(`/projects/api/projects/${ID}/repositories`).flush(answer);
+    await loaded;
+    const refreshed = store.refresh(ID);
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${ID}/repositories`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await refreshed;
+    expect(store.byProject()[ID]?.status).toBe('loaded');
+  });
 });
