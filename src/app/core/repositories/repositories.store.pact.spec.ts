@@ -5,28 +5,34 @@ import { PactV4 } from '@pact-foundation/pact';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { NOTHING } from '@qits/angular';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { LIST_PROJECT_REPOSITORIES, PROJECT_CARD_REPOSITORIES } from './repositories.consumes';
+import {
+  BACKUP_SYNC_PROJECT,
+  LIST_PROJECT_REPOSITORIES,
+  PROJECT_CARD_REPOSITORIES,
+} from './repositories.consumes';
 import { RepositoriesStore } from './repositories.store';
 
 /**
  * `RepositoriesStore`'s part of qits-landing-app's pact with qits-projects-service (epic qits-112):
- * the `listProjectRepositories` interactions, in the same file as `ProjectsStore`'s
- * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
+ * the `listProjectRepositories` and `backupSyncProject` interactions, in the same file as
+ * `ProjectsStore`'s (`pacts/qits-landing-app_qits-projects-service.json`, see
+ * `src/testing/pact-part.ts`).
  *
- * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against
+ * Each test drives `load(projectId)` or `syncBackups(projectId)`, as the UI interaction named in `interactions.ts` does, against
  * a pact mock server answering with qits-projects' golden master, binding only the fields in
  * `repositories.consumes.ts`.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS = ['listProjectRepositories'];
+const OPERATIONS = ['listProjectRepositories', 'backupSyncProject'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-repositories-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -43,6 +49,16 @@ const given = (
     state,
     operationId: 'listProjectRepositories',
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
+    consumes,
+  });
+
+/** The `backupSyncProject` interaction for `state`, binding `consumes`. */
+const syncGiven = (state: string, consumes: readonly string[]) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state,
+    operationId: 'backupSyncProject',
+    trigger: { kind: 'ui', app: CONSUMER, interaction: 'sync-backups-after-sign-in' },
     consumes,
   });
 
@@ -103,5 +119,25 @@ describe('qits-landing-app → qits-projects-service pact: repositories', () => 
       const loaded = store.byProject()[projectId];
       expect(loaded?.status).toBe('loaded');
       expect(loaded?.wrapper?.entries?.length).toBeGreaterThan(0);
+    }));
+
+  it('sync-backups-after-sign-in: the store schedules every repository’s backup', () =>
+    syncGiven('a project with repositories in components', BACKUP_SYNC_PROJECT).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const state = 'a project with repositories in components';
+        const projectId = masters.operation(state, 'backupSyncProject').params['projectId'];
+        const scheduled = await store.syncBackups(projectId);
+        expect(scheduled).toBe(masters.body(state, 'backupSyncProject').scheduled);
+      },
+    ));
+
+  it('sync-backups-after-sign-in: a project qits-projects does not know schedules nothing', () =>
+    // On an error the store reads nothing from the body: `consume`'s default for `error`.
+    syncGiven('no project with the given id', NOTHING).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const projectId = masters.operation('no project with the given id', 'backupSyncProject')
+        .params['projectId'];
+      expect(await store.syncBackups(projectId)).toBeNull();
     }));
 });

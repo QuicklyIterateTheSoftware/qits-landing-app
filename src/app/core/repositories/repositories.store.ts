@@ -3,8 +3,12 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import { injectRefreshOn, payloadField } from '$core/events/refresh-on';
 import type { DomainEvent } from '$core/events/domain-events';
-import { listProjectRepositories } from '../../api/projects';
 import {
+  listProjectRepositories,
+  postProjectsApiProjectsByProjectIdRepositoriesBackupSync,
+} from '../../api/projects';
+import {
+  BACKUP_SYNC_PROJECT,
   LIST_PROJECT_REPOSITORIES,
   type RepositoryEntry,
   type WrapperView,
@@ -30,7 +34,9 @@ interface RepositoriesState {
  * `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  * project card does in the browser, and the Repositories page for the open project.
  * `refresh(projectId)` fetches again whatever the store holds (the Repositories page, after the
- * backup sign-in terminal ends), keeping the answer on hand while it does.
+ * backup sign-in terminal ends), keeping the answer on hand while it does. `syncBackups(projectId)`
+ * asks qits-projects to push every repository to its backup remote; the outcomes land on each
+ * repository's `lastBackup` later, with no event to say so.
  * `follow(projectId, destroy)` keeps a project's answer current while a page or card shows it.
  *
  * Staleness (qits-1270): `SCMPublishCommit` to the project's wrapper repository on its main branch
@@ -40,7 +46,7 @@ interface RepositoriesState {
  * creates or adopts one, so that commit is the one event that moves the list. Gaps: qits-projects
  * emits no repository-created, -renamed or -deleted event (a repository created without a wrapper
  * commit shows only on the next load), and none for a backup's outcome (`lastBackup`, read again
- * after the sign-in terminal only) or a changed `mainBranch`/`backupUrl`.
+ * after the sign-in terminal and its backup sync only) or a changed `mainBranch`/`backupUrl`.
  */
 export const RepositoriesStore = signalStore(
   { providedIn: 'root' },
@@ -102,6 +108,15 @@ export const RepositoriesStore = signalStore(
           },
           destroy,
         );
+      },
+
+      /** How many repositories qits-projects scheduled a backup for, or null when it refused. */
+      async syncBackups(projectId: string): Promise<number | null> {
+        const { data, error } = await consume(
+          postProjectsApiProjectsByProjectIdRepositoriesBackupSync({ path: { projectId } }),
+          BACKUP_SYNC_PROJECT,
+        );
+        return error !== undefined || !data ? null : (data.scheduled ?? 0);
       },
     };
   }),

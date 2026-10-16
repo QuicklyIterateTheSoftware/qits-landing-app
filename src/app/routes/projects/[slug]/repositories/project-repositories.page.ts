@@ -33,8 +33,11 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
  * the sign-in terminal; otherwise it is a quieter action in the header. One sign-in fills the
  * shared credential store and so clears every repository's (`signInRepositoryId`: the wrapper's
  * backup remote first). The terminal is `app-remote-login-panel`; when its session ends the page
- * reads the repositories again (`RepositoriesStore.refresh`), which is what turns "Auth needed"
- * back into an outcome once the next backup runs.
+ * does what the old panel did: reads the repositories again (`RepositoriesStore.refresh`) and nudges
+ * every backup (`RepositoriesStore.syncBackups`). A refused sync is a quiet note: the backups still
+ * run on their own schedule. The old panel also read the list again 3 s after an accepted sync; that
+ * was a refresh timer, which qits-1270 forbids, and qits-projects emits no event for a backup's
+ * outcome, so an "Auth needed" turns back into an outcome on the next read.
  *
  * Staleness (qits-1270): `SCMPublishCommit` to the open project's wrapper on its main branch → the
  * project's repositories (`RepositoriesStore.follow`; see the store for the gaps: no event for a
@@ -58,7 +61,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Repositories" [actions]="headerActions()">
-        @if (needsSignIn() && !terminalOpen()) {
+        @if (needsSignIn() && !terminalRepoId()) {
           <div
             class="mb-4 flex flex-col items-start gap-2 rounded-md border border-sunflower-gold-300 bg-sunflower-gold-50 px-3 py-2.5 text-sm"
             role="alert"
@@ -79,13 +82,16 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
             }
           </div>
         }
-        @if (terminalOpen() && signInRepoId(); as repositoryId) {
+        @if (terminalRepoId(); as repositoryId) {
           <app-remote-login-panel
             class="mb-6"
             [repositoryId]="repositoryId"
-            (ended)="refresh()"
-            (closed)="terminalOpen.set(false)"
+            (ended)="signInEnded()"
+            (closed)="terminalRepoId.set(null)"
           />
+        }
+        @if (syncNote(); as note) {
+          <p class="m-0 mb-4 text-sm text-charcoal-brown-600" role="status">{{ note }}</p>
         }
         <ui-spinner [state]="state()" class="min-h-48">
           <div class="flex flex-col gap-6">
@@ -172,14 +178,22 @@ export class ProjectRepositoriesPage {
     return signInRepositoryId(repositories?.entries ?? [], repositories?.wrapper?.repositoryId);
   });
 
-  protected readonly terminalOpen = signal(false);
+  /**
+   * The repository the open terminal pushes through, or null while it is closed. Fixed when it
+   * opens: the re-reads after the session ends can change `signInRepoId`, and a new id would be a
+   * new socket, so a new `git push`.
+   */
+  protected readonly terminalRepoId = signal<string | null>(null);
 
   protected readonly signInAction = computed((): Action | null =>
     this.signInRepoId()
       ? {
           label: 'Sign in to backup remote',
           variant: this.needsSignIn() ? 'success' : 'muted',
-          callback: () => this.terminalOpen.set(true),
+          callback: () => {
+            this.syncNote.set('');
+            this.terminalRepoId.set(this.signInRepoId());
+          },
         }
       : null,
   );
@@ -187,8 +201,11 @@ export class ProjectRepositoriesPage {
   /** The sign-in, in the header while no backup asks for it (the alert offers it otherwise). */
   protected readonly headerActions = computed((): Action[] => {
     const action = this.signInAction();
-    return action && !this.needsSignIn() && !this.terminalOpen() ? [action] : [];
+    return action && !this.needsSignIn() && !this.terminalRepoId() ? [action] : [];
   });
+
+  /** What the nudge after the sign-in came to, for a person; empty before one. */
+  protected readonly syncNote = signal('');
 
   protected readonly state = computed((): LoadState => {
     const status = this.repositories()?.status;
@@ -206,9 +223,22 @@ export class ProjectRepositoriesPage {
     this.store.follow(() => this.selected.project()?.id, inject(DestroyRef));
   }
 
-  /** The sign-in ended (not necessarily well): read the backups' outcomes again. */
-  protected refresh(): void {
+  /**
+   * The sign-in ended, which says the terminal is gone, not that the sign-in worked. So the list is
+   * read again and a sync is nudged: if the credentials landed, the sync is what turns every "Auth
+   * needed" back into an outcome; if not, the badges come back unchanged.
+   */
+  protected async signInEnded(): Promise<void> {
     const id = this.selected.project()?.id;
-    if (id) void this.store.refresh(id);
+    if (!id) return;
+    void this.store.refresh(id);
+    const scheduled = await this.store.syncBackups(id);
+    if (scheduled === null) {
+      this.syncNote.set(
+        'Could not schedule the backups now; they run again on their own schedule.',
+      );
+      return;
+    }
+    this.syncNote.set(`Scheduled ${scheduled} backup${scheduled === 1 ? '' : 's'}.`);
   }
 }
