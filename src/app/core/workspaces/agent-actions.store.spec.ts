@@ -197,6 +197,11 @@ describe('AgentActionsStore', () => {
     http
       .expectOne(`/workspaces/api/workspaces/${id}/recreate-container`)
       .flush(body, { status: 400, statusText: 'Bad Request' });
-    expect(await done).toEqual({ ok: false, status: 400, message: body.message, code: undefined });
+    expect(await done).toEqual({
+      ok: false,
+      status: 400,
+      message: body.message,
+      code: body.code,
+    });
   });
 });
