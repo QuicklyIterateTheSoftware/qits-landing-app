@@ -356,6 +356,7 @@
         {
           "name": "an unregistered runner",
           "params": {
+            "authorization": "Bearer qits_tok_contract-registration",
             "runnerId": "00000000-0000-4000-8000-000000000020",
             "runnerName": "localhost"
           }
@@ -1030,6 +1031,7 @@
         {
           "name": "an unregistered runner",
           "params": {
+            "authorization": "Bearer qits_tok_contract-registration",
             "runnerId": "00000000-0000-4000-8000-000000000020",
             "runnerName": "localhost"
           }
@@ -1312,6 +1314,7 @@
         {
           "name": "an unregistered runner",
           "params": {
+            "authorization": "Bearer qits_tok_contract-registration",
             "runnerId": "00000000-0000-4000-8000-000000000020",
             "runnerName": "localhost"
           }
@@ -1467,6 +1470,7 @@
         {
           "name": "an unregistered runner",
           "params": {
+            "authorization": "Bearer qits_tok_contract-registration",
             "runnerId": "00000000-0000-4000-8000-000000000020",
             "runnerName": "localhost"
           }
@@ -3021,6 +3025,7 @@
         {
           "name": "an unregistered runner",
           "params": {
+            "authorization": "Bearer qits_tok_contract-registration",
             "runnerId": "00000000-0000-4000-8000-000000000020",
             "runnerName": "localhost"
           }
@@ -3643,6 +3648,7 @@
         {
           "name": "an unregistered runner",
           "params": {
+            "authorization": "Bearer qits_tok_contract-registration",
             "runnerId": "00000000-0000-4000-8000-000000000020",
             "runnerName": "localhost"
           }

@@ -23,6 +23,7 @@
         {
           "name": "a release request awaiting approval while its build runs",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -939,8 +940,10 @@
           "content": {
             "comment": {
               "author": "dev",
+              "authorAgentOf": null,
               "body": "The range 2026-07-01 to 2026-09-30 reproduces it.",
               "createdAt": "2026-01-01T00:00:00Z",
+              "editable": true,
               "id": "00000000-0000-4000-8000-000000000004"
             }
           },
@@ -976,6 +979,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -1025,6 +1036,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -2668,9 +2680,11 @@
         "body": {
           "content": {
             "comment": {
-              "author": "dana.weber",
+              "author": "dev",
+              "authorAgentOf": null,
               "body": "It answers 500 when the range holds no invoice at all.",
               "createdAt": "2026-01-01T00:00:00Z",
+              "editable": true,
               "id": "00000000-0000-4000-8000-000000000001"
             }
           },
@@ -2706,6 +2720,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -5802,6 +5824,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -14477,6 +14500,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -14587,6 +14611,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -14700,6 +14725,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -15004,6 +15030,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -17591,6 +17618,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -19742,6 +19770,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -20403,6 +20432,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
@@ -24658,24 +24688,30 @@
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Three invoices from October are affected; see the dossier.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               },
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Three invoices from October are affected; see the dossier.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               },
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Three invoices from October are affected; see the dossier.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               }
@@ -24743,6 +24779,20 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -24850,8 +24900,10 @@
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Tax rates are verified. The export is next, then the open bug.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               }
@@ -24899,6 +24951,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -25080,8 +25140,10 @@
               {
                 "comment": {
                   "author": "qits-agent",
+                  "authorAgentOf": null,
                   "body": "Started on the renderer. The preview waits for it.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               }
@@ -25129,6 +25191,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -25321,8 +25391,10 @@
               {
                 "comment": {
                   "author": "qits-agent",
+                  "authorAgentOf": null,
                   "body": "Implemented and released in billing-frontend `2026.1001.140000`.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               }
@@ -25370,6 +25442,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -25469,24 +25549,30 @@
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Accounting needs the export before the Q4 close on 15 December.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               },
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Accounting needs the export before the Q4 close on 15 December.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               },
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Accounting needs the export before the Q4 close on 15 December.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               }
@@ -25554,6 +25640,20 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -25644,8 +25744,10 @@
               {
                 "comment": {
                   "author": "contract-seeder",
+                  "authorAgentOf": null,
                   "body": "Released and deployed. The connection limit is now 300.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000003"
                 }
               }
@@ -25693,6 +25795,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -25792,8 +25902,10 @@
               {
                 "comment": {
                   "author": "dana.weber",
+                  "authorAgentOf": null,
                   "body": "Per user, not per browser, please.",
                   "createdAt": "2026-01-01T00:00:00Z",
+                  "editable": false,
                   "id": "00000000-0000-4000-8000-000000000013"
                 }
               }
@@ -25841,6 +25953,14 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.entries[*].comment.editable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -27798,6 +27918,7 @@
         {
           "name": "a release request awaiting approval",
           "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
             "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
             "projectId": "00000000-0000-4000-8000-000000000001",
             "repositoryId": "00000000-0000-4000-8000-000000000002",
