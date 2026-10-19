@@ -328,9 +328,11 @@ export type CommentDto = {
     id?: string;
     entityId?: string;
     author?: string;
+    authorAgentOf?: string;
     body?: string;
     createdAt?: Instant;
     updatedAt?: Instant;
+    editable?: boolean;
 };
 
 export type CommitBuildStatusDto = {
@@ -1759,7 +1761,7 @@ export type WorkCommentListEntry = {
 };
 
 /**
- * A JSON merge patch (RFC 7396) of one comment. body is the only property and is required: it replaces the text, and may not be null or blank. id, entityId, author, createdAt and updatedAt are server-owned; any other property is refused as unknown.
+ * A JSON merge patch (RFC 7396) of one comment. body is the only property and is required: it replaces the text, and may not be null or blank. id, entityId, author, authorAgentOf, createdAt, updatedAt and editable are server-owned; any other property is refused as unknown.
  */
 export type WorkCommentPatch = {
     /**
@@ -5277,7 +5279,7 @@ export type PostProjectsApiRunnersByIdLoginCheckResponses = {
     202: unknown;
 };
 
-export type PostProjectsApiRunnersByIdRegisterData = {
+export type RegisterDeskRunnerData = {
     body: RegisterDeskRunnerRequest;
     path: {
         id: string;
@@ -5286,7 +5288,7 @@ export type PostProjectsApiRunnersByIdRegisterData = {
     url: '/projects/api/runners/{id}/register';
 };
 
-export type PostProjectsApiRunnersByIdRegisterErrors = {
+export type RegisterDeskRunnerErrors = {
     /**
      * Capabilities that are not a JSON object
      */
@@ -5317,14 +5319,14 @@ export type PostProjectsApiRunnersByIdRegisterErrors = {
     503: unknown;
 };
 
-export type PostProjectsApiRunnersByIdRegisterResponses = {
+export type RegisterDeskRunnerResponses = {
     /**
      * The runner's own client and where to use it
      */
     200: DeskRunnerRegistered;
 };
 
-export type PostProjectsApiRunnersByIdRegisterResponse = PostProjectsApiRunnersByIdRegisterResponses[keyof PostProjectsApiRunnersByIdRegisterResponses];
+export type RegisterDeskRunnerResponse = RegisterDeskRunnerResponses[keyof RegisterDeskRunnerResponses];
 
 export type PostProjectsApiRunnersByIdRegistrationTokenData = {
     body?: never;
@@ -6002,7 +6004,7 @@ export type EditWorkCommentErrors = {
      */
     401: unknown;
     /**
-     * An agent editing a comment outside its own project; nothing is written
+     * An agent editing a comment outside its own project, or a caller who is not the comment's author; nothing is written
      */
     403: unknown;
     /**

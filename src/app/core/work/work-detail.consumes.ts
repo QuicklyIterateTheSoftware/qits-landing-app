@@ -49,12 +49,19 @@ export type EntityDetail = Consumed<GetWorkResponses[200], typeof GET_WORK>;
  */
 export const GET_WORK_CRITERIA = ['acceptanceCriteria'] as const;
 
-/** `listWorkComments`, by qualified id: the thread, oldest first. The body is Markdown. */
+/**
+ * `listWorkComments`, by qualified id: the thread, oldest first. The body is Markdown.
+ * `authorAgentOf` names the work item whose agent wrote the comment (blank for a person's); the
+ * thread shows "`<authorAgentOf>`'s agent" in its place. `editable` says whether the caller may
+ * edit it (only its author may).
+ */
 export const LIST_WORK_COMMENTS = [
   'entries[].comment.id',
   'entries[].comment.author',
+  'entries[].comment.authorAgentOf',
   'entries[].comment.body',
   'entries[].comment.createdAt',
+  'entries[].comment.editable',
 ] as const;
 
 /** One comment, cut to what the store reads. */
@@ -72,8 +79,10 @@ export type CommentEntry = NonNullable<
 export const WORK_COMMENT = [
   'comment.id',
   'comment.author',
+  'comment.authorAgentOf',
   'comment.body',
   'comment.createdAt',
+  'comment.editable',
 ] as const;
 
 /**

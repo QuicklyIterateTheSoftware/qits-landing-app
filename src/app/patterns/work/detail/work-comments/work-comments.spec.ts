@@ -16,10 +16,16 @@ const COMMENTED = 'a ticket with a comment';
 describe('WorkComments', () => {
   let http: HttpTestingController;
   const ref = projectsGoldenMasters.operation(COMMENTED, 'listWorkComments').params['qualifiedId'];
+  // The recorded fixture predates `editable`/`authorAgentOf` (qits-1452): the installed
+  // `@qits/projects-golden-masters` is bumped only on qits-projects-service's release, which has
+  // not happened for this field yet. Its thread is the caller's own, so `editable: true` is what
+  // the provider now records for it (its own golden-masters/a-ticket-with-a-comment already does);
+  // make that explicit here until the devDependency catches up.
   const thread = (): CommentEntry[] =>
-    goldenMaster(COMMENTED, 'listWorkComments').entries.map(
-      (e: { comment: CommentEntry }) => e.comment,
-    );
+    goldenMaster(COMMENTED, 'listWorkComments').entries.map((e: { comment: CommentEntry }) => ({
+      ...e.comment,
+      editable: true,
+    }));
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -58,6 +64,37 @@ describe('WorkComments', () => {
     const { element, box } = render();
     expect(element.querySelectorAll('li').length).toBe(thread().length);
     expect(box.placeholder).toBe('Say something about this ticket.');
+  });
+
+  it("names a person's comment by its author", () => {
+    const first = thread()[0];
+    const { element } = render([{ ...first, authorAgentOf: undefined }]);
+    const byline = element.querySelector('li p')!;
+    expect(byline.textContent).toContain(first.author);
+  });
+
+  it("names an agent's comment by the work item whose agent wrote it", () => {
+    const first = thread()[0];
+    const { element } = render([{ ...first, authorAgentOf: 'qits-1402' }]);
+    const byline = element.querySelector('li p')!;
+    expect(byline.textContent).toContain("qits-1402's agent");
+    expect(byline.textContent).not.toContain(first.author!);
+  });
+
+  it('shows Edit only on a comment the caller may edit', () => {
+    const first = thread()[0];
+    const editable = render([{ ...first, editable: true }]);
+    expect(
+      [...editable.element.querySelectorAll('button')].some(
+        (b) => b.textContent?.trim() === 'Edit',
+      ),
+    ).toBe(true);
+    const notEditable = render([{ ...first, editable: false }]);
+    expect(
+      [...notEditable.element.querySelectorAll('button')].some(
+        (b) => b.textContent?.trim() === 'Edit',
+      ),
+    ).toBe(false);
   });
 
   it('keeps Comment disabled while the box is blank', () => {

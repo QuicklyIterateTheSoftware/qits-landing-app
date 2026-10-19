@@ -14,6 +14,11 @@ type CommentWrite = 'add' | 'save';
  * A work item's comments, oldest first: each with its author, its time (UTC) and its body as
  * Markdown. "No comments yet" for none. A region named "Comments".
  *
+ * A comment an agent wrote shows "`<authorAgentOf>`'s agent" (the qualified id of the work item
+ * whose agent wrote it) in place of its author (qits-1452); a person's shows its author as before.
+ * Edit shows only on a comment the caller may edit (`editable`, stamped by qits-projects: only its
+ * author may edit it today).
+ *
  * Below the thread, a box to comment (Markdown) and Comment; Edit on a comment opens its body in a
  * box with Save and Cancel. Ported from qits-projects-frontend's thread (`entity-thread.ts`), with
  * the same request: only the body travels, the author is the session's. Comment and Save stay
@@ -34,10 +39,12 @@ type CommentWrite = 'add' | 'save';
           <li class="rounded-md border border-charcoal-brown-200 px-4 py-3">
             <div class="mb-1 flex items-start justify-between gap-2">
               <p class="m-0 text-xs text-charcoal-brown-600">
-                <span class="font-semibold text-charcoal-brown-900">{{ comment.author }}</span>
+                <span class="font-semibold text-charcoal-brown-900">{{
+                  authorLabel(comment)
+                }}</span>
                 · {{ comment.createdAt | date: 'd MMM y, HH:mm' : 'UTC' }}
               </p>
-              @if (editing() !== comment.id) {
+              @if (editing() !== comment.id && comment.editable) {
                 <ui-action-button [action]="editAction(comment)" />
               }
             </div>
@@ -119,6 +126,12 @@ export class WorkComments {
     disabled: this.writing() !== null,
     callback: () => this.stopEditing(),
   }));
+
+  /** The byline for `comment`: the work item whose agent wrote it, else its author. */
+  protected authorLabel(comment: CommentEntry): string {
+    const agentOf = comment.authorAgentOf?.trim();
+    return agentOf ? `${agentOf}'s agent` : (comment.author ?? '');
+  }
 
   protected editAction(comment: CommentEntry): Action {
     return {
