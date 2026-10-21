@@ -13,13 +13,17 @@ import {
   setReleaseSourcePriority,
   withdrawReleaseRequest,
 } from '../../api/projects';
+import { client as projectsClient } from '../../api/projects/client.gen';
 import { NOTHING } from '@qits/angular';
 import {
+  GET_APPROVAL_ELIGIBILITY,
   GET_PROJECT_RELEASE_REQUEST,
   GET_RELEASE_ARTIFACTS,
   LIST_COMMIT_BUILDS,
   CHANGED_RELEASE_REQUEST,
   LIST_RELEASE_REQUEST_COMMITS,
+  type ApprovalEligibility,
+  type ApprovalEligibilityDto,
   type CommitBuild,
   type ReleaseArtifacts,
   type ReleaseCommits,
@@ -76,6 +80,14 @@ export interface ReleaseRequestView {
   readonly artifacts?: Read<ReleaseArtifacts>;
   /** The fold (`mergedSha`, `''` for none) the commits and the verdicts were read for. */
   readonly fold?: string;
+  /**
+   * What the viewer may approve (epic qits-1038), read once per fold and set of requirements;
+   * `undefined` while the request carries no requirements (an older qits-projects, or none on the
+   * fold). A failed read (an older qits-projects answers 404) leaves the approval drawn as before.
+   */
+  readonly eligibility?: Read<ApprovalEligibility>;
+  /** The fold and requirement ids {@link eligibility} was read for. */
+  readonly eligibilityOf?: string;
 }
 
 interface ReleaseRequestState {
@@ -93,6 +105,8 @@ interface ReleaseRequestState {
  * - `load(projectId, ref)` reads the request, once, and again after an error or a "no such
  *   request". Then, for its fold, the commits it brought in and the CI verdicts on it; and once a
  *   tag is cut (RELEASED or FINALIZED), what it published. A 404 leaves the request `missing`.
+ *   When the request names approval requirements (epic qits-1038), what the viewer may approve
+ *   (`eligibility`, read by `approvalEligibility`), once per fold and set of requirements.
  * - `refresh(ref)` reads the request again and keeps the old data until the answer is in. The
  *   commits and the verdicts are read again only when the fold moved, the artifacts only the first
  *   time the request is released: each is a fact about the fold or the tag, so an answer that
@@ -175,12 +189,50 @@ export const ReleaseRequestStore = signalStore(
       set(ref, { artifacts: error !== undefined || !data ? FAILED : loaded(data) });
     }
 
+    /**
+     * `GET …/{requestId}/approval-eligibility` (epic qits-1038): which requirements on the
+     * request's fold the caller may satisfy. Called through the client by hand until qits-projects'
+     * `docs/openapi.yml` carries the door and `npm run generate:api` generates its function.
+     */
+    async function approvalEligibility(
+      repoId: string,
+      requestId: string,
+    ): Promise<Read<ApprovalEligibility>> {
+      const { data, error } = await consume(
+        // eslint-disable-next-line qits/consume-client-calls -- the door has no generated function yet (epic qits-1038); the call is consume's first argument all the same
+        projectsClient.get<{ 200: ApprovalEligibilityDto }, unknown, false>({
+          security: [{ scheme: 'bearer', type: 'http' }],
+          url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approval-eligibility',
+          path: { repoId, requestId },
+        }),
+        GET_APPROVAL_ELIGIBILITY,
+      );
+      return error !== undefined || !data ? FAILED : loaded(data);
+    }
+
+    async function readEligibility(ref: string, of: string): Promise<void> {
+      const { repoId, requestId } = addressOf(ref);
+      if (!repoId || !requestId) return;
+      set(ref, { eligibility: LOADING, eligibilityOf: of });
+      const eligibility = await approvalEligibility(repoId, requestId);
+      if (store.byId()[ref]?.eligibilityOf !== of) return;
+      set(ref, { eligibility });
+    }
+
     /** The reads that follow an answer: per new fold, and once after the tag. */
     async function follow(ref: string, request: ReleaseRequest): Promise<void> {
       const view = store.byId()[ref];
       if (!view) return;
       const fold = request.mergedSha ?? '';
       const reads: Promise<void>[] = [];
+      // What the viewer may approve depends on the fold's requirements, not on who satisfied them.
+      const requirements = request.approvalRequirements;
+      if (Array.isArray(requirements) && requirements.length > 0) {
+        const of = [fold, ...requirements.map((requirement) => requirement.id ?? '')].join(' ');
+        if (view.eligibilityOf !== of) reads.push(readEligibility(ref, of));
+      } else if (view.eligibilityOf !== undefined) {
+        set(ref, { eligibility: undefined, eligibilityOf: undefined });
+      }
       if (view.fold !== fold) {
         set(ref, { fold });
         reads.push(readCommits(ref, fold), readBuilds(ref, fold));
@@ -236,7 +288,14 @@ export const ReleaseRequestStore = signalStore(
       if (!request) {
         // The project has no such request (any more): say so, whether or not it was on show.
         if (response?.status === 404) {
-          set(ref, { ...EMPTY, request: MISSING, fold: undefined, artifacts: undefined });
+          set(ref, {
+            ...EMPTY,
+            request: MISSING,
+            fold: undefined,
+            artifacts: undefined,
+            eligibility: undefined,
+            eligibilityOf: undefined,
+          });
           return;
         }
         // A failed refresh keeps the request on show; a failed first read shows the failure.
@@ -256,7 +315,14 @@ export const ReleaseRequestStore = signalStore(
         const current = store.byId()[ref];
         const status = current?.request.status;
         if (current?.projectId === projectId && status !== 'error' && status !== 'missing') return;
-        set(ref, { ...EMPTY, projectId, fold: undefined, artifacts: undefined });
+        set(ref, {
+          ...EMPTY,
+          projectId,
+          fold: undefined,
+          artifacts: undefined,
+          eligibility: undefined,
+          eligibilityOf: undefined,
+        });
         await read(ref);
       },
       async refresh(ref: string): Promise<void> {
@@ -279,6 +345,7 @@ export const ReleaseRequestStore = signalStore(
         else await readArtifacts(ref);
       },
       put,
+      approvalEligibility,
       of(ref: string): ReleaseRequestView | undefined {
         return store.byId()[ref];
       },

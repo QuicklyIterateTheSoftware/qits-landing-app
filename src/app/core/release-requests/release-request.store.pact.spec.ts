@@ -1,14 +1,14 @@
 import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { PactV4 } from '@pact-foundation/pact';
+import { MatchersV3, PactV4 } from '@pact-foundation/pact';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { addGoldenInteraction } from '@qits/angular/testing';
+import { addGoldenInteraction, examplePath, type GoldenMasters } from '@qits/angular/testing';
 import { consume, NOTHING } from '@qits/angular';
 import {
   getReleaseRequest,
@@ -17,7 +17,7 @@ import {
   listReleaseRequestCommits,
 } from '../../api/projects';
 import { assertPactPart } from '../../../testing/pact-part';
-import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import { heldBy, projectsGoldenMasters as recordedMasters } from '../../../testing/golden-masters';
 import {
   CHANGED_RELEASE_REQUEST,
   GET_PROJECT_RELEASE_REQUEST,
@@ -25,6 +25,7 @@ import {
   GET_RELEASE_REQUEST,
   LIST_COMMIT_BUILDS,
   LIST_RELEASE_REQUEST_COMMITS,
+  type ReleaseRequest,
 } from './release-request.consumes';
 import { ReleaseRequestStore } from './release-request.store';
 
@@ -52,8 +53,50 @@ const STATES = {
   failedAutomation: 'a release request held by a failed automation',
 } as const;
 
+/**
+ * The eligibility read (epic qits-1038). qits-projects names the door's operation so; its golden
+ * masters record no answer of it yet.
+ */
+const ELIGIBILITY = 'getReleaseRequestApprovalEligibility';
+
+/**
+ * The approval requirement the awaiting-approval state's request carries (epic qits-1038): the
+ * repository's `manual-review: true`, which admits a person ("configured by manual-review" in the
+ * recorded approval gate). Only the fields every answer of it holds: `detail` and `satisfiedBy` may
+ * be null and are bound once qits-projects records them.
+ */
+const MANUAL_REVIEW = {
+  id: 'manual-review',
+  reason: 'The repository asks a person to review every release',
+  admits: ['person'],
+  excludesAuthors: false,
+  satisfied: false,
+};
+
+/**
+ * qits-projects' golden masters, with what epic qits-1038 adds to them before qits-projects records
+ * it: the awaiting-approval request's `approvalRequirements`. Once the recording holds the field,
+ * the recording is used as it is.
+ */
+const masters: GoldenMasters = {
+  operation: (state, operationId) => recordedMasters.operation(state, operationId),
+  body(state, operationId) {
+    const body = recordedMasters.body(state, operationId);
+    if (
+      state === STATES.awaitingApproval &&
+      operationId === 'getReleaseRequest' &&
+      body?.request &&
+      !('approvalRequirements' in body.request)
+    ) {
+      body.request.approvalRequirements = [MANUAL_REVIEW];
+    }
+    return body;
+  },
+};
+
 /** The operations this spec owns in that file. */
 const OPERATIONS = [
+  ELIGIBILITY,
   'getProjectReleaseRequest',
   'getReleaseRequest',
   'listReleaseRequestCommits',
@@ -176,6 +219,10 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
             consume(getReleaseRequest({ path: { repoId, requestId } }), GET_RELEASE_REQUEST),
           );
           expect(data?.request?.state).toBe(expected);
+          if (state === STATES.awaitingApproval) {
+            const request = data?.request as ReleaseRequest | undefined;
+            expect(request?.approvalRequirements?.[0]?.admits).toEqual(['person']);
+          }
         },
       ));
 
@@ -227,6 +274,43 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
           );
           expect(Array.isArray(data?.artifacts)).toBe(true);
         }));
+  });
+
+  // Epic qits-1038: which requirements on the fold the viewer may satisfy. qits-projects records no
+  // answer of the door yet, so the interaction is written here, on the awaiting-approval state's
+  // request, and binds only what the page reads: a list of requirement ids, possibly empty (who
+  // the verification's caller is decides what it holds). Move it to `given(...)` once the golden
+  // masters record the door.
+  it('show-release-request: what the viewer may approve', () => {
+    const op = recordedMasters.operation(STATES.awaitingApproval, 'getReleaseRequest');
+    const path = `${op.path}/approval-eligibility`;
+    const interaction = pact
+      .addInteraction()
+      .given(STATES.awaitingApproval, { ...op.params })
+      .uponReceiving(`show-release-request: ${ELIGIBILITY}`)
+      .reference('qits-call', 'app', PROVIDER)
+      .reference('qits-call', 'operationId', ELIGIBILITY)
+      .reference('qits-trigger', 'kind', 'ui')
+      .reference('qits-trigger', 'app', CONSUMER)
+      .reference('qits-trigger', 'interaction', 'show-release-request' satisfies InteractionSlug)
+      .withRequest(
+        'GET',
+        MatchersV3.fromProviderState(
+          path.replace(/\{(\w+)}/g, '$${$1}'),
+          examplePath({ ...op, path }),
+        ),
+      )
+      .willRespondWith(200, (response) => {
+        response
+          .headers({ 'Content-Type': MatchersV3.regex('application/json.*', 'application/json') })
+          .jsonBody({ eligibleRequirementIds: MatchersV3.atLeastLike(MANUAL_REVIEW.id, 0, 1) });
+      });
+    return interaction.executeTest(async (server) => {
+      const { repoId, requestId } = recorded(STATES.awaitingApproval, 'getReleaseRequest');
+      const store = storeAt(server.url);
+      const read = await store.approvalEligibility(repoId, requestId);
+      expect(read.value?.eligibleRequirementIds).toEqual([MANUAL_REVIEW.id]);
+    });
   });
 
   it('set-release-source-priority: a branch’s priority changes', () =>

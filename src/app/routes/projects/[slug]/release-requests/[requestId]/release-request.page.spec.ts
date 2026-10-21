@@ -166,6 +166,130 @@ describe('ReleaseRequestPage', () => {
     expect(element.textContent).toContain(request.summary);
   });
 
+  describe('approval requirements (epic qits-1038)', () => {
+    /** The recorded request awaiting a person's approval, with `approvalRequirements` as given. */
+    const awaiting = (approvalRequirements?: readonly object[]) => {
+      const body = goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+      if (approvalRequirements) body.request.approvalRequirements = approvalRequirements;
+      return { request: { ...body.request, qualifiedId: request.qualifiedId } };
+    };
+
+    const MANUAL_REVIEW = {
+      id: 'manual-review',
+      reason: 'The repository asks a person to review every release',
+      admits: ['person'],
+      excludesAuthors: false,
+      detail: null,
+      satisfied: false,
+      satisfiedBy: null,
+    };
+
+    const SCREENSHOTS = {
+      id: 'automation:screenshot-baselines',
+      reason: 'Screenshot baselines changed',
+      admits: ['agent', 'person'],
+      excludesAuthors: false,
+      detail: 'src/app/__screenshots__/home.png',
+      satisfied: true,
+      satisfiedBy: { approver: 'agent-7', roles: ['agent'], at: '2026-01-01T00:00:00Z' },
+    };
+
+    const CONTRACT = {
+      id: 'contract:shop',
+      reason: 'The published contract changed',
+      admits: ['person', 'agent@shop'],
+      excludesAuthors: true,
+      satisfied: false,
+    };
+
+    const buttons = (element: HTMLElement) =>
+      Array.from(element.querySelectorAll('app-release-approval button')).map((b) =>
+        b.textContent?.trim(),
+      );
+
+    /** The page with `body` read, and the eligibility read it made (if any). */
+    async function shownWith(body: object) {
+      const page = await render(request.qualifiedId);
+      read(request.qualifiedId).flush(body);
+      await page.answered();
+      const { repoId, id } = (body as { request: { repoId: string; id: string } }).request;
+      const eligibility = () =>
+        http.match(
+          `/projects/api/repositories/${repoId}/release-requests/${id}/approval-eligibility`,
+        );
+      return { ...page, eligibility };
+    }
+
+    it('draws one line per requirement: reason, roles, detail, satisfied by or open', async () => {
+      const { element, eligibility, answered } = await shownWith(
+        awaiting([MANUAL_REVIEW, SCREENSHOTS, CONTRACT]),
+      );
+      eligibility()[0].flush({ viewer: 'dana', heldRoles: ['person'], eligibleRequirementIds: [] });
+      await answered();
+      const lines = Array.from(element.querySelectorAll('[data-requirement]'));
+      expect(lines.map((line) => line.getAttribute('data-requirement'))).toEqual([
+        'manual-review',
+        'automation:screenshot-baselines',
+        'contract:shop',
+      ]);
+      const [manual, screenshots, contract] = lines.map((line) => line.textContent ?? '');
+      expect(manual).toContain('The repository asks a person to review every release');
+      expect(manual).toContain('May be approved by a person');
+      expect(manual).toContain('Open');
+      expect(manual).not.toContain('authors');
+      expect(screenshots).toContain('an agent of this project or a person');
+      expect(screenshots).toContain('src/app/__screenshots__/home.png');
+      expect(screenshots).toContain('Satisfied by agent-7');
+      expect(screenshots).toContain('(agent)');
+      expect(contract).toContain('a person or an agent of shop');
+      expect(contract).toContain('not the request’s authors');
+    });
+
+    it('offers Approve and Decline when the viewer may satisfy an open requirement', async () => {
+      const { element, eligibility, answered } = await shownWith(awaiting([MANUAL_REVIEW]));
+      eligibility()[0].flush({ eligibleRequirementIds: ['manual-review'] });
+      await answered();
+      expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
+    });
+
+    it('offers Decline alone when every requirement the viewer may satisfy is satisfied', async () => {
+      const { element, eligibility, answered } = await shownWith(
+        awaiting([MANUAL_REVIEW, SCREENSHOTS]),
+      );
+      eligibility()[0].flush({ eligibleRequirementIds: ['automation:screenshot-baselines'] });
+      await answered();
+      expect(buttons(element)).toEqual(['Decline release']);
+    });
+
+    it('offers neither, and says why, when the viewer may satisfy none', async () => {
+      const { element, eligibility, answered } = await shownWith(awaiting([CONTRACT]));
+      eligibility()[0].flush({
+        viewer: 'agent-1',
+        heldRoles: ['agent'],
+        eligibleRequirementIds: [],
+      });
+      await answered();
+      expect(buttons(element)).toEqual([]);
+      expect(element.querySelector('app-release-approval')?.textContent).toContain(
+        'You hold none of the roles',
+      );
+    });
+
+    it('offers both, as before, when the eligibility read fails (an older service)', async () => {
+      const { element, eligibility, answered } = await shownWith(awaiting([MANUAL_REVIEW]));
+      eligibility()[0].flush(null, { status: 404, statusText: 'Not Found' });
+      await answered();
+      expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
+    });
+
+    it('draws the approval as before, reading no eligibility, without requirements', async () => {
+      const { element, eligibility } = await shownWith(awaiting());
+      expect(eligibility()).toHaveLength(0);
+      expect(element.querySelector('[data-requirement]')).toBeNull();
+      expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
+    });
+  });
+
   describe('staleness (qits-1270)', () => {
     /** The page with its request read, and the live stream it opened. */
     async function shown() {

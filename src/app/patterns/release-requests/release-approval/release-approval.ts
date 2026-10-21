@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import type { ApprovalOffer } from '$core/release-requests/approval-requirements';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal, shortShaOrNone } from '$core/release-requests/release-request-model';
 import { movedFold } from '$core/release-requests/release-pipeline';
@@ -16,6 +17,9 @@ type Decision = 'approve' | 'decline';
  * The fold the reader saw travels with the decision. A push that lands first is refused (409)
  * naming the fold the request is on now, and the panel says the fold changed rather than calling
  * it a failure. The answered request takes the shown one's place (`ReleaseRequestStore`).
+ *
+ * Which of the two it offers is `offer` (epic qits-1038): Approve only while the viewer may satisfy
+ * an open requirement, Decline only while they may satisfy any; both when nothing says otherwise.
  */
 @Component({
   selector: 'app-release-approval',
@@ -23,23 +27,32 @@ type Decision = 'approve' | 'decline';
   imports: [ActionButton],
   host: { class: 'block' },
   template: `
-    <div class="flex flex-wrap items-center gap-2">
-      <input
-        class="h-8 min-w-48 flex-1 rounded-md border border-charcoal-brown-300 px-2 text-sm"
-        type="text"
-        [value]="note()"
-        (input)="noteTyped($event)"
-        placeholder="A note (optional)"
-        [attr.aria-label]="'A note on the decision about ' + request().summary"
-      />
-      <div class="flex">
-        <ui-action-button [action]="approve()" join="start" />
-        <ui-action-button [action]="decline()" join="end" />
+    @if (offer().note; as note) {
+      <p class="m-0 text-sm text-charcoal-brown-600">{{ note }}</p>
+    }
+    @if (offer().approve || offer().decline) {
+      <div class="flex flex-wrap items-center gap-2">
+        <input
+          class="h-8 min-w-48 flex-1 rounded-md border border-charcoal-brown-300 px-2 text-sm"
+          type="text"
+          [value]="note()"
+          (input)="noteTyped($event)"
+          placeholder="A note (optional)"
+          [attr.aria-label]="'A note on the decision about ' + request().summary"
+        />
+        <div class="flex">
+          @if (offer().approve) {
+            <ui-action-button [action]="approve()" [join]="offer().decline ? 'start' : 'none'" />
+          }
+          @if (offer().decline) {
+            <ui-action-button [action]="decline()" [join]="offer().approve ? 'end' : 'none'" />
+          }
+        </div>
+        <span class="text-xs text-charcoal-brown-500"
+          >of <span class="font-mono">{{ fold() }}</span></span
+        >
       </div>
-      <span class="text-xs text-charcoal-brown-500"
-        >of <span class="font-mono">{{ fold() }}</span></span
-      >
-    </div>
+    }
     @if (moved(); as moved) {
       <p class="mt-1 mb-0 text-sm text-sunflower-gold-900" role="alert">{{ moved }}</p>
     }
@@ -54,6 +67,8 @@ export class ReleaseApproval {
   private readonly store = inject(ReleaseRequestStore);
 
   readonly request = input.required<ReleaseRequest>();
+  /** Which decisions the viewer is offered (`approvalOffer`); both unless something says otherwise. */
+  readonly offer = input<ApprovalOffer>({ approve: true, decline: true, note: null });
 
   protected readonly fold = computed(() => shortShaOrNone(this.request().mergedSha));
 

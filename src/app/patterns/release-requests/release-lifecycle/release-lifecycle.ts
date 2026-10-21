@@ -14,6 +14,12 @@ import {
   type AutomationCogState,
 } from '$ui/components/automation-cog/automation-cog';
 import { GateShield } from '$ui/components/gate-shield/gate-shield';
+import {
+  approvalLines,
+  approvalOffer,
+  type EligibilityRead,
+} from '$core/release-requests/approval-requirements';
+import { ApprovalRequirements } from '$patterns/release-requests/approval-requirements/approval-requirements';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal } from '$core/release-requests/release-request-model';
 import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
@@ -55,7 +61,9 @@ const RAIL: Readonly<Record<StepState, string>> = {
  * Every check is its own row: its label, its state as the backend words it, its detail and
  * sub-checks, and a link to its CI run or deployment. Actions sit on the row they act on: the
  * conflict under the fold, each automation with Re-run and the waiver, "run again" on a phase that
- * can run again, and Approve or Decline on the approval while a person must answer. A check that
+ * can run again, and Approve or Decline on the approval while a person must answer. The approval
+ * lists its requirements, one line each, and offers only the decisions the viewer may make
+ * (`approvalOffer`, epic qits-1038). A check that
  * needs a person is marked and ringed; each row has an id (`stepAnchor`), so a link can open the
  * page at it. P1's header carries the automations' cog, P3's and P6's their gates' shield.
  */
@@ -68,6 +76,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
     AutomationCog,
     Chip,
     GateShield,
+    ApprovalRequirements,
     ReleaseApproval,
     ReleaseAutomations,
     ReleaseConflictPanel,
@@ -207,8 +216,11 @@ const RAIL: Readonly<Record<StepState, string>> = {
                   @if (step.kind === 'automations' && (request().automations?.length ?? 0) > 0) {
                     <app-release-automations class="mt-1" [request]="request()" />
                   }
+                  @if (step.kind === 'approval' && requirementLines()?.length) {
+                    <app-approval-requirements class="mt-1" [lines]="requirementLines() ?? []" />
+                  }
                   @if (step.kind === 'approval' && step.asks) {
-                    <app-release-approval class="mt-1" [request]="request()" />
+                    <app-release-approval class="mt-1" [request]="request()" [offer]="offer()" />
                   }
                 </li>
               }
@@ -226,6 +238,17 @@ export class ReleaseLifecycle {
   readonly request = input.required<ReleaseRequest>();
   /** The project's slug, for the deployment's address. */
   readonly slug = input.required<string>();
+  /**
+   * What the viewer may approve (epic qits-1038); `undefined` when it was not read, and then the
+   * approval is offered as before.
+   */
+  readonly eligibility = input<EligibilityRead>(undefined);
+
+  /** One line per approval requirement; null when the answer names none (an older service). */
+  protected readonly requirementLines = computed(() => approvalLines(this.request()));
+
+  /** Which of Approve and Decline the viewer is offered. */
+  protected readonly offer = computed(() => approvalOffer(this.request(), this.eligibility()));
 
   protected readonly stages = computed(() => releaseLifecycle(this.request()));
 

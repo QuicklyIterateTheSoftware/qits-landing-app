@@ -434,6 +434,7 @@ const UNATTENDED_TITLE =
                 class="mt-4"
                 [request]="current() ?? request"
                 [slug]="slug()"
+                [eligibility]="view()?.eligibility"
               />
               @for (run of reportRuns(); track run.runId) {
                 <app-run-reports class="mt-4" [runId]="run.runId" [title]="run.title" />
