@@ -114,6 +114,22 @@ export type AgentSurfaceConfigurationDto = {
     shipped?: boolean;
 };
 
+export type ApprovalEligibilityDto = {
+    viewer?: string;
+    heldRoles?: Array<string>;
+    eligibleRequirementIds?: Array<string>;
+};
+
+export type ApprovalRequirementDto = {
+    id?: string;
+    reason?: string;
+    admits?: Array<string>;
+    excludesAuthors?: boolean;
+    detail?: string;
+    satisfied?: boolean;
+    satisfiedBy?: SatisfiedBy;
+};
+
 export type ApproveReleaseRequest = {
     mergedSha: string;
     note?: string;
@@ -628,6 +644,9 @@ export type DeskRunnerRegistrationDto = {
     installLine?: string;
 };
 
+/**
+ * A refinement room's teardown, done.
+ */
 export type DiscardResponse = {
     success?: boolean;
 };
@@ -1031,9 +1050,20 @@ export type PatchDeskRunnerRequest = {
     slots?: number;
 };
 
+/**
+ * A refinement room and the technical process narrating its container's bring-up.
+ */
 export type ProcessResponse = {
     refinement?: RefinementDto;
     technicalProcessId?: string;
+};
+
+export type ProjectDeliveryDto = {
+    enabled?: boolean;
+    maxRunning?: number;
+    startRefined?: boolean;
+    approves?: Array<string>;
+    interval?: string;
 };
 
 export type ProjectDnsRecordDto = {
@@ -1051,6 +1081,7 @@ export type ProjectDto = {
     description?: string;
     dns?: ProjectDnsRecordDto;
     frontDeskLifecycle?: FrontDeskLifecycle;
+    delivery?: ProjectDeliveryDto;
 };
 
 /**
@@ -1187,6 +1218,7 @@ export type ReleaseRequestApprovalDto = {
     actor?: string;
     note?: string;
     decidedAt?: Instant;
+    roles?: Array<string>;
 };
 
 export type ReleaseRequestChangesDto = {
@@ -1226,6 +1258,7 @@ export type ReleaseRequestDto = {
     approvedBy?: string;
     approvedAt?: Instant;
     approvalNote?: string;
+    approvalRequirements?: Array<ApprovalRequirementDto>;
     /**
      * @deprecated
      */
@@ -1258,7 +1291,7 @@ export type RenameRepositoryRequest = {
     name: string;
 };
 
-export type RepositoryArchetype = 'PROJECT' | 'SERVICE' | 'DAEMON' | 'LIBRARY' | 'FRONTEND' | 'APP' | 'CLI' | 'IMAGE' | 'SERVICE_TEMPLATE' | 'FORK';
+export type RepositoryArchetype = 'PROJECT' | 'SERVICE' | 'DAEMON' | 'LIBRARY' | 'FRONTEND' | 'APP' | 'CLI' | 'IMAGE' | 'SERVICE_TEMPLATE' | 'FORK' | 'AGENT_CONFIG';
 
 export type RepositoryCoordinatesDto = {
     id?: string;
@@ -1350,25 +1383,25 @@ export type Response22 = {
 };
 
 export type Response23 = {
-    request?: ReleaseRequestDto;
+    eligibility?: ApprovalEligibilityDto;
 };
 
 export type Response24 = {
-    technicalProcessId?: string;
+    request?: ReleaseRequestDto;
 };
 
 export type Response25 = {
-    repository?: RepositoryDto;
+    technicalProcessId?: string;
 };
 
 export type Response26 = {
     repository?: RepositoryDto;
-    previousName?: string;
-    changed?: boolean;
 };
 
 export type Response27 = {
-    technicalProcessId?: string;
+    repository?: RepositoryDto;
+    previousName?: string;
+    changed?: boolean;
 };
 
 export type Response28 = {
@@ -1376,7 +1409,7 @@ export type Response28 = {
 };
 
 export type Response29 = {
-    repositories?: Array<RepositoryCoordinatesDto>;
+    technicalProcessId?: string;
 };
 
 export type Response3 = {
@@ -1385,11 +1418,11 @@ export type Response3 = {
 };
 
 export type Response30 = {
-    repository?: RepositoryDto;
+    repositories?: Array<RepositoryCoordinatesDto>;
 };
 
 export type Response31 = {
-    success?: boolean;
+    repository?: RepositoryDto;
 };
 
 export type Response32 = {
@@ -1397,19 +1430,23 @@ export type Response32 = {
 };
 
 export type Response33 = {
-    builds?: Array<CommitBuildStatusDto>;
+    success?: boolean;
 };
 
 export type Response34 = {
-    branches?: Array<BranchDto>;
+    builds?: Array<CommitBuildStatusDto>;
 };
 
 export type Response35 = {
+    branches?: Array<BranchDto>;
+};
+
+export type Response36 = {
     repositoryId?: string;
     scheduled?: boolean;
 };
 
-export type Response36 = {
+export type Response37 = {
     technicalProcessId?: string;
 };
 
@@ -1451,6 +1488,12 @@ export type RevisionDto = {
 
 export type RevisionListResponse = {
     revisions?: Array<RevisionDto>;
+};
+
+export type SatisfiedBy = {
+    approver?: string;
+    roles?: Array<string>;
+    at?: Instant;
 };
 
 export type SaveRequest = {
@@ -1879,6 +1922,10 @@ export type WorkDispatchRequest = {
      * FLOW (Dispatch: run the whole flow) or PHASE (Run the next phase: one, then stop)
      */
     mode: string;
+    /**
+     * The delivery desk's rule id this press is made under (backlog-newest-first, start-refined). Required for a qits:desk caller, ignored for anyone else.
+     */
+    rule?: string;
 };
 
 /**
@@ -2679,6 +2726,43 @@ export type PutProjectsApiProjectsByIdResponses = {
 
 export type PutProjectsApiProjectsByIdResponse = PutProjectsApiProjectsByIdResponses[keyof PutProjectsApiProjectsByIdResponses];
 
+export type EnsureAgentConfigRepositoryData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/agent-config-repository';
+};
+
+export type EnsureAgentConfigRepositoryErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type EnsureAgentConfigRepositoryResponses = {
+    /**
+     * The project already had it; answered as it stands
+     */
+    200: RepositoryDto;
+    /**
+     * Created, seeded and served by the git host
+     */
+    201: RepositoryDto;
+};
+
+export type EnsureAgentConfigRepositoryResponse = EnsureAgentConfigRepositoryResponses[keyof EnsureAgentConfigRepositoryResponses];
+
 export type DeleteProjectsApiProjectsByProjectIdAgentContainerData = {
     body?: never;
     path: {
@@ -2987,7 +3071,7 @@ export type CreateProjectRepositoryData = {
 
 export type CreateProjectRepositoryErrors = {
     /**
-     * Neither or both of url/name, an archetype that is not a component of a project (PROJECT, SERVICE_TEMPLATE, FORK), a name that carries no role suffix when no archetype is stated, a name already taken in the project, or a wrapper commit the git host refused
+     * Neither or both of url/name, an archetype that is not a component of a project (PROJECT, SERVICE_TEMPLATE, FORK, AGENT_CONFIG), a name that carries no role suffix when no archetype is stated, a name already taken in the project, or a wrapper commit the git host refused
      */
     400: unknown;
     /**
@@ -3411,7 +3495,7 @@ export type UpdateRefinementDesignResponses = {
 
 export type UpdateRefinementDesignResponse = UpdateRefinementDesignResponses[keyof UpdateRefinementDesignResponses];
 
-export type PostProjectsApiRefinementsByIdDiscardData = {
+export type DiscardRefinementData = {
     body?: never;
     path: {
         id: number;
@@ -3420,7 +3504,7 @@ export type PostProjectsApiRefinementsByIdDiscardData = {
     url: '/projects/api/refinements/{id}/discard';
 };
 
-export type PostProjectsApiRefinementsByIdDiscardErrors = {
+export type DiscardRefinementErrors = {
     /**
      * Not Authorized
      */
@@ -3429,18 +3513,22 @@ export type PostProjectsApiRefinementsByIdDiscardErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * No refinement with this id
+     */
+    404: unknown;
 };
 
-export type PostProjectsApiRefinementsByIdDiscardResponses = {
+export type DiscardRefinementResponses = {
     /**
-     * OK
+     * The room is gone
      */
     200: DiscardResponse;
 };
 
-export type PostProjectsApiRefinementsByIdDiscardResponse = PostProjectsApiRefinementsByIdDiscardResponses[keyof PostProjectsApiRefinementsByIdDiscardResponses];
+export type DiscardRefinementResponse = DiscardRefinementResponses[keyof DiscardRefinementResponses];
 
-export type PostProjectsApiRefinementsByIdEnsureContainerData = {
+export type EnsureRefinementContainerData = {
     body?: never;
     path: {
         id: number;
@@ -3449,7 +3537,7 @@ export type PostProjectsApiRefinementsByIdEnsureContainerData = {
     url: '/projects/api/refinements/{id}/ensure-container';
 };
 
-export type PostProjectsApiRefinementsByIdEnsureContainerErrors = {
+export type EnsureRefinementContainerErrors = {
     /**
      * Not Authorized
      */
@@ -3458,16 +3546,24 @@ export type PostProjectsApiRefinementsByIdEnsureContainerErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * No refinement with this id
+     */
+    404: unknown;
+    /**
+     * The container is already being worked on and no process is live
+     */
+    409: unknown;
 };
 
-export type PostProjectsApiRefinementsByIdEnsureContainerResponses = {
+export type EnsureRefinementContainerResponses = {
     /**
-     * OK
+     * The room and the bring-up's technical process id
      */
     200: ProcessResponse;
 };
 
-export type PostProjectsApiRefinementsByIdEnsureContainerResponse = PostProjectsApiRefinementsByIdEnsureContainerResponses[keyof PostProjectsApiRefinementsByIdEnsureContainerResponses];
+export type EnsureRefinementContainerResponse = EnsureRefinementContainerResponses[keyof EnsureRefinementContainerResponses];
 
 export type GetProjectsApiRefinementsByIdEventsData = {
     body?: never;
@@ -3821,7 +3917,7 @@ export type ListRepositoriesResponses = {
     /**
      * OK
      */
-    200: Response29;
+    200: Response30;
 };
 
 export type ListRepositoriesResponse = ListRepositoriesResponses[keyof ListRepositoriesResponses];
@@ -3850,7 +3946,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdResponses = {
     /**
      * OK
      */
-    200: Response32;
+    200: Response33;
 };
 
 export type DeleteProjectsApiRepositoriesByRepoIdResponse = DeleteProjectsApiRepositoriesByRepoIdResponses[keyof DeleteProjectsApiRepositoriesByRepoIdResponses];
@@ -3879,7 +3975,7 @@ export type GetRepositoryResponses = {
     /**
      * OK
      */
-    200: Response30;
+    200: Response31;
 };
 
 export type GetRepositoryResponse = GetRepositoryResponses[keyof GetRepositoryResponses];
@@ -3916,7 +4012,7 @@ export type PatchProjectsApiRepositoriesByRepoIdResponses = {
     /**
      * The repository answers to the new name
      */
-    200: Response26;
+    200: Response27;
 };
 
 export type PatchProjectsApiRepositoriesByRepoIdResponse = PatchProjectsApiRepositoriesByRepoIdResponses[keyof PatchProjectsApiRepositoriesByRepoIdResponses];
@@ -3945,7 +4041,7 @@ export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponses = {
     /**
      * OK
      */
-    200: Response36;
+    200: Response37;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponse = GetProjectsApiRepositoriesByRepoIdActiveProcessResponses[keyof GetProjectsApiRepositoriesByRepoIdActiveProcessResponses];
@@ -3978,7 +4074,7 @@ export type PostProjectsApiRepositoriesByRepoIdBackupSyncResponses = {
     /**
      * Queued
      */
-    202: Response35;
+    202: Response36;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdBackupSyncResponse = PostProjectsApiRepositoriesByRepoIdBackupSyncResponses[keyof PostProjectsApiRepositoriesByRepoIdBackupSyncResponses];
@@ -4009,7 +4105,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponses = {
     /**
      * OK
      */
-    200: Response31;
+    200: Response32;
 };
 
 export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponse = DeleteProjectsApiRepositoriesByRepoIdBranchesResponses[keyof DeleteProjectsApiRepositoriesByRepoIdBranchesResponses];
@@ -4038,7 +4134,7 @@ export type ListRepositoryBranchesResponses = {
     /**
      * OK
      */
-    200: Response34;
+    200: Response35;
 };
 
 export type ListRepositoryBranchesResponse = ListRepositoryBranchesResponses[keyof ListRepositoryBranchesResponses];
@@ -4131,7 +4227,7 @@ export type ListCommitBuildsResponses = {
     /**
      * OK
      */
-    200: Response33;
+    200: Response34;
 };
 
 export type ListCommitBuildsResponse = ListCommitBuildsResponses[keyof ListCommitBuildsResponses];
@@ -4229,7 +4325,7 @@ export type PutProjectsApiRepositoriesByRepoIdMainBranchResponses = {
     /**
      * OK
      */
-    200: Response25;
+    200: Response26;
 };
 
 export type PutProjectsApiRepositoriesByRepoIdMainBranchResponse = PutProjectsApiRepositoriesByRepoIdMainBranchResponses[keyof PutProjectsApiRepositoriesByRepoIdMainBranchResponses];
@@ -4258,7 +4354,7 @@ export type PostProjectsApiRepositoriesByRepoIdPullResponses = {
     /**
      * OK
      */
-    200: Response28;
+    200: Response29;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdPullResponse = PostProjectsApiRepositoriesByRepoIdPullResponses[keyof PostProjectsApiRepositoriesByRepoIdPullResponses];
@@ -4287,7 +4383,7 @@ export type PostProjectsApiRepositoriesByRepoIdPushResponses = {
     /**
      * OK
      */
-    200: Response27;
+    200: Response28;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdPushResponse = PostProjectsApiRepositoriesByRepoIdPushResponses[keyof PostProjectsApiRepositoriesByRepoIdPushResponses];
@@ -4385,6 +4481,36 @@ export type GetReleaseRequestResponses = {
 };
 
 export type GetReleaseRequestResponse = GetReleaseRequestResponses[keyof GetReleaseRequestResponses];
+
+export type GetReleaseRequestApprovalEligibilityData = {
+    body?: never;
+    path: {
+        repoId: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approval-eligibility';
+};
+
+export type GetReleaseRequestApprovalEligibilityErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetReleaseRequestApprovalEligibilityResponses = {
+    /**
+     * OK
+     */
+    200: Response23;
+};
+
+export type GetReleaseRequestApprovalEligibilityResponse = GetReleaseRequestApprovalEligibilityResponses[keyof GetReleaseRequestApprovalEligibilityResponses];
 
 export type ListReleaseRequestApprovalsData = {
     body?: never;
@@ -4794,7 +4920,7 @@ export type AddReleaseRequestSourceResponses = {
     /**
      * OK
      */
-    200: Response23;
+    200: Response24;
 };
 
 export type AddReleaseRequestSourceResponse = AddReleaseRequestSourceResponses[keyof AddReleaseRequestSourceResponses];
@@ -4891,7 +5017,7 @@ export type PostProjectsApiRepositoriesByRepoIdSyncResponses = {
     /**
      * OK
      */
-    200: Response24;
+    200: Response25;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdSyncResponse = PostProjectsApiRepositoriesByRepoIdSyncResponses[keyof PostProjectsApiRepositoriesByRepoIdSyncResponses];
@@ -6066,7 +6192,7 @@ export type DispatchWorkData = {
 
 export type DispatchWorkErrors = {
     /**
-     * A missing or unknown mode
+     * A missing or unknown mode, or a delivery desk naming no rule
      */
     400: unknown;
     /**
@@ -6074,7 +6200,7 @@ export type DispatchWorkErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A delivery desk reaching for another project's item
      */
     403: unknown;
     /**
@@ -6082,7 +6208,7 @@ export type DispatchWorkErrors = {
      */
     404: unknown;
     /**
-     * A status that starts no phase, a feature or a task, a blocked entity, a project with no wrapper
+     * A status that starts no phase, a feature or a task, a blocked entity, a project with no wrapper; for the delivery desk also its loop off, a campaign, or its cap reached
      */
     409: unknown;
 };

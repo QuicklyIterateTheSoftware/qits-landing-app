@@ -4,6 +4,7 @@ import type {
   ListReleaseRequestCommitsResponses,
   GetReleaseRequestResponses,
   GetProjectReleaseRequestResponses,
+  GetReleaseRequestApprovalEligibilityResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
@@ -141,65 +142,39 @@ export const GET_RELEASE_ARTIFACTS = [
   'detail',
 ] as const;
 
+/** One release request, cut to what its page reads. */
+export type ReleaseRequest = NonNullable<
+  Consumed<GetReleaseRequestResponses[200], typeof GET_RELEASE_REQUEST>['request']
+>;
+
+/** One release request as its project answers it: {@link ReleaseRequest} and its logical id. */
+export type ProjectReleaseRequest = NonNullable<
+  Consumed<GetProjectReleaseRequestResponses[200], typeof GET_PROJECT_RELEASE_REQUEST>['request']
+>;
+
 /**
  * One approval requirement of a request's current fold (epic qits-1038): why it holds, the approval
  * roles that may satisfy it (`person`, `agent`, `agent@<project slug>`), whether the request's own
  * authors are shut out, and who satisfied it. Every field may be absent: an older qits-projects
  * answers none of them.
- *
- * Declared here until qits-projects' `docs/openapi.yml` carries `approvalRequirements` and
- * `npm run generate:api` regenerates the client with it; then this is the generated shape again.
  */
-export interface ApprovalRequirement {
-  readonly id?: string;
-  readonly reason?: string;
-  readonly admits?: readonly string[] | null;
-  readonly excludesAuthors?: boolean | null;
-  readonly detail?: string | null;
-  readonly satisfied?: boolean | null;
-  readonly satisfiedBy?: {
-    readonly approver?: string | null;
-    readonly roles?: readonly string[] | null;
-    readonly at?: string | null;
-  } | null;
-}
-
-/** The approval fields a request carries from epic qits-1038 on; absent from an older answer. */
-interface UpcomingApprovalFields {
-  readonly approvalRequirements?: readonly ApprovalRequirement[] | null;
-}
-
-/** One release request, cut to what its page reads. */
-export type ReleaseRequest = NonNullable<
-  Consumed<GetReleaseRequestResponses[200], typeof GET_RELEASE_REQUEST>['request']
-> &
-  UpcomingApprovalFields;
-
-/** One release request as its project answers it: {@link ReleaseRequest} and its logical id. */
-export type ProjectReleaseRequest = NonNullable<
-  Consumed<GetProjectReleaseRequestResponses[200], typeof GET_PROJECT_RELEASE_REQUEST>['request']
-> &
-  UpcomingApprovalFields;
+export type ApprovalRequirement = NonNullable<ReleaseRequest['approvalRequirements']>[number];
 
 /**
  * What the viewer may approve on a request (`GET …/{requestId}/approval-eligibility`, epic
  * qits-1038): the ids of the requirements on its current fold whose roles the viewer holds. The
- * page reads nothing else of the answer (`viewer`, `heldRoles`).
+ * door answers them under `eligibility`; the page reads nothing else of it (`viewer`,
+ * `heldRoles`).
  */
-export const GET_APPROVAL_ELIGIBILITY = ['eligibleRequirementIds'] as const;
+export const GET_APPROVAL_ELIGIBILITY = ['eligibility.eligibleRequirementIds'] as const;
 
-/**
- * The eligibility answer, declared here until qits-projects' `docs/openapi.yml` carries the door
- * (see {@link ApprovalRequirement}).
- */
-export interface ApprovalEligibilityDto {
-  readonly viewer?: string | null;
-  readonly heldRoles?: readonly string[] | null;
-  readonly eligibleRequirementIds?: readonly string[] | null;
-}
-
-/** The eligibility answer, cut to what the page reads. */
-export type ApprovalEligibility = Consumed<ApprovalEligibilityDto, typeof GET_APPROVAL_ELIGIBILITY>;
+/** The eligibility answer's `eligibility`, cut to what the page reads. */
+export type ApprovalEligibility = NonNullable<
+  Consumed<
+    GetReleaseRequestApprovalEligibilityResponses[200],
+    typeof GET_APPROVAL_ELIGIBILITY
+  >['eligibility']
+>;
 
 /** One source branch of a request. */
 export type ReleaseSource = NonNullable<ReleaseRequest['sources']>[number];

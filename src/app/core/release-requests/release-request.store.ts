@@ -3,6 +3,7 @@ import { consume } from '@qits/angular';
 import {
   listCommitBuilds,
   getProjectReleaseRequest,
+  getReleaseRequestApprovalEligibility,
   getReleaseRequestArtifacts as getReleaseArtifacts,
   listReleaseRequestCommits,
   approveReleaseRequest,
@@ -13,7 +14,6 @@ import {
   setReleaseSourcePriority,
   withdrawReleaseRequest,
 } from '../../api/projects';
-import { client as projectsClient } from '../../api/projects/client.gen';
 import { NOTHING } from '@qits/angular';
 import {
   GET_APPROVAL_ELIGIBILITY,
@@ -23,7 +23,6 @@ import {
   CHANGED_RELEASE_REQUEST,
   LIST_RELEASE_REQUEST_COMMITS,
   type ApprovalEligibility,
-  type ApprovalEligibilityDto,
   type CommitBuild,
   type ReleaseArtifacts,
   type ReleaseCommits,
@@ -191,23 +190,18 @@ export const ReleaseRequestStore = signalStore(
 
     /**
      * `GET …/{requestId}/approval-eligibility` (epic qits-1038): which requirements on the
-     * request's fold the caller may satisfy. Called through the client by hand until qits-projects'
-     * `docs/openapi.yml` carries the door and `npm run generate:api` generates its function.
+     * request's fold the caller may satisfy. The door answers them under `eligibility`.
      */
     async function approvalEligibility(
       repoId: string,
       requestId: string,
     ): Promise<Read<ApprovalEligibility>> {
       const { data, error } = await consume(
-        // eslint-disable-next-line qits/consume-client-calls -- the door has no generated function yet (epic qits-1038); the call is consume's first argument all the same
-        projectsClient.get<{ 200: ApprovalEligibilityDto }, unknown, false>({
-          security: [{ scheme: 'bearer', type: 'http' }],
-          url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/approval-eligibility',
-          path: { repoId, requestId },
-        }),
+        getReleaseRequestApprovalEligibility({ path: { repoId, requestId } }),
         GET_APPROVAL_ELIGIBILITY,
       );
-      return error !== undefined || !data ? FAILED : loaded(data);
+      const eligibility = error === undefined ? data?.eligibility : undefined;
+      return eligibility ? loaded(eligibility) : FAILED;
     }
 
     async function readEligibility(ref: string, of: string): Promise<void> {

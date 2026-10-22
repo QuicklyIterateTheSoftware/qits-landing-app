@@ -54,29 +54,30 @@ const STATES = {
 } as const;
 
 /**
- * The eligibility read (epic qits-1038). qits-projects names the door's operation so; its golden
- * masters record no answer of it yet.
+ * The eligibility read (epic qits-1038). qits-projects records its answer from 2026.1022.75745 on;
+ * the golden masters this repository pins (`@qits/projects-golden-masters`) predate that.
  */
 const ELIGIBILITY = 'getReleaseRequestApprovalEligibility';
 
 /**
  * The approval requirement the awaiting-approval state's request carries (epic qits-1038): the
  * repository's `manual-review: true`, which admits a person ("configured by manual-review" in the
- * recorded approval gate). Only the fields every answer of it holds: `detail` and `satisfiedBy` may
- * be null and are bound once qits-projects records them.
+ * recorded approval gate, and its `reason` in qits-projects' recording from 2026.1022.75745 on).
+ * Only the fields every answer of it holds: `detail` and `satisfiedBy` may be null and are bound
+ * once the pinned golden masters record them.
  */
 const MANUAL_REVIEW = {
   id: 'manual-review',
-  reason: 'The repository asks a person to review every release',
+  reason: 'configured by manual-review',
   admits: ['person'],
   excludesAuthors: false,
   satisfied: false,
 };
 
 /**
- * qits-projects' golden masters, with what epic qits-1038 adds to them before qits-projects records
- * it: the awaiting-approval request's `approvalRequirements`. Once the recording holds the field,
- * the recording is used as it is.
+ * qits-projects' golden masters, with what epic qits-1038 adds to them while the pinned recording
+ * predates it: the awaiting-approval request's `approvalRequirements`. Once the pin holds the
+ * field, the recording is used as it is.
  */
 const masters: GoldenMasters = {
   operation: (state, operationId) => recordedMasters.operation(state, operationId),
@@ -276,11 +277,11 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
         }));
   });
 
-  // Epic qits-1038: which requirements on the fold the viewer may satisfy. qits-projects records no
-  // answer of the door yet, so the interaction is written here, on the awaiting-approval state's
-  // request, and binds only what the page reads: a list of requirement ids, possibly empty (who
-  // the verification's caller is decides what it holds). Move it to `given(...)` once the golden
-  // masters record the door.
+  // Epic qits-1038: which requirements on the fold the viewer may satisfy. The pinned golden
+  // masters predate the door's recording, so the interaction is written here, on the
+  // awaiting-approval state's request, and binds only what the page reads: the requirement ids
+  // under the answer's `eligibility` envelope, possibly empty (who the verification's caller is
+  // decides what it holds). Move it to `given(...)` once the pin records the door.
   it('show-release-request: what the viewer may approve', () => {
     const op = recordedMasters.operation(STATES.awaitingApproval, 'getReleaseRequest');
     const path = `${op.path}/approval-eligibility`;
@@ -303,12 +304,15 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
       .willRespondWith(200, (response) => {
         response
           .headers({ 'Content-Type': MatchersV3.regex('application/json.*', 'application/json') })
-          .jsonBody({ eligibleRequirementIds: MatchersV3.atLeastLike(MANUAL_REVIEW.id, 0, 1) });
+          .jsonBody({
+            eligibility: { eligibleRequirementIds: MatchersV3.atLeastLike(MANUAL_REVIEW.id, 0, 1) },
+          });
       });
     return interaction.executeTest(async (server) => {
       const { repoId, requestId } = recorded(STATES.awaitingApproval, 'getReleaseRequest');
       const store = storeAt(server.url);
       const read = await store.approvalEligibility(repoId, requestId);
+      expect(read.status).toBe('loaded');
       expect(read.value?.eligibleRequirementIds).toEqual([MANUAL_REVIEW.id]);
     });
   });

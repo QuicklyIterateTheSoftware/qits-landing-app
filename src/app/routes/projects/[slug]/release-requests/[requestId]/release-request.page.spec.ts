@@ -224,7 +224,9 @@ describe('ReleaseRequestPage', () => {
       const { element, eligibility, answered } = await shownWith(
         awaiting([MANUAL_REVIEW, SCREENSHOTS, CONTRACT]),
       );
-      eligibility()[0].flush({ viewer: 'dana', heldRoles: ['person'], eligibleRequirementIds: [] });
+      eligibility()[0].flush({
+        eligibility: { viewer: 'dana', heldRoles: ['person'], eligibleRequirementIds: [] },
+      });
       await answered();
       const lines = Array.from(element.querySelectorAll('[data-requirement]'));
       expect(lines.map((line) => line.getAttribute('data-requirement'))).toEqual([
@@ -247,7 +249,7 @@ describe('ReleaseRequestPage', () => {
 
     it('offers Approve and Decline when the viewer may satisfy an open requirement', async () => {
       const { element, eligibility, answered } = await shownWith(awaiting([MANUAL_REVIEW]));
-      eligibility()[0].flush({ eligibleRequirementIds: ['manual-review'] });
+      eligibility()[0].flush({ eligibility: { eligibleRequirementIds: ['manual-review'] } });
       await answered();
       expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
     });
@@ -256,7 +258,9 @@ describe('ReleaseRequestPage', () => {
       const { element, eligibility, answered } = await shownWith(
         awaiting([MANUAL_REVIEW, SCREENSHOTS]),
       );
-      eligibility()[0].flush({ eligibleRequirementIds: ['automation:screenshot-baselines'] });
+      eligibility()[0].flush({
+        eligibility: { eligibleRequirementIds: ['automation:screenshot-baselines'] },
+      });
       await answered();
       expect(buttons(element)).toEqual(['Decline release']);
     });
@@ -264,9 +268,7 @@ describe('ReleaseRequestPage', () => {
     it('offers neither, and says why, when the viewer may satisfy none', async () => {
       const { element, eligibility, answered } = await shownWith(awaiting([CONTRACT]));
       eligibility()[0].flush({
-        viewer: 'agent-1',
-        heldRoles: ['agent'],
-        eligibleRequirementIds: [],
+        eligibility: { viewer: 'agent-1', heldRoles: ['agent'], eligibleRequirementIds: [] },
       });
       await answered();
       expect(buttons(element)).toEqual([]);
@@ -280,6 +282,18 @@ describe('ReleaseRequestPage', () => {
       eligibility()[0].flush(null, { status: 404, statusText: 'Not Found' });
       await answered();
       expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
+    });
+
+    it('reads the ids under `eligibility`, never at the top of the answer', async () => {
+      // The door wraps its answer: a flat body names no eligibility, so it is drawn as before
+      // rather than as "you hold none of the roles".
+      const { element, eligibility, answered } = await shownWith(awaiting([MANUAL_REVIEW]));
+      eligibility()[0].flush({ eligibleRequirementIds: [] });
+      await answered();
+      expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
+      expect(element.querySelector('app-release-approval')?.textContent).not.toContain(
+        'You hold none of the roles',
+      );
     });
 
     it('draws the approval as before, reading no eligibility, without requirements', async () => {

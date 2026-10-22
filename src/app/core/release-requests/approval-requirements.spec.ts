@@ -10,9 +10,7 @@ const OPEN: ApprovalRequirement = {
   reason: 'The repository asks a person to review every release',
   admits: ['person'],
   excludesAuthors: false,
-  detail: null,
   satisfied: false,
-  satisfiedBy: null,
 };
 
 const SATISFIED: ApprovalRequirement = {
@@ -25,17 +23,20 @@ const SATISFIED: ApprovalRequirement = {
   satisfiedBy: { approver: 'agent-7', roles: ['agent', 'agent@shop'], at: '2026-01-01T00:00:00Z' },
 };
 
-function request(approvalRequirements?: readonly ApprovalRequirement[] | null): ReleaseRequest {
+/** `null` stands for a wire answer of `null`, which the generated type does not admit. */
+function request(approvalRequirements?: ApprovalRequirement[] | null): ReleaseRequest {
   return {
     id: 'r1',
     state: 'PENDING',
     approvalRequired: true,
     approvalState: 'WAITING',
-    ...(approvalRequirements !== undefined ? { approvalRequirements } : {}),
+    ...(approvalRequirements !== undefined
+      ? { approvalRequirements: approvalRequirements as ApprovalRequirement[] }
+      : {}),
   };
 }
 
-const loaded = (eligibleRequirementIds?: readonly string[]) =>
+const loaded = (eligibleRequirementIds?: string[]) =>
   ({ status: 'loaded', value: { eligibleRequirementIds } }) as const;
 
 describe('approval requirements', () => {

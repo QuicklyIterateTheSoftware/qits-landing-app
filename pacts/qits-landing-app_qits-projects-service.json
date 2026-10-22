@@ -17659,7 +17659,7 @@
                   ],
                   "excludesAuthors": false,
                   "id": "manual-review",
-                  "reason": "The repository asks a person to review every release",
+                  "reason": "configured by manual-review",
                   "satisfied": false
                 }
               ],
@@ -19599,9 +19599,11 @@
       "response": {
         "body": {
           "content": {
-            "eligibleRequirementIds": [
-              "manual-review"
-            ]
+            "eligibility": {
+              "eligibleRequirementIds": [
+                "manual-review"
+              ]
+            }
           },
           "contentType": "application/json",
           "encoded": false
@@ -19613,7 +19615,7 @@
         },
         "matchingRules": {
           "body": {
-            "$.eligibleRequirementIds": {
+            "$.eligibility.eligibleRequirementIds": {
               "combine": "AND",
               "matchers": [
                 {
