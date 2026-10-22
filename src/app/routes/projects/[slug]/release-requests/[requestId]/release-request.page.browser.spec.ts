@@ -23,6 +23,10 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  * per state for this reason (`release-request.store.pact.spec.ts`), with the state's commits,
  * verdicts and artifacts recorded beside it.
  *
+ * A request carrying approval requirements ("a release request awaiting approval") is also read
+ * for what the viewer may approve (getReleaseRequestApprovalEligibility), answered with that
+ * state's recording: the recorded viewer may satisfy `manual-review`, so Approve and Decline show.
+ *
  * qits-ci's calls (the repository's runs, a run's reports) answer with an error unless a spec
  * answers the runs with qits-ci's recording ({@link CI_RUNS}).
  */
@@ -95,6 +99,13 @@ describe('ReleaseRequestPage (screenshots)', () => {
     read.flush(recorded);
     await answered(fixture);
     const base = `/projects/api/repositories/${repoId}/release-requests/${id}`;
+    // A request whose fold carries approval requirements has the page read what the viewer may
+    // approve (epic qits-1038); the state records that read beside the request.
+    if (recorded.request.approvalRequirements?.length) {
+      http
+        .expectOne(`${base}/approval-eligibility`)
+        .flush(await goldenMaster(state, 'getReleaseRequestApprovalEligibility'));
+    }
     http.expectOne(`${base}/commits`).flush(await goldenMaster(state, 'listReleaseRequestCommits'));
     if (recorded.request.mergedSha) {
       http
@@ -226,6 +237,8 @@ describe('ReleaseRequestPage (screenshots)', () => {
 
   it('offers Approve and Decline while a person must approve', async () => {
     const { view } = await shown('a release request awaiting approval');
+    // The requirement line, then both actions: the recorded viewer is eligible for it.
+    await expect.element(view).toMatchTextContent('configured by manual-review');
     await expect.element(view.getByRole('button', { name: 'Approve release' })).toBeVisible();
     await expect.element(view.getByRole('button', { name: 'Decline release' })).toBeVisible();
   });
