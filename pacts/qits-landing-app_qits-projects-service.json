@@ -70,6 +70,25 @@
             "request": {
               "approvalNote": "Read the diff: the pin moves to the export release.",
               "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": true,
+                  "satisfiedBy": {
+                    "approver": "dev",
+                    "at": "2026-01-01T00:00:00Z",
+                    "roles": [
+                      "person"
+                    ]
+                  }
+                }
+              ],
               "approvalState": "APPROVED",
               "approvedAt": "2026-01-01T00:00:00Z",
               "approvedBy": "dev",
@@ -227,6 +246,101 @@
               ]
             },
             "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfiedBy.approver": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfiedBy.at": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfiedBy.roles": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfiedBy.roles[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -1083,6 +1197,18 @@
             "request": {
               "approvalNote": "The README promises an approval policy nobody has signed off yet.",
               "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": false
+                }
+              ],
               "approvalState": "DECLINED",
               "approvedAt": "2026-01-01T00:00:00Z",
               "approvedBy": "dev",
@@ -1255,6 +1381,66 @@
               ]
             },
             "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
               "combine": "AND",
               "matchers": [
                 {
@@ -5871,6 +6057,18 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": false
+                }
+              ],
               "approvalState": "WAITING",
               "approvedAt": null,
               "approvedBy": null,
@@ -5980,7 +6178,7 @@
                 },
                 {
                   "checks": [],
-                  "detail": "configured by manual-review",
+                  "detail": "configured by manual-review (person)",
                   "kind": "approval",
                   "label": "Approval",
                   "position": "qa-publish",
@@ -6035,6 +6233,66 @@
         "matchingRules": {
           "body": {
             "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
               "combine": "AND",
               "matchers": [
                 {
@@ -15275,6 +15533,18 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": false
+                }
+              ],
               "approvalState": "WAITING",
               "approvedAt": null,
               "approvedBy": null,
@@ -15390,7 +15660,7 @@
                 },
                 {
                   "checks": [],
-                  "detail": "configured by manual-review",
+                  "detail": "configured by manual-review (person)",
                   "kind": "approval",
                   "label": "Approval",
                   "position": "qa-publish",
@@ -15438,6 +15708,66 @@
         "matchingRules": {
           "body": {
             "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
               "combine": "AND",
               "matchers": [
                 {
@@ -16263,6 +16593,7 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": false,
+              "approvalRequirements": [],
               "approvalState": "NOT_REQUIRED",
               "approvedAt": null,
               "approvedBy": null,
@@ -16913,6 +17244,7 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": false,
+              "approvalRequirements": [],
               "approvalState": "NOT_REQUIRED",
               "approvedAt": null,
               "approvedBy": null,
@@ -17657,6 +17989,7 @@
                   "admits": [
                     "person"
                   ],
+                  "detail": null,
                   "excludesAuthors": false,
                   "id": "manual-review",
                   "reason": "configured by manual-review",
@@ -17772,7 +18105,7 @@
                 },
                 {
                   "checks": [],
-                  "detail": "configured by manual-review",
+                  "detail": "configured by manual-review (person)",
                   "kind": "approval",
                   "label": "Approval",
                   "position": "qa-publish",
@@ -18669,6 +19002,7 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": false,
+              "approvalRequirements": [],
               "approvalState": "NOT_REQUIRED",
               "approvedAt": null,
               "approvedBy": null,
@@ -19620,7 +19954,16 @@
               "matchers": [
                 {
                   "match": "type",
-                  "min": 0
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.eligibility.eligibleRequirementIds[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             }
@@ -27069,6 +27412,18 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": false
+                }
+              ],
               "approvalState": "WAITING",
               "approvedAt": null,
               "approvedBy": null,
@@ -27185,7 +27540,7 @@
                 },
                 {
                   "checks": [],
-                  "detail": "configured by manual-review",
+                  "detail": "configured by manual-review (person)",
                   "kind": "approval",
                   "label": "Approval",
                   "position": "qa-publish",
@@ -27240,6 +27595,66 @@
         "matchingRules": {
           "body": {
             "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
               "combine": "AND",
               "matchers": [
                 {
@@ -28128,6 +28543,18 @@
             "request": {
               "approvalNote": null,
               "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": false
+                }
+              ],
               "approvalState": "WAITING",
               "approvedAt": null,
               "approvedBy": null,
@@ -28250,6 +28677,66 @@
         "matchingRules": {
           "body": {
             "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
               "combine": "AND",
               "matchers": [
                 {

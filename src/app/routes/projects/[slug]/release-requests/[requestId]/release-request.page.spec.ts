@@ -297,7 +297,11 @@ describe('ReleaseRequestPage', () => {
     });
 
     it('draws the approval as before, reading no eligibility, without requirements', async () => {
-      const { element, eligibility } = await shownWith(awaiting());
+      // Built with an explicit empty list rather than the bare recording: the recording itself
+      // carries `approvalRequirements` from qits-projects 2026.1022.75745 on, so relying on it
+      // lacking the field would make this test track the pin rather than the "no requirements"
+      // case it means to cover.
+      const { element, eligibility } = await shownWith(awaiting([]));
       expect(eligibility()).toHaveLength(0);
       expect(element.querySelector('[data-requirement]')).toBeNull();
       expect(buttons(element)).toEqual(['Approve release', 'Decline release']);
