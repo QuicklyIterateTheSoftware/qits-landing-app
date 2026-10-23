@@ -6,7 +6,6 @@ import {
   NONE,
   placementNote,
   relativeSince,
-  runnerName,
   runStateLabel,
   runtimeLabel,
   waitsOnYou,
@@ -61,28 +60,27 @@ describe('agent labels', () => {
     expect(agentName({ entityId: ' ', agentId: 'a1' })).toBe('a1');
   });
 
-  it('says where a slot is placed', () => {
-    const runner = { name: 'localhost' };
+  it('says where a slot is placed, with no runner name (qits-1481)', () => {
     expect(runtimeLabel('RUNNING')).toBe('running');
     expect(runtimeLabel(undefined)).toBe('runtime unknown');
     expect(placementNote({ placement: 'DIRECT' })).toBe('on the platform host');
-    expect(placementNote({ placement: 'RUNNER', runner, runtimeStatus: 'RUNNING' })).toBe(
-      'on runner localhost',
+    expect(placementNote({ placement: 'RUNNER', runtimeStatus: 'RUNNING' })).toBe(
+      'placed on a runner',
     );
     expect(placementNote({ placement: 'RUNNER', runtimeStatus: 'STOPPED' })).toBe(
       'placed on a runner',
     );
     expect(
       placementNote(
-        { placement: 'RUNNER', runner, runtimeStatus: 'QUEUED', queuedAt: '2026-01-01T10:00:00Z' },
+        { placement: 'RUNNER', runtimeStatus: 'QUEUED', queuedAt: '2026-01-01T10:00:00Z' },
         NOW,
       ),
-    ).toBe('waiting for a slot on localhost since 2h ago');
+    ).toBe('waiting for a runner since 2h ago');
     expect(placementNote({ placement: 'RUNNER', runtimeStatus: 'QUEUED' }, NOW)).toBe(
       'waiting for a runner',
     );
-    expect(placementNote({ placement: 'RUNNER', runner, runtimeStatus: 'UNAVAILABLE' })).toBe(
-      'runner localhost is offline',
+    expect(placementNote({ placement: 'RUNNER', runtimeStatus: 'UNAVAILABLE' })).toBe(
+      'its runner is offline',
     );
     expect(
       placementNote({
@@ -91,8 +89,10 @@ describe('agent labels', () => {
         daemonConnectedAt: '2026-01-01T10:00:00Z',
       }),
     ).toBe('its runner is offline — the session is still up');
-    expect(runnerName({ placement: 'RUNNER', runner })).toBe('localhost');
-    expect(runnerName({ placement: 'DIRECT', runner })).toBeNull();
+    // `TARGET` is qits-system's rename of the placement; both read the same until it ships.
+    expect(placementNote({ placement: 'TARGET', runtimeStatus: 'RUNNING' })).toBe(
+      'placed on a runner',
+    );
   });
 
   it('reads the daemon off the slot', () => {

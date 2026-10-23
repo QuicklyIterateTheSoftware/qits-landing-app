@@ -142,7 +142,7 @@ describe('ProjectWorkspacesPage (screenshots)', () => {
     await expect
       .element(view.getByRole('link', { name: /ws-contract/ }))
       .toHaveAttribute('href', `/projects/${project.slug}/workspaces/1`);
-    await expect.element(view).toMatchTextContent('on runner localhost');
+    await expect.element(view).toMatchTextContent('placed on a runner');
     await expect.element(view).toMatchScreenshot('slots-and-agents');
   });
 

@@ -118,7 +118,6 @@ describe('AgentsStore', () => {
       .flush(workspacesGoldenMaster(SLOT, 'listAgents'));
     await done;
     expect(store.slotOf(id)).toMatchObject({ status: 'loaded', processId: null });
-    expect(store.slotOf(id)?.slot?.runner?.name).toBe('localhost');
     expect(store.slotAgentsOf(id)?.agents.map((a) => a.runState)).toEqual(['RUNNING', 'YIELDED']);
   });
 

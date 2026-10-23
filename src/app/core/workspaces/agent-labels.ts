@@ -105,34 +105,38 @@ export function runtimeLabel(runtimeStatus: string | null | undefined): string {
 export interface Placed {
   readonly placement?: string | null;
   readonly runtimeStatus?: string | null;
-  readonly runner?: { readonly name?: string | null } | null;
   readonly queuedAt?: string | null;
   readonly daemonConnectedAt?: string | null;
 }
 
-/** The runner a slot is placed on, by name; null for a DIRECT slot and one no runner took yet. */
-export function runnerName(slot: Placed): string | null {
-  return slot.placement === 'RUNNER' ? (slot.runner?.name ?? null) : null;
+/**
+ * Whether a slot is placed on an execution target, rather than directly on the platform host.
+ * qits-system renames the placement `RUNNER` to `TARGET` (epic qits-1481); both read the same
+ * until every service has made the move.
+ */
+function isOnRunner(placement: string | null | undefined): boolean {
+  return placement === 'RUNNER' || placement === 'TARGET';
 }
 
 /**
- * Where a slot stands and why, as one sentence: on which runner, waiting for a slot on it (and
- * since when), or offline; "on the platform host" for a DIRECT slot.
+ * Where a slot stands and why, as one sentence: waiting for a slot, or offline; "on the platform
+ * host" for a DIRECT slot. qits-1481 drops the runner's name from here — qits-workspaces-service
+ * no longer sends `workspace.runner` — so this says only that a slot waits or is offline, with no
+ * name; a later change says which target it is on.
  */
 export function placementNote(slot: Placed, now?: Date): string {
-  if (slot.placement !== 'RUNNER') return 'on the platform host';
-  const runner = runnerName(slot);
+  if (!isOnRunner(slot.placement)) return 'on the platform host';
   switch (slot.runtimeStatus) {
     case 'QUEUED': {
       const since = slot.queuedAt ? ` since ${relativeSince(slot.queuedAt, now)}` : '';
-      return runner ? `waiting for a slot on ${runner}${since}` : `waiting for a runner${since}`;
+      return `waiting for a runner${since}`;
     }
     case 'UNAVAILABLE': {
-      const base = runner ? `runner ${runner} is offline` : 'its runner is offline';
+      const base = 'its runner is offline';
       return slot.daemonConnectedAt ? `${base} — the session is still up` : base;
     }
     default:
-      return runner ? `on runner ${runner}` : 'placed on a runner';
+      return 'placed on a runner';
   }
 }
 

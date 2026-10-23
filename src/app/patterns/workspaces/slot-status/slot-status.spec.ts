@@ -21,12 +21,11 @@ describe('SlotStatus', () => {
     return (fixture.nativeElement as HTMLElement).textContent?.replace(/\s+/g, ' ') ?? '';
   }
 
-  it('shows the container, the runner, a connected daemon and the hosted agents', () => {
+  it('shows the container, a connected daemon and the hosted agents', () => {
     const text = render(
       {
         runtimeStatus: 'RUNNING',
         placement: 'RUNNER',
-        runner: { name: 'localhost' },
         daemonConnectedAt: new Date(Date.now() - 5 * 60_000).toISOString(),
         daemonVersion: '1.2.3',
         daemonOutdated: true,
@@ -34,7 +33,7 @@ describe('SlotStatus', () => {
       1,
     );
     expect(text).toContain('running');
-    expect(text).toContain('on runner localhost');
+    expect(text).toContain('placed on a runner');
     expect(text).toContain('connected 5m ago');
     expect(text).toContain('version 1.2.3');
     expect(text).toContain('outdated');
@@ -51,7 +50,6 @@ describe('SlotStatus', () => {
   it('has no daemon to reach while no container runs, and names an admin slot', () => {
     const text = render({ runtimeStatus: 'PROVISIONING', placement: 'RUNNER', admin: true }, 0);
     expect(text).toContain('No container running');
-    expect(text).toContain('none yet');
     expect(text).toContain('docker socket');
     expect(text).toContain('0 agents');
   });

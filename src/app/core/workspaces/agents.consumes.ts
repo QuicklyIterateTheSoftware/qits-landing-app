@@ -14,14 +14,16 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * `AgentsStore.loadProject(repositoryId)`, the project's Workspaces page: the wrapper's slots
- * (`listWorkspaces`, ACTIVE only), each with its label, container state, placement and runner.
+ * (`listWorkspaces`, ACTIVE only), each with its label, container state and placement.
+ *
+ * No longer reads `workspace.runner` (epic qits-1481, ahead of qits-workspaces-service dropping
+ * it): the page no longer names which runner a slot is on.
  */
 export const LIST_PROJECT_SLOTS = [
   'entries[].workspace.id',
   'entries[].workspace.workspaceId',
   'entries[].workspace.runtimeStatus',
   'entries[].workspace.placement',
-  'entries[].workspace.runner.name',
   'entries[].workspace.queuedAt',
   'entries[].workspace.admin',
 ] as const;
@@ -59,7 +61,11 @@ export type ProjectAgent = NonNullable<
 
 /**
  * `AgentsStore.loadSlot(id)` and `loadItem(workId)`: one slot (`getWorkspace`) and its status
- * strip — the container (and its error), the placement and runner, the daemon.
+ * strip — the container (and its error, which a QUEUED slot shows too, as its lease's detail),
+ * the placement, the daemon.
+ *
+ * No longer reads `workspace.runner` (epic qits-1481, ahead of qits-workspaces-service dropping
+ * it): the page no longer names which runner a slot is on.
  */
 export const GET_SLOT = [
   'workspace.id',
@@ -67,7 +73,6 @@ export const GET_SLOT = [
   'workspace.runtimeStatus',
   'workspace.runtimeError',
   'workspace.placement',
-  'workspace.runner.name',
   'workspace.queuedAt',
   'workspace.admin',
   'workspace.daemonConnectedAt',

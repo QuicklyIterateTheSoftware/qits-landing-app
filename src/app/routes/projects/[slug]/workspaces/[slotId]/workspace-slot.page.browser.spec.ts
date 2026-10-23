@@ -131,7 +131,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(view.getByRole('heading', { name: 'Workspace ws-contract' }))
       .toBeVisible();
-    await expect.element(view).toMatchTextContent('on runner localhost');
+    await expect.element(view).toMatchTextContent('placed on a runner');
     await expect.element(view).toMatchTextContent('2 agents');
     await expect.element(view.getByRole('region', { name: 'Starting' })).not.toBeInTheDocument();
     await expect

@@ -34,13 +34,15 @@ import { AgentActionsStore, type NewAgent } from './agent-actions.store';
  *   (409 `AGENT_HAS_LEFTOVER_WORK`) are refused, with the reason the page shows before it offers
  *   force. A forced discard (`force: true`) has no recording, so no interaction binds it; the plain
  *   spec covers it.
- * - `ensureWorkspaceContainer`: "a stopped workspace slot on a runner in service" starts; "a
- *   workspace slot on a disconnected runner" is refused (409 `RUNNER_UNAVAILABLE`).
- * - `stopWorkspaceContainer`: "a workspace slot running on a runner in service" stops; the
- *   disconnected runner's slot is refused (409 `RUNNER_UNAVAILABLE`).
+ * - `ensureWorkspaceContainer`: "a stopped workspace slot on a runner in service" starts.
+ * - `stopWorkspaceContainer`: "a workspace slot running on a runner in service" stops.
  * - `recreateWorkspaceContainer`: only its refusal is recorded — "an agent whose workspace daemon
  *   is not connected" (400: the working tree cannot be proved clean). A successful recreate has no
  *   recording, so the success path is covered by the plain spec only.
+ *
+ * No longer binds the offline-runner refusal (409 `RUNNER_UNAVAILABLE`, "a workspace slot on a
+ * disconnected runner") on either write, ahead of qits-workspaces-service dropping it (epic
+ * qits-1481); the plain spec still covers the refusal while the code path exists.
  *
  * Ids in a path are the states' params, sent as provider-state expressions. A create's recorded
  * body names its ids as params (`{ticketId}`): it travels as it is, and the provider puts its run's
@@ -57,7 +59,6 @@ const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const LEFTOVER = 'an agent with leftover work';
 const STOPPED = 'a stopped workspace slot on a runner in service';
 const RUNNING = 'a workspace slot running on a runner in service';
-const OFFLINE = 'a workspace slot on a disconnected runner';
 
 /** What this spec owns in the shared pact file. */
 const OPERATIONS: readonly OwnedOperation[] = [
@@ -171,16 +172,6 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
       expect(outcome.ok && outcome.value.technicalProcessId).toBeTruthy();
     }));
 
-  it('start-workspace-container: a slot on an offline runner is refused, with the reason', () =>
-    given(OFFLINE, 'ensureWorkspaceContainer', 'start-workspace-container', REFUSAL).executeTest(
-      async (server) => {
-        const store = storeAt(server.url);
-        const outcome = await store.ensureContainer(slotOf(OFFLINE, 'ensureWorkspaceContainer'));
-        expect(outcome).toMatchObject({ ok: false, status: 409, code: 'RUNNER_UNAVAILABLE' });
-        expect(!outcome.ok && outcome.message).toBeTruthy();
-      },
-    ));
-
   it('stop-workspace-container: a running slot stops', () =>
     given(
       RUNNING,
@@ -192,15 +183,6 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
       const outcome = await store.stopContainer(slotOf(RUNNING, 'stopWorkspaceContainer'));
       expect(outcome.ok && outcome.value.runtimeStatus).toBe('STOPPED');
     }));
-
-  it('stop-workspace-container: a slot on an offline runner is refused, with the reason', () =>
-    given(OFFLINE, 'stopWorkspaceContainer', 'stop-workspace-container', REFUSAL).executeTest(
-      async (server) => {
-        const store = storeAt(server.url);
-        const outcome = await store.stopContainer(slotOf(OFFLINE, 'stopWorkspaceContainer'));
-        expect(outcome).toMatchObject({ ok: false, status: 409, code: 'RUNNER_UNAVAILABLE' });
-      },
-    ));
 
   it('recreate-workspace-container: a working tree nobody can prove clean is refused', () =>
     given(

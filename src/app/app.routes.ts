@@ -50,9 +50,9 @@ import { sessionGuard } from '$core/auth/session.guard';
  * work item's agent is at `work/detail/<qualified id>/agent` (`WorkAgentLayout`), where the
  * Workspace links on cards and on the item's page lead: a layout, whose children are the agent's
  * tabs (`agent/chat`, `AgentChatPage`; `agent/files`, `AgentFilesPage`; `agent/terminal`,
- * `AgentTerminalPage`), with an empty default. The platform's workspace runners are at
- * `workspaces/runners` (`WorkspaceRunnersPage`): a literal page below `workspaces` goes before
- * `workspaces/:slotId`, so it wins over a slot id.
+ * `AgentTerminalPage`), with an empty default. This app has no runners page of its own (epic
+ * qits-1481): the execution targets a slot is placed on are qits-system's, at its own Targets
+ * page, which the Workspaces page links to directly rather than routing through here.
  *
  * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
  * outside the shell, so the guard does not run on it.
@@ -174,13 +174,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./routes/projects/[slug]/workspaces/project-workspaces.page').then(
             (m) => m.ProjectWorkspacesPage,
-          ),
-      },
-      {
-        path: 'projects/:slug/workspaces/runners',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/workspaces/runners/workspace-runners.page').then(
-            (m) => m.WorkspaceRunnersPage,
           ),
       },
       {

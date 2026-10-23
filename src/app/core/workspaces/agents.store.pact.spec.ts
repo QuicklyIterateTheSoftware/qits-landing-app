@@ -137,7 +137,6 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
         );
         const slot = data?.entries?.[0]?.workspace;
         expect(slot?.placement).toBe('RUNNER');
-        expect(slot?.runner?.name).toBeTruthy();
       },
     ));
 

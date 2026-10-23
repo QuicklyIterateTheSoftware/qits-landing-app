@@ -68,12 +68,10 @@ open project's work again after `EntityTransitioned` naming it (`entities[].proj
 item page its own data when the event names the item (`entities[].entityId`). A request's CI runs and
 each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) by `repoId` and
 `runId` (`CiRunsStore.follow`, `CiReportsStore.followRun`). `WorkspacesStore` follows
-qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. The Runners page
-has no poll: it reads again after a runner event naming a listed runner and after any slot event
-(the counts). Known gaps, where no event exists yet (qits-1270's thread lists them): project and
-repository creation, work item edits, comments, dossier and membership, a submitted CI report, a
-backup outcome, lines-of-code counts, and qits-workspaces' runners (the `Runner*` events are
-qits-ci's own runners).
+qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
+no event exists yet (qits-1270's thread lists them): project and repository creation, work item
+edits, comments, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
+counts.
 
 Users today: the lightning menu fetches the open project's release requests when the project opens
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
@@ -161,23 +159,15 @@ is `openSignInTerminal`, whose command the screen attaches to until it ends) and
 shared agent home (`AgentPluginsStore`: `listPlugins`, `installPlugin`). No recording holds a
 successful recreate or a forced discard, so their success paths are covered by plain specs only.
 
-The platform's workspace runners are at `/projects/<slug>/workspaces/runners` (`WorkspaceRunnersPage`,
-qits-1244; the static route sits before `workspaces/:slotId`, and the Workspaces page links it beside
-the slots), through `RunnersStore` (`core/workspaces/runners.store.ts`): every runner
-(`listRunners`, read again every 5 s while the page is visible, as there are no runner events), each
-in `patterns/workspaces/runner-card/` with its connection, slot counts, memory caps, quarantine, the
-project's slots placed on it (`AgentsStore.loadProject`), its health check and checks (Run health
-check, `requestRunnerHealthcheck`; Node details, `getRunnerHealth`, 204 for a runner never checked),
-the node's agent login (Re-check, `requestRunnerLoginCheck`) and its login commands with Copy
-(`patterns/workspaces/copy-text/`). Its Actions are Edit (`patchRunner`), Rotate token
-(`rotateRunnerRegistrationToken`), Greenlight on a quarantined runner (`greenlightRunner`, which lifts
-the quarantine: nothing in the service or here puts a runner into quarantine, the service does after
-a failed check) and Delete, confirmed (`deleteRunner`; a 409 `RUNNER_OWNS_WORKSPACES` lists the
-workspaces it owns, linked when they are the project's). Register a runner
-(`patterns/workspaces/register-runner-form/`, `createRunner`) and Rotate token answer a one-time
-install line, which `patterns/workspaces/install-line-panel/` shows until it is closed and nothing
-holds after. Writes are offered to everyone; the service answers 403 to a credential without the role,
-which shows as a refusal like any other.
+This app has no runners page of its own (epic qits-1481, ahead of qits-workspaces-service dropping
+its runner doors in qits-1532): `WorkspaceRunnersPage`, `RunnersStore` and the
+`patterns/workspaces/{runner-card,register-runner-form,install-line-panel}/` it used are retired.
+Beside the Workspaces page's Slots heading, Targets links to qits-system's Targets page
+(`PlatformOrigins.page('system')` + `/system/targets`) instead, where execution targets are now
+managed. A slot's status strip no longer names which runner it is placed on
+(`patterns/workspaces/slot-status/`, `placementNote` in `core/workspaces/agent-labels.ts`): the
+field it read, `workspace.runner`, is gone from what this app consumes, ahead of the service
+dropping it.
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
@@ -269,7 +259,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | ----------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
 | qits-projects-service   | `core/projects/projects.store*.ts`                                                             | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
 | qits-githost-service    | `core/loc/loc.store*.ts`                                                                       | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,runners}.store*.ts`             | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions}.store*.ts`                     | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts` | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider

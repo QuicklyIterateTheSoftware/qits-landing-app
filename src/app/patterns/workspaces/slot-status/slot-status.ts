@@ -4,7 +4,6 @@ import {
   daemonState,
   placementNote,
   relativeSince,
-  runnerName,
   runtimeLabel,
 } from '$core/workspaces/agent-labels';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
@@ -21,9 +20,13 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
 
 /**
  * A slot's status strip (qits-workspaces-frontend's `status-strip`, read only): the container
- * (its state, where it is placed and why, and its error), the runner, the daemon (connected since
- * when and its version; or not connected; or no container to hold one), whether it is an admin
- * slot, and how many agents it hosts. The verbs (start, stop, recreate) come with the writes.
+ * (its state, where it is placed and why, and its error), the daemon (connected since when and
+ * its version; or not connected; or no container to hold one), whether it is an admin slot, and
+ * how many agents it hosts. The verbs (start, stop, recreate) come with the writes.
+ *
+ * No longer shows which runner a slot is placed on (epic qits-1481): qits-workspaces-service drops
+ * `workspace.runner`, so `placementNote` says only that a slot waits or is offline, with no name.
+ * A later change adds the execution target back from the lease.
  */
 @Component({
   selector: 'app-slot-status',
@@ -41,17 +44,6 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
         <span class="text-charcoal-brown-600">{{ placement() }}</span>
         @if (slot().runtimeError; as fault) {
           <span class="text-cinnabar-700" role="alert">{{ fault }}</span>
-        }
-      </dd>
-
-      <dt class="font-semibold text-charcoal-brown-700">Runner</dt>
-      <dd class="m-0 text-charcoal-brown-900">
-        @if (runner(); as name) {
-          {{ name }}
-        } @else if (slot().placement === 'RUNNER') {
-          <span class="text-charcoal-brown-600">none yet</span>
-        } @else {
-          <span class="text-charcoal-brown-600">the platform host</span>
         }
       </dd>
 
@@ -108,7 +100,6 @@ export class SlotStatus {
     (): ChipTone => RUNTIME_TONES[this.slot().runtimeStatus ?? ''] ?? 'neutral',
   );
   protected readonly placement = computed(() => placementNote(this.slot()));
-  protected readonly runner = computed(() => runnerName(this.slot()));
   protected readonly daemon = computed(() => daemonState(this.slot()));
   protected readonly daemonSince = computed(() => {
     const at = this.slot().daemonConnectedAt;

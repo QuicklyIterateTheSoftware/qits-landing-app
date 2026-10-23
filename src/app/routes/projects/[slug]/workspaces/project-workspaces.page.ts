@@ -10,6 +10,7 @@ import {
   untracked,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { placementNote, runtimeLabel } from '$core/workspaces/agent-labels';
@@ -26,8 +27,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * an epic of the project, a harness, admin mode), then its agents — each a link to its work item's
  * agent page — with how each runs and what it waits on; then its slots, the workspaces agents run in — each a
  * link to the slot's page (`workspaces/<slot id>`) — with its container state, placement and how
- * many agents it hosts. Beside the slots' heading, Runners leads to the runners they are placed on
- * (`workspaces/runners`).
+ * many agents it hosts. Beside the slots' heading, Targets leads to qits-system's Targets page
+ * (`https://system.qits.<domain>/system/targets`, `PlatformOrigins.page('system')`, epic
+ * qits-1481), where the execution targets slots are placed on are managed — this app no longer
+ * has a runners page of its own.
  *
  * The slots are the project's wrapper's: qits-projects names the wrapper (`RepositoriesStore`), and
  * the page reads its slots and the project's agents (`AgentsStore.loadProject`: those in the
@@ -91,7 +94,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 >
                   Slots
                 </h2>
-                <a class="text-sm text-ocean-deep-700" [routerLink]="runnersLink()">Runners</a>
+                @if (targetsHref(); as href) {
+                  <a class="text-sm text-ocean-deep-700" [href]="href">Targets</a>
+                }
               </div>
               <p
                 class="m-0 text-sm text-charcoal-brown-500"
@@ -128,8 +133,15 @@ export class ProjectWorkspacesPage {
   private readonly selected = inject(SelectedProject);
   private readonly repositories = inject(RepositoriesStore);
   private readonly store = inject(AgentsStore);
+  private readonly origins = inject(PlatformOrigins);
 
   protected readonly slug = computed(() => this.selected.slug());
+
+  /** qits-system's Targets page, where the slots' execution targets are managed (epic qits-1481). */
+  protected readonly targetsHref = computed(() => {
+    const origin = this.origins.page('system');
+    return origin ? `${origin}/system/targets` : undefined;
+  });
 
   /** The project's wrapper repository, once qits-projects named it. */
   protected readonly wrapperId = computed(() => {
@@ -181,11 +193,6 @@ export class ProjectWorkspacesPage {
   protected reload(): void {
     const wrapper = this.wrapperId();
     if (wrapper) void this.store.loadProject(wrapper, this.slug());
-  }
-
-  /** The platform's runners, which the slots are placed on. */
-  protected runnersLink(): string {
-    return `/projects/${this.slug() ?? ''}/workspaces/runners`;
   }
 
   protected slotLink(id: number | undefined): string {

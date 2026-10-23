@@ -13,7 +13,7 @@ import type {
  * its pact spec passes the same lists as `consumes`. To read another field, add it here.
  *
  * A refusal's body is read too, for a person: the service's `message`, verbatim, and its `code`
- * where it names one (`AGENT_HAS_LEFTOVER_WORK`, `RUNNER_UNAVAILABLE`, …). The store passes
+ * where it names one (`AGENT_HAS_LEFTOVER_WORK`, `AGENT_DAEMON_UNREACHABLE`, …). The store passes
  * `REFUSAL` as `consume`'s error paths, and the pact binds it on every recorded refusal.
  */
 
