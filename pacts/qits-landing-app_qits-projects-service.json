@@ -183,6 +183,15 @@
                 },
                 {
                   "checks": [],
+                  "detail": null,
+                  "kind": "upstream-in-flight",
+                  "label": "Upstream releases",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PASSED"
+                },
+                {
+                  "checks": [],
                   "detail": "Waiting for a CI verdict for bd6360a2c6",
                   "kind": "ci",
                   "label": "CI build",
@@ -780,6 +789,43 @@
                     },
                     {
                       "index": 1,
+                      "rules": {
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.position": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
                       "rules": {
                         "$.detail": {
                           "combine": "AND",
