@@ -18,14 +18,14 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  * request, and the epic's, yielded. The project is qits-projects' recorded one ("a project
  * exists"); the slot is the state's first row (`workspaceId`, frozen to 1).
  *
- * Its Stop is refused as qits-workspaces' "a workspace slot on a disconnected runner" refuses it
- * (409 `RUNNER_UNAVAILABLE`, the same slot row), and the page reads the slot again.
- *
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
+ *
+ * No longer screenshots a refused Stop (epic qits-1481, ahead of qits-workspaces-service dropping
+ * the offline-runner refusal in qits-1532): that case bound the pact's "a workspace slot on a
+ * disconnected runner" / `stopWorkspaceContainer` interaction, which this epic's qits-1533 removed.
  */
 
 const SLOT = 'a workspace slot hosting agents';
-const OFFLINE = 'a workspace slot on a disconnected runner';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -97,36 +97,10 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await answered(harness);
   }
 
-  it('shows a refused stop in the service’s words', async () => {
-    const id = '1';
-    const { harness, element } = await render(id);
-    await answerSlot(harness, id);
-    const view = page.elementLocator(element);
-    await view.getByRole('button', { name: 'Stop' }).click();
-    await settle();
-    const refusal = await goldenMaster(OFFLINE, 'stopWorkspaceContainer', 'qits-workspaces');
-    http
-      .expectOne(`/workspaces/api/workspaces/${id}/stop-container`)
-      .flush(refusal, { status: 409, statusText: 'Conflict' });
-    await answered(harness);
-    await answerSlot(harness, id);
-    await expect.element(view).toMatchTextContent(`That did not work — 409 ${refusal.message}.`);
-    await expect.element(view).toMatchScreenshot('stop-refused');
-  });
-
   it('shows the slot’s status strip and the agents it hosts', async () => {
     const id = '1';
     const { harness, element, project } = await render(id);
-    http
-      .expectOne(`/workspaces/api/workspaces/${id}`)
-      .flush(await goldenMaster(SLOT, 'getWorkspace', 'qits-workspaces'));
-    http
-      .expectOne(`/workspaces/api/workspaces/${id}/active-process`)
-      .flush(await goldenMaster(SLOT, 'getWorkspaceActiveProcess', 'qits-workspaces'));
-    http
-      .expectOne(`/workspaces/api/agents?workspaceId=${id}`)
-      .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
-    await answered(harness);
+    await answerSlot(harness, id);
     const view = page.elementLocator(element);
     await expect
       .element(view.getByRole('heading', { name: 'Workspace ws-contract' }))
