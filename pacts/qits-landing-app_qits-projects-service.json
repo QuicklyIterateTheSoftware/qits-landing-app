@@ -5845,6 +5845,875 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "overrideReleaseRequestUpstream"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "override-release-upstream",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "override-release-upstream: overrideReleaseRequestUpstream",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a release request held by an upstream release",
+          "params": {
+            "authorization": "Bearer qits_tok_contract-person-cli",
+            "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repositoryId": "00000000-0000-4000-8000-000000000002",
+            "requestId": "00000000-0000-4000-8000-000000000003",
+            "upstreamRequestId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "note": "The service change is docs only; the suite need not wait.",
+            "upstreamRequestId": "{upstreamRequestId}"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/repositories/${repositoryId}/release-requests/${requestId}/upstream-overrides",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/upstream-overrides"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "request": {
+              "approvalNote": null,
+              "approvalRequired": true,
+              "approvalRequirements": [
+                {
+                  "admits": [
+                    "person"
+                  ],
+                  "detail": null,
+                  "excludesAuthors": false,
+                  "id": "manual-review",
+                  "reason": "configured by manual-review",
+                  "satisfied": false
+                }
+              ],
+              "approvalState": "WAITING",
+              "approvedAt": null,
+              "approvedBy": null,
+              "automations": [
+                {
+                  "branch": "maintenance/estate-pins",
+                  "detail": null,
+                  "foldSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
+                  "kind": "estate-pins",
+                  "label": "Estate pins",
+                  "runId": "bump-00000000-0000-4000-8000-000000000005",
+                  "state": "FRESH",
+                  "updatedAt": "2026-01-01T00:00:00Z"
+                },
+                {
+                  "branch": "maintenance/estate-pins",
+                  "detail": null,
+                  "foldSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
+                  "kind": "estate-pins",
+                  "label": "Estate pins",
+                  "runId": "bump-00000000-0000-4000-8000-000000000005",
+                  "state": "FRESH",
+                  "updatedAt": "2026-01-01T00:00:00Z"
+                }
+              ],
+              "backingBranch": "release/contract-suite-app-rr-1",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "detail": "Waiting for a CI verdict for bd6360a2c6",
+              "gateTicketId": null,
+              "gates": [
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PASSED"
+                },
+                {
+                  "detail": "configured by manual-review",
+                  "kind": "APPROVAL",
+                  "state": "PENDING"
+                }
+              ],
+              "id": "00000000-0000-4000-8000-000000000003",
+              "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
+              "mergedToMainAt": null,
+              "priority": "HIGH",
+              "qualityGates": [
+                {
+                  "checks": [
+                    {
+                      "detail": "FRESH",
+                      "name": "Estate pins",
+                      "state": "PASSED"
+                    },
+                    {
+                      "detail": "FRESH",
+                      "name": "Estate pins",
+                      "state": "PASSED"
+                    }
+                  ],
+                  "detail": null,
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PASSED"
+                },
+                {
+                  "checks": [
+                    {
+                      "detail": "Overridden by dev; QA run 00000000-0000-4000-8000-000000000007 is RUNNING at cb97768559",
+                      "name": "contract-service-rr-1",
+                      "state": "PASSED"
+                    }
+                  ],
+                  "detail": "Overridden: contract-service-rr-1 (dev)",
+                  "kind": "upstream-in-flight",
+                  "label": "Upstream releases",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PASSED"
+                },
+                {
+                  "checks": [],
+                  "detail": "Waiting for a CI verdict for bd6360a2c6",
+                  "kind": "ci",
+                  "label": "CI build",
+                  "position": "qa-publish",
+                  "runId": null,
+                  "state": "PENDING"
+                }
+              ],
+              "releasedSha": null,
+              "repoId": "00000000-0000-4000-8000-000000000002",
+              "repoName": "contract-suite-app",
+              "requester": "contract-seeder",
+              "retryable": false,
+              "sources": [
+                {
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                }
+              ],
+              "state": "PENDING",
+              "summary": "Release the export across the suite",
+              "supersededBy": null,
+              "unattended": false,
+              "updatedAt": "2026-01-01T00:00:00Z",
+              "version": null
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].admits[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].excludesAuthors": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalRequirements[*].satisfied": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalState": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.request.automations[*].branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations[*].foldSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations[*].runId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.automations[*].updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.backingBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.gates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.request.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.checks": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.checks[*].detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.checks[*].name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.checks[*].state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.position": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.checks": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.checks[*].detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.checks[*].name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.checks[*].state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.position": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.position": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.request.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.requester": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.retryable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.request.sources[*].implicit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].ref": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.summary": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.unattended": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "setWorkStatus"
           },
           "qits-trigger": {
