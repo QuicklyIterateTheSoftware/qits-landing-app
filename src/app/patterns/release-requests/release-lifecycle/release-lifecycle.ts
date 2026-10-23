@@ -29,6 +29,10 @@ import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { ReleaseApproval } from '$patterns/release-requests/release-approval/release-approval';
 import { ReleaseAutomations } from '$patterns/release-requests/release-automations/release-automations';
 import { ReleaseConflictPanel } from '$patterns/release-requests/release-conflict/release-conflict';
+import {
+  NO_LONGER_BUILDING,
+  UpstreamOverride,
+} from '$patterns/release-requests/upstream-override/upstream-override';
 
 const TONES: Readonly<Record<StepState, ChipTone>> = {
   passed: 'ok',
@@ -61,7 +65,8 @@ const RAIL: Readonly<Record<StepState, string>> = {
  * Every check is its own row: its label, its state as the backend words it, its detail and
  * sub-checks, and a link to its CI run or deployment. Actions sit on the row they act on: the
  * conflict under the fold, each automation with Re-run and the waiver, "run again" on a phase that
- * can run again, and Approve or Decline on the approval while a person must answer. The approval
+ * can run again, Approve or Decline on the approval while a person must answer, and Override on
+ * each upstream request still holding the upstream-in-flight gate (epic qits-897). The approval
  * lists its requirements, one line each, and offers only the decisions the viewer may make
  * (`approvalOffer`, epic qits-1038). A check that
  * needs a person is marked and ringed; each row has an id (`stepAnchor`), so a link can open the
@@ -80,6 +85,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
     ReleaseApproval,
     ReleaseAutomations,
     ReleaseConflictPanel,
+    UpstreamOverride,
   ],
   host: { class: 'block' },
   template: `
@@ -201,9 +207,22 @@ const RAIL: Readonly<Record<StepState, string>> = {
                           @if (check.detail) {
                             <span class="text-charcoal-brown-600">{{ check.detail }}</span>
                           }
+                          @if (check.overridable) {
+                            <app-upstream-override
+                              class="w-full"
+                              [request]="request()"
+                              [upstream]="check.name"
+                              (moot)="mooted.set({ key: step.key, upstream: $event })"
+                            />
+                          }
                         </li>
                       }
                     </ul>
+                  }
+                  @if (mooted()?.key === step.key) {
+                    <p class="m-0 mt-0.5 text-sunflower-gold-900" role="alert">
+                      {{ noLongerBuilding }} ({{ mooted()?.upstream }}).
+                    </p>
                   }
                   @if (refusal()?.phase === step.phase && step.phase) {
                     <p class="m-0 mt-0.5 text-sunflower-gold-900" role="alert">
@@ -287,6 +306,12 @@ export class ReleaseLifecycle {
       ? `${origin}/${this.slug()}/deployment-requests/${encodeURIComponent(id)}`
       : undefined;
   }
+
+  /** An upstream override the service found moot (409), on the row of the gate it was for. */
+  protected readonly mooted = signal<{ readonly key: string; readonly upstream: string } | null>(
+    null,
+  );
+  protected readonly noLongerBuilding = NO_LONGER_BUILDING;
 
   /** The phase being run again. */
   private readonly rerunning = signal<string | null>(null);

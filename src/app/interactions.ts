@@ -122,6 +122,12 @@ export const INTERACTIONS = {
   /** `release-request.page.ts`: Withdraw calls a release request off. */
   'withdraw-release-request': 'Withdraw on a release request calls it off',
   /**
+   * `upstream-override.ts`: Override on an upstream request still holding a request's
+   * upstream-in-flight gate (epic qits-897) lets it start QA without waiting for that one.
+   */
+  'override-release-upstream':
+    'Override on a release request’s upstream hold lets it start QA without that upstream',
+  /**
    * `release-request-changes.ts`: the Changes tab lists the fold's changed files and shows one
    * file's diff; a submodule expands into its own commits and files.
    */

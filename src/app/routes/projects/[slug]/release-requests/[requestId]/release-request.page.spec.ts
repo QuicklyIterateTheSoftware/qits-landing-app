@@ -308,6 +308,143 @@ describe('ReleaseRequestPage', () => {
     });
   });
 
+  describe('upstream override (epic qits-897)', () => {
+    /** What the service sends on a 403 from the override door: only a person may decide. */
+    const ONLY_A_PERSON = 'Only a person may make this decision; an agent or a service may not.';
+
+    /**
+     * The recorded request awaiting approval, held before QA by one upstream request: the
+     * upstream-in-flight gate inserted after its automations, as qits-projects records it in
+     * 'a release request held by an upstream release' (from qits-914 on; the pinned golden masters
+     * do not hold that state yet). `overridden` is the door's answer: the same check PASSED,
+     * naming who overrode. Once the pin carries the state, read both bodies from it instead.
+     */
+    const held = (state: 'PENDING' | 'PASSED', checks?: readonly object[]) => {
+      const body = goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+      const gates = body.request.qualityGates ?? [];
+      const upstream = {
+        kind: 'upstream-in-flight',
+        label: 'Upstream releases',
+        position: 'pre-run-qa',
+        state,
+        detail:
+          state === 'PENDING'
+            ? 'Waiting for upstream releases: contract-service-rr-1'
+            : 'Overridden: contract-service-rr-1 (dev)',
+        checks: checks ?? [
+          {
+            name: 'contract-service-rr-1',
+            state,
+            detail:
+              (state === 'PASSED' ? 'Overridden by dev; ' : '') +
+              'QA run 00000000-0000-4000-8000-000000000007 is RUNNING at cb97768559',
+            runId: '00000000-0000-4000-8000-000000000007',
+          },
+        ],
+        runId: null,
+        link: null,
+      };
+      body.request.qualityGates = [gates[0], upstream, ...gates.slice(1)];
+      return { request: { ...body.request, qualifiedId: request.qualifiedId } };
+    };
+
+    /** The page with `body` read. */
+    async function shownWith(body: { request: { repoId: string; id: string } }) {
+      const page = await render(request.qualifiedId);
+      read(request.qualifiedId).flush(body);
+      await page.answered();
+      const { repoId, id } = body.request;
+      const overrides = () =>
+        http.match(
+          `/projects/api/repositories/${repoId}/release-requests/${id}/upstream-overrides`,
+        );
+      const button = () =>
+        Array.from(page.element.querySelectorAll('app-upstream-override button')).find((b) =>
+          /override/i.test(b.textContent ?? ''),
+        ) as HTMLButtonElement | undefined;
+      /** The check's row of the upstream gate, by the upstream's qualified id. */
+      const check = (name: string) =>
+        Array.from(page.element.querySelectorAll('li li')).find(
+          (li) => li.querySelector('span')?.textContent?.trim() === name,
+        ) as HTMLElement | undefined;
+      return { ...page, overrides, button, check };
+    }
+
+    /** Types a note, presses Override twice, and answers the override with `answer`. */
+    async function override(
+      shown: Awaited<ReturnType<typeof shownWith>>,
+      answer: (call: ReturnType<typeof http.match>[number]) => void,
+    ) {
+      const input = shown.element.querySelector('app-upstream-override input') as HTMLInputElement;
+      input.value = '  The service change is docs only.  ';
+      input.dispatchEvent(new Event('input'));
+      shown.button()!.click();
+      await shown.answered();
+      expect(shown.button()?.textContent?.trim()).toBe('Confirm override?');
+      expect(shown.overrides()).toHaveLength(0);
+      shown.button()!.click();
+      await settle();
+      const [call] = shown.overrides();
+      expect(call.request.method).toBe('POST');
+      expect(call.request.body).toEqual({
+        upstreamRequestId: 'contract-service-rr-1',
+        note: 'The service change is docs only.',
+      });
+      answer(call);
+      await shown.answered();
+    }
+
+    it('offers Override on the PENDING check of the upstream-in-flight gate, and only there', async () => {
+      const { element, check } = await shownWith(held('PENDING'));
+      expect(element.querySelectorAll('app-upstream-override')).toHaveLength(1);
+      expect(check('contract-service-rr-1')?.querySelector('app-upstream-override')).not.toBeNull();
+      expect(check('Estate pins')?.querySelector('app-upstream-override')).toBeNull();
+    });
+
+    it('offers no Override on an overridden (PASSED) upstream check', async () => {
+      const { element } = await shownWith(held('PASSED'));
+      expect(element.textContent).toContain('Overridden by dev');
+      expect(element.querySelector('app-upstream-override')).toBeNull();
+    });
+
+    it('offers no Override while the request is held by no upstream', async () => {
+      const { element } = await shownWith(held('PASSED', []));
+      expect(element.querySelector('app-upstream-override')).toBeNull();
+    });
+
+    it('posts the upstream and the note on the second press, and shows the check PASSED', async () => {
+      const shown = await shownWith(held('PENDING'));
+      await override(shown, (call) => call.flush(held('PASSED')));
+      const row = shown.check('contract-service-rr-1')!;
+      expect(row.textContent).toContain('Overridden by dev');
+      expect(row.querySelector('app-upstream-override')).toBeNull();
+    });
+
+    it('shows the service’s sentence on a 403', async () => {
+      const shown = await shownWith(held('PENDING'));
+      await override(shown, (call) =>
+        call.flush({ message: ONLY_A_PERSON }, { status: 403, statusText: 'Forbidden' }),
+      );
+      const alert = shown.element.querySelector('app-upstream-override [role="alert"]');
+      expect(alert?.textContent?.trim()).toBe(ONLY_A_PERSON);
+      expect(shown.button()?.textContent?.trim()).toBe('Override');
+    });
+
+    it('says the upstream is no longer building on a 409, and reads the request again', async () => {
+      const shown = await shownWith(held('PENDING'));
+      await override(shown, (call) =>
+        call.flush({ message: 'The override is moot' }, { status: 409, statusText: 'Conflict' }),
+      );
+      // The upstream finished: the gate holds no one any more.
+      read(request.qualifiedId).flush(held('PASSED', []));
+      await shown.answered();
+      expect(shown.element.querySelector('app-upstream-override')).toBeNull();
+      expect(shown.element.textContent).toContain(
+        'The upstream is no longer building (contract-service-rr-1).',
+      );
+    });
+  });
+
   describe('staleness (qits-1270)', () => {
     /** The page with its request read, and the live stream it opened. */
     async function shown() {

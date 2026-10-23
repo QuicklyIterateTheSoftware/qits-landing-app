@@ -1035,6 +1035,11 @@ export type NonComplyingCommit = {
 
 export type Outcome = 'CREATED' | 'ADOPTED' | 'KEPT' | 'COMPONENT_UPDATED' | 'SYNC_TARGET_UPDATED' | 'UNDECLARED' | 'SKIPPED';
 
+export type OverrideReleaseRequestUpstream = {
+    upstreamRequestId: string;
+    note?: string;
+};
+
 export type PatchDeskRunnerRequest = {
     /**
      * [a-z][a-z0-9-]{0,63}, unique; absent leaves it
@@ -1352,11 +1357,11 @@ export type Response16 = {
 };
 
 export type Response17 = {
-    requests?: Array<ReleaseRequestDto>;
+    request?: ReleaseRequestDto;
 };
 
 export type Response18 = {
-    request?: ReleaseRequestDto;
+    requests?: Array<ReleaseRequestDto>;
 };
 
 export type Response19 = {
@@ -1379,33 +1384,33 @@ export type Response21 = {
 };
 
 export type Response22 = {
-    approvals?: Array<ReleaseRequestApprovalDto>;
-};
-
-export type Response23 = {
-    eligibility?: ApprovalEligibilityDto;
-};
-
-export type Response24 = {
     request?: ReleaseRequestDto;
 };
 
+export type Response23 = {
+    approvals?: Array<ReleaseRequestApprovalDto>;
+};
+
+export type Response24 = {
+    eligibility?: ApprovalEligibilityDto;
+};
+
 export type Response25 = {
-    technicalProcessId?: string;
+    request?: ReleaseRequestDto;
 };
 
 export type Response26 = {
-    repository?: RepositoryDto;
+    technicalProcessId?: string;
 };
 
 export type Response27 = {
     repository?: RepositoryDto;
-    previousName?: string;
-    changed?: boolean;
 };
 
 export type Response28 = {
-    technicalProcessId?: string;
+    repository?: RepositoryDto;
+    previousName?: string;
+    changed?: boolean;
 };
 
 export type Response29 = {
@@ -1418,15 +1423,15 @@ export type Response3 = {
 };
 
 export type Response30 = {
-    repositories?: Array<RepositoryCoordinatesDto>;
+    technicalProcessId?: string;
 };
 
 export type Response31 = {
-    repository?: RepositoryDto;
+    repositories?: Array<RepositoryCoordinatesDto>;
 };
 
 export type Response32 = {
-    success?: boolean;
+    repository?: RepositoryDto;
 };
 
 export type Response33 = {
@@ -1434,19 +1439,23 @@ export type Response33 = {
 };
 
 export type Response34 = {
-    builds?: Array<CommitBuildStatusDto>;
+    success?: boolean;
 };
 
 export type Response35 = {
-    branches?: Array<BranchDto>;
+    builds?: Array<CommitBuildStatusDto>;
 };
 
 export type Response36 = {
+    branches?: Array<BranchDto>;
+};
+
+export type Response37 = {
     repositoryId?: string;
     scheduled?: boolean;
 };
 
-export type Response37 = {
+export type Response38 = {
     technicalProcessId?: string;
 };
 
@@ -1923,7 +1932,7 @@ export type WorkDispatchRequest = {
      */
     mode: string;
     /**
-     * The delivery desk's rule id this press is made under (backlog-newest-first, start-refined). Required for a qits:desk caller, ignored for anyone else.
+     * The delivery desk's rule id this press is made under (backlog-newest-first, start-refined, resume-orphaned). Required for a qits:desk caller, ignored for anyone else.
      */
     rule?: string;
 };
@@ -3917,7 +3926,7 @@ export type ListRepositoriesResponses = {
     /**
      * OK
      */
-    200: Response30;
+    200: Response31;
 };
 
 export type ListRepositoriesResponse = ListRepositoriesResponses[keyof ListRepositoriesResponses];
@@ -3946,7 +3955,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdResponses = {
     /**
      * OK
      */
-    200: Response33;
+    200: Response34;
 };
 
 export type DeleteProjectsApiRepositoriesByRepoIdResponse = DeleteProjectsApiRepositoriesByRepoIdResponses[keyof DeleteProjectsApiRepositoriesByRepoIdResponses];
@@ -3975,7 +3984,7 @@ export type GetRepositoryResponses = {
     /**
      * OK
      */
-    200: Response31;
+    200: Response32;
 };
 
 export type GetRepositoryResponse = GetRepositoryResponses[keyof GetRepositoryResponses];
@@ -4012,7 +4021,7 @@ export type PatchProjectsApiRepositoriesByRepoIdResponses = {
     /**
      * The repository answers to the new name
      */
-    200: Response27;
+    200: Response28;
 };
 
 export type PatchProjectsApiRepositoriesByRepoIdResponse = PatchProjectsApiRepositoriesByRepoIdResponses[keyof PatchProjectsApiRepositoriesByRepoIdResponses];
@@ -4041,7 +4050,7 @@ export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponses = {
     /**
      * OK
      */
-    200: Response37;
+    200: Response38;
 };
 
 export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponse = GetProjectsApiRepositoriesByRepoIdActiveProcessResponses[keyof GetProjectsApiRepositoriesByRepoIdActiveProcessResponses];
@@ -4074,7 +4083,7 @@ export type PostProjectsApiRepositoriesByRepoIdBackupSyncResponses = {
     /**
      * Queued
      */
-    202: Response36;
+    202: Response37;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdBackupSyncResponse = PostProjectsApiRepositoriesByRepoIdBackupSyncResponses[keyof PostProjectsApiRepositoriesByRepoIdBackupSyncResponses];
@@ -4105,7 +4114,7 @@ export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponses = {
     /**
      * OK
      */
-    200: Response32;
+    200: Response33;
 };
 
 export type DeleteProjectsApiRepositoriesByRepoIdBranchesResponse = DeleteProjectsApiRepositoriesByRepoIdBranchesResponses[keyof DeleteProjectsApiRepositoriesByRepoIdBranchesResponses];
@@ -4134,7 +4143,7 @@ export type ListRepositoryBranchesResponses = {
     /**
      * OK
      */
-    200: Response35;
+    200: Response36;
 };
 
 export type ListRepositoryBranchesResponse = ListRepositoryBranchesResponses[keyof ListRepositoryBranchesResponses];
@@ -4227,7 +4236,7 @@ export type ListCommitBuildsResponses = {
     /**
      * OK
      */
-    200: Response34;
+    200: Response35;
 };
 
 export type ListCommitBuildsResponse = ListCommitBuildsResponses[keyof ListCommitBuildsResponses];
@@ -4325,7 +4334,7 @@ export type PutProjectsApiRepositoriesByRepoIdMainBranchResponses = {
     /**
      * OK
      */
-    200: Response26;
+    200: Response27;
 };
 
 export type PutProjectsApiRepositoriesByRepoIdMainBranchResponse = PutProjectsApiRepositoriesByRepoIdMainBranchResponses[keyof PutProjectsApiRepositoriesByRepoIdMainBranchResponses];
@@ -4354,7 +4363,7 @@ export type PostProjectsApiRepositoriesByRepoIdPullResponses = {
     /**
      * OK
      */
-    200: Response29;
+    200: Response30;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdPullResponse = PostProjectsApiRepositoriesByRepoIdPullResponses[keyof PostProjectsApiRepositoriesByRepoIdPullResponses];
@@ -4383,7 +4392,7 @@ export type PostProjectsApiRepositoriesByRepoIdPushResponses = {
     /**
      * OK
      */
-    200: Response28;
+    200: Response29;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdPushResponse = PostProjectsApiRepositoriesByRepoIdPushResponses[keyof PostProjectsApiRepositoriesByRepoIdPushResponses];
@@ -4414,7 +4423,7 @@ export type ListRepositoryReleaseRequestsResponses = {
     /**
      * OK
      */
-    200: Response17;
+    200: Response18;
 };
 
 export type ListRepositoryReleaseRequestsResponse = ListRepositoryReleaseRequestsResponses[keyof ListRepositoryReleaseRequestsResponses];
@@ -4447,7 +4456,7 @@ export type CreateReleaseRequestResponses = {
     /**
      * OK
      */
-    200: Response20;
+    200: Response21;
 };
 
 export type CreateReleaseRequestResponse = CreateReleaseRequestResponses[keyof CreateReleaseRequestResponses];
@@ -4477,7 +4486,7 @@ export type GetReleaseRequestResponses = {
     /**
      * OK
      */
-    200: Response18;
+    200: Response19;
 };
 
 export type GetReleaseRequestResponse = GetReleaseRequestResponses[keyof GetReleaseRequestResponses];
@@ -4507,7 +4516,7 @@ export type GetReleaseRequestApprovalEligibilityResponses = {
     /**
      * OK
      */
-    200: Response23;
+    200: Response24;
 };
 
 export type GetReleaseRequestApprovalEligibilityResponse = GetReleaseRequestApprovalEligibilityResponses[keyof GetReleaseRequestApprovalEligibilityResponses];
@@ -4537,7 +4546,7 @@ export type ListReleaseRequestApprovalsResponses = {
     /**
      * OK
      */
-    200: Response22;
+    200: Response23;
 };
 
 export type ListReleaseRequestApprovalsResponse = ListReleaseRequestApprovalsResponses[keyof ListReleaseRequestApprovalsResponses];
@@ -4571,7 +4580,7 @@ export type ApproveReleaseRequestResponses = {
     /**
      * OK
      */
-    200: Response21;
+    200: Response22;
 };
 
 export type ApproveReleaseRequestResponse = ApproveReleaseRequestResponses[keyof ApproveReleaseRequestResponses];
@@ -4855,7 +4864,7 @@ export type DeclineReleaseRequestResponses = {
     /**
      * OK
      */
-    200: Response19;
+    200: Response20;
 };
 
 export type DeclineReleaseRequestResponse = DeclineReleaseRequestResponses[keyof DeclineReleaseRequestResponses];
@@ -4920,7 +4929,7 @@ export type AddReleaseRequestSourceResponses = {
     /**
      * OK
      */
-    200: Response24;
+    200: Response25;
 };
 
 export type AddReleaseRequestSourceResponse = AddReleaseRequestSourceResponses[keyof AddReleaseRequestSourceResponses];
@@ -4958,6 +4967,40 @@ export type SetReleaseSourcePriorityResponses = {
 };
 
 export type SetReleaseSourcePriorityResponse = SetReleaseSourcePriorityResponses[keyof SetReleaseSourcePriorityResponses];
+
+export type OverrideReleaseRequestUpstreamData = {
+    body: OverrideReleaseRequestUpstream;
+    path: {
+        repoId: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/upstream-overrides';
+};
+
+export type OverrideReleaseRequestUpstreamErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type OverrideReleaseRequestUpstreamResponses = {
+    /**
+     * OK
+     */
+    200: Response17;
+};
+
+export type OverrideReleaseRequestUpstreamResponse = OverrideReleaseRequestUpstreamResponses[keyof OverrideReleaseRequestUpstreamResponses];
 
 export type WithdrawReleaseRequestData = {
     body: WithdrawReleaseRequest;
@@ -5017,7 +5060,7 @@ export type PostProjectsApiRepositoriesByRepoIdSyncResponses = {
     /**
      * OK
      */
-    200: Response25;
+    200: Response26;
 };
 
 export type PostProjectsApiRepositoriesByRepoIdSyncResponse = PostProjectsApiRepositoriesByRepoIdSyncResponses[keyof PostProjectsApiRepositoriesByRepoIdSyncResponses];
@@ -6833,7 +6876,7 @@ export type GetWorkRefinementErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * Not Allowed, or the credential is bound to another entity
      */
     403: unknown;
     /**
@@ -6866,7 +6909,7 @@ export type StartWorkRefinementErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * Not Allowed, or the credential is bound to another entity
      */
     403: unknown;
     /**

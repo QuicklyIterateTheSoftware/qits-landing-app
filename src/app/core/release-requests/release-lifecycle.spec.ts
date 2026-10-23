@@ -373,3 +373,37 @@ describe('attention', () => {
     expect(attentionOf(pending)).toEqual([]);
   });
 });
+
+describe('the upstream-in-flight gate (epic qits-897)', () => {
+  const held: ReleaseRequest = {
+    ...pending,
+    qualityGates: [
+      {
+        kind: 'upstream-in-flight',
+        label: 'Upstream releases',
+        position: 'pre-run-qa',
+        state: 'PENDING',
+        checks: [
+          { name: 'qits-ci-frontend-rr-12', state: 'PENDING', detail: 'QA run q1 is RUNNING' },
+          { name: 'qits-ci-daemon-rr-3', state: 'PASSED', detail: 'Overridden by dana; …' },
+        ],
+      },
+      {
+        kind: 'automations',
+        label: 'Automations',
+        position: 'pre-run-qa',
+        state: 'PENDING',
+        checks: [{ name: 'Entity diagram', state: 'PENDING' }],
+      },
+    ],
+  };
+
+  it('marks only the PENDING checks of that gate as overridable', () => {
+    const checks = releaseLifecycle(held)
+      .flatMap((stage) => stage.steps)
+      .flatMap((step) => step.checks);
+    expect(checks.filter((check) => check.overridable).map((check) => check.name)).toEqual([
+      'qits-ci-frontend-rr-12',
+    ]);
+  });
+});

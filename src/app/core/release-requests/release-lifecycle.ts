@@ -33,6 +33,12 @@ export interface SubCheck {
   readonly state: StepState;
   readonly word: string;
   readonly detail: string | null;
+  /**
+   * A person may lift the hold this check is (epic qits-897): a PENDING check of the
+   * `upstream-in-flight` gate, one per upstream request still building, named by that request's
+   * qualified id. The page offers Override on it.
+   */
+  readonly overridable?: boolean;
 }
 
 /** One check: a row in a stage. */
@@ -208,6 +214,9 @@ function gateStep(request: ReleaseRequest, gate: GenericGate, generic: boolean):
       state: stepStateOf(check.state),
       word: wordOf(check.state),
       detail: check.detail?.trim() || null,
+      ...(kindOf(gate) === 'UPSTREAM_IN_FLIGHT' && check.state === 'PENDING' && !!check.name
+        ? { overridable: true }
+        : {}),
     })),
     runId: gate.runId ?? null,
     kind: kindOf(gate) === 'APPROVAL' ? 'approval' : 'gate',

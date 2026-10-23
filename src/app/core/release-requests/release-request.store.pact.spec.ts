@@ -52,6 +52,7 @@ const STATES = {
   refolded: 'a refolded release request',
   rejected: 'a release request rejected by its build',
   failedAutomation: 'a release request held by a failed automation',
+  heldByUpstream: 'a release request held by an upstream release',
 } as const;
 
 /**
@@ -77,6 +78,7 @@ const OPERATIONS = [
   'rerunReleasePipelinePhase',
   'rerunReleaseRequestAutomation',
   'waiveReleaseRequestAutomations',
+  'overrideReleaseRequestUpstream',
 ];
 
 const given = (
@@ -326,6 +328,31 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
       );
       const outcome = await store.withdraw(repoId, requestId, body['reason']);
       expect(outcome.request?.state).toBe('WITHDRAWN');
+    }));
+
+  it('override-release-upstream: a person lets the request start QA past one upstream', () =>
+    given(
+      'override-release-upstream',
+      STATES.heldByUpstream,
+      'overrideReleaseRequestUpstream',
+      CHANGED_RELEASE_REQUEST,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { repoId, requestId, body } = recorded(
+        STATES.heldByUpstream,
+        'overrideReleaseRequestUpstream',
+      );
+      const outcome = await store.overrideUpstream(
+        repoId,
+        requestId,
+        body['upstreamRequestId'],
+        body['note'],
+      );
+      const gate = outcome.request?.qualityGates?.find(
+        (entry) => entry.kind === 'upstream-in-flight',
+      );
+      expect(gate?.checks?.[0]?.state).toBe('PASSED');
+      expect(gate?.checks?.[0]?.detail).toMatch(/^Overridden by /);
     }));
 
   // Skipped: qits-projects recorded these two calls with a `{}` body, but neither operation takes a

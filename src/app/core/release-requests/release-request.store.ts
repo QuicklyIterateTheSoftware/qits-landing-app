@@ -10,6 +10,7 @@ import {
   rerunReleaseRequestAutomation as rerunReleaseAutomation,
   waiveReleaseRequestAutomations as waiveReleaseAutomations,
   declineReleaseRequest,
+  overrideReleaseRequestUpstream,
   rerunReleasePipelinePhase as rerunReleasePhase,
   setReleaseSourcePriority,
   withdrawReleaseRequest,
@@ -116,7 +117,7 @@ interface ReleaseRequestState {
  * - `of(ref)`: the data, or undefined before `load`.
  * - The changes a person makes: `approve` and `decline` (the fold the reader saw travels with the
  *   decision; a moved fold is refused 409), `withdraw`, `rerunPhase`, `setSourcePriority`,
- *   `rerunAutomation` and `waiveAutomations`. Each answers a {@link ChangeOutcome}; a change that
+ *   `rerunAutomation`, `waiveAutomations` and `overrideUpstream` (epic qits-897). Each answers a {@link ChangeOutcome}; a change that
  *   answers the request puts it in place (`put`). `rerunAutomation` answers 202 and no request:
  *   the automation's row moves on the next refresh.
  *
@@ -268,6 +269,14 @@ export const ReleaseRequestStore = signalStore(
       );
     }
 
+    /** Reads again every `ref` that shows the request `requestId`. */
+    async function reread(requestId: string): Promise<void> {
+      const refs = Object.entries(store.byId())
+        .filter(([, view]) => !!requestId && view.request.value?.id === requestId)
+        .map(([ref]) => ref);
+      await Promise.all(refs.map((ref) => read(ref)));
+    }
+
     async function read(ref: string): Promise<void> {
       const projectId = store.byId()[ref]?.projectId;
       if (!projectId) return;
@@ -379,6 +388,33 @@ export const ReleaseRequestStore = signalStore(
             CHANGED_RELEASE_REQUEST,
           ),
         );
+      },
+      /**
+       * `POST …/{requestId}/upstream-overrides` (epic qits-897): a person lets the request start QA
+       * although `upstreamRequestId` (a uuid or a qualified id; the page sends the check's name,
+       * the upstream's qualified id) is still building. The answer is the request with that
+       * upstream's check PASSED, naming who overrode. A 409 (the override is moot: the upstream is
+       * no longer building, or the request moved on) reads the request again, so the page drops
+       * the hold it no longer has. A blank note sends none.
+       */
+      async overrideUpstream(
+        repoId: string,
+        requestId: string,
+        upstreamRequestId: string,
+        note?: string,
+      ) {
+        const trimmed = note?.trim();
+        const outcome = await changed(
+          await consume(
+            overrideReleaseRequestUpstream({
+              path: { repoId, requestId },
+              body: { upstreamRequestId, ...(trimmed ? { note: trimmed } : {}) },
+            }),
+            CHANGED_RELEASE_REQUEST,
+          ),
+        );
+        if (outcome.status === 409) await reread(requestId);
+        return outcome;
       },
       async rerunPhase(repoId: string, requestId: string, phase: string) {
         return changed(
