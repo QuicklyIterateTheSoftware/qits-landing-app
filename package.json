@@ -55,7 +55,7 @@
     "@qits/events-golden-masters": "2026.1023.82831",
     "@qits/githost-golden-masters": "2026.1020.204038",
     "@qits/maintenance-golden-masters": "2026.1023.5649",
-    "@qits/projects-golden-masters": "2026.1023.110335",
+    "@qits/projects-golden-masters": "2026.1023.130225",
     "@qits/workspace-daemon-golden-masters": "2026.1018.152111",
     "@qits/workspaces-golden-masters": "2026.1022.75919",
     "@tailwindcss/postcss": "^4.3.3",
