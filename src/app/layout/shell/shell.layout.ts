@@ -225,6 +225,7 @@ export class ShellLayout {
             path: `/projects/${slug}/${RELEASE_REQUESTS}`,
             note: this.latestRelease(),
           },
+          { label: 'Desk', path: `/projects/${slug}/${DESK}` },
           { label: 'Repositories', path: `/projects/${slug}/repositories` },
           { label: 'Observability', path: `/projects/${slug}/observability` },
           { label: 'Events', path: `/projects/${slug}/events` },
@@ -307,6 +308,9 @@ export class ShellLayout {
 
 /** The release requests section's segment below a project: `/projects/<slug>/release-requests`. */
 export const RELEASE_REQUESTS = 'release-requests';
+
+/** The desk section's segment below a project: `/projects/<slug>/desk`. */
+export const DESK = 'desk';
 
 /** True when `url` is `path` or a page below it, query and fragment ignored. */
 function within(url: string, path: string): boolean {
