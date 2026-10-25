@@ -32,7 +32,7 @@
             "improvementTicketQualifiedId": "contract-00000001-11",
             "projectId": "00000000-0000-4000-8000-00000000000f",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "taskId": "00000000-0000-4000-8000-000000000011",
             "workspaceId": "1"
           }
@@ -1484,7 +1484,7 @@
             "improvementTicketQualifiedId": "contract-00000001-11",
             "projectId": "00000000-0000-4000-8000-00000000000f",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "taskId": "00000000-0000-4000-8000-000000000011"
           }
         }
@@ -1826,7 +1826,7 @@
             "improvementTicketQualifiedId": "contract-00000001-11",
             "projectId": "00000000-0000-4000-8000-00000000000f",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "taskId": "00000000-0000-4000-8000-000000000011"
           }
         }
@@ -1868,7 +1868,7 @@
                 "workspace": {
                   "admin": false,
                   "id": 1,
-                  "placement": "RUNNER",
+                  "placement": "TARGET",
                   "queuedAt": null,
                   "runtimeStatus": "RUNNING",
                   "workspaceId": "ws-contract"
@@ -1982,7 +1982,7 @@
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "bugTicketQualifiedId": "contract-00000001-10",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "workspaceId": "1"
           }
         }
@@ -2016,7 +2016,7 @@
               "daemonOutdated": null,
               "daemonVersion": null,
               "id": 1,
-              "placement": "RUNNER",
+              "placement": "TARGET",
               "queuedAt": null,
               "runtimeError": null,
               "runtimeStatus": "PROVISIONING",
@@ -2114,7 +2114,7 @@
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "bugTicketQualifiedId": "contract-00000001-10",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "workspaceId": "1"
           }
         }
@@ -2204,7 +2204,7 @@
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
             "bugTicketQualifiedId": "contract-00000001-10",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "workspaceId": "1"
           }
         }
@@ -2712,7 +2712,7 @@
             "improvementTicketQualifiedId": "contract-00000001-11",
             "projectId": "00000000-0000-4000-8000-00000000000f",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "taskId": "00000000-0000-4000-8000-000000000011",
             "workspaceId": "1"
           }
@@ -2747,7 +2747,7 @@
               "daemonOutdated": null,
               "daemonVersion": null,
               "id": 1,
-              "placement": "RUNNER",
+              "placement": "TARGET",
               "queuedAt": null,
               "runtimeError": null,
               "runtimeStatus": "RUNNING",
@@ -2850,7 +2850,7 @@
             "improvementTicketQualifiedId": "contract-00000001-11",
             "projectId": "00000000-0000-4000-8000-00000000000f",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "taskId": "00000000-0000-4000-8000-000000000011",
             "workspaceId": "1"
           }
@@ -2935,7 +2935,7 @@
             "improvementTicketQualifiedId": "contract-00000001-11",
             "projectId": "00000000-0000-4000-8000-00000000000f",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
+            "targetId": "00000000-0000-4000-8000-000000000020",
             "taskId": "00000000-0000-4000-8000-000000000011",
             "workspaceId": "1"
           }
@@ -3214,12 +3214,10 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a stopped workspace slot on a runner in service",
+          "name": "a stopped workspace slot",
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
-            "runnerName": "localhost",
             "workspaceId": "1"
           }
         }
@@ -3247,7 +3245,7 @@
       "response": {
         "body": {
           "content": {
-            "technicalProcessId": "00000000-0000-4000-8000-000000000100"
+            "technicalProcessId": "00000000-0000-4000-8000-000000000101"
           },
           "contentType": "application/json",
           "encoded": false
@@ -3303,12 +3301,10 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a workspace slot running on a runner in service",
+          "name": "a workspace slot running on a target",
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "runnerId": "00000000-0000-4000-8000-000000000020",
-            "runnerName": "localhost",
             "workspaceId": "1"
           }
         }

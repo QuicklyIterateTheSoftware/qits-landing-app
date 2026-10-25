@@ -13,9 +13,9 @@ import { ContainerActions } from './container-actions';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-const STOPPED = 'a stopped workspace slot on a runner in service';
-const RUNNING = 'a workspace slot running on a runner in service';
-const OFFLINE = 'a workspace slot on a disconnected runner';
+const STOPPED = 'a stopped workspace slot';
+const RUNNING = 'a workspace slot running on a target';
+const OFFLINE = 'a workspace slot qits-system cannot be asked about';
 const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const ID = Number(
   workspacesGoldenMasters.operation(STOPPED, 'ensureWorkspaceContainer').params['workspaceId'],

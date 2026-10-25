@@ -18,9 +18,9 @@ const TO_DISPATCH = 'a wrapper repository and a ticket to dispatch';
 const WAITING = 'an agent waiting for a workspace slot';
 const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const LEFTOVER = 'an agent with leftover work';
-const STOPPED = 'a stopped workspace slot on a runner in service';
-const RUNNING = 'a workspace slot running on a runner in service';
-const OFFLINE = 'a workspace slot on a disconnected runner';
+const STOPPED = 'a stopped workspace slot';
+const RUNNING = 'a workspace slot running on a target';
+const OFFLINE = 'a workspace slot qits-system cannot be asked about';
 
 const op = (state: string, operationId: string) =>
   workspacesGoldenMasters.operation(state, operationId);
@@ -138,7 +138,7 @@ describe('AgentActionsStore', () => {
     });
   });
 
-  it('says why a start on an offline runner was refused', async () => {
+  it('says why a start qits-system could not be asked about was refused', async () => {
     const id = op(OFFLINE, 'ensureWorkspaceContainer').params['workspaceId'];
     const done = store.ensureContainer(Number(id));
     await settle();
@@ -150,7 +150,7 @@ describe('AgentActionsStore', () => {
       ok: false,
       status: 409,
       message: body.message,
-      code: 'RUNNER_UNAVAILABLE',
+      code: 'TARGET_UNAVAILABLE',
     });
   });
 
@@ -164,7 +164,7 @@ describe('AgentActionsStore', () => {
     expect(await done).toMatchObject({ ok: true, value: { runtimeStatus: 'STOPPED' } });
   });
 
-  it('says why a stop on an offline runner was refused', async () => {
+  it('says why a stop qits-system could not be asked about was refused', async () => {
     const id = op(OFFLINE, 'stopWorkspaceContainer').params['workspaceId'];
     const done = store.stopContainer(Number(id));
     await settle();

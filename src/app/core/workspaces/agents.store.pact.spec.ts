@@ -136,7 +136,7 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
           consume(listWorkspaces({ query: { repositoryId } }), LIST_PROJECT_SLOTS),
         );
         const slot = data?.entries?.[0]?.workspace;
-        expect(slot?.placement).toBe('RUNNER');
+        expect(slot?.placement).toBe('TARGET');
       },
     ));
 

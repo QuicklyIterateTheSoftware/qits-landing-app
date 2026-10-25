@@ -34,15 +34,16 @@ import { AgentActionsStore, type NewAgent } from './agent-actions.store';
  *   (409 `AGENT_HAS_LEFTOVER_WORK`) are refused, with the reason the page shows before it offers
  *   force. A forced discard (`force: true`) has no recording, so no interaction binds it; the plain
  *   spec covers it.
- * - `ensureWorkspaceContainer`: "a stopped workspace slot on a runner in service" starts.
- * - `stopWorkspaceContainer`: "a workspace slot running on a runner in service" stops.
+ * - `ensureWorkspaceContainer`: "a stopped workspace slot" starts (its WORKSPACE lease queued on
+ *   qits-system's targets).
+ * - `stopWorkspaceContainer`: "a workspace slot running on a target" stops.
  * - `recreateWorkspaceContainer`: only its refusal is recorded — "an agent whose workspace daemon
  *   is not connected" (400: the working tree cannot be proved clean). A successful recreate has no
  *   recording, so the success path is covered by the plain spec only.
  *
- * No longer binds the offline-runner refusal (409 `RUNNER_UNAVAILABLE`, "a workspace slot on a
- * disconnected runner") on either write, ahead of qits-workspaces-service dropping it (epic
- * qits-1481); the plain spec still covers the refusal while the code path exists.
+ * Does not bind the refusal of either write when qits-system cannot be asked about the slot's lease
+ * (409 `TARGET_UNAVAILABLE`, "a workspace slot qits-system cannot be asked about"), the successor of
+ * the retired offline-runner refusal (epic qits-1481, qits-1532); the plain spec covers it.
  *
  * Ids in a path are the states' params, sent as provider-state expressions. A create's recorded
  * body names its ids as params (`{ticketId}`): it travels as it is, and the provider puts its run's
@@ -57,8 +58,8 @@ const HOSTING = 'a workspace slot hosting agents';
 const WAITING = 'an agent waiting for a workspace slot';
 const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const LEFTOVER = 'an agent with leftover work';
-const STOPPED = 'a stopped workspace slot on a runner in service';
-const RUNNING = 'a workspace slot running on a runner in service';
+const STOPPED = 'a stopped workspace slot';
+const RUNNING = 'a workspace slot running on a target';
 
 /** What this spec owns in the shared pact file. */
 const OPERATIONS: readonly OwnedOperation[] = [
