@@ -852,6 +852,13 @@ export type EntryOutcome = {
     warning?: string;
 };
 
+export type FeatureFreezeDto = {
+    features?: number;
+    threshold?: number;
+    frozen?: boolean;
+    source?: string;
+};
+
 export type FoldParentDto = {
     sha?: string;
     role?: string;
@@ -866,7 +873,64 @@ export type FoldSourceDto = {
     tipSha?: string;
 };
 
+export type FrontDeskLastAnswer = {
+    /**
+     * The kept desk command
+     */
+    commandId?: string;
+    /**
+     * Its agent session
+     */
+    sessionId?: string;
+    /**
+     * That command's state, as the daemon reports it
+     */
+    state?: string;
+    /**
+     * The last answer's text; null before the first
+     */
+    text?: string | null;
+    /**
+     * When it was given; null before the first
+     */
+    at?: string | null;
+};
+
 export type FrontDeskLifecycle = 'ALWAYS_ON' | 'ON_DEMAND';
+
+export type FrontDeskPromptRequest = {
+    /**
+     * The prompt; must not be blank
+     */
+    text: string;
+};
+
+export type FrontDeskPromptResponse = {
+    /**
+     * The kept desk command the prompt was given to
+     */
+    commandId?: string;
+    /**
+     * That command's state, as the daemon reports it
+     */
+    state?: string;
+    /**
+     * Whether the prompt was handed to the session at once
+     */
+    delivered?: boolean;
+    /**
+     * Whether it waits behind a running turn instead
+     */
+    queued?: boolean;
+    /**
+     * Its place in the queue when queued, else null
+     */
+    position?: number | null;
+};
+
+export type FrontDeskRefusal = {
+    reason?: string;
+};
 
 export type HarnessCapabilityReport = {
     /**
@@ -1053,6 +1117,12 @@ export type PatchDeskRunnerRequest = {
      * At least 1; absent leaves it
      */
     slots?: number;
+};
+
+export type PlacementDto = {
+    outcome?: string;
+    queued?: boolean;
+    detail?: string;
 };
 
 /**
@@ -1281,6 +1351,11 @@ export type ReleaseRequestDto = {
     pipeline?: ReleasePipelineDto;
     qualityGates?: Array<ReleaseQualityGateDto>;
     preRun?: ReleasePreRunDto;
+    queuedBehind?: string;
+    queuedBehindQualifiedId?: string;
+    queuedNext?: string;
+    queuedNextQualifiedId?: string;
+    featureFreeze?: FeatureFreezeDto;
 };
 
 export type ReleaseRequestSourceDto = {
@@ -1290,6 +1365,8 @@ export type ReleaseRequestSourceDto = {
     implicit?: boolean;
     priority?: string;
     addedBy?: string;
+    feature?: boolean;
+    explicitJoin?: boolean;
 };
 
 export type RenameRepositoryRequest = {
@@ -1381,6 +1458,10 @@ export type Response20 = {
 
 export type Response21 = {
     request?: ReleaseRequestDto;
+    /**
+     * Where the branch landed (epic qits-1580, the soft feature freeze). Once the repository's active request holds as many counted sources as the threshold in force, it is frozen. Counted are branches naming a work item (epics, tasks, tickets of any type); main, maintenance* and release* never count. The threshold is the repository's own feature_freeze in .config/qits/release-requests.yml, else the project's release_requests.feature_freeze, else 3, and 0 turns it off. While it is frozen, every branch new to the repository's requests (a feature, a bug fix or a maintenance bump) lands in the one request queued behind it, minted if absent, which folds nothing and runs no gate until the active request has released or been withdrawn. A branch already a source of an unreleased request answers PRESENT where it is. outcome is CREATED, JOINED or PRESENT, queued says the answering request is queued, and detail is one sentence saying where the branch went.
+     */
+    placement?: PlacementDto;
 };
 
 export type Response22 = {
@@ -1397,6 +1478,10 @@ export type Response24 = {
 
 export type Response25 = {
     request?: ReleaseRequestDto;
+    /**
+     * Where the branch landed (epic qits-1580). An explicit join overrides the soft feature freeze: a request frozen at its threshold admits any branch named onto it here (a feature, a bug fix or a maintenance branch), and the new source carries explicitJoin true, with a detail saying it joined a frozen request explicitly. From RELEASED on no join is accepted: the 409 says the request is released and names the repository's next unreleased request by qualified id, if there is one.
+     */
+    placement?: PlacementDto;
 };
 
 export type Response26 = {
@@ -2917,6 +3002,100 @@ export type GetProjectsApiProjectsByProjectIdEventsResponses = {
 
 export type GetProjectsApiProjectsByProjectIdEventsResponse = GetProjectsApiProjectsByProjectIdEventsResponses[keyof GetProjectsApiProjectsByProjectIdEventsResponses];
 
+export type GetFrontDeskLastAnswerData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/front-desk/last-answer';
+};
+
+export type GetFrontDeskLastAnswerErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project, or the desk keeps no command
+     */
+    404: FrontDeskRefusal;
+    /**
+     * The desk's daemon predates this door
+     */
+    409: FrontDeskRefusal;
+    /**
+     * No daemon is connected for the project, or it could not be reached
+     */
+    503: FrontDeskRefusal;
+};
+
+export type GetFrontDeskLastAnswerError = GetFrontDeskLastAnswerErrors[keyof GetFrontDeskLastAnswerErrors];
+
+export type GetFrontDeskLastAnswerResponses = {
+    /**
+     * The kept desk command's last answer; text and at are null before the first
+     */
+    200: FrontDeskLastAnswer;
+};
+
+export type GetFrontDeskLastAnswerResponse = GetFrontDeskLastAnswerResponses[keyof GetFrontDeskLastAnswerResponses];
+
+export type PromptFrontDeskData = {
+    body: FrontDeskPromptRequest;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/front-desk/prompt';
+};
+
+export type PromptFrontDeskErrors = {
+    /**
+     * Blank text
+     */
+    400: FrontDeskRefusal;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: FrontDeskRefusal;
+    /**
+     * No kept desk command is running, or the desk's daemon predates this door
+     */
+    409: FrontDeskRefusal;
+    /**
+     * The desk's prompt queue is full
+     */
+    429: FrontDeskRefusal;
+    /**
+     * No daemon is connected for the project, or it could not be reached
+     */
+    503: FrontDeskRefusal;
+};
+
+export type PromptFrontDeskError = PromptFrontDeskErrors[keyof PromptFrontDeskErrors];
+
+export type PromptFrontDeskResponses = {
+    /**
+     * Delivered or queued
+     */
+    200: FrontDeskPromptResponse;
+};
+
+export type PromptFrontDeskResponse = PromptFrontDeskResponses[keyof PromptFrontDeskResponses];
+
 export type PostProjectsApiProjectsByProjectIdReconcileData = {
     body?: never;
     path: {
@@ -2932,7 +3111,7 @@ export type PostProjectsApiProjectsByProjectIdReconcileErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The delivery desk naming another project
      */
     403: unknown;
     /**
@@ -3225,7 +3404,7 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The delivery desk naming another project
      */
     403: unknown;
     /**
@@ -3519,7 +3698,7 @@ export type DiscardRefinementErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The credential is bound to another entity, or the delivery desk reaches another project's room
      */
     403: unknown;
     /**
@@ -3552,7 +3731,7 @@ export type EnsureRefinementContainerErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The credential is bound to another entity, or the delivery desk reaches another project's room
      */
     403: unknown;
     /**
@@ -4008,7 +4187,7 @@ export type PatchProjectsApiRepositoriesByRepoIdErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The delivery desk naming another project's repository
      */
     403: unknown;
     /**
@@ -5727,7 +5906,7 @@ export type DeleteWorkErrors = {
      */
     401: unknown;
     /**
-     * An agent deleting an epic or a ticket, or outside its own project
+     * An agent deleting an epic or a ticket, or an agent or the delivery desk deleting outside its own project
      */
     403: unknown;
     /**
@@ -6135,7 +6314,7 @@ export type DeleteWorkCommentErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A plain agent, or the delivery desk on another project's entity
      */
     403: unknown;
     /**
@@ -6768,7 +6947,7 @@ export type ApproveWorkMemberCriterionErrors = {
      */
     401: unknown;
     /**
-     * Not a verified person
+     * Neither a verified person nor this campaign's project's delivery desk
      */
     403: unknown;
     /**
@@ -6909,7 +7088,7 @@ export type StartWorkRefinementErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed, or the credential is bound to another entity
+     * Not Allowed, the credential is bound to another entity, or the delivery desk reaches another project's entity
      */
     403: unknown;
     /**
@@ -6954,7 +7133,7 @@ export type SetWorkStatusErrors = {
      */
     401: unknown;
     /**
-     * A platform service moving an epic, or an agent moving an entity outside its own project; nothing is written
+     * A platform service moving an epic, or an agent or the delivery desk moving an entity outside its own project; nothing is written
      */
     403: unknown;
     /**
