@@ -17,6 +17,7 @@ import {
   releaseDetail,
   releaseSources,
   shortShaOrNone,
+  sourceMarks,
   sourceTitle,
 } from './release-request-model';
 
@@ -220,6 +221,22 @@ describe('release request model', () => {
       expect(sourceTitle(source())).toBe('refs/heads/main');
       expect(sourceTitle(TAG)).toContain('refs/tags/2026.903.1');
       expect(sourceTitle(TAG)).toContain('has not reached main yet');
+    });
+  });
+
+  describe('sourceMarks (epic qits-1580)', () => {
+    it('marks a counted source and one that joined past the freeze, and nothing else', () => {
+      const labels = (entry: ReleaseSource) => sourceMarks(entry).map((mark) => mark.label);
+      expect(labels(source({ feature: false, explicitJoin: false }))).toEqual([]);
+      expect(labels(source())).toEqual([]);
+      expect(labels(source({ name: 'ticket/x', feature: true }))).toEqual(['counted']);
+      expect(labels(source({ name: 'ticket/x', feature: true, explicitJoin: true }))).toEqual([
+        'counted',
+        'joined',
+      ]);
+      expect(sourceMarks(source({ explicitJoin: true }))[0].title).toContain(
+        'past the feature freeze',
+      );
     });
   });
 

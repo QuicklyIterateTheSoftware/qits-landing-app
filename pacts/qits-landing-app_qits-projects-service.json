@@ -117,6 +117,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Waiting for a CI verdict for bd6360a2c6",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -200,6 +206,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -207,6 +217,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -214,6 +226,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -221,6 +235,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -493,6 +509,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -916,6 +964,34 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -1283,6 +1359,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Declined by dev: The README promises an approval policy nobody has signed off yet.",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -1372,6 +1454,10 @@
                   "state": "FAILED"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -1379,6 +1465,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -1386,6 +1474,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -1393,6 +1483,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -1630,6 +1722,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -2110,6 +2234,34 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -5158,6 +5310,12 @@
                 "backingBranch": "release/contract-suite-app-rr-1",
                 "conflict": null,
                 "detail": "Waiting for a person to approve 0000000000",
+                "featureFreeze": {
+                  "features": 0,
+                  "frozen": false,
+                  "source": "PLATFORM",
+                  "threshold": 3
+                },
                 "gates": [
                   {
                     "kind": "AUTOMATIONS",
@@ -5204,6 +5362,10 @@
                     "state": "PENDING"
                   }
                 ],
+                "queuedBehind": "",
+                "queuedBehindQualifiedId": "",
+                "queuedNext": "",
+                "queuedNextQualifiedId": "",
                 "releasedSha": "",
                 "repoId": "00000000-0000-4000-8000-000000000002",
                 "repoName": "contract-suite-app",
@@ -5815,6 +5977,94 @@
                               "match": "null"
                             }
                           ]
+                        },
+                        "$.featureFreeze.features": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.threshold": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.frozen": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.source": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedBehind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedBehindQualifiedId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedNext": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedNextQualifiedId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       },
                       "generators": {}
@@ -5948,6 +6198,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Waiting for a CI verdict for bd6360a2c6",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -6011,6 +6267,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -6018,6 +6278,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -6025,6 +6287,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -6032,6 +6296,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -6244,6 +6510,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -6586,6 +6884,34 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -7012,6 +7338,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Waiting for a person to approve bd6360a2c6",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -7101,6 +7433,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -7108,6 +7444,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -7115,6 +7453,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -7122,6 +7462,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -7334,6 +7676,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -7817,6 +8191,34 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -8186,6 +8588,822 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a frozen release request with a queued next request",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "queuedRequestId": "00000000-0000-4000-8000-000000000002",
+            "queuedRequestQualifiedId": "contract-service-rr-2",
+            "repositoryId": "00000000-0000-4000-8000-000000000003",
+            "requestId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/release-requests",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "requests": [
+              {
+                "approvalNote": "",
+                "approvalRequired": false,
+                "approvalState": "NOT_REQUIRED",
+                "approvedAt": "",
+                "approvedBy": "",
+                "backingBranch": "release/contract-service-rr-2",
+                "detail": "Queued behind contract-service-rr-1: it folds once that request has released",
+                "featureFreeze": {
+                  "features": 1,
+                  "frozen": false,
+                  "source": "PLATFORM",
+                  "threshold": 3
+                },
+                "gates": [
+                  {
+                    "kind": "AUTOMATIONS",
+                    "state": "PENDING"
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000002",
+                "mergedSha": "",
+                "mergedToMainAt": "",
+                "priority": "MEDIUM",
+                "qualifiedId": "contract-service-rr-2",
+                "qualityGates": [
+                  {
+                    "checks": [],
+                    "detail": "Waiting for the automations to answer",
+                    "kind": "automations",
+                    "label": "Automations",
+                    "position": "pre-run-qa",
+                    "runId": "",
+                    "state": "PENDING"
+                  }
+                ],
+                "queuedBehind": "00000000-0000-4000-8000-000000000004",
+                "queuedBehindQualifiedId": "contract-service-rr-1",
+                "queuedNext": "",
+                "queuedNextQualifiedId": "",
+                "releasedSha": "",
+                "repoId": "00000000-0000-4000-8000-000000000003",
+                "repoName": "contract-service",
+                "requester": "contract-seeder",
+                "sources": [
+                  {
+                    "name": "main"
+                  }
+                ],
+                "state": "PENDING",
+                "summary": "Release the PDF export",
+                "unattended": false,
+                "updatedAt": "2026-01-01T00:00:00Z",
+                "version": ""
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.requests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.repoName": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.gates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.gates[*].kind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.gates[*].state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.mergedSha": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.requester": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.unattended": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.approvalRequired": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.approvalState": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.updatedAt": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.mergedToMainAt": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.backingBranch": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.sources": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.sources[*].name": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.conflict.conflicts": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.conflict.conflicts[*].path": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.approvedBy": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.approvedAt": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.approvalNote": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.releasedSha": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.automations": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.automations[*].kind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.automations[*].label": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.automations[*].state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.automations[*].detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.phases": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.pipeline.phases[*].phase": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.phases[*].state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.phases[*].runId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.phases[*].detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.gates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.pipeline.gates[*].between": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.gates[*].kind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.gates[*].state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.pipeline.gates[*].detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].kind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].label": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].position": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].checks": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].checks[*].name": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].checks[*].state": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].checks[*].detail": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.qualityGates[*].runId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.features": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.threshold": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.frozen": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.source": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedBehind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedBehindQualifiedId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedNext": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedNextQualifiedId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "generators": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectReleaseRequests"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-release-requests",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-release-requests: listProjectReleaseRequests",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a project with no release requests",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001"
@@ -8298,6 +9516,12 @@
                 "approvedBy": "",
                 "backingBranch": "release/contract-service-rr-3",
                 "detail": "",
+                "featureFreeze": {
+                  "features": 0,
+                  "frozen": false,
+                  "source": "PLATFORM",
+                  "threshold": 3
+                },
                 "gates": [
                   {
                     "kind": "AUTOMATIONS",
@@ -8320,6 +9544,10 @@
                     "state": "PENDING"
                   }
                 ],
+                "queuedBehind": "",
+                "queuedBehindQualifiedId": "",
+                "queuedNext": "",
+                "queuedNextQualifiedId": "",
                 "releasedSha": "",
                 "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
@@ -8918,6 +10146,94 @@
                           ]
                         },
                         "$.qualityGates[*].runId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.features": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.threshold": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.frozen": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.featureFreeze.source": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedBehind": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedBehindQualifiedId": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedNext": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.queuedNextQualifiedId": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -16413,6 +17729,540 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a frozen release request with a queued next request",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "queuedRequestId": "00000000-0000-4000-8000-000000000002",
+            "queuedRequestQualifiedId": "contract-service-rr-2",
+            "repositoryId": "00000000-0000-4000-8000-000000000003",
+            "requestId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/release-requests/${queuedRequestQualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests/contract-service-rr-2"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "request": {
+              "approvalNote": null,
+              "approvalRequired": false,
+              "approvalRequirements": [],
+              "approvalState": "NOT_REQUIRED",
+              "approvedAt": null,
+              "approvedBy": null,
+              "backingBranch": "release/contract-service-rr-2",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "detail": "Queued behind contract-service-rr-1: it folds once that request has released",
+              "featureFreeze": {
+                "features": 1,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
+              "gateTicketId": null,
+              "gates": [
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PENDING"
+                },
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PENDING"
+                }
+              ],
+              "id": "00000000-0000-4000-8000-000000000002",
+              "mergedSha": null,
+              "mergedToMainAt": null,
+              "priority": "MEDIUM",
+              "qualifiedId": "contract-service-rr-2",
+              "qualityGates": [
+                {
+                  "checks": [],
+                  "detail": "Waiting for the automations to answer",
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PENDING"
+                },
+                {
+                  "checks": [],
+                  "detail": "Waiting for the automations to answer",
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PENDING"
+                }
+              ],
+              "queuedBehind": "00000000-0000-4000-8000-000000000004",
+              "queuedBehindQualifiedId": "contract-service-rr-1",
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
+              "releasedSha": null,
+              "repoId": "00000000-0000-4000-8000-000000000003",
+              "repoName": "contract-service",
+              "requester": "contract-seeder",
+              "retryable": false,
+              "sources": [
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                }
+              ],
+              "state": "PENDING",
+              "summary": "Release the PDF export",
+              "supersededBy": null,
+              "unattended": false,
+              "updatedAt": "2026-01-01T00:00:00Z",
+              "version": null
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalState": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.backingBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.gates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.request.gates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.gates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.request.qualityGates[*].detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].position": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.queuedBehind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.queuedBehindQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.requester": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.retryable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].implicit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].ref": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.summary": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.unattended": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getProjectReleaseRequest"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-release-request",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-release-request: getProjectReleaseRequest",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a project with release requests in every state",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001",
@@ -16488,6 +18338,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Waiting for a person to approve 0000000000",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -16583,6 +18439,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -16590,6 +18450,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -16597,6 +18459,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -16862,6 +18726,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -17351,6 +19247,28 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -17538,6 +19456,12 @@
               },
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "The sources cannot be folded: src/invoice.txt, README.md",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -17589,6 +19513,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
@@ -17596,6 +19524,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -17603,6 +19533,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -17610,6 +19542,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -17808,6 +19742,38 @@
                 }
               ]
             },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
             "$.request.gates": {
               "combine": "AND",
               "matchers": [
@@ -17986,6 +19952,34 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -18124,6 +20118,583 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a frozen release request with a queued next request",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "queuedRequestId": "00000000-0000-4000-8000-000000000002",
+            "queuedRequestQualifiedId": "contract-service-rr-2",
+            "repositoryId": "00000000-0000-4000-8000-000000000003",
+            "requestId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/repositories/${repositoryId}/release-requests/${requestId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/repositories/00000000-0000-4000-8000-000000000003/release-requests/00000000-0000-4000-8000-000000000004"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "request": {
+              "approvalNote": null,
+              "approvalRequired": false,
+              "approvalRequirements": [],
+              "approvalState": "NOT_REQUIRED",
+              "approvedAt": null,
+              "approvedBy": null,
+              "backingBranch": "release/contract-service-rr-1",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "detail": null,
+              "featureFreeze": {
+                "features": 3,
+                "frozen": true,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
+              "gateTicketId": null,
+              "gates": [
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PENDING"
+                },
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PENDING"
+                }
+              ],
+              "id": "00000000-0000-4000-8000-000000000004",
+              "mergedSha": null,
+              "mergedToMainAt": null,
+              "priority": "HIGH",
+              "qualityGates": [
+                {
+                  "checks": [],
+                  "detail": "Waiting for the automations to answer",
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PENDING"
+                },
+                {
+                  "checks": [],
+                  "detail": "Waiting for the automations to answer",
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PENDING"
+                }
+              ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": "00000000-0000-4000-8000-000000000002",
+              "queuedNextQualifiedId": "contract-service-rr-2",
+              "releasedSha": null,
+              "repoId": "00000000-0000-4000-8000-000000000003",
+              "repoName": "contract-service",
+              "requester": "contract-seeder",
+              "retryable": false,
+              "sources": [
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                }
+              ],
+              "state": "PENDING",
+              "summary": "Release the CSV export",
+              "supersededBy": null,
+              "unattended": false,
+              "updatedAt": "2026-01-01T00:00:00Z",
+              "version": null
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.request.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.approvalState": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.backingBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.gates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.request.gates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.gates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.request.qualityGates[*].detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].position": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.qualityGates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.queuedNext": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.queuedNextQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.requester": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.retryable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].implicit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].ref": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.summary": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.unattended": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getReleaseRequest"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-release-request",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-release-request: getReleaseRequest",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a refolded release request",
           "params": {
             "mergedSha": "a1e24622a6b22ddf43a4f8d7674758a6d9b42a31",
@@ -18166,6 +20737,12 @@
               "backingBranch": "release/contract-service-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": null,
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -18255,6 +20832,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
@@ -18262,6 +20843,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -18269,6 +20852,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -18276,6 +20861,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -18331,6 +20918,38 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -18725,6 +21344,34 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -18939,6 +21586,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Waiting for a person to approve bd6360a2c6",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -19028,6 +21681,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -19035,6 +21692,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -19042,6 +21701,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -19049,6 +21710,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -19261,6 +21924,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -19744,6 +22439,34 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -19924,6 +22647,12 @@
               "backingBranch": "release/contract-service-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": null,
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -20047,6 +22776,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": "cb9776855921387be1951de5bbbf0914aa54b1bf",
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
@@ -20054,6 +22787,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -20061,6 +22796,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": true,
                   "kind": "RELEASED_TAG",
                   "name": "2026.101.100500",
@@ -20116,6 +22853,38 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -20656,6 +23425,22 @@
                     {
                       "index": 0,
                       "rules": {
+                        "$.explicitJoin": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.feature": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.implicit": {
                           "combine": "AND",
                           "matchers": [
@@ -20701,6 +23486,22 @@
                     {
                       "index": 1,
                       "rules": {
+                        "$.explicitJoin": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.feature": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.implicit": {
                           "combine": "AND",
                           "matchers": [
@@ -28374,6 +31175,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "Waiting for a person to approve bd6360a2c6",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -28463,6 +31270,10 @@
                   "state": "PENDING"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -28470,6 +31281,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -28477,6 +31290,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -28484,6 +31299,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -28781,6 +31598,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -29272,6 +32121,34 @@
                 }
               ]
             },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.sources[*].implicit": {
               "combine": "AND",
               "matchers": [
@@ -29476,6 +32353,12 @@
               "backingBranch": "release/contract-suite-app-rr-1",
               "createdAt": "2026-01-01T00:00:00Z",
               "detail": "The export moves to next quarter's release.",
+              "featureFreeze": {
+                "features": 0,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
               "gateTicketId": null,
               "gates": [
                 {
@@ -29545,6 +32428,10 @@
                   "state": "PASSED"
                 }
               ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
@@ -29552,6 +32439,8 @@
               "retryable": false,
               "sources": [
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -29559,6 +32448,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -29566,6 +32457,8 @@
                   "ref": "refs/heads/main"
                 },
                 {
+                  "explicitJoin": false,
+                  "feature": false,
                   "implicit": false,
                   "kind": "BRANCH",
                   "name": "main",
@@ -29689,6 +32582,38 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.request.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
                 }
               ]
             },
@@ -30089,6 +33014,34 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.request.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },

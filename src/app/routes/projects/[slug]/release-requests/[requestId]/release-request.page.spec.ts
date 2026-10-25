@@ -166,6 +166,67 @@ describe('ReleaseRequestPage', () => {
     expect(element.textContent).toContain(request.summary);
   });
 
+  describe('the soft feature freeze (epic qits-1580)', () => {
+    const FROZEN = 'a frozen release request with a queued next request';
+    /** rr-2, queued behind rr-1, as its project answers it by rr-2's logical id. */
+    const queued = goldenMaster(FROZEN, 'getProjectReleaseRequest');
+    /** rr-1, frozen at 3 of 3 counted branches with rr-2 queued behind it: the same `{ request }`. */
+    const frozen = goldenMaster(FROZEN, 'getReleaseRequest');
+
+    const link = (element: HTMLElement, text: string) =>
+      Array.from(element.querySelectorAll('a')).find((a) => a.textContent?.includes(text));
+
+    it('says a queued request’s freeze and links the request it waits behind', async () => {
+      const ref = queued.request.qualifiedId;
+      const { element, answered } = await render(ref);
+      read(ref).flush(queued);
+      await answered();
+      expect(element.textContent).toContain(
+        'feature freeze: 1 of 3 counted branches · threshold from platform',
+      );
+      const behind = link(element, 'queued behind')!;
+      expect(behind.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+        `queued behind ${frozen.request.qualifiedId}`,
+      );
+      expect(behind.getAttribute('href')).toBe(
+        `/projects/${project.slug}/release-requests/${frozen.request.qualifiedId}`,
+      );
+      expect(link(element, 'next:')).toBeUndefined();
+    });
+
+    it('says a frozen request is frozen and links the request queued behind it', async () => {
+      const ref = frozen.request.qualifiedId;
+      const { element, answered } = await render(ref);
+      read(ref).flush(frozen);
+      await answered();
+      expect(element.textContent).toContain(
+        'feature freeze: 3 of 3 counted branches · frozen · threshold from platform',
+      );
+      const next = link(element, 'next:')!;
+      expect(next.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+        `next: ${queued.request.qualifiedId}`,
+      );
+      expect(next.getAttribute('href')).toBe(
+        `/projects/${project.slug}/release-requests/${queued.request.qualifiedId}`,
+      );
+      expect(link(element, 'queued behind')).toBeUndefined();
+    });
+
+    it('says the freeze is off, and which level switched it off', async () => {
+      const ref = frozen.request.qualifiedId;
+      const { element, answered } = await render(ref);
+      // Derived from the frozen recording: a repository whose own threshold is 0.
+      read(ref).flush({
+        request: {
+          ...frozen.request,
+          featureFreeze: { features: 3, threshold: 0, frozen: false, source: 'REPOSITORY' },
+        },
+      });
+      await answered();
+      expect(element.textContent).toContain('feature freeze: off (repository)');
+    });
+  });
+
   describe('approval requirements (epic qits-1038)', () => {
     /** The recorded request awaiting a person's approval, with `approvalRequirements` as given. */
     const awaiting = (approvalRequirements?: readonly object[]) => {

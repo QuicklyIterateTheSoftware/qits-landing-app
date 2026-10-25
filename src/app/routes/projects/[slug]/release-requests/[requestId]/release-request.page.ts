@@ -21,7 +21,13 @@ import {
   affectsReleaseRequest,
   RELEASE_REQUEST_EVENTS,
 } from '$core/projects/release-request-events';
-import { requestBadge } from '$core/projects/release-requests';
+import {
+  FROZEN_TITLE,
+  freezeFact,
+  queuedBehind,
+  queuedNext,
+  requestBadge,
+} from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import type {
@@ -92,6 +98,10 @@ const UNATTENDED_TITLE =
  * request's own gates, a stale QA phase replaced from the runs (`currentFoldPhases`), reports only
  * of runs at that commit. A re-fold reads the fold's commits, verdicts and reports again.
  * The tab labels count the commits and, once read, the runs.
+ * The facts say the soft feature freeze in force (epic qits-1580: counted branches of the
+ * threshold, frozen, and which level set it, or "off") and link the request it is queued behind,
+ * or the one queued behind it; the commit graph marks each source counted toward it or joined past
+ * it.
  * Withdraw sits in the page's actions while the request can be called off.
  *
  * On a repository's request the lifecycle follows the facts; on the project's estate release (its
@@ -328,6 +338,25 @@ const UNATTENDED_TITLE =
                 <span [title]="instant(request.updatedAt)"
                   >last change {{ ago(request.updatedAt) }}</span
                 >
+                @if (freeze(request); as fact) {
+                  <span [title]="frozenTitle">feature freeze: {{ fact }}</span>
+                }
+                @if (behind(request); as ahead) {
+                  <a
+                    class="text-ocean-deep-700 no-underline hover:underline"
+                    [routerLink]="['..', ahead]"
+                    title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
+                    >queued behind <span class="font-mono">{{ ahead }}</span></a
+                  >
+                }
+                @if (next(request); as after) {
+                  <a
+                    class="text-ocean-deep-700 no-underline hover:underline"
+                    [routerLink]="['..', after]"
+                    title="The request queued behind this one: new asks land there while this one is frozen"
+                    >next: <span class="font-mono">{{ after }}</span></a
+                  >
+                }
               </div>
 
               @if (detail(request); as sentence) {
@@ -468,6 +497,10 @@ export class ReleaseRequestPage {
   protected readonly ago = formatRelativeTime;
   protected readonly priorityTitle = PRIORITY_TITLE;
   protected readonly unattendedTitle = UNATTENDED_TITLE;
+  protected readonly freeze = freezeFact;
+  protected readonly frozenTitle = FROZEN_TITLE;
+  protected readonly behind = queuedBehind;
+  protected readonly next = queuedNext;
 
   /** The open tab, from `?tab=`: `commits`, `runs`, `changes`, or the overview. */
   protected readonly tab = toSignal(

@@ -2,6 +2,11 @@ import { goldenMaster } from '../../../testing/golden-masters';
 import type { ReleaseRequestEntry } from './projects.consumes';
 import {
   findReleaseRequest,
+  freezeChip,
+  freezeCount,
+  freezeFact,
+  queuedBehind,
+  queuedNext,
   gateTone,
   latestReleaseRequest,
   nobodyWatching,
@@ -85,5 +90,67 @@ describe('release requests', () => {
     expect(releaseRequestName(requests, id)).toBe('00000000');
     expect(releaseRequestRef(requests[0])).toBe(id);
     expect(releaseRequestName([], 'other-rr-1')).toBe('other-rr-1');
+  });
+});
+
+describe('the soft feature freeze (epic qits-1580)', () => {
+  /** Recorded: rr-2, queued behind rr-1 (1 of 3 counted), then rr-1, frozen at 3 of 3. */
+  const recorded = (): readonly ReleaseRequestEntry[] =>
+    goldenMaster(
+      'a frozen release request with a queued next request',
+      'listProjectReleaseRequests',
+    ).requests;
+
+  it('chips a frozen request with its count, and nothing else', () => {
+    const [queued, frozen] = recorded();
+    expect(freezeChip(frozen)).toEqual({ label: 'frozen 3/3', tone: 'waiting' });
+    expect(freezeChip(queued)).toBeNull();
+    // Derived: the frozen request once released; its freeze no longer holds anything back.
+    expect(freezeChip({ ...frozen, state: 'RELEASED' })).toBeNull();
+    // Derived: an older qits-projects, which answers no freeze.
+    expect(freezeChip({ ...frozen, featureFreeze: undefined })).toBeNull();
+  });
+
+  it('counts an active request quietly, but not a frozen, queued, empty or switched-off one', () => {
+    const [queued, frozen] = recorded();
+    expect(freezeCount(frozen)).toBeNull();
+    expect(freezeCount(queued)).toBeNull();
+    // Derived from the queued request: the same request once nothing is ahead of it.
+    const active = { ...queued, queuedBehind: undefined, queuedBehindQualifiedId: undefined };
+    expect(freezeCount(active)).toBe('1/3');
+    expect(
+      freezeCount({ ...active, featureFreeze: { ...active.featureFreeze, features: 0 } }),
+    ).toBeNull();
+    expect(
+      freezeCount({ ...active, featureFreeze: { ...active.featureFreeze, threshold: 0 } }),
+    ).toBeNull();
+    expect(freezeCount({ ...active, state: 'FINALIZED' })).toBeNull();
+  });
+
+  it('names the requests either side of the queue by logical id, else by uuid', () => {
+    const [queued, frozen] = recorded();
+    expect(queuedBehind(queued)).toBe(frozen.qualifiedId);
+    expect(queuedNext(frozen)).toBe(queued.qualifiedId);
+    expect(queuedBehind(frozen)).toBeNull();
+    expect(queuedNext(queued)).toBeNull();
+    // Derived: an answer without the logical id falls back to the uuid.
+    expect(queuedBehind({ ...queued, queuedBehindQualifiedId: undefined })).toBe(frozen.id);
+  });
+
+  it('says the freeze in force: count, frozen, and the level that set the threshold', () => {
+    const [queued, frozen] = recorded();
+    expect(freezeFact(frozen)).toBe('3 of 3 counted branches · frozen · threshold from platform');
+    expect(freezeFact(queued)).toBe('1 of 3 counted branches · threshold from platform');
+    // Derived: a repository that switched the freeze off (threshold 0).
+    expect(
+      freezeFact({
+        ...frozen,
+        featureFreeze: { features: 3, threshold: 0, frozen: false, source: 'REPOSITORY' },
+      }),
+    ).toBe('off (repository)');
+    expect(
+      freezeFact({ ...frozen, featureFreeze: { ...frozen.featureFreeze, source: 'PROJECT' } }),
+    ).toBe('3 of 3 counted branches · frozen · threshold from project');
+    expect(freezeFact({ ...frozen, featureFreeze: undefined })).toBeNull();
   });
 });

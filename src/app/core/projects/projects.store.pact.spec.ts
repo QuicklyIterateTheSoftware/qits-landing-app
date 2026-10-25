@@ -307,6 +307,32 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(kept?.requests.every((r) => typeof r.updatedAt === 'string')).toBe(true);
     }));
 
+  // Epic qits-1580, the soft feature freeze: a request frozen at its threshold and the one queued
+  // behind it, so the list's freeze and queue fields are bound in a state that sets them. Like the
+  // other list answers, the committed pact keeps one representative (`openEndedReleaseRequests`).
+  it('show-project-release-requests: a frozen request and the one queued behind it', () =>
+    given(
+      'show-project-release-requests',
+      'a frozen release request with a queued next request',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a frozen release request with a queued next request',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      const requests = store.releaseRequests()[projectId]?.requests ?? [];
+      const frozen = requests.find((request) => request.id === op.params['requestId']);
+      const queued = requests.find((request) => request.id === op.params['queuedRequestId']);
+      expect(frozen?.featureFreeze?.frozen).toBe(true);
+      expect(frozen?.queuedNext).toBe(queued?.id);
+      expect(queued?.queuedBehind).toBe(frozen?.id);
+      expect(queued?.queuedBehindQualifiedId).toBe(frozen?.qualifiedId);
+    }));
+
   it('show-project-release-requests: a project without any shows none', () =>
     given(
       'show-project-release-requests',

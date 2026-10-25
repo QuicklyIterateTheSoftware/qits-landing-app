@@ -32,7 +32,9 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * line (`lifecycleSummary`, `attentionOf`): its merge, automations, phases and quality gates.
  * qits-projects answers the open requests plus the last few FINALIZED ones; the menu keeps the
  * pending ones ({@link isPendingRelease}). The line counts the sources and the conflicts; each
- * binds one field (`name`, `path`), because a pact cannot bind an element with none.
+ * binds one field (`name`, `path`), because a pact cannot bind an element with none. The page
+ * also shows the soft feature freeze (epic qits-1580): a frozen request's count (`featureFreeze`)
+ * and the request a queued one waits behind (`queuedBehind*`; `queuedNext*` names the other way).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
@@ -81,6 +83,14 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].qualityGates[].checks[].state',
   'requests[].qualityGates[].checks[].detail',
   'requests[].qualityGates[].runId',
+  'requests[].featureFreeze.features',
+  'requests[].featureFreeze.threshold',
+  'requests[].featureFreeze.frozen',
+  'requests[].featureFreeze.source',
+  'requests[].queuedBehind',
+  'requests[].queuedBehindQualifiedId',
+  'requests[].queuedNext',
+  'requests[].queuedNextQualifiedId',
 ] as const;
 
 /** One release request, cut to what the menu, the sidebar and the page read. */

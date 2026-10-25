@@ -86,6 +86,58 @@ describe('ReleaseRequestsPage', () => {
     expect(empty(element)?.classList.contains('hidden')).toBe(true);
   });
 
+  it('marks a frozen request and links a queued one to the request it waits behind', async () => {
+    const { element, request, answered } = await render();
+    // Recorded: rr-2, queued behind rr-1, then rr-1, frozen at 3 of 3 counted branches.
+    const listed = goldenMaster(
+      'a frozen release request with a queued next request',
+      'listProjectReleaseRequests',
+    );
+    request.flush(listed);
+    await answered();
+    const rows = Array.from(element.querySelectorAll('li'));
+    const [queued, frozen] = listed.requests;
+    const rowOf = (qualifiedId: string) =>
+      rows.find((row) =>
+        Array.from(row.querySelectorAll('a')).some(
+          (link) => link.textContent?.trim() === qualifiedId,
+        ),
+      )!;
+    const frozenRow = rowOf(frozen.qualifiedId);
+    const queuedRow = rowOf(queued.qualifiedId);
+    const chips = (row: Element) =>
+      Array.from(row.querySelectorAll('ui-chip')).map((chip) => chip.textContent?.trim());
+    expect(chips(frozenRow)).toContain('frozen 3/3');
+    expect(chips(queuedRow)).not.toContain('frozen 3/3');
+    const behind = Array.from(queuedRow.querySelectorAll('a')).find((link) =>
+      link.textContent?.includes('queued behind'),
+    )!;
+    expect(behind.textContent?.trim()).toBe(`queued behind ${frozen.qualifiedId}`);
+    expect(behind.getAttribute('href')).toBe(
+      `/projects/${project.slug}/release-requests/${frozen.qualifiedId}`,
+    );
+    expect(frozenRow.textContent).not.toContain('queued behind');
+    // Neither shows the quiet count: one is frozen (its chip says it), the other queued.
+    expect(frozenRow.textContent).not.toContain('1/3');
+    expect(queuedRow.textContent).not.toContain('1/3');
+  });
+
+  it('counts an open request’s counted branches quietly until it freezes', async () => {
+    const { element, request, answered } = await render();
+    // Derived from the recorded queued request (1 of 3 counted): the same request, no longer
+    // queued, as it reads once the request ahead of it has released.
+    const listed = goldenMaster(
+      'a frozen release request with a queued next request',
+      'listProjectReleaseRequests',
+    );
+    const active = { ...listed.requests[0], queuedBehind: null, queuedBehindQualifiedId: null };
+    request.flush({ requests: [active] });
+    await answered();
+    const row = element.querySelector('li')!;
+    expect(row.textContent).toContain('1/3');
+    expect(row.textContent).not.toContain('queued behind');
+  });
+
   it('says so when the project has no release requests', async () => {
     const { element, request, answered } = await render();
     request.flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));

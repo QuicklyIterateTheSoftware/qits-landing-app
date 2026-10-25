@@ -53,6 +53,7 @@ const STATES = {
   rejected: 'a release request rejected by its build',
   failedAutomation: 'a release request held by a failed automation',
   heldByUpstream: 'a release request held by an upstream release',
+  frozen: 'a frozen release request with a queued next request',
 } as const;
 
 /**
@@ -164,6 +165,49 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
       expect(view?.request.value?.id).toBe(params['requestId']);
       expect(view?.request.value?.repoId).toBe(params['repositoryId']);
       expect(view?.qualifiedId).toBe(ref);
+    }));
+
+  // Epic qits-1580, the soft feature freeze. qits-projects records two requests of one repository
+  // here: rr-1, frozen at its threshold with rr-2 queued behind it (getReleaseRequest), and rr-2,
+  // queued behind rr-1 (getProjectReleaseRequest, by rr-2's logical id). So each queue id the page
+  // links is bound where it is set, not only as a recorded null.
+  it('show-release-request: a frozen request, with the one queued behind it', () =>
+    given(
+      'show-release-request',
+      STATES.frozen,
+      'getReleaseRequest',
+      GET_RELEASE_REQUEST,
+    ).executeTest(async (server) => {
+      const { repoId, requestId } = recorded(STATES.frozen, 'getReleaseRequest');
+      const { data } = await readOnItsOwn(server.url, () =>
+        consume(getReleaseRequest({ path: { repoId, requestId } }), GET_RELEASE_REQUEST),
+      );
+      const { params } = masters.operation(STATES.frozen, 'getReleaseRequest');
+      expect(data?.request?.featureFreeze?.frozen).toBe(true);
+      expect(data?.request?.queuedNext).toBe(params['queuedRequestId']);
+      expect(data?.request?.queuedNextQualifiedId).toBe(params['queuedRequestQualifiedId']);
+      // A pinned array answers its first recorded element at every index (here `main`), so the
+      // markers are bound by type; which source counts is the plain specs' business.
+      expect(typeof data?.request?.sources?.[0]?.feature).toBe('boolean');
+      expect(typeof data?.request?.sources?.[0]?.explicitJoin).toBe('boolean');
+    }));
+
+  it('show-release-request: a queued request, read through its project by its logical id', () =>
+    given(
+      'show-release-request',
+      STATES.frozen,
+      'getProjectReleaseRequest',
+      GET_PROJECT_RELEASE_REQUEST,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { params } = masters.operation(STATES.frozen, 'getProjectReleaseRequest');
+      const ref = params['queuedRequestQualifiedId'];
+      await store.load(params['projectId'], ref);
+      const request = store.of(ref)?.request.value;
+      expect(request?.id).toBe(params['queuedRequestId']);
+      expect(request?.queuedBehind).toBe(params['requestId']);
+      expect(request?.queuedBehindQualifiedId).toBeTruthy();
+      expect(request?.featureFreeze?.frozen).toBe(false);
     }));
 
   // The page's reads, once per state the screenshot specs show. Each runs on its own: the mock

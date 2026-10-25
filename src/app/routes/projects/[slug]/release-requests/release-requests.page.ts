@@ -12,7 +12,11 @@ import { RouterLink } from '@angular/router';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { ProjectsStore } from '$core/projects/projects.store';
 import {
+  FROZEN_TITLE,
+  freezeChip,
+  freezeCount,
   nobodyWatching,
+  queuedBehind,
   releaseRequestRef,
   requestBadge,
   shortSha,
@@ -20,7 +24,7 @@ import {
 } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
-import { Chip } from '$ui/components/chip/chip';
+import { Chip, chipClass } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
@@ -37,7 +41,10 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  * for a stopped request a machine asked for, its logical id (`<repository>-rr-<n>`; the repository
  * where an older answer has none), the summary, when it last changed, its
  * version, its merged commit, who asked, the service's detail, and its lifecycle as a line (cog,
- * phase chips, gate shields). A request that needs a person is ringed, with a link to that check. The logical id
+ * phase chips, gate shields). The soft feature freeze (epic qits-1580): a frozen request has a
+ * `frozen 3/3` chip, a queued one `queued behind <id>` (a link to that request), and an open one
+ * that is neither a quiet count of its counted branches (`1/3`). A request that needs a person is
+ * ringed, with a link to that check. The logical id
  * and summary link to the request's own page, `release-requests/<logical id>` (its uuid where it
  * has no logical id). A request that can still be
  * called off has Withdraw.
@@ -102,6 +109,18 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     tone="waiting"
                     title="A machine asked for this release and it has stopped: it moves again only when somebody pushes a fix"
                   />
+                  @if (frozen(request); as chip) {
+                    <ui-chip [label]="chip.label" [tone]="chip.tone" [title]="frozenTitle" />
+                  }
+                  @if (behind(request); as ahead) {
+                    <a
+                      class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap no-underline hover:underline"
+                      [class]="queuedTone"
+                      [routerLink]="ahead"
+                      title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
+                      >queued behind {{ ahead }}</a
+                    >
+                  }
                   <a
                     class="font-semibold break-all text-ocean-deep-700 no-underline hover:underline"
                     [routerLink]="ref(request)"
@@ -112,6 +131,13 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     [routerLink]="ref(request)"
                     >{{ request.summary }}</a
                   >
+                  @if (count(request); as counted) {
+                    <span
+                      class="text-xs whitespace-nowrap text-gray-400"
+                      title="Counted branches of the feature freeze's threshold: at the threshold, new asks queue behind this request"
+                      >{{ counted }}</span
+                    >
+                  }
                   <span class="text-xs whitespace-nowrap text-gray-500">{{
                     when(request.updatedAt)
                   }}</span>
@@ -180,6 +206,11 @@ export class ReleaseRequestsPage {
   protected readonly when = utcMinute;
   protected readonly sha = shortSha;
   protected readonly ref = releaseRequestRef;
+  protected readonly frozen = freezeChip;
+  protected readonly frozenTitle = FROZEN_TITLE;
+  protected readonly count = freezeCount;
+  protected readonly behind = queuedBehind;
+  protected readonly queuedTone = chipClass('waiting');
 
   private readonly answer = computed(() => {
     const id = this.selected.project()?.id;

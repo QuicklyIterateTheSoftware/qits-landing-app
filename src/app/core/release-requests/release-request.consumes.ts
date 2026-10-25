@@ -17,6 +17,10 @@ import type { Consumed } from '@qits/angular';
 /**
  * The request itself, as its page shows it: the head (state, priority, summary), the facts, the
  * sources, the conflict, the pipeline with its gates and automations, the approval and the release.
+ * Epic qits-1580 (the soft feature freeze): the freeze in force (`featureFreeze`), the request it
+ * is queued behind or the one queued behind it (`queuedBehind*`, `queuedNext*`, null otherwise),
+ * and per source whether it counts toward the freeze (`feature`) or joined a frozen request by name
+ * (`explicitJoin`).
  */
 export const GET_RELEASE_REQUEST = [
   'request.id',
@@ -28,6 +32,8 @@ export const GET_RELEASE_REQUEST = [
   'request.sources[].ref',
   'request.sources[].implicit',
   'request.sources[].priority',
+  'request.sources[].feature',
+  'request.sources[].explicitJoin',
   'request.priority',
   'request.mergedSha',
   'request.state',
@@ -99,6 +105,14 @@ export const GET_RELEASE_REQUEST = [
   'request.qualityGates[].checks[].state',
   'request.qualityGates[].checks[].detail',
   'request.qualityGates[].runId',
+  'request.featureFreeze.features',
+  'request.featureFreeze.threshold',
+  'request.featureFreeze.frozen',
+  'request.featureFreeze.source',
+  'request.queuedBehind',
+  'request.queuedBehindQualifiedId',
+  'request.queuedNext',
+  'request.queuedNextQualifiedId',
 ] as const;
 
 /**

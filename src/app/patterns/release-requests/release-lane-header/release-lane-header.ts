@@ -7,6 +7,7 @@ import {
   isChangeable,
   priorityBadge,
   priorityOptions,
+  sourceMarks,
   sourceTitle,
 } from '$core/release-requests/release-request-model';
 import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
@@ -25,7 +26,8 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
  * full name in its tooltip, and under it, for a named source branch, its priority as a select. The
  * select is disabled, not hidden, once the request can no longer change (a tag is cut). A source
  * the service added (a released tag that has not reached main) shows "tag" and its priority as a
- * chip; the backing branch, "other" and guessed lanes say what they are.
+ * chip; the backing branch, "other" and guessed lanes say what they are. Under a source, its
+ * soft-feature-freeze markers (epic qits-1580): `counted` toward the freeze, `joined` past it.
  *
  * A change goes to qits-projects at once (`ReleaseRequestStore.setSourcePriority`); the answered
  * request takes the shown one's place. A refusal is said under the select, which goes back.
@@ -66,6 +68,13 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
           }
         </div>
       }
+      @if (marks().length) {
+        <div class="mt-0.5 flex flex-wrap gap-1">
+          @for (mark of marks(); track mark.label) {
+            <ui-chip [label]="mark.label" [tone]="mark.tone" [title]="mark.title" />
+          }
+        </div>
+      }
     } @else {
       <p class="m-0 mt-0.5 truncate text-xs text-charcoal-brown-500">{{ note() }}</p>
     }
@@ -94,6 +103,12 @@ export class ReleaseLaneHeader {
   protected readonly options = computed(() => priorityOptions(this.source()?.priority));
   protected readonly badge = computed(() => priorityBadge(this.source()?.priority));
   protected readonly note = computed(() => KIND_NOTES[this.lane().kind]);
+
+  /** The source's freeze markers (epic qits-1580): counted toward it, or joined past it. */
+  protected readonly marks = computed(() => {
+    const source = this.source();
+    return source ? sourceMarks(source) : [];
+  });
 
   protected readonly title = computed(() => {
     const source = this.source();

@@ -121,6 +121,33 @@ export function sourceTitle(source: ReleaseSource): string {
     : (source.ref ?? '');
 }
 
+/** A marker on a source about the soft feature freeze (epic qits-1580), with its tooltip. */
+export interface SourceMark extends ReleaseBadge {
+  readonly title: string;
+}
+
+/**
+ * A source's freeze markers: `counted` for a branch that counts toward the feature freeze (one
+ * naming a work item; `main`, `maintenance/*` and `release/*` never count), and `joined` for one
+ * named onto the request by its id while it was frozen, past the freeze.
+ */
+export function sourceMarks(source: ReleaseSource): readonly SourceMark[] {
+  const marks: SourceMark[] = [];
+  if (source.feature)
+    marks.push({
+      label: 'counted',
+      tone: 'neutral',
+      title: 'Names a work item, so it counts toward the feature freeze',
+    });
+  if (source.explicitJoin)
+    marks.push({
+      label: 'joined',
+      tone: 'waiting',
+      title: 'Joined this request by its id while it was frozen, past the feature freeze',
+    });
+  return marks;
+}
+
 /** The conflict, or null when the request has none with paths. */
 export function releaseConflict(request: ReleaseRequest): ReleaseConflict | null {
   const conflict = request.conflict;
