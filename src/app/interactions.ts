@@ -87,6 +87,12 @@ export const INTERACTIONS = {
   'show-project-release-requests':
     'The Release Requests page lists the project’s open and recently finalized release requests',
   /**
+   * `project-desk.page.ts` via `DeskTriggersStore`: the Desk page lists the project’s delivery
+   * desk trigger messages, newest first.
+   */
+  'show-project-desk':
+    'The Desk page lists the project’s delivery-desk trigger messages, newest first',
+  /**
    * `release-request.page.ts` via `ReleaseRequestStore`: a request's page reads the request, the
    * commits its fold brought in, the CI verdicts on the fold and, once released, what it published.
    */

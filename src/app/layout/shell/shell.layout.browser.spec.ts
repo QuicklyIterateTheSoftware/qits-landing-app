@@ -225,6 +225,7 @@ describe('ShellLayout (screenshots)', () => {
       'Work',
       'Workspaces',
       'Release Requests',
+      'Desk',
       'Repositories',
       'Observability',
       'Events',

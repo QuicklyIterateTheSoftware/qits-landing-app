@@ -45,6 +45,9 @@ import { sessionGuard } from '$core/auth/session.guard';
  * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`),
  * one request at `release-requests/<requestId>` (`ReleaseRequestPage`).
  *
+ * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
+ * epic qits-1604).
+ *
  * The workspaces (epic qits-1230): `projects/<slug>/workspaces` lists the project's slots and
  * agents (`ProjectWorkspacesPage`), `workspaces/<slot id>` is one slot (`WorkspaceSlotPage`). A
  * work item's agent is at `work/detail/<qualified id>/agent` (`WorkAgentLayout`), where the
@@ -196,6 +199,11 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/release-requests/[requestId]/release-request.page').then(
             (m) => m.ReleaseRequestPage,
           ),
+      },
+      {
+        path: 'projects/:slug/desk',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/desk/project-desk.page').then((m) => m.ProjectDeskPage),
       },
       {
         path: 'projects/:slug/repositories',

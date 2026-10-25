@@ -645,6 +645,102 @@ export type DeskRunnerRegistrationDto = {
 };
 
 /**
+ * One item a desk trigger source admitted into a window.
+ */
+export type DeskTriggerEvent = {
+    /**
+     * The source that admitted it: work-verified or approval-needed
+     */
+    source?: string;
+    /**
+     * The item as the desk is shown it, e.g. qits-1580
+     */
+    itemRef?: string;
+    /**
+     * The item's own id, when the source knows one
+     */
+    itemId?: string | null;
+    /**
+     * What follows the item in brackets
+     */
+    label?: string | null;
+    /**
+     * Who or what caused it
+     */
+    cause?: string | null;
+    /**
+     * The bus event that carried it
+     */
+    eventId?: Uuid;
+    /**
+     * When it happened
+     */
+    occurredAt?: Instant;
+};
+
+/**
+ * One desk trigger window of the project: what it collected, the message it became and how its delivery to the delivery desk went.
+ */
+export type DeskTriggerMessage = {
+    id?: Uuid;
+    /**
+     * OPEN, OWED, DELIVERED, QUEUED or FAILED
+     */
+    state?: string;
+    /**
+     * When the first trigger opened the window
+     */
+    openedAt?: Instant;
+    /**
+     * When it stops admitting; set at the open and never moved
+     */
+    closesAt?: Instant;
+    /**
+     * When it was closed and its message rendered; null while OPEN
+     */
+    closedAt?: Instant | null;
+    /**
+     * When the desk's daemon took the message; null until it did
+     */
+    acceptedAt?: Instant | null;
+    /**
+     * How many deliveries were tried
+     */
+    attempts?: number;
+    /**
+     * The HTTP status of the last attempt; null before the first
+     */
+    lastStatus?: number | null;
+    /**
+     * Why the last attempt was refused or failed; null when it was not
+     */
+    lastDetail?: string | null;
+    /**
+     * The desk command the message was given to; null until accepted
+     */
+    commandId?: string | null;
+    /**
+     * Its place in the desk's prompt queue when QUEUED, else null
+     */
+    queuePosition?: number | null;
+    /**
+     * The exact text sent to the desk; null while OPEN
+     */
+    message?: string | null;
+    /**
+     * The lines it collected, by admittedAt then itemRef
+     */
+    events?: Array<DeskTriggerEvent>;
+};
+
+/**
+ * A project's desk trigger messages, newest first by openedAt.
+ */
+export type DeskTriggerMessages = {
+    messages?: Array<DeskTriggerMessage>;
+};
+
+/**
  * A refinement room's teardown, done.
  */
 export type DiscardResponse = {
@@ -1138,7 +1234,6 @@ export type ProjectDeliveryDto = {
     maxRunning?: number;
     startRefined?: boolean;
     approves?: Array<string>;
-    interval?: string;
 };
 
 export type ProjectDnsRecordDto = {
@@ -2972,6 +3067,37 @@ export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponses = {
 };
 
 export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponse = PostProjectsApiProjectsByProjectIdAgentContainerStopResponses[keyof PostProjectsApiProjectsByProjectIdAgentContainerStopResponses];
+
+export type ListDeskTriggerMessagesData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: {
+        limit?: number;
+    };
+    url: '/projects/api/projects/{projectId}/desk-triggers';
+};
+
+export type ListDeskTriggerMessagesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListDeskTriggerMessagesResponses = {
+    /**
+     * OK
+     */
+    200: DeskTriggerMessages;
+};
+
+export type ListDeskTriggerMessagesResponse = ListDeskTriggerMessagesResponses[keyof ListDeskTriggerMessagesResponses];
 
 export type GetProjectsApiProjectsByProjectIdEventsData = {
     body?: never;
