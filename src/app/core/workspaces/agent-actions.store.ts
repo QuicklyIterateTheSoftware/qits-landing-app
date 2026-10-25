@@ -101,9 +101,9 @@ export function sentence(text: string): string {
  *   (`AGENT_HAS_LEFTOVER_WORK`), whose daemon does not answer (`AGENT_DAEMON_UNREACHABLE`) or that
  *   is still busy (`AGENT_BUSY`); the page then offers `force`.
  * - `ensureContainer(id)`, `stopContainer(id)`, `recreateContainer(id)`: a slot's container verbs
- *   (`…/workspaces/{id}/ensure-container|stop-container|recreate-container`). A slot on an offline
- *   runner is refused (409 `RUNNER_UNAVAILABLE`); a recreate needs a working tree the service can
- *   prove clean (400 otherwise).
+ *   (`…/workspaces/{id}/ensure-container|stop-container|recreate-container`). A slot whose lease
+ *   qits-system cannot be asked about is refused (409 `TARGET_UNAVAILABLE`); a recreate needs a
+ *   working tree the service can prove clean (400 otherwise).
  *
  * Staleness (qits-1270): holds no platform state; nothing to follow.
  */
