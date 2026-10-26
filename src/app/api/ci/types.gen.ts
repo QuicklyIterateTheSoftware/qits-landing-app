@@ -20,9 +20,17 @@ export type CancelReleaseRequestRunsRequest = {
      */
     repoId: string;
     /**
-     * The release request whose work is withdrawn
+     * The release request whose work is withdrawn, by its UUID
      */
     releaseRequestId: string;
+    /**
+     * Stop only this phase's runs: RELEASE_REQUEST (QA) or RELEASE (publish). Omit to stop every unfinished run of the request
+     */
+    phase?: 'RELEASE_REQUEST' | 'RELEASE';
+    /**
+     * Why the runs are being stopped: RELEASE_REQUEST_CANCELLED (the request itself went away — withdrawn, closed or re-scoped) or HELD_BY_PRE_RUN_GATE (a pre-run gate is holding the request; not a verdict). Omit for RELEASE_REQUEST_CANCELLED, today's behaviour
+     */
+    reason?: 'RELEASE_REQUEST_CANCELLED' | 'HELD_BY_PRE_RUN_GATE';
 };
 
 export type CancelReleaseRequestRunsResponse = {
@@ -31,13 +39,6 @@ export type CancelReleaseRequestRunsResponse = {
 
 export type CancelRunRequest = {
     reason?: string;
-};
-
-export type CheckReport = {
-    name?: string;
-    ok?: boolean;
-    detail?: string;
-    data?: JsonNode;
 };
 
 export type CiBaselineAnswer = {
@@ -54,6 +55,7 @@ export type CiReportBaselineDto = {
     version?: string;
     runId?: string;
     releaseRequestId?: string;
+    releaseRequestQualifiedId?: string;
     tagSha?: string;
 };
 
@@ -115,6 +117,7 @@ export type CiRunDto = {
     triggerEventId?: string;
     triggerEventName?: string;
     releaseRequestId?: string;
+    releaseRequestQualifiedId?: string;
     retryOfRunId?: string;
     configPath?: string;
     archetypeName?: string;
@@ -131,8 +134,8 @@ export type CiRunDto = {
     expectedFinishInMillis?: number;
     predictionUnavailable?: string;
     ordering?: CiRunOrderingDto;
-    runnerId?: Uuid;
-    runnerName?: string;
+    leaseId?: Uuid;
+    targetId?: Uuid;
     retryReason?: string;
     autoRetry?: boolean;
 };
@@ -152,77 +155,12 @@ export type CiRunReportsDto = {
     runId?: string;
     commitSha?: string;
     releaseRequestId?: string;
+    releaseRequestQualifiedId?: string;
     baseline?: CiReportBaselineDto;
     reports?: Array<CiReportSummaryDto>;
 };
 
 export type CiRunStatus = 'QUEUED' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'CONFIG_ERROR' | 'TIMED_OUT';
-
-export type CiRunnerCreated = {
-    id?: Uuid;
-    name?: string;
-    description?: string;
-    slots?: number;
-    plane?: CiRunnerPlane;
-    stepMemoryLimit?: string;
-    capabilities?: JsonNode;
-    registered?: boolean;
-    connected?: boolean;
-    heldRuns?: number;
-    lastSeenAt?: Instant;
-    createdAt?: Instant;
-    runnerVersion?: string;
-    targetVersion?: string;
-    updating?: boolean;
-    quarantined?: boolean;
-    quarantineReason?: string;
-    quarantinedAt?: Instant;
-    lastHealthcheck?: CiRunnerHealthcheckDto;
-    /**
-     * The one line that installs this runner on a host: it fetches the generic install script with the registration token and pipes it into sudo sh with this runner's values. Returned once; never readable again
-     */
-    installScript?: string;
-};
-
-export type CiRunnerDto = {
-    id?: Uuid;
-    name?: string;
-    description?: string;
-    slots?: number;
-    plane?: CiRunnerPlane;
-    stepMemoryLimit?: string;
-    capabilities?: JsonNode;
-    registered?: boolean;
-    connected?: boolean;
-    heldRuns?: number;
-    lastSeenAt?: Instant;
-    createdAt?: Instant;
-    runnerVersion?: string;
-    targetVersion?: string;
-    updating?: boolean;
-    quarantined?: boolean;
-    quarantineReason?: string;
-    quarantinedAt?: Instant;
-    lastHealthcheck?: CiRunnerHealthcheckDto;
-};
-
-export type CiRunnerHealthDto = {
-    at?: Instant;
-    ok?: boolean;
-    detail?: string;
-    requestId?: string;
-    dataOmitted?: boolean;
-    checks?: Array<CheckReport>;
-};
-
-export type CiRunnerHealthcheckDto = {
-    at?: Instant;
-    result?: string;
-    runId?: string;
-    detail?: string;
-};
-
-export type CiRunnerPlane = 'EDGE';
 
 export type CiStepDto = {
     stepIndex?: number;
@@ -238,39 +176,11 @@ export type CiStepStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'SKIPP
 
 export type CiTriggerType = 'POST_RECEIVE' | 'EVENT';
 
-export type CreateRunnerRequest = {
-    /**
-     * [a-z][a-z0-9-]{0,63}, unique
-     */
-    name: string;
-    /**
-     * Free text, at most 1024 characters
-     */
-    description?: string;
-    /**
-     * How many steps it may hold at once; 0 drains it. Default 1
-     */
-    slots?: number;
-    /**
-     * Where its steps reach the platform. There is one plane, EDGE — through the public names — and absent means EDGE. Any other value is refused 400
-     */
-    plane?: 'EDGE';
-    /**
-     * The memory cap its step containers get, memory and memory-swap alike: a docker size, digits and an optional b, k, m or g (6g, 6144m), at least 6m. Absent or blank is the platform default, qits.ci.memory-limit
-     */
-    stepMemoryLimit?: string;
-};
-
 export type DaemonPinDto = {
     daemonName?: string;
     daemonVersion?: string;
     previousDaemonVersion?: string;
     source?: string;
-};
-
-export type HealthCheckQueued = {
-    runId?: string;
-    requestId?: string;
 };
 
 export type Instant = string;
@@ -310,53 +220,14 @@ export type ListRepositorySummariesResponse = {
     repositories?: Array<RepositorySummaryDto>;
 };
 
-export type ListRunnersResponse = {
-    runners?: Array<CiRunnerDto>;
-};
-
 export type ListRunsResponse = {
     runs?: Array<CiRunDto>;
-};
-
-export type PatchRunnerRequest = {
-    /**
-     * 0 drains the runner; absent leaves it
-     */
-    slots?: number;
-    /**
-     * Blank clears it; absent leaves it
-     */
-    description?: string;
-    /**
-     * EDGE, or absent; it changes nothing. Any other value is refused 400
-     */
-    plane?: 'EDGE';
-    /**
-     * A docker size (6g, 6144m) its step containers are capped at; blank clears it back to the platform default, qits.ci.memory-limit; absent leaves it. Reaches the runner's next step
-     */
-    stepMemoryLimit?: string;
 };
 
 export type QueueResponse = {
     generatedAt?: Instant;
     running?: Array<CiRunDto>;
     queued?: Array<CiRunDto>;
-    runners?: Array<RunnerCapacity>;
-};
-
-export type RegisterRunnerRequest = {
-    /**
-     * What the runner says about itself — a JSON object, at most 16 KiB
-     */
-    capabilities?: JsonNode;
-};
-
-export type RegisteredRunner = {
-    clientId?: string;
-    secret?: string;
-    tokenUrl?: string;
-    audience?: string;
-    socketUrl?: string;
 };
 
 export type ReleaseArtifactsResponse = {
@@ -396,7 +267,7 @@ export type RerunReleaseRequestPhaseRequest = {
      */
     repoId: string;
     /**
-     * The release request the run serves
+     * The release request the run serves, by its UUID
      */
     releaseRequestId: string;
     /**
@@ -407,21 +278,6 @@ export type RerunReleaseRequestPhaseRequest = {
 
 export type RetryRunResponse = {
     runId?: string;
-};
-
-export type RunnerCapacity = {
-    id?: Uuid;
-    name?: string;
-    slots?: number;
-    held?: number;
-    connected?: boolean;
-    runnerVersion?: string;
-    targetVersion?: string;
-    updating?: boolean;
-    quarantined?: boolean;
-    quarantineReason?: string;
-    quarantinedAt?: Instant;
-    lastHealthcheck?: CiRunnerHealthcheckDto;
 };
 
 export type Selection = 'UNBLOCKED' | 'CYCLE_DEGRADED';
@@ -442,7 +298,7 @@ export type TriggerEventRequest = {
      */
     occurredAt?: string;
     /**
-     * UUID. Absent: a fresh random one — see the dedupe note.
+     * UUID. Absent: a fresh random one, so the call is a rerun — except that a ReleaseRequestChanged for a fold that already has a non-cancelled gating run answers that run; building it again is POST /ci/api/runs/rerun.
      */
     eventId?: string;
 };
@@ -456,14 +312,14 @@ export type TriggerEventResult = {
 
 export type Uuid = string;
 
-export type GetCiApiDaemonData = {
+export type GetDaemonPinData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/ci/api/daemon';
 };
 
-export type GetCiApiDaemonErrors = {
+export type GetDaemonPinErrors = {
     /**
      * Not Authorized
      */
@@ -474,23 +330,23 @@ export type GetCiApiDaemonErrors = {
     403: unknown;
 };
 
-export type GetCiApiDaemonResponses = {
+export type GetDaemonPinResponses = {
     /**
      * The pinned daemon binary. daemonVersion is the version of the protocol dependency this service is built against, with source "pinned"; source is "override" when a deployment has set qits.ci.daemon-version-override. previousDaemonVersion is always blank: a pin has no fallback rung.
      */
     200: DaemonPinDto;
 };
 
-export type GetCiApiDaemonResponse = GetCiApiDaemonResponses[keyof GetCiApiDaemonResponses];
+export type GetDaemonPinResponse = GetDaemonPinResponses[keyof GetDaemonPinResponses];
 
-export type PostCiApiEventsTriggerData = {
+export type TriggerEventData = {
     body: TriggerEventRequest;
     path?: never;
     query?: never;
     url: '/ci/api/events/trigger';
 };
 
-export type PostCiApiEventsTriggerErrors = {
+export type TriggerEventErrors = {
     /**
      * Blank name, missing payload, or an unparseable timestamp or id
      */
@@ -509,16 +365,16 @@ export type PostCiApiEventsTriggerErrors = {
     503: TriggerEventResult;
 };
 
-export type PostCiApiEventsTriggerError = PostCiApiEventsTriggerErrors[keyof PostCiApiEventsTriggerErrors];
+export type TriggerEventError = TriggerEventErrors[keyof TriggerEventErrors];
 
-export type PostCiApiEventsTriggerResponses = {
+export type TriggerEventResponses = {
     /**
      * Evaluated, with the runs it recorded and which repositories it could ask
      */
     200: TriggerEventResult;
 };
 
-export type PostCiApiEventsTriggerResponse = PostCiApiEventsTriggerResponses[keyof PostCiApiEventsTriggerResponses];
+export type TriggerEventResponse = TriggerEventResponses[keyof TriggerEventResponses];
 
 export type GetCiApiRepositoriesData = {
     body?: never;
@@ -574,7 +430,7 @@ export type GetCiApiRepositoriesSummaryResponses = {
 
 export type GetCiApiRepositoriesSummaryResponse = GetCiApiRepositoriesSummaryResponses[keyof GetCiApiRepositoriesSummaryResponses];
 
-export type GetCiApiRepositoriesByRepoIdReleasePhaseData = {
+export type GetReleasePhaseData = {
     body?: never;
     path: {
         repoId: string;
@@ -588,7 +444,7 @@ export type GetCiApiRepositoriesByRepoIdReleasePhaseData = {
     url: '/ci/api/repositories/{repoId}/release-phase';
 };
 
-export type GetCiApiRepositoriesByRepoIdReleasePhaseErrors = {
+export type GetReleasePhaseErrors = {
     /**
      * Missing or blank rev
      */
@@ -607,16 +463,16 @@ export type GetCiApiRepositoriesByRepoIdReleasePhaseErrors = {
     503: unknown;
 };
 
-export type GetCiApiRepositoriesByRepoIdReleasePhaseResponses = {
+export type GetReleasePhaseResponses = {
     /**
      * Answered — declared true or false, with the reason
      */
     200: ReleasePhaseResponse;
 };
 
-export type GetCiApiRepositoriesByRepoIdReleasePhaseResponse = GetCiApiRepositoriesByRepoIdReleasePhaseResponses[keyof GetCiApiRepositoriesByRepoIdReleasePhaseResponses];
+export type GetReleasePhaseResponse = GetReleasePhaseResponses[keyof GetReleasePhaseResponses];
 
-export type GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData = {
+export type ListReleaseArtifactsData = {
     body?: never;
     path: {
         repoId: string;
@@ -626,7 +482,7 @@ export type GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData = {
     url: '/ci/api/repositories/{repoId}/releases/{version}/artifacts';
 };
 
-export type GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsErrors = {
+export type ListReleaseArtifactsErrors = {
     /**
      * Blank version
      */
@@ -641,427 +497,14 @@ export type GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsErrors = {
     403: unknown;
 };
 
-export type GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponses = {
+export type ListReleaseArtifactsResponses = {
     /**
      * The decision record, one entry per artifact; empty when nothing was owed
      */
     200: ReleaseArtifactsResponse;
 };
 
-export type GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse = GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponses[keyof GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponses];
-
-export type GetCiApiRunnersData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/ci/api/runners';
-};
-
-export type GetCiApiRunnersErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetCiApiRunnersResponses = {
-    /**
-     * Every runner, by name
-     */
-    200: ListRunnersResponse;
-};
-
-export type GetCiApiRunnersResponse = GetCiApiRunnersResponses[keyof GetCiApiRunnersResponses];
-
-export type PostCiApiRunnersData = {
-    body: CreateRunnerRequest;
-    path?: never;
-    query?: never;
-    url: '/ci/api/runners';
-};
-
-export type PostCiApiRunnersErrors = {
-    /**
-     * A malformed name, slots, description or stepMemoryLimit, or UNKNOWN_PLANE: a plane other than EDGE — INTERNAL included, which no longer exists
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * The name is taken
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the registration token
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or cannot render an install script — which includes knowing no public domain to address a runner by
-     */
-    503: unknown;
-};
-
-export type PostCiApiRunnersResponses = {
-    /**
-     * The runner and the install line carrying its registration token
-     */
-    201: CiRunnerCreated;
-};
-
-export type PostCiApiRunnersResponse = PostCiApiRunnersResponses[keyof PostCiApiRunnersResponses];
-
-export type GetCiApiRunnersInstallShData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/ci/api/runners/install.sh';
-};
-
-export type GetCiApiRunnersInstallShErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * This deployment cannot render an install script
-     */
-    503: unknown;
-};
-
-export type GetCiApiRunnersInstallShResponses = {
-    /**
-     * A POSIX sh script, carrying no secret
-     */
-    200: string;
-};
-
-export type GetCiApiRunnersInstallShResponse = GetCiApiRunnersInstallShResponses[keyof GetCiApiRunnersInstallShResponses];
-
-export type DeleteCiApiRunnersByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}';
-};
-
-export type DeleteCiApiRunnersByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner holds a running run, or LAST_RUNNER: it is localhost and no other runner exists
-     */
-    409: unknown;
-};
-
-export type DeleteCiApiRunnersByIdResponses = {
-    /**
-     * Gone
-     */
-    204: void;
-};
-
-export type DeleteCiApiRunnersByIdResponse = DeleteCiApiRunnersByIdResponses[keyof DeleteCiApiRunnersByIdResponses];
-
-export type GetCiApiRunnersByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}';
-};
-
-export type GetCiApiRunnersByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GetCiApiRunnersByIdResponses = {
-    /**
-     * The runner
-     */
-    200: CiRunnerDto;
-};
-
-export type GetCiApiRunnersByIdResponse = GetCiApiRunnersByIdResponses[keyof GetCiApiRunnersByIdResponses];
-
-export type PatchCiApiRunnersByIdData = {
-    body: PatchRunnerRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}';
-};
-
-export type PatchCiApiRunnersByIdErrors = {
-    /**
-     * Negative slots, an overlong description, a malformed stepMemoryLimit, or UNKNOWN_PLANE: a plane other than EDGE
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type PatchCiApiRunnersByIdResponses = {
-    /**
-     * The runner as it now is
-     */
-    200: CiRunnerDto;
-};
-
-export type PatchCiApiRunnersByIdResponse = PatchCiApiRunnersByIdResponses[keyof PatchCiApiRunnersByIdResponses];
-
-export type PostCiApiRunnersByIdGreenlightData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}/greenlight';
-};
-
-export type PostCiApiRunnersByIdGreenlightErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type PostCiApiRunnersByIdGreenlightResponses = {
-    /**
-     * The runner as it now is
-     */
-    200: CiRunnerDto;
-};
-
-export type PostCiApiRunnersByIdGreenlightResponse = PostCiApiRunnersByIdGreenlightResponses[keyof PostCiApiRunnersByIdGreenlightResponses];
-
-export type GetCiApiRunnersByIdHealthData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}/health';
-};
-
-export type GetCiApiRunnersByIdHealthErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GetCiApiRunnersByIdHealthResponses = {
-    /**
-     * The newest node health report
-     */
-    200: CiRunnerHealthDto;
-    /**
-     * The runner has never reported
-     */
-    204: void;
-};
-
-export type GetCiApiRunnersByIdHealthResponse = GetCiApiRunnersByIdHealthResponses[keyof GetCiApiRunnersByIdHealthResponses];
-
-export type PostCiApiRunnersByIdHealthcheckData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}/healthcheck';
-};
-
-export type PostCiApiRunnersByIdHealthcheckErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * One is already queued or running for it
-     */
-    409: unknown;
-    /**
-     * The health check's repository, its head or its image could not be resolved; ask again
-     */
-    503: unknown;
-};
-
-export type PostCiApiRunnersByIdHealthcheckResponses = {
-    /**
-     * The health check's run id, and the node health request's id when the runner is connected
-     */
-    202: HealthCheckQueued;
-};
-
-export type PostCiApiRunnersByIdHealthcheckResponse = PostCiApiRunnersByIdHealthcheckResponses[keyof PostCiApiRunnersByIdHealthcheckResponses];
-
-export type PostCiApiRunnersByIdRegisterData = {
-    body: RegisterRunnerRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}/register';
-};
-
-export type PostCiApiRunnersByIdRegisterErrors = {
-    /**
-     * Capabilities that are not a JSON object
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * The token is not this runner's
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner is already registered
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the runner's client
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or knows no public domain to tell the runner its addresses by
-     */
-    503: unknown;
-};
-
-export type PostCiApiRunnersByIdRegisterResponses = {
-    /**
-     * The runner's own client and where to use it
-     */
-    200: RegisteredRunner;
-};
-
-export type PostCiApiRunnersByIdRegisterResponse = PostCiApiRunnersByIdRegisterResponses[keyof PostCiApiRunnersByIdRegisterResponses];
-
-export type PostCiApiRunnersByIdRegistrationTokenData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/ci/api/runners/{id}/registration-token';
-};
-
-export type PostCiApiRunnersByIdRegistrationTokenErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner is already registered
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the registration token
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or cannot render an install script
-     */
-    503: unknown;
-};
-
-export type PostCiApiRunnersByIdRegistrationTokenResponses = {
-    /**
-     * The runner and the install line carrying its new registration token
-     */
-    200: CiRunnerCreated;
-};
-
-export type PostCiApiRunnersByIdRegistrationTokenResponse = PostCiApiRunnersByIdRegistrationTokenResponses[keyof PostCiApiRunnersByIdRegistrationTokenResponses];
+export type ListReleaseArtifactsResponse = ListReleaseArtifactsResponses[keyof ListReleaseArtifactsResponses];
 
 export type ListRunsData = {
     body?: never;
@@ -1103,14 +546,14 @@ export type ListRunsResponses = {
 
 export type ListRunsResponse2 = ListRunsResponses[keyof ListRunsResponses];
 
-export type GetCiApiRunsActiveData = {
+export type ListActiveRunsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/ci/api/runs/active';
 };
 
-export type GetCiApiRunsActiveErrors = {
+export type ListActiveRunsErrors = {
     /**
      * Not Authorized
      */
@@ -1121,25 +564,25 @@ export type GetCiApiRunsActiveErrors = {
     403: unknown;
 };
 
-export type GetCiApiRunsActiveResponses = {
+export type ListActiveRunsResponses = {
     /**
      * The active runs with their step boundaries and queue position, without step output
      */
     200: ListRunsResponse;
 };
 
-export type GetCiApiRunsActiveResponse = GetCiApiRunsActiveResponses[keyof GetCiApiRunsActiveResponses];
+export type ListActiveRunsResponse = ListActiveRunsResponses[keyof ListActiveRunsResponses];
 
-export type PostCiApiRunsCancellationsData = {
+export type CancelReleaseRequestRunsData = {
     body: CancelReleaseRequestRunsRequest;
     path?: never;
     query?: never;
     url: '/ci/api/runs/cancellations';
 };
 
-export type PostCiApiRunsCancellationsErrors = {
+export type CancelReleaseRequestRunsErrors = {
     /**
-     * The repository id or the release request id is missing or invalid
+     * The repository id or the release request id is missing or invalid, the phase names no phase, or the reason names neither RELEASE_REQUEST_CANCELLED nor HELD_BY_PRE_RUN_GATE
      */
     400: unknown;
     /**
@@ -1152,14 +595,14 @@ export type PostCiApiRunsCancellationsErrors = {
     403: unknown;
 };
 
-export type PostCiApiRunsCancellationsResponses = {
+export type CancelReleaseRequestRunsResponses = {
     /**
      * The request's runs have been stopped or asked to stop
      */
     202: CancelReleaseRequestRunsResponse;
 };
 
-export type PostCiApiRunsCancellationsResponse = PostCiApiRunsCancellationsResponses[keyof PostCiApiRunsCancellationsResponses];
+export type CancelReleaseRequestRunsResponse2 = CancelReleaseRequestRunsResponses[keyof CancelReleaseRequestRunsResponses];
 
 export type GetCiApiRunsFinishedData = {
     body?: never;
@@ -1197,14 +640,14 @@ export type GetCiApiRunsFinishedResponses = {
 
 export type GetCiApiRunsFinishedResponse = GetCiApiRunsFinishedResponses[keyof GetCiApiRunsFinishedResponses];
 
-export type GetCiApiRunsQueueData = {
+export type GetRunQueueData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/ci/api/runs/queue';
 };
 
-export type GetCiApiRunsQueueErrors = {
+export type GetRunQueueErrors = {
     /**
      * Not Authorized
      */
@@ -1215,23 +658,23 @@ export type GetCiApiRunsQueueErrors = {
     403: unknown;
 };
 
-export type GetCiApiRunsQueueResponses = {
+export type GetRunQueueResponses = {
     /**
      * The queue at one instant
      */
     200: QueueResponse;
 };
 
-export type GetCiApiRunsQueueResponse = GetCiApiRunsQueueResponses[keyof GetCiApiRunsQueueResponses];
+export type GetRunQueueResponse = GetRunQueueResponses[keyof GetRunQueueResponses];
 
-export type PostCiApiRunsRerunData = {
+export type RerunReleaseRequestPhaseData = {
     body: RerunReleaseRequestPhaseRequest;
     path?: never;
     query?: never;
     url: '/ci/api/runs/rerun';
 };
 
-export type PostCiApiRunsRerunErrors = {
+export type RerunReleaseRequestPhaseErrors = {
     /**
      * The repository id, the release request id or the phase is missing or invalid
      */
@@ -1254,16 +697,16 @@ export type PostCiApiRunsRerunErrors = {
     409: unknown;
 };
 
-export type PostCiApiRunsRerunResponses = {
+export type RerunReleaseRequestPhaseResponses = {
     /**
      * A new run has been accepted and queued
      */
     202: RetryRunResponse;
 };
 
-export type PostCiApiRunsRerunResponse = PostCiApiRunsRerunResponses[keyof PostCiApiRunsRerunResponses];
+export type RerunReleaseRequestPhaseResponse = RerunReleaseRequestPhaseResponses[keyof RerunReleaseRequestPhaseResponses];
 
-export type GetCiApiRunsByRunIdData = {
+export type GetRunData = {
     body?: never;
     path: {
         runId: string;
@@ -1272,7 +715,7 @@ export type GetCiApiRunsByRunIdData = {
     url: '/ci/api/runs/{runId}';
 };
 
-export type GetCiApiRunsByRunIdErrors = {
+export type GetRunErrors = {
     /**
      * Not Authorized
      */
@@ -1287,16 +730,16 @@ export type GetCiApiRunsByRunIdErrors = {
     404: unknown;
 };
 
-export type GetCiApiRunsByRunIdResponses = {
+export type GetRunResponses = {
     /**
      * The run
      */
     200: CiRunDto;
 };
 
-export type GetCiApiRunsByRunIdResponse = GetCiApiRunsByRunIdResponses[keyof GetCiApiRunsByRunIdResponses];
+export type GetRunResponse = GetRunResponses[keyof GetRunResponses];
 
-export type GetCiApiRunsByRunIdBaselineData = {
+export type GetRunBaselineData = {
     body?: never;
     path: {
         runId: string;
@@ -1305,7 +748,7 @@ export type GetCiApiRunsByRunIdBaselineData = {
     url: '/ci/api/runs/{runId}/baseline';
 };
 
-export type GetCiApiRunsByRunIdBaselineErrors = {
+export type GetRunBaselineErrors = {
     /**
      * Not Authorized
      */
@@ -1320,16 +763,16 @@ export type GetCiApiRunsByRunIdBaselineErrors = {
     404: unknown;
 };
 
-export type GetCiApiRunsByRunIdBaselineResponses = {
+export type GetRunBaselineResponses = {
     /**
      * The baseline, or {"baseline":null}
      */
     200: CiBaselineAnswer;
 };
 
-export type GetCiApiRunsByRunIdBaselineResponse = GetCiApiRunsByRunIdBaselineResponses[keyof GetCiApiRunsByRunIdBaselineResponses];
+export type GetRunBaselineResponse = GetRunBaselineResponses[keyof GetRunBaselineResponses];
 
-export type GetCiApiRunsByRunIdBaselineReportsByKindData = {
+export type ListRunBaselineReportsData = {
     body?: never;
     path: {
         kind: string;
@@ -1339,7 +782,7 @@ export type GetCiApiRunsByRunIdBaselineReportsByKindData = {
     url: '/ci/api/runs/{runId}/baseline/reports/{kind}';
 };
 
-export type GetCiApiRunsByRunIdBaselineReportsByKindErrors = {
+export type ListRunBaselineReportsErrors = {
     /**
      * A bad kind name
      */
@@ -1358,16 +801,16 @@ export type GetCiApiRunsByRunIdBaselineReportsByKindErrors = {
     404: unknown;
 };
 
-export type GetCiApiRunsByRunIdBaselineReportsByKindResponses = {
+export type ListRunBaselineReportsResponses = {
     /**
      * The reports; [] when there is no baseline or none
      */
     200: Array<CiReportDto>;
 };
 
-export type GetCiApiRunsByRunIdBaselineReportsByKindResponse = GetCiApiRunsByRunIdBaselineReportsByKindResponses[keyof GetCiApiRunsByRunIdBaselineReportsByKindResponses];
+export type ListRunBaselineReportsResponse = ListRunBaselineReportsResponses[keyof ListRunBaselineReportsResponses];
 
-export type PostCiApiRunsByRunIdCancelData = {
+export type CancelRunData = {
     /**
      * Optional human-readable cancellation reason
      */
@@ -1379,7 +822,7 @@ export type PostCiApiRunsByRunIdCancelData = {
     url: '/ci/api/runs/{runId}/cancel';
 };
 
-export type PostCiApiRunsByRunIdCancelErrors = {
+export type CancelRunErrors = {
     /**
      * Bad Request
      */
@@ -1402,14 +845,14 @@ export type PostCiApiRunsByRunIdCancelErrors = {
     409: unknown;
 };
 
-export type PostCiApiRunsByRunIdCancelResponses = {
+export type CancelRunResponses = {
     /**
      * The run has been stopped or asked to stop
      */
     202: unknown;
 };
 
-export type GetCiApiRunsByRunIdGateReportsData = {
+export type ListRunGateReportsData = {
     body?: never;
     path: {
         runId: string;
@@ -1418,7 +861,7 @@ export type GetCiApiRunsByRunIdGateReportsData = {
     url: '/ci/api/runs/{runId}/gate/reports';
 };
 
-export type GetCiApiRunsByRunIdGateReportsErrors = {
+export type ListRunGateReportsErrors = {
     /**
      * Not Authorized
      */
@@ -1433,14 +876,14 @@ export type GetCiApiRunsByRunIdGateReportsErrors = {
     404: unknown;
 };
 
-export type GetCiApiRunsByRunIdGateReportsResponses = {
+export type ListRunGateReportsResponses = {
     /**
      * The gate run's reports; runId null and [] when no green QA run gated the request
      */
     200: CiRunReportsDto;
 };
 
-export type GetCiApiRunsByRunIdGateReportsResponse = GetCiApiRunsByRunIdGateReportsResponses[keyof GetCiApiRunsByRunIdGateReportsResponses];
+export type ListRunGateReportsResponse = ListRunGateReportsResponses[keyof ListRunGateReportsResponses];
 
 export type ListRunReportsData = {
     body?: never;
@@ -1509,7 +952,7 @@ export type GetRunReportResponses = {
 
 export type GetRunReportResponse = GetRunReportResponses[keyof GetRunReportResponses];
 
-export type PostCiApiRunsByRunIdRetryData = {
+export type RetryRunData = {
     body?: never;
     path: {
         runId: string;
@@ -1518,7 +961,7 @@ export type PostCiApiRunsByRunIdRetryData = {
     url: '/ci/api/runs/{runId}/retry';
 };
 
-export type PostCiApiRunsByRunIdRetryErrors = {
+export type RetryRunErrors = {
     /**
      * Not Authorized
      */
@@ -1535,18 +978,22 @@ export type PostCiApiRunsByRunIdRetryErrors = {
      * The run has not finished, so there is nothing to retry yet
      */
     409: unknown;
+    /**
+     * A step image's digest could not be resolved; ask again
+     */
+    503: unknown;
 };
 
-export type PostCiApiRunsByRunIdRetryResponses = {
+export type RetryRunResponses = {
     /**
      * A new run has been accepted and queued
      */
     202: RetryRunResponse;
 };
 
-export type PostCiApiRunsByRunIdRetryResponse = PostCiApiRunsByRunIdRetryResponses[keyof PostCiApiRunsByRunIdRetryResponses];
+export type RetryRunResponse2 = RetryRunResponses[keyof RetryRunResponses];
 
-export type PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData = {
+export type PutRunStepReportData = {
     body: CiReportSubmission;
     path: {
         kind: string;
@@ -1557,7 +1004,7 @@ export type PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData = {
     url: '/ci/api/runs/{runId}/steps/{stepIndex}/reports/{kind}';
 };
 
-export type PutCiApiRunsByRunIdStepsByStepIndexReportsByKindErrors = {
+export type PutRunStepReportErrors = {
     /**
      * A bad kind name, body, or more than 10 highlights
      */
@@ -1584,11 +1031,11 @@ export type PutCiApiRunsByRunIdStepsByStepIndexReportsByKindErrors = {
     413: unknown;
 };
 
-export type PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponses = {
+export type PutRunStepReportResponses = {
     /**
      * Stored, replacing any earlier report of the kind
      */
     204: void;
 };
 
-export type PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse = PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponses[keyof PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponses];
+export type PutRunStepReportResponse = PutRunStepReportResponses[keyof PutRunStepReportResponses];

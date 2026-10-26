@@ -4,12 +4,12 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { DeleteCiApiRunnersByIdData, DeleteCiApiRunnersByIdResponse, GetCiApiDaemonData, GetCiApiDaemonResponse, GetCiApiRepositoriesByRepoIdReleasePhaseData, GetCiApiRepositoriesByRepoIdReleasePhaseResponse, GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData, GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse, GetCiApiRepositoriesData, GetCiApiRepositoriesResponse, GetCiApiRepositoriesSummaryData, GetCiApiRepositoriesSummaryResponse, GetCiApiRunnersByIdData, GetCiApiRunnersByIdHealthData, GetCiApiRunnersByIdHealthResponse, GetCiApiRunnersByIdResponse, GetCiApiRunnersData, GetCiApiRunnersInstallShData, GetCiApiRunnersInstallShResponse, GetCiApiRunnersResponse, GetCiApiRunsActiveData, GetCiApiRunsActiveResponse, GetCiApiRunsByRunIdBaselineData, GetCiApiRunsByRunIdBaselineReportsByKindData, GetCiApiRunsByRunIdBaselineReportsByKindResponse, GetCiApiRunsByRunIdBaselineResponse, GetCiApiRunsByRunIdData, GetCiApiRunsByRunIdGateReportsData, GetCiApiRunsByRunIdGateReportsResponse, GetCiApiRunsByRunIdResponse, GetCiApiRunsFinishedData, GetCiApiRunsFinishedResponse, GetCiApiRunsQueueData, GetCiApiRunsQueueResponse, GetRunReportData, GetRunReportResponse, ListRunReportsData, ListRunReportsResponse, ListRunsData, ListRunsResponse2, PatchCiApiRunnersByIdData, PatchCiApiRunnersByIdResponse, PostCiApiEventsTriggerData, PostCiApiEventsTriggerResponse, PostCiApiRunnersByIdGreenlightData, PostCiApiRunnersByIdGreenlightResponse, PostCiApiRunnersByIdHealthcheckData, PostCiApiRunnersByIdHealthcheckResponse, PostCiApiRunnersByIdRegisterData, PostCiApiRunnersByIdRegisterResponse, PostCiApiRunnersByIdRegistrationTokenData, PostCiApiRunnersByIdRegistrationTokenResponse, PostCiApiRunnersData, PostCiApiRunnersResponse, PostCiApiRunsByRunIdCancelData, PostCiApiRunsByRunIdRetryData, PostCiApiRunsByRunIdRetryResponse, PostCiApiRunsCancellationsData, PostCiApiRunsCancellationsResponse, PostCiApiRunsRerunData, PostCiApiRunsRerunResponse, PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData, PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse } from '../types.gen';
+import type { CancelReleaseRequestRunsData, CancelReleaseRequestRunsResponse2, CancelRunData, GetCiApiRepositoriesData, GetCiApiRepositoriesResponse, GetCiApiRepositoriesSummaryData, GetCiApiRepositoriesSummaryResponse, GetCiApiRunsFinishedData, GetCiApiRunsFinishedResponse, GetDaemonPinData, GetDaemonPinResponse, GetReleasePhaseData, GetReleasePhaseResponse, GetRunBaselineData, GetRunBaselineResponse, GetRunData, GetRunQueueData, GetRunQueueResponse, GetRunReportData, GetRunReportResponse, GetRunResponse, ListActiveRunsData, ListActiveRunsResponse, ListReleaseArtifactsData, ListReleaseArtifactsResponse, ListRunBaselineReportsData, ListRunBaselineReportsResponse, ListRunGateReportsData, ListRunGateReportsResponse, ListRunReportsData, ListRunReportsResponse, ListRunsData, ListRunsResponse2, PutRunStepReportData, PutRunStepReportResponse, RerunReleaseRequestPhaseData, RerunReleaseRequestPhaseResponse, RetryRunData, RetryRunResponse2, TriggerEventData, TriggerEventResponse } from '../types.gen';
 
 /**
  * The daemon binary this instance is configured to launch
  */
-export const getCiApiDaemonRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCiApiDaemonData, ThrowOnError>): HttpRequest<GetCiApiDaemonResponse> => (options?.client ?? client).requestOptions<GetCiApiDaemonResponse, ThrowOnError>({
+export const getDaemonPinRequest = <ThrowOnError extends boolean = false>(options?: Options<GetDaemonPinData, ThrowOnError>): HttpRequest<GetDaemonPinResponse> => (options?.client ?? client).requestOptions<GetDaemonPinResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/daemon',
@@ -19,7 +19,7 @@ export const getCiApiDaemonRequest = <ThrowOnError extends boolean = false>(opti
 /**
  * Run every event pipeline that selects a caller-supplied domain event
  */
-export const postCiApiEventsTriggerRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiEventsTriggerData, ThrowOnError>): HttpRequest<PostCiApiEventsTriggerResponse> => (options?.client ?? client).requestOptions<PostCiApiEventsTriggerResponse, ThrowOnError>({
+export const triggerEventRequest = <ThrowOnError extends boolean = false>(options: Options<TriggerEventData, ThrowOnError>): HttpRequest<TriggerEventResponse> => (options?.client ?? client).requestOptions<TriggerEventResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/ci/api/events/trigger',
@@ -49,7 +49,7 @@ export const getCiApiRepositoriesSummaryRequest = <ThrowOnError extends boolean 
 /**
  * Whether a rev's composed release cycle declares a release phase
  */
-export const getCiApiRepositoriesByRepoIdReleasePhaseRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRepositoriesByRepoIdReleasePhaseData, ThrowOnError>): HttpRequest<GetCiApiRepositoriesByRepoIdReleasePhaseResponse> => (options?.client ?? client).requestOptions<GetCiApiRepositoriesByRepoIdReleasePhaseResponse, ThrowOnError>({
+export const getReleasePhaseRequest = <ThrowOnError extends boolean = false>(options: Options<GetReleasePhaseData, ThrowOnError>): HttpRequest<GetReleasePhaseResponse> => (options?.client ?? client).requestOptions<GetReleasePhaseResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/repositories/{repoId}/release-phase',
@@ -59,120 +59,10 @@ export const getCiApiRepositoriesByRepoIdReleasePhaseRequest = <ThrowOnError ext
 /**
  * What was decided about each artifact of one release
  */
-export const getCiApiRepositoriesByRepoIdReleasesByVersionArtifactsRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData, ThrowOnError>): HttpRequest<GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse> => (options?.client ?? client).requestOptions<GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse, ThrowOnError>({
+export const listReleaseArtifactsRequest = <ThrowOnError extends boolean = false>(options: Options<ListReleaseArtifactsData, ThrowOnError>): HttpRequest<ListReleaseArtifactsResponse> => (options?.client ?? client).requestOptions<ListReleaseArtifactsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/repositories/{repoId}/releases/{version}/artifacts',
-    ...options
-});
-
-/**
- * Every runner, with whether it is connected and how many runs it holds
- */
-export const getCiApiRunnersRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCiApiRunnersData, ThrowOnError>): HttpRequest<GetCiApiRunnersResponse> => (options?.client ?? client).requestOptions<GetCiApiRunnersResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/ci/api/runners',
-    ...options
-});
-
-/**
- * Declare a runner; answers its install line, once
- */
-export const postCiApiRunnersRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunnersData, ThrowOnError>): HttpRequest<PostCiApiRunnersResponse> => (options?.client ?? client).requestOptions<PostCiApiRunnersResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/ci/api/runners',
-    ...options
-});
-
-/**
- * The generic runner install script, which the install line pipes into sh
- */
-export const getCiApiRunnersInstallShRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCiApiRunnersInstallShData, ThrowOnError>): HttpRequest<GetCiApiRunnersInstallShResponse> => (options?.client ?? client).requestOptions<GetCiApiRunnersInstallShResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/ci/api/runners/install.sh',
-    ...options
-});
-
-/**
- * Decommission a runner and give its credentials back
- */
-export const deleteCiApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteCiApiRunnersByIdData, ThrowOnError>): HttpRequest<DeleteCiApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<DeleteCiApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/ci/api/runners/{id}',
-    ...options
-});
-
-/**
- * One runner
- */
-export const getCiApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunnersByIdData, ThrowOnError>): HttpRequest<GetCiApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<GetCiApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/ci/api/runners/{id}',
-    ...options
-});
-
-/**
- * Change a runner's slots, description or step memory limit
- */
-export const patchCiApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<PatchCiApiRunnersByIdData, ThrowOnError>): HttpRequest<PatchCiApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<PatchCiApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PATCH',
-    url: '/ci/api/runners/{id}',
-    ...options
-});
-
-/**
- * Lift a runner's quarantine
- */
-export const postCiApiRunnersByIdGreenlightRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunnersByIdGreenlightData, ThrowOnError>): HttpRequest<PostCiApiRunnersByIdGreenlightResponse> => (options?.client ?? client).requestOptions<PostCiApiRunnersByIdGreenlightResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/ci/api/runners/{id}/greenlight',
-    ...options
-});
-
-/**
- * A runner's newest node health report, every check's data included
- */
-export const getCiApiRunnersByIdHealthRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunnersByIdHealthData, ThrowOnError>): HttpRequest<GetCiApiRunnersByIdHealthResponse> => (options?.client ?? client).requestOptions<GetCiApiRunnersByIdHealthResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/ci/api/runners/{id}/health',
-    ...options
-});
-
-/**
- * Queue a health check for a runner, and ask a connected one for its node report
- */
-export const postCiApiRunnersByIdHealthcheckRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunnersByIdHealthcheckData, ThrowOnError>): HttpRequest<PostCiApiRunnersByIdHealthcheckResponse> => (options?.client ?? client).requestOptions<PostCiApiRunnersByIdHealthcheckResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/ci/api/runners/{id}/healthcheck',
-    ...options
-});
-
-/**
- * Register a runner with its registration token; answers its client, once
- */
-export const postCiApiRunnersByIdRegisterRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunnersByIdRegisterData, ThrowOnError>): HttpRequest<PostCiApiRunnersByIdRegisterResponse> => (options?.client ?? client).requestOptions<PostCiApiRunnersByIdRegisterResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/ci/api/runners/{id}/register',
-    ...options
-});
-
-/**
- * Replace a runner's registration token; answers a new install line, once
- */
-export const postCiApiRunnersByIdRegistrationTokenRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunnersByIdRegistrationTokenData, ThrowOnError>): HttpRequest<PostCiApiRunnersByIdRegistrationTokenResponse> => (options?.client ?? client).requestOptions<PostCiApiRunnersByIdRegistrationTokenResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/ci/api/runners/{id}/registration-token',
     ...options
 });
 
@@ -189,7 +79,7 @@ export const listRunsRequest = <ThrowOnError extends boolean = false>(options: O
 /**
  * Every queued or running CI run, all repositories, newest first
  */
-export const getCiApiRunsActiveRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCiApiRunsActiveData, ThrowOnError>): HttpRequest<GetCiApiRunsActiveResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsActiveResponse, ThrowOnError>({
+export const listActiveRunsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListActiveRunsData, ThrowOnError>): HttpRequest<ListActiveRunsResponse> => (options?.client ?? client).requestOptions<ListActiveRunsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/active',
@@ -197,9 +87,9 @@ export const getCiApiRunsActiveRequest = <ThrowOnError extends boolean = false>(
 });
 
 /**
- * Cancel every unfinished run a repository has for one release request
+ * Cancel every unfinished run a repository has for one release request, or one phase's
  */
-export const postCiApiRunsCancellationsRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunsCancellationsData, ThrowOnError>): HttpRequest<PostCiApiRunsCancellationsResponse> => (options?.client ?? client).requestOptions<PostCiApiRunsCancellationsResponse, ThrowOnError>({
+export const cancelReleaseRequestRunsRequest = <ThrowOnError extends boolean = false>(options: Options<CancelReleaseRequestRunsData, ThrowOnError>): HttpRequest<CancelReleaseRequestRunsResponse2> => (options?.client ?? client).requestOptions<CancelReleaseRequestRunsResponse2, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/ci/api/runs/cancellations',
@@ -219,7 +109,7 @@ export const getCiApiRunsFinishedRequest = <ThrowOnError extends boolean = false
 /**
  * The run queue in claim order, with each run's expected start and finish
  */
-export const getCiApiRunsQueueRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCiApiRunsQueueData, ThrowOnError>): HttpRequest<GetCiApiRunsQueueResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsQueueResponse, ThrowOnError>({
+export const getRunQueueRequest = <ThrowOnError extends boolean = false>(options?: Options<GetRunQueueData, ThrowOnError>): HttpRequest<GetRunQueueResponse> => (options?.client ?? client).requestOptions<GetRunQueueResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/queue',
@@ -229,9 +119,9 @@ export const getCiApiRunsQueueRequest = <ThrowOnError extends boolean = false>(o
 /**
  * Run one phase of a release request's CI again
  *
- * A release is one pipeline of three phases and a PHASE is a unit of work with a state and a rerun. Two of them are runs here — RELEASE_REQUEST is phase one, the QA run at release/<id>@mergedSha, and RELEASE is phase two, the publish run at <version>@commitSha. Phase three is the deploy and is qits-deployments' own release request, so it is not a word this door takes. A step inside a run is not a phase, so it cannot be re-fired separately. Which phase a run is was decided by the event that triggered it and never by which config file produced it, so this addresses a run the same way whatever the repository's release.yml composed for it — and the same way for a run from a bespoke ci-event-*.yml, which is the escape hatch the grammar still has. This decides nothing about the release: the pipeline is the release request in qits-projects, the new run announces its verdict on the bus exactly as the first one did, and the gate between the two phases goes on holding the release where it is until that verdict arrives — a gate delays, it does not fail.
+ * A release is one pipeline of three phases and a PHASE is a unit of work with a state and a rerun. Two of them are runs here — RELEASE_REQUEST is phase one, the QA run at backingBranch@mergedSha, and RELEASE is phase two, the publish run at <version>@commitSha. Phase three is the deploy and is qits-deployments' own release request, so it is not a word this door takes. A step inside a run is not a phase, so it cannot be re-fired separately. Which phase a run is was decided by the event that triggered it and never by which config file produced it, so this addresses a run the same way whatever the repository's release.yml composed for it — and the same way for a run from a bespoke ci-event-*.yml, which is the escape hatch the grammar still has. This decides nothing about the release: the pipeline is the release request in qits-projects, the new run announces its verdict on the bus exactly as the first one did, and the gate between the two phases goes on holding the release where it is until that verdict arrives — a gate delays, it does not fail.
  */
-export const postCiApiRunsRerunRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunsRerunData, ThrowOnError>): HttpRequest<PostCiApiRunsRerunResponse> => (options?.client ?? client).requestOptions<PostCiApiRunsRerunResponse, ThrowOnError>({
+export const rerunReleaseRequestPhaseRequest = <ThrowOnError extends boolean = false>(options: Options<RerunReleaseRequestPhaseData, ThrowOnError>): HttpRequest<RerunReleaseRequestPhaseResponse> => (options?.client ?? client).requestOptions<RerunReleaseRequestPhaseResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/ci/api/runs/rerun',
@@ -241,7 +131,7 @@ export const postCiApiRunsRerunRequest = <ThrowOnError extends boolean = false>(
 /**
  * One CI run with its steps, output and — while it runs — its live step
  */
-export const getCiApiRunsByRunIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdResponse, ThrowOnError>({
+export const getRunRequest = <ThrowOnError extends boolean = false>(options: Options<GetRunData, ThrowOnError>): HttpRequest<GetRunResponse> => (options?.client ?? client).requestOptions<GetRunResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/{runId}',
@@ -251,7 +141,7 @@ export const getCiApiRunsByRunIdRequest = <ThrowOnError extends boolean = false>
 /**
  * A run's baseline: the gating run of its repository's newest released version, or null
  */
-export const getCiApiRunsByRunIdBaselineRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdBaselineData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdBaselineResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdBaselineResponse, ThrowOnError>({
+export const getRunBaselineRequest = <ThrowOnError extends boolean = false>(options: Options<GetRunBaselineData, ThrowOnError>): HttpRequest<GetRunBaselineResponse> => (options?.client ?? client).requestOptions<GetRunBaselineResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/{runId}/baseline',
@@ -261,7 +151,7 @@ export const getCiApiRunsByRunIdBaselineRequest = <ThrowOnError extends boolean 
 /**
  * The baseline run's release reports of one kind, with payloads
  */
-export const getCiApiRunsByRunIdBaselineReportsByKindRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdBaselineReportsByKindData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdBaselineReportsByKindResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdBaselineReportsByKindResponse, ThrowOnError>({
+export const listRunBaselineReportsRequest = <ThrowOnError extends boolean = false>(options: Options<ListRunBaselineReportsData, ThrowOnError>): HttpRequest<ListRunBaselineReportsResponse> => (options?.client ?? client).requestOptions<ListRunBaselineReportsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/{runId}/baseline/reports/{kind}',
@@ -271,7 +161,7 @@ export const getCiApiRunsByRunIdBaselineReportsByKindRequest = <ThrowOnError ext
 /**
  * Cancel a queued or running CI run
  */
-export const postCiApiRunsByRunIdCancelRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunsByRunIdCancelData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const cancelRunRequest = <ThrowOnError extends boolean = false>(options: Options<CancelRunData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/ci/api/runs/{runId}/cancel',
@@ -281,7 +171,7 @@ export const postCiApiRunsByRunIdCancelRequest = <ThrowOnError extends boolean =
 /**
  * The release reports of the green QA run that gated this run's release request, without payloads
  */
-export const getCiApiRunsByRunIdGateReportsRequest = <ThrowOnError extends boolean = false>(options: Options<GetCiApiRunsByRunIdGateReportsData, ThrowOnError>): HttpRequest<GetCiApiRunsByRunIdGateReportsResponse> => (options?.client ?? client).requestOptions<GetCiApiRunsByRunIdGateReportsResponse, ThrowOnError>({
+export const listRunGateReportsRequest = <ThrowOnError extends boolean = false>(options: Options<ListRunGateReportsData, ThrowOnError>): HttpRequest<ListRunGateReportsResponse> => (options?.client ?? client).requestOptions<ListRunGateReportsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/runs/{runId}/gate/reports',
@@ -311,7 +201,7 @@ export const getRunReportRequest = <ThrowOnError extends boolean = false>(option
 /**
  * Run a finished CI run's pipeline again, at the same commit
  */
-export const postCiApiRunsByRunIdRetryRequest = <ThrowOnError extends boolean = false>(options: Options<PostCiApiRunsByRunIdRetryData, ThrowOnError>): HttpRequest<PostCiApiRunsByRunIdRetryResponse> => (options?.client ?? client).requestOptions<PostCiApiRunsByRunIdRetryResponse, ThrowOnError>({
+export const retryRunRequest = <ThrowOnError extends boolean = false>(options: Options<RetryRunData, ThrowOnError>): HttpRequest<RetryRunResponse2> => (options?.client ?? client).requestOptions<RetryRunResponse2, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/ci/api/runs/{runId}/retry',
@@ -321,7 +211,7 @@ export const postCiApiRunsByRunIdRetryRequest = <ThrowOnError extends boolean = 
 /**
  * Submit a step's release report of one kind (a run's own ci-run token only)
  */
-export const putCiApiRunsByRunIdStepsByStepIndexReportsByKindRequest = <ThrowOnError extends boolean = false>(options: Options<PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData, ThrowOnError>): HttpRequest<PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse> => (options?.client ?? client).requestOptions<PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse, ThrowOnError>({
+export const putRunStepReportRequest = <ThrowOnError extends boolean = false>(options: Options<PutRunStepReportData, ThrowOnError>): HttpRequest<PutRunStepReportResponse> => (options?.client ?? client).requestOptions<PutRunStepReportResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'PUT',
     url: '/ci/api/runs/{runId}/steps/{stepIndex}/reports/{kind}',
@@ -331,17 +221,17 @@ export const putCiApiRunsByRunIdStepsByStepIndexReportsByKindRequest = <ThrowOnE
 /**
  * The daemon binary this instance is configured to launch
  */
-export const getCiApiDaemonResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCiApiDaemonData, ThrowOnError> | undefined) => httpResource<GetCiApiDaemonResponse>(() => {
+export const getDaemonPinResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetDaemonPinData, ThrowOnError> | undefined) => httpResource<GetDaemonPinResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiDaemonRequest(opts) : undefined;
+    return opts ? getDaemonPinRequest(opts) : undefined;
 });
 
 /**
  * Run every event pipeline that selects a caller-supplied domain event
  */
-export const postCiApiEventsTriggerResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiEventsTriggerData, ThrowOnError> | undefined) => httpResource<PostCiApiEventsTriggerResponse>(() => {
+export const triggerEventResource = <ThrowOnError extends boolean = false>(options: () => Options<TriggerEventData, ThrowOnError> | undefined) => httpResource<TriggerEventResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postCiApiEventsTriggerRequest(opts) : undefined;
+    return opts ? triggerEventRequest(opts) : undefined;
 });
 
 /**
@@ -363,105 +253,17 @@ export const getCiApiRepositoriesSummaryResource = <ThrowOnError extends boolean
 /**
  * Whether a rev's composed release cycle declares a release phase
  */
-export const getCiApiRepositoriesByRepoIdReleasePhaseResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRepositoriesByRepoIdReleasePhaseData, ThrowOnError> | undefined) => httpResource<GetCiApiRepositoriesByRepoIdReleasePhaseResponse>(() => {
+export const getReleasePhaseResource = <ThrowOnError extends boolean = false>(options: () => Options<GetReleasePhaseData, ThrowOnError> | undefined) => httpResource<GetReleasePhaseResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRepositoriesByRepoIdReleasePhaseRequest(opts) : undefined;
+    return opts ? getReleasePhaseRequest(opts) : undefined;
 });
 
 /**
  * What was decided about each artifact of one release
  */
-export const getCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsData, ThrowOnError> | undefined) => httpResource<GetCiApiRepositoriesByRepoIdReleasesByVersionArtifactsResponse>(() => {
+export const listReleaseArtifactsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListReleaseArtifactsData, ThrowOnError> | undefined) => httpResource<ListReleaseArtifactsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRepositoriesByRepoIdReleasesByVersionArtifactsRequest(opts) : undefined;
-});
-
-/**
- * Every runner, with whether it is connected and how many runs it holds
- */
-export const getCiApiRunnersResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCiApiRunnersData, ThrowOnError> | undefined) => httpResource<GetCiApiRunnersResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getCiApiRunnersRequest(opts) : undefined;
-});
-
-/**
- * Declare a runner; answers its install line, once
- */
-export const postCiApiRunnersResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunnersData, ThrowOnError> | undefined) => httpResource<PostCiApiRunnersResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postCiApiRunnersRequest(opts) : undefined;
-});
-
-/**
- * The generic runner install script, which the install line pipes into sh
- */
-export const getCiApiRunnersInstallShResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCiApiRunnersInstallShData, ThrowOnError> | undefined) => httpResource<GetCiApiRunnersInstallShResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getCiApiRunnersInstallShRequest(opts) : undefined;
-});
-
-/**
- * Decommission a runner and give its credentials back
- */
-export const deleteCiApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteCiApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<DeleteCiApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? deleteCiApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * One runner
- */
-export const getCiApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<GetCiApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getCiApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * Change a runner's slots, description or step memory limit
- */
-export const patchCiApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchCiApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<PatchCiApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? patchCiApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * Lift a runner's quarantine
- */
-export const postCiApiRunnersByIdGreenlightResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunnersByIdGreenlightData, ThrowOnError> | undefined) => httpResource<PostCiApiRunnersByIdGreenlightResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postCiApiRunnersByIdGreenlightRequest(opts) : undefined;
-});
-
-/**
- * A runner's newest node health report, every check's data included
- */
-export const getCiApiRunnersByIdHealthResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunnersByIdHealthData, ThrowOnError> | undefined) => httpResource<GetCiApiRunnersByIdHealthResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getCiApiRunnersByIdHealthRequest(opts) : undefined;
-});
-
-/**
- * Queue a health check for a runner, and ask a connected one for its node report
- */
-export const postCiApiRunnersByIdHealthcheckResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunnersByIdHealthcheckData, ThrowOnError> | undefined) => httpResource<PostCiApiRunnersByIdHealthcheckResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postCiApiRunnersByIdHealthcheckRequest(opts) : undefined;
-});
-
-/**
- * Register a runner with its registration token; answers its client, once
- */
-export const postCiApiRunnersByIdRegisterResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunnersByIdRegisterData, ThrowOnError> | undefined) => httpResource<PostCiApiRunnersByIdRegisterResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postCiApiRunnersByIdRegisterRequest(opts) : undefined;
-});
-
-/**
- * Replace a runner's registration token; answers a new install line, once
- */
-export const postCiApiRunnersByIdRegistrationTokenResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunnersByIdRegistrationTokenData, ThrowOnError> | undefined) => httpResource<PostCiApiRunnersByIdRegistrationTokenResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postCiApiRunnersByIdRegistrationTokenRequest(opts) : undefined;
+    return opts ? listReleaseArtifactsRequest(opts) : undefined;
 });
 
 /**
@@ -475,17 +277,17 @@ export const listRunsResource = <ThrowOnError extends boolean = false>(options: 
 /**
  * Every queued or running CI run, all repositories, newest first
  */
-export const getCiApiRunsActiveResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCiApiRunsActiveData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsActiveResponse>(() => {
+export const listActiveRunsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListActiveRunsData, ThrowOnError> | undefined) => httpResource<ListActiveRunsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsActiveRequest(opts) : undefined;
+    return opts ? listActiveRunsRequest(opts) : undefined;
 });
 
 /**
- * Cancel every unfinished run a repository has for one release request
+ * Cancel every unfinished run a repository has for one release request, or one phase's
  */
-export const postCiApiRunsCancellationsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunsCancellationsData, ThrowOnError> | undefined) => httpResource<PostCiApiRunsCancellationsResponse>(() => {
+export const cancelReleaseRequestRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<CancelReleaseRequestRunsData, ThrowOnError> | undefined) => httpResource<CancelReleaseRequestRunsResponse2>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postCiApiRunsCancellationsRequest(opts) : undefined;
+    return opts ? cancelReleaseRequestRunsRequest(opts) : undefined;
 });
 
 /**
@@ -499,59 +301,59 @@ export const getCiApiRunsFinishedResource = <ThrowOnError extends boolean = fals
 /**
  * The run queue in claim order, with each run's expected start and finish
  */
-export const getCiApiRunsQueueResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCiApiRunsQueueData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsQueueResponse>(() => {
+export const getRunQueueResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetRunQueueData, ThrowOnError> | undefined) => httpResource<GetRunQueueResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsQueueRequest(opts) : undefined;
+    return opts ? getRunQueueRequest(opts) : undefined;
 });
 
 /**
  * Run one phase of a release request's CI again
  *
- * A release is one pipeline of three phases and a PHASE is a unit of work with a state and a rerun. Two of them are runs here — RELEASE_REQUEST is phase one, the QA run at release/<id>@mergedSha, and RELEASE is phase two, the publish run at <version>@commitSha. Phase three is the deploy and is qits-deployments' own release request, so it is not a word this door takes. A step inside a run is not a phase, so it cannot be re-fired separately. Which phase a run is was decided by the event that triggered it and never by which config file produced it, so this addresses a run the same way whatever the repository's release.yml composed for it — and the same way for a run from a bespoke ci-event-*.yml, which is the escape hatch the grammar still has. This decides nothing about the release: the pipeline is the release request in qits-projects, the new run announces its verdict on the bus exactly as the first one did, and the gate between the two phases goes on holding the release where it is until that verdict arrives — a gate delays, it does not fail.
+ * A release is one pipeline of three phases and a PHASE is a unit of work with a state and a rerun. Two of them are runs here — RELEASE_REQUEST is phase one, the QA run at backingBranch@mergedSha, and RELEASE is phase two, the publish run at <version>@commitSha. Phase three is the deploy and is qits-deployments' own release request, so it is not a word this door takes. A step inside a run is not a phase, so it cannot be re-fired separately. Which phase a run is was decided by the event that triggered it and never by which config file produced it, so this addresses a run the same way whatever the repository's release.yml composed for it — and the same way for a run from a bespoke ci-event-*.yml, which is the escape hatch the grammar still has. This decides nothing about the release: the pipeline is the release request in qits-projects, the new run announces its verdict on the bus exactly as the first one did, and the gate between the two phases goes on holding the release where it is until that verdict arrives — a gate delays, it does not fail.
  */
-export const postCiApiRunsRerunResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunsRerunData, ThrowOnError> | undefined) => httpResource<PostCiApiRunsRerunResponse>(() => {
+export const rerunReleaseRequestPhaseResource = <ThrowOnError extends boolean = false>(options: () => Options<RerunReleaseRequestPhaseData, ThrowOnError> | undefined) => httpResource<RerunReleaseRequestPhaseResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postCiApiRunsRerunRequest(opts) : undefined;
+    return opts ? rerunReleaseRequestPhaseRequest(opts) : undefined;
 });
 
 /**
  * One CI run with its steps, output and — while it runs — its live step
  */
-export const getCiApiRunsByRunIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdResponse>(() => {
+export const getRunResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRunData, ThrowOnError> | undefined) => httpResource<GetRunResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsByRunIdRequest(opts) : undefined;
+    return opts ? getRunRequest(opts) : undefined;
 });
 
 /**
  * A run's baseline: the gating run of its repository's newest released version, or null
  */
-export const getCiApiRunsByRunIdBaselineResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdBaselineData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdBaselineResponse>(() => {
+export const getRunBaselineResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRunBaselineData, ThrowOnError> | undefined) => httpResource<GetRunBaselineResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsByRunIdBaselineRequest(opts) : undefined;
+    return opts ? getRunBaselineRequest(opts) : undefined;
 });
 
 /**
  * The baseline run's release reports of one kind, with payloads
  */
-export const getCiApiRunsByRunIdBaselineReportsByKindResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdBaselineReportsByKindData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdBaselineReportsByKindResponse>(() => {
+export const listRunBaselineReportsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListRunBaselineReportsData, ThrowOnError> | undefined) => httpResource<ListRunBaselineReportsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsByRunIdBaselineReportsByKindRequest(opts) : undefined;
+    return opts ? listRunBaselineReportsRequest(opts) : undefined;
 });
 
 /**
  * Cancel a queued or running CI run
  */
-export const postCiApiRunsByRunIdCancelResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunsByRunIdCancelData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const cancelRunResource = <ThrowOnError extends boolean = false>(options: () => Options<CancelRunData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postCiApiRunsByRunIdCancelRequest(opts) : undefined;
+    return opts ? cancelRunRequest(opts) : undefined;
 });
 
 /**
  * The release reports of the green QA run that gated this run's release request, without payloads
  */
-export const getCiApiRunsByRunIdGateReportsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetCiApiRunsByRunIdGateReportsData, ThrowOnError> | undefined) => httpResource<GetCiApiRunsByRunIdGateReportsResponse>(() => {
+export const listRunGateReportsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListRunGateReportsData, ThrowOnError> | undefined) => httpResource<ListRunGateReportsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRunsByRunIdGateReportsRequest(opts) : undefined;
+    return opts ? listRunGateReportsRequest(opts) : undefined;
 });
 
 /**
@@ -573,15 +375,15 @@ export const getRunReportResource = <ThrowOnError extends boolean = false>(optio
 /**
  * Run a finished CI run's pipeline again, at the same commit
  */
-export const postCiApiRunsByRunIdRetryResource = <ThrowOnError extends boolean = false>(options: () => Options<PostCiApiRunsByRunIdRetryData, ThrowOnError> | undefined) => httpResource<PostCiApiRunsByRunIdRetryResponse>(() => {
+export const retryRunResource = <ThrowOnError extends boolean = false>(options: () => Options<RetryRunData, ThrowOnError> | undefined) => httpResource<RetryRunResponse2>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postCiApiRunsByRunIdRetryRequest(opts) : undefined;
+    return opts ? retryRunRequest(opts) : undefined;
 });
 
 /**
  * Submit a step's release report of one kind (a run's own ci-run token only)
  */
-export const putCiApiRunsByRunIdStepsByStepIndexReportsByKindResource = <ThrowOnError extends boolean = false>(options: () => Options<PutCiApiRunsByRunIdStepsByStepIndexReportsByKindData, ThrowOnError> | undefined) => httpResource<PutCiApiRunsByRunIdStepsByStepIndexReportsByKindResponse>(() => {
+export const putRunStepReportResource = <ThrowOnError extends boolean = false>(options: () => Options<PutRunStepReportData, ThrowOnError> | undefined) => httpResource<PutRunStepReportResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? putCiApiRunsByRunIdStepsByStepIndexReportsByKindRequest(opts) : undefined;
+    return opts ? putRunStepReportRequest(opts) : undefined;
 });
