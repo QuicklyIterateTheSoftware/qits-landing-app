@@ -7,13 +7,14 @@ import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as systemClient } from '../../../api/system/client.gen';
+import { client as ciClient } from '../../../api/ci/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { ReleaseMenu } from './release-menu';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 
 /**
- * Screenshots of the top bar's release menu, its answers qits-projects' and qits-system's golden
- * masters. The open project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
+ * Screenshots of the top bar's release menu, its answers qits-projects', qits-system's and
+ * qits-ci's golden masters. The open project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
  * in the recorded project list.
  */
 
@@ -40,6 +41,7 @@ describe('ReleaseMenu (screenshots)', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(systemClient),
+        provideHeyApiClient(ciClient),
         // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
         {
           provide: EVENT_SOURCE,
@@ -78,6 +80,8 @@ describe('ReleaseMenu (screenshots)', () => {
   /**
    * Opens the panel. Opening reads qits-system's targets for the runners and slots line at the top;
    * answered as recorded ("a declared target": one target, not connected, so every count is 0).
+   * It also reads qits-ci's active runs, answered as recorded ("a commit with a run in flight": a
+   * run of no request, so no request shows an active run).
    */
   async function open(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
     await userEvent.click(page.getByRole('button', { name: 'Release requests' }));
@@ -86,6 +90,9 @@ describe('ReleaseMenu (screenshots)', () => {
     http
       .expectOne('/system/api/targets')
       .flush(await goldenMaster('a declared target', 'listTargets', 'qits-system'));
+    http
+      .expectOne('/ci/api/runs/active')
+      .flush(await goldenMaster('a commit with a run in flight', 'listActiveRuns', 'qits-ci'));
     await settle();
     fixture.detectChanges();
   }

@@ -87,6 +87,10 @@ The lightning menu's top line (`patterns/system/runner-slots/`, `TargetsStore`) 
 targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
 `TargetLoginChanged`). qits-system sends no event when a runner connects or drops. A person whose
 roles may not read the targets gets a refusal, and the line stays hidden.
+The lightning menu's active-run chips (`patterns/release-requests/active-runs/`, `activeRunsOf`)
+read qits-ci's active runs (`CiRunsStore.loadActive`, `/ci/api/runs/active`) on each opening until
+they load, and again after `BUILD_EVENTS` of a pending request's repository (`followActive`). The
+release request page draws the same chips from its repository's runs.
 The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
 name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A container

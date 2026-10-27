@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   untracked,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { activeRunsOf } from '$core/ci/active-runs';
+import { CiRunsStore } from '$core/ci/ci-runs.store';
 import { refreshOn } from '$core/events/refresh-on';
 import {
   affectsReleaseRequests,
@@ -22,6 +25,7 @@ import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { TargetsStore } from '$core/system/targets.store';
 import { RunnerSlots } from '$patterns/system/runner-slots/runner-slots';
+import { ActiveRuns } from '$patterns/release-requests/active-runs/active-runs';
 
 /** How long a burst of domain events waits before the requests are fetched again. */
 export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
@@ -46,13 +50,17 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
  * it too).
  * The panel starts with the runners and slots line (`RunnerSlots`), fetched on each opening until
  * it loads.
+ * Below a request with a queued or running CI run (`activeRunsOf`: its QA, release and gate runs,
+ * its automations), a chip per kind links to the run in qits-ci (`ActiveRuns`). The active runs
+ * are read on each opening until they load (`CiRunsStore.loadActive`), and again after a build
+ * event of a pending request's repository (`followActive`). A refused read shows no chip.
  * The button and the panel are `ui-dropdown`'s. Each request links to its page
  * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel.
  */
 @Component({
   selector: 'app-release-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, LifecycleLine, RouterLink, RunnerSlots, Spinner],
+  imports: [ActiveRuns, Dropdown, LifecycleLine, RouterLink, RunnerSlots, Spinner],
   // One display class or the other: a static display class would beat `hidden`. `ml-auto` pushes
   // the menu and the settings gear after it to the right end of the top bar.
   host: {
@@ -125,6 +133,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
                 <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
                 <ui-lifecycle-line [points]="row.summary" [spread]="true" />
               </a>
+              <app-active-runs class="-mt-1 px-3 pb-2" [runs]="row.active" />
             </li>
           }
         </ul>
@@ -142,6 +151,7 @@ export class ReleaseMenu {
   private readonly store = inject(ProjectsStore);
   private readonly selected = inject(SelectedProject);
   private readonly targets = inject(TargetsStore);
+  private readonly ci = inject(CiRunsStore);
   protected readonly requestTone = requestTone;
   protected readonly ref = releaseRequestRef;
 
@@ -163,10 +173,15 @@ export class ReleaseMenu {
    * needing someone first, the rest in the answer's order.
    */
   protected readonly rows = computed(() => {
+    const active = this.ci.active()?.runs;
     const rows = this.pending().map((request) => ({
       request,
       summary: lifecycleSummary(request),
       attention: attentionOf(request),
+      active: activeRunsOf(request.id, active, [
+        ...(request.pipeline?.phases ?? []).map((phase) => phase.runId),
+        ...(request.qualityGates ?? []).map((gate) => gate.runId),
+      ]),
     }));
     return [
       ...rows.filter((row) => row.attention.length),
@@ -209,14 +224,17 @@ export class ReleaseMenu {
         if (id !== undefined) void this.store.refreshReleaseRequests(id);
       },
     });
+    this.ci.followActive(() => this.pending().map((request) => request.repoId), inject(DestroyRef));
   }
 
   /**
-   * On each opening: the targets for the runners and slots line (once, and again after a failure),
-   * and the open project's requests if nothing has yet (opening the menu after a failure).
+   * On each opening: the targets for the runners and slots line and the active CI runs (each once,
+   * and again after a failure), and the open project's requests if nothing has yet (opening the
+   * menu after a failure).
    */
   protected load(): void {
     void this.targets.load();
+    void this.ci.loadActive();
     const id = this.projectId();
     if (id !== undefined) void this.store.loadReleaseRequests(id);
   }

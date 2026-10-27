@@ -1,4 +1,4 @@
-import type { ListRunsResponses } from '../../api/ci';
+import type { ListActiveRunsResponses, ListRunsResponses } from '../../api/ci';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -25,4 +25,20 @@ export const LIST_REPOSITORY_RUNS = [
 /** One run, cut to what the page reads. */
 export type CiRun = NonNullable<
   Consumed<ListRunsResponses[200], typeof LIST_REPOSITORY_RUNS>['runs']
+>[number];
+
+/**
+ * Every queued or running run, all repositories: the lightning menu marks each pending request
+ * with its active runs (`activeRunsOf`), and links them.
+ */
+export const LIST_ACTIVE_RUNS = [
+  'runs[].id',
+  'runs[].status',
+  'runs[].branch',
+  'runs[].releaseRequestId',
+] as const;
+
+/** One active run, cut to what the menu reads. */
+export type ActiveCiRun = NonNullable<
+  Consumed<ListActiveRunsResponses[200], typeof LIST_ACTIVE_RUNS>['runs']
 >[number];
