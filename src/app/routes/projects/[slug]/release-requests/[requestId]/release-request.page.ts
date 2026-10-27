@@ -15,6 +15,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
+import { activeRunsOf } from '$core/ci/active-runs';
 import { CiRunsStore } from '$core/ci/ci-runs.store';
 import { refreshOn } from '$core/events/refresh-on';
 import {
@@ -62,6 +63,7 @@ import { CommitChangesView } from '$patterns/release-requests/commit-changes/com
 import { ReleaseChangesView } from '$patterns/release-requests/release-changes/release-changes';
 import { ReleaseLifecycle } from '$patterns/release-requests/release-lifecycle/release-lifecycle';
 import { ReleaseRuns } from '$patterns/release-requests/release-runs/release-runs';
+import { ActiveRuns } from '$patterns/release-requests/active-runs/active-runs';
 import { RunReports } from '$patterns/release-requests/run-reports/run-reports';
 import { requestRuns } from '$core/release-requests/release-runs';
 import { currentFoldPhases } from '$core/release-requests/fold-truth';
@@ -92,7 +94,9 @@ const UNATTENDED_TITLE =
  * and what it published. Commits: the commits the fold brought in, as a graph under its sources
  * (each opens its changeset). Builds: the request's runs in qits-ci (also read for the overview,
  * to check its test phase). Changes: what the fold changes, file by file (`?path=`). The
- * lifecycle is on the overview only; the head (title, chips, tabs) is on every tab.
+ * lifecycle is on the overview only; the head (title, chips, tabs) is on every tab. The head also
+ * links the request's queued or running CI runs, one per kind (`activeRunsOf`, `ActiveRuns`), from
+ * the repository's runs, so they follow the same build events.
  *
  * Everything the page shows is of the request's current fold (`mergedSha`): gate states from the
  * request's own gates, a stale QA phase replaced from the runs (`currentFoldPhases`), reports only
@@ -130,6 +134,7 @@ const UNATTENDED_TITLE =
     ReleaseChangesView,
     ReleaseLifecycle,
     ReleaseRuns,
+    ActiveRuns,
     RunReports,
     ReleaseLaneHeader,
     ReleaseWithdraw,
@@ -179,6 +184,7 @@ const UNATTENDED_TITLE =
               @if (unattended(request)) {
                 <ui-chip label="nobody watching" tone="waiting" [title]="unattendedTitle" />
               }
+              <app-active-runs [runs]="activeRuns()" />
               <span class="font-semibold break-all text-charcoal-brown-800">{{
                 view()?.qualifiedId ?? request.repoName
               }}</span>
@@ -609,6 +615,22 @@ export class ReleaseRequestPage {
   protected readonly noFinishedBuild = computed(
     () => !!this.row()?.mergedSha && this.testRunning() && this.foldBuilds().length === 0,
   );
+
+  /**
+   * The request's queued or running CI runs, one per kind, from the repository's newest runs: the
+   * head links them.
+   */
+  protected readonly activeRuns = computed(() => {
+    const request = this.row();
+    const runs = this.runs();
+    if (!request || runs?.status !== 'loaded') return [];
+    const named = requestRuns(request, this.view()?.builds?.value ?? [], runs.runs);
+    return activeRunsOf(
+      request.id,
+      runs.runs,
+      named.map((entry) => entry.id),
+    );
+  });
 
   /** The repository's newest CI runs, where the request's runs are found. */
   protected readonly runs = computed(() => this.ci.byRepository()[this.repoId()]);

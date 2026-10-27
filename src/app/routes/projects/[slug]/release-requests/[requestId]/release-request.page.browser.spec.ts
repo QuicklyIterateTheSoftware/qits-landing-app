@@ -259,6 +259,8 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await expect.element(builds).toBeVisible();
     await expect.element(view).toMatchTextContent('2026.101.120000');
     await expect.element(view).toMatchTextContent('running');
+    // The head links that running run.
+    await expect.element(view.getByRole('link', { name: 'CI running' })).toBeVisible();
   });
 
   it('shows a released request with its version and what it published', async () => {
