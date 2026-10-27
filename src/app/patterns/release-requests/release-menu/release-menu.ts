@@ -20,6 +20,8 @@ import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import { TargetsStore } from '$core/system/targets.store';
+import { RunnerSlots } from '$patterns/system/runner-slots/runner-slots';
 
 /** How long a burst of domain events waits before the requests are fetched again. */
 export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
@@ -42,13 +44,15 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
  * Staleness (qits-1270): `RELEASE_REQUEST_EVENTS` about the open project → its pending requests
  * (`ProjectsStore.refreshReleaseRequests`; the list answer is the only read, so a row change reads
  * it too).
+ * The panel starts with the runners and slots line (`RunnerSlots`), fetched on each opening until
+ * it loads.
  * The button and the panel are `ui-dropdown`'s. Each request links to its page
  * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel.
  */
 @Component({
   selector: 'app-release-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, LifecycleLine, RouterLink, Spinner],
+  imports: [Dropdown, LifecycleLine, RouterLink, RunnerSlots, Spinner],
   // One display class or the other: a static display class would beat `hidden`. `ml-auto` pushes
   // the menu and the settings gear after it to the right end of the top bar.
   host: {
@@ -86,6 +90,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
         aria-hidden="true"
         >{{ attentionCount() || count() }}</span
       >
+      <app-runner-slots dropdown-panel />
       <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
         <ul class="m-0 list-none p-0">
           @for (row of rows(); track row.request.id) {
@@ -136,6 +141,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 export class ReleaseMenu {
   private readonly store = inject(ProjectsStore);
   private readonly selected = inject(SelectedProject);
+  private readonly targets = inject(TargetsStore);
   protected readonly requestTone = requestTone;
   protected readonly ref = releaseRequestRef;
 
@@ -205,8 +211,12 @@ export class ReleaseMenu {
     });
   }
 
-  /** Fetches the open project's requests if nothing has yet (opening the menu after a failure). */
+  /**
+   * On each opening: the targets for the runners and slots line (once, and again after a failure),
+   * and the open project's requests if nothing has yet (opening the menu after a failure).
+   */
   protected load(): void {
+    void this.targets.load();
     const id = this.projectId();
     if (id !== undefined) void this.store.loadReleaseRequests(id);
   }

@@ -6,13 +6,14 @@ import { provideRouter, Router } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
+import { client as systemClient } from '../../../api/system/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { ReleaseMenu } from './release-menu';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 
 /**
- * Screenshots of the top bar's release menu, its answers qits-projects' golden masters. The open
- * project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
+ * Screenshots of the top bar's release menu, its answers qits-projects' and qits-system's golden
+ * masters. The open project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
  * in the recorded project list.
  */
 
@@ -38,6 +39,7 @@ describe('ReleaseMenu (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(systemClient),
         // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
         {
           provide: EVENT_SOURCE,
@@ -73,10 +75,19 @@ describe('ReleaseMenu (screenshots)', () => {
     return { fixture, frame: page.elementLocator(element.parentElement!), requests };
   }
 
+  /**
+   * Opens the panel. Opening reads qits-system's targets for the runners and slots line at the top;
+   * answered as recorded ("a declared target": one target, not connected, so every count is 0).
+   */
   async function open(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
     await userEvent.click(page.getByRole('button', { name: 'Release requests' }));
     fixture.detectChanges();
     await settle();
+    http
+      .expectOne('/system/api/targets')
+      .flush(await goldenMaster('a declared target', 'listTargets', 'qits-system'));
+    await settle();
+    fixture.detectChanges();
   }
 
   async function answered(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
@@ -117,6 +128,9 @@ describe('ReleaseMenu (screenshots)', () => {
       .element(panel.getByRole('link', { name: /contract-frontend/ }).first())
       .toHaveAttribute('title', 'Look: CI build');
     await expect.element(panel).not.toMatchTextContent('Finalized release');
+    // The runners and slots line heads the panel: runners at the left, the slots grid at the right.
+    await expect.element(panel.getByText('runners: 0')).toBeVisible();
+    await expect.element(panel.getByText('workspaces:')).toBeVisible();
     await expect.element(frame).toMatchScreenshot('open');
   });
 

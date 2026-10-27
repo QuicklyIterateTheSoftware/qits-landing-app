@@ -23,6 +23,8 @@ const services = [
   // The workspace daemon (epic qits-1230): its paths are its own (`/commands`), reached through
   // qits-workspaces' container proxy, so a call sets its `baseUrl` to the container's prefix.
   'qits-workspaces/qits-workspace-daemon',
+  // qits-system (`src/app/api/system`) is not listed: qits-system-service commits no
+  // `docs/openapi.yml` yet. Its client was generated from the served `/system/q/openapi`.
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

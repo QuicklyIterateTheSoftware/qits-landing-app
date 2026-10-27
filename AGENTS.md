@@ -82,6 +82,10 @@ notifications menu puts every new event at the top of its list once it is loaded
 (the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
 (`listPendingBumps`) on its first opening and again after `BUMP_EVENTS` (`ReleaseRequestStateChanged`
 among them), at most once a second.
+The lightning menu's top line (`patterns/system/runner-slots/`, `TargetsStore`) reads qits-system's
+targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
+`TargetLoginChanged`). qits-system sends no event when a runner connects or drops. A person whose
+roles may not read the targets gets a refusal, and the line stays hidden.
 The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
 name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A container
@@ -261,6 +265,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service    | `core/loc/loc.store*.ts`                                                                       | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
 | qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions}.store*.ts`                     | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon   | `core/workspaces/{agent-harness,agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts` | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service     | `core/system/targets.store*.ts`                                                                | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

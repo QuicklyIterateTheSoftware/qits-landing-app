@@ -13,6 +13,7 @@ import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
+import { client as systemClient } from './api/system/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
 import { client as workspaceDaemonClient } from './api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from './api/projects/client/client.gen';
@@ -33,6 +34,7 @@ const CLIENTS = [
   [workspacesClient, 'workspaces'],
   [workspaceDaemonClient, 'workspaces'],
   [ciClient, 'ci'],
+  [systemClient, 'system'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -69,6 +71,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(workspacesClient),
     provideHeyApiClient(workspaceDaemonClient),
     provideHeyApiClient(ciClient),
+    provideHeyApiClient(systemClient),
     provideBackendOrigins(),
     // `ng serve` only: the bearer sign-in. Deployed: nothing.
     ...environment.providers,

@@ -143,6 +143,8 @@ export const INTERACTIONS = {
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */
   'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
+  /** `runner-slots.ts` via `TargetsStore`: the lightning menu's runners and slots line, on opening. */
+  'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspacesStore`: the ACTIVE
    * workspaces bound to work items, one request per page, for the Workspace links on the cards.

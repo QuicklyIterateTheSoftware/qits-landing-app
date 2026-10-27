@@ -5,8 +5,9 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
+import { client as systemClient } from '../../../api/system/client.gen';
 import { SelectedProject } from '$core/projects/selected-project';
-import { goldenMaster } from '../../../../testing/golden-masters';
+import { goldenMaster, systemGoldenMaster } from '../../../../testing/golden-masters';
 import { Subject } from 'rxjs';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { isPendingRelease, type ReleaseRequestEntry } from '$core/projects/projects.consumes';
@@ -35,6 +36,7 @@ describe('ReleaseMenu', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(systemClient),
         { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
         {
           provide: SelectedProject,
@@ -45,7 +47,17 @@ describe('ReleaseMenu', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  /** Opening the menu also reads qits-system's targets, for the runners and slots line. */
+  const TARGETS = '/system/api/targets';
+
+  // The tests below that open the menu are about the requests: their targets read is refused, which
+  // hides the line (its own spec is `runner-slots.spec.ts`).
+  afterEach(async () => {
+    await settle();
+    for (const read of http.match(TARGETS))
+      read.flush(null, { status: 403, statusText: 'Forbidden' });
+    http.verify();
+  });
 
   function render() {
     const fixture = TestBed.createComponent(ReleaseMenu);
@@ -165,5 +177,25 @@ describe('ReleaseMenu', () => {
     document.body.click();
     fixture.detectChanges();
     expect(panel.classList.contains('hidden')).toBe(true);
+  });
+
+  it('reads the targets on opening and shows the runners and slots line above the list', async () => {
+    const { fixture, button, panel } = render();
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${recorded.id}/release-requests`)
+      .flush(goldenMaster('a project with no release requests', 'listProjectReleaseRequests'));
+    await settle();
+    expect(panel.querySelector('app-runner-slots')?.textContent?.trim()).toBe('');
+    button.click();
+    fixture.detectChanges();
+    await settle();
+    http.expectOne(TARGETS).flush(systemGoldenMaster('a declared target', 'listTargets'));
+    await settle();
+    fixture.detectChanges();
+    const line = panel.querySelector('app-runner-slots')!;
+    expect(line.nextElementSibling?.tagName).toBe('UI-SPINNER');
+    expect(line.textContent).toContain('runners: 0');
+    expect(line.textContent).toContain('slots:');
   });
 });

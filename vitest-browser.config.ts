@@ -10,6 +10,7 @@ import {
   githostGoldenMasters,
   maintenanceGoldenMasters,
   projectsGoldenMasters,
+  systemGoldenMasters,
   workspaceDaemonGoldenMasters,
   workspacesGoldenMasters,
 } from './src/testing/golden-masters';
@@ -39,6 +40,7 @@ const READERS = {
     workspaceDaemonGoldenMasters,
     pactWith('qits-workspace-daemon'),
   ),
+  'qits-system': pactedGoldenMasters(systemGoldenMasters, pactWith('qits-system-service')),
 };
 
 /**

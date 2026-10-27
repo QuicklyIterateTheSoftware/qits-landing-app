@@ -49,6 +49,9 @@ export const workspaceDaemonGoldenMasters = goldenMasters(
 /** qits-ci's golden masters (epic qits-112), from its npm package. */
 export const ciGoldenMasters = goldenMasters('@qits/ci-golden-masters', 'qits-ci');
 
+/** qits-system's golden masters (epic qits-112), from its npm package. */
+export const systemGoldenMasters = goldenMasters('@qits/system-golden-masters', 'qits-system');
+
 /** The body qits-projects recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const goldenMaster = <T = any>(state: string, operationId: string): T =>
   projectsGoldenMasters.body<T>(state, operationId);
@@ -72,6 +75,10 @@ export const workspacesGoldenMaster = <T = any>(state: string, operationId: stri
 /** The body qits-workspace-daemon recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const workspaceDaemonGoldenMaster = <T = any>(state: string, operationId: string): T =>
   workspaceDaemonGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-system recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const systemGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  systemGoldenMasters.body<T>(state, operationId);
 
 /** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>
