@@ -1,19 +1,17 @@
 import type { TargetEntry } from './targets.consumes';
 
-/** One slot type's row: its label, the slots in use and the minimum reserved, summed. */
-export interface SlotTypeRow {
+/**
+ * One row of the right column: a slot type, or the shared pool. `used` of `capacity`, summed over
+ * the connected targets. Every slot in use is counted in exactly one row.
+ */
+export interface SlotRow {
+  /** The slot type as the answer names it; `shared` for the pool. */
   readonly type: string;
   readonly label: string;
+  /** A type: Σ min(used, minimum). The pool: Σ the types' overflow, max(0, used − minimum). */
   readonly used: number;
-  readonly reserved: number;
-}
-
-/** The shared pool: the slots no minimum reserves, and how many the types use beyond theirs. */
-export interface SharedPool {
-  /** Per target Σ max(0, used − minimum) over its types, summed over the targets. */
-  readonly used: number;
-  /** Per target max(0, slotsTotal − Σ minimums), summed over the targets. */
-  readonly size: number;
+  /** A type: Σ minimum, its reservation. The pool: Σ max(0, slotsTotal − Σ minimums). */
+  readonly capacity: number;
 }
 
 /** What the lightning menu's runners and slots line shows. */
@@ -25,9 +23,9 @@ export interface RunnerSlots {
   /** Slots the connected targets offer (`slotsTotal`). */
   readonly total: number;
   /** One row per slot type the answer names: ci, workspaces, desk, then any other by name. */
-  readonly types: readonly SlotTypeRow[];
-  /** The unreserved slots and their use. */
-  readonly shared: SharedPool;
+  readonly types: readonly SlotRow[];
+  /** The slots no minimum reserves, and the types' use beyond their minimums. */
+  readonly shared: SlotRow;
 }
 
 /** The labels for the slot types known today; any other type shows its raw name. */
@@ -48,52 +46,48 @@ const count = (counts: unknown, type: string): number => {
 };
 
 /**
- * The line's figures from qits-system's targets. Only connected targets count. A minimum is a
- * reserve, not a cap: a type grows past it into the shared pool (the slots no minimum reserves)
- * while that has room. Each target has its own pool, so the pool is counted per target and then
- * summed: a type over its minimum on one target is not netted against the same type under it on
- * another. The per-type rows and `slots` are plain sums. The types come
- * from the answer (every key of `used` and `minimums` on any target), so a new type shows by itself,
- * after the known ones.
+ * The line's figures from qits-system's targets. Only connected targets count, and each is counted
+ * on its own before the sums, since each has its own reservations. On a target, a type's
+ * reservation (its minimum) is its capacity: up to that, its use counts in its row. Beyond it, the
+ * type takes slots from the target's shared pool (`slotsTotal − Σ minimums`, floored at 0), and that
+ * overflow counts in the `shared` row. So the rows' use adds up to `slots` used, and their
+ * capacities to `slots` total unless a target reserves more than it has. The types come from the
+ * answer (every key of `used` and `minimums` on any target), so a new type shows by itself, after
+ * the known ones.
  */
 export function runnerSlots(targets: readonly TargetEntry[]): RunnerSlots {
   const connected = targets.filter((target) => target.connected);
-  const types = new Set<string>();
+  const seen = new Set<string>();
   for (const target of targets) {
     for (const counts of [target.used, target.minimums]) {
-      for (const type of Object.keys(counts ?? {})) types.add(type);
+      for (const type of Object.keys(counts ?? {})) seen.add(type);
     }
   }
+  const types = [...seen].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
   const sum = (read: (target: TargetEntry) => number) =>
     connected.reduce((total, target) => total + read(target), 0);
-  const rows = [...types]
-    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
-    .map((type) => ({
-      type,
-      label: LABELS[type] ?? type,
-      used: sum((target) => count(target.used, type)),
-      reserved: sum((target) => count(target.minimums, type)),
-    }));
-  const total = sum((target) => target.slotsTotal ?? 0);
-  const add = (read: (row: SlotTypeRow) => number) => rows.reduce((all, row) => all + read(row), 0);
+  const across = (read: (type: string) => number) =>
+    types.reduce((total, type) => total + read(type), 0);
+  const used = (target: TargetEntry, type: string) => count(target.used, type);
+  const minimum = (target: TargetEntry, type: string) => count(target.minimums, type);
   return {
     runners: connected.length,
-    used: add((row) => row.used),
-    total,
-    types: rows,
+    used: sum((target) => across((type) => used(target, type))),
+    total: sum((target) => target.slotsTotal ?? 0),
+    types: types.map((type) => ({
+      type,
+      label: LABELS[type] ?? type,
+      used: sum((target) => Math.min(used(target, type), minimum(target, type))),
+      capacity: sum((target) => minimum(target, type)),
+    })),
     shared: {
+      type: 'shared',
+      label: 'shared',
       used: sum((target) =>
-        [...types].reduce(
-          (all, type) => all + Math.max(0, count(target.used, type) - count(target.minimums, type)),
-          0,
-        ),
+        across((type) => Math.max(0, used(target, type) - minimum(target, type))),
       ),
-      size: sum((target) =>
-        Math.max(
-          0,
-          (target.slotsTotal ?? 0) -
-            [...types].reduce((all, type) => all + count(target.minimums, type), 0),
-        ),
+      capacity: sum((target) =>
+        Math.max(0, (target.slotsTotal ?? 0) - across((type) => minimum(target, type))),
       ),
     },
   };

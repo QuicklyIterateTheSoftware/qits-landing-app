@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { refreshOn } from '$core/events/refresh-on';
-import { runnerSlots } from '$core/system/runner-slots';
+import { runnerSlots, type RunnerSlots as RunnerSlotsLine } from '$core/system/runner-slots';
 import { TARGET_EVENTS } from '$core/system/target-events';
 import { TargetsStore } from '$core/system/targets.store';
 
 /**
  * The lightning menu's heading. At the left: `runners: N` and `slots: used/total`. At the right, a
- * small grid with labels and values aligned: one row per slot type with the slots it uses now, then
- * `shared: used/size`, the slots no minimum reserves and how many the types use beyond theirs.
+ * small grid with labels and values aligned: `used/capacity` for each slot type (its reservation),
+ * then for `shared` (the slots no minimum reserves, which the types use beyond theirs).
  * Only connected targets count (`runnerSlots`).
  *
  * Shown only once the targets are loaded: hidden while they load, and when the read fails, which
@@ -30,12 +30,10 @@ import { TargetsStore } from '$core/system/targets.store';
           <span>slots: {{ line.used }}/{{ line.total }}</span>
         </div>
         <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
-          @for (row of line.types; track row.type) {
+          @for (row of rows(line); track row.type) {
             <dt>{{ row.label }}:</dt>
-            <dd class="m-0 text-right">{{ row.used }}</dd>
+            <dd class="m-0 text-right">{{ row.used }}/{{ row.capacity }}</dd>
           }
-          <dt>shared:</dt>
-          <dd class="m-0 text-right">{{ line.shared.used }}/{{ line.shared.size }}</dd>
         </dl>
       </div>
     }
@@ -48,6 +46,11 @@ export class RunnerSlots {
   protected readonly summary = computed(() =>
     this.store.status() === 'loaded' ? runnerSlots(this.store.targets()) : undefined,
   );
+
+  /** The right column: the types, then the shared pool. */
+  protected rows(line: RunnerSlotsLine) {
+    return [...line.types, line.shared];
+  }
 
   constructor() {
     refreshOn({ names: TARGET_EVENTS, refresh: () => void this.store.refresh() });

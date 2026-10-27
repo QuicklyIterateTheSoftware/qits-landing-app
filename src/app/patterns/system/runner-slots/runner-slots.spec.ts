@@ -75,16 +75,23 @@ describe('RunnerSlots', () => {
     expect(line.classList).toContain('justify-between');
     const left = Array.from(line.firstElementChild!.children).map((s) => s.textContent?.trim());
     expect(left).toEqual(['runners: 2', 'slots: 11/16']);
-    // Shared, per target: the first has 3 free and ci and workspaces take 2 + 3 beyond their
-    // minimums; the second has none free and workspaces takes 1.
-    expect(rows(element)).toEqual(['ci: 4', 'workspaces: 6', 'desk: 0', 'gpu: 1', 'shared: 6/3']);
+    // Each type: its use up to its reservation, of that reservation. Shared, per target: the first
+    // has 3 free and ci and workspaces take 2 + 3 beyond theirs; the second has none and workspaces 1.
+    // The rows add up to the slots line: 11 used of 16.
+    expect(rows(element)).toEqual([
+      'ci: 2/8',
+      'workspaces: 2/2',
+      'desk: 0/2',
+      'gpu: 1/1',
+      'shared: 6/3',
+    ]);
   });
 
   it('shows zeros for the recorded target, which is not connected', async () => {
     const { element } = await render((request) => request.flush(recorded));
     expect(element.textContent).toContain('runners: 0');
     expect(element.textContent).toContain('slots: 0/0');
-    expect(rows(element)).toEqual(['ci: 0', 'workspaces: 0', 'desk: 0', 'shared: 0/0']);
+    expect(rows(element)).toEqual(['ci: 0/0', 'workspaces: 0/0', 'desk: 0/0', 'shared: 0/0']);
   });
 
   it('stays hidden when the read is refused', async () => {
