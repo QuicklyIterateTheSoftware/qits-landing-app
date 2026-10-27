@@ -103,6 +103,11 @@ export const INTERACTIONS = {
    */
   'show-release-request-runs': 'A release request’s page links the CI runs of the request',
   /**
+   * `release-menu.ts` via `CiRunsStore.loadActive`: the lightning menu reads every queued or running
+   * CI run, to mark each pending request that has one and link it.
+   */
+  'show-release-request-active-runs': 'The lightning menu marks the requests with an active CI run',
+  /**
    * `commit-changes.ts`: a commit under "What this release folds in", opened: its changed files
    * and one file's patch.
    */
