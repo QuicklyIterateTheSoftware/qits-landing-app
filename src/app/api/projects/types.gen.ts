@@ -4,10 +4,6 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
-export type ActiveProcessResponse = {
-    technicalProcessId?: string;
-};
-
 export type AddReleaseRequestSource = {
     branch: string;
     requester?: string;
@@ -436,25 +432,9 @@ export type ContainerView = {
     pinnedDaemonVersion?: string;
     daemonVersionStale?: boolean;
     failureDetail?: string;
-    runnerId?: Uuid;
-    runnerName?: string;
+    targetId?: Uuid;
     lifecycle?: FrontDeskLifecycle;
     queuedAt?: Instant;
-};
-
-export type CreateDeskRunnerRequest = {
-    /**
-     * [a-z][a-z0-9-]{0,63}, unique
-     */
-    name: string;
-    /**
-     * Free text, at most 1024 characters
-     */
-    description?: string;
-    /**
-     * How many desks it may hold at once, at least 1. Default 8
-     */
-    slots?: number;
 };
 
 export type CreateProjectRepositoryRequest = {
@@ -561,95 +541,12 @@ export type DesignDto = {
     html?: string;
 };
 
-export type DeskRunnerCheck = {
-    name?: string;
-    ok?: boolean;
-    detail?: string;
-};
-
-export type DeskRunnerCheckReport = {
-    name?: string;
-    ok?: boolean;
-    detail?: string;
-    data?: JsonNode;
-};
-
-export type DeskRunnerDesk = {
-    projectId?: string;
-    slug?: string;
-    state?: string;
-};
-
-export type DeskRunnerDto = {
-    id?: Uuid;
-    name?: string;
-    description?: string;
-    slots?: number;
-    version?: string;
-    registered?: boolean;
-    registeredAt?: Instant;
-    quarantined?: boolean;
-    quarantinedAt?: Instant;
-    quarantineReason?: string;
-    loginState?: string;
-    lastSeenAt?: Instant;
-    lastHealthCheckAt?: Instant;
-    lastHealthCheckOk?: boolean;
-    createdAt?: Instant;
-    connected?: boolean;
-    connectedSince?: Instant;
-    pinnedVersion?: string;
-    loginCommand?: string;
-    desks?: Array<DeskRunnerDesk>;
-    health?: DeskRunnerHealth;
-};
-
-export type DeskRunnerHealth = {
-    at?: Instant;
-    ok?: boolean;
-    detail?: string;
-    checks?: Array<DeskRunnerCheck>;
-};
-
-export type DeskRunnerHealthCheckRequested = {
-    requestId?: string;
-};
-
-export type DeskRunnerHealthDto = {
-    at?: Instant;
-    ok?: boolean;
-    detail?: string;
-    requestId?: string;
-    dataOmitted?: boolean;
-    checks?: Array<DeskRunnerCheckReport>;
-};
-
-export type DeskRunnerRegistered = {
-    clientId?: string;
-    secret?: string;
-    tokenUrl?: string;
-    audience?: string;
-    socketUrl?: string;
-};
-
-export type DeskRunnerRegistrationDto = {
-    runner?: DeskRunnerDto;
-    /**
-     * The runner's one-use registration token. Returned once
-     */
-    registrationToken?: string;
-    /**
-     * The one line that installs the runner on a docker host: it fetches the generic install script with the registration token and pipes it into sudo sh with this runner's values. Returned once
-     */
-    installLine?: string;
-};
-
 /**
  * One item a desk trigger source admitted into a window.
  */
 export type DeskTriggerEvent = {
     /**
-     * The source that admitted it: work-verified or approval-needed
+     * The source that admitted it: wait, work-verified, approval-needed or desk-mentioned
      */
     source?: string;
     /**
@@ -1032,6 +929,30 @@ export type FrontDeskRefusal = {
     reason?: string;
 };
 
+export type GuideResponse = {
+    /**
+     * workstation, agent, desk or refinement
+     */
+    variant?: string;
+    /**
+     * True when the variant was chosen from the caller's credential.
+     */
+    detected?: boolean;
+    /**
+     * The guide, as markdown.
+     */
+    markdown?: string;
+};
+
+export type GuideVariantDto = {
+    name?: string;
+    description?: string;
+};
+
+export type GuideVariantsResponse = {
+    variants?: Array<GuideVariantDto>;
+};
+
 export type HarnessCapabilityReport = {
     /**
      * CLAUDE or KIMI
@@ -1076,33 +997,6 @@ export type HarnessCapabilityReport = {
 };
 
 export type Instant = string;
-
-export type JsonNode = {
-    empty?: boolean;
-    valueNode?: boolean;
-    containerNode?: boolean;
-    missingNode?: boolean;
-    array?: boolean;
-    object?: boolean;
-    nodeType?: JsonNodeType;
-    pojo?: boolean;
-    number?: boolean;
-    integralNumber?: boolean;
-    floatingPointNumber?: boolean;
-    short?: boolean;
-    int?: boolean;
-    long?: boolean;
-    float?: boolean;
-    double?: boolean;
-    bigDecimal?: boolean;
-    bigInteger?: boolean;
-    textual?: boolean;
-    boolean?: boolean;
-    null?: boolean;
-    binary?: boolean;
-};
-
-export type JsonNodeType = 'ARRAY' | 'BINARY' | 'BOOLEAN' | 'MISSING' | 'NULL' | 'NUMBER' | 'OBJECT' | 'POJO' | 'STRING';
 
 export type KeptTags = {
     newest?: number;
@@ -1204,21 +1098,6 @@ export type OverrideReleaseRequestUpstream = {
     note?: string;
 };
 
-export type PatchDeskRunnerRequest = {
-    /**
-     * [a-z][a-z0-9-]{0,63}, unique; absent leaves it
-     */
-    name?: string;
-    /**
-     * Blank clears it; absent leaves it
-     */
-    description?: string;
-    /**
-     * At least 1; absent leaves it
-     */
-    slots?: number;
-};
-
 export type PlacementDto = {
     outcome?: string;
     queued?: boolean;
@@ -1226,7 +1105,7 @@ export type PlacementDto = {
 };
 
 /**
- * A refinement room and the technical process narrating its container's bring-up.
+ * A refinement room and a technical process id, already settled: ensure-container's answer, kept for the consumers that still call that door.
  */
 export type ProcessResponse = {
     refinement?: RefinementDto;
@@ -1271,33 +1150,20 @@ export type RefinementDto = {
     epicId?: string;
     projectId?: string;
     repositoryId?: string;
-    branch?: string;
-    parent?: string;
     label?: string;
     runtimeStatus?: string;
     runtimeError?: string;
-    clean?: boolean;
-    ahead?: number;
-    behind?: number;
-    conflictsWithParent?: boolean;
     agentActivity?: string;
-    daemonConnectedAt?: Instant;
-    daemonVersion?: string;
-    daemonOutdated?: boolean;
-    pinnedDaemonVersion?: string;
-    daemonVersionStale?: boolean;
     createdAt?: Instant;
+    sessionId?: string;
+    commandId?: string;
+    deskStatus?: string;
+    deskDetail?: string;
+    deskBase?: string;
 };
 
 export type RefinementResponse = {
     refinement?: RefinementDto;
-};
-
-export type RegisterDeskRunnerRequest = {
-    /**
-     * What the runner says about itself — a JSON object, at most 16 KiB
-     */
-    capabilities?: JsonNode;
 };
 
 export type ReleaseArtifactDto = {
@@ -2739,6 +2605,62 @@ export type CollectTagsResponses = {
 
 export type CollectTagsResponse = CollectTagsResponses[keyof CollectTagsResponses];
 
+export type GetDevelopmentGuideData = {
+    body?: never;
+    path?: never;
+    query?: {
+        for?: string;
+    };
+    url: '/projects/api/guide';
+};
+
+export type GetDevelopmentGuideErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetDevelopmentGuideResponses = {
+    /**
+     * OK
+     */
+    200: GuideResponse;
+};
+
+export type GetDevelopmentGuideResponse = GetDevelopmentGuideResponses[keyof GetDevelopmentGuideResponses];
+
+export type ListDevelopmentGuideVariantsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/projects/api/guide/variants';
+};
+
+export type ListDevelopmentGuideVariantsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListDevelopmentGuideVariantsResponses = {
+    /**
+     * OK
+     */
+    200: GuideVariantsResponse;
+};
+
+export type ListDevelopmentGuideVariantsResponse = ListDevelopmentGuideVariantsResponses[keyof ListDevelopmentGuideVariantsResponses];
+
 export type ListLaunchPinsData = {
     body?: never;
     path?: never;
@@ -3630,35 +3552,6 @@ export type GetProjectsApiRefinementsByIdResponses = {
 
 export type GetProjectsApiRefinementsByIdResponse = GetProjectsApiRefinementsByIdResponses[keyof GetProjectsApiRefinementsByIdResponses];
 
-export type GetProjectsApiRefinementsByIdActiveProcessData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/projects/api/refinements/{id}/active-process';
-};
-
-export type GetProjectsApiRefinementsByIdActiveProcessErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiRefinementsByIdActiveProcessResponses = {
-    /**
-     * OK
-     */
-    200: ActiveProcessResponse;
-};
-
-export type GetProjectsApiRefinementsByIdActiveProcessResponse = GetProjectsApiRefinementsByIdActiveProcessResponses[keyof GetProjectsApiRefinementsByIdActiveProcessResponses];
-
 export type ListRefinementDesignsData = {
     body?: never;
     path: {
@@ -3846,6 +3739,43 @@ export type DiscardRefinementResponses = {
 
 export type DiscardRefinementResponse = DiscardRefinementResponses[keyof DiscardRefinementResponses];
 
+export type EnsureRefinementSessionData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/projects/api/refinements/{id}/ensure';
+};
+
+export type EnsureRefinementSessionErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * The credential is bound to another entity, or the delivery desk reaches another project's room
+     */
+    403: unknown;
+    /**
+     * No refinement with this id
+     */
+    404: unknown;
+    /**
+     * REFINEMENT_SESSIONS_FULL: the project already runs as many refinement sessions as qits.projects.refinement-sessions-max allows; the message names them
+     */
+    409: unknown;
+};
+
+export type EnsureRefinementSessionResponses = {
+    /**
+     * The room
+     */
+    200: RefinementResponse;
+};
+
+export type EnsureRefinementSessionResponse = EnsureRefinementSessionResponses[keyof EnsureRefinementSessionResponses];
+
 export type EnsureRefinementContainerData = {
     body?: never;
     path: {
@@ -3869,14 +3799,14 @@ export type EnsureRefinementContainerErrors = {
      */
     404: unknown;
     /**
-     * The container is already being worked on and no process is live
+     * REFINEMENT_SESSIONS_FULL, as on ensure
      */
     409: unknown;
 };
 
 export type EnsureRefinementContainerResponses = {
     /**
-     * The room and the bring-up's technical process id
+     * The room and a settled technical process id
      */
     200: ProcessResponse;
 };
@@ -4155,63 +4085,38 @@ export type PutProjectsApiRefinementsByIdPromptDraftResponses = {
 
 export type PutProjectsApiRefinementsByIdPromptDraftResponse = PutProjectsApiRefinementsByIdPromptDraftResponses[keyof PutProjectsApiRefinementsByIdPromptDraftResponses];
 
-export type PostProjectsApiRefinementsByIdRecreateContainerData = {
+export type StopRefinementSessionData = {
     body?: never;
     path: {
         id: number;
     };
     query?: never;
-    url: '/projects/api/refinements/{id}/recreate-container';
+    url: '/projects/api/refinements/{id}/stop';
 };
 
-export type PostProjectsApiRefinementsByIdRecreateContainerErrors = {
+export type StopRefinementSessionErrors = {
     /**
      * Not Authorized
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The credential is bound to another entity, or the delivery desk reaches another project's room
      */
     403: unknown;
-};
-
-export type PostProjectsApiRefinementsByIdRecreateContainerResponses = {
     /**
-     * OK
+     * No refinement with this id
      */
-    200: ProcessResponse;
+    404: unknown;
 };
 
-export type PostProjectsApiRefinementsByIdRecreateContainerResponse = PostProjectsApiRefinementsByIdRecreateContainerResponses[keyof PostProjectsApiRefinementsByIdRecreateContainerResponses];
-
-export type PostProjectsApiRefinementsByIdStopContainerData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/projects/api/refinements/{id}/stop-container';
-};
-
-export type PostProjectsApiRefinementsByIdStopContainerErrors = {
+export type StopRefinementSessionResponses = {
     /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostProjectsApiRefinementsByIdStopContainerResponses = {
-    /**
-     * OK
+     * The room
      */
     200: RefinementResponse;
 };
 
-export type PostProjectsApiRefinementsByIdStopContainerResponse = PostProjectsApiRefinementsByIdStopContainerResponses[keyof PostProjectsApiRefinementsByIdStopContainerResponses];
+export type StopRefinementSessionResponse = StopRefinementSessionResponses[keyof StopRefinementSessionResponses];
 
 export type ListRepositoriesData = {
     body?: never;
@@ -5402,454 +5307,6 @@ export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponses = {
 };
 
 export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponse = GetProjectsApiRepositoriesByRepoIdSyncStatusResponses[keyof GetProjectsApiRepositoriesByRepoIdSyncStatusResponses];
-
-export type GetProjectsApiRunnersData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/projects/api/runners';
-};
-
-export type GetProjectsApiRunnersErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetProjectsApiRunnersResponses = {
-    /**
-     * Every runner, by name
-     */
-    200: Array<DeskRunnerDto>;
-};
-
-export type GetProjectsApiRunnersResponse = GetProjectsApiRunnersResponses[keyof GetProjectsApiRunnersResponses];
-
-export type PostProjectsApiRunnersData = {
-    body: CreateDeskRunnerRequest;
-    path?: never;
-    query?: never;
-    url: '/projects/api/runners';
-};
-
-export type PostProjectsApiRunnersErrors = {
-    /**
-     * A malformed name, slots or description
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * The name is taken
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the registration token
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED: it knows no public domain to address a runner by
-     */
-    503: unknown;
-};
-
-export type PostProjectsApiRunnersResponses = {
-    /**
-     * The runner, its registration token and the install line carrying it
-     */
-    201: DeskRunnerRegistrationDto;
-};
-
-export type PostProjectsApiRunnersResponse = PostProjectsApiRunnersResponses[keyof PostProjectsApiRunnersResponses];
-
-export type GetProjectsApiRunnersInstallShData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/projects/api/runners/install.sh';
-};
-
-export type GetProjectsApiRunnersInstallShErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * RUNNER_PLANE_UNCONFIGURED, or the script cannot be rendered
-     */
-    503: unknown;
-};
-
-export type GetProjectsApiRunnersInstallShResponses = {
-    /**
-     * A POSIX sh script, carrying no secret
-     */
-    200: string;
-};
-
-export type GetProjectsApiRunnersInstallShResponse = GetProjectsApiRunnersInstallShResponses[keyof GetProjectsApiRunnersInstallShResponses];
-
-export type DeleteProjectsApiRunnersByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}';
-};
-
-export type DeleteProjectsApiRunnersByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * RUNNER_OWNS_DESKS: a project's front desk is placed on it
-     */
-    409: unknown;
-};
-
-export type DeleteProjectsApiRunnersByIdResponses = {
-    /**
-     * Gone
-     */
-    204: void;
-};
-
-export type DeleteProjectsApiRunnersByIdResponse = DeleteProjectsApiRunnersByIdResponses[keyof DeleteProjectsApiRunnersByIdResponses];
-
-export type GetProjectsApiRunnersByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}';
-};
-
-export type GetProjectsApiRunnersByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GetProjectsApiRunnersByIdResponses = {
-    /**
-     * The runner
-     */
-    200: DeskRunnerDto;
-};
-
-export type GetProjectsApiRunnersByIdResponse = GetProjectsApiRunnersByIdResponses[keyof GetProjectsApiRunnersByIdResponses];
-
-export type PatchProjectsApiRunnersByIdData = {
-    body: PatchDeskRunnerRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}';
-};
-
-export type PatchProjectsApiRunnersByIdErrors = {
-    /**
-     * A malformed name, slots below 1, or an overlong description
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The name is taken
-     */
-    409: unknown;
-};
-
-export type PatchProjectsApiRunnersByIdResponses = {
-    /**
-     * The runner as it now is
-     */
-    200: DeskRunnerDto;
-};
-
-export type PatchProjectsApiRunnersByIdResponse = PatchProjectsApiRunnersByIdResponses[keyof PatchProjectsApiRunnersByIdResponses];
-
-export type PostProjectsApiRunnersByIdGreenlightData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}/greenlight';
-};
-
-export type PostProjectsApiRunnersByIdGreenlightErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type PostProjectsApiRunnersByIdGreenlightResponses = {
-    /**
-     * The runner as it now is
-     */
-    200: DeskRunnerDto;
-};
-
-export type PostProjectsApiRunnersByIdGreenlightResponse = PostProjectsApiRunnersByIdGreenlightResponses[keyof PostProjectsApiRunnersByIdGreenlightResponses];
-
-export type GetProjectsApiRunnersByIdHealthData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}/health';
-};
-
-export type GetProjectsApiRunnersByIdHealthErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GetProjectsApiRunnersByIdHealthResponses = {
-    /**
-     * The newest health check
-     */
-    200: DeskRunnerHealthDto;
-    /**
-     * No health check has settled yet
-     */
-    204: void;
-};
-
-export type GetProjectsApiRunnersByIdHealthResponse = GetProjectsApiRunnersByIdHealthResponses[keyof GetProjectsApiRunnersByIdHealthResponses];
-
-export type PostProjectsApiRunnersByIdHealthcheckData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}/healthcheck';
-};
-
-export type PostProjectsApiRunnersByIdHealthcheckErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * RUNNER_UNAVAILABLE: the runner is not connected
-     */
-    409: unknown;
-};
-
-export type PostProjectsApiRunnersByIdHealthcheckResponses = {
-    /**
-     * Sent, or one is pending already; its requestId
-     */
-    202: DeskRunnerHealthCheckRequested;
-};
-
-export type PostProjectsApiRunnersByIdHealthcheckResponse = PostProjectsApiRunnersByIdHealthcheckResponses[keyof PostProjectsApiRunnersByIdHealthcheckResponses];
-
-export type PostProjectsApiRunnersByIdLoginCheckData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}/login-check';
-};
-
-export type PostProjectsApiRunnersByIdLoginCheckErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * RUNNER_UNAVAILABLE: the runner is not connected
-     */
-    409: unknown;
-};
-
-export type PostProjectsApiRunnersByIdLoginCheckResponses = {
-    /**
-     * Sent
-     */
-    202: unknown;
-};
-
-export type RegisterDeskRunnerData = {
-    body: RegisterDeskRunnerRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}/register';
-};
-
-export type RegisterDeskRunnerErrors = {
-    /**
-     * Capabilities that are not a JSON object
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * The token is not this runner's
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner is already registered
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the runner's client
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
-     */
-    503: unknown;
-};
-
-export type RegisterDeskRunnerResponses = {
-    /**
-     * The runner's own client and where to use it
-     */
-    200: DeskRunnerRegistered;
-};
-
-export type RegisterDeskRunnerResponse = RegisterDeskRunnerResponses[keyof RegisterDeskRunnerResponses];
-
-export type PostProjectsApiRunnersByIdRegistrationTokenData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/projects/api/runners/{id}/registration-token';
-};
-
-export type PostProjectsApiRunnersByIdRegistrationTokenErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner is already registered
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the registration token
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
-     */
-    503: unknown;
-};
-
-export type PostProjectsApiRunnersByIdRegistrationTokenResponses = {
-    /**
-     * The runner, its new registration token and the install line carrying it
-     */
-    200: DeskRunnerRegistrationDto;
-};
-
-export type PostProjectsApiRunnersByIdRegistrationTokenResponse = PostProjectsApiRunnersByIdRegistrationTokenResponses[keyof PostProjectsApiRunnersByIdRegistrationTokenResponses];
 
 export type GetProjectsApiTechnicalProcessesByIdEventsData = {
     body?: never;
@@ -7226,13 +6683,9 @@ export type StartWorkRefinementErrors = {
      */
     404: unknown;
     /**
-     * The entity cannot be refined now
+     * The entity cannot be refined now, or REFINEMENT_SESSIONS_FULL: the project already runs as many refinement sessions as qits.projects.refinement-sessions-max allows
      */
     409: unknown;
-    /**
-     * The git host would not cut the branch
-     */
-    502: unknown;
 };
 
 export type StartWorkRefinementResponses = {

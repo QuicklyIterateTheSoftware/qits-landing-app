@@ -8627,6 +8627,7 @@
                 "events": [
                   {
                     "cause": "tok-workspace-agent-contract",
+                    "commentId": null,
                     "eventId": "00000000-0000-4000-8000-000000000004",
                     "itemId": "00000000-0000-4000-8000-000000000003",
                     "itemRef": "contract-00000001-1580",
@@ -8636,6 +8637,7 @@
                   },
                   {
                     "cause": "tok-workspace-agent-contract",
+                    "commentId": null,
                     "eventId": "00000000-0000-4000-8000-000000000004",
                     "itemId": "00000000-0000-4000-8000-000000000003",
                     "itemRef": "contract-00000001-1580",

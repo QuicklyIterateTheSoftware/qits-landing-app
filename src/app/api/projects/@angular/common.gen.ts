@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, CollectTagsData, CollectTagsResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteProjectsApiRunnersByIdData, DeleteProjectsApiRunnersByIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdActiveProcessData, GetProjectsApiRefinementsByIdActiveProcessResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiRunnersByIdData, GetProjectsApiRunnersByIdHealthData, GetProjectsApiRunnersByIdHealthResponse, GetProjectsApiRunnersByIdResponse, GetProjectsApiRunnersData, GetProjectsApiRunnersInstallShData, GetProjectsApiRunnersInstallShResponse, GetProjectsApiRunnersResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchProjectsApiRunnersByIdData, PatchProjectsApiRunnersByIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRefinementsByIdRecreateContainerData, PostProjectsApiRefinementsByIdRecreateContainerResponse, PostProjectsApiRefinementsByIdStopContainerData, PostProjectsApiRefinementsByIdStopContainerResponse, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PostProjectsApiRunnersByIdGreenlightData, PostProjectsApiRunnersByIdGreenlightResponse, PostProjectsApiRunnersByIdHealthcheckData, PostProjectsApiRunnersByIdHealthcheckResponse, PostProjectsApiRunnersByIdLoginCheckData, PostProjectsApiRunnersByIdRegistrationTokenData, PostProjectsApiRunnersByIdRegistrationTokenResponse, PostProjectsApiRunnersData, PostProjectsApiRunnersResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RegisterDeskRunnerData, RegisterDeskRunnerResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, TransitionWorkData, TransitionWorkResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
+import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, CollectTagsData, CollectTagsResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
 
 /**
  * Catalogue
@@ -123,6 +123,26 @@ export const collectTagsRequest = <ThrowOnError extends boolean = false>(options
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/gc/tags',
+    ...options
+});
+
+/**
+ * Get
+ */
+export const getDevelopmentGuideRequest = <ThrowOnError extends boolean = false>(options?: Options<GetDevelopmentGuideData, ThrowOnError>): HttpRequest<GetDevelopmentGuideResponse> => (options?.client ?? client).requestOptions<GetDevelopmentGuideResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/guide',
+    ...options
+});
+
+/**
+ * Variants
+ */
+export const listDevelopmentGuideVariantsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListDevelopmentGuideVariantsData, ThrowOnError>): HttpRequest<ListDevelopmentGuideVariantsResponse> => (options?.client ?? client).requestOptions<ListDevelopmentGuideVariantsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/guide/variants',
     ...options
 });
 
@@ -415,16 +435,6 @@ export const getProjectsApiRefinementsByIdRequest = <ThrowOnError extends boolea
 });
 
 /**
- * Active Process
- */
-export const getProjectsApiRefinementsByIdActiveProcessRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRefinementsByIdActiveProcessData, ThrowOnError>): HttpRequest<GetProjectsApiRefinementsByIdActiveProcessResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRefinementsByIdActiveProcessResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/refinements/{id}/active-process',
-    ...options
-});
-
-/**
  * A refinement's designs, oldest first, without their documents
  */
 export const listRefinementDesignsRequest = <ThrowOnError extends boolean = false>(options: Options<ListRefinementDesignsData, ThrowOnError>): HttpRequest<ListRefinementDesignsResponse> => (options?.client ?? client).requestOptions<ListRefinementDesignsResponse, ThrowOnError>({
@@ -477,7 +487,7 @@ export const updateRefinementDesignRequest = <ThrowOnError extends boolean = fal
 /**
  * Discard a refinement room
  *
- * Tears the room down: container, volume, credential, refining branch and row. The work entity stays where it is, and a later open starts a fresh room. The path names the room by its row id.
+ * Tears the room down: its session is stopped, its row (draft, sketches and designs with it) deleted and its token revoked. The work entity stays where it is, and a later open starts a fresh room. The path names the room by its row id.
  */
 export const discardRefinementRequest = <ThrowOnError extends boolean = false>(options: Options<DiscardRefinementData, ThrowOnError>): HttpRequest<DiscardRefinementResponse> => (options?.client ?? client).requestOptions<DiscardRefinementResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -487,9 +497,21 @@ export const discardRefinementRequest = <ThrowOnError extends boolean = false>(o
 });
 
 /**
- * Bring a refinement room's container up
+ * Ask for a refinement room's session
  *
- * Provisions a fresh container, wakes a stopped one or touches a running one, off the request thread, and answers the room together with the technical process that narrates the bring-up. A second call while one is under way answers the live process. The path names the room by its row id.
+ * Stamps the room's demand, so its session is wanted for the idle window, tells the project's front desk (an ON_DEMAND desk is started for it) and sends the desk's daemon its sessions list; answers the room. The path names the room by its row id.
+ */
+export const ensureRefinementSessionRequest = <ThrowOnError extends boolean = false>(options: Options<EnsureRefinementSessionData, ThrowOnError>): HttpRequest<EnsureRefinementSessionResponse> => (options?.client ?? client).requestOptions<EnsureRefinementSessionResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/refinements/{id}/ensure',
+    ...options
+});
+
+/**
+ * Ask for a refinement room's session, under the door's old name
+ *
+ * The alias of ensure, kept while a consumer still calls it: the session is asked for and the technical process answered is already settled. The path names the room by its row id.
  */
 export const ensureRefinementContainerRequest = <ThrowOnError extends boolean = false>(options: Options<EnsureRefinementContainerData, ThrowOnError>): HttpRequest<EnsureRefinementContainerResponse> => (options?.client ?? client).requestOptions<EnsureRefinementContainerResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -589,22 +611,14 @@ export const putProjectsApiRefinementsByIdPromptDraftRequest = <ThrowOnError ext
 });
 
 /**
- * Recreate
+ * Stop a refinement room's session
+ *
+ * Clears the room's demand, so its session is no longer wanted, and sends the project's desk daemon its sessions list, which stops it; idempotent. The room, its draft and its designs stay. The path names the room by its row id.
  */
-export const postProjectsApiRefinementsByIdRecreateContainerRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRefinementsByIdRecreateContainerData, ThrowOnError>): HttpRequest<PostProjectsApiRefinementsByIdRecreateContainerResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRefinementsByIdRecreateContainerResponse, ThrowOnError>({
+export const stopRefinementSessionRequest = <ThrowOnError extends boolean = false>(options: Options<StopRefinementSessionData, ThrowOnError>): HttpRequest<StopRefinementSessionResponse> => (options?.client ?? client).requestOptions<StopRefinementSessionResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
-    url: '/projects/api/refinements/{id}/recreate-container',
-    ...options
-});
-
-/**
- * Stop
- */
-export const postProjectsApiRefinementsByIdStopContainerRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRefinementsByIdStopContainerData, ThrowOnError>): HttpRequest<PostProjectsApiRefinementsByIdStopContainerResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRefinementsByIdStopContainerResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/refinements/{id}/stop-container',
+    url: '/projects/api/refinements/{id}/stop',
     ...options
 });
 
@@ -1035,126 +1049,6 @@ export const getProjectsApiRepositoriesByRepoIdSyncStatusRequest = <ThrowOnError
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/repositories/{repoId}/sync-status',
-    ...options
-});
-
-/**
- * Every front-desk runner, by name, with its connection, login and desks
- */
-export const getProjectsApiRunnersRequest = <ThrowOnError extends boolean = false>(options?: Options<GetProjectsApiRunnersData, ThrowOnError>): HttpRequest<GetProjectsApiRunnersResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRunnersResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/runners',
-    ...options
-});
-
-/**
- * Declare a front-desk runner; answers its install line, once
- */
-export const postProjectsApiRunnersRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRunnersData, ThrowOnError>): HttpRequest<PostProjectsApiRunnersResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRunnersResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/runners',
-    ...options
-});
-
-/**
- * The generic front-desk runner install script the install line pipes to sh
- */
-export const getProjectsApiRunnersInstallShRequest = <ThrowOnError extends boolean = false>(options?: Options<GetProjectsApiRunnersInstallShData, ThrowOnError>): HttpRequest<GetProjectsApiRunnersInstallShResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRunnersInstallShResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/runners/install.sh',
-    ...options
-});
-
-/**
- * Decommission a front-desk runner and give its credentials back
- */
-export const deleteProjectsApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteProjectsApiRunnersByIdData, ThrowOnError>): HttpRequest<DeleteProjectsApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<DeleteProjectsApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/projects/api/runners/{id}',
-    ...options
-});
-
-/**
- * One front-desk runner
- */
-export const getProjectsApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRunnersByIdData, ThrowOnError>): HttpRequest<GetProjectsApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/runners/{id}',
-    ...options
-});
-
-/**
- * Change a front-desk runner's name, description or slots
- */
-export const patchProjectsApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<PatchProjectsApiRunnersByIdData, ThrowOnError>): HttpRequest<PatchProjectsApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<PatchProjectsApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PATCH',
-    url: '/projects/api/runners/{id}',
-    ...options
-});
-
-/**
- * Lift a front-desk runner's quarantine
- */
-export const postProjectsApiRunnersByIdGreenlightRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRunnersByIdGreenlightData, ThrowOnError>): HttpRequest<PostProjectsApiRunnersByIdGreenlightResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRunnersByIdGreenlightResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/runners/{id}/greenlight',
-    ...options
-});
-
-/**
- * A front-desk runner's newest health check, every check's data included
- */
-export const getProjectsApiRunnersByIdHealthRequest = <ThrowOnError extends boolean = false>(options: Options<GetProjectsApiRunnersByIdHealthData, ThrowOnError>): HttpRequest<GetProjectsApiRunnersByIdHealthResponse> => (options?.client ?? client).requestOptions<GetProjectsApiRunnersByIdHealthResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/runners/{id}/health',
-    ...options
-});
-
-/**
- * Ask a connected front-desk runner for a health check
- */
-export const postProjectsApiRunnersByIdHealthcheckRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRunnersByIdHealthcheckData, ThrowOnError>): HttpRequest<PostProjectsApiRunnersByIdHealthcheckResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRunnersByIdHealthcheckResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/runners/{id}/healthcheck',
-    ...options
-});
-
-/**
- * Ask a connected front-desk runner to re-check its node's agent login
- */
-export const postProjectsApiRunnersByIdLoginCheckRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRunnersByIdLoginCheckData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/runners/{id}/login-check',
-    ...options
-});
-
-/**
- * Register a front-desk runner with its registration token; answers its client
- */
-export const registerDeskRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<RegisterDeskRunnerData, ThrowOnError>): HttpRequest<RegisterDeskRunnerResponse> => (options?.client ?? client).requestOptions<RegisterDeskRunnerResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/runners/{id}/register',
-    ...options
-});
-
-/**
- * Replace a front-desk runner's registration token; answers a new install line
- */
-export const postProjectsApiRunnersByIdRegistrationTokenRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiRunnersByIdRegistrationTokenData, ThrowOnError>): HttpRequest<PostProjectsApiRunnersByIdRegistrationTokenResponse> => (options?.client ?? client).requestOptions<PostProjectsApiRunnersByIdRegistrationTokenResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/runners/{id}/registration-token',
     ...options
 });
 
@@ -1603,7 +1497,7 @@ export const getWorkRefinementRequest = <ThrowOnError extends boolean = false>(o
 /**
  * Open (or find) a work entity's refinement room
  *
- * Find-or-create: an entity has at most one room, and a second open answers the first. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, and a project with no wrapper. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
+ * Find-or-create: an entity has at most one room, and a second open answers the first. The room is a session of the project's front desk, asked for by the open. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, a project with no wrapper, and beyond the project's refinement-sessions cap. The path names the entity (an epic, a ticket or a campaign) by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const startWorkRefinementRequest = <ThrowOnError extends boolean = false>(options: Options<StartWorkRefinementData, ThrowOnError>): HttpRequest<StartWorkRefinementResponse> => (options?.client ?? client).requestOptions<StartWorkRefinementResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1730,6 +1624,22 @@ export const getProjectsApiAgentSurfacesBySurfaceRevisionsResource = <ThrowOnErr
 export const collectTagsResource = <ThrowOnError extends boolean = false>(options: () => Options<CollectTagsData, ThrowOnError> | undefined) => httpResource<CollectTagsResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? collectTagsRequest(opts) : undefined;
+});
+
+/**
+ * Get
+ */
+export const getDevelopmentGuideResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetDevelopmentGuideData, ThrowOnError> | undefined) => httpResource<GetDevelopmentGuideResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getDevelopmentGuideRequest(opts) : undefined;
+});
+
+/**
+ * Variants
+ */
+export const listDevelopmentGuideVariantsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListDevelopmentGuideVariantsData, ThrowOnError> | undefined) => httpResource<ListDevelopmentGuideVariantsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listDevelopmentGuideVariantsRequest(opts) : undefined;
 });
 
 /**
@@ -1967,14 +1877,6 @@ export const getProjectsApiRefinementsByIdResource = <ThrowOnError extends boole
 });
 
 /**
- * Active Process
- */
-export const getProjectsApiRefinementsByIdActiveProcessResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRefinementsByIdActiveProcessData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRefinementsByIdActiveProcessResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRefinementsByIdActiveProcessRequest(opts) : undefined;
-});
-
-/**
  * A refinement's designs, oldest first, without their documents
  */
 export const listRefinementDesignsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListRefinementDesignsData, ThrowOnError> | undefined) => httpResource<ListRefinementDesignsResponse>(() => {
@@ -2017,7 +1919,7 @@ export const updateRefinementDesignResource = <ThrowOnError extends boolean = fa
 /**
  * Discard a refinement room
  *
- * Tears the room down: container, volume, credential, refining branch and row. The work entity stays where it is, and a later open starts a fresh room. The path names the room by its row id.
+ * Tears the room down: its session is stopped, its row (draft, sketches and designs with it) deleted and its token revoked. The work entity stays where it is, and a later open starts a fresh room. The path names the room by its row id.
  */
 export const discardRefinementResource = <ThrowOnError extends boolean = false>(options: () => Options<DiscardRefinementData, ThrowOnError> | undefined) => httpResource<DiscardRefinementResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2025,9 +1927,19 @@ export const discardRefinementResource = <ThrowOnError extends boolean = false>(
 });
 
 /**
- * Bring a refinement room's container up
+ * Ask for a refinement room's session
  *
- * Provisions a fresh container, wakes a stopped one or touches a running one, off the request thread, and answers the room together with the technical process that narrates the bring-up. A second call while one is under way answers the live process. The path names the room by its row id.
+ * Stamps the room's demand, so its session is wanted for the idle window, tells the project's front desk (an ON_DEMAND desk is started for it) and sends the desk's daemon its sessions list; answers the room. The path names the room by its row id.
+ */
+export const ensureRefinementSessionResource = <ThrowOnError extends boolean = false>(options: () => Options<EnsureRefinementSessionData, ThrowOnError> | undefined) => httpResource<EnsureRefinementSessionResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? ensureRefinementSessionRequest(opts) : undefined;
+});
+
+/**
+ * Ask for a refinement room's session, under the door's old name
+ *
+ * The alias of ensure, kept while a consumer still calls it: the session is asked for and the technical process answered is already settled. The path names the room by its row id.
  */
 export const ensureRefinementContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<EnsureRefinementContainerData, ThrowOnError> | undefined) => httpResource<EnsureRefinementContainerResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2107,19 +2019,13 @@ export const putProjectsApiRefinementsByIdPromptDraftResource = <ThrowOnError ex
 });
 
 /**
- * Recreate
+ * Stop a refinement room's session
+ *
+ * Clears the room's demand, so its session is no longer wanted, and sends the project's desk daemon its sessions list, which stops it; idempotent. The room, its draft and its designs stay. The path names the room by its row id.
  */
-export const postProjectsApiRefinementsByIdRecreateContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRefinementsByIdRecreateContainerData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRefinementsByIdRecreateContainerResponse>(() => {
+export const stopRefinementSessionResource = <ThrowOnError extends boolean = false>(options: () => Options<StopRefinementSessionData, ThrowOnError> | undefined) => httpResource<StopRefinementSessionResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRefinementsByIdRecreateContainerRequest(opts) : undefined;
-});
-
-/**
- * Stop
- */
-export const postProjectsApiRefinementsByIdStopContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRefinementsByIdStopContainerData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRefinementsByIdStopContainerResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRefinementsByIdStopContainerRequest(opts) : undefined;
+    return opts ? stopRefinementSessionRequest(opts) : undefined;
 });
 
 /**
@@ -2474,102 +2380,6 @@ export const postProjectsApiRepositoriesByRepoIdSyncResource = <ThrowOnError ext
 export const getProjectsApiRepositoriesByRepoIdSyncStatusResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRepositoriesByRepoIdSyncStatusData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRepositoriesByRepoIdSyncStatusResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? getProjectsApiRepositoriesByRepoIdSyncStatusRequest(opts) : undefined;
-});
-
-/**
- * Every front-desk runner, by name, with its connection, login and desks
- */
-export const getProjectsApiRunnersResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetProjectsApiRunnersData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRunnersResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRunnersRequest(opts) : undefined;
-});
-
-/**
- * Declare a front-desk runner; answers its install line, once
- */
-export const postProjectsApiRunnersResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRunnersData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRunnersResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRunnersRequest(opts) : undefined;
-});
-
-/**
- * The generic front-desk runner install script the install line pipes to sh
- */
-export const getProjectsApiRunnersInstallShResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetProjectsApiRunnersInstallShData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRunnersInstallShResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRunnersInstallShRequest(opts) : undefined;
-});
-
-/**
- * Decommission a front-desk runner and give its credentials back
- */
-export const deleteProjectsApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteProjectsApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<DeleteProjectsApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? deleteProjectsApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * One front-desk runner
- */
-export const getProjectsApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * Change a front-desk runner's name, description or slots
- */
-export const patchProjectsApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchProjectsApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<PatchProjectsApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? patchProjectsApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * Lift a front-desk runner's quarantine
- */
-export const postProjectsApiRunnersByIdGreenlightResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRunnersByIdGreenlightData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRunnersByIdGreenlightResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRunnersByIdGreenlightRequest(opts) : undefined;
-});
-
-/**
- * A front-desk runner's newest health check, every check's data included
- */
-export const getProjectsApiRunnersByIdHealthResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProjectsApiRunnersByIdHealthData, ThrowOnError> | undefined) => httpResource<GetProjectsApiRunnersByIdHealthResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getProjectsApiRunnersByIdHealthRequest(opts) : undefined;
-});
-
-/**
- * Ask a connected front-desk runner for a health check
- */
-export const postProjectsApiRunnersByIdHealthcheckResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRunnersByIdHealthcheckData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRunnersByIdHealthcheckResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRunnersByIdHealthcheckRequest(opts) : undefined;
-});
-
-/**
- * Ask a connected front-desk runner to re-check its node's agent login
- */
-export const postProjectsApiRunnersByIdLoginCheckResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRunnersByIdLoginCheckData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRunnersByIdLoginCheckRequest(opts) : undefined;
-});
-
-/**
- * Register a front-desk runner with its registration token; answers its client
- */
-export const registerDeskRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<RegisterDeskRunnerData, ThrowOnError> | undefined) => httpResource<RegisterDeskRunnerResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? registerDeskRunnerRequest(opts) : undefined;
-});
-
-/**
- * Replace a front-desk runner's registration token; answers a new install line
- */
-export const postProjectsApiRunnersByIdRegistrationTokenResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiRunnersByIdRegistrationTokenData, ThrowOnError> | undefined) => httpResource<PostProjectsApiRunnersByIdRegistrationTokenResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postProjectsApiRunnersByIdRegistrationTokenRequest(opts) : undefined;
 });
 
 /**
@@ -2943,7 +2753,7 @@ export const getWorkRefinementResource = <ThrowOnError extends boolean = false>(
 /**
  * Open (or find) a work entity's refinement room
  *
- * Find-or-create: an entity has at most one room, and a second open answers the first. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, and a project with no wrapper. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
+ * Find-or-create: an entity has at most one room, and a second open answers the first. The room is a session of the project's front desk, asked for by the open. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, a project with no wrapper, and beyond the project's refinement-sessions cap. The path names the entity (an epic, a ticket or a campaign) by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const startWorkRefinementResource = <ThrowOnError extends boolean = false>(options: () => Options<StartWorkRefinementData, ThrowOnError> | undefined) => httpResource<StartWorkRefinementResponse>(() => {
     const opts = options ? options() : undefined;
