@@ -10,7 +10,7 @@ import { provideHeyApiClient } from '../../api/ci/client/client.gen';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { ciGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { LIST_REPOSITORY_RUNS } from './ci-runs.consumes';
+import { LIST_ACTIVE_RUNS, LIST_REPOSITORY_RUNS } from './ci-runs.consumes';
 import { CiRunsStore } from './ci-runs.store';
 
 /**
@@ -21,7 +21,8 @@ const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-ci-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const STATE = 'a repository with the runs of a release request';
-const OPERATIONS = ['listRuns'];
+const ACTIVE_STATE = 'a commit with a run in flight';
+const OPERATIONS = ['listRuns', 'listActiveRuns'];
 
 describe('qits-landing-app → qits-ci-service pact', () => {
   let dir = '';
@@ -66,5 +67,34 @@ describe('qits-landing-app → qits-ci-service pact', () => {
       const repoId = masters.operation(STATE, 'listRuns').query['repositoryId'];
       await store.load(repoId);
       expect(store.byRepository()[repoId]?.status).toBe('loaded');
+    }));
+
+  it('show-release-request-active-runs: the lightning menu reads every queued or running run', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: ACTIVE_STATE,
+      operationId: 'listActiveRuns',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-release-request-active-runs' },
+      consumes: LIST_ACTIVE_RUNS,
+    }).executeTest(async (server) => {
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: PLATFORM_ID, useValue: 'server' },
+          provideHttpClient(withFetch()),
+          provideHeyApiClient(ciClient),
+        ],
+      });
+      ciClient.setConfig({ baseUrl: server.url });
+      const store = TestBed.inject(CiRunsStore);
+      await store.loadActive();
+      const active = store.active();
+      expect(active?.status).toBe('loaded');
+      const recorded = masters.body<{ runs: { id: string; status: string }[] }>(
+        ACTIVE_STATE,
+        'listActiveRuns',
+      );
+      expect(active?.runs.map((run) => [run.id, run.status])).toEqual(
+        recorded.runs.map((run) => [run.id, run.status]),
+      );
     }));
 });
