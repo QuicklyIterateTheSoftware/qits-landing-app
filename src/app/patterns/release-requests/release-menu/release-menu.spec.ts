@@ -6,8 +6,14 @@ import { provideRouter } from '@angular/router';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as systemClient } from '../../../api/system/client.gen';
+import { client as ciClient } from '../../../api/ci/client.gen';
+import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
-import { goldenMaster, systemGoldenMaster } from '../../../../testing/golden-masters';
+import {
+  ciGoldenMaster,
+  goldenMaster,
+  systemGoldenMaster,
+} from '../../../../testing/golden-masters';
 import { Subject } from 'rxjs';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { isPendingRelease, type ReleaseRequestEntry } from '$core/projects/projects.consumes';
@@ -37,6 +43,8 @@ describe('ReleaseMenu', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(systemClient),
+        provideHeyApiClient(ciClient),
+        provideTestPlatformOrigins({}, { ci: 'https://ci.example' }),
         { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
         {
           provide: SelectedProject,
@@ -49,12 +57,14 @@ describe('ReleaseMenu', () => {
 
   /** Opening the menu also reads qits-system's targets, for the runners and slots line. */
   const TARGETS = '/system/api/targets';
+  /** ...and qits-ci's active runs, for the chips under each request. */
+  const ACTIVE = '/ci/api/runs/active';
 
   // The tests below that open the menu are about the requests: their targets read is refused, which
   // hides the line (its own spec is `runner-slots.spec.ts`).
   afterEach(async () => {
     await settle();
-    for (const read of http.match(TARGETS))
+    for (const read of http.match((r) => r.url === TARGETS || r.url === ACTIVE))
       read.flush(null, { status: 403, statusText: 'Forbidden' });
     http.verify();
   });
@@ -197,5 +207,96 @@ describe('ReleaseMenu', () => {
     expect(line.nextElementSibling?.tagName).toBe('UI-SPINNER');
     expect(line.textContent).toContain('runners: 0');
     expect(line.textContent).toContain('slots:');
+  });
+
+  describe('active CI runs', () => {
+    const requests = goldenMaster(
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+    ) as { requests: ReleaseRequestEntry[] };
+    const recordedActive = ciGoldenMaster('a commit with a run in flight', 'listActiveRuns') as {
+      runs: { id: string; status: string; branch: string; releaseRequestId: string | null }[];
+    };
+
+    async function opened() {
+      const rendered = render();
+      await settle();
+      http.expectOne(`/projects/api/projects/${recorded.id}/release-requests`).flush(requests);
+      await settle();
+      rendered.button.click();
+      rendered.fixture.detectChanges();
+      await settle();
+      return { ...rendered, active: http.expectOne(ACTIVE) };
+    }
+
+    it('links the active runs under the request they belong to', async () => {
+      const { fixture, panel, active } = await opened();
+      // qits-ci's recorded run in flight names no request (two providers, unrelated ids), so it is
+      // put under the first pending request; a queued copy of it runs that request's automation.
+      const target = requests.requests.find(isPendingRelease)!;
+      const [run] = recordedActive.runs;
+      active.flush({
+        runs: [
+          { ...run, releaseRequestId: target.id },
+          {
+            ...run,
+            id: `${run.id}-auto`,
+            status: 'QUEUED',
+            branch: `maintenance/automations/screenshot-baselines/${target.id}`,
+          },
+        ],
+      });
+      await settle();
+      fixture.detectChanges();
+      const chips = Array.from(panel.querySelectorAll<HTMLAnchorElement>('a[data-active-run]'));
+      expect(chips.map((a) => a.textContent?.trim())).toEqual(['CI running', 'Automation queued']);
+      expect(chips[0].getAttribute('href')).toBe(`https://ci.example/runs/${run.id}`);
+      const row = chips[0].closest('li')!;
+      expect(row.querySelector('a span')?.textContent?.trim()).toBe(target.qualifiedId);
+      expect(panel.querySelectorAll('li a[data-active-run]').length).toBe(2);
+    });
+
+    it('shows no chip while no run of a pending request is active', async () => {
+      const { fixture, panel, active } = await opened();
+      active.flush(recordedActive);
+      await settle();
+      fixture.detectChanges();
+      expect(panel.querySelectorAll('[data-active-run]')).toHaveLength(0);
+    });
+
+    it('reads the active runs again after a build event of a pending request’s repository', async () => {
+      const { fixture, panel, active } = await opened();
+      active.flush(recordedActive);
+      await settle();
+      const target = requests.requests.find(isPendingRelease)!;
+      vi.useFakeTimers();
+      events.next({
+        id: '1',
+        name: 'BuildStatusChanged',
+        payload: JSON.stringify({ repoId: 'other' }),
+      });
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+      http.expectNone(ACTIVE);
+      vi.useFakeTimers();
+      events.next({
+        id: '2',
+        name: 'BuildStatusChanged',
+        payload: JSON.stringify({ repoId: target.repoId }),
+      });
+      vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      await settle();
+      // Derived as above: the recorded run, put under the first pending request.
+      const [run] = recordedActive.runs;
+      http.expectOne(ACTIVE).flush({ runs: [{ ...run, releaseRequestId: target.id }] });
+      await settle();
+      fixture.detectChanges();
+      expect(panel.querySelector('[data-active-run]')?.textContent?.trim()).toBe('CI running');
+      // A build event may also move the requests; that read is not this test's subject.
+      for (const read of http.match(`/projects/api/projects/${recorded.id}/release-requests`))
+        read.flush(requests);
+    });
   });
 });
