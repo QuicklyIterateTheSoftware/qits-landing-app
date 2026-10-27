@@ -135,8 +135,8 @@ describe('ReleaseMenu (screenshots)', () => {
       .element(panel.getByRole('link', { name: /contract-frontend/ }).first())
       .toHaveAttribute('title', 'Look: CI build');
     await expect.element(panel).not.toMatchTextContent('Finalized release');
-    // The runners and slots line heads the panel: runners and slots at the left, the types and the
-    // shared pool at the right.
+    // The runners and slots line heads the panel: runners, slots and the shared pool at the left,
+    // the types' reservations at the right.
     await expect.element(panel.getByText('runners: 0')).toBeVisible();
     await expect.element(panel.getByText('workspaces:')).toBeVisible();
     await expect.element(panel.getByText('shared:')).toBeVisible();

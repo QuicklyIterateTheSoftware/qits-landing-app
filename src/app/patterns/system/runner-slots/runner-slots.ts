@@ -5,11 +5,11 @@ import { TARGET_EVENTS } from '$core/system/target-events';
 import { TargetsStore } from '$core/system/targets.store';
 
 /**
- * The lightning menu's heading. At the left: `runners: N`, and `slots: used/total`, the targets'
- * real slot count. At the right, a small grid with labels and values aligned. Under a "used /
- * reserved" caption, each slot type's use and its reservation (not a limit, so use may be larger).
- * Under a "used / unreserved" caption, `shared`: the types' use beyond their reservations, and the
- * slots nothing reserves.
+ * The lightning menu's heading. At the left, the general slots: `runners: N`; `slots: used/total`,
+ * the targets' real slot count; and `shared: used/unreserved`, the types' use beyond their
+ * reservations and the slots nothing reserves. At the right, only the reservations: each slot
+ * type's use and its reservation (not a limit, so use may be larger), labels and values aligned,
+ * with no caption; a tooltip on each row says "used / reserved".
  * Only connected targets count (`runnerSlots`).
  *
  * Shown only once the targets are loaded: hidden while they load, and when the read fails, which
@@ -33,32 +33,21 @@ import { TargetsStore } from '$core/system/targets.store';
             >slots: {{ line.used }}/{{ line.total }}
             <span class="text-[0.625rem] text-gray-400">used / total</span></span
           >
+          <span
+            >shared: {{ line.shared.used }}/{{ line.shared.unreserved }}
+            <span class="text-[0.625rem] text-gray-400">used / unreserved</span></span
+          >
         </div>
         <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
-          <div class="contents">
-            <dt class="sr-only">slot type</dt>
-            <dd class="col-start-2 m-0 text-right text-[0.625rem] text-gray-400">
-              used / reserved
-            </dd>
-          </div>
           @for (row of line.types; track row.type) {
             <div class="contents" data-row>
-              <dt>{{ row.label }}:</dt>
-              <dd class="m-0 text-right">{{ row.used }}/{{ row.reserved }}</dd>
+              <!-- A display: contents box shows no tooltip, so each cell carries it. -->
+              <dt title="used / reserved">{{ row.label }}:</dt>
+              <dd class="m-0 text-right" title="used / reserved">
+                {{ row.used }}/{{ row.reserved }}
+              </dd>
             </div>
           }
-          <div class="contents">
-            <dt class="sr-only">shared pool</dt>
-            <dd
-              class="col-start-2 m-0 mt-0.5 border-t border-gray-100 text-right text-[0.625rem] text-gray-400"
-            >
-              used / unreserved
-            </dd>
-          </div>
-          <div class="contents" data-row>
-            <dt>shared:</dt>
-            <dd class="m-0 text-right">{{ line.shared.used }}/{{ line.shared.unreserved }}</dd>
-          </div>
         </dl>
       </div>
     }

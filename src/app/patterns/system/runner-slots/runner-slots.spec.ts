@@ -56,7 +56,7 @@ describe('RunnerSlots', () => {
       (dt) => `${dt.textContent?.trim()} ${dt.nextElementSibling?.textContent?.trim()}`,
     );
 
-  it('shows runners and slots at the left, and the use per type and the shared pool at the right', async () => {
+  it('shows runners, slots and the shared pool at the left, and the use per type at the right', async () => {
     // The recorded target, connected and busy, plus a second one with a new slot type. The answer
     // names the reservations `minimums`, as qits-system still does.
     const [lab] = recorded;
@@ -77,26 +77,32 @@ describe('RunnerSlots', () => {
     const left = Array.from(line.firstElementChild!.children).map((s) =>
       s.textContent?.replace(/\s+/g, ' ').trim(),
     );
-    expect(left).toEqual(['runners: 2', 'slots: 11/16 used / total']);
-    // Each type: its use, uncapped, of its reservation. Shared, per target: the first has 3 slots
-    // nothing reserves and ci and workspaces use 2 + 3 beyond theirs; the second has none, and
-    // workspaces uses 1 beyond its 0.
-    expect(line.textContent).toContain('used / reserved');
-    expect(line.textContent).toContain('used / unreserved');
-    expect(rows(element)).toEqual([
-      'ci: 4/8',
-      'workspaces: 6/2',
-      'desk: 0/2',
-      'gpu: 1/1',
-      'shared: 6/3',
+    // Shared, per target: the first has 3 slots nothing reserves and ci and workspaces use 2 + 3
+    // beyond theirs; the second has none, and workspaces uses 1 beyond its 0.
+    expect(left).toEqual([
+      'runners: 2',
+      'slots: 11/16 used / total',
+      'shared: 6/3 used / unreserved',
     ]);
+    // The right holds only the reservations: each type's use, uncapped, of its reservation.
+    const right = line.lastElementChild!;
+    expect(right.textContent).not.toContain('used / reserved');
+    expect(
+      Array.from(right.querySelectorAll('[data-row] > *')).every(
+        (cell) => cell.getAttribute('title') === 'used / reserved',
+      ),
+    ).toBe(true);
+    expect(right.textContent).not.toContain('shared');
+    expect(right.querySelector('.border-t')).toBeNull();
+    expect(rows(element)).toEqual(['ci: 4/8', 'workspaces: 6/2', 'desk: 0/2', 'gpu: 1/1']);
   });
 
   it('shows zeros for the recorded target, which is not connected', async () => {
     const { element } = await render((request) => request.flush(recorded));
     expect(element.textContent).toContain('runners: 0');
     expect(element.textContent).toContain('slots: 0/0');
-    expect(rows(element)).toEqual(['ci: 0/0', 'workspaces: 0/0', 'desk: 0/0', 'shared: 0/0']);
+    expect(element.textContent).toContain('shared: 0/0');
+    expect(rows(element)).toEqual(['ci: 0/0', 'workspaces: 0/0', 'desk: 0/0']);
   });
 
   it('stays hidden when the read is refused', async () => {
