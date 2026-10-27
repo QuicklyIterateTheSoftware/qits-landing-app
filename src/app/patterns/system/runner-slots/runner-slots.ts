@@ -5,8 +5,9 @@ import { TARGET_EVENTS } from '$core/system/target-events';
 import { TargetsStore } from '$core/system/targets.store';
 
 /**
- * The lightning menu's heading: `runners: N` at the far left, and at the far right a small grid
- * with `slots: used/total` and one row per slot type (`used/minimum`), labels and values aligned.
+ * The lightning menu's heading. At the left: `runners: N` and `slots: used/total`. At the right, a
+ * small grid with labels and values aligned: one row per slot type with the slots it uses now, then
+ * `shared: used/size`, the slots no minimum reserves and how many the types use beyond theirs.
  * Only connected targets count (`runnerSlots`).
  *
  * Shown only once the targets are loaded: hidden while they load, and when the read fails, which
@@ -24,14 +25,17 @@ import { TargetsStore } from '$core/system/targets.store';
         class="flex items-start justify-between gap-4 border-b border-gray-100 px-3 py-1.5 text-[0.6875rem] leading-4 text-gray-500 tabular-nums"
         data-testid="runner-slots"
       >
-        <span>runners: {{ line.runners }}</span>
+        <div class="flex flex-col">
+          <span>runners: {{ line.runners }}</span>
+          <span>slots: {{ line.used }}/{{ line.total }}</span>
+        </div>
         <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
-          <dt>slots:</dt>
-          <dd class="m-0 text-right">{{ line.used }}/{{ line.total }}</dd>
           @for (row of line.types; track row.type) {
             <dt>{{ row.label }}:</dt>
-            <dd class="m-0 text-right">{{ row.used }}/{{ row.reserved }}</dd>
+            <dd class="m-0 text-right">{{ row.used }}</dd>
           }
+          <dt>shared:</dt>
+          <dd class="m-0 text-right">{{ line.shared.used }}/{{ line.shared.size }}</dd>
         </dl>
       </div>
     }

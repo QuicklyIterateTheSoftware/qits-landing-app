@@ -16,6 +16,7 @@ describe('runnerSlots', () => {
         { type: 'workspace', label: 'workspaces', used: 0, reserved: 0 },
         { type: 'desk', label: 'desk', used: 0, reserved: 0 },
       ],
+      shared: { used: 0, size: 0 },
     });
   });
 
@@ -43,6 +44,26 @@ describe('runnerSlots', () => {
         { type: 'desk', label: 'desk', used: 0, reserved: 2 },
         { type: 'gpu', label: 'gpu', used: 1, reserved: 1 },
       ],
+      // Size: 16 − (8 + 2 + 2 + 1) = 3. Used: only workspaces is over its minimum (6 − 2 = 4);
+      // ci (4 of 8) and desk (0 of 2) are under theirs and take nothing from the pool.
+      shared: { used: 4, size: 3 },
     });
+  });
+
+  it("computes the shared pool from the owner's example: ci at, workspaces over, desk under", () => {
+    const [lab] = recorded;
+    const targets = [
+      {
+        ...lab,
+        connected: true,
+        slotsTotal: 16,
+        used: { ci: 8, workspace: 4, desk: 0 },
+        minimums: { ci: 8, workspace: 2, desk: 1 },
+      },
+    ] as TargetEntry[];
+    const line = runnerSlots(targets);
+    expect([line.used, line.total]).toEqual([12, 16]);
+    expect(line.types.map((row) => row.used)).toEqual([8, 4, 0]);
+    expect(line.shared).toEqual({ used: 2, size: 5 });
   });
 });

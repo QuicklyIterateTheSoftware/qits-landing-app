@@ -8,6 +8,14 @@ export interface SlotTypeRow {
   readonly reserved: number;
 }
 
+/** The shared pool: the slots no minimum reserves, and how many the types use beyond theirs. */
+export interface SharedPool {
+  /** Slots the types use beyond their minimums: Σ max(0, used − minimum) per type. */
+  readonly used: number;
+  /** Slots no minimum reserves: total − Σ minimums. */
+  readonly size: number;
+}
+
 /** What the lightning menu's runners and slots line shows. */
 export interface RunnerSlots {
   /** How many targets are connected. */
@@ -18,6 +26,8 @@ export interface RunnerSlots {
   readonly total: number;
   /** One row per slot type the answer names: ci, workspaces, desk, then any other by name. */
   readonly types: readonly SlotTypeRow[];
+  /** The unreserved slots and their use. */
+  readonly shared: SharedPool;
 }
 
 /** The labels for the slot types known today; any other type shows its raw name. */
@@ -38,8 +48,9 @@ const count = (counts: unknown, type: string): number => {
 };
 
 /**
- * The line's figures from qits-system's targets. Only connected targets count. A slot type's row
- * is `used / minimum`: a minimum is a reserve, not a cap, so `used` may be larger. The types come
+ * The line's figures from qits-system's targets. Only connected targets count. A minimum is a
+ * reserve, not a cap: a type grows past it into the shared pool (the slots no minimum reserves)
+ * while that has room. The pool is computed from the sums over all targets, per type. The types come
  * from the answer (every key of `used` and `minimums` on any target), so a new type shows by itself,
  * after the known ones.
  */
@@ -61,10 +72,16 @@ export function runnerSlots(targets: readonly TargetEntry[]): RunnerSlots {
       used: sum((target) => count(target.used, type)),
       reserved: sum((target) => count(target.minimums, type)),
     }));
+  const total = sum((target) => target.slotsTotal ?? 0);
+  const add = (read: (row: SlotTypeRow) => number) => rows.reduce((all, row) => all + read(row), 0);
   return {
     runners: connected.length,
-    used: rows.reduce((total, row) => total + row.used, 0),
-    total: sum((target) => target.slotsTotal ?? 0),
+    used: add((row) => row.used),
+    total,
     types: rows,
+    shared: {
+      used: add((row) => Math.max(0, row.used - row.reserved)),
+      size: total - add((row) => row.reserved),
+    },
   };
 }
