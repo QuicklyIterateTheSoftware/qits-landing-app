@@ -1,5 +1,21 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  input,
+  PLATFORM_ID,
+  signal,
+  untracked,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { commentAnchor, commentOfAnchor } from '$core/work/comment-anchor';
 import type { CommentEntry } from '$core/work/work-detail.consumes';
 import { WorkDetailStore } from '$core/work/work-detail.store';
 import type { WorkEntry } from '$core/work/work.consumes';
@@ -13,6 +29,12 @@ type CommentWrite = 'add' | 'save';
 /**
  * A work item's comments, oldest first: each with its author, its time (UTC) and its body as
  * Markdown. "No comments yet" for none. A region named "Comments".
+ *
+ * Each comment's row has the id `comment-<comment id>` (`commentAnchor`), so a link can open the
+ * page at it (qits-1660; the Desk page links each `@desk` comment so). When the URL's fragment
+ * names a comment, its row is outlined and scrolled into view once it is drawn. A fragment naming
+ * a comment the thread does not hold yet (a thread read before the comment was written) reads the
+ * thread again, once.
  *
  * A comment an agent wrote shows "`<authorAgentOf>`'s agent" (the qualified id of the work item
  * whose agent wrote it) in place of its author (qits-1452); a person's shows its author as before.
@@ -36,7 +58,15 @@ type CommentWrite = 'add' | 'save';
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Comments</h2>
       <ol class="m-0 flex list-none flex-col gap-3 p-0">
         @for (comment of comments(); track comment.id) {
-          <li class="rounded-md border border-charcoal-brown-200 px-4 py-3">
+          <li
+            class="scroll-mt-6 rounded-md border px-4 py-3"
+            [class]="
+              targeted() === comment.id
+                ? 'border-ocean-deep-500 ring-2 ring-ocean-deep-200'
+                : 'border-charcoal-brown-200'
+            "
+            [id]="anchor(comment)"
+          >
             <div class="mb-1 flex items-start justify-between gap-2">
               <p class="m-0 text-xs text-charcoal-brown-600">
                 <span class="font-semibold text-charcoal-brown-900">{{
@@ -90,6 +120,7 @@ type CommentWrite = 'add' | 'save';
 })
 export class WorkComments {
   private readonly store = inject(WorkDetailStore);
+  private readonly injector = inject(Injector);
 
   readonly comments = input.required<readonly CommentEntry[]>();
   /** The item the thread belongs to: its qualified id addresses the writes. */
@@ -101,6 +132,16 @@ export class WorkComments {
   protected readonly draft = signal('');
   protected readonly writing = signal<CommentWrite | null>(null);
   protected readonly failure = signal<string | null>(null);
+
+  /** The comment the URL's fragment names (`#comment-<id>`); undefined when it names none. */
+  protected readonly targeted = computed(() => commentOfAnchor(this.fragment()));
+
+  private readonly fragment = toSignal(
+    inject(ActivatedRoute, { optional: true })?.fragment ?? of(null),
+    {
+      initialValue: null,
+    },
+  );
 
   protected readonly placeholder = computed(
     () => `Say something about this ${(this.entry().archetype ?? 'item').toLowerCase()}.`,
@@ -126,6 +167,35 @@ export class WorkComments {
     disabled: this.writing() !== null,
     callback: () => this.stopEditing(),
   }));
+
+  constructor() {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+    let scrolledTo: string | undefined;
+    let reread: string | undefined;
+    effect(() => {
+      const id = this.targeted();
+      if (!id || id === scrolledTo) return;
+      if (this.comments().some((comment) => comment.id === id)) {
+        scrolledTo = id;
+        afterNextRender(
+          () => document.getElementById(commentAnchor(id))?.scrollIntoView({ block: 'start' }),
+          { injector: this.injector },
+        );
+        return;
+      }
+      // Only a thread that has loaded can lack it; one still loading is read already.
+      const ref = this.entry().qualifiedId;
+      if (ref && reread !== id && this.store.of(ref)?.status === 'loaded') {
+        reread = id;
+        untracked(() => void this.store.refresh(ref));
+      }
+    });
+  }
+
+  /** The row's `id`, which a URL fragment names to open the page at it. */
+  protected anchor(comment: CommentEntry): string {
+    return commentAnchor(comment.id ?? '');
+  }
 
   /** The byline for `comment`: the work item whose agent wrote it, else its author. */
   protected authorLabel(comment: CommentEntry): string {

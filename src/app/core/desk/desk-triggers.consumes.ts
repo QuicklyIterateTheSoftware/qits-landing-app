@@ -24,6 +24,7 @@ export const LIST_DESK_TRIGGER_MESSAGES = [
   'messages[].events[].itemId',
   'messages[].events[].label',
   'messages[].events[].cause',
+  'messages[].events[].commentId',
   'messages[].events[].eventId',
   'messages[].events[].occurredAt',
 ] as const;

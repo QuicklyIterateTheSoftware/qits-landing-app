@@ -58,6 +58,16 @@ const DELIVERED_MESSAGE = {
       eventId: '00000000-0000-4000-8000-000000000006',
       occurredAt: '2026-01-01T00:00:00Z',
     },
+    {
+      source: 'desk-mentioned',
+      itemRef: 'contract-00000001-1660',
+      itemId: '00000000-0000-4000-8000-000000000007',
+      label: "Desk triggers; from qits-1580's agent",
+      cause: 'comment 00000000',
+      commentId: '00000000-0000-4000-8000-000000000008',
+      eventId: '00000000-0000-4000-8000-000000000009',
+      occurredAt: '2026-01-01T00:00:00Z',
+    },
   ],
 };
 
@@ -136,7 +146,7 @@ describe('ProjectDeskPage', () => {
     expect(row.querySelector('ui-chip')?.textContent?.trim()).toBe('delivered');
     expect(row.textContent).toContain('2026-01-01 00:00 UTC');
     const lines = row.querySelectorAll('ul li');
-    expect(lines).toHaveLength(2);
+    expect(lines).toHaveLength(3);
     expect(lines[0].textContent).toContain('work-verified');
     expect(lines[0].textContent).toContain('Desk triggers read door');
     expect(lines[0].textContent).toContain('tok-workspace-agent-contract');
@@ -144,11 +154,15 @@ describe('ProjectDeskPage', () => {
     expect(workLink?.textContent?.trim()).toBe('contract-00000001-1580');
     expect(workLink?.getAttribute('href')).toBe(
       `/projects/${project.slug}/work/detail/contract-00000001-1580`,
-    );
+    ); // no comment, no fragment
     const requestLink = lines[1].querySelector('a');
     expect(requestLink?.textContent?.trim()).toBe('contract-service-rr-7');
     expect(requestLink?.getAttribute('href')).toBe(
       `/projects/${project.slug}/release-requests/contract-service-rr-7`,
+    );
+    expect(lines[2].textContent).toContain('comment 00000000');
+    expect(lines[2].querySelector('a')?.getAttribute('href')).toBe(
+      `/projects/${project.slug}/work/detail/contract-00000001-1660#comment-00000000-0000-4000-8000-000000000008`,
     );
     // Accepted: no attempts/refusal line shown.
     const attemptsLine = Array.from(row.querySelectorAll('span')).find((span) =>

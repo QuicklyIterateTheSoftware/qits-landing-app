@@ -22,6 +22,9 @@ import { SelectedProject } from '$core/projects/selected-project';
 /** The event qits-projects announces for every status or shape change of work entities. */
 export const WORK_EVENTS = ['EntityTransitioned'];
 
+/** qits-projects' event for a new comment; it names the item as `entityId` (qits-1660). */
+export const COMMENT_EVENTS = ['EntityCommented'];
+
 /** How long a burst of transitions waits before the work is fetched again. */
 export const WORK_REFRESH_DEBOUNCE_MS = REFRESH_DEBOUNCE_MS;
 

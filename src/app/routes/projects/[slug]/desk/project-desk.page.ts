@@ -13,6 +13,7 @@ import type { DeskTriggerEvent, DeskTriggerMessage } from '$core/desk/desk-trigg
 import { DeskTriggersStore } from '$core/desk/desk-triggers.store';
 import { utcMinute } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
+import { commentAnchor } from '$core/work/comment-anchor';
 import { WORK_DETAIL } from '$core/work/work-tabs';
 import { RELEASE_REQUESTS } from '$layout/shell/shell.layout';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -53,7 +54,9 @@ function when(instant: string | null | undefined): string {
  * deliveries were tried and the last one's refusal, when the service gave one. Below that, the
  * lines it collected: each event's source, the item it names — linking to the work item's or the
  * release request's own page where the qualified id's shape says which, plain text otherwise
- * (`app.routes.ts` has both routes) — its label and its cause. The exact text sent to the desk is
+ * (`app.routes.ts` has both routes) — its label and its cause. A line that names a comment (a
+ * `desk-mentioned` one carries `commentId`, qits-1660) links to that comment on the work item page
+ * (`#comment-<commentId>`), so a person can read exactly what the desk was told about. The exact text sent to the desk is
  * in a collapsible `<details>`, hidden while the window is still OPEN (`message` is null until it
  * closes).
  *
@@ -112,6 +115,7 @@ function when(instant: string | null | undefined): string {
                         <a
                           class="font-mono text-ocean-deep-700 no-underline hover:underline"
                           [routerLink]="href"
+                          [fragment]="fragment(event)"
                           >{{ event.itemRef }}</a
                         >
                       } @else {
@@ -191,6 +195,11 @@ export class ProjectDeskPage {
     return RELEASE_REQUEST_REF.test(ref)
       ? `/projects/${slug}/${RELEASE_REQUESTS}/${ref}`
       : `/projects/${slug}/work/${WORK_DETAIL}/${ref}`;
+  }
+
+  /** The fragment of the link: the comment the line came from, when it names one (qits-1660). */
+  protected fragment(event: DeskTriggerEvent): string | undefined {
+    return event.commentId ? commentAnchor(event.commentId) : undefined;
   }
 
   /** Reads the list again after a failed read. */

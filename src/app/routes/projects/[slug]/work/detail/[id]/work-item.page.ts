@@ -14,8 +14,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
-import { refreshOn } from '$core/events/refresh-on';
-import { SelectedWork, WORK_EVENTS } from '$core/work/selected-work';
+import { payloadField, refreshOn } from '$core/events/refresh-on';
+import { COMMENT_EVENTS, SelectedWork, WORK_EVENTS } from '$core/work/selected-work';
 import { ArchetypesStore } from '$core/work/archetypes.store';
 import {
   lookOf,
@@ -72,9 +72,10 @@ const notBuiltYet = (): void => undefined;
  * Staleness (qits-1270): `EntityTransitioned` naming the open project → the project's work
  * (`SelectedWork.followTransitions`: the item's status, its children, its actions); naming this
  * item among its `entities[].entityId` → the item's own data (`WorkDetailStore.refresh`: its
- * started/implemented times move with its status). A child's or the parent's move changes only
- * their rows in the work, which the first refetch reads. qits-projects sends no event for a
- * comment, a dossier page or figure, an edit of the item's fields (description, criteria,
+ * started/implemented times move with its status). `EntityCommented` naming this item as its
+ * `entityId` → the same read, which brings the new comment (qits-1660). A child's or the parent's
+ * move changes only their rows in the work, which the first refetch reads. qits-projects sends no
+ * event for a comment's edit, a dossier page or figure, an edit of the item's fields (description, criteria,
  * assignee…), a block or unblock, or a campaign's members: those show on the next visit.
  * `AgentPlaced`, `AgentRequeued`, `AgentObsolete`, `AgentRemoved` naming this item's `workId` →
  * the item's workspaces (`WorkspacesStore.refreshHistory`, quietly; `AgentsStore.follow`); any of
@@ -237,10 +238,10 @@ export class WorkItemPage {
       });
       refreshOn(
         {
-          names: WORK_EVENTS,
-          when: (_, ids) => {
+          names: [...WORK_EVENTS, ...COMMENT_EVENTS],
+          when: (event, ids) => {
             const id = this.entryId();
-            return !!id && ids.workIds.includes(id);
+            return !!id && (ids.workIds.includes(id) || payloadField(event, 'entityId') === id);
           },
           refresh: () => {
             const ref = this.id();

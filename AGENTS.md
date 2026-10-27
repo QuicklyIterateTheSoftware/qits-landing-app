@@ -65,12 +65,13 @@ build of its repository at its version or fold; a deployment of its version whil
 Repositories page and the project cards read a project's repositories again after a
 `SCMPublishCommit` to the wrapper's main branch (`RepositoriesStore.follow`). The work pages read the
 open project's work again after `EntityTransitioned` naming it (`entities[].projectId`), and the work
-item page its own data when the event names the item (`entities[].entityId`). A request's CI runs and
+item page its own data when the event names the item (`entities[].entityId`), and again after
+`EntityCommented` naming it (`entityId`; qits-1660). A request's CI runs and
 each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) by `repoId` and
 `runId` (`CiRunsStore.follow`, `CiReportsStore.followRun`). `WorkspacesStore` follows
 qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
-edits, comments, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
+edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
 counts.
 
 Users today: the lightning menu fetches the open project's release requests when the project opens

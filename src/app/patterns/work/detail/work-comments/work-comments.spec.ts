@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import type { CommentEntry } from '$core/work/work-detail.consumes';
@@ -162,5 +164,61 @@ describe('WorkComments', () => {
     await settle();
     fixture.detectChanges();
     expect(element.querySelector('textarea[aria-label="Edit the comment"]')).toBeNull();
+  });
+});
+
+describe('WorkComments, opened at a comment (qits-1660)', () => {
+  const thread = (): CommentEntry[] =>
+    goldenMaster(COMMENTED, 'listWorkComments').entries.map(
+      (e: { comment: CommentEntry }) => e.comment,
+    );
+  const ref = projectsGoldenMasters.operation(COMMENTED, 'listWorkComments').params['qualifiedId'];
+  let scrolled: Element[];
+
+  beforeEach(() => {
+    scrolled = [];
+    // jsdom draws nothing, so it has no scrollIntoView: record which element was asked to scroll.
+    Element.prototype.scrollIntoView = function (this: Element) {
+      scrolled.push(this);
+    };
+  });
+
+  afterEach(() => {
+    delete (Element.prototype as Partial<Element>).scrollIntoView;
+  });
+
+  function render(fragment: string | null, comments: readonly CommentEntry[] = thread()) {
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideHeyApiClient(projectsClient),
+        provideTestPlatformOrigins(),
+        { provide: ActivatedRoute, useValue: { fragment: of(fragment) } },
+      ],
+    });
+    const fixture = TestBed.createComponent(WorkComments);
+    fixture.componentRef.setInput('comments', comments);
+    fixture.componentRef.setInput('entry', { qualifiedId: ref, archetype: 'TICKET' });
+    fixture.detectChanges();
+    TestBed.tick();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('gives each comment a stable anchor', () => {
+    const element = render(null);
+    const first = thread()[0];
+    expect(element.querySelector('li')?.id).toBe(`comment-${first.id}`);
+    expect(scrolled).toHaveLength(0);
+  });
+
+  it('scrolls to the comment the fragment names, and outlines it', () => {
+    const first = thread()[0];
+    const second: CommentEntry = { ...first, id: 'second-comment', body: 'the second' };
+    const element = render('comment-second-comment', [first, second]);
+    const target = element.querySelector('#comment-second-comment')!;
+    expect(scrolled).toEqual([target]);
+    expect(target.classList.contains('ring-2')).toBe(true);
+    expect(element.querySelector(`#comment-${first.id}`)?.classList.contains('ring-2')).toBe(false);
   });
 });

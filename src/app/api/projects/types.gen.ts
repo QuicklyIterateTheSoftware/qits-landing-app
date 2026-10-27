@@ -669,6 +669,10 @@ export type DeskTriggerEvent = {
      */
     cause?: string | null;
     /**
+     * The comment it came from, for desk-mentioned; null for the other sources
+     */
+    commentId?: string | null;
+    /**
      * The bus event that carried it
      */
     eventId?: Uuid;

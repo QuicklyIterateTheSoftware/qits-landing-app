@@ -41,6 +41,26 @@ const OPERATIONS = ['listDeskTriggerMessages'];
 
 const STATE = 'a project whose desk received a trigger message';
 
+/**
+ * `commentId` (qits-1660) is newer than the pinned `@qits/projects-golden-masters`: the recorded body
+ * holds it only from the qits-projects-service release that adds it. Until the pin reaches that
+ * release this spec consumes everything else, so the committed pact stays the one CI writes; once
+ * it does, the spec consumes `commentId` too, and the pact is rewritten with `QITS_GOLDEN_UPDATE`.
+ */
+const COMMENT_ID = 'messages[].events[].commentId';
+
+/** Whether the recorded body of `state`/`operationId` has a line that carries `commentId`. */
+function recordsCommentId(state: string, operationId: string): boolean {
+  try {
+    const body = masters.body(state, operationId) as {
+      messages?: { events?: Record<string, unknown>[] }[];
+    };
+    return (body.messages ?? []).some((m) => (m.events ?? []).some((e) => 'commentId' in e));
+  } catch {
+    return false;
+  }
+}
+
 /** Whether `state`/`operationId` is recorded in the `@qits/projects-golden-masters` this run resolved. */
 function recorded(state: string, operationId: string): boolean {
   try {
@@ -96,7 +116,9 @@ describe('qits-landing-app → qits-projects-service pact: DeskTriggersStore', (
         state: STATE,
         operationId: 'listDeskTriggerMessages',
         trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-project-desk' },
-        consumes: LIST_DESK_TRIGGER_MESSAGES,
+        consumes: recordsCommentId(STATE, 'listDeskTriggerMessages')
+          ? LIST_DESK_TRIGGER_MESSAGES
+          : LIST_DESK_TRIGGER_MESSAGES.filter((path) => path !== COMMENT_ID),
       }).executeTest(async (server) => {
         const projectId = '00000000-0000-4000-8000-000000000001';
         const store = storeAt(server.url);
