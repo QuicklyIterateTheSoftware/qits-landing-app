@@ -10,9 +10,9 @@ export interface SlotTypeRow {
 
 /** The shared pool: the slots no minimum reserves, and how many the types use beyond theirs. */
 export interface SharedPool {
-  /** Slots the types use beyond their minimums: Σ max(0, used − minimum) per type. */
+  /** Per target Σ max(0, used − minimum) over its types, summed over the targets. */
   readonly used: number;
-  /** Slots no minimum reserves: total − Σ minimums. */
+  /** Per target max(0, slotsTotal − Σ minimums), summed over the targets. */
   readonly size: number;
 }
 
@@ -50,7 +50,9 @@ const count = (counts: unknown, type: string): number => {
 /**
  * The line's figures from qits-system's targets. Only connected targets count. A minimum is a
  * reserve, not a cap: a type grows past it into the shared pool (the slots no minimum reserves)
- * while that has room. The pool is computed from the sums over all targets, per type. The types come
+ * while that has room. Each target has its own pool, so the pool is counted per target and then
+ * summed: a type over its minimum on one target is not netted against the same type under it on
+ * another. The per-type rows and `slots` are plain sums. The types come
  * from the answer (every key of `used` and `minimums` on any target), so a new type shows by itself,
  * after the known ones.
  */
@@ -80,8 +82,19 @@ export function runnerSlots(targets: readonly TargetEntry[]): RunnerSlots {
     total,
     types: rows,
     shared: {
-      used: add((row) => Math.max(0, row.used - row.reserved)),
-      size: total - add((row) => row.reserved),
+      used: sum((target) =>
+        [...types].reduce(
+          (all, type) => all + Math.max(0, count(target.used, type) - count(target.minimums, type)),
+          0,
+        ),
+      ),
+      size: sum((target) =>
+        Math.max(
+          0,
+          (target.slotsTotal ?? 0) -
+            [...types].reduce((all, type) => all + count(target.minimums, type), 0),
+        ),
+      ),
     },
   };
 }

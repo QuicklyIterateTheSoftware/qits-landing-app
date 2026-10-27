@@ -75,8 +75,9 @@ describe('RunnerSlots', () => {
     expect(line.classList).toContain('justify-between');
     const left = Array.from(line.firstElementChild!.children).map((s) => s.textContent?.trim());
     expect(left).toEqual(['runners: 2', 'slots: 11/16']);
-    // Shared: 16 − 13 reserved = 3; workspaces uses 4 beyond its minimum of 2, ci and desk none.
-    expect(rows(element)).toEqual(['ci: 4', 'workspaces: 6', 'desk: 0', 'gpu: 1', 'shared: 4/3']);
+    // Shared, per target: the first has 3 free and ci and workspaces take 2 + 3 beyond their
+    // minimums; the second has none free and workspaces takes 1.
+    expect(rows(element)).toEqual(['ci: 4', 'workspaces: 6', 'desk: 0', 'gpu: 1', 'shared: 6/3']);
   });
 
   it('shows zeros for the recorded target, which is not connected', async () => {

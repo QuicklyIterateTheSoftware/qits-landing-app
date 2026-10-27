@@ -44,9 +44,9 @@ describe('runnerSlots', () => {
         { type: 'desk', label: 'desk', used: 0, reserved: 2 },
         { type: 'gpu', label: 'gpu', used: 1, reserved: 1 },
       ],
-      // Size: 16 − (8 + 2 + 2 + 1) = 3. Used: only workspaces is over its minimum (6 − 2 = 4);
-      // ci (4 of 8) and desk (0 of 2) are under theirs and take nothing from the pool.
-      shared: { used: 4, size: 3 },
+      // Per target. First: 8 − (2 + 2 + 1) = 3 free; ci 4 − 2 and workspace 5 − 2 overflow, 5.
+      // Second: 8 − (6 + 0 + 1 + 1) = 0 free; workspace 1 − 0 overflows, 1.
+      shared: { used: 6, size: 3 },
     });
   });
 
@@ -65,5 +65,29 @@ describe('runnerSlots', () => {
     expect([line.used, line.total]).toEqual([12, 16]);
     expect(line.types.map((row) => row.used)).toEqual([8, 4, 0]);
     expect(line.shared).toEqual({ used: 2, size: 5 });
+  });
+
+  it('counts the shared pool per target, so one under its minimum does not hide one over it', () => {
+    // The live estate on 2026-10-27, cut to ci: workstation ci 5 of 6, ws-proof ci 3 of 2.
+    const [lab] = recorded;
+    const targets = [
+      { ...lab, connected: true, slotsTotal: 6, used: { ci: 5 }, minimums: { ci: 6 } },
+      { ...lab, connected: true, slotsTotal: 8, used: { ci: 3 }, minimums: { ci: 2 } },
+    ] as TargetEntry[];
+    const line = runnerSlots(targets);
+    expect(line.types).toEqual([{ type: 'ci', label: 'ci', used: 8, reserved: 8 }]);
+    // Summed, ci is 8 of 8 and nothing overflows; per target, ws-proof's ci takes 1.
+    // Free: workstation 6 − 6 = 0, ws-proof 8 − 2 = 6.
+    expect(line.shared).toEqual({ used: 1, size: 6 });
+  });
+
+  it("floors a target's pool at 0 when its minimums reserve more than it has", () => {
+    const [lab] = recorded;
+    const targets = [
+      { ...lab, connected: true, slotsTotal: 2, used: { ci: 1 }, minimums: { ci: 3, desk: 1 } },
+      { ...lab, connected: true, slotsTotal: 4, used: { ci: 0 }, minimums: { ci: 1 } },
+    ] as TargetEntry[];
+    // First: 2 − 4 is floored to 0, not −2. Second: 4 − 1 = 3.
+    expect(runnerSlots(targets).shared).toEqual({ used: 0, size: 3 });
   });
 });
