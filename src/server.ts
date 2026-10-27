@@ -5,8 +5,9 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { telemetryTarget, type TelemetryTarget } from './server/otel-config';
+import { missingAssets } from './server/missing-assets';
 import { otelRoutes } from './server/otel-routes';
 import { activeTraceparent, serverSpans, startTelemetry } from './server/otel-sdk';
 import { withTraceparentMeta } from './server/trace-meta';
@@ -50,15 +51,27 @@ app.get(HEALTH_PATH, (_req, res) => {
 });
 
 /**
- * Serve static files from /browser.
+ * Files whose name does not change between releases: the service worker, its manifest and the
+ * html it serves to an open tab. They must never come from a year-old cache.
+ */
+const UNHASHED = new Set(['ngsw-worker.js', 'ngsw.json', 'safety-worker.js', 'index.csr.html']);
+
+/**
+ * Serve static files from /browser. The hashed build files are cached for a year.
  */
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
     redirect: false,
+    setHeaders: (res, path) => {
+      if (UNHASHED.has(basename(path))) res.setHeader('Cache-Control', 'no-cache');
+    },
   }),
 );
+
+/** A `.js` or `.css` file that is not there is a 404, never the app's html (qits-1686). */
+app.use(missingAssets());
 
 /**
  * TELEMETRY IS DECIDED AT START, NOT HERE. It stays `null` (off) unless this module runs as the

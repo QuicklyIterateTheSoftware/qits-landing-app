@@ -5,7 +5,7 @@ import {
   provideEnvironmentInitializer,
 } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withNavigationErrorHandler } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideQitsIntegration } from '@qits/angular';
 import { client as ciClient } from './api/ci/client.gen';
@@ -19,6 +19,8 @@ import { client as workspaceDaemonClient } from './api/workspace-daemon/client.g
 import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { routes } from './app.routes';
 import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
+import { provideAppUpdates } from '$core/updates/app-updates';
+import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
 import { environment } from '../environments/environment';
 
 /**
@@ -58,7 +60,11 @@ function provideBackendOrigins() {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    // A lazy page whose file a release replaced loads its URL as a full page, once (qits-1686).
+    provideRouter(routes, withNavigationErrorHandler(reloadOnFailedImport)),
+    provideChunkReloadReset(),
+    // The service worker keeps an open tab on a complete version across releases (qits-1686).
+    provideAppUpdates(),
     provideClientHydration(),
     // Error records and Navigation spans; dark unless `main.ts` found a telemetry target.
     provideQitsIntegration(),
