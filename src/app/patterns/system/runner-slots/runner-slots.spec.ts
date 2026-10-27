@@ -52,7 +52,7 @@ describe('RunnerSlots', () => {
 
   /** The grid's rows, each `label value`. */
   const rows = (element: HTMLElement) =>
-    Array.from(element.querySelectorAll('dt')).map(
+    Array.from(element.querySelectorAll('[data-row] dt')).map(
       (dt) => `${dt.textContent?.trim()} ${dt.nextElementSibling?.textContent?.trim()}`,
     );
 
@@ -74,12 +74,15 @@ describe('RunnerSlots', () => {
     );
     const line = element.querySelector('[data-testid="runner-slots"]')!;
     expect(line.classList).toContain('justify-between');
-    const left = Array.from(line.firstElementChild!.children).map((s) => s.textContent?.trim());
-    expect(left).toEqual(['runners: 2', 'slots: 11/16']);
+    const left = Array.from(line.firstElementChild!.children).map((s) =>
+      s.textContent?.replace(/\s+/g, ' ').trim(),
+    );
+    expect(left).toEqual(['runners: 2', 'slots: 11/16 used / total']);
     // Each type: its use, uncapped, of its reservation. Shared, per target: the first has 3 slots
     // nothing reserves and ci and workspaces use 2 + 3 beyond theirs; the second has none, and
     // workspaces uses 1 beyond its 0.
     expect(line.textContent).toContain('used / reserved');
+    expect(line.textContent).toContain('used / unreserved');
     expect(rows(element)).toEqual([
       'ci: 4/8',
       'workspaces: 6/2',

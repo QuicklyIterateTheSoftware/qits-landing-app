@@ -15,8 +15,8 @@ export interface SlotTypeRow {
 export interface SharedPool {
   /** Per target Σ max(0, used − reserved) over the types; summed over the targets. */
   readonly used: number;
-  /** Per target max(0, slotsTotal − Σ reserved); summed over the targets. */
-  readonly capacity: number;
+  /** The unreserved slots: per target max(0, slotsTotal − Σ reserved); summed over the targets. */
+  readonly unreserved: number;
 }
 
 /** What the lightning menu's runners and slots line shows. */
@@ -25,7 +25,7 @@ export interface RunnerSlots {
   readonly runners: number;
   /** Slots in use on the connected targets. */
   readonly used: number;
-  /** Slots the connected targets offer (`slotsTotal`). */
+  /** The connected targets' real slot count (`slotsTotal`), summed. Not a reservation. */
   readonly total: number;
   /** One row per slot type the answer names: ci, workspaces, desk, then any other by name. */
   readonly types: readonly SlotTypeRow[];
@@ -81,7 +81,7 @@ export function runnerSlots(targets: readonly Target[]): RunnerSlots {
       used: sum((target) =>
         across((type) => Math.max(0, used(target, type) - reserved(target, type))),
       ),
-      capacity: sum((target) =>
+      unreserved: sum((target) =>
         Math.max(0, target.slotsTotal - across((type) => reserved(target, type))),
       ),
     },

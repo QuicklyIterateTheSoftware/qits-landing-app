@@ -10,10 +10,10 @@ describe('runnerSlots', () => {
     connected = true,
   ): Target => ({ connected, slotsTotal, used, reserved });
 
-  /** The right column as `label used/reserved`, then `shared used/capacity`. */
+  /** The right column as `label used/reserved`, then `shared used/unreserved`. */
   const column = (line: RunnerSlots) => [
     ...line.types.map((row) => `${row.label} ${row.used}/${row.reserved}`),
-    `shared ${line.shared.used}/${line.shared.capacity}`,
+    `shared ${line.shared.used}/${line.shared.unreserved}`,
   ];
 
   it('counts nothing for a target that is not connected, but still lists its slot types', () => {
@@ -52,6 +52,6 @@ describe('runnerSlots', () => {
       target(4, { ci: 0 }, { ci: 1 }),
     ]);
     // First: 2 − 4 is floored to 0, not −2. Second: 4 − 1 = 3.
-    expect(line.shared).toEqual({ used: 0, capacity: 3 });
+    expect(line.shared).toEqual({ used: 0, unreserved: 3 });
   });
 });

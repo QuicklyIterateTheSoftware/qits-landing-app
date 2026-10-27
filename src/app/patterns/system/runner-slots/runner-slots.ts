@@ -5,10 +5,11 @@ import { TARGET_EVENTS } from '$core/system/target-events';
 import { TargetsStore } from '$core/system/targets.store';
 
 /**
- * The lightning menu's heading. At the left: `runners: N` and `slots: used/total`. At the right, a
- * small grid with labels and values aligned, under a "used / reserved" caption: each slot type's
- * use and its reservation (a reservation, not a limit, so use may be larger). Below a rule,
- * `shared: used/capacity`: the slots nothing reserves, and the types' use beyond their reservations.
+ * The lightning menu's heading. At the left: `runners: N`, and `slots: used/total`, the targets'
+ * real slot count. At the right, a small grid with labels and values aligned. Under a "used /
+ * reserved" caption, each slot type's use and its reservation (not a limit, so use may be larger).
+ * Under a "used / unreserved" caption, `shared`: the types' use beyond their reservations, and the
+ * slots nothing reserves.
  * Only connected targets count (`runnerSlots`).
  *
  * Shown only once the targets are loaded: hidden while they load, and when the read fails, which
@@ -28,26 +29,37 @@ import { TargetsStore } from '$core/system/targets.store';
       >
         <div class="flex flex-col">
           <span>runners: {{ line.runners }}</span>
-          <span>slots: {{ line.used }}/{{ line.total }}</span>
+          <span
+            >slots: {{ line.used }}/{{ line.total }}
+            <span class="text-[0.625rem] text-gray-400">used / total</span></span
+          >
         </div>
-        <div class="flex flex-col">
-          <span class="text-right text-[0.625rem] text-gray-400">used / reserved</span>
-          <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
-            @for (row of line.types; track row.type) {
+        <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
+          <div class="contents">
+            <dt class="sr-only">slot type</dt>
+            <dd class="col-start-2 m-0 text-right text-[0.625rem] text-gray-400">
+              used / reserved
+            </dd>
+          </div>
+          @for (row of line.types; track row.type) {
+            <div class="contents" data-row>
               <dt>{{ row.label }}:</dt>
               <dd class="m-0 text-right">{{ row.used }}/{{ row.reserved }}</dd>
-            }
-            <dt
-              class="border-t border-gray-100"
-              title="Slots used beyond the reservations / slots nothing reserves"
+            </div>
+          }
+          <div class="contents">
+            <dt class="sr-only">shared pool</dt>
+            <dd
+              class="col-start-2 m-0 mt-0.5 border-t border-gray-100 text-right text-[0.625rem] text-gray-400"
             >
-              shared:
-            </dt>
-            <dd class="m-0 border-t border-gray-100 text-right">
-              {{ line.shared.used }}/{{ line.shared.capacity }}
+              used / unreserved
             </dd>
-          </dl>
-        </div>
+          </div>
+          <div class="contents" data-row>
+            <dt>shared:</dt>
+            <dd class="m-0 text-right">{{ line.shared.used }}/{{ line.shared.unreserved }}</dd>
+          </div>
+        </dl>
       </div>
     }
   `,
