@@ -1,5 +1,5 @@
 import type { WorkEntry } from './work.consumes';
-import { byNumber, taskDistribution, WorkGraph, type WorkNode } from './work-tree';
+import { byNumber, taskDistribution, WorkGraph, withoutHidden, type WorkNode } from './work-tree';
 
 /**
  * The tree, its columns and its campaign tags, on inline entries: this is a pure function of entries and campaign
@@ -411,5 +411,31 @@ describe('WorkGraph', () => {
       ].sort(byNumber);
       expect(sorted.map((e) => e.id)).toEqual(['a', 'y', 'z']);
     });
+  });
+});
+
+describe('withoutHidden', () => {
+  // A VERIFIED epic waiting in Acceptance, its features VERIFIED, one with a task (qits-1685).
+  const entries = [
+    entry('epic', 'EPIC', 'VERIFIED'),
+    entry('f1', 'FEATURE', 'VERIFIED', 'epic'),
+    entry('t1', 'TASK', 'VERIFIED', 'f1'),
+    entry('f2', 'FEATURE', 'IMPLEMENTED', 'epic'),
+    entry('ticket', 'TICKET', 'VERIFIED'),
+  ];
+
+  it('leaves the pieces of an epic whose finish waits out with it', () => {
+    const kept = withoutHidden(entries, new Set(['epic']));
+    expect(kept.map((e) => e.id)).toEqual(['ticket']);
+  });
+
+  it('never draws a hidden epic’s feature as a root of its own', () => {
+    const graph = new WorkGraph(withoutHidden(entries, new Set(['epic'])));
+    expect(graph.tree('acceptance').map(shape)).toEqual(['ticket']);
+    expect(graph.tree('board').map(shape)).toEqual([]);
+  });
+
+  it('keeps everything when nothing is hidden', () => {
+    expect(withoutHidden(entries, new Set())).toBe(entries);
   });
 });

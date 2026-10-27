@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { injectRefreshOn, REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { ProjectsStore } from '$core/projects/projects.store';
-import { WorkGraph } from './work-tree';
+import { WorkGraph, withoutHidden } from './work-tree';
 import { WorkStore } from './work.store';
 import type { LoadState } from '$ui/components/spinner/spinner';
 import { SelectedProject } from '$core/projects/selected-project';
@@ -37,13 +37,12 @@ export class SelectedWork {
 
   /**
    * The open project's work entities; empty until they are loaded. An item whose finish waits for
-   * its Undo, or is being sent, is left out (`WorkStore.hidden`): it has left its list already.
+   * its Undo, or is being sent, is left out (`WorkStore.hidden`), and so is everything below it
+   * (`withoutHidden`): it has left its list already.
    */
-  readonly entries = computed(() => {
-    const hidden = this.workStore.hidden();
-    const entries = this.work()?.entries ?? [];
-    return hidden.size ? entries.filter((e) => !e.id || !hidden.has(e.id)) : entries;
-  });
+  readonly entries = computed(() =>
+    withoutHidden(this.work()?.entries ?? [], this.workStore.hidden()),
+  );
 
   /** The open project's work as a tree: phases, columns and spans (`work-tree.ts`). */
   readonly graph = computed(() => new WorkGraph(this.entries(), this.work()?.campaigns ?? {}));
