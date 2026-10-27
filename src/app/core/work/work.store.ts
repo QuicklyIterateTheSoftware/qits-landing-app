@@ -407,6 +407,47 @@ export const WorkStore = signalStore(
       return { work, startedAt };
     }
 
+    /** The open refresh of each project, and the one queued after it. */
+    const refreshing = new Map<string, Promise<void>>();
+    const queued = new Map<string, Promise<void>>();
+
+    /**
+     * Fetches again; the old work stays until the answer is in, and stays if it fails.
+     *
+     * One refresh per project at a time (qits-1684). A call while one is open queues one more
+     * fetch after it, and every later call shares that queued one. Each refresh is a list read
+     * plus two reads per campaign; overlapping refreshes (one per finish's event) piled up so
+     * many reads that the finishes' own moves, and their toasts, waited for minutes.
+     */
+    function refresh(projectId: string): Promise<void> {
+      const waiting = queued.get(projectId);
+      if (waiting) return waiting;
+      const open = refreshing.get(projectId);
+      if (open) {
+        // After the open one ends, also if it failed: else the queue would never clear.
+        const next = open
+          .catch(() => undefined)
+          .then(() => {
+            queued.delete(projectId);
+            return refresh(projectId);
+          });
+        queued.set(projectId, next);
+        return next;
+      }
+      const run = (async () => {
+        try {
+          const { work, startedAt } = await fetch(projectId);
+          if (work.status === 'loaded' || !store.byProject()[projectId]) {
+            commit(projectId, work, startedAt);
+          }
+        } finally {
+          refreshing.delete(projectId);
+        }
+      })();
+      refreshing.set(projectId, run);
+      return run;
+    }
+
     return {
       async load(projectId: string): Promise<void> {
         const current = store.byProject()[projectId];
@@ -415,13 +456,7 @@ export const WorkStore = signalStore(
         const { work, startedAt } = await fetch(projectId);
         commit(projectId, work, startedAt);
       },
-      /** Fetches again; the old work stays until the answer is in, and stays if it fails. */
-      async refresh(projectId: string): Promise<void> {
-        const { work, startedAt } = await fetch(projectId);
-        if (work.status === 'loaded' || !store.byProject()[projectId]) {
-          commit(projectId, work, startedAt);
-        }
-      },
+      refresh,
       /** Moves `entry` to DONE now. */
       finish,
       /** Moves `entry` to `target` (a Status action); a running move is not repeated. */

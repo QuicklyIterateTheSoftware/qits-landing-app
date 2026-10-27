@@ -342,6 +342,51 @@ describe('WorkStore', () => {
       expect(statusOf(store, verifiedEpic.id as string)).toBe('DONE');
     });
 
+    it('closes finishes made within a second on time: their events fetch the work one at a time (qits-1684)', async () => {
+      const store = await loaded();
+      const work = `/projects/api/projects/${ID}/work`;
+      store.finishLater(ID, ticket);
+      await vi.advanceTimersByTimeAsync(400);
+      store.finishLater(ID, epic);
+      expect(Object.keys(store.pendingFinishes())).toEqual(['t-1', 'e-1']);
+
+      // The ticket's move goes out; its event refreshes the work, and the refresh is slow.
+      await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS - 400);
+      await drain();
+      http.expectOne('/projects/api/work/qits-1/status').flush({ status: 'DONE' });
+      await drain();
+      expect(store.pendingFinishes()['t-1']).toBeUndefined();
+      const first = store.refresh(ID);
+      await drain();
+      const slow = http.expectOne(work);
+
+      // The epic's move goes out while that refresh is still open, and its event arrives too.
+      await vi.advanceTimersByTimeAsync(400);
+      await drain();
+      http.expectOne('/projects/api/work/qits-2/status').flush({ status: 'DONE' });
+      await drain();
+      expect(store.pendingFinishes()).toEqual({});
+      const second = store.refresh(ID);
+      const third = store.refresh(ID);
+      await drain();
+      // One fetch at a time: the events wait for the open one, then fetch once more together.
+      http.expectNone(work);
+
+      slow.flush({ entities: [{ ...ticket, status: 'DONE' }, epic] });
+      await first;
+      await drain();
+      http.expectOne(work).flush({
+        entities: [
+          { ...ticket, status: 'DONE' },
+          { ...epic, status: 'DONE' },
+        ],
+      });
+      await Promise.all([second, third]);
+      await drain();
+      http.expectNone(work);
+      expect(statusOf(store, 'e-1')).toBe('DONE');
+    });
+
     it('asks once for an item already waiting', async () => {
       const store = await loaded();
       store.finishLater(ID, ticket);
