@@ -17,7 +17,8 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   be on the board while its epic waits in Acceptance; the epic is then the task's context there.
  *   An entity without a status takes its nearest ancestor's. One exception: an ancestor in the
  *   archive (DONE, DROPPED) takes every item below it there, so a finished or dropped epic archives
- *   its whole tree (qits-projects moves no child when an epic goes to DONE or DROPPED).
+ *   its whole tree (qits-projects closes the open pieces with an epic's move to DONE, qits-1685, but
+ *   moves none when an epic is DROPPED).
  * - **Column** (on the board): READY_FOR_DEV 0, IMPLEMENTING 1, IMPLEMENTED 2, VERIFYING 3, by
  *   the entity's own status (or that ancestor's). A feature or task still REFINED below a started
  *   epic is in the schedule phase, so, like a REPORTED one, it is not on the board.
@@ -312,6 +313,31 @@ export class WorkGraph {
     list.push(child);
     this.childrenOf.set(parent, list);
   }
+}
+
+/**
+ * `entries` without the `hidden` ones and without everything below them (qits-1685). An epic whose
+ * finish waits for its Undo has left its list, and its features and tasks leave with it: kept
+ * without their parent, they would be drawn as roots, like tickets of their own.
+ */
+export function withoutHidden(
+  entries: readonly WorkEntry[],
+  hidden: ReadonlySet<string>,
+): readonly WorkEntry[] {
+  if (!hidden.size) return entries;
+  const parentOf = new Map<string, string>();
+  for (const entry of entries) if (entry.id && entry.parent) parentOf.set(entry.id, entry.parent);
+  const isHidden = (id: string | undefined): boolean => {
+    for (
+      let current = id, hops = 0;
+      current && hops < 16;
+      current = parentOf.get(current), hops++
+    ) {
+      if (hidden.has(current)) return true;
+    }
+    return false;
+  };
+  return entries.filter((entry) => !entry.id || !isHidden(entry.id));
 }
 
 /** The number at the end of a qualified id (`qits-112` → 112), or undefined without one. */
