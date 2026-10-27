@@ -9,7 +9,8 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * `TargetsStore.load()`: every execution target, for the runners and slots line of the lightning
- * menu. `used` and `minimums` are read whole, so a new slot type shows without a code change.
+ * menu. `used` and the reservations are read whole, so a new slot type shows without a code change.
+ * qits-system still names the reservations `minimums`; `TargetsStore` maps them to `reserved`.
  */
 export const LIST_TARGETS = ['[].connected', '[].slotsTotal', '[].used', '[].minimums'] as const;
 

@@ -5,10 +5,34 @@ import { LIST_TARGETS, type TargetEntry } from './targets.consumes';
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
+/** Slot counts by slot type, as qits-system names the types (`ci`, `workspace`, `desk`, …). */
+export type SlotCounts = Readonly<Record<string, number | undefined>>;
+
+/** One execution target, as this app reads it. */
+export interface Target {
+  readonly connected: boolean;
+  readonly slotsTotal: number;
+  /** Slots in use, by type. */
+  readonly used: SlotCounts;
+  /** Slots reserved for each type: a reservation, not a limit. */
+  readonly reserved: SlotCounts;
+}
+
+/** A target from qits-system's answer, in this app's terms. */
+function targetOf(entry: TargetEntry): Target {
+  return {
+    connected: entry.connected ?? false,
+    slotsTotal: entry.slotsTotal ?? 0,
+    used: entry.used ?? {},
+    // qits-system still names the reservations `minimums`; only this line changes when it renames.
+    reserved: entry.minimums ?? {},
+  };
+}
+
 interface TargetsState {
   readonly status: Status;
   /** Every execution target qits-system knows. */
-  readonly targets: readonly TargetEntry[];
+  readonly targets: readonly Target[];
 }
 
 /**
@@ -34,7 +58,7 @@ export const TargetsStore = signalStore(
         if (store.status() !== 'loaded') patchState(store, { status: 'error', targets: [] });
         return;
       }
-      patchState(store, { status: 'loaded', targets: data });
+      patchState(store, { status: 'loaded', targets: data.map(targetOf) });
     }
 
     return {

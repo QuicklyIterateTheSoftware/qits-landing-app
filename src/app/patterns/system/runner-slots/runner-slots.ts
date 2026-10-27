@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { refreshOn } from '$core/events/refresh-on';
-import { runnerSlots, type RunnerSlots as RunnerSlotsLine } from '$core/system/runner-slots';
+import { runnerSlots } from '$core/system/runner-slots';
 import { TARGET_EVENTS } from '$core/system/target-events';
 import { TargetsStore } from '$core/system/targets.store';
 
 /**
  * The lightning menu's heading. At the left: `runners: N` and `slots: used/total`. At the right, a
- * small grid with labels and values aligned: `used/capacity` for each slot type (its reservation),
- * then for `shared` (the slots no minimum reserves, which the types use beyond theirs).
+ * small grid with labels and values aligned, under a "used / reserved" caption: each slot type's
+ * use and its reservation (a reservation, not a limit, so use may be larger). Below a rule,
+ * `shared: used/capacity`: the slots nothing reserves, and the types' use beyond their reservations.
  * Only connected targets count (`runnerSlots`).
  *
  * Shown only once the targets are loaded: hidden while they load, and when the read fails, which
@@ -29,12 +30,24 @@ import { TargetsStore } from '$core/system/targets.store';
           <span>runners: {{ line.runners }}</span>
           <span>slots: {{ line.used }}/{{ line.total }}</span>
         </div>
-        <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
-          @for (row of rows(line); track row.type) {
-            <dt>{{ row.label }}:</dt>
-            <dd class="m-0 text-right">{{ row.used }}/{{ row.capacity }}</dd>
-          }
-        </dl>
+        <div class="flex flex-col">
+          <span class="text-right text-[0.625rem] text-gray-400">used / reserved</span>
+          <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">
+            @for (row of line.types; track row.type) {
+              <dt>{{ row.label }}:</dt>
+              <dd class="m-0 text-right">{{ row.used }}/{{ row.reserved }}</dd>
+            }
+            <dt
+              class="border-t border-gray-100"
+              title="Slots used beyond the reservations / slots nothing reserves"
+            >
+              shared:
+            </dt>
+            <dd class="m-0 border-t border-gray-100 text-right">
+              {{ line.shared.used }}/{{ line.shared.capacity }}
+            </dd>
+          </dl>
+        </div>
       </div>
     }
   `,
@@ -46,11 +59,6 @@ export class RunnerSlots {
   protected readonly summary = computed(() =>
     this.store.status() === 'loaded' ? runnerSlots(this.store.targets()) : undefined,
   );
-
-  /** The right column: the types, then the shared pool. */
-  protected rows(line: RunnerSlotsLine) {
-    return [...line.types, line.shared];
-  }
 
   constructor() {
     refreshOn({ names: TARGET_EVENTS, refresh: () => void this.store.refresh() });

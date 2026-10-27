@@ -57,7 +57,8 @@ describe('RunnerSlots', () => {
     );
 
   it('shows runners and slots at the left, and the use per type and the shared pool at the right', async () => {
-    // The recorded target, connected and busy, plus a second one with a new slot type.
+    // The recorded target, connected and busy, plus a second one with a new slot type. The answer
+    // names the reservations `minimums`, as qits-system still does.
     const [lab] = recorded;
     const { element } = await render((request) =>
       request.flush([
@@ -75,12 +76,13 @@ describe('RunnerSlots', () => {
     expect(line.classList).toContain('justify-between');
     const left = Array.from(line.firstElementChild!.children).map((s) => s.textContent?.trim());
     expect(left).toEqual(['runners: 2', 'slots: 11/16']);
-    // Each type: its use up to its reservation, of that reservation. Shared, per target: the first
-    // has 3 free and ci and workspaces take 2 + 3 beyond theirs; the second has none and workspaces 1.
-    // The rows add up to the slots line: 11 used of 16.
+    // Each type: its use, uncapped, of its reservation. Shared, per target: the first has 3 slots
+    // nothing reserves and ci and workspaces use 2 + 3 beyond theirs; the second has none, and
+    // workspaces uses 1 beyond its 0.
+    expect(line.textContent).toContain('used / reserved');
     expect(rows(element)).toEqual([
-      'ci: 2/8',
-      'workspaces: 2/2',
+      'ci: 4/8',
+      'workspaces: 6/2',
       'desk: 0/2',
       'gpu: 1/1',
       'shared: 6/3',
