@@ -8,7 +8,8 @@ import { provideHeyApiClient } from '../../../../../api/projects/client/client.g
 import { client as ciClient } from '../../../../../api/ci/client.gen';
 import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS, type EventSourceLike } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
-import { goldenMaster } from '../../../../../../testing/golden-masters';
+import { ciGoldenMaster, goldenMaster } from '../../../../../../testing/golden-masters';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ReleaseRequestPage } from './release-request.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -503,6 +504,40 @@ describe('ReleaseRequestPage', () => {
       expect(shown.element.textContent).toContain(
         'The upstream is no longer building (contract-service-rr-1).',
       );
+    });
+  });
+
+  describe('active CI runs', () => {
+    /** A request whose QA phase names a run qits-ci records as still running. */
+    const awaiting = goldenMaster('a release request awaiting approval', 'getReleaseRequest');
+
+    /** The page of the awaiting request, its repository's runs answered as `state` records them. */
+    async function shownWithRuns(state: string) {
+      const { element, answered } = await render(awaiting.request.qualifiedId);
+      read(awaiting.request.qualifiedId).flush(awaiting);
+      await answered();
+      http
+        .expectOne((r) => /^\/ci\/api\/runs(\?|$)/.test(r.url))
+        .flush(ciGoldenMaster(state, 'listRuns'));
+      await answered();
+      return element;
+    }
+
+    it('links the request’s running CI run in the head', async () => {
+      const element = await shownWithRuns('a repository with the runs of a release request');
+      const qa = awaiting.request.pipeline.phases.find(
+        (phase: { phase: string }) => phase.phase === 'QA',
+      ).runId;
+      const chips = Array.from(element.querySelectorAll<HTMLAnchorElement>('a[data-active-run]'));
+      expect(chips.map((a) => a.textContent?.trim())).toEqual(['CI running']);
+      const ci = TestBed.inject(PlatformOrigins).page('ci');
+      expect(ci).not.toBe('');
+      expect(chips[0].getAttribute('href')).toBe(`${ci}/runs/${qa}`);
+    });
+
+    it('shows no chip while none of its runs is active', async () => {
+      const element = await shownWithRuns('a green release run');
+      expect(element.querySelectorAll('[data-active-run]')).toHaveLength(0);
     });
   });
 
