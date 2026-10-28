@@ -133,7 +133,7 @@ describe('AgentsMenu', () => {
     expect(panel.textContent).toContain('No active agents');
     const all = panel.querySelector<HTMLAnchorElement>('a:last-of-type')!;
     expect(all.textContent?.trim()).toBe('All agents');
-    expect(all.getAttribute('href')).toBe(`/projects/${slug}/workspaces`);
+    expect(all.getAttribute('href')).toBe(`/projects/${slug}/agents`);
   });
 
   it('lists the agents needing a person first, then the newest activity first', async () => {
@@ -146,7 +146,7 @@ describe('AgentsMenu', () => {
     await open();
     const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>('li > div:first-child a'));
     expect(links.map((a) => a.getAttribute('href'))).toEqual(
-      [2, 3, 1, 4].map((n) => `/projects/${slug}/work/detail/${slug}-${n}/agent`),
+      [2, 3, 1, 4].map((n) => `/projects/${slug}/agents/agent-${n}`),
     );
     expect(links[0].textContent?.replace(/\s+/g, ' ').trim()).toBe(`${slug}-2 Item 2`);
 
@@ -264,13 +264,9 @@ describe('AgentsMenu', () => {
 
     const idle = byReason('IDLE_NO_WAIT')[0];
     expect(action(idle).textContent?.trim()).toBe('Prompt agent');
-    expect(action(idle).getAttribute('href')).toBe(
-      `/projects/${slug}/work/detail/${slug}-1/agent/chat`,
-    );
+    expect(action(idle).getAttribute('href')).toBe(`/projects/${slug}/agents/agent-1/chat`);
     const passed = byReason('WAIT_SUBJECT_PASSED')[0];
-    expect(action(passed).getAttribute('href')).toBe(
-      `/projects/${slug}/work/detail/${slug}-2/agent/chat`,
-    );
+    expect(action(passed).getAttribute('href')).toBe(`/projects/${slug}/agents/agent-2/chat`);
     const blocked = byReason('BLOCKED_NO_DESK')[0];
     expect(action(blocked).textContent?.trim()).toBe('Open item');
     expect(action(blocked).getAttribute('href')).toBe(`/projects/${slug}/work/detail/${slug}-3`);

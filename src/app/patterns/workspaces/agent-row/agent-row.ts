@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { agentPath } from '$core/workspaces/agent-attention';
 import {
   activityLabel,
   agentName,
@@ -27,12 +28,13 @@ export interface AgentRowData {
 const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE: 'neutral' };
 
 /**
- * One agent, as the Workspaces and slot pages list it (qits-workspaces-frontend's agent rows): its
- * work item's qualified id, a link to the item's agent page (`/projects/<slug>/work/detail/<id>/
- * agent`), the item's title, its state and run state, what it is doing, and — on a line of its own
+ * One agent, as the Agents and slot pages list it (qits-workspaces-frontend's agent rows): its
+ * work item's qualified id, a link to the agent's page (`/projects/<slug>/agents/<agent id>`, epic
+ * qits-1681), the item's title, its state and run state, what it is doing, and — on a line of its own
  * — what it waits on and since when (qits-1229). "waiting on you" only when it waits for input and
  * declared no wait: a wait on a release request, a CI run or a work item is not a person's.
- * `wrapperBranch` and `harness` show when given.
+ * `wrapperBranch` and `harness` show when given. Projected content (the Agents page's waits and
+ * attention, `app-agent-status`) goes last.
  */
 @Component({
   selector: 'app-agent-row',
@@ -82,12 +84,13 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
       @if (agent().wrapperBranch; as branch) {
         <code class="font-mono text-xs text-charcoal-brown-600">{{ branch }}</code>
       }
+      <ng-content />
     </div>
   `,
 })
 export class AgentRow {
   readonly agent = input.required<AgentRowData>();
-  /** The open project's slug, for the link to the item's agent page; no link without it. */
+  /** The open project's slug, for the link to the agent's page; no link without it. */
   readonly slug = input<string | undefined>(undefined);
 
   protected readonly name = computed(() => agentName(this.agent()));
@@ -102,7 +105,7 @@ export class AgentRow {
   protected readonly wait = computed(() => agentWaitLabel(this.agent()));
   protected readonly link = computed(() => {
     const slug = this.slug();
-    const id = this.agent().entityId?.trim();
-    return slug && id ? `/projects/${slug}/work/detail/${id}/agent` : undefined;
+    const id = this.agent().agentId?.trim();
+    return slug && id ? agentPath(slug, id) : undefined;
   });
 }

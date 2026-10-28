@@ -1,23 +1,22 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, signal } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { client as workspacesClient } from '../../../../../../../../api/workspaces/client.gen';
-import { provideHeyApiClient } from '../../../../../../../../api/workspaces/client/client.gen';
-import { client as workspaceDaemonClient } from '../../../../../../../../api/workspace-daemon/client.gen';
+import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
+import { provideHeyApiClient } from '../../../../../../api/workspaces/client/client.gen';
+import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
 import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { SelectedWork } from '$core/work/selected-work';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PickedContext } from '$core/workspaces/picked-context';
 import {
   workspaceDaemonGoldenMaster,
   workspaceDaemonGoldenMasters,
   workspacesGoldenMaster,
-} from '../../../../../../../../../testing/golden-masters';
-import { provideTestPlatformOrigins } from '../../../../../../../../../testing/platform-origins';
+} from '../../../../../../../testing/golden-masters';
+import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { AgentChatPage, TRANSCRIPT_POLL_MS } from './agent-chat.page';
 
 /** A socket the spec drives by hand. */
@@ -56,7 +55,6 @@ const CHATTING = 'a workspace daemon with an agent chatting';
 const TURNS = 'a workspace daemon with an agent that has taken turns';
 const DRAFTED = 'an agent with a saved prompt draft';
 const ORIGIN = 'https://workspaces.qits.example';
-const ITEM = 'contract-00000001-10';
 const { agentId, workspaceRowId, commandId } = workspaceDaemonGoldenMasters.operation(
   RUNNING,
   'getAgentWorktree',
@@ -90,7 +88,7 @@ describe('AgentChatPage', () => {
         { provide: PLATFORM_ID, useValue: 'browser' },
         provideRouter([
           {
-            path: 'agent/:id',
+            path: 'agent/:agentId',
             children: [
               { path: 'chat', component: AgentChatPage },
               { path: 'files', children: [] },
@@ -103,13 +101,9 @@ describe('AgentChatPage', () => {
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
         {
-          provide: SelectedWork,
-          useValue: { entries: signal([{ id: AGENT.workId, qualifiedId: ITEM }]) },
-        },
-        {
           provide: AgentsStore,
           useValue: {
-            itemOf: () => ({ status: 'loaded', agent }),
+            agentOf: () => ({ status: 'loaded', agent }),
             follow: () => undefined,
           },
         },
@@ -146,7 +140,7 @@ describe('AgentChatPage', () => {
 
   /** Opens the tab and answers the harness's reads (the commands from `listed`). */
   async function open(listed = RUNNING) {
-    await harness.navigateByUrl(`/agent/${ITEM}/chat`);
+    await harness.navigateByUrl(`/agent/${agentId}/chat`);
     await settle();
     http
       .expectOne(`${BASE}/agent-worktrees/${agentId}`)
@@ -252,7 +246,7 @@ describe('AgentChatPage', () => {
   it('offers a queued agent the composer alone', async () => {
     // The recorded agent, before it got a slot.
     agent = { ...AGENT, workspaceRowId: null };
-    await harness.navigateByUrl(`/agent/${ITEM}/chat`);
+    await harness.navigateByUrl(`/agent/${agentId}/chat`);
     await settle();
     await answerDraft();
     expect(streams).toEqual([]);
@@ -275,7 +269,7 @@ describe('AgentChatPage', () => {
     element().querySelector<HTMLButtonElement>(`[aria-label="Open ${file.path}:3-4"]`)!.click();
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/agent/${ITEM}/files?path=${encodeURIComponent(file.path)}&lines=3-4`,
+      `/agent/${agentId}/files?path=${encodeURIComponent(file.path)}&lines=3-4`,
     );
   });
 
@@ -290,7 +284,7 @@ describe('AgentChatPage', () => {
 
   it('detaches when the tab is left', async () => {
     await open(CHATTING);
-    await harness.navigateByUrl(`/agent/${ITEM}`);
+    await harness.navigateByUrl(`/agent/${agentId}`);
     expect(sockets[0].closed).toBe(true);
   });
 });

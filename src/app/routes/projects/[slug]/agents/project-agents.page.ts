@@ -16,79 +16,82 @@ import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { placementNote, runtimeLabel } from '$core/workspaces/agent-labels';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { AgentStatus } from '$patterns/agents/agent-status/agent-status';
 import { AgentRow } from '$patterns/workspaces/agent-row/agent-row';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
- * The project's Workspaces page, at `/projects/<slug>/workspaces` (epic qits-1230), ported from
- * qits-workspaces-frontend's overview. Its agents — each a link to its work item's agent page —
- * with how each runs and what it waits on; then its slots, the workspaces agents run in — each a
- * link to the slot's page (`workspaces/<slot id>`) — with its container state, placement and how
- * many agents it hosts. Beside the slots' heading, Targets leads to qits-system's Targets page
- * (`https://system.qits.<domain>/system/targets`, `PlatformOrigins.page('system')`, epic
- * qits-1481), where the execution targets slots are placed on are managed — this app no longer
- * has a runners page of its own.
+ * The project's Agents page, at `/projects/<slug>/agents` (epic qits-1681; `workspaces` redirects
+ * here). First its ACTIVE agents (`AgentsStore.loadProjectAgents`) — each a link to the agent's page
+ * (`agents/<agent id>`) — with how each runs, what each waits on and, when one needs a person, why
+ * and what to do (`app-agent-status`). Then, under a "Workspaces" heading, the project's wrapper's
+ * slots, the workspaces agents run in — each a link to the slot's page (`workspaces/<slot id>`) —
+ * with its container state, placement and how many agents it hosts. Beside that heading, Targets
+ * leads to qits-system's Targets page (`https://system.qits.<domain>/system/targets`,
+ * `PlatformOrigins.page('system')`, epic qits-1481), where the execution targets slots are placed
+ * on are managed.
  *
  * The slots are the project's wrapper's: qits-projects names the wrapper (`RepositoriesStore`), and
- * the page reads its slots and the project's agents (`AgentsStore.loadProject`: those in the
- * wrapper or on the project's items) once it is known, and again after a lifecycle event about the
- * wrapper or one of the agents it lists (at most once a second). In the browser only: the server
- * render has no session to send.
+ * the page reads its slots and the agents they host (`AgentsStore.loadProject`) once it is known.
+ * In the browser only: the server render has no session to send.
  *
- * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the wrapper (`repositoryId`), or a listed
- * agent's `agentId` (one of the project's items worked on outside the wrapper) → the wrapper's
- * slots and the project's agents (`AgentsStore.loadProject`, quietly). Not announced (see
- * `AgentsStore`): an agent's activity and wait, a queued agent's creation, a slot's runtime
- * leaving RUNNING.
+ * Staleness (qits-1270): `AGENT_STATUS_EVENTS` about the project → its ACTIVE agents
+ * (`AgentsStore.followProject`, debounced 1 s; its comment has the mapping). `WORKSPACE_EVENTS`
+ * naming the wrapper (`repositoryId`), or a listed agent's `agentId` → the wrapper's slots and their
+ * agents (`AgentsStore.loadProject`, quietly, at most once a second). Not announced (see
+ * `AgentsStore`): a queued agent's creation, a slot's runtime leaving RUNNING.
  */
 @Component({
-  selector: 'app-project-workspaces-page',
+  selector: 'app-project-agents-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AgentRow, Chip, PageLayoutComponent, RouterLink, Spinner],
+  imports: [AgentRow, AgentStatus, Chip, PageLayoutComponent, RouterLink, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout title="Workspaces">
+      <app-page-layout title="Agents">
         <p class="m-0 mb-6 max-w-[48rem] text-sm text-charcoal-brown-600">
           An agent works on one ticket or epic in its own worktree of the project's wrapper.
           Workspaces are the slots agents run in; the platform makes and removes them as agents need
           them.
         </p>
-        <ui-spinner [state]="state()" class="min-h-48">
-          <div class="flex flex-col gap-8">
-            <section class="flex flex-col gap-3" aria-labelledby="workspaces-agents">
-              <h2
-                id="workspaces-agents"
-                class="m-0 text-base font-semibold text-charcoal-brown-900"
-              >
-                Agents
-              </h2>
+        <div class="flex flex-col gap-8">
+          <section class="flex flex-col gap-3" aria-labelledby="project-agents">
+            <h2 id="project-agents" class="m-0 text-base font-semibold text-charcoal-brown-900">
+              Active agents
+            </h2>
+            <ui-spinner [state]="agentsState()" class="min-h-16">
               <p
                 class="m-0 text-sm text-charcoal-brown-500"
-                [class.hidden]="state() !== 'loaded' || agents().length"
+                [class.hidden]="agentsState() !== 'loaded' || agents().length"
               >
-                No agents yet.
+                No active agents.
               </p>
               <ul class="m-0 flex list-none flex-col gap-2 p-0">
                 @for (agent of agents(); track agent.agentId) {
-                  <li><app-agent-row [agent]="agent" [slug]="slug()" /></li>
+                  <li>
+                    <app-agent-row [agent]="agent" [slug]="slug()">
+                      <app-agent-status [agent]="agent" />
+                    </app-agent-row>
+                  </li>
                 }
               </ul>
-            </section>
+            </ui-spinner>
+          </section>
 
-            <section class="flex flex-col gap-3" aria-labelledby="workspaces-slots">
-              <div class="flex flex-wrap items-baseline gap-3">
-                <h2
-                  id="workspaces-slots"
-                  class="m-0 text-base font-semibold text-charcoal-brown-900"
-                >
-                  Slots
-                </h2>
-                @if (targetsHref(); as href) {
-                  <a class="text-sm text-ocean-deep-700" [href]="href">Targets</a>
-                }
-              </div>
+          <section class="flex flex-col gap-3" aria-labelledby="project-workspaces">
+            <div class="flex flex-wrap items-baseline gap-3">
+              <h2
+                id="project-workspaces"
+                class="m-0 text-base font-semibold text-charcoal-brown-900"
+              >
+                Workspaces
+              </h2>
+              @if (targetsHref(); as href) {
+                <a class="text-sm text-ocean-deep-700" [href]="href">Targets</a>
+              }
+            </div>
+            <ui-spinner [state]="state()" class="min-h-16">
               <p
                 class="m-0 text-sm text-charcoal-brown-500"
                 [class.hidden]="state() !== 'loaded' || slots().length"
@@ -113,14 +116,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   </li>
                 }
               </ul>
-            </section>
-          </div>
-        </ui-spinner>
+            </ui-spinner>
+          </section>
+        </div>
       </app-page-layout>
     </div>
   `,
 })
-export class ProjectWorkspacesPage {
+export class ProjectAgentsPage {
   private readonly selected = inject(SelectedProject);
   private readonly repositories = inject(RepositoriesStore);
   private readonly store = inject(AgentsStore);
@@ -145,9 +148,25 @@ export class ProjectWorkspacesPage {
     return wrapper ? this.store.projectOf(wrapper) : undefined;
   });
 
-  protected readonly agents = computed(() => this.read()?.agents ?? []);
+  /** The wrapper's agents, for how many each slot hosts. */
+  private readonly hostedAgents = computed(() => this.read()?.agents ?? []);
   protected readonly slots = computed(() => this.read()?.slots ?? []);
 
+  /** The project's ACTIVE agents, with their waits and attention. */
+  private readonly listed = computed(() => {
+    const id = this.selected.project()?.id;
+    return id ? this.store.projectAgentsOf(id) : undefined;
+  });
+
+  protected readonly agents = computed(() => this.listed()?.agents ?? []);
+
+  protected readonly agentsState = computed((): LoadState => {
+    const status = this.listed()?.status;
+    if (status === 'loaded') return 'loaded';
+    return status === 'error' || status === 'missing' ? 'error' : 'loading';
+  });
+
+  /** The slots' read. */
   protected readonly state = computed((): LoadState => {
     const id = this.selected.project()?.id;
     const repositories = id ? this.repositories.byProject()[id] : undefined;
@@ -167,20 +186,26 @@ export class ProjectWorkspacesPage {
       if (id) untracked(() => void this.repositories.load(id));
     });
     effect(() => {
+      const id = this.selected.project()?.id;
+      if (id) untracked(() => void this.store.loadProjectAgents(id));
+    });
+    const destroy = inject(DestroyRef);
+    this.store.followProject(destroy, () => this.selected.project()?.id);
+    effect(() => {
       const wrapper = this.wrapperId();
       if (wrapper) untracked(() => void this.store.loadProject(wrapper, this.slug()));
     });
     this.store.follow(
-      inject(DestroyRef),
+      destroy,
       () => [
         { repositoryId: this.wrapperId() },
-        ...this.agents().map((agent) => ({ agentId: agent.agentId })),
+        ...this.hostedAgents().map((agent) => ({ agentId: agent.agentId })),
       ],
       () => this.reload(),
     );
   }
 
-  /** Reads the wrapper's slots and the project's agents again (after a lifecycle event). */
+  /** Reads the wrapper's slots and the agents they host again (after a lifecycle event). */
   protected reload(): void {
     const wrapper = this.wrapperId();
     if (wrapper) void this.store.loadProject(wrapper, this.slug());
@@ -200,7 +225,7 @@ export class ProjectWorkspacesPage {
 
   /** How many of the listed agents the slot hosts. */
   protected hosted(id: number | undefined): string {
-    const count = this.agents().filter((a) => a.workspaceRowId === id).length;
+    const count = this.hostedAgents().filter((a) => a.workspaceRowId === id).length;
     return count === 1 ? '1 agent' : `${count} agents`;
   }
 }

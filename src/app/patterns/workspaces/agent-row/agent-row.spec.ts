@@ -22,8 +22,9 @@ describe('AgentRow', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('links the item’s agent page and says how the agent runs', () => {
+  it('links the agent’s page and says how the agent runs', () => {
     const element = render({
+      agentId: 'a-617',
       entityId: 'qits-617',
       entityTitle: 'Fix it',
       state: 'ACTIVE',
@@ -31,9 +32,7 @@ describe('AgentRow', () => {
       harness: 'CLAUDE',
       activity: 'BUSY',
     });
-    expect(element.querySelector('a')?.getAttribute('href')).toBe(
-      '/projects/qits/work/detail/qits-617/agent',
-    );
+    expect(element.querySelector('a')?.getAttribute('href')).toBe('/projects/qits/agents/a-617');
     expect(element.textContent).toContain('Fix it');
     expect(element.textContent).toContain('active');
     expect(element.textContent).toContain('running');
@@ -60,12 +59,16 @@ describe('AgentRow', () => {
   });
 
   it('has no link without a project', () => {
-    expect(render({ entityId: 'qits-617' }, '').querySelector('a')).toBeNull();
+    expect(render({ agentId: 'a-617', entityId: 'qits-617' }, '').querySelector('a')).toBeNull();
   });
 
-  it('names an agent without an item by its id, without a link', () => {
+  it('has no link without the agent’s id', () => {
+    expect(render({ entityId: 'qits-617' }).querySelector('a')).toBeNull();
+  });
+
+  it('names an agent without an item by its id, and links it', () => {
     const element = render({ agentId: 'a1' });
-    expect(element.querySelector('a')).toBeNull();
+    expect(element.querySelector('a')?.getAttribute('href')).toBe('/projects/qits/agents/a1');
     expect(element.textContent).toContain('a1');
   });
 });

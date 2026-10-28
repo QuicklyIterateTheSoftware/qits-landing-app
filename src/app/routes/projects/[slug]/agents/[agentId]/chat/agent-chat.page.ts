@@ -15,7 +15,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
-import { SelectedWork } from '$core/work/selected-work';
 import { AgentChatStore } from '$core/workspaces/agent-chat.store';
 import { AgentHarnessStore } from '$core/workspaces/agent-harness.store';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
@@ -44,11 +43,11 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
 };
 
 /**
- * A work item's agent's Chat tab, at `/projects/<slug>/work/detail/<qualified id>/agent/chat` (epic
- * qits-1230): the conversation with the agent as it grows, and a prompt box, ported from
+ * An agent's Chat tab, at `/projects/<slug>/agents/<agent id>/chat` (epic qits-1230; by the
+ * agent's id since epic qits-1681): the conversation with the agent as it grows, and a prompt box, ported from
  * qits-workspaces-frontend's chat panel without its speech input.
  *
- * The agent is the layout's (`AgentsStore.itemOf`); its harness's command and whether it runs come
+ * The agent is the layout's (`AgentsStore.agentOf`, by the URL's agent id); its harness's command and whether it runs come
  * from its slot's daemon (`AgentHarnessStore`), read again after a lifecycle event about the agent
  * or its slot and on the slot's `commands` hint (`WorkspaceHints`).
  *
@@ -60,7 +59,7 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
  *   the harness runs, and once more when it stops.
  * - Otherwise, and below a terminal's transcript: the prompt composer (`PromptComposer`), whose
  *   draft lives on the service and whose prompt the delivery door hands to the agent, with the line
- *   ranges picked in the Files tab; a pick's ↗ opens it there (`agent/files?path=…&lines=…`).
+ *   ranges picked in the Files tab; a pick's ↗ opens it there (`files?path=…&lines=…`).
  *
  * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
  * (`workspaceId`) → the harness (`AgentHarnessStore.load`, quietly). `AgentStarted` and
@@ -182,7 +181,7 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
             }
             <app-prompt-composer
               [agentId]="agent.agentId ?? ''"
-              [workId]="workId() ?? ''"
+              [workId]="agent.workId ?? ''"
               [workspaceRowId]="rowId()"
               [preamble]="preamble()"
               (sent)="onSent($event)"
@@ -195,7 +194,6 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
   `,
 })
 export class AgentChatPage {
-  private readonly work = inject(SelectedWork);
   private readonly agents = inject(AgentsStore);
   private readonly harnesses = inject(AgentHarnessStore);
   private readonly chats = inject(AgentChatStore);
@@ -206,23 +204,19 @@ export class AgentChatPage {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  /** The work item's qualified id, the agent layout's `:id`. */
-  private readonly id = toSignal(
-    this.layoutRoute().paramMap.pipe(map((params) => params.get('id') ?? '')),
+  /** The agent's id, the agent layout's `:agentId`. */
+  private readonly agentId = toSignal(
+    this.layoutRoute().paramMap.pipe(map((params) => params.get('agentId') ?? '')),
     { initialValue: '' },
   );
 
-  protected readonly workId = computed(
-    () => this.work.entries().find((e) => e.qualifiedId === this.id())?.id,
-  );
-
+  /** The agent, as the layout read it (`AgentsStore.loadAgent`). */
   protected readonly agent = computed(() => {
-    const id = this.workId();
-    return id ? this.agents.itemOf(id)?.agent : undefined;
+    const id = this.agentId();
+    return id ? this.agents.agentOf(id)?.agent : undefined;
   });
 
   protected readonly rowId = computed(() => this.agent()?.workspaceRowId ?? 0);
-  private readonly agentId = computed(() => this.agent()?.agentId ?? '');
 
   /** What the work is about, for the prompt rewrite: the item's id and title. */
   protected readonly preamble = computed(() => {
@@ -361,7 +355,7 @@ export class AgentChatPage {
     });
   }
 
-  /** The agent layout's route, which holds `:id`. */
+  /** The agent layout's route, which holds `:agentId`. */
   private layoutRoute(): ActivatedRoute {
     const route = inject(ActivatedRoute);
     return route.parent ?? route;

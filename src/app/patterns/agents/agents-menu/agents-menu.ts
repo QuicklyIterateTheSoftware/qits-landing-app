@@ -16,11 +16,11 @@ import { requestTone } from '$core/projects/release-requests';
 import { lifecycleSummary, type SummaryPoint } from '$core/release-requests/release-lifecycle';
 import { WorkStore } from '$core/work/work.store';
 import {
+  agentPath,
   attentionAction,
   attentionCount,
   needsAttention,
   waitSubject,
-  workItemPath,
   type AttentionAction,
   type WaitContext,
   type WaitSubject,
@@ -99,7 +99,8 @@ interface AgentMenuRow {
 
 /**
  * The top bar's agents menu (epic qits-1681), beside the lightning menu: the open project's ACTIVE
- * agents (`AgentsStore.loadProjectAgents`), each with its item linked to the agent page, an
+ * agents (`AgentsStore.loadProjectAgents`), each with its item linked to the agent's page
+ * (`agents/<agent id>`), an
  * activity chip (Working, Waiting, Idle since HH:mm, Ended), a line per open wait
  * (`waitSubject`: a request with its state and lifecycle line, a run, an item, comments, or the
  * wait's label), "Blocked since HH:mm" when its item is blocked (the work list carries no block
@@ -109,7 +110,7 @@ interface AgentMenuRow {
  *
  * Rows needing a person come first, then the rest by `lastActivityAt`, newest first. The badge
  * counts the agents needing a person, in red; with none, the active agents, in amber; it is hidden
- * at none. The footer links "All agents" to the project's Workspaces page.
+ * at none. The footer links "All agents" to the project's Agents page.
  *
  * The agents are read as soon as a project opens, and again on each opening. A wait's request comes
  * from `ProjectsStore`'s release requests, which the lightning menu reads; an item's status from
@@ -302,7 +303,7 @@ interface AgentMenuRow {
         </p>
         <a
           class="block border-t border-gray-100 px-3 py-2 text-center text-sm font-semibold text-gray-700 no-underline hover:bg-gray-50"
-          [routerLink]="['/projects', slug(), 'workspaces']"
+          [routerLink]="['/projects', slug(), 'agents']"
           (click)="menu.close()"
           >All agents</a
         >
@@ -355,12 +356,11 @@ export class AgentsMenu {
       (a, b) => Number(needsAttention(b)) - Number(needsAttention(a)) || time(b) - time(a),
     );
     return sorted.map((agent) => {
-      const page =
-        ctx.slug && agent.entityId ? `${workItemPath(ctx.slug, agent.entityId)}/agent` : null;
+      const page = ctx.slug && agent.agentId ? agentPath(ctx.slug, agent.agentId) : null;
       return {
         agent,
         page,
-        chat: page ? `${page}/chat` : null,
+        chat: ctx.slug && agent.agentId ? agentPath(ctx.slug, agent.agentId, 'chat') : null,
         activity: activityChip(agent),
         waits: (agent.waits ?? []).map((wait, index) => {
           const subject = waitSubject(wait, ctx);

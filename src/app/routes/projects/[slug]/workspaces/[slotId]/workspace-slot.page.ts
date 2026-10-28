@@ -26,8 +26,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * qits-workspaces-frontend's workspace page. A slot hosts agents and runs one working agent at a
  * time. Its status strip (container, runner, daemon, how many agents) with the container's verbs
  * (`app-container-actions`: start or stop, recreate; read again after each), the log of the start
- * bringing its container up while one runs, and the agents it hosts — each a link to its work
- * item's agent page.
+ * bringing its container up while one runs, and the agents it hosts — each a link to the
+ * agent's page (`agents/<agent id>`, epic qits-1681).
  *
  * Read by `AgentsStore.loadSlot`, again after a lifecycle event about this slot (at most once a
  * second). A slot that resolved answers 404: "This workspace is gone". In the browser only.

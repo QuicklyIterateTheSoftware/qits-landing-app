@@ -108,9 +108,13 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect.element(view).toMatchTextContent('placed on a runner');
     await expect.element(view).toMatchTextContent('2 agents');
     await expect.element(view.getByRole('region', { name: 'Starting' })).not.toBeInTheDocument();
+    const hosted = await goldenMaster(SLOT, 'listAgents', 'qits-workspaces');
+    const agentId = hosted.agents.find(
+      (a: { entityId?: string }) => a.entityId === 'contract-00000001-2',
+    ).agentId;
     await expect
       .element(view.getByRole('link', { name: 'contract-00000001-2' }))
-      .toHaveAttribute('href', `/projects/${project.slug}/work/detail/contract-00000001-2/agent`);
+      .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
     await expect.element(view).toMatchTextContent('yielded — idle, terminal stays live');
     await expect
       .element(view.getByRole('group', { name: 'Container' }).getByRole('button', { name: 'Stop' }))

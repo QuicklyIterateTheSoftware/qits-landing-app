@@ -120,6 +120,15 @@ export function workItemPath(slug: string, qualifiedId: string): string {
   return `/projects/${encodeURIComponent(slug)}/work/detail/${encodeURIComponent(qualifiedId)}`;
 }
 
+/**
+ * The app's page for an agent of the project (epic qits-1681), or one of its tabs (`chat`, `files`,
+ * `terminal`).
+ */
+export function agentPath(slug: string, agentId: string, tab?: string): string {
+  const page = `/projects/${encodeURIComponent(slug)}/agents/${encodeURIComponent(agentId)}`;
+  return tab ? `${page}/${tab}` : page;
+}
+
 /** The app's page for a release request of the project. */
 export function releaseRequestPath(slug: string, qualifiedId: string): string {
   return `/projects/${encodeURIComponent(slug)}/release-requests/${encodeURIComponent(qualifiedId)}`;

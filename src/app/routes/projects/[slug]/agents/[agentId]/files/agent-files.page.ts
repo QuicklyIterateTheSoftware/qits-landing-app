@@ -12,7 +12,6 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
-import { SelectedWork } from '$core/work/selected-work';
 import type { FileDetection, FileListing } from '$core/workspaces/agent-files.consumes';
 import { AgentFilesStore } from '$core/workspaces/agent-files.store';
 import { AgentsStore } from '$core/workspaces/agents.store';
@@ -76,8 +75,8 @@ const CHIP =
   'cursor-pointer rounded-full border px-2.5 py-0.5 font-sans text-xs aria-pressed:border-ocean-deep-600 aria-pressed:bg-ocean-deep-50 aria-pressed:text-ocean-deep-800 border-charcoal-brown-200 bg-white text-charcoal-brown-700';
 
 /**
- * A work item's agent's Files tab, at `/projects/<slug>/work/detail/<qualified id>/agent/files`
- * (epic qits-1230): the agent's worktree, ported from qits-workspaces-frontend's files panel. A
+ * An agent's Files tab, at `/projects/<slug>/agents/<agent id>/files` (epic qits-1230; by the
+ * agent's id since epic qits-1681): the agent's worktree, ported from qits-workspaces-frontend's files panel. A
  * tree on the left, the open file on the right, and the filters that decide what the tree shows.
  *
  * **What it reads** (`AgentFilesStore`, through qits-workspaces' container proxy):
@@ -95,7 +94,7 @@ const CHIP =
  *
  * Staleness (qits-1270): no qits-events event says the worktree changed, so the `files` hint (a
  * named, lint-allowed exception) is the trigger; the agent and its slot are the layout's
- * (`AgentsStore.loadItem`, `WORKSPACE_EVENTS`), and a new slot moves the hint channel with it.
+ * (`AgentsStore.loadAgent`, `WORKSPACE_EVENTS`), and a new slot moves the hint channel with it.
  *
  * **What the tree shows.** A gitignored directory is a dimmed stub with its child count. A name
  * search (fuzzy, a glob with `*`, or a path with `/`) or a manual rule opens the tree fully; a
@@ -306,7 +305,6 @@ const CHIP =
   `,
 })
 export class AgentFilesPage {
-  private readonly work = inject(SelectedWork);
   private readonly agents = inject(AgentsStore);
   private readonly files = inject(AgentFilesStore);
   private readonly hints = inject(WorkspaceHints);
@@ -315,25 +313,21 @@ export class AgentFilesPage {
   protected readonly picked = inject(PickedContext);
   protected readonly chip = CHIP;
 
-  /** The work item's qualified id, the agent layout's `:id`. */
-  private readonly id = toSignal(
-    (this.route.parent ?? this.route).paramMap.pipe(map((params) => params.get('id') ?? '')),
+  /** The agent's id, the agent layout's `:agentId`. */
+  private readonly agentId = toSignal(
+    (this.route.parent ?? this.route).paramMap.pipe(map((params) => params.get('agentId') ?? '')),
     { initialValue: '' },
   );
 
   private readonly params = toSignal(this.route.queryParamMap, { initialValue: null });
 
-  private readonly workId = computed(
-    () => this.work.entries().find((e) => e.qualifiedId === this.id())?.id,
-  );
-
+  /** The agent, as the layout read it (`AgentsStore.loadAgent`). */
   protected readonly agent = computed(() => {
-    const id = this.workId();
-    return id ? this.agents.itemOf(id)?.agent : undefined;
+    const id = this.agentId();
+    return id ? this.agents.agentOf(id)?.agent : undefined;
   });
 
   protected readonly rowId = computed(() => this.agent()?.workspaceRowId ?? 0);
-  private readonly agentId = computed(() => this.agent()?.agentId ?? '');
 
   /** The open file: the URL's `path`. */
   readonly selectedPath = computed(() => this.params()?.get('path') ?? null);

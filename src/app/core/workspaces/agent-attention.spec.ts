@@ -1,4 +1,5 @@
 import {
+  agentPath,
   attentionAction,
   attentionCount,
   needsAttention,
@@ -74,6 +75,11 @@ describe('agent attention', () => {
     expect(agents.map(needsAttention)).toEqual([true, false, false, true]);
     expect(attentionCount(agents)).toBe(2);
     expect(attentionCount([])).toBe(0);
+  });
+
+  it('builds an agent’s page and its tabs by the agent’s id', () => {
+    expect(agentPath('contract', 'a-1')).toBe('/projects/contract/agents/a-1');
+    expect(agentPath('contract', 'a-1', 'chat')).toBe('/projects/contract/agents/a-1/chat');
   });
 
   describe('waitSubject', () => {

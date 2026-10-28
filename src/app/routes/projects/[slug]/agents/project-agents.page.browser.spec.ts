@@ -8,11 +8,13 @@ import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
-import { ProjectWorkspacesPage } from './project-workspaces.page';
+import { ProjectAgentsPage } from './project-agents.page';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 
 /**
- * Screenshots of a project's Workspaces page. The project is qits-projects' recorded one ("a
+ * Screenshots of a project's Agents page. Its ACTIVE agents are answered with the same recording as
+ * the slots' agents (qits-workspaces' `listAgents` of the state below): the state that records waits
+ * and attention is not published yet, so the rows show none. The project is qits-projects' recorded one ("a
  * project exists", slug `contract-00000001`) and its wrapper the one "a project with repositories
  * in components" names. The slots and agents are qits-workspaces' "a project with workspace slots
  * hosting agents", answered to the page's read by that wrapper's id (the two providers' frozen ids
@@ -31,14 +33,14 @@ const NOW = new Date('2026-01-01T00:04:00Z');
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-describe('ProjectWorkspacesPage (screenshots)', () => {
+describe('ProjectAgentsPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/workspaces', component: ProjectWorkspacesPage }]),
+        provideRouter([{ path: 'projects/:slug/agents', component: ProjectAgentsPage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -63,7 +65,7 @@ describe('ProjectWorkspacesPage (screenshots)', () => {
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/workspaces`);
+    const navigated = harness.navigateByUrl(`/projects/${project.slug}/agents`);
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
@@ -81,8 +83,11 @@ describe('ProjectWorkspacesPage (screenshots)', () => {
     harness.fixture.detectChanges();
   }
 
-  /** Answers the wrapper, then its slots and the project's agents; gives the wrapper's id. */
+  /** Answers the project's agents, the wrapper, then its slots and their agents. */
   async function answerSlots(harness: RouterTestingHarness, projectId: string) {
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
+      .flush(await goldenMaster(WORKSPACES, 'listAgents', 'qits-workspaces'));
     const repositories = await goldenMaster(REPOSITORIES, 'listProjectRepositories');
     http.expectOne(`/projects/api/projects/${projectId}/repositories`).flush(repositories);
     await answered(harness);
@@ -100,11 +105,16 @@ describe('ProjectWorkspacesPage (screenshots)', () => {
   it('lists the project’s agents, with what each waits on, and its slots', async () => {
     const { harness, element, project } = await render();
     await answerSlots(harness, project.id);
+    const agents = await goldenMaster(WORKSPACES, 'listAgents', 'qits-workspaces');
+    const agentId = agents.agents.find(
+      (a: { entityId?: string }) => a.entityId === 'contract-00000001-10',
+    ).agentId;
     const view = page.elementLocator(element);
-    await expect.element(view.getByRole('heading', { name: 'Agents' })).toBeVisible();
+    await expect.element(view.getByRole('heading', { name: 'Active agents' })).toBeVisible();
+    await expect.element(view.getByRole('heading', { name: 'Workspaces' })).toBeVisible();
     await expect
       .element(view.getByRole('link', { name: 'contract-00000001-10' }))
-      .toHaveAttribute('href', `/projects/${project.slug}/work/detail/contract-00000001-10/agent`);
+      .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
     await expect
       .element(view)
       .toMatchTextContent(
@@ -122,13 +132,16 @@ describe('ProjectWorkspacesPage (screenshots)', () => {
   it('marks the page as loading, then as failed to load', async () => {
     const { harness, element, project } = await render();
     const view = page.elementLocator(element);
-    await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
+    await expect.element(view.getByRole('img', { name: 'Loading' }).first()).toBeVisible();
     await expect.element(view).toMatchScreenshot('loading');
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
     http
       .expectOne(`/projects/api/projects/${project.id}/repositories`)
       .flush(null, { status: 500, statusText: 'Server Error' });
     await answered(harness);
-    await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
+    await expect.element(view.getByRole('img', { name: 'Failed to load' }).first()).toBeVisible();
     await expect.element(view).toMatchScreenshot('error');
   });
 });

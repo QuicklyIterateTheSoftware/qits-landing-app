@@ -1,21 +1,20 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, signal } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { client as workspaceDaemonClient } from '../../../../../../../../api/workspace-daemon/client.gen';
-import { provideHeyApiClient } from '../../../../../../../../api/workspace-daemon/client/client.gen';
+import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
+import { provideHeyApiClient } from '../../../../../../api/workspace-daemon/client/client.gen';
 import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
-import { SelectedWork } from '$core/work/selected-work';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PickedContext } from '$core/workspaces/picked-context';
 import {
   workspaceDaemonGoldenMaster,
   workspaceDaemonGoldenMasters,
   workspacesGoldenMaster,
-} from '../../../../../../../../../testing/golden-masters';
-import { provideTestPlatformOrigins } from '../../../../../../../../../testing/platform-origins';
+} from '../../../../../../../testing/golden-masters';
+import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { AgentFilesPage } from './agent-files.page';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -23,7 +22,6 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const FILES = 'a workspace daemon with an agent whose worktree holds files';
 const IGNORED = 'a workspace daemon with an agent whose worktree has an ignored directory';
 const ORIGIN = 'https://workspaces.qits.example';
-const ITEM = 'contract-00000001-10';
 const { agentId, workspaceRowId } = workspaceDaemonGoldenMasters.operation(
   FILES,
   'listFiles',
@@ -52,19 +50,15 @@ describe('AgentFilesPage', () => {
       providers: [
         { provide: PLATFORM_ID, useValue: platform },
         provideRouter([
-          { path: 'agent/:id', children: [{ path: 'files', component: AgentFilesPage }] },
+          { path: 'agent/:agentId', children: [{ path: 'files', component: AgentFilesPage }] },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
         {
-          provide: SelectedWork,
-          useValue: { entries: signal([{ id: AGENT.workId, qualifiedId: ITEM }]) },
-        },
-        {
           provide: AgentsStore,
-          useValue: { itemOf: () => ({ status: 'loaded', agent }) },
+          useValue: { agentOf: () => ({ status: 'loaded', agent }) },
         },
         {
           provide: EVENT_SOURCE,
@@ -106,7 +100,7 @@ describe('AgentFilesPage', () => {
   async function open(search = '') {
     configure();
     harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl(`/agent/${ITEM}/files${search}`);
+    await harness.navigateByUrl(`/agent/${agentId}/files${search}`);
     await settle();
     http.expectOne(`${WORKTREE}/detection`).flush(workspaceDaemonGoldenMaster(FILES, 'detect'));
     http.expectOne(`${WORKTREE}/files`).flush(workspaceDaemonGoldenMaster(FILES, 'listFiles'));
@@ -260,7 +254,7 @@ describe('AgentFilesPage', () => {
   it('says a tree it could not read could not be read, and reads it again on request', async () => {
     configure();
     harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl(`/agent/${ITEM}/files`);
+    await harness.navigateByUrl(`/agent/${agentId}/files`);
     await settle();
     http.expectOne(`${WORKTREE}/detection`).flush(null, { status: 502, statusText: 'Bad Gateway' });
     http.expectOne(`${WORKTREE}/files`).flush(null, { status: 502, statusText: 'Bad Gateway' });
@@ -279,7 +273,7 @@ describe('AgentFilesPage', () => {
     // The recorded agent, before it got a slot.
     agent = { ...AGENT, workspaceRowId: null };
     harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl(`/agent/${ITEM}/files`);
+    await harness.navigateByUrl(`/agent/${agentId}/files`);
     await rendered();
     expect(text()).toContain('This agent has no workspace yet');
     expect(streams).toEqual([]);
@@ -288,7 +282,7 @@ describe('AgentFilesPage', () => {
   it('reads nothing on the server', async () => {
     configure('server');
     harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl(`/agent/${ITEM}/files?path=${encodeURIComponent(LOGIN)}`);
+    await harness.navigateByUrl(`/agent/${agentId}/files?path=${encodeURIComponent(LOGIN)}`);
     await rendered();
     expect(streams).toEqual([]);
   });

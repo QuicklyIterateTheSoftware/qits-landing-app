@@ -15,7 +15,12 @@ import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-ite
 import { WorkInProgressPage } from './routes/projects/[slug]/work/in-progress/work-in-progress.page';
 import { WorkRefinementPage } from './routes/projects/[slug]/work/refinement/work-refinement.page';
 import { WorkLayout } from './routes/projects/[slug]/work/work.layout';
-import { ProjectWorkspacesPage } from './routes/projects/[slug]/workspaces/project-workspaces.page';
+import { AgentChatPage } from './routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page';
+import { AgentFilesPage } from './routes/projects/[slug]/agents/[agentId]/files/agent-files.page';
+import { AgentLayout } from './routes/projects/[slug]/agents/[agentId]/agent.layout';
+import { AgentTerminalPage } from './routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page';
+import { ProjectAgentsPage } from './routes/projects/[slug]/agents/project-agents.page';
+import { WorkAgentLayout } from './routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout';
 import { WorkspaceSlotPage } from './routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page';
 import { ProjectPickerPage } from './routes/projects/project-picker.page';
 
@@ -71,7 +76,7 @@ describe('work routes', () => {
   });
 });
 
-describe('workspaces routes', () => {
+describe('agents and workspaces routes', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [
@@ -86,9 +91,33 @@ describe('workspaces routes', () => {
     }),
   );
 
-  it('opens the project’s workspaces at workspaces', async () => {
-    expect(await opened('/projects/x/workspaces')).toEqual([ProjectWorkspacesPage]);
+  it('opens the project’s agents at agents', async () => {
+    expect(await opened('/projects/x/agents')).toEqual([ProjectAgentsPage]);
   });
+
+  it('redirects workspaces to agents', async () => {
+    expect(await opened('/projects/x/workspaces')).toEqual([ProjectAgentsPage]);
+    expect(TestBed.inject(Router).url).toBe('/projects/x/agents');
+  });
+
+  it('opens an agent at agents/<agent id>', async () => {
+    expect((await opened('/projects/x/agents/a-1'))[0]).toBe(AgentLayout);
+  });
+
+  it.each([
+    ['chat', AgentChatPage],
+    ['files', AgentFilesPage],
+    ['terminal', AgentTerminalPage],
+  ])('opens its %s tab below it', async (tab, page) => {
+    expect(await opened(`/projects/x/agents/a-1/${tab}`)).toEqual([AgentLayout, page]);
+  });
+
+  it.each(['', '/chat', '/files', '/terminal'])(
+    'opens the item’s old agent address work/detail/<id>/agent%s on the redirect',
+    async (tab) => {
+      expect((await opened(`/projects/x/work/detail/x-1/agent${tab}`))[0]).toBe(WorkAgentLayout);
+    },
+  );
 
   it('opens a slot at workspaces/<slot id>', async () => {
     expect(await opened('/projects/x/workspaces/1')).toEqual([WorkspaceSlotPage]);

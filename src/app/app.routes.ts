@@ -48,14 +48,17 @@ import { sessionGuard } from '$core/auth/session.guard';
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
- * The workspaces (epic qits-1230): `projects/<slug>/workspaces` lists the project's slots and
- * agents (`ProjectWorkspacesPage`), `workspaces/<slot id>` is one slot (`WorkspaceSlotPage`). A
- * work item's agent is at `work/detail/<qualified id>/agent` (`WorkAgentLayout`), where the
- * Workspace links on cards and on the item's page lead: a layout, whose children are the agent's
- * tabs (`agent/chat`, `AgentChatPage`; `agent/files`, `AgentFilesPage`; `agent/terminal`,
- * `AgentTerminalPage`), with an empty default. This app has no runners page of its own (epic
- * qits-1481): the execution targets a slot is placed on are qits-system's, at its own Targets
- * page, which the Workspaces page links to directly rather than routing through here.
+ * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
+ * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
+ * (`ProjectAgentsPage`); `agents/<agent id>` is one agent (`AgentLayout`): a layout, whose
+ * children are the agent's tabs (`chat`, `AgentChatPage`; `files`, `AgentFilesPage`; `terminal`,
+ * `AgentTerminalPage`), with an empty default. `workspaces/<slot id>` is one slot
+ * (`WorkspaceSlotPage`); the bare `workspaces` redirects to `agents`. A work item's old agent
+ * address, `work/detail/<qualified id>/agent[/<tab>]`, where the Workspace links on cards and on the
+ * item's page still lead, is `WorkAgentLayout`: it finds the item's ACTIVE agent and goes to its
+ * page on the same tab, or to the item. This app has no runners page of its own (epic qits-1481):
+ * the execution targets a slot is placed on are qits-system's, at its own Targets page, which the
+ * Agents page links to directly rather than routing through here.
  *
  * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
  * outside the shell, so the guard does not run on it.
@@ -90,35 +93,15 @@ export const routes: Routes = [
           ),
       },
       {
+        // The item's old agent address: leads to its ACTIVE agent's page, on the same tab.
         path: 'projects/:slug/work/detail/:id/agent',
         loadComponent: () =>
           import('./routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout').then(
             (m) => m.WorkAgentLayout,
           ),
-        // The agent's tabs (`AGENT_TABS`); the bare URL shows the agent alone.
         children: [
           { path: '', children: [] },
-          {
-            path: 'chat',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/work/detail/[id]/agent/chat/agent-chat.page').then(
-                (m) => m.AgentChatPage,
-              ),
-          },
-          {
-            path: 'files',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/work/detail/[id]/agent/files/agent-files.page').then(
-                (m) => m.AgentFilesPage,
-              ),
-          },
-          {
-            path: 'terminal',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/work/detail/[id]/agent/terminal/agent-terminal.page').then(
-                (m) => m.AgentTerminalPage,
-              ),
-          },
+          { path: ':tab', children: [] },
         ],
       },
       {
@@ -173,12 +156,46 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'projects/:slug/workspaces',
+        path: 'projects/:slug/agents',
         loadComponent: () =>
-          import('./routes/projects/[slug]/workspaces/project-workspaces.page').then(
-            (m) => m.ProjectWorkspacesPage,
+          import('./routes/projects/[slug]/agents/project-agents.page').then(
+            (m) => m.ProjectAgentsPage,
           ),
       },
+      {
+        path: 'projects/:slug/agents/:agentId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/agents/[agentId]/agent.layout').then(
+            (m) => m.AgentLayout,
+          ),
+        // The agent's tabs (`AGENT_TABS`); the bare URL shows the agent alone.
+        children: [
+          { path: '', children: [] },
+          {
+            path: 'chat',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page').then(
+                (m) => m.AgentChatPage,
+              ),
+          },
+          {
+            path: 'files',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/agents/[agentId]/files/agent-files.page').then(
+                (m) => m.AgentFilesPage,
+              ),
+          },
+          {
+            path: 'terminal',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page').then(
+                (m) => m.AgentTerminalPage,
+              ),
+          },
+        ],
+      },
+      // The section was Workspaces before epic qits-1681; its slots are now on the Agents page.
+      { path: 'projects/:slug/workspaces', pathMatch: 'full', redirectTo: 'projects/:slug/agents' },
       {
         path: 'projects/:slug/workspaces/:slotId',
         loadComponent: () =>

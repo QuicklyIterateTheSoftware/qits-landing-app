@@ -4,8 +4,9 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
 
 /**
- * A "Workspace" link to a work item's agent page, `/projects/<slug>/work/detail/<qualified
- * id>/agent` (epic qits-1230), shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
+ * A "Workspace" link to a work item's agent, `/projects/<slug>/work/detail/<qualified id>/agent`
+ * (epic qits-1230), which leads on to its ACTIVE agent's page (`agents/<agent id>`, epic
+ * qits-1681): the link knows the item, not its agent. Shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
  * it hides itself. The page loads the open workspaces once (`WorkspacesStore.load()`); the link
  * costs no request.
  *

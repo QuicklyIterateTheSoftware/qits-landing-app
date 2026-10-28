@@ -9,6 +9,7 @@ import {
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { SelectedProject } from '$core/projects/selected-project';
 import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
+import { AgentsStore } from '$core/workspaces/agents.store';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
@@ -179,6 +180,7 @@ export interface NavNote {
 export class ShellLayout {
   private readonly selected = inject(SelectedProject);
   private readonly projects = inject(ProjectsStore);
+  private readonly agents = inject(AgentsStore);
 
   /**
    * The open project's newest release request (`latestReleaseRequest`), as the line below the
@@ -222,7 +224,7 @@ export class ShellLayout {
               path: `/projects/${slug}/work/${tab.segment}`,
             })),
           },
-          { label: 'Workspaces', path: `/projects/${slug}/${WORKSPACES}` },
+          { label: 'Agents', path: `/projects/${slug}/${AGENTS}` },
           {
             label: 'Release Requests',
             path: `/projects/${slug}/${RELEASE_REQUESTS}`,
@@ -238,9 +240,8 @@ export class ShellLayout {
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
    * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
-   * Work › <item id>, Release Requests › <request id>, Workspaces › ws-<slot id>), and below an
-   * item, its agent (Work › <item id> › Agent). The last crumb is the current page and is not a
-   * link.
+   * Work › <item id>, Release Requests › <request id>, Agents › <agent's item id>, Agents ›
+   * ws-<slot id>). The last crumb is the current page and is not a link.
    */
   protected readonly crumbs = computed((): readonly NavLink[] => {
     const projects: NavLink = { label: 'Projects', path: '/projects' };
@@ -254,20 +255,26 @@ export class ShellLayout {
     // Release Requests › <request id>.
     const url = this.selected.url();
     const requests = this.projects.releaseRequests()[project.id ?? '']?.requests ?? [];
+    const agents = this.agents.projectAgents()[project.id ?? '']?.agents ?? [];
     const sub =
       workSubpage(url, `/projects/${slug}`) ??
       releaseRequestSubpage(url, `/projects/${slug}`, requests) ??
-      slotSubpage(url, `/projects/${slug}`);
-    if (!sub) return [...crumbs, section];
-    const agent = agentSubpage(url, `/projects/${slug}`);
-    return agent ? [...crumbs, section, sub, agent] : [...crumbs, section, sub];
+      slotSubpage(url, `/projects/${slug}`) ??
+      agentSubpage(url, `/projects/${slug}`, agents);
+    return sub ? [...crumbs, section, sub] : [...crumbs, section];
   });
 
-  /** The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear. */
+  /**
+   * The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear.
+   * A slot's page (`workspaces/<slot id>`) is in Agents.
+   */
   protected readonly section = computed((): NavLink | undefined => {
     const slug = this.selected.slug();
     if (slug === undefined) return undefined;
     const url = this.selected.url();
+    if (within(url, `/projects/${slug}/${WORKSPACES}`)) {
+      return this.links().find((link) => link.path === `/projects/${slug}/${AGENTS}`);
+    }
     return [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find((link) =>
       within(url, link.path),
     );
@@ -320,7 +327,13 @@ function within(url: string, path: string): boolean {
   return url === path || /^[/?#]/.test(url.startsWith(path) ? url.slice(path.length) : 'x');
 }
 
-/** The workspaces section's segment below a project: `/projects/<slug>/workspaces`. */
+/** The agents section's segment below a project: `/projects/<slug>/agents` (epic qits-1681). */
+export const AGENTS = 'agents';
+
+/**
+ * The slots' segment below a project: `/projects/<slug>/workspaces/<slot id>`, a page of the
+ * agents section (the bare `workspaces` redirects to `agents`).
+ */
 export const WORKSPACES = 'workspaces';
 
 /**
@@ -336,15 +349,24 @@ export function slotSubpage(url: string, project: string): NavLink | undefined {
 }
 
 /**
- * The crumb of a work item's agent page below the project at `project` (`/projects/<slug>`):
- * `<project>/work/detail/<item id>/agent` (and its tabs below) is "Agent". Undefined for any other
- * URL.
+ * The crumb of one agent below the project at `project` (`/projects/<slug>`):
+ * `<project>/agents/<agent id>` (and its tabs below) names the agent by its work item's qualified
+ * id, found in `agents` (the project's ACTIVE agents, as `AgentsStore` holds them); an agent not
+ * among them by its id's first eight characters. Undefined for the list itself and anything outside
+ * it.
  */
-export function agentSubpage(url: string, project: string): NavLink | undefined {
-  const prefix = `${project}/work/${WORK_DETAIL}/`;
+export function agentSubpage(
+  url: string,
+  project: string,
+  agents: readonly { readonly agentId?: string; readonly entityId?: string }[] = [],
+): NavLink | undefined {
+  const prefix = `${project}/${AGENTS}/`;
   if (!url.startsWith(prefix)) return undefined;
-  const [id, segment] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
-  return id && segment === 'agent' ? { label: 'Agent', path: `${prefix}${id}/agent` } : undefined;
+  const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
+  if (!id) return undefined;
+  const agentId = decodeURIComponent(id);
+  const item = agents.find((agent) => agent.agentId === agentId)?.entityId;
+  return { label: item ?? agentId.slice(0, 8), path: `${prefix}${id}` };
 }
 
 /**

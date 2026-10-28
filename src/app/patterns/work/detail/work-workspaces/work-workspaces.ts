@@ -8,7 +8,8 @@ import { Tag } from '$ui/components/tag/tag';
 /**
  * A work item's workspaces in every state (active, integrated, abandoned), newest first: each with
  * its state, its branch, when it was opened and, once resolved, when it was closed (UTC). Each
- * links to the item's agent page, `link` (`/projects/<slug>/work/detail/<qualified id>/agent`). "No workspaces yet" for none. A region named
+ * links to the item's agent, `link` (`/projects/<slug>/work/detail/<qualified id>/agent`, which
+ * leads on to its ACTIVE agent's page: a workspace names no agent). "No workspaces yet" for none. A region named
  * "Workspaces"; `state` is the read's (`WorkspacesStore.historyOf`). The list is read in the
  * browser only, so the server renders none of its rows, and a row may use `@if`.
  */
@@ -58,6 +59,6 @@ import { Tag } from '$ui/components/tag/tag';
 export class WorkWorkspaces {
   readonly workspaces = input.required<readonly WorkspaceHistoryEntry[]>();
   readonly state = input.required<LoadState>();
-  /** The item's agent page, `/projects/<slug>/work/detail/<qualified id>/agent`. */
+  /** The item's agent, `/projects/<slug>/work/detail/<qualified id>/agent` (a redirect). */
   readonly link = input.required<string>();
 }

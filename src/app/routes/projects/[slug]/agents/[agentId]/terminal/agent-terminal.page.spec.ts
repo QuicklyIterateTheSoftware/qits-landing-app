@@ -1,13 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, signal } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { client as workspaceDaemonClient } from '../../../../../../../../api/workspace-daemon/client.gen';
-import { provideHeyApiClient } from '../../../../../../../../api/workspace-daemon/client/client.gen';
+import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
+import { provideHeyApiClient } from '../../../../../../api/workspace-daemon/client/client.gen';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { SelectedWork } from '$core/work/selected-work';
 import type { DomainEvent } from '$core/events/domain-events';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
@@ -16,8 +15,8 @@ import {
   workspaceDaemonGoldenMaster,
   workspaceDaemonGoldenMasters,
   workspacesGoldenMaster,
-} from '../../../../../../../../../testing/golden-masters';
-import { provideTestPlatformOrigins } from '../../../../../../../../../testing/platform-origins';
+} from '../../../../../../../testing/golden-masters';
+import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { AgentTerminalPage } from './agent-terminal.page';
 
 /** A socket the spec drives by hand. */
@@ -56,7 +55,6 @@ const SIGNED_IN = 'a workspace daemon with a signed-in harness';
 const SIGNED_OUT = 'a workspace daemon with a harness nobody signed in';
 const PLUGINS = 'a workspace daemon with plugins installed';
 const ORIGIN = 'https://workspaces.qits.example';
-const ITEM = 'contract-00000001-10';
 const { agentId, workspaceRowId, commandId } = workspaceDaemonGoldenMasters.operation(
   RUNNING,
   'getAgentWorktree',
@@ -80,20 +78,19 @@ describe('AgentTerminalPage', () => {
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
         provideRouter([
-          { path: 'agent/:id', children: [{ path: 'terminal', component: AgentTerminalPage }] },
+          {
+            path: 'agent/:agentId',
+            children: [{ path: 'terminal', component: AgentTerminalPage }],
+          },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
         {
-          provide: SelectedWork,
-          useValue: { entries: signal([{ id: AGENT.workId, qualifiedId: ITEM }]) },
-        },
-        {
           provide: AgentsStore,
           useValue: {
-            itemOf: () => ({ status: 'loaded', agent: AGENT }),
+            agentOf: () => ({ status: 'loaded', agent: AGENT }),
             follow: (...args: unknown[]) => followed.push(args),
           },
         },
@@ -122,7 +119,7 @@ describe('AgentTerminalPage', () => {
     list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands'),
     report = SIGNED_IN,
   ) {
-    await harness.navigateByUrl(`/agent/${ITEM}/terminal`);
+    await harness.navigateByUrl(`/agent/${agentId}/terminal`);
     await settle();
     http
       .expectOne(`${BASE}/agents/available`)
@@ -208,7 +205,7 @@ describe('AgentTerminalPage', () => {
 
   it('detaches when the tab is left', async () => {
     await open();
-    await harness.navigateByUrl(`/agent/${ITEM}`);
+    await harness.navigateByUrl(`/agent/${agentId}`);
     expect(sockets[0].closed).toBe(true);
   });
 

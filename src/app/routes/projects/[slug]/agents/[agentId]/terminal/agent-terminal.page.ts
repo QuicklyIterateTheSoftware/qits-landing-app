@@ -15,7 +15,6 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
-import { SelectedWork } from '$core/work/selected-work';
 import { AgentHarnessStore } from '$core/workspaces/agent-harness.store';
 import { AgentPluginsStore } from '$core/workspaces/agent-plugins.store';
 import { AgentSignInStore } from '$core/workspaces/agent-sign-in.store';
@@ -42,11 +41,11 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
 };
 
 /**
- * A work item's agent's Terminal tab, at `/projects/<slug>/work/detail/<qualified id>/agent/terminal`
- * (epic qits-1230): the agent's harness, live, when it runs in a terminal, ported from
+ * An agent's Terminal tab, at `/projects/<slug>/agents/<agent id>/terminal` (epic qits-1230; by
+ * the agent's id since epic qits-1681): the agent's harness, live, when it runs in a terminal, ported from
  * qits-workspaces-frontend's Terminal tab.
  *
- * The agent is the layout's (`AgentsStore.itemOf`, by the item's id); its harness's command comes
+ * The agent is the layout's (`AgentsStore.agentOf`, by the URL's agent id); its harness's command comes
  * from its slot's daemon (`AgentHarnessStore`), read again after a lifecycle event about the agent
  * or its slot (a restart is a new command). The screen attaches to that command's PTY socket on
  * qits-workspaces' origin (`terminalSocketUrl`, through `WEB_SOCKET`): deployed with the session
@@ -151,7 +150,6 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
   `,
 })
 export class AgentTerminalPage {
-  private readonly work = inject(SelectedWork);
   private readonly agents = inject(AgentsStore);
   private readonly harnesses = inject(AgentHarnessStore);
   private readonly signIn = inject(AgentSignInStore);
@@ -160,23 +158,19 @@ export class AgentTerminalPage {
   private readonly openSocket = inject(WEB_SOCKET);
   private readonly document = inject(DOCUMENT);
 
-  /** The work item's qualified id, the agent layout's `:id`. */
-  private readonly id = toSignal(
-    this.layoutRoute().paramMap.pipe(map((params) => params.get('id') ?? '')),
+  /** The agent's id, the agent layout's `:agentId`. */
+  private readonly agentId = toSignal(
+    this.layoutRoute().paramMap.pipe(map((params) => params.get('agentId') ?? '')),
     { initialValue: '' },
   );
 
-  private readonly workId = computed(
-    () => this.work.entries().find((e) => e.qualifiedId === this.id())?.id,
-  );
-
+  /** The agent, as the layout read it (`AgentsStore.loadAgent`). */
   protected readonly agent = computed(() => {
-    const id = this.workId();
-    return id ? this.agents.itemOf(id)?.agent : undefined;
+    const id = this.agentId();
+    return id ? this.agents.agentOf(id)?.agent : undefined;
   });
 
   protected readonly rowId = computed(() => this.agent()?.workspaceRowId ?? 0);
-  private readonly agentId = computed(() => this.agent()?.agentId ?? '');
 
   private readonly harness = computed(() =>
     this.rowId() ? this.harnesses.harnessOf(this.rowId(), this.agentId()) : undefined,
@@ -262,7 +256,7 @@ export class AgentTerminalPage {
     destroy.onDestroy(() => this.detach());
   }
 
-  /** The agent layout's route, which holds `:id`. */
+  /** The agent layout's route, which holds `:agentId`. */
   private layoutRoute(): ActivatedRoute {
     const route = inject(ActivatedRoute);
     return route.parent ?? route;

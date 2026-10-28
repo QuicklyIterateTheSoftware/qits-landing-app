@@ -21,19 +21,27 @@ describe('slotSubpage', () => {
 
 describe('agentSubpage', () => {
   const project = '/projects/qits';
+  const agentId = '00000000-0000-4000-8000-0000000000a1';
 
-  it('names a work item’s agent page, and its tabs', () => {
-    expect(agentSubpage(`${project}/work/detail/qits-111/agent`, project)).toEqual({
-      label: 'Agent',
-      path: `${project}/work/detail/qits-111/agent`,
+  it('names an agent by its item, and its tabs', () => {
+    const agents = [{ agentId, entityId: 'qits-111' }];
+    expect(agentSubpage(`${project}/agents/${agentId}`, project, agents)).toEqual({
+      label: 'qits-111',
+      path: `${project}/agents/${agentId}`,
     });
-    expect(agentSubpage(`${project}/work/detail/qits-111/agent/terminal?x=1`, project)?.path).toBe(
-      `${project}/work/detail/qits-111/agent`,
+    expect(agentSubpage(`${project}/agents/${agentId}/terminal?x=1`, project, agents)?.path).toBe(
+      `${project}/agents/${agentId}`,
     );
   });
 
-  it('is undefined for the item itself and anywhere else', () => {
-    expect(agentSubpage(`${project}/work/detail/qits-111`, project)).toBeUndefined();
+  it('names an agent it does not list by its id’s first eight characters', () => {
+    expect(agentSubpage(`${project}/agents/${agentId}/chat`, project)?.label).toBe('00000000');
+  });
+
+  it('is undefined for the list itself and anywhere else', () => {
+    expect(agentSubpage(`${project}/agents`, project)).toBeUndefined();
+    expect(agentSubpage(`${project}/agents/`, project)).toBeUndefined();
+    expect(agentSubpage(`${project}/work/detail/qits-111/agent`, project)).toBeUndefined();
     expect(agentSubpage(`${project}/workspaces/12`, project)).toBeUndefined();
   });
 });

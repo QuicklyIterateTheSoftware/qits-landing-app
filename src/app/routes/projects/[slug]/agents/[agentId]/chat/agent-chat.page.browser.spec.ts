@@ -4,26 +4,22 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../../../../../api/workspaces/client.gen';
-import { client as workspaceDaemonClient } from '../../../../../../../../api/workspace-daemon/client.gen';
+import { client as projectsClient } from '../../../../../../api/projects/client.gen';
+import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
+import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { provideTestPlatformOrigins } from '../../../../../../../../../testing/platform-origins';
-import {
-  answerCampaignReads,
-  campaignsIn,
-} from '../../../../../../../../../testing/campaign-reads';
-import { goldenMaster } from '../../../../../../../../../testing/browser/golden-master';
+import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
+import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
 import { WorkAgentLayout } from '../work-agent.layout';
 import { AgentChatPage } from './agent-chat.page';
 
 /**
- * Screenshots of a work item's agent's Chat tab. The project and its work are qits-projects'
- * recordings ("a project exists", "a bug ticket in detail", whose campaign is described by "a
- * campaign in detail"); the agent and its slot are qits-workspaces' "a workspace slot hosting
- * agents": the bug ticket's agent `…a1`, RUNNING in slot 1. Its saved prompt draft is
+ * Screenshots of an agent's Chat tab, at `agents/<agent id>/…`. The project is
+ * qits-projects' "a project exists"; the agent is qits-workspaces' `getAgent` of "an agent with a
+ * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents and the slot
+ * "a workspace slot hosting agents"' (the agent RUNNING in slot 1). Its saved prompt draft is
  * qits-workspaces' "an agent with a saved prompt draft" (the same agent).
  *
  * Its harness is qits-workspace-daemon's: "a workspace daemon with an agent running" names the same
@@ -33,8 +29,6 @@ import { AgentChatPage } from './agent-chat.page';
  * recorded transcript's lines, the shape the daemon replays. The event streams never connect.
  */
 
-const ITEM = 'contract-00000001-10';
-const WORK = 'a bug ticket in detail';
 const SLOT = 'a workspace slot hosting agents';
 const DRAFTED = 'an agent with a saved prompt draft';
 const RUNNING = 'a workspace daemon with an agent running';
@@ -80,7 +74,7 @@ describe('AgentChatPage (screenshots)', () => {
       providers: [
         provideRouter([
           {
-            path: 'projects/:slug/work/detail/:id/agent',
+            path: 'projects/:slug/agents/:agentId',
             component: WorkAgentLayout,
             children: [
               { path: '', children: [] },
@@ -129,25 +123,19 @@ describe('AgentChatPage (screenshots)', () => {
     await page.viewport(900, 1300);
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
+    const agent = await goldenMaster(DRAFTED, 'getAgent', 'qits-workspaces');
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/work/detail/${ITEM}/agent/chat`,
+      `/projects/${project.slug}/agents/${agent.agentId}/chat`,
     );
     await settle();
     http.expectOne('/projects/api/projects').flush(list);
     await navigated;
     await answered(harness);
-    const work = await goldenMaster(WORK, 'listProjectWork');
-    http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
-    await answered(harness);
-    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
-      members: WORK,
-      described: ['a campaign in detail'],
-    });
-    await answered(harness);
-    const agents = await goldenMaster(SLOT, 'listAgents', 'qits-workspaces');
-    const agent = agents.agents[0];
-    http.expectOne(`/workspaces/api/agents?workId=${agent.workId}`).flush(agents);
+    http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
+      .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
     await answered(harness);
     const slot = agent.workspaceRowId;
     http
