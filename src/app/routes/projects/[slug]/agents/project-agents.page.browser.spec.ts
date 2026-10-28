@@ -12,20 +12,21 @@ import { ProjectAgentsPage } from './project-agents.page';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 
 /**
- * Screenshots of a project's Agents page. Its ACTIVE agents are answered with the same recording as
- * the slots' agents (qits-workspaces' `listAgents` of the state below): the state that records waits
- * and attention is not published yet, so the rows show none. The project is qits-projects' recorded one ("a
- * project exists", slug `contract-00000001`) and its wrapper the one "a project with repositories
- * in components" names. The slots and agents are qits-workspaces' "a project with workspace slots
- * hosting agents", answered to the page's read by that wrapper's id (the two providers' frozen ids
- * are unrelated): its agents work on `contract-00000001-…` items, so they are the project's. One
- * slot on runner `localhost`; the bug ticket's agent holds it and waits on a release request, the
- * epic's yielded it, the improvement ticket's is queued.
+ * Screenshots of a project's Agents page. Its ACTIVE agents (the "Active agents" heading) are
+ * qits-workspaces' "a project with agents needing attention": the bug ticket's agent waits on a
+ * release request that is already FINALIZED, the epic's agent is blocked with no `@desk` answer,
+ * the PDF ticket's agent is idle. The project is qits-projects' recorded one ("a project exists",
+ * slug `contract-00000001`), which the state's entity ids name (the two providers' frozen ids are
+ * unrelated). The "Workspaces" heading stays on the older recording, "a project with workspace
+ * slots hosting agents" (its wrapper the one "a project with repositories in components" names):
+ * one slot on runner `localhost`, hosting the bug ticket's and the epic's agents, the improvement
+ * ticket's queued.
  *
- * The clock is pinned four minutes after the recordings' instants, so the wait reads "4m ago". The
+ * The clock is pinned four minutes after the recordings' instants, so a wait reads "4m ago". The
  * event stream never connects.
  */
 
+const NEEDING_ATTENTION = 'a project with agents needing attention';
 const WORKSPACES = 'a project with workspace slots hosting agents';
 const REPOSITORIES = 'a project with repositories in components';
 const NOW = new Date('2026-01-01T00:04:00Z');
@@ -87,7 +88,7 @@ describe('ProjectAgentsPage (screenshots)', () => {
   async function answerSlots(harness: RouterTestingHarness, projectId: string) {
     http
       .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
-      .flush(await goldenMaster(WORKSPACES, 'listAgents', 'qits-workspaces'));
+      .flush(await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces'));
     const repositories = await goldenMaster(REPOSITORIES, 'listProjectRepositories');
     http.expectOne(`/projects/api/projects/${projectId}/repositories`).flush(repositories);
     await answered(harness);
@@ -102,10 +103,10 @@ describe('ProjectAgentsPage (screenshots)', () => {
     return wrapper;
   }
 
-  it('lists the project’s agents, with what each waits on, and its slots', async () => {
+  it('lists the project’s agents, with what each waits on and needs a person, and its slots', async () => {
     const { harness, element, project } = await render();
     await answerSlots(harness, project.id);
-    const agents = await goldenMaster(WORKSPACES, 'listAgents', 'qits-workspaces');
+    const agents = await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces');
     const agentId = agents.agents.find(
       (a: { entityId?: string }) => a.entityId === 'contract-00000001-10',
     ).agentId;
@@ -117,10 +118,10 @@ describe('ProjectAgentsPage (screenshots)', () => {
       .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
     await expect
       .element(view)
-      .toMatchTextContent(
-        'waiting on release-request 00000000-0000-4000-8000-0000000000c1 · 4m ago',
-      );
-    await expect.element(view).toMatchTextContent('queued — no free slot yet');
+      .toMatchTextContent('waiting on release request contract-qits-rr-368 to end · 4m ago');
+    await expect.element(view).toMatchTextContent('Blocked 50 min by contract-person');
+    await expect.element(view.getByRole('link', { name: 'Open item' })).toBeVisible();
+    await expect.element(view.getByRole('link', { name: 'Prompt agent' }).first()).toBeVisible();
     await expect.element(view).not.toMatchTextContent('waiting on you');
     await expect
       .element(view.getByRole('link', { name: /ws-contract/ }))

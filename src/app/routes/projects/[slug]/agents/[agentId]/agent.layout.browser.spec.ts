@@ -16,9 +16,10 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  * Screenshots of an agent's page. The project is qits-projects' recording ("a project exists");
  * the agent is qits-workspaces' `getAgent` of "an agent with a saved prompt draft" (the bug
  * ticket's agent, slot 1), the project's ACTIVE agents the same agent as "an agent whose workspace
- * is starting" lists it (no waits or attention: the state that records them is not published
- * yet), and its slot that state's: a container coming up while a start is live. The start's log stream opens but sends nothing here: the log's
- * segments are `ui-segment-log`'s own screenshots.
+ * is starting" lists it (no waits or attention: this agent is not among "a project with agents
+ * needing attention"'s, which records a different fixture agent for the same ticket), and its slot
+ * that state's: a container coming up while a start is live. The start's log stream opens but sends
+ * nothing here: the log's segments are `ui-segment-log`'s own screenshots.
  *
  * Its Discard is refused as qits-workspaces' "an agent with leftover work" refuses it (409
  * `AGENT_HAS_LEFTOVER_WORK`, the same agent), and the page offers to discard it anyway.
