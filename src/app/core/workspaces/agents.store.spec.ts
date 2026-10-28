@@ -18,6 +18,7 @@ const SLOT = 'a workspace slot hosting agents';
 const STARTING = 'an agent whose workspace is starting';
 const DRAFT = 'an agent with a saved prompt draft';
 const NO_AGENT = 'no agent with that id';
+const NEEDING_ATTENTION = 'a project with agents needing attention';
 const API = '/workspaces/api';
 
 const params = (state: string) => workspacesGoldenMasters.operation(state, 'listAgents').params;
@@ -239,10 +240,11 @@ describe('AgentsStore', () => {
   });
 
   /**
-   * `loadProjectAgents` until the pinned golden masters hold state `a project with agents needing
-   * attention`: the request it makes, and what it keeps of an answer. The answer is state
-   * `a project with workspace slots hosting agents`'s `listAgents` as recorded (it has no waits or
-   * attention yet; the service filters by project and state, so the store keeps the list as is).
+   * `loadProjectAgents`: the request it makes, and what it keeps of an answer. These general cases
+   * use state `a project with workspace slots hosting agents`'s `listAgents` (no waits or
+   * attention; the service filters by project and state, so the store keeps the list as is); the
+   * waits and attention themselves are covered below, from state `a project with agents needing
+   * attention`.
    */
   const projectAgentsUrl = (projectId: string) =>
     `${API}/agents?projectId=${projectId}&state=ACTIVE`;
@@ -319,5 +321,43 @@ describe('AgentsStore', () => {
     }
     await settle();
     expect(reads()).toHaveLength(0);
+  });
+
+  it('keeps a project’s agents’ waits (subject, targetStates, subjectState) and attention', async () => {
+    const projectId = params(NEEDING_ATTENTION)['projectId'];
+    const done = store.loadProjectAgents(projectId);
+    await settle();
+    http
+      .expectOne(projectAgentsUrl(projectId))
+      .flush(workspacesGoldenMaster(NEEDING_ATTENTION, 'listAgents'));
+    await done;
+    const agents = store.projectAgentsOf(projectId)!.agents;
+    expect(agents).toHaveLength(5);
+
+    const waitingOnRequest = agents.find((a) => a.entityId === 'contract-00000001-10')!;
+    expect(waitingOnRequest.waits?.[0]).toMatchObject({
+      subjectKind: 'RELEASE_REQUEST',
+      subjectQualifiedId: 'contract-qits-rr-368',
+      subjectState: 'FINALIZED',
+    });
+    expect(waitingOnRequest.attention).toMatchObject({ code: 'WAIT_SUBJECT_PASSED' });
+
+    const blocked = agents.find((a) => a.entityId === 'contract-00000001-2')!;
+    expect(blocked.attention).toMatchObject({ code: 'BLOCKED_NO_DESK' });
+    expect(blocked.blockedAt).toBeTruthy();
+
+    const idle = agents.find((a) => a.entityId === 'contract-00000001-6')!;
+    expect(idle.attention).toMatchObject({ code: 'IDLE_NO_WAIT' });
+    expect(idle.waits).toEqual([]);
+
+    const overdue = agents.find((a) => a.entityId === 'contract-00000001-5')!;
+    expect(overdue.waits?.[0]).toMatchObject({ subjectKind: 'CI_RUN', subjectState: 'RUNNING' });
+    expect(overdue.waits?.[0]?.targetStates).toContain('SUCCESS');
+    expect(overdue.attention).toMatchObject({ code: 'WAIT_OVERDUE' });
+
+    const twoWaits = agents.find((a) => a.entityId === 'contract-00000001-11')!;
+    expect(twoWaits.waits?.map((w) => w.subjectKind)).toEqual(['WORK_ITEM', 'COMMENTS']);
+    expect(twoWaits.waits?.[0]?.targetStates).toEqual(['VERIFIED']);
+    expect(twoWaits.attention).toBeNull();
   });
 });

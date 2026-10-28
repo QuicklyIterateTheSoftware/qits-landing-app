@@ -255,6 +255,12 @@ export const INTERACTIONS = {
   'show-agent-plugins': 'An agent’s Terminal tab lists the plugins on the shared agent home',
   /** `plugins-section.ts` via `AgentPluginsStore.install`: Install on a plugin not installed yet. */
   'install-agent-plugin': 'Install on a plugin installs it on the shared agent home',
+  /**
+   * `agents-menu.ts` via `AgentsStore.loadProjectAgents`: the top bar's agents menu lists the
+   * project's agents with what they wait on and what needs attention (epic qits-1681).
+   */
+  'agents-menu':
+    'The top bar’s agents menu lists the project’s agents with what they wait on and what needs attention',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

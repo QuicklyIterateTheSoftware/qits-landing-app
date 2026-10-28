@@ -27,6 +27,7 @@ import {
   LIST_PROJECT_AGENTS,
   LIST_PROJECT_SLOTS,
   LIST_SLOT_AGENTS,
+  PROJECT_AGENTS,
 } from './agents.consumes';
 
 /**
@@ -41,7 +42,10 @@ import {
  * - "an agent whose workspace is starting": the bug ticket's ACTIVE agent, which its old agent
  *   address leads to, and the agent page's slot while it is PROVISIONING and a start is live;
  * - "an agent with a saved prompt draft" and "no agent with that id": the agent page's agent, read
- *   by its id, and one the service does not know.
+ *   by its id, and one the service does not know;
+ * - "a project with agents needing attention": the project's ACTIVE agents with their open waits
+ *   and attention (`listAgents?projectId=&state=ACTIVE`), read by the agents menu, the Agents page
+ *   and the agent page alike.
  *
  * The slot's row id is a param (`workspaceId`, frozen to its place in the state's write order); the
  * provider names its real value, so the path and the query take it as a provider-state expression.
@@ -55,6 +59,7 @@ const SLOT = 'a workspace slot hosting agents';
 const STARTING = 'an agent whose workspace is starting';
 const AGENT = 'an agent with a saved prompt draft';
 const NO_AGENT = 'no agent with that id';
+const NEEDING_ATTENTION = 'a project with agents needing attention';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   'listWorkspaces',
@@ -63,7 +68,12 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'getAgent',
   {
     operationId: 'listAgents',
-    interactions: ['show-project-workspaces', 'show-workspace-slot', 'show-work-item-agent'],
+    interactions: [
+      'show-project-workspaces',
+      'show-workspace-slot',
+      'show-work-item-agent',
+      'agents-menu',
+    ],
   },
 ];
 
@@ -232,6 +242,25 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
           consume(getWorkspaceActiveProcess({ path: { id } }), GET_ACTIVE_PROCESS),
         );
         expect(data?.technicalProcessId).toBeTruthy();
+      },
+    ));
+
+  it('agents-menu: the project’s ACTIVE agents, with their waits and attention', () =>
+    given(NEEDING_ATTENTION, 'listAgents', 'agents-menu', PROJECT_AGENTS).executeTest(
+      async (server) => {
+        const projectId = param(NEEDING_ATTENTION, 'listAgents', 'projectId');
+        const { data } = await at(server.url, () =>
+          consume(listAgents({ query: { projectId, state: 'ACTIVE' } }), PROJECT_AGENTS),
+        );
+        const agents = data?.agents ?? [];
+        expect(agents).toHaveLength(5);
+        const blocked = agents.find((a) => a.attention?.code === 'BLOCKED_NO_DESK');
+        expect(blocked?.blockedAt).toBeTruthy();
+        const overdue = agents.find((a) => a.attention?.code === 'WAIT_OVERDUE');
+        expect(overdue?.waits?.[0]?.subjectKind).toBe('CI_RUN');
+        expect(overdue?.waits?.[0]?.targetStates).toContain('SUCCESS');
+        const noAttention = agents.find((a) => !a.attention);
+        expect(noAttention?.waits?.length).toBeGreaterThan(0);
       },
     ));
 });
