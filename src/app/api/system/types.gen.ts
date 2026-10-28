@@ -125,12 +125,6 @@ export type CreateTargetRequest = {
      */
     reservations?: SlotCounts;
     /**
-     * Deprecated: send reservations
-     *
-     * @deprecated
-     */
-    minimums?: SlotCounts;
-    /**
      * The slots total the install line carries, 0..1024 and at least the reservations' sum; absent is the reservations' sum. Not stored: the runner reports its total
      */
     slots?: number;
@@ -348,12 +342,6 @@ export type PatchTargetRequest = {
      * Slots reserved per type; absent members leave theirs
      */
     reservations?: SlotCounts;
-    /**
-     * Deprecated: send reservations
-     *
-     * @deprecated
-     */
-    minimums?: SlotCounts;
 };
 
 export type RegisterTargetRequest = {
@@ -455,12 +443,6 @@ export type Target = {
      * Slots reserved per type. Not a limit: a type may use more while shared (unreserved) slots are free
      */
     reservations?: SlotCounts;
-    /**
-     * Deprecated: read reservations. Same values
-     *
-     * @deprecated
-     */
-    minimums?: SlotCounts;
     /**
      * GRANTED, RUNNING and ENDING leases per type
      */
