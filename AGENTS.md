@@ -155,14 +155,13 @@ composer lists, inserts, saves in the draft (`{"text":…,"picked":[…]}`) and 
 sends when not pressed in.
 
 The workspace pages' writes (qits-1243) go through `AgentActionsStore`
-(`core/workspaces/agent-actions.store.ts`): the Workspaces page's "New agent" form
-(`patterns/workspaces/create-agent-form/`: a ticket or an epic of the project from `SelectedWork`, a
-harness, admin mode; `createAgent`, then the item's agent page), a slot's container verbs on the slot
-and agent pages (`patterns/workspaces/container-actions/`: `ensure-`, `stop-`, `recreate-container`)
-and Discard on the agent page (`patterns/workspaces/agent-discard/`: confirmed, then `force` after the
-service's 409). A refusal is shown in the service's words: the store reads the error body's `message`
-and `code` (`consume`'s error paths, `REFUSAL`), and the pact binds them on each recorded refusal.
-After a write the page reads its data again. The Terminal tab also shows the sign-in notice
+(`core/workspaces/agent-actions.store.ts`): a slot's container verbs on the slot and agent pages
+(`patterns/workspaces/container-actions/`: `ensure-`, `stop-`, `recreate-container`) and Discard on
+the agent page (`patterns/workspaces/agent-discard/`: confirmed, then `force` after the service's
+409). A
+refusal is shown in the service's words: the store reads the error body's `message` and `code`
+(`consume`'s error paths, `REFUSAL`), and the pact binds them on each recorded refusal. After a
+write the page reads its data again. The Terminal tab also shows the sign-in notice
 (`AgentSignInStore`: the daemon's `availableAgents`, `authenticated: false`; Open the sign-in terminal
 is `openSignInTerminal`, whose command the screen attaches to until it ends) and the plugins on the
 shared agent home (`AgentPluginsStore`: `listPlugins`, `installPlugin`). No recording holds a

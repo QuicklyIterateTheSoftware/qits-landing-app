@@ -17,15 +17,13 @@ import { placementNote, runtimeLabel } from '$core/workspaces/agent-labels';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentRow } from '$patterns/workspaces/agent-row/agent-row';
-import { CreateAgentForm } from '$patterns/workspaces/create-agent-form/create-agent-form';
 import { Chip } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
  * The project's Workspaces page, at `/projects/<slug>/workspaces` (epic qits-1230), ported from
- * qits-workspaces-frontend's overview. The "New agent" form (`app-create-agent-form`: a ticket or
- * an epic of the project, a harness, admin mode), then its agents — each a link to its work item's
- * agent page — with how each runs and what it waits on; then its slots, the workspaces agents run in — each a
+ * qits-workspaces-frontend's overview. Its agents — each a link to its work item's agent page —
+ * with how each runs and what it waits on; then its slots, the workspaces agents run in — each a
  * link to the slot's page (`workspaces/<slot id>`) — with its container state, placement and how
  * many agents it hosts. Beside the slots' heading, Targets leads to qits-system's Targets page
  * (`https://system.qits.<domain>/system/targets`, `PlatformOrigins.page('system')`, epic
@@ -35,8 +33,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * The slots are the project's wrapper's: qits-projects names the wrapper (`RepositoriesStore`), and
  * the page reads its slots and the project's agents (`AgentsStore.loadProject`: those in the
  * wrapper or on the project's items) once it is known, and again after a lifecycle event about the
- * wrapper or one of the agents it lists (at most once a second), and after an agent is created. In
- * the browser only: the server render has no session to send.
+ * wrapper or one of the agents it lists (at most once a second). In the browser only: the server
+ * render has no session to send.
  *
  * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the wrapper (`repositoryId`), or a listed
  * agent's `agentId` (one of the project's items worked on outside the wrapper) → the wrapper's
@@ -47,7 +45,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-project-workspaces-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AgentRow, Chip, CreateAgentForm, PageLayoutComponent, RouterLink, Spinner],
+  imports: [AgentRow, Chip, PageLayoutComponent, RouterLink, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -59,13 +57,6 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
         </p>
         <ui-spinner [state]="state()" class="min-h-48">
           <div class="flex flex-col gap-8">
-            @if (wrapperId(); as wrapper) {
-              <app-create-agent-form
-                [repositoryId]="wrapper"
-                [slug]="slug() ?? ''"
-                (created)="reload()"
-              />
-            }
             <section class="flex flex-col gap-3" aria-labelledby="workspaces-agents">
               <h2
                 id="workspaces-agents"
@@ -189,7 +180,7 @@ export class ProjectWorkspacesPage {
     );
   }
 
-  /** Reads the wrapper's slots and the project's agents again (after a lifecycle event, a create). */
+  /** Reads the wrapper's slots and the project's agents again (after a lifecycle event). */
   protected reload(): void {
     const wrapper = this.wrapperId();
     if (wrapper) void this.store.loadProject(wrapper, this.slug());

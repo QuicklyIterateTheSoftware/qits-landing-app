@@ -12,23 +12,19 @@ import type { InteractionSlug } from '../../interactions';
 import { workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
-  CREATE_AGENT,
   DISCARD_AGENT,
   ENSURE_CONTAINER,
   REFUSAL,
   REFUSAL_MESSAGE,
   STOP_CONTAINER,
 } from './agent-actions.consumes';
-import { AgentActionsStore, type NewAgent } from './agent-actions.store';
+import { AgentActionsStore } from './agent-actions.store';
 
 /**
  * qits-landing-app's pact with qits-workspaces-service, the part the workspace pages' writes make
  * (epic qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside the other
  * stores' parts:
  *
- * - `createAgent`: "a wrapper repository and a ticket to dispatch" makes a new agent (harness and
- *   first instruction chosen); "a workspace slot hosting agents" answers the item's ACTIVE agent
- *   (`fresh: false`; nothing chosen, the service's default harness).
  * - `discardAgent`: "an agent waiting for a workspace slot" is removed; "an agent whose workspace
  *   daemon is not connected" (409 `AGENT_DAEMON_UNREACHABLE`) and "an agent with leftover work"
  *   (409 `AGENT_HAS_LEFTOVER_WORK`) are refused, with the reason the page shows before it offers
@@ -45,16 +41,12 @@ import { AgentActionsStore, type NewAgent } from './agent-actions.store';
  * (409 `TARGET_UNAVAILABLE`, "a workspace slot qits-system cannot be asked about"), the successor of
  * the retired offline-runner refusal (epic qits-1481, qits-1532); the plain spec covers it.
  *
- * Ids in a path are the states' params, sent as provider-state expressions. A create's recorded
- * body names its ids as params (`{ticketId}`): it travels as it is, and the provider puts its run's
- * values in their place.
+ * Ids in a path are the states' params, sent as provider-state expressions.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-workspaces-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
-const TO_DISPATCH = 'a wrapper repository and a ticket to dispatch';
-const HOSTING = 'a workspace slot hosting agents';
 const WAITING = 'an agent waiting for a workspace slot';
 const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const LEFTOVER = 'an agent with leftover work';
@@ -63,7 +55,6 @@ const RUNNING = 'a workspace slot running on a target';
 
 /** What this spec owns in the shared pact file. */
 const OPERATIONS: readonly OwnedOperation[] = [
-  'createAgent',
   'discardAgent',
   'ensureWorkspaceContainer',
   'stopWorkspaceContainer',
@@ -101,10 +92,6 @@ const params = (state: string, operationId: string) => masters.operation(state, 
 const slotOf = (state: string, operationId: string) =>
   Number(params(state, operationId)['workspaceId']);
 
-/** What the recording of `operationId` in `state` sent. */
-const sent = <T>(state: string, operationId: string) =>
-  masters.operation(state, operationId).body as T;
-
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-actions-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
 
@@ -122,21 +109,6 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
       rmSync(dir, { recursive: true, force: true });
     }
   });
-
-  it('create-agent: a ticket gets a new agent, in the chosen harness', () =>
-    given(TO_DISPATCH, 'createAgent', 'create-agent', CREATE_AGENT).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.createAgent(sent<NewAgent>(TO_DISPATCH, 'createAgent'));
-      expect(outcome.ok && outcome.value.fresh).toBe(true);
-      expect(outcome.ok && outcome.value.agent?.agentId).toBeTruthy();
-    }));
-
-  it('create-agent: an item that has an agent answers that one', () =>
-    given(HOSTING, 'createAgent', 'create-agent', CREATE_AGENT).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.createAgent(sent<NewAgent>(HOSTING, 'createAgent'));
-      expect(outcome.ok && outcome.value.fresh).toBe(false);
-    }));
 
   it('discard-agent: an agent waiting for a slot is removed', () =>
     given(WAITING, 'discardAgent', 'discard-agent', DISCARD_AGENT).executeTest(async (server) => {

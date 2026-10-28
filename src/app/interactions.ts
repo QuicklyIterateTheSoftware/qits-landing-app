@@ -217,12 +217,6 @@ export const INTERACTIONS = {
    */
   'open-agent-file': 'Opening a file in the Files tab shows its text',
   /**
-   * `create-agent-form.ts` (the Workspaces page) via `AgentActionsStore.createAgent`: Create agent
-   * makes an agent for a ticket or an epic, in the chosen harness and posture, and opens it; an
-   * item that already has one opens that one (epic qits-1230).
-   */
-  'create-agent': 'Create agent on the Workspaces page starts an agent on a work item',
-  /**
    * `agent-discard.ts` (a slot's page, an item's agent page) via `AgentActionsStore.discardAgent`:
    * Discard, confirmed, removes the agent; a refusal (leftover work, a daemon that does not answer)
    * is shown with the service's reason.

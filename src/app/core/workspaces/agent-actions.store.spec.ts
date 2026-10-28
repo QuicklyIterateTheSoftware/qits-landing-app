@@ -4,17 +4,11 @@ import { TestBed } from '@angular/core/testing';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { workspacesGoldenMaster, workspacesGoldenMasters } from '../../../testing/golden-masters';
-import {
-  AgentActionsStore,
-  describeRefusal,
-  refusalOf,
-  type NewAgent,
-} from './agent-actions.store';
+import { AgentActionsStore, describeRefusal, refusalOf } from './agent-actions.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-const TO_DISPATCH = 'a wrapper repository and a ticket to dispatch';
 const WAITING = 'an agent waiting for a workspace slot';
 const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const LEFTOVER = 'an agent with leftover work';
@@ -67,26 +61,6 @@ describe('AgentActionsStore', () => {
   });
 
   afterEach(() => http.verify());
-
-  it('creates an agent with what the form chose', async () => {
-    const body = op(TO_DISPATCH, 'createAgent').body as unknown as NewAgent;
-    const done = store.createAgent(body);
-    await settle();
-    const request = http.expectOne('/workspaces/api/agents');
-    expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual(body);
-    const answer = workspacesGoldenMaster(TO_DISPATCH, 'createAgent');
-    request.flush(answer);
-    expect(await done).toMatchObject({ ok: true, value: { fresh: true } });
-  });
-
-  it('says why a create was refused', async () => {
-    const done = store.createAgent(op(TO_DISPATCH, 'createAgent').body as unknown as NewAgent);
-    await settle();
-    // No create refusal is recorded; an error answer is only a status here.
-    http.expectOne('/workspaces/api/agents').flush(null, { status: 404, statusText: 'Not Found' });
-    expect(await done).toMatchObject({ ok: false, status: 404 });
-  });
 
   it('discards an agent, without force', async () => {
     const { agentId } = op(WAITING, 'discardAgent').params;
