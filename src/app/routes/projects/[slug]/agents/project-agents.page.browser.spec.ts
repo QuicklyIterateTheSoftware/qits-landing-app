@@ -86,6 +86,8 @@ describe('ProjectAgentsPage (screenshots)', () => {
 
   /** Answers the project's agents, the wrapper, then its slots and their agents. */
   async function answerSlots(harness: RouterTestingHarness, projectId: string) {
+    // The project's agents are asked for once the selected project settles, not at render.
+    await answered(harness);
     http
       .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
       .flush(await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces'));
