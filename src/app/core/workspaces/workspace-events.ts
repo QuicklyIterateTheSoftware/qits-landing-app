@@ -6,6 +6,11 @@ import type { DomainEvent } from '$core/events/domain-events';
  * its harness gone; a slot started, failed or removed. Each names its ids flat and top-level, as
  * strings: `agentId`, `workId`, `workspaceId` (the slot's row id, as a string) and `repositoryId`
  * (the wrapper). A field the row does not have (a queued agent's slot) is absent.
+ *
+ * Since epic qits-1681 also an agent's status: a wait opened, its subject moved, a wait closed, its
+ * activity flipped, its attention changed. These five also name the agent's `projectId` (the
+ * project's uuid). `AgentNudged` (qits-1460, the nudge an idle agent is handed) names only the
+ * lifecycle events' four ids.
  */
 export const WORKSPACE_EVENTS = [
   'AgentPlaced',
@@ -21,6 +26,12 @@ export const WORKSPACE_EVENTS = [
   'WorkspaceStarted',
   'WorkspaceFailed',
   'WorkspaceRemoved',
+  'AgentWaitOpened',
+  'AgentWaitChanged',
+  'AgentWaitClosed',
+  'AgentActivityChanged',
+  'AgentAttentionChanged',
+  'AgentNudged',
 ] as const;
 
 /**
@@ -65,6 +76,23 @@ export const ACTIVE_AGENT_EVENTS = [
   'AgentRequeued',
   'AgentObsolete',
   'AgentRemoved',
+] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
+
+/**
+ * The events that can change a project's agents as `AgentsStore.loadProjectAgents` reads them
+ * (epic qits-1681): their waits (opened, the subject moved, closed), their activity, their
+ * attention, a nudge, and which agents are ACTIVE at all (`ACTIVE_AGENT_EVENTS`). The five status
+ * events name the `projectId`; the nudge and the lifecycle events name only the agent, its item, its
+ * slot and its repository.
+ */
+export const AGENT_STATUS_EVENTS = [
+  'AgentWaitOpened',
+  'AgentWaitChanged',
+  'AgentWaitClosed',
+  'AgentActivityChanged',
+  'AgentAttentionChanged',
+  'AgentNudged',
+  ...ACTIVE_AGENT_EVENTS,
 ] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
 
 /** How long a burst of lifecycle events waits before the page reads again: at most once a second. */

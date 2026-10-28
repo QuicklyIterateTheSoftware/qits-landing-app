@@ -16,13 +16,16 @@ import {
   LIST_PROJECT_AGENTS,
   LIST_PROJECT_SLOTS,
   LIST_SLOT_AGENTS,
+  PROJECT_AGENTS,
   type ItemAgent,
   type ProjectAgent,
   type ProjectSlot,
+  type ProjectStatusAgent,
   type SlotAgent,
   type SlotDetail,
 } from './agents.consumes';
 import {
+  AGENT_STATUS_EVENTS,
   concerns,
   WORKSPACE_EVENTS,
   WORKSPACE_REFRESH_DEBOUNCE_MS,
@@ -39,6 +42,13 @@ export interface ProjectWorkspaces {
   readonly slots: readonly ProjectSlot[];
   /** The wrapper's agents that are not removed, newest first. */
   readonly agents: readonly ProjectAgent[];
+}
+
+/** A project's ACTIVE agents with their waits and attention, as `loadProjectAgents` left them. */
+export interface ProjectAgentsStatus {
+  readonly status: ReadStatus;
+  /** The project's ACTIVE agents, as the service orders them. */
+  readonly agents: readonly ProjectStatusAgent[];
 }
 
 /** A slot's status strip: the slot and the start running against it, as `loadSlotStatus` left them. */
@@ -65,6 +75,8 @@ export interface ItemAgents {
 interface AgentsState {
   /** By the wrapper repository's id. */
   readonly projects: Readonly<Record<string, ProjectWorkspaces>>;
+  /** By the project's id (qits-projects' uuid). */
+  readonly projectAgents: Readonly<Record<string, ProjectAgentsStatus>>;
   /** By the slot's row id. */
   readonly slots: Readonly<Record<number, SlotStatus>>;
   /** By the slot's row id. */
@@ -103,6 +115,9 @@ const failedWith = (status: number | undefined): ReadStatus =>
  *   is live (`getWorkspaceActiveProcess`); its log comes from `ProcessLog`.
  * - `loadItem(workId)`: the item's agents (`listAgents?workId=`), its agent, and that agent's slot
  *   status when it has a slot.
+ * - `loadProjectAgents(projectId)` (epic qits-1681): the project's ACTIVE agents
+ *   (`listAgents?projectId=&state=ACTIVE`) with their open waits, their activity and their
+ *   attention; `followProject` keeps them current (its comment has the mapping).
  *
  * Every load reads again when called again (a page calls it on arrival and on every relevant
  * lifecycle event), keeping the last good answer when a read again fails, and without going back
@@ -114,8 +129,7 @@ const failedWith = (status: number | undefined): ReadStatus =>
  * Staleness (qits-1270): `WORKSPACE_EVENTS` (or the page's narrower `names`) naming the page's
  * wrapper, slot, agent or item → whatever the page's `refresh` reads again (its `load…`). Each
  * page records its own mapping. What no lifecycle event announces, and so goes stale until the
- * next event or a visit: an agent's activity and wait (`activity`, `waitingOn`, written by the
- * daemon's hooks, no event); a queued agent's creation (no `AgentCreated`: it shows once placed);
+ * next event or a visit: a queued agent's creation (no `AgentCreated`: it shows once placed);
  * a slot's runtime leaving RUNNING, or a start beginning (stopped, its container gone, its runner
  * offline, a start's PROVISIONING and its log: `WorkspaceStarted` says only that it turned
  * RUNNING, `WorkspaceFailed` that a start failed); an agent of the project working outside the
@@ -123,12 +137,14 @@ const failedWith = (status: number | undefined): ReadStatus =>
  */
 export const AgentsStore = signalStore(
   { providedIn: 'root' },
-  withState<AgentsState>({ projects: {}, slots: {}, slotAgents: {}, items: {} }),
+  withState<AgentsState>({ projects: {}, projectAgents: {}, slots: {}, slotAgents: {}, items: {} }),
   withMethods((store) => {
     const refreshOn = injectRefreshOn();
 
     const setProject = (id: string, value: ProjectWorkspaces) =>
       patchState(store, { projects: { ...store.projects(), [id]: value } });
+    const setProjectAgents = (id: string, value: ProjectAgentsStatus) =>
+      patchState(store, { projectAgents: { ...store.projectAgents(), [id]: value } });
     const setSlot = (id: number, value: SlotStatus) =>
       patchState(store, { slots: { ...store.slots(), [id]: value } });
     const setSlotAgents = (id: number, value: SlotAgents) =>
@@ -157,7 +173,65 @@ export const AgentsStore = signalStore(
       setSlot(id, { status: 'loaded', slot: slot.data.workspace, processId });
     }
 
+    async function loadProjectAgents(projectId: string): Promise<void> {
+      if (!projectId) return;
+      if (!store.projectAgents()[projectId]) {
+        setProjectAgents(projectId, { status: 'loading', agents: [] });
+      }
+      const { data, error } = await consume(
+        listAgents({ query: { projectId, state: 'ACTIVE' } }),
+        PROJECT_AGENTS,
+      );
+      if (error !== undefined || !data) {
+        if (store.projectAgents()[projectId]?.status !== 'loaded') {
+          setProjectAgents(projectId, { status: 'error', agents: [] });
+        }
+        return;
+      }
+      setProjectAgents(projectId, { status: 'loaded', agents: data.agents ?? [] });
+    }
+
     return {
+      loadProjectAgents,
+      projectAgentsOf(projectId: string): ProjectAgentsStatus | undefined {
+        return store.projectAgents()[projectId];
+      },
+      /**
+       * Keeps `projectId()`'s agents current while `destroy` lives, by reading them again
+       * (`loadProjectAgents`, quietly: no spinner) after the events that can change them.
+       *
+       * Staleness (qits-1270): `AGENT_STATUS_EVENTS` about the open project → `loadProjectAgents`
+       * again, debounced 1 s. "About the project": the five status events by their `projectId`;
+       * `AgentNudged` and `ACTIVE_AGENT_EVENTS`, which name no project, by an agent or a repository
+       * of the agents already listed. So an agent placed in a repository of the project none of
+       * whose agents is listed yet shows on the next status event or visit. A wait's request gates
+       * follow `RELEASE_REQUEST_EVENTS` through `ProjectsStore`, an item's status and block
+       * `WORK_EVENTS` through `SelectedWork`, not this. No timer and no second stream.
+       */
+      followProject(destroy: DestroyRef, projectId: () => string | undefined): void {
+        refreshOn(
+          {
+            names: AGENT_STATUS_EVENTS,
+            when: (_event, ids) => {
+              const id = projectId();
+              if (!id) return false;
+              if (ids.projectId) return ids.projectId === id;
+              const listed = store.projectAgents()[id]?.agents ?? [];
+              return listed.some(
+                (agent) =>
+                  (!!ids.agentId && agent.agentId === ids.agentId) ||
+                  (!!ids.repositoryId && agent.repositoryId === ids.repositoryId),
+              );
+            },
+            debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+            refresh: () => {
+              const id = projectId();
+              return id ? loadProjectAgents(id) : undefined;
+            },
+          },
+          destroy,
+        );
+      },
       async loadProject(repositoryId: string, slug?: string): Promise<void> {
         if (!repositoryId) return;
         if (!store.projects()[repositoryId]) {

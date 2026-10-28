@@ -93,7 +93,13 @@ they load, and again after `BUILD_EVENTS` of a pending request's repository (`fo
 release request page draws the same chips from its repository's runs.
 The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
-name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A container
+name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A project's
+ACTIVE agents with their waits and attention (epic qits-1681, `AgentsStore.loadProjectAgents`,
+`listAgents?projectId=&state=ACTIVE`; the pure `core/workspaces/agent-attention.ts` turns a wait into
+its subject's line and an attention into its action) read again after `AGENT_STATUS_EVENTS` (the
+wait, activity and attention events, `AgentNudged` and `ACTIVE_AGENT_EVENTS`) whose `projectId` is
+the open project, or, for those naming no project, an agent or repository already listed
+(`AgentsStore.followProject`). A container
 start's log is not a domain event: `ProcessLog` reads that one process's own stream on
 qits-workspaces' origin (`/workspaces/api/technical-processes/{id}/events`), through `EVENT_SOURCE`.
 

@@ -215,4 +215,87 @@ describe('AgentsStore', () => {
       vi.useRealTimers();
     }
   });
+
+  /**
+   * `loadProjectAgents` until the pinned golden masters hold state `a project with agents needing
+   * attention`: the request it makes, and what it keeps of an answer. The answer is state
+   * `a project with workspace slots hosting agents`'s `listAgents` as recorded (it has no waits or
+   * attention yet; the service filters by project and state, so the store keeps the list as is).
+   */
+  const projectAgentsUrl = (projectId: string) =>
+    `${API}/agents?projectId=${projectId}&state=ACTIVE`;
+
+  async function answerProjectAgents(projectId: string) {
+    const done = store.loadProjectAgents(projectId);
+    await settle();
+    http
+      .expectOne(projectAgentsUrl(projectId))
+      .flush(workspacesGoldenMaster(PROJECT, 'listAgents'));
+    await done;
+  }
+
+  it('reads a project’s ACTIVE agents by its id, and keeps the last good answer', async () => {
+    await answerProjectAgents('p1');
+    const loaded = store.projectAgentsOf('p1')!;
+    expect(loaded.status).toBe('loaded');
+    const recorded = workspacesGoldenMaster(PROJECT, 'listAgents') as {
+      agents: { agentId: string }[];
+    };
+    expect(loaded.agents.map((a) => a.agentId)).toEqual(recorded.agents.map((a) => a.agentId));
+
+    const again = store.loadProjectAgents('p1');
+    await settle();
+    http.expectOne(projectAgentsUrl('p1')).flush(null, { status: 500, statusText: 'Server Error' });
+    await again;
+    expect(store.projectAgentsOf('p1')).toEqual(loaded);
+  });
+
+  it('calls a first failed read of a project’s agents an error', async () => {
+    const done = store.loadProjectAgents('p2');
+    expect(store.projectAgentsOf('p2')?.status).toBe('loading');
+    await settle();
+    http.expectOne(projectAgentsUrl('p2')).flush(null, { status: 403, statusText: 'Forbidden' });
+    await done;
+    expect(store.projectAgentsOf('p2')).toEqual({ status: 'error', agents: [] });
+  });
+
+  it('reads the project’s agents again after the status events about it, at most once a second', async () => {
+    await answerProjectAgents('p1');
+    const listed = store.projectAgentsOf('p1')!.agents[0]!;
+    const event = (name: string, payload: object) => ({ name, payload: JSON.stringify(payload) });
+    const reads = () => http.match(projectAgentsUrl('p1'));
+    let open: string | undefined = 'p1';
+    vi.useFakeTimers();
+    try {
+      store.followProject(TestBed.inject(DestroyRef), () => open);
+      // Another project's status event; a nudge of a listed agent; one of this project's.
+      events.next(event('AgentAttentionChanged', { agentId: listed.agentId, projectId: 'p9' }));
+      events.next(event('AgentNudged', { agentId: listed.agentId }));
+      events.next(event('AgentWaitOpened', { agentId: 'x', projectId: 'p1' }));
+      vi.advanceTimersByTime(WORKSPACE_REFRESH_DEBOUNCE_MS);
+    } finally {
+      vi.useRealTimers();
+    }
+    await settle();
+    const burst = reads();
+    expect(burst).toHaveLength(1);
+    burst[0]!.flush(workspacesGoldenMaster(PROJECT, 'listAgents'));
+    await settle();
+
+    vi.useFakeTimers();
+    try {
+      // A lifecycle event outside the status events; an agent placed where no listed agent works;
+      // a status event once no project is open.
+      events.next(event('AgentStarted', { agentId: listed.agentId }));
+      events.next(event('AgentPlaced', { agentId: 'new', repositoryId: 'elsewhere' }));
+      events.next(event('AgentAttentionChanged', { agentId: listed.agentId, projectId: 'p9' }));
+      open = undefined;
+      events.next(event('AgentActivityChanged', { agentId: 'x', projectId: 'p1' }));
+      vi.advanceTimersByTime(WORKSPACE_REFRESH_DEBOUNCE_MS);
+    } finally {
+      vi.useRealTimers();
+    }
+    await settle();
+    expect(reads()).toHaveLength(0);
+  });
 });

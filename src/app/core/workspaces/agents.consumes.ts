@@ -142,3 +142,60 @@ export const LIST_ITEM_AGENTS = [
 export type ItemAgent = NonNullable<
   Consumed<ListAgentsResponses[200], typeof LIST_ITEM_AGENTS>['agents']
 >[number];
+
+/**
+ * `AgentsStore.loadProjectAgents(projectId)`, the project's agents with what each waits on and what
+ * it needs a person for (epic qits-1681): `listAgents?projectId=&state=ACTIVE`, every ACTIVE agent
+ * whose repository is one of the project's. Each with its item (and the item's status and block),
+ * its slot, how it runs, its activity, its open waits with their subjects, and its attention.
+ *
+ * A list of its own, beside `LIST_PROJECT_AGENTS`, until the pinned `@qits/workspaces-golden-masters`
+ * holds state `a project with agents needing attention`: the pact binds every field listed here, and
+ * the older states lack `waits`, `attention`, `blockedAt` and `deskAskedAt`.
+ */
+export const PROJECT_AGENTS = [
+  'agents[].agentId',
+  'agents[].workspaceRowId',
+  'agents[].repositoryId',
+  'agents[].workId',
+  'agents[].entityId',
+  'agents[].entityTitle',
+  'agents[].entityStatus',
+  'agents[].entityBlocked',
+  'agents[].state',
+  'agents[].runState',
+  'agents[].admin',
+  'agents[].activity',
+  'agents[].waitingSince',
+  'agents[].waitingOn',
+  'agents[].waitingOnSince',
+  'agents[].lastActivityAt',
+  'agents[].waits[].id',
+  'agents[].waits[].label',
+  'agents[].waits[].createdAt',
+  'agents[].waits[].subjectKind',
+  'agents[].waits[].subjectRef',
+  'agents[].waits[].subjectId',
+  'agents[].waits[].subjectQualifiedId',
+  'agents[].waits[].targetStates',
+  'agents[].waits[].subjectState',
+  'agents[].waits[].subjectStateAt',
+  'agents[].waits[].subjectExpectedBy',
+  'agents[].attention.code',
+  'agents[].attention.reason',
+  'agents[].attention.since',
+  'agents[].attention.waitId',
+  'agents[].blockedAt',
+  'agents[].deskAskedAt',
+] as const;
+
+/** One of the project's ACTIVE agents, with its waits and attention, cut to what the store reads. */
+export type ProjectStatusAgent = NonNullable<
+  Consumed<ListAgentsResponses[200], typeof PROJECT_AGENTS>['agents']
+>[number];
+
+/** One open wait of a project's agent, cut to what the store reads. */
+export type AgentWait = NonNullable<ProjectStatusAgent['waits']>[number];
+
+/** What a project's agent needs a person for, cut to what the store reads. */
+export type AgentAttention = NonNullable<ProjectStatusAgent['attention']>;

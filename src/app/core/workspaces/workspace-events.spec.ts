@@ -1,5 +1,12 @@
 import type { DomainEvent } from '$core/events/domain-events';
-import { concerns, workspaceEventIds } from './workspace-events';
+import { payloadIds } from '$core/events/refresh-on';
+import {
+  ACTIVE_AGENT_EVENTS,
+  AGENT_STATUS_EVENTS,
+  concerns,
+  WORKSPACE_EVENTS,
+  workspaceEventIds,
+} from './workspace-events';
 
 const event = (name: string, payload: object | string | undefined): DomainEvent => ({
   name,
@@ -43,5 +50,35 @@ describe('workspace lifecycle events', () => {
     expect(concerns(event('AgentRequeued', { agentId: 'a2' }), { workspaceId: undefined })).toBe(
       false,
     );
+  });
+
+  it('names an agent’s status events, and the ACTIVE agents’ moves, as its status', () => {
+    const status = [
+      'AgentWaitOpened',
+      'AgentWaitChanged',
+      'AgentWaitClosed',
+      'AgentActivityChanged',
+      'AgentAttentionChanged',
+      'AgentNudged',
+    ];
+    expect([...AGENT_STATUS_EVENTS]).toEqual([...status, ...ACTIVE_AGENT_EVENTS]);
+    expect(status.every((name) => (WORKSPACE_EVENTS as readonly string[]).includes(name))).toBe(
+      true,
+    );
+  });
+
+  it('reads the project a status event names', () => {
+    const opened = event('AgentWaitOpened', {
+      agentId: 'a1',
+      workId: 'w1',
+      workspaceId: '12',
+      repositoryId: 'r1',
+      projectId: 'p1',
+      waitId: 'wait-1',
+      subjectKind: 'RELEASE_REQUEST',
+    });
+    expect(payloadIds(opened).projectId).toBe('p1');
+    expect(payloadIds(opened).agentId).toBe('a1');
+    expect(concerns(opened, { agentId: 'a1' })).toBe(true);
   });
 });
