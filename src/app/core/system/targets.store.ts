@@ -24,8 +24,7 @@ function targetOf(entry: TargetEntry): Target {
     connected: entry.connected ?? false,
     slotsTotal: entry.slotsTotal ?? 0,
     used: entry.used ?? {},
-    // qits-system still names the reservations `minimums`; only this line changes when it renames.
-    reserved: entry.minimums ?? {},
+    reserved: entry.reservations ?? {},
   };
 }
 

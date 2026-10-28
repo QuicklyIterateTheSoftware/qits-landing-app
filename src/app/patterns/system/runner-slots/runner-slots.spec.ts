@@ -57,8 +57,7 @@ describe('RunnerSlots', () => {
     );
 
   it('shows runners, slots and the shared pool at the left, and the use per type at the right', async () => {
-    // The recorded target, connected and busy, plus a second one with a new slot type. The answer
-    // names the reservations `minimums`, as qits-system still does.
+    // The recorded target, connected and busy, plus a second one with a new slot type.
     const [lab] = recorded;
     const { element } = await render((request) =>
       request.flush([
@@ -68,7 +67,7 @@ describe('RunnerSlots', () => {
           connected: true,
           slotsTotal: 8,
           used: { ci: 0, workspace: 1, desk: 0, gpu: 1 },
-          minimums: { ci: 6, workspace: 0, desk: 1, gpu: 1 },
+          reservations: { ci: 6, workspace: 0, desk: 1, gpu: 1 },
         },
       ]),
     );

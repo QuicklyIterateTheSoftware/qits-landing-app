@@ -36,7 +36,7 @@
           "content": [
             {
               "connected": false,
-              "minimums": {
+              "reservations": {
                 "ci": 2,
                 "desk": 1,
                 "workspace": 2
@@ -77,7 +77,7 @@
                 }
               ]
             },
-            "$[*].minimums.ci": {
+            "$[*].reservations.ci": {
               "combine": "AND",
               "matchers": [
                 {
@@ -85,7 +85,7 @@
                 }
               ]
             },
-            "$[*].minimums.desk": {
+            "$[*].reservations.desk": {
               "combine": "AND",
               "matchers": [
                 {
@@ -93,7 +93,7 @@
                 }
               ]
             },
-            "$[*].minimums.workspace": {
+            "$[*].reservations.workspace": {
               "combine": "AND",
               "matchers": [
                 {
