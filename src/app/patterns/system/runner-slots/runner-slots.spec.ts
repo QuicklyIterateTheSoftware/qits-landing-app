@@ -122,4 +122,15 @@ describe('RunnerSlots', () => {
     http.expectOne(LIST).flush(recorded);
     await settle();
   });
+
+  it('reads the targets again after a target connects or drops', async () => {
+    await render((request) => request.flush(recorded));
+    vi.useFakeTimers();
+    events.next({ id: '1', name: 'TargetConnectionChanged', payload: '{}' });
+    vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+    vi.useRealTimers();
+    await settle();
+    http.expectOne(LIST).flush(recorded);
+    await settle();
+  });
 });
