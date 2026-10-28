@@ -79,9 +79,9 @@ describe('ReleaseMenu (screenshots)', () => {
 
   /**
    * Opens the panel. Opening reads qits-system's targets for the runners and slots line at the top;
-   * answered as recorded ("a declared target": one target, not connected, so every count is 0).
-   * It also reads qits-ci's active runs, answered as recorded ("a commit with a run in flight": a
-   * run of no request, so no request shows an active run).
+   * answered as recorded ("a connected target with leases": one target, connected, with busy
+   * slots). It also reads qits-ci's active runs, answered as recorded ("a commit with a run in
+   * flight": a run of no request, so no request shows an active run).
    */
   async function open(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
     await userEvent.click(page.getByRole('button', { name: 'Release requests' }));
@@ -89,7 +89,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await settle();
     http
       .expectOne('/system/api/targets')
-      .flush(await goldenMaster('a declared target', 'listTargets', 'qits-system'));
+      .flush(await goldenMaster('a connected target with leases', 'listTargets', 'qits-system'));
     http
       .expectOne('/ci/api/runs/active')
       .flush(await goldenMaster('a commit with a run in flight', 'listActiveRuns', 'qits-ci'));
@@ -137,7 +137,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(panel).not.toMatchTextContent('Finalized release');
     // The runners and slots line heads the panel: runners, slots and the shared pool at the left,
     // the types' reservations at the right.
-    await expect.element(panel.getByText('runners: 0')).toBeVisible();
+    await expect.element(panel.getByText('runners: 1')).toBeVisible();
     await expect.element(panel.getByText('workspaces:')).toBeVisible();
     await expect.element(panel.getByText('shared:')).toBeVisible();
     await expect.element(frame).toMatchScreenshot('open');

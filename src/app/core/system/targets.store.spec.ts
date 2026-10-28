@@ -33,7 +33,7 @@ describe('TargetsStore', () => {
     http.expectNone(LIST);
     const loading = store.load();
     await settle();
-    http.expectOne(LIST).flush(systemGoldenMaster('a declared target', 'listTargets'));
+    http.expectOne(LIST).flush(systemGoldenMaster('a connected target with leases', 'listTargets'));
     await loading;
     expect(store.status()).toBe('loaded');
     void store.load();
@@ -51,7 +51,7 @@ describe('TargetsStore', () => {
 
     loading = store.load();
     await settle();
-    http.expectOne(LIST).flush(systemGoldenMaster('a declared target', 'listTargets'));
+    http.expectOne(LIST).flush(systemGoldenMaster('a connected target with leases', 'listTargets'));
     await loading;
     const refreshing = store.refresh();
     await settle();

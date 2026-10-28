@@ -21,7 +21,7 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "a declared target",
+          "name": "a connected target with leases",
           "params": {
             "targetId": "00000000-0000-4000-8000-000000000001"
           }
@@ -35,7 +35,7 @@
         "body": {
           "content": [
             {
-              "connected": false,
+              "connected": true,
               "reservations": {
                 "ci": 2,
                 "desk": 1,
@@ -43,9 +43,9 @@
               },
               "slotsTotal": 6,
               "used": {
-                "ci": 0,
+                "ci": 1,
                 "desk": 0,
-                "workspace": 0
+                "workspace": 1
               }
             }
           ],
