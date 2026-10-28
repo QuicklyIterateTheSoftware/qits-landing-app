@@ -29,6 +29,7 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * with, so it renders a spinner and the browser navigates. A layout only because the tab is a
  * child route (`:tab`), which renders nothing.
  */
+// eslint-disable-next-line qits/page-has-screenshots -- a redirect: it shows a spinner, then leaves.
 @Component({
   selector: 'app-work-agent-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -97,7 +97,7 @@ function stalenessBans() {
     // TEMPORARY (qits-1270): the 3 s transcript poll (TRANSCRIPT_POLL_MS); the workspace daemon
     // offers no transcript stream.
     except(
-      ['src/app/routes/projects/[[]slug]/work/detail/[[]id]/agent/chat/agent-chat.page.ts'],
+      ['src/app/routes/projects/[[]slug]/agents/[[]agentId]/chat/agent-chat.page.ts'],
       'interval',
     ),
   ];
