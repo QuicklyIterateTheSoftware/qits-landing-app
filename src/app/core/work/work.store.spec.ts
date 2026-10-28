@@ -201,6 +201,17 @@ describe('WorkStore', () => {
       expect(store.hidden().size).toBe(0);
     });
 
+    it('stays sending and hidden while the status call has not answered (qits-1684)', async () => {
+      const store = await loaded();
+      store.finishLater(ID, ticket);
+      await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
+      await drain();
+      expect(store.pendingFinishes()['t-1']?.phase).toBe('sending');
+      expect(store.hidden().has('t-1')).toBe(true);
+      http.expectOne('/projects/api/work/qits-1/status');
+      // Left open on purpose: the call never answers in this test.
+    });
+
     it('sends nothing after an Undo, and shows the item again', async () => {
       const store = await loaded();
       store.finishLater(ID, ticket);

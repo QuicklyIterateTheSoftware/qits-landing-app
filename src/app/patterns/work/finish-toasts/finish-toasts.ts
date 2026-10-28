@@ -10,13 +10,18 @@ interface FinishToast {
   readonly failed: boolean;
 }
 
-function toast(id: string, pending: PendingFinish): FinishToast {
+/** A finish with something left to show: `sending` has no button and must not stay up. */
+type ShowableFinish = PendingFinish & { phase: 'waiting' | 'failed' };
+
+function showable(pending: PendingFinish): pending is ShowableFinish {
+  return pending.phase !== 'sending';
+}
+
+function toast(id: string, pending: ShowableFinish): FinishToast {
   const name = pending.entry.qualifiedId ?? 'The item';
   switch (pending.phase) {
     case 'waiting':
       return { id, message: `${name} finished`, action: 'Undo', failed: false };
-    case 'sending':
-      return { id, message: `${name} finished`, action: '', failed: false };
     case 'failed':
       return {
         id,
@@ -28,8 +33,10 @@ function toast(id: string, pending: PendingFinish): FinishToast {
 }
 
 /**
- * A toast for each finish the Acceptance list asked for and that is not settled (`WorkStore.pendingFinishes`):
+ * A toast for each finish the Acceptance list asked for and not settled (`WorkStore.pendingFinishes`):
  * "<id> finished" with Undo while it waits, and the failure with Dismiss if the move to DONE failed.
+ * A toast lasts exactly the Undo window: once sending starts Undo no longer works, so the toast has
+ * nothing left to offer, and its life must not depend on how long the network call takes (qits-1684).
  * In the layout, so a toast stays while the user moves to another page.
  */
 @Component({
@@ -54,7 +61,9 @@ export class FinishToasts {
   private readonly store = inject(WorkStore);
 
   protected readonly toasts = computed(() =>
-    Object.entries(this.store.pendingFinishes()).map(([id, pending]) => toast(id, pending)),
+    Object.entries(this.store.pendingFinishes()).flatMap(([id, pending]) =>
+      showable(pending) ? [toast(id, pending)] : [],
+    ),
   );
 
   protected act(t: FinishToast): void {

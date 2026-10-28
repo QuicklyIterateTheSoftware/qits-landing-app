@@ -35,7 +35,7 @@ describe('FinishToasts', () => {
     }));
   }
 
-  it('shows one toast per pending finish, oldest first', () => {
+  it('shows one toast per pending finish, oldest first, and none while sending', () => {
     const toasts = render({
       'qits-1': pending('qits-1', 'waiting'),
       'qits-2': pending('qits-2', 'sending'),
@@ -43,12 +43,9 @@ describe('FinishToasts', () => {
     });
     expect(toasts.map((t) => t.text)).toEqual([
       'qits-1 finished',
-      'qits-2 finished',
       'qits-3 could not be finished. It is back in Acceptance.',
     ]);
-    expect(toasts.map((t) => t.button.textContent?.trim())).toEqual(['Undo', '', 'Dismiss']);
-    // A finish being sent can no longer be undone: its button is hidden by class.
-    expect(toasts[1].button.classList.contains('hidden')).toBe(true);
+    expect(toasts.map((t) => t.button.textContent?.trim())).toEqual(['Undo', 'Dismiss']);
   });
 
   it('undoes a waiting finish', () => {
