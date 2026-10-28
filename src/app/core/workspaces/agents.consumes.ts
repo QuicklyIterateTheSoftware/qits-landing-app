@@ -1,4 +1,5 @@
 import type {
+  GetAgentResponses,
   GetWorkspaceActiveProcessResponses,
   GetWorkspaceResponses,
   ListAgentsResponses,
@@ -118,30 +119,44 @@ export type ActiveProcess = Consumed<
 >;
 
 /**
- * `AgentsStore.loadItem(workId)`, a work item's agent page: the item's agents (`listAgents?workId=`,
- * newest first), with what each works on, where, how it runs and what it waits on.
+ * `AgentsStore.loadItem(workId)`: which of a work item's agents is ACTIVE (`listAgents?workId=`,
+ * newest first), so the item's old agent address (`work/detail/<qualified id>/agent[/<tab>]`) can
+ * lead to that agent's page (`agents/<agent id>`).
  */
-export const LIST_ITEM_AGENTS = [
-  'agents[].agentId',
-  'agents[].workspaceRowId',
-  'agents[].entityId',
-  'agents[].entityTitle',
-  'agents[].entityStatus',
-  'agents[].entityBlocked',
-  'agents[].state',
-  'agents[].runState',
-  'agents[].admin',
-  'agents[].harness',
-  'agents[].activity',
-  'agents[].waitingOn',
-  'agents[].waitingOnSince',
-  'agents[].wrapperBranch',
-] as const;
+export const LIST_ITEM_AGENTS = ['agents[].agentId', 'agents[].state'] as const;
 
 /** One agent of an item, cut to what the store reads. */
 export type ItemAgent = NonNullable<
   Consumed<ListAgentsResponses[200], typeof LIST_ITEM_AGENTS>['agents']
 >[number];
+
+/**
+ * `AgentsStore.loadAgent(agentId)`, an agent's page (`agents/<agent id>`, epic qits-1681): the agent
+ * (`getAgent`, in any state), with what it works on (its item, the item's status and block), where
+ * (its slot and repository), how it runs and what it waits on. Its open waits and its attention come
+ * from the project's list (`PROJECT_AGENTS`), which the recorded `getAgent` does not carry.
+ */
+export const GET_AGENT = [
+  'agentId',
+  'workspaceRowId',
+  'repositoryId',
+  'workId',
+  'entityId',
+  'entityTitle',
+  'entityStatus',
+  'entityBlocked',
+  'state',
+  'runState',
+  'admin',
+  'harness',
+  'activity',
+  'waitingOn',
+  'waitingOnSince',
+  'wrapperBranch',
+] as const;
+
+/** One agent, cut to what the store reads. */
+export type AgentDetail = Consumed<GetAgentResponses[200], typeof GET_AGENT>;
 
 /**
  * `AgentsStore.loadProjectAgents(projectId)`, the project's agents with what each waits on and what

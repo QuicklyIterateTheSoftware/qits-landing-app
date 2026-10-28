@@ -163,20 +163,25 @@ export const INTERACTIONS = {
    */
   'show-agent-work': 'The In Progress tab shows every work item an active agent is on',
   /**
-   * `project-workspaces.page.ts` via `AgentsStore.loadProject`: the project's Workspaces page
-   * lists the wrapper's slots and its agents (epic qits-1230).
+   * `project-agents.page.ts` via `AgentsStore.loadProject`: the project's Agents page lists, under
+   * its Workspaces heading, the wrapper's slots and how many agents each hosts (epic qits-1230).
    */
-  'show-project-workspaces': 'The Workspaces page lists the project’s slots and their agents',
+  'show-project-workspaces': 'The Agents page lists the project’s slots and their agents',
   /**
    * `workspace-slot.page.ts` via `AgentsStore.loadSlot`: one slot, its status strip (container,
    * daemon), the start running against it, and the agents it hosts.
    */
   'show-workspace-slot': 'A slot’s page shows its status and the agents it hosts',
   /**
-   * `work-agent.layout.ts` via `AgentsStore.loadItem`: a work item's agent, how it runs, what it
-   * waits on, and its slot while the container comes up.
+   * `work-agent.layout.ts` via `AgentsStore.loadItem`: a work item's old agent address finds the
+   * item's ACTIVE agent and leads to its page (epic qits-1681).
    */
-  'show-work-item-agent': 'A work item’s agent page shows its agent and what it waits on',
+  'show-work-item-agent': 'A work item’s agent address leads to its active agent’s page',
+  /**
+   * `agent.layout.ts` via `AgentsStore.loadAgent`: an agent's page, by its id — what it works on,
+   * how it runs, what it waits on, and its slot while the container comes up (epic qits-1681).
+   */
+  'show-agent': 'An agent’s page shows the agent, what it waits on and its workspace',
   /**
    * `agent-terminal.page.ts` via `AgentHarnessStore.load`: the agent's Terminal tab finds its
    * harness's command on the slot's daemon, to attach the terminal to (epic qits-1230).

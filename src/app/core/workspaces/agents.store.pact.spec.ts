@@ -10,6 +10,7 @@ import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { consume } from '@qits/angular';
 import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing';
 import {
+  getAgent,
   getWorkspace,
   getWorkspaceActiveProcess,
   listAgents,
@@ -20,6 +21,7 @@ import { workspacesGoldenMasters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
   GET_ACTIVE_PROCESS,
+  GET_AGENT,
   GET_SLOT,
   LIST_ITEM_AGENTS,
   LIST_PROJECT_AGENTS,
@@ -36,8 +38,10 @@ import {
  *   slot RUNNING on runner `localhost`, the bug ticket's agent holding it and waiting on a release
  *   request, the epic's agent yielded in it, the improvement ticket's agent QUEUED;
  * - "a workspace slot hosting agents": the same, read by the slot (no start is running);
- * - "an agent whose workspace is starting": the bug ticket's agent page while its slot is
- *   PROVISIONING and a start is live.
+ * - "an agent whose workspace is starting": the bug ticket's ACTIVE agent, which its old agent
+ *   address leads to, and the agent page's slot while it is PROVISIONING and a start is live;
+ * - "an agent with a saved prompt draft" and "no agent with that id": the agent page's agent, read
+ *   by its id, and one the service does not know.
  *
  * The slot's row id is a param (`workspaceId`, frozen to its place in the state's write order); the
  * provider names its real value, so the path and the query take it as a provider-state expression.
@@ -49,11 +53,14 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const PROJECT = 'a project with workspace slots hosting agents';
 const SLOT = 'a workspace slot hosting agents';
 const STARTING = 'an agent whose workspace is starting';
+const AGENT = 'an agent with a saved prompt draft';
+const NO_AGENT = 'no agent with that id';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   'listWorkspaces',
   'getWorkspace',
   'getWorkspaceActiveProcess',
+  'getAgent',
   {
     operationId: 'listAgents',
     interactions: ['show-project-workspaces', 'show-workspace-slot', 'show-work-item-agent'],
@@ -182,39 +189,49 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
       },
     ));
 
-  it('show-work-item-agent: the item’s agents', () =>
+  it('show-work-item-agent: the item’s agents, one of them ACTIVE', () =>
     given(STARTING, 'listAgents', 'show-work-item-agent', LIST_ITEM_AGENTS).executeTest(
       async (server) => {
         const workId = param(STARTING, 'listAgents', 'bugTicketId');
         const { data } = await at(server.url, () =>
           consume(listAgents({ query: { workId } }), LIST_ITEM_AGENTS),
         );
-        expect(data?.agents?.[0]?.waitingOn).toBeTruthy();
+        expect(data?.agents?.[0]?.state).toBe('ACTIVE');
       },
     ));
 
-  it('show-work-item-agent: its slot, starting', () =>
-    given(STARTING, 'getWorkspace', 'show-work-item-agent', GET_SLOT).executeTest(
-      async (server) => {
-        const id = Number(param(STARTING, 'getWorkspace', 'workspaceId'));
-        const { data } = await at(server.url, () =>
-          consume(getWorkspace({ path: { id } }), GET_SLOT),
-        );
-        expect(data?.workspace?.runtimeStatus).toBe('PROVISIONING');
-      },
-    ));
-
-  it('show-work-item-agent: the start running against its slot', () =>
-    given(
-      STARTING,
-      'getWorkspaceActiveProcess',
-      'show-work-item-agent',
-      GET_ACTIVE_PROCESS,
-    ).executeTest(async (server) => {
-      const id = Number(param(STARTING, 'getWorkspaceActiveProcess', 'workspaceId'));
-      const { data } = await at(server.url, () =>
-        consume(getWorkspaceActiveProcess({ path: { id } }), GET_ACTIVE_PROCESS),
-      );
-      expect(data?.technicalProcessId).toBeTruthy();
+  it('show-agent: the agent, by its id', () =>
+    given(AGENT, 'getAgent', 'show-agent', GET_AGENT).executeTest(async (server) => {
+      const id = param(AGENT, 'getAgent', 'agentId');
+      const { data } = await at(server.url, () => consume(getAgent({ path: { id } }), GET_AGENT));
+      expect(data?.agentId).toBeTruthy();
+      expect(data?.workspaceRowId).toBeTruthy();
     }));
+
+  it('show-agent: an agent the service does not know', () =>
+    given(NO_AGENT, 'getAgent', 'show-agent', []).executeTest(async (server) => {
+      const id = param(NO_AGENT, 'getAgent', 'agentId');
+      const { response } = await at(server.url, () => consume(getAgent({ path: { id } }), []));
+      expect(response?.status).toBe(404);
+    }));
+
+  it('show-agent: its slot, starting', () =>
+    given(STARTING, 'getWorkspace', 'show-agent', GET_SLOT).executeTest(async (server) => {
+      const id = Number(param(STARTING, 'getWorkspace', 'workspaceId'));
+      const { data } = await at(server.url, () =>
+        consume(getWorkspace({ path: { id } }), GET_SLOT),
+      );
+      expect(data?.workspace?.runtimeStatus).toBe('PROVISIONING');
+    }));
+
+  it('show-agent: the start running against its slot', () =>
+    given(STARTING, 'getWorkspaceActiveProcess', 'show-agent', GET_ACTIVE_PROCESS).executeTest(
+      async (server) => {
+        const id = Number(param(STARTING, 'getWorkspaceActiveProcess', 'workspaceId'));
+        const { data } = await at(server.url, () =>
+          consume(getWorkspaceActiveProcess({ path: { id } }), GET_ACTIVE_PROCESS),
+        );
+        expect(data?.technicalProcessId).toBeTruthy();
+      },
+    ));
 });

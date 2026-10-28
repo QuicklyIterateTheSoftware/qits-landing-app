@@ -16,6 +16,8 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const PROJECT = 'a project with workspace slots hosting agents';
 const SLOT = 'a workspace slot hosting agents';
 const STARTING = 'an agent whose workspace is starting';
+const DRAFT = 'an agent with a saved prompt draft';
+const NO_AGENT = 'no agent with that id';
 const API = '/workspaces/api';
 
 const params = (state: string) => workspacesGoldenMasters.operation(state, 'listAgents').params;
@@ -132,33 +134,53 @@ describe('AgentsStore', () => {
     expect(store.slotOf(99)?.status).toBe('missing');
   });
 
-  it('reads an item’s agent, then its slot and the start running against it', async () => {
+  it('reads which of an item’s agents is ACTIVE', async () => {
     const workId = params(STARTING)['bugTicketId'];
-    const id = Number(params(STARTING)['workspaceId']);
     const done = store.loadItem(workId);
     await settle();
     http
       .expectOne(`${API}/agents?workId=${workId}`)
       .flush(workspacesGoldenMaster(STARTING, 'listAgents'));
-    await settle();
-    http
-      .expectOne(`${API}/workspaces/${id}`)
-      .flush(workspacesGoldenMaster(STARTING, 'getWorkspace'));
-    http
-      .expectOne(`${API}/workspaces/${id}/active-process`)
-      .flush(workspacesGoldenMaster(STARTING, 'getWorkspaceActiveProcess'));
     await done;
-    expect(store.itemOf(workId)?.agent?.waitingOn).toContain('release-request');
-    expect(store.slotOf(id)?.slot?.runtimeStatus).toBe('PROVISIONING');
-    expect(store.slotOf(id)?.processId).toBeTruthy();
+    expect(store.itemOf(workId)?.agent?.agentId).toBe(params(STARTING)['agentId']);
   });
 
-  it('holds no agent for an item without one', async () => {
+  it('holds no agent for an item without an ACTIVE one', async () => {
     const done = store.loadItem('w-none');
     await settle();
-    http.expectOne(`${API}/agents?workId=w-none`).flush({ agents: [] });
+    http
+      .expectOne(`${API}/agents?workId=w-none`)
+      .flush({ agents: [{ agentId: 'old', state: 'REMOVED' }] });
     await done;
     expect(store.itemOf('w-none')).toEqual({ status: 'loaded', agent: undefined });
+  });
+
+  it('reads an agent by its id, then its slot and the start running against it', async () => {
+    const agentId = workspacesGoldenMasters.operation(DRAFT, 'getAgent').params['agentId'];
+    const done = store.loadAgent(agentId);
+    await settle();
+    http.expectOne(`${API}/agents/${agentId}`).flush(workspacesGoldenMaster(DRAFT, 'getAgent'));
+    await settle();
+    http.expectOne(`${API}/workspaces/1`).flush(workspacesGoldenMaster(STARTING, 'getWorkspace'));
+    http
+      .expectOne(`${API}/workspaces/1/active-process`)
+      .flush(workspacesGoldenMaster(STARTING, 'getWorkspaceActiveProcess'));
+    await done;
+    expect(store.agentOf(agentId)?.status).toBe('loaded');
+    expect(store.agentOf(agentId)?.agent?.entityId).toBe('contract-00000001-10');
+    expect(store.slotOf(1)?.slot?.runtimeStatus).toBe('PROVISIONING');
+  });
+
+  it('marks an agent the service does not know as missing', async () => {
+    const agentId = workspacesGoldenMasters.operation(NO_AGENT, 'getAgent').params['agentId'];
+    const done = store.loadAgent(agentId);
+    await settle();
+    http.expectOne(`${API}/agents/${agentId}`).flush(workspacesGoldenMaster(NO_AGENT, 'getAgent'), {
+      status: 404,
+      statusText: 'Not Found',
+    });
+    await done;
+    expect(store.agentOf(agentId)).toEqual({ status: 'missing' });
   });
 
   it('refreshes after the lifecycle events about its scope, at most once a second', async () => {
