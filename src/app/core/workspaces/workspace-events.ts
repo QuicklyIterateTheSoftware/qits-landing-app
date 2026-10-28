@@ -38,7 +38,7 @@ export const WORKSPACE_EVENTS = [
  * The lifecycle events that can change an agent's harness (which command its terminal or chat
  * attaches to, and whether it runs): a start, a refused start, a yield or a resume, its exit, its
  * removal, and its slot's container starting, failing or going. A placement is not among them: it
- * gives the agent a slot, which the agent page reads (`loadItem`), and the tab follows that slot.
+ * gives the agent a slot, which the agent page reads (`loadAgent`), and the tab follows that slot.
  */
 export const HARNESS_EVENTS = [
   'AgentStarted',
