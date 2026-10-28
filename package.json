@@ -59,7 +59,7 @@
     "@qits/projects-golden-masters": "2026.1028.74846",
     "@qits/system-golden-masters": "2026.1028.130628",
     "@qits/workspace-daemon-golden-masters": "2026.1027.193351",
-    "@qits/workspaces-golden-masters": "2026.1024.141209",
+    "@qits/workspaces-golden-masters": "2026.1028.163502",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
     "@types/node": "^26.6.5",
