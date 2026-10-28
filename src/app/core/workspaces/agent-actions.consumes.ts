@@ -1,6 +1,5 @@
 import type { Consumed } from '@qits/angular';
 import type {
-  CreateAgentResponses,
   DiscardAgentResponses,
   EnsureWorkspaceContainerResponses,
   RecreateWorkspaceContainerResponses,
@@ -16,15 +15,6 @@ import type {
  * where it names one (`AGENT_HAS_LEFTOVER_WORK`, `AGENT_DAEMON_UNREACHABLE`, …). The store passes
  * `REFUSAL` as `consume`'s error paths, and the pact binds it on every recorded refusal.
  */
-
-/**
- * `AgentActionsStore.createAgent(…)`: the agent made for the item, or the item's ACTIVE agent
- * (`fresh: false`); the Workspaces page opens the item's agent page either way.
- */
-export const CREATE_AGENT = ['agent.agentId', 'fresh'] as const;
-
-/** A created (or found) agent, cut to what the store reads. */
-export type CreatedAgent = Consumed<CreateAgentResponses[200], typeof CREATE_AGENT>;
 
 /** `AgentActionsStore.discardAgent(agentId, force)`: the agent, now REMOVED. */
 export const DISCARD_AGENT = ['state'] as const;
