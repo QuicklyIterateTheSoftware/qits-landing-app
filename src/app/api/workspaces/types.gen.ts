@@ -41,6 +41,10 @@ export type AgentDto = {
     removedAt?: Instant;
     startRefusal?: string;
     startRefusedAt?: Instant;
+    waits?: Array<WaitView>;
+    attention?: Attention;
+    blockedAt?: Instant;
+    deskAskedAt?: Instant;
 };
 
 export type AgentHarness = 'CLAUDE' | 'KIMI';
@@ -70,17 +74,9 @@ export type ApiError = {
      */
     conflicts?: Array<string>;
     /**
-     * The refusal's own name, where it has one (e.g. RUNNER_OWNS_WORKSPACES). Absent otherwise.
+     * The refusal's own name, where it has one (e.g. TARGET_UNAVAILABLE). Absent otherwise.
      */
     code?: string;
-    /**
-     * The ACTIVE workspace row ids a runner still owns. Present only with RUNNER_OWNS_WORKSPACES.
-     */
-    workspaceIds?: Array<number>;
-    /**
-     * The ACTIVE workspaces a runner still owns, each with its repository and branch so a client can link it. Present only with RUNNER_OWNS_WORKSPACES.
-     */
-    workspaces?: Array<RunnerOwnedWorkspace>;
 };
 
 export type ArchivedSessionDto = {
@@ -98,6 +94,13 @@ export type ArchivedSubagentDto = {
     messageCount?: number;
 };
 
+export type Attention = {
+    code?: 'WAIT_SUBJECT_PASSED' | 'BLOCKED_NO_DESK' | 'IDLE_NO_WAIT' | 'WAIT_OVERDUE';
+    reason?: string;
+    since?: Instant;
+    waitId?: string;
+};
+
 export type Branch = {
     repositoryId?: string;
     branch?: string;
@@ -111,19 +114,6 @@ export type BranchSweepReport = {
     branchesExamined?: number;
     removed?: Array<SweptBranch>;
     errors?: Array<SweepError>;
-};
-
-export type Check = {
-    name?: string;
-    ok?: boolean;
-    detail?: string;
-};
-
-export type CheckReport = {
-    name?: string;
-    ok?: boolean;
-    detail?: string;
-    data?: JsonNode;
 };
 
 export type CleanupBranchRequest = {
@@ -140,29 +130,6 @@ export type CreateAgentRequest = {
     admin?: boolean;
     harness?: AgentHarness;
     instruction?: string;
-};
-
-export type CreateRunnerRequest = {
-    /**
-     * [a-z][a-z0-9-]{0,63}, unique
-     */
-    name: string;
-    /**
-     * Free text, at most 1024 characters
-     */
-    description?: string;
-    /**
-     * How many workspaces it may run at once; 0 drains it. Default 1
-     */
-    slots?: number;
-    /**
-     * The --memory its workspace containers get, a docker size: digits and an optional unit b, k, m or g (e.g. 12g), at least 6m. Absent or blank is the platform default
-     */
-    workspaceMemoryLimit?: string;
-    /**
-     * Their --memory-swap: memory plus swap, the same grammar and at least workspaceMemoryLimit, which it needs; or -1 for unlimited swap. Absent or blank is workspaceMemoryLimit when that is set (no swap), else the platform default
-     */
-    workspaceMemorySwapLimit?: string;
 };
 
 export type CreateWaitRequest = {
@@ -252,45 +219,7 @@ export type EventSelectionCondition = {
     value?: string;
 };
 
-export type Health = {
-    at?: Instant;
-    ok?: boolean;
-    detail?: string;
-    checks?: Array<Check>;
-};
-
-export type HealthCheckRequested = {
-    requestId?: string;
-};
-
 export type Instant = string;
-
-export type JsonNode = {
-    empty?: boolean;
-    valueNode?: boolean;
-    containerNode?: boolean;
-    missingNode?: boolean;
-    array?: boolean;
-    object?: boolean;
-    nodeType?: JsonNodeType;
-    pojo?: boolean;
-    number?: boolean;
-    integralNumber?: boolean;
-    floatingPointNumber?: boolean;
-    short?: boolean;
-    int?: boolean;
-    long?: boolean;
-    float?: boolean;
-    double?: boolean;
-    bigDecimal?: boolean;
-    bigInteger?: boolean;
-    textual?: boolean;
-    boolean?: boolean;
-    null?: boolean;
-    binary?: boolean;
-};
-
-export type JsonNodeType = 'ARRAY' | 'BINARY' | 'BOOLEAN' | 'MISSING' | 'NULL' | 'NUMBER' | 'OBJECT' | 'POJO' | 'STRING';
 
 export type LaunchPin = {
     image?: string;
@@ -303,16 +232,11 @@ export type LaunchPins = {
     pins?: Array<LaunchPin>;
 };
 
-export type Login = {
-    claude?: string;
-    kimi?: string;
-    checkedAt?: Instant;
-};
-
 export type MarkBlockedRequest = {
     workId: string;
     blocked?: boolean;
     blockSource?: string;
+    blockedBy?: string;
 };
 
 export type MarkEntityRequest = {
@@ -321,6 +245,7 @@ export type MarkEntityRequest = {
     status?: string;
     blocked: boolean;
     blockSource?: string;
+    blockedBy?: string;
 };
 
 export type MergeBranchRequest = {
@@ -329,43 +254,9 @@ export type MergeBranchRequest = {
     result?: string;
 };
 
-export type PatchRunnerRequest = {
-    /**
-     * 0 drains the runner; absent leaves it
-     */
-    slots?: number;
-    /**
-     * Blank clears it; absent leaves it
-     */
-    description?: string;
-    /**
-     * A docker size (e.g. 12g, at least 6m); blank clears it back to the platform default; absent leaves it. Reaches the next workspace launched on the runner, never a running one
-     */
-    workspaceMemoryLimit?: string;
-    /**
-     * Memory plus swap, a docker size at least the resulting workspaceMemoryLimit, which it needs; or -1 for unlimited swap. Blank clears it; absent leaves it
-     */
-    workspaceMemorySwapLimit?: string;
-};
-
 export type PromptAttachmentSource = 'SKETCH' | 'PASTE';
 
 export type Reason = 'CONFLICT' | 'MERGE_CONFLICT' | 'NOT_FAST_FORWARD' | 'ALREADY_INTEGRATED' | 'PUSH_REJECTED' | 'RELEASE_REQUIRED';
-
-export type RegisterRunnerRequest = {
-    /**
-     * What the runner says about itself — a JSON object, at most 16 KiB
-     */
-    capabilities?: JsonNode;
-};
-
-export type RegisteredRunner = {
-    clientId?: string;
-    secret?: string;
-    tokenUrl?: string;
-    audience?: string;
-    socketUrl?: string;
-};
 
 export type Resolution = {
     resolved?: boolean;
@@ -464,33 +355,6 @@ export type Response9 = {
     technicalProcessId?: string;
 };
 
-export type RunnerOwnedWorkspace = {
-    /**
-     * The workspace row id
-     */
-    id?: number;
-    /**
-     * Its repository
-     */
-    repositoryId?: string;
-    /**
-     * Its branch, or null
-     */
-    branch?: string;
-};
-
-export type RunnerRegistrationDto = {
-    runner?: WorkspaceRunnerDto;
-    /**
-     * The runner's one-use registration token. Returned once
-     */
-    registrationToken?: string;
-    /**
-     * The one line that installs the runner on a docker host: it fetches the generic install script with the registration token and pipes it into sudo sh with this runner's values. Returned once
-     */
-    installLine?: string;
-};
-
 export type SavePromptDraftRequest = {
     content: string;
     serializedPrompt?: string;
@@ -541,6 +405,42 @@ export type WaitView = {
     expiresAt?: Instant;
     matchedEventId?: string;
     closedAt?: Instant;
+    /**
+     * What the selection waits on
+     */
+    subjectKind?: 'RELEASE_REQUEST' | 'CI_RUN' | 'WORK_ITEM' | 'COMMENTS' | 'OTHER';
+    /**
+     * The subject's id as the selection names it; null for OTHER
+     */
+    subjectRef?: string;
+    /**
+     * The subject's uuid, once resolved
+     */
+    subjectId?: string;
+    /**
+     * The subject's qualified id, once resolved; null for a run
+     */
+    subjectQualifiedId?: string;
+    /**
+     * The states the selection waits for; empty when it names none
+     */
+    targetStates?: Array<string>;
+    /**
+     * The subject's last known state
+     */
+    subjectState?: string;
+    /**
+     * When that state was seen to begin
+     */
+    subjectStateAt?: Instant;
+    /**
+     * Runs only: when the run should have finished
+     */
+    subjectExpectedBy?: Instant;
+    /**
+     * The last failure to look the subject up
+     */
+    subjectError?: string;
 };
 
 export type WorkItemWorkspaceDto = {
@@ -590,7 +490,8 @@ export type WorkspaceDto = {
     daemonOutdated?: boolean;
     admin?: boolean;
     placement?: WorkspacePlacement;
-    runner?: WorkspaceRunnerRefDto;
+    leaseId?: Uuid;
+    targetId?: Uuid;
     queuedAt?: Instant;
 };
 
@@ -628,7 +529,7 @@ export type WorkspaceHistoryDto = {
     resolvedAt?: Instant;
 };
 
-export type WorkspacePlacement = 'DIRECT' | 'RUNNER';
+export type WorkspacePlacement = 'DIRECT' | 'TARGET';
 
 export type WorkspacePromptAttachmentDataDto = {
     id?: string;
@@ -647,53 +548,6 @@ export type WorkspacePromptDraftDto = {
     lastRunPromptVersion?: number;
     lastRunCommandId?: string;
     updatedAt?: Instant;
-};
-
-export type WorkspaceRunnerDto = {
-    id?: Uuid;
-    name?: string;
-    description?: string;
-    slots?: number;
-    workspaceMemoryLimit?: string;
-    workspaceMemorySwapLimit?: string;
-    version?: string;
-    arch?: string;
-    dotClaudeVolume?: string;
-    login?: Login;
-    registered?: boolean;
-    registeredAt?: Instant;
-    quarantined?: boolean;
-    quarantinedAt?: Instant;
-    quarantineReason?: string;
-    eligible?: boolean;
-    lastSeenAt?: Instant;
-    lastHealthCheckAt?: Instant;
-    lastHealthCheckOk?: boolean;
-    createdAt?: Instant;
-    connected?: boolean;
-    connectedSince?: Instant;
-    pinnedVersion?: string;
-    running?: number;
-    owned?: number;
-    queued?: number;
-    loginCommand?: string;
-    kimiLoginCommand?: string;
-    loginCommandPending?: boolean;
-    health?: Health;
-};
-
-export type WorkspaceRunnerHealthDto = {
-    at?: Instant;
-    ok?: boolean;
-    detail?: string;
-    requestId?: string;
-    dataOmitted?: boolean;
-    checks?: Array<CheckReport>;
-};
-
-export type WorkspaceRunnerRefDto = {
-    id?: Uuid;
-    name?: string;
 };
 
 export type WorkspaceRuntimeStatus = 'RUNNING' | 'STOPPED' | 'PROVISIONING' | 'FAILED' | 'QUEUED' | 'UNAVAILABLE';
@@ -717,9 +571,9 @@ export type DispatchAgentErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the repository's project. Nothing was created.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such repository. Nothing was created.
      */
@@ -754,9 +608,9 @@ export type MarkAgentDispatchBlockedErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the item's ACTIVE agent's project. Nothing was marked.
      */
-    403: unknown;
+    403: ApiError;
 };
 
 export type MarkAgentDispatchBlockedError = MarkAgentDispatchBlockedErrors[keyof MarkAgentDispatchBlockedErrors];
@@ -787,16 +641,16 @@ export type DeliverAgentTurnErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the item's ACTIVE agent's project. Nothing was said.
      */
-    403: unknown;
+    403: ApiError;
 };
 
 export type DeliverAgentTurnError = DeliverAgentTurnErrors[keyof DeliverAgentTurnErrors];
 
 export type DeliverAgentTurnResponses = {
     /**
-     * Answered. `agentId: null` means no agent works on the item: nothing was said and nothing created — a normal outcome. Otherwise one of `delivered` (said at the running agent's next turn boundary), `launched` (its first turn, once it starts) or `resumed` (a yielded agent resumes to hear it).
+     * Answered. `agentId: null` means no agent works on the item: nothing was said and nothing created — a normal outcome. Otherwise one of `delivered` (queued for the running agent: said once it is not busy, or after the launch window), `launched` (its first turn, once it starts) or `resumed` (a yielded agent resumes to hear it).
      */
     200: Delivery;
 };
@@ -820,9 +674,9 @@ export type MarkAgentDispatchEntityErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the item's ACTIVE agent's project. Nothing was stored.
      */
-    403: unknown;
+    403: ApiError;
 };
 
 export type MarkAgentDispatchEntityError = MarkAgentDispatchEntityErrors[keyof MarkAgentDispatchEntityErrors];
@@ -871,6 +725,10 @@ export type ListAgentsData = {
     body?: never;
     path?: never;
     query?: {
+        /**
+         * A project's uuid: only the agents whose repository is that project's. A repository whose project cannot be named is in none.
+         */
+        projectId?: string;
         state?: AgentState;
         workId?: string;
         workspaceId?: number;
@@ -915,9 +773,9 @@ export type CreateAgentErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller asking for an ADMIN agent, or whose token's `project` claim is not the repository's project. Nothing was created.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such repository.
      */
@@ -1105,9 +963,9 @@ export type DiscardAgentErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the agent's project. Nothing was removed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * AGENT_BUSY (harness still working in the background), AGENT_HAS_LEFTOVER_WORK (uncommitted or unpushed work, named) or AGENT_DAEMON_UNREACHABLE; nothing was removed. Send `force: true` to remove anyway.
      */
@@ -1179,9 +1037,9 @@ export type PostWorkspacesApiAgentsByIdPromptAttachmentsErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such ACTIVE workspace.
      */
@@ -1219,9 +1077,9 @@ export type DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors =
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such ACTIVE workspace, or no such attachment on it.
      */
@@ -1259,9 +1117,9 @@ export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such ACTIVE workspace, or no such attachment on it.
      */
@@ -1332,9 +1190,9 @@ export type DeleteAgentPromptDraftErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such ACTIVE workspace.
      */
@@ -1406,9 +1264,9 @@ export type SaveAgentPromptDraftErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such ACTIVE workspace.
      */
@@ -1531,9 +1389,9 @@ export type ResolveReleasedBranchErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the repository's project. Nothing was resolved.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * No such repository.
      */
@@ -1544,12 +1402,120 @@ export type ResolveReleasedBranchError = ResolveReleasedBranchErrors[keyof Resol
 
 export type ResolveReleasedBranchResponses = {
     /**
-     * Resolved, or `resolved:false` when nothing owned the branch — the ordinary case, and what a repeated call answers. `agentIds` are the agents marked OBSOLETE.
+     * Resolved, or `resolved:false` when nothing owned the branch — the ordinary case, and what a repeated call answers. `resolved` is true whenever an ACTIVE agent owned the branch; `agentIds` are the agents marked OBSOLETE by this call, the ones whose item is already closed. An open item's agent stays ACTIVE until the item closes.
      */
     200: Resolution;
 };
 
 export type ResolveReleasedBranchResponse = ResolveReleasedBranchResponses[keyof ResolveReleasedBranchResponses];
+
+export type ListDeskWaitsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: {
+        state?: string;
+    };
+    url: '/workspaces/api/desks/{projectId}/waits';
+};
+
+export type ListDeskWaitsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk-admin` caller whose token's `project` claim is not this project.
+     */
+    403: ApiError;
+};
+
+export type ListDeskWaitsError = ListDeskWaitsErrors[keyof ListDeskWaitsErrors];
+
+export type ListDeskWaitsResponses = {
+    /**
+     * The desk's waits, newest first.
+     */
+    200: WaitList;
+};
+
+export type ListDeskWaitsResponse = ListDeskWaitsResponses[keyof ListDeskWaitsResponses];
+
+export type CreateDeskWaitData = {
+    body: CreateWaitRequest;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/workspaces/api/desks/{projectId}/waits';
+};
+
+export type CreateDeskWaitErrors = {
+    /**
+     * An invalid selection (the matcher's reason), a bad timeout, or a project id that is not a UUID.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk-admin` caller whose token's `project` claim is not this project.
+     */
+    403: ApiError;
+    /**
+     * TOO_MANY_WAITS (8 are OPEN for this project's desk).
+     */
+    409: ApiError;
+};
+
+export type CreateDeskWaitError = CreateDeskWaitErrors[keyof CreateDeskWaitErrors];
+
+export type CreateDeskWaitResponses = {
+    /**
+     * The wait, OPEN.
+     */
+    201: WaitView;
+};
+
+export type CreateDeskWaitResponse = CreateDeskWaitResponses[keyof CreateDeskWaitResponses];
+
+export type CancelDeskWaitData = {
+    body?: never;
+    path: {
+        projectId: string;
+        waitId: string;
+    };
+    query?: never;
+    url: '/workspaces/api/desks/{projectId}/waits/{waitId}';
+};
+
+export type CancelDeskWaitErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk-admin` caller whose token's `project` claim is not this project.
+     */
+    403: ApiError;
+    /**
+     * No such wait of this project's desk.
+     */
+    404: ApiError;
+};
+
+export type CancelDeskWaitError = CancelDeskWaitErrors[keyof CancelDeskWaitErrors];
+
+export type CancelDeskWaitResponses = {
+    /**
+     * The wait: CANCELLED, or as it was when already closed. Nothing is announced.
+     */
+    200: WaitView;
+};
+
+export type CancelDeskWaitResponse = CancelDeskWaitResponses[keyof CancelDeskWaitResponses];
 
 export type SweepBranchesData = {
     body: SweepBranchesRequest;
@@ -1568,14 +1534,16 @@ export type SweepBranchesErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller asking for a real sweep: deleting a branch is a push, and the delivery desk may only dry-run. Nothing was deleted.
      */
-    403: unknown;
+    403: ApiError;
 };
+
+export type SweepBranchesError = SweepBranchesErrors[keyof SweepBranchesErrors];
 
 export type SweepBranchesResponses = {
     /**
-     * OK
+     * The sweep's report; a dry run deleted nothing.
      */
     200: BranchSweepReport;
 };
@@ -1655,14 +1623,16 @@ export type PatchWorkspacesApiHistoryByIdErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the workspace's project (a workspace of no resolvable project counts as another's). Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
 };
+
+export type PatchWorkspacesApiHistoryByIdError = PatchWorkspacesApiHistoryByIdErrors[keyof PatchWorkspacesApiHistoryByIdErrors];
 
 export type PatchWorkspacesApiHistoryByIdResponses = {
     /**
-     * OK
+     * The updated record.
      */
     200: Response10;
 };
@@ -1754,458 +1724,6 @@ export type ListLaunchPinsResponses = {
 };
 
 export type ListLaunchPinsResponse = ListLaunchPinsResponses[keyof ListLaunchPinsResponses];
-
-export type ListRunnersData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/workspaces/api/runners';
-};
-
-export type ListRunnersErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type ListRunnersResponses = {
-    /**
-     * Every runner, by name
-     */
-    200: Array<WorkspaceRunnerDto>;
-};
-
-export type ListRunnersResponse = ListRunnersResponses[keyof ListRunnersResponses];
-
-export type CreateRunnerData = {
-    body: CreateRunnerRequest;
-    path?: never;
-    query?: never;
-    url: '/workspaces/api/runners';
-};
-
-export type CreateRunnerErrors = {
-    /**
-     * A malformed name, slots, description or memory limit, or a swap limit that does not fit the memory limit
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * The name is taken
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the registration token
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED: it knows no public domain to address a runner by
-     */
-    503: ApiError;
-};
-
-export type CreateRunnerError = CreateRunnerErrors[keyof CreateRunnerErrors];
-
-export type CreateRunnerResponses = {
-    /**
-     * The runner, its registration token and the install line carrying it
-     */
-    201: RunnerRegistrationDto;
-};
-
-export type CreateRunnerResponse = CreateRunnerResponses[keyof CreateRunnerResponses];
-
-export type GetWorkspacesApiRunnersInstallShData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/workspaces/api/runners/install.sh';
-};
-
-export type GetWorkspacesApiRunnersInstallShErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * RUNNER_PLANE_UNCONFIGURED, or the script cannot be rendered
-     */
-    503: unknown;
-};
-
-export type GetWorkspacesApiRunnersInstallShResponses = {
-    /**
-     * A POSIX sh script, carrying no secret
-     */
-    200: string;
-};
-
-export type GetWorkspacesApiRunnersInstallShResponse = GetWorkspacesApiRunnersInstallShResponses[keyof GetWorkspacesApiRunnersInstallShResponses];
-
-export type DeleteRunnerData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}';
-};
-
-export type DeleteRunnerErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * RUNNER_OWNS_WORKSPACES: an ACTIVE workspace is placed on it; workspaceIds and workspaces name them
-     */
-    409: ApiError;
-};
-
-export type DeleteRunnerError = DeleteRunnerErrors[keyof DeleteRunnerErrors];
-
-export type DeleteRunnerResponses = {
-    /**
-     * Gone
-     */
-    204: void;
-};
-
-export type DeleteRunnerResponse = DeleteRunnerResponses[keyof DeleteRunnerResponses];
-
-export type GetWorkspacesApiRunnersByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}';
-};
-
-export type GetWorkspacesApiRunnersByIdErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GetWorkspacesApiRunnersByIdResponses = {
-    /**
-     * The runner
-     */
-    200: WorkspaceRunnerDto;
-};
-
-export type GetWorkspacesApiRunnersByIdResponse = GetWorkspacesApiRunnersByIdResponses[keyof GetWorkspacesApiRunnersByIdResponses];
-
-export type PatchRunnerData = {
-    body: PatchRunnerRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}';
-};
-
-export type PatchRunnerErrors = {
-    /**
-     * Negative slots, an overlong description, a malformed memory limit, or limits that would not fit together once applied
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type PatchRunnerResponses = {
-    /**
-     * The runner as it now is
-     */
-    200: WorkspaceRunnerDto;
-};
-
-export type PatchRunnerResponse = PatchRunnerResponses[keyof PatchRunnerResponses];
-
-export type GreenlightRunnerData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}/greenlight';
-};
-
-export type GreenlightRunnerErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GreenlightRunnerResponses = {
-    /**
-     * The runner as it now is
-     */
-    200: WorkspaceRunnerDto;
-};
-
-export type GreenlightRunnerResponse = GreenlightRunnerResponses[keyof GreenlightRunnerResponses];
-
-export type GetRunnerHealthData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}/health';
-};
-
-export type GetRunnerHealthErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-};
-
-export type GetRunnerHealthResponses = {
-    /**
-     * The newest health check
-     */
-    200: WorkspaceRunnerHealthDto;
-    /**
-     * No health check has settled yet
-     */
-    204: void;
-};
-
-export type GetRunnerHealthResponse = GetRunnerHealthResponses[keyof GetRunnerHealthResponses];
-
-export type RequestRunnerHealthcheckData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}/healthcheck';
-};
-
-export type RequestRunnerHealthcheckErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * RUNNER_UNAVAILABLE: the runner is not connected
-     */
-    409: ApiError;
-};
-
-export type RequestRunnerHealthcheckError = RequestRunnerHealthcheckErrors[keyof RequestRunnerHealthcheckErrors];
-
-export type RequestRunnerHealthcheckResponses = {
-    /**
-     * Sent, or one is pending already; its requestId
-     */
-    202: HealthCheckRequested;
-};
-
-export type RequestRunnerHealthcheckResponse = RequestRunnerHealthcheckResponses[keyof RequestRunnerHealthcheckResponses];
-
-export type RequestRunnerLoginCheckData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}/login-check';
-};
-
-export type RequestRunnerLoginCheckErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * RUNNER_UNAVAILABLE: the runner is not connected
-     */
-    409: ApiError;
-};
-
-export type RequestRunnerLoginCheckError = RequestRunnerLoginCheckErrors[keyof RequestRunnerLoginCheckErrors];
-
-export type RequestRunnerLoginCheckResponses = {
-    /**
-     * Sent
-     */
-    202: unknown;
-};
-
-export type PostWorkspacesApiRunnersByIdRegisterData = {
-    body: RegisterRunnerRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}/register';
-};
-
-export type PostWorkspacesApiRunnersByIdRegisterErrors = {
-    /**
-     * Capabilities that are not a JSON object
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * The token is not this runner's
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner is already registered
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the runner's client
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
-     */
-    503: unknown;
-};
-
-export type PostWorkspacesApiRunnersByIdRegisterResponses = {
-    /**
-     * The runner's own client and where to use it
-     */
-    200: RegisteredRunner;
-};
-
-export type PostWorkspacesApiRunnersByIdRegisterResponse = PostWorkspacesApiRunnersByIdRegisterResponses[keyof PostWorkspacesApiRunnersByIdRegisterResponses];
-
-export type RotateRunnerRegistrationTokenData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/workspaces/api/runners/{id}/registration-token';
-};
-
-export type RotateRunnerRegistrationTokenErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such runner
-     */
-    404: unknown;
-    /**
-     * The runner is already registered
-     */
-    409: unknown;
-    /**
-     * qits-idp refused the registration token
-     */
-    502: unknown;
-    /**
-     * This deployment commissions nothing, or RUNNER_PLANE_UNCONFIGURED
-     */
-    503: unknown;
-};
-
-export type RotateRunnerRegistrationTokenResponses = {
-    /**
-     * The runner, its new registration token and the install line carrying it
-     */
-    200: RunnerRegistrationDto;
-};
-
-export type RotateRunnerRegistrationTokenResponse = RotateRunnerRegistrationTokenResponses[keyof RotateRunnerRegistrationTokenResponses];
 
 export type ListOpenWorkspacesData = {
     body?: never;
@@ -2356,7 +1874,7 @@ export type GetWorkspaceActiveProcessResponses = {
 
 export type GetWorkspaceActiveProcessResponse = GetWorkspaceActiveProcessResponses[keyof GetWorkspaceActiveProcessResponses];
 
-export type PostWorkspacesApiWorkspacesByIdDeleteContainerData = {
+export type DeleteWorkspaceContainerData = {
     body?: never;
     path: {
         id: number;
@@ -2365,27 +1883,29 @@ export type PostWorkspacesApiWorkspacesByIdDeleteContainerData = {
     url: '/workspaces/api/workspaces/{id}/delete-container';
 };
 
-export type PostWorkspacesApiWorkspacesByIdDeleteContainerErrors = {
+export type DeleteWorkspaceContainerErrors = {
     /**
      * Not Authorized
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the workspace's project (a workspace of no resolvable project counts as another's). Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
 };
 
-export type PostWorkspacesApiWorkspacesByIdDeleteContainerResponses = {
+export type DeleteWorkspaceContainerError = DeleteWorkspaceContainerErrors[keyof DeleteWorkspaceContainerErrors];
+
+export type DeleteWorkspaceContainerResponses = {
     /**
-     * OK
+     * Deleted; the refreshed workspace.
      */
     200: WorkspaceDto;
 };
 
-export type PostWorkspacesApiWorkspacesByIdDeleteContainerResponse = PostWorkspacesApiWorkspacesByIdDeleteContainerResponses[keyof PostWorkspacesApiWorkspacesByIdDeleteContainerResponses];
+export type DeleteWorkspaceContainerResponse = DeleteWorkspaceContainerResponses[keyof DeleteWorkspaceContainerResponses];
 
-export type PostWorkspacesApiWorkspacesByIdDiscardData = {
+export type DiscardWorkspaceData = {
     body: DiscardWorkspaceRequest;
     path: {
         id: number;
@@ -2396,7 +1916,7 @@ export type PostWorkspacesApiWorkspacesByIdDiscardData = {
     url: '/workspaces/api/workspaces/{id}/discard';
 };
 
-export type PostWorkspacesApiWorkspacesByIdDiscardErrors = {
+export type DiscardWorkspaceErrors = {
     /**
      * Bad Request
      */
@@ -2406,19 +1926,21 @@ export type PostWorkspacesApiWorkspacesByIdDiscardErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` caller whose token's `project` claim is not the workspace's project, or a workspace that stands on a branch: discarding it deletes that branch on the git host, a push the delivery desk may not make. Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
 };
 
-export type PostWorkspacesApiWorkspacesByIdDiscardResponses = {
+export type DiscardWorkspaceError = DiscardWorkspaceErrors[keyof DiscardWorkspaceErrors];
+
+export type DiscardWorkspaceResponses = {
     /**
-     * OK
+     * Discarded.
      */
     200: Response8;
 };
 
-export type PostWorkspacesApiWorkspacesByIdDiscardResponse = PostWorkspacesApiWorkspacesByIdDiscardResponses[keyof PostWorkspacesApiWorkspacesByIdDiscardResponses];
+export type DiscardWorkspaceResponse = DiscardWorkspaceResponses[keyof DiscardWorkspaceResponses];
 
 export type EnsureWorkspaceContainerData = {
     body?: never;
@@ -2435,9 +1957,9 @@ export type EnsureWorkspaceContainerErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the workspace's project (a workspace of no resolvable project counts as another's). Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
     /**
      * The workspace was stopped while it was starting and that start's process is still open. `code` is WORKSPACE_STOPPED_DURING_START and the message names the process; retry once it has ended.
      */
@@ -2470,14 +1992,16 @@ export type RecreateWorkspaceContainerErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the workspace's project (a workspace of no resolvable project counts as another's). Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
 };
+
+export type RecreateWorkspaceContainerError = RecreateWorkspaceContainerErrors[keyof RecreateWorkspaceContainerErrors];
 
 export type RecreateWorkspaceContainerResponses = {
     /**
-     * OK
+     * The recreate this call started.
      */
     200: Response4;
 };
@@ -2499,14 +2023,16 @@ export type StopWorkspaceContainerErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the workspace's project (a workspace of no resolvable project counts as another's). Nothing was changed.
      */
-    403: unknown;
+    403: ApiError;
 };
+
+export type StopWorkspaceContainerError = StopWorkspaceContainerErrors[keyof StopWorkspaceContainerErrors];
 
 export type StopWorkspaceContainerResponses = {
     /**
-     * OK
+     * Stopped; the refreshed workspace.
      */
     200: WorkspaceDto;
 };

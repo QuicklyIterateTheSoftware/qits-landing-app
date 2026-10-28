@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CancelAgentWaitData, CancelAgentWaitResponse, CreateAgentData, CreateAgentResponse, CreateAgentWaitData, CreateAgentWaitResponse, CreateRunnerData, CreateRunnerResponse, DeleteAgentPromptDraftData, DeleteAgentPromptDraftResponse, DeleteRunnerData, DeleteRunnerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DispatchAgentData, DispatchAgentResponse, EnsureWorkspaceContainerData, EnsureWorkspaceContainerResponse, GetAgentData, GetAgentPromptDraftData, GetAgentPromptDraftResponse, GetAgentResponse, GetRunnerHealthData, GetRunnerHealthResponse, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessResponse, GetWorkspaceAgentTranscriptData, GetWorkspaceAgentTranscriptResponse, GetWorkspaceData, GetWorkspaceHistoryData, GetWorkspaceHistoryResponse, GetWorkspaceResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, GetWorkspacesApiRunnersByIdData, GetWorkspacesApiRunnersByIdResponse, GetWorkspacesApiRunnersInstallShData, GetWorkspacesApiRunnersInstallShResponse, GreenlightRunnerData, GreenlightRunnerResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentsResponse, ListAgentWaitsData, ListAgentWaitsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListRunnersData, ListRunnersResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, ListWorkspaceAgentSessionsData, ListWorkspaceAgentSessionsResponse, ListWorkspacesData, ListWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchRunnerData, PatchRunnerResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PostWorkspacesApiRunnersByIdRegisterData, PostWorkspacesApiRunnersByIdRegisterResponse, PostWorkspacesApiWorkspacesByIdDeleteContainerData, PostWorkspacesApiWorkspacesByIdDeleteContainerResponse, PostWorkspacesApiWorkspacesByIdDiscardData, PostWorkspacesApiWorkspacesByIdDiscardResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, RecreateWorkspaceContainerData, RecreateWorkspaceContainerResponse, RequestRunnerHealthcheckData, RequestRunnerHealthcheckResponse, RequestRunnerLoginCheckData, ResolveReleasedBranchData, ResolveReleasedBranchResponse, RotateRunnerRegistrationTokenData, RotateRunnerRegistrationTokenResponse, SaveAgentPromptDraftData, SaveAgentPromptDraftResponse, StopWorkspaceContainerData, StopWorkspaceContainerResponse, SweepBranchesData, SweepBranchesResponse } from '../types.gen';
+import type { CancelAgentWaitData, CancelAgentWaitResponse, CancelDeskWaitData, CancelDeskWaitResponse, CreateAgentData, CreateAgentResponse, CreateAgentWaitData, CreateAgentWaitResponse, CreateDeskWaitData, CreateDeskWaitResponse, DeleteAgentPromptDraftData, DeleteAgentPromptDraftResponse, DeleteWorkspaceContainerData, DeleteWorkspaceContainerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DiscardWorkspaceData, DiscardWorkspaceResponse, DispatchAgentData, DispatchAgentResponse, EnsureWorkspaceContainerData, EnsureWorkspaceContainerResponse, GetAgentData, GetAgentPromptDraftData, GetAgentPromptDraftResponse, GetAgentResponse, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessResponse, GetWorkspaceAgentTranscriptData, GetWorkspaceAgentTranscriptResponse, GetWorkspaceData, GetWorkspaceHistoryData, GetWorkspaceHistoryResponse, GetWorkspaceResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentsResponse, ListAgentWaitsData, ListAgentWaitsResponse, ListDeskWaitsData, ListDeskWaitsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, ListWorkspaceAgentSessionsData, ListWorkspaceAgentSessionsResponse, ListWorkspacesData, ListWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, RecreateWorkspaceContainerData, RecreateWorkspaceContainerResponse, ResolveReleasedBranchData, ResolveReleasedBranchResponse, SaveAgentPromptDraftData, SaveAgentPromptDraftResponse, StopWorkspaceContainerData, StopWorkspaceContainerResponse, SweepBranchesData, SweepBranchesResponse } from '../types.gen';
 
 /**
  * Dispatch
@@ -58,6 +58,8 @@ export const listAgentDispatchReferencesRequest = <ThrowOnError extends boolean 
 
 /**
  * Agents, newest first, each filter optional
+ *
+ * Each agent carries its OPEN waits (`waits`, oldest first, with what each waits on) and what it needs a person for (`attention`, null when nothing).
  */
 export const listAgentsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListAgentsData, ThrowOnError>): HttpRequest<ListAgentsResponse> => (options?.client ?? client).requestOptions<ListAgentsResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -237,6 +239,36 @@ export const resolveReleasedBranchRequest = <ThrowOnError extends boolean = fals
 });
 
 /**
+ * The project desk's waits, optionally of one state
+ */
+export const listDeskWaitsRequest = <ThrowOnError extends boolean = false>(options: Options<ListDeskWaitsData, ThrowOnError>): HttpRequest<ListDeskWaitsResponse> => (options?.client ?? client).requestOptions<ListDeskWaitsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/desks/{projectId}/waits',
+    ...options
+});
+
+/**
+ * Declare what the project's desk waits on
+ */
+export const createDeskWaitRequest = <ThrowOnError extends boolean = false>(options: Options<CreateDeskWaitData, ThrowOnError>): HttpRequest<CreateDeskWaitResponse> => (options?.client ?? client).requestOptions<CreateDeskWaitResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/desks/{projectId}/waits',
+    ...options
+});
+
+/**
+ * Cancel one of the project desk's waits
+ */
+export const cancelDeskWaitRequest = <ThrowOnError extends boolean = false>(options: Options<CancelDeskWaitData, ThrowOnError>): HttpRequest<CancelDeskWaitResponse> => (options?.client ?? client).requestOptions<CancelDeskWaitResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/workspaces/api/desks/{projectId}/waits/{waitId}',
+    ...options
+});
+
+/**
  * Sweep Branches
  */
 export const sweepBranchesRequest = <ThrowOnError extends boolean = false>(options: Options<SweepBranchesData, ThrowOnError>): HttpRequest<SweepBranchesResponse> => (options?.client ?? client).requestOptions<SweepBranchesResponse, ThrowOnError>({
@@ -307,126 +339,6 @@ export const listLaunchPinsRequest = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
- * Every workspace runner, by name, with its connection, counts and login
- */
-export const listRunnersRequest = <ThrowOnError extends boolean = false>(options?: Options<ListRunnersData, ThrowOnError>): HttpRequest<ListRunnersResponse> => (options?.client ?? client).requestOptions<ListRunnersResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/runners',
-    ...options
-});
-
-/**
- * Declare a workspace runner; answers its install line, once
- */
-export const createRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<CreateRunnerData, ThrowOnError>): HttpRequest<CreateRunnerResponse> => (options?.client ?? client).requestOptions<CreateRunnerResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/runners',
-    ...options
-});
-
-/**
- * The generic workspace runner install script the install line pipes to sh
- */
-export const getWorkspacesApiRunnersInstallShRequest = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiRunnersInstallShData, ThrowOnError>): HttpRequest<GetWorkspacesApiRunnersInstallShResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiRunnersInstallShResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/runners/install.sh',
-    ...options
-});
-
-/**
- * Decommission a workspace runner and give its credentials back
- */
-export const deleteRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteRunnerData, ThrowOnError>): HttpRequest<DeleteRunnerResponse> => (options?.client ?? client).requestOptions<DeleteRunnerResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/workspaces/api/runners/{id}',
-    ...options
-});
-
-/**
- * One workspace runner
- */
-export const getWorkspacesApiRunnersByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiRunnersByIdData, ThrowOnError>): HttpRequest<GetWorkspacesApiRunnersByIdResponse> => (options?.client ?? client).requestOptions<GetWorkspacesApiRunnersByIdResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/runners/{id}',
-    ...options
-});
-
-/**
- * Change a workspace runner's slots, description or workspace memory limits
- */
-export const patchRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<PatchRunnerData, ThrowOnError>): HttpRequest<PatchRunnerResponse> => (options?.client ?? client).requestOptions<PatchRunnerResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PATCH',
-    url: '/workspaces/api/runners/{id}',
-    ...options
-});
-
-/**
- * Lift a workspace runner's quarantine
- */
-export const greenlightRunnerRequest = <ThrowOnError extends boolean = false>(options: Options<GreenlightRunnerData, ThrowOnError>): HttpRequest<GreenlightRunnerResponse> => (options?.client ?? client).requestOptions<GreenlightRunnerResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/runners/{id}/greenlight',
-    ...options
-});
-
-/**
- * A workspace runner's newest health check, every check's data included
- */
-export const getRunnerHealthRequest = <ThrowOnError extends boolean = false>(options: Options<GetRunnerHealthData, ThrowOnError>): HttpRequest<GetRunnerHealthResponse> => (options?.client ?? client).requestOptions<GetRunnerHealthResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/workspaces/api/runners/{id}/health',
-    ...options
-});
-
-/**
- * Ask a connected workspace runner for a health check
- */
-export const requestRunnerHealthcheckRequest = <ThrowOnError extends boolean = false>(options: Options<RequestRunnerHealthcheckData, ThrowOnError>): HttpRequest<RequestRunnerHealthcheckResponse> => (options?.client ?? client).requestOptions<RequestRunnerHealthcheckResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/runners/{id}/healthcheck',
-    ...options
-});
-
-/**
- * Ask a connected workspace runner to re-check its node's agent login
- */
-export const requestRunnerLoginCheckRequest = <ThrowOnError extends boolean = false>(options: Options<RequestRunnerLoginCheckData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/runners/{id}/login-check',
-    ...options
-});
-
-/**
- * Register a workspace runner with its registration token; answers its client
- */
-export const postWorkspacesApiRunnersByIdRegisterRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiRunnersByIdRegisterData, ThrowOnError>): HttpRequest<PostWorkspacesApiRunnersByIdRegisterResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiRunnersByIdRegisterResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/runners/{id}/register',
-    ...options
-});
-
-/**
- * Replace a workspace runner's registration token; answers a new install line
- */
-export const rotateRunnerRegistrationTokenRequest = <ThrowOnError extends boolean = false>(options: Options<RotateRunnerRegistrationTokenData, ThrowOnError>): HttpRequest<RotateRunnerRegistrationTokenResponse> => (options?.client ?? client).requestOptions<RotateRunnerRegistrationTokenResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/workspaces/api/runners/{id}/registration-token',
-    ...options
-});
-
-/**
  * Open
  */
 export const listOpenWorkspacesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListOpenWorkspacesData, ThrowOnError>): HttpRequest<ListOpenWorkspacesResponse> => (options?.client ?? client).requestOptions<ListOpenWorkspacesResponse, ThrowOnError>({
@@ -479,7 +391,7 @@ export const getWorkspaceActiveProcessRequest = <ThrowOnError extends boolean = 
 /**
  * Delete Container
  */
-export const postWorkspacesApiWorkspacesByIdDeleteContainerRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdDeleteContainerData, ThrowOnError>): HttpRequest<PostWorkspacesApiWorkspacesByIdDeleteContainerResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiWorkspacesByIdDeleteContainerResponse, ThrowOnError>({
+export const deleteWorkspaceContainerRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspaceContainerData, ThrowOnError>): HttpRequest<DeleteWorkspaceContainerResponse> => (options?.client ?? client).requestOptions<DeleteWorkspaceContainerResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/workspaces/{id}/delete-container',
@@ -489,7 +401,7 @@ export const postWorkspacesApiWorkspacesByIdDeleteContainerRequest = <ThrowOnErr
 /**
  * Discard
  */
-export const postWorkspacesApiWorkspacesByIdDiscardRequest = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdDiscardData, ThrowOnError>): HttpRequest<PostWorkspacesApiWorkspacesByIdDiscardResponse> => (options?.client ?? client).requestOptions<PostWorkspacesApiWorkspacesByIdDiscardResponse, ThrowOnError>({
+export const discardWorkspaceRequest = <ThrowOnError extends boolean = false>(options: Options<DiscardWorkspaceData, ThrowOnError>): HttpRequest<DiscardWorkspaceResponse> => (options?.client ?? client).requestOptions<DiscardWorkspaceResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/workspaces/{id}/discard',
@@ -568,6 +480,8 @@ export const listAgentDispatchReferencesResource = <ThrowOnError extends boolean
 
 /**
  * Agents, newest first, each filter optional
+ *
+ * Each agent carries its OPEN waits (`waits`, oldest first, with what each waits on) and what it needs a person for (`attention`, null when nothing).
  */
 export const listAgentsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListAgentsData, ThrowOnError> | undefined) => httpResource<ListAgentsResponse>(() => {
     const opts = options ? options() : undefined;
@@ -711,6 +625,30 @@ export const resolveReleasedBranchResource = <ThrowOnError extends boolean = fal
 });
 
 /**
+ * The project desk's waits, optionally of one state
+ */
+export const listDeskWaitsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListDeskWaitsData, ThrowOnError> | undefined) => httpResource<ListDeskWaitsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listDeskWaitsRequest(opts) : undefined;
+});
+
+/**
+ * Declare what the project's desk waits on
+ */
+export const createDeskWaitResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateDeskWaitData, ThrowOnError> | undefined) => httpResource<CreateDeskWaitResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createDeskWaitRequest(opts) : undefined;
+});
+
+/**
+ * Cancel one of the project desk's waits
+ */
+export const cancelDeskWaitResource = <ThrowOnError extends boolean = false>(options: () => Options<CancelDeskWaitData, ThrowOnError> | undefined) => httpResource<CancelDeskWaitResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? cancelDeskWaitRequest(opts) : undefined;
+});
+
+/**
  * Sweep Branches
  */
 export const sweepBranchesResource = <ThrowOnError extends boolean = false>(options: () => Options<SweepBranchesData, ThrowOnError> | undefined) => httpResource<SweepBranchesResponse>(() => {
@@ -767,102 +705,6 @@ export const listLaunchPinsResource = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
- * Every workspace runner, by name, with its connection, counts and login
- */
-export const listRunnersResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListRunnersData, ThrowOnError> | undefined) => httpResource<ListRunnersResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? listRunnersRequest(opts) : undefined;
-});
-
-/**
- * Declare a workspace runner; answers its install line, once
- */
-export const createRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateRunnerData, ThrowOnError> | undefined) => httpResource<CreateRunnerResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? createRunnerRequest(opts) : undefined;
-});
-
-/**
- * The generic workspace runner install script the install line pipes to sh
- */
-export const getWorkspacesApiRunnersInstallShResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetWorkspacesApiRunnersInstallShData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiRunnersInstallShResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiRunnersInstallShRequest(opts) : undefined;
-});
-
-/**
- * Decommission a workspace runner and give its credentials back
- */
-export const deleteRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteRunnerData, ThrowOnError> | undefined) => httpResource<DeleteRunnerResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? deleteRunnerRequest(opts) : undefined;
-});
-
-/**
- * One workspace runner
- */
-export const getWorkspacesApiRunnersByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspacesApiRunnersByIdData, ThrowOnError> | undefined) => httpResource<GetWorkspacesApiRunnersByIdResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkspacesApiRunnersByIdRequest(opts) : undefined;
-});
-
-/**
- * Change a workspace runner's slots, description or workspace memory limits
- */
-export const patchRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchRunnerData, ThrowOnError> | undefined) => httpResource<PatchRunnerResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? patchRunnerRequest(opts) : undefined;
-});
-
-/**
- * Lift a workspace runner's quarantine
- */
-export const greenlightRunnerResource = <ThrowOnError extends boolean = false>(options: () => Options<GreenlightRunnerData, ThrowOnError> | undefined) => httpResource<GreenlightRunnerResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? greenlightRunnerRequest(opts) : undefined;
-});
-
-/**
- * A workspace runner's newest health check, every check's data included
- */
-export const getRunnerHealthResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRunnerHealthData, ThrowOnError> | undefined) => httpResource<GetRunnerHealthResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getRunnerHealthRequest(opts) : undefined;
-});
-
-/**
- * Ask a connected workspace runner for a health check
- */
-export const requestRunnerHealthcheckResource = <ThrowOnError extends boolean = false>(options: () => Options<RequestRunnerHealthcheckData, ThrowOnError> | undefined) => httpResource<RequestRunnerHealthcheckResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? requestRunnerHealthcheckRequest(opts) : undefined;
-});
-
-/**
- * Ask a connected workspace runner to re-check its node's agent login
- */
-export const requestRunnerLoginCheckResource = <ThrowOnError extends boolean = false>(options: () => Options<RequestRunnerLoginCheckData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? requestRunnerLoginCheckRequest(opts) : undefined;
-});
-
-/**
- * Register a workspace runner with its registration token; answers its client
- */
-export const postWorkspacesApiRunnersByIdRegisterResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiRunnersByIdRegisterData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiRunnersByIdRegisterResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiRunnersByIdRegisterRequest(opts) : undefined;
-});
-
-/**
- * Replace a workspace runner's registration token; answers a new install line
- */
-export const rotateRunnerRegistrationTokenResource = <ThrowOnError extends boolean = false>(options: () => Options<RotateRunnerRegistrationTokenData, ThrowOnError> | undefined) => httpResource<RotateRunnerRegistrationTokenResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? rotateRunnerRegistrationTokenRequest(opts) : undefined;
-});
-
-/**
  * Open
  */
 export const listOpenWorkspacesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListOpenWorkspacesData, ThrowOnError> | undefined) => httpResource<ListOpenWorkspacesResponse>(() => {
@@ -905,17 +747,17 @@ export const getWorkspaceActiveProcessResource = <ThrowOnError extends boolean =
 /**
  * Delete Container
  */
-export const postWorkspacesApiWorkspacesByIdDeleteContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiWorkspacesByIdDeleteContainerData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiWorkspacesByIdDeleteContainerResponse>(() => {
+export const deleteWorkspaceContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkspaceContainerData, ThrowOnError> | undefined) => httpResource<DeleteWorkspaceContainerResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiWorkspacesByIdDeleteContainerRequest(opts) : undefined;
+    return opts ? deleteWorkspaceContainerRequest(opts) : undefined;
 });
 
 /**
  * Discard
  */
-export const postWorkspacesApiWorkspacesByIdDiscardResource = <ThrowOnError extends boolean = false>(options: () => Options<PostWorkspacesApiWorkspacesByIdDiscardData, ThrowOnError> | undefined) => httpResource<PostWorkspacesApiWorkspacesByIdDiscardResponse>(() => {
+export const discardWorkspaceResource = <ThrowOnError extends boolean = false>(options: () => Options<DiscardWorkspaceData, ThrowOnError> | undefined) => httpResource<DiscardWorkspaceResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postWorkspacesApiWorkspacesByIdDiscardRequest(opts) : undefined;
+    return opts ? discardWorkspaceRequest(opts) : undefined;
 });
 
 /**

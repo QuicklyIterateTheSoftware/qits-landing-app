@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CancelAgentWaitData, CancelAgentWaitErrors, CancelAgentWaitResponses, CreateAgentData, CreateAgentErrors, CreateAgentResponses, CreateAgentWaitData, CreateAgentWaitErrors, CreateAgentWaitResponses, CreateRunnerData, CreateRunnerErrors, CreateRunnerResponses, DeleteAgentPromptDraftData, DeleteAgentPromptDraftErrors, DeleteAgentPromptDraftResponses, DeleteRunnerData, DeleteRunnerErrors, DeleteRunnerResponses, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses, DeliverAgentTurnData, DeliverAgentTurnErrors, DeliverAgentTurnResponses, DiscardAgentData, DiscardAgentErrors, DiscardAgentResponses, DispatchAgentData, DispatchAgentErrors, DispatchAgentResponses, EnsureWorkspaceContainerData, EnsureWorkspaceContainerErrors, EnsureWorkspaceContainerResponses, GetAgentData, GetAgentErrors, GetAgentPromptDraftData, GetAgentPromptDraftErrors, GetAgentPromptDraftResponses, GetAgentResponses, GetRunnerHealthData, GetRunnerHealthErrors, GetRunnerHealthResponses, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessErrors, GetWorkspaceActiveProcessResponses, GetWorkspaceAgentTranscriptData, GetWorkspaceAgentTranscriptErrors, GetWorkspaceAgentTranscriptResponses, GetWorkspaceData, GetWorkspaceErrors, GetWorkspaceHistoryData, GetWorkspaceHistoryErrors, GetWorkspaceHistoryResponses, GetWorkspaceResponses, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentErrors, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentResponses, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsErrors, GetWorkspacesApiAgentsByIdPromptAttachmentsResponses, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryErrors, GetWorkspacesApiHistoryResponses, GetWorkspacesApiRunnersByIdData, GetWorkspacesApiRunnersByIdErrors, GetWorkspacesApiRunnersByIdResponses, GetWorkspacesApiRunnersInstallShData, GetWorkspacesApiRunnersInstallShErrors, GetWorkspacesApiRunnersInstallShResponses, GreenlightRunnerData, GreenlightRunnerErrors, GreenlightRunnerResponses, ListAgentDispatchReferencesData, ListAgentDispatchReferencesErrors, ListAgentDispatchReferencesResponses, ListAgentsData, ListAgentsErrors, ListAgentsResponses, ListAgentWaitsData, ListAgentWaitsErrors, ListAgentWaitsResponses, ListLaunchPinsData, ListLaunchPinsErrors, ListLaunchPinsResponses, ListOpenWorkspacesData, ListOpenWorkspacesErrors, ListOpenWorkspacesResponses, ListRunnersData, ListRunnersErrors, ListRunnersResponses, ListWorkItemWorkspacesData, ListWorkItemWorkspacesErrors, ListWorkItemWorkspacesResponses, ListWorkspaceAgentSessionsData, ListWorkspaceAgentSessionsErrors, ListWorkspaceAgentSessionsResponses, ListWorkspacesData, ListWorkspacesErrors, ListWorkspacesResponses, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedErrors, MarkAgentDispatchBlockedResponses, MarkAgentDispatchEntityData, MarkAgentDispatchEntityErrors, MarkAgentDispatchEntityResponses, PatchRunnerData, PatchRunnerErrors, PatchRunnerResponses, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdErrors, PatchWorkspacesApiHistoryByIdResponses, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsErrors, PostWorkspacesApiAgentsByIdPromptAttachmentsResponses, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupErrors, PostWorkspacesApiBranchesCleanupResponses, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeErrors, PostWorkspacesApiBranchesMergeResponses, PostWorkspacesApiRunnersByIdRegisterData, PostWorkspacesApiRunnersByIdRegisterErrors, PostWorkspacesApiRunnersByIdRegisterResponses, PostWorkspacesApiWorkspacesByIdDeleteContainerData, PostWorkspacesApiWorkspacesByIdDeleteContainerErrors, PostWorkspacesApiWorkspacesByIdDeleteContainerResponses, PostWorkspacesApiWorkspacesByIdDiscardData, PostWorkspacesApiWorkspacesByIdDiscardErrors, PostWorkspacesApiWorkspacesByIdDiscardResponses, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses, RecreateWorkspaceContainerData, RecreateWorkspaceContainerErrors, RecreateWorkspaceContainerResponses, RequestRunnerHealthcheckData, RequestRunnerHealthcheckErrors, RequestRunnerHealthcheckResponses, RequestRunnerLoginCheckData, RequestRunnerLoginCheckErrors, RequestRunnerLoginCheckResponses, ResolveReleasedBranchData, ResolveReleasedBranchErrors, ResolveReleasedBranchResponses, RotateRunnerRegistrationTokenData, RotateRunnerRegistrationTokenErrors, RotateRunnerRegistrationTokenResponses, SaveAgentPromptDraftData, SaveAgentPromptDraftErrors, SaveAgentPromptDraftResponses, StopWorkspaceContainerData, StopWorkspaceContainerErrors, StopWorkspaceContainerResponses, SweepBranchesData, SweepBranchesErrors, SweepBranchesResponses } from './types.gen';
+import type { CancelAgentWaitData, CancelAgentWaitErrors, CancelAgentWaitResponses, CancelDeskWaitData, CancelDeskWaitErrors, CancelDeskWaitResponses, CreateAgentData, CreateAgentErrors, CreateAgentResponses, CreateAgentWaitData, CreateAgentWaitErrors, CreateAgentWaitResponses, CreateDeskWaitData, CreateDeskWaitErrors, CreateDeskWaitResponses, DeleteAgentPromptDraftData, DeleteAgentPromptDraftErrors, DeleteAgentPromptDraftResponses, DeleteWorkspaceContainerData, DeleteWorkspaceContainerErrors, DeleteWorkspaceContainerResponses, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses, DeliverAgentTurnData, DeliverAgentTurnErrors, DeliverAgentTurnResponses, DiscardAgentData, DiscardAgentErrors, DiscardAgentResponses, DiscardWorkspaceData, DiscardWorkspaceErrors, DiscardWorkspaceResponses, DispatchAgentData, DispatchAgentErrors, DispatchAgentResponses, EnsureWorkspaceContainerData, EnsureWorkspaceContainerErrors, EnsureWorkspaceContainerResponses, GetAgentData, GetAgentErrors, GetAgentPromptDraftData, GetAgentPromptDraftErrors, GetAgentPromptDraftResponses, GetAgentResponses, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessErrors, GetWorkspaceActiveProcessResponses, GetWorkspaceAgentTranscriptData, GetWorkspaceAgentTranscriptErrors, GetWorkspaceAgentTranscriptResponses, GetWorkspaceData, GetWorkspaceErrors, GetWorkspaceHistoryData, GetWorkspaceHistoryErrors, GetWorkspaceHistoryResponses, GetWorkspaceResponses, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentErrors, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentResponses, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsErrors, GetWorkspacesApiAgentsByIdPromptAttachmentsResponses, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryErrors, GetWorkspacesApiHistoryResponses, ListAgentDispatchReferencesData, ListAgentDispatchReferencesErrors, ListAgentDispatchReferencesResponses, ListAgentsData, ListAgentsErrors, ListAgentsResponses, ListAgentWaitsData, ListAgentWaitsErrors, ListAgentWaitsResponses, ListDeskWaitsData, ListDeskWaitsErrors, ListDeskWaitsResponses, ListLaunchPinsData, ListLaunchPinsErrors, ListLaunchPinsResponses, ListOpenWorkspacesData, ListOpenWorkspacesErrors, ListOpenWorkspacesResponses, ListWorkItemWorkspacesData, ListWorkItemWorkspacesErrors, ListWorkItemWorkspacesResponses, ListWorkspaceAgentSessionsData, ListWorkspaceAgentSessionsErrors, ListWorkspaceAgentSessionsResponses, ListWorkspacesData, ListWorkspacesErrors, ListWorkspacesResponses, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedErrors, MarkAgentDispatchBlockedResponses, MarkAgentDispatchEntityData, MarkAgentDispatchEntityErrors, MarkAgentDispatchEntityResponses, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdErrors, PatchWorkspacesApiHistoryByIdResponses, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsErrors, PostWorkspacesApiAgentsByIdPromptAttachmentsResponses, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupErrors, PostWorkspacesApiBranchesCleanupResponses, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeErrors, PostWorkspacesApiBranchesMergeResponses, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdErrors, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses, RecreateWorkspaceContainerData, RecreateWorkspaceContainerErrors, RecreateWorkspaceContainerResponses, ResolveReleasedBranchData, ResolveReleasedBranchErrors, ResolveReleasedBranchResponses, SaveAgentPromptDraftData, SaveAgentPromptDraftErrors, SaveAgentPromptDraftResponses, StopWorkspaceContainerData, StopWorkspaceContainerErrors, StopWorkspaceContainerResponses, SweepBranchesData, SweepBranchesErrors, SweepBranchesResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -81,6 +81,8 @@ export const listAgentDispatchReferences = <ThrowOnError extends boolean = false
 
 /**
  * Agents, newest first, each filter optional
+ *
+ * Each agent carries its OPEN waits (`waits`, oldest first, with what each waits on) and what it needs a person for (`attention`, null when nothing).
  */
 export const listAgents = <ThrowOnError extends boolean = false>(options?: Options<ListAgentsData, ThrowOnError>): RequestResult<ListAgentsResponses, ListAgentsErrors, ThrowOnError> => (options?.client ?? client).get<ListAgentsResponses, ListAgentsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -278,6 +280,37 @@ export const resolveReleasedBranch = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
+ * The project desk's waits, optionally of one state
+ */
+export const listDeskWaits = <ThrowOnError extends boolean = false>(options: Options<ListDeskWaitsData, ThrowOnError>): RequestResult<ListDeskWaitsResponses, ListDeskWaitsErrors, ThrowOnError> => (options.client ?? client).get<ListDeskWaitsResponses, ListDeskWaitsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/workspaces/api/desks/{projectId}/waits',
+    ...options
+});
+
+/**
+ * Declare what the project's desk waits on
+ */
+export const createDeskWait = <ThrowOnError extends boolean = false>(options: Options<CreateDeskWaitData, ThrowOnError>): RequestResult<CreateDeskWaitResponses, CreateDeskWaitErrors, ThrowOnError> => (options.client ?? client).post<CreateDeskWaitResponses, CreateDeskWaitErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/workspaces/api/desks/{projectId}/waits',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Cancel one of the project desk's waits
+ */
+export const cancelDeskWait = <ThrowOnError extends boolean = false>(options: Options<CancelDeskWaitData, ThrowOnError>): RequestResult<CancelDeskWaitResponses, CancelDeskWaitErrors, ThrowOnError> => (options.client ?? client).delete<CancelDeskWaitResponses, CancelDeskWaitErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/workspaces/api/desks/{projectId}/waits/{waitId}',
+    ...options
+});
+
+/**
  * Sweep Branches
  */
 export const sweepBranches = <ThrowOnError extends boolean = false>(options: Options<SweepBranchesData, ThrowOnError>): RequestResult<SweepBranchesResponses, SweepBranchesErrors, ThrowOnError> => (options.client ?? client).post<SweepBranchesResponses, SweepBranchesErrors, ThrowOnError>({
@@ -349,126 +382,6 @@ export const listLaunchPins = <ThrowOnError extends boolean = false>(options?: O
 });
 
 /**
- * Every workspace runner, by name, with its connection, counts and login
- */
-export const listRunners = <ThrowOnError extends boolean = false>(options?: Options<ListRunnersData, ThrowOnError>): RequestResult<ListRunnersResponses, ListRunnersErrors, ThrowOnError> => (options?.client ?? client).get<ListRunnersResponses, ListRunnersErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners',
-    ...options
-});
-
-/**
- * Declare a workspace runner; answers its install line, once
- */
-export const createRunner = <ThrowOnError extends boolean = false>(options: Options<CreateRunnerData, ThrowOnError>): RequestResult<CreateRunnerResponses, CreateRunnerErrors, ThrowOnError> => (options.client ?? client).post<CreateRunnerResponses, CreateRunnerErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * The generic workspace runner install script the install line pipes to sh
- */
-export const getWorkspacesApiRunnersInstallSh = <ThrowOnError extends boolean = false>(options?: Options<GetWorkspacesApiRunnersInstallShData, ThrowOnError>): RequestResult<GetWorkspacesApiRunnersInstallShResponses, GetWorkspacesApiRunnersInstallShErrors, ThrowOnError> => (options?.client ?? client).get<GetWorkspacesApiRunnersInstallShResponses, GetWorkspacesApiRunnersInstallShErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/install.sh',
-    ...options
-});
-
-/**
- * Decommission a workspace runner and give its credentials back
- */
-export const deleteRunner = <ThrowOnError extends boolean = false>(options: Options<DeleteRunnerData, ThrowOnError>): RequestResult<DeleteRunnerResponses, DeleteRunnerErrors, ThrowOnError> => (options.client ?? client).delete<DeleteRunnerResponses, DeleteRunnerErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}',
-    ...options
-});
-
-/**
- * One workspace runner
- */
-export const getWorkspacesApiRunnersById = <ThrowOnError extends boolean = false>(options: Options<GetWorkspacesApiRunnersByIdData, ThrowOnError>): RequestResult<GetWorkspacesApiRunnersByIdResponses, GetWorkspacesApiRunnersByIdErrors, ThrowOnError> => (options.client ?? client).get<GetWorkspacesApiRunnersByIdResponses, GetWorkspacesApiRunnersByIdErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}',
-    ...options
-});
-
-/**
- * Change a workspace runner's slots, description or workspace memory limits
- */
-export const patchRunner = <ThrowOnError extends boolean = false>(options: Options<PatchRunnerData, ThrowOnError>): RequestResult<PatchRunnerResponses, PatchRunnerErrors, ThrowOnError> => (options.client ?? client).patch<PatchRunnerResponses, PatchRunnerErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Lift a workspace runner's quarantine
- */
-export const greenlightRunner = <ThrowOnError extends boolean = false>(options: Options<GreenlightRunnerData, ThrowOnError>): RequestResult<GreenlightRunnerResponses, GreenlightRunnerErrors, ThrowOnError> => (options.client ?? client).post<GreenlightRunnerResponses, GreenlightRunnerErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}/greenlight',
-    ...options
-});
-
-/**
- * A workspace runner's newest health check, every check's data included
- */
-export const getRunnerHealth = <ThrowOnError extends boolean = false>(options: Options<GetRunnerHealthData, ThrowOnError>): RequestResult<GetRunnerHealthResponses, GetRunnerHealthErrors, ThrowOnError> => (options.client ?? client).get<GetRunnerHealthResponses, GetRunnerHealthErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}/health',
-    ...options
-});
-
-/**
- * Ask a connected workspace runner for a health check
- */
-export const requestRunnerHealthcheck = <ThrowOnError extends boolean = false>(options: Options<RequestRunnerHealthcheckData, ThrowOnError>): RequestResult<RequestRunnerHealthcheckResponses, RequestRunnerHealthcheckErrors, ThrowOnError> => (options.client ?? client).post<RequestRunnerHealthcheckResponses, RequestRunnerHealthcheckErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}/healthcheck',
-    ...options
-});
-
-/**
- * Ask a connected workspace runner to re-check its node's agent login
- */
-export const requestRunnerLoginCheck = <ThrowOnError extends boolean = false>(options: Options<RequestRunnerLoginCheckData, ThrowOnError>): RequestResult<RequestRunnerLoginCheckResponses, RequestRunnerLoginCheckErrors, ThrowOnError> => (options.client ?? client).post<RequestRunnerLoginCheckResponses, RequestRunnerLoginCheckErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}/login-check',
-    ...options
-});
-
-/**
- * Register a workspace runner with its registration token; answers its client
- */
-export const postWorkspacesApiRunnersByIdRegister = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiRunnersByIdRegisterData, ThrowOnError>): RequestResult<PostWorkspacesApiRunnersByIdRegisterResponses, PostWorkspacesApiRunnersByIdRegisterErrors, ThrowOnError> => (options.client ?? client).post<PostWorkspacesApiRunnersByIdRegisterResponses, PostWorkspacesApiRunnersByIdRegisterErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}/register',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Replace a workspace runner's registration token; answers a new install line
- */
-export const rotateRunnerRegistrationToken = <ThrowOnError extends boolean = false>(options: Options<RotateRunnerRegistrationTokenData, ThrowOnError>): RequestResult<RotateRunnerRegistrationTokenResponses, RotateRunnerRegistrationTokenErrors, ThrowOnError> => (options.client ?? client).post<RotateRunnerRegistrationTokenResponses, RotateRunnerRegistrationTokenErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/workspaces/api/runners/{id}/registration-token',
-    ...options
-});
-
-/**
  * Open
  */
 export const listOpenWorkspaces = <ThrowOnError extends boolean = false>(options?: Options<ListOpenWorkspacesData, ThrowOnError>): RequestResult<ListOpenWorkspacesResponses, ListOpenWorkspacesErrors, ThrowOnError> => (options?.client ?? client).get<ListOpenWorkspacesResponses, ListOpenWorkspacesErrors, ThrowOnError>({
@@ -516,7 +429,7 @@ export const getWorkspaceActiveProcess = <ThrowOnError extends boolean = false>(
 /**
  * Delete Container
  */
-export const postWorkspacesApiWorkspacesByIdDeleteContainer = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdDeleteContainerData, ThrowOnError>): RequestResult<PostWorkspacesApiWorkspacesByIdDeleteContainerResponses, PostWorkspacesApiWorkspacesByIdDeleteContainerErrors, ThrowOnError> => (options.client ?? client).post<PostWorkspacesApiWorkspacesByIdDeleteContainerResponses, PostWorkspacesApiWorkspacesByIdDeleteContainerErrors, ThrowOnError>({
+export const deleteWorkspaceContainer = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspaceContainerData, ThrowOnError>): RequestResult<DeleteWorkspaceContainerResponses, DeleteWorkspaceContainerErrors, ThrowOnError> => (options.client ?? client).post<DeleteWorkspaceContainerResponses, DeleteWorkspaceContainerErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/workspaces/api/workspaces/{id}/delete-container',
     ...options
@@ -525,7 +438,7 @@ export const postWorkspacesApiWorkspacesByIdDeleteContainer = <ThrowOnError exte
 /**
  * Discard
  */
-export const postWorkspacesApiWorkspacesByIdDiscard = <ThrowOnError extends boolean = false>(options: Options<PostWorkspacesApiWorkspacesByIdDiscardData, ThrowOnError>): RequestResult<PostWorkspacesApiWorkspacesByIdDiscardResponses, PostWorkspacesApiWorkspacesByIdDiscardErrors, ThrowOnError> => (options.client ?? client).post<PostWorkspacesApiWorkspacesByIdDiscardResponses, PostWorkspacesApiWorkspacesByIdDiscardErrors, ThrowOnError>({
+export const discardWorkspace = <ThrowOnError extends boolean = false>(options: Options<DiscardWorkspaceData, ThrowOnError>): RequestResult<DiscardWorkspaceResponses, DiscardWorkspaceErrors, ThrowOnError> => (options.client ?? client).post<DiscardWorkspaceResponses, DiscardWorkspaceErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/workspaces/api/workspaces/{id}/discard',
     ...options,

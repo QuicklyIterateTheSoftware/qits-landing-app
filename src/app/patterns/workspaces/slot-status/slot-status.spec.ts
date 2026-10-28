@@ -25,7 +25,7 @@ describe('SlotStatus', () => {
     const text = render(
       {
         runtimeStatus: 'RUNNING',
-        placement: 'RUNNER',
+        placement: 'TARGET',
         daemonConnectedAt: new Date(Date.now() - 5 * 60_000).toISOString(),
         daemonVersion: '1.2.3',
         daemonOutdated: true,
@@ -48,7 +48,7 @@ describe('SlotStatus', () => {
   });
 
   it('has no daemon to reach while no container runs, and names an admin slot', () => {
-    const text = render({ runtimeStatus: 'PROVISIONING', placement: 'RUNNER', admin: true }, 0);
+    const text = render({ runtimeStatus: 'PROVISIONING', placement: 'TARGET', admin: true }, 0);
     expect(text).toContain('No container running');
     expect(text).toContain('docker socket');
     expect(text).toContain('0 agents');
