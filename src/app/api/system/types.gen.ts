@@ -121,11 +121,17 @@ export type CreateTargetRequest = {
      */
     description?: string;
     /**
-     * Slots reserved per type; absent is 0
+     * Slots reserved per type; absent is 0. Not a limit: a type may use more while shared slots are free
+     */
+    reservations?: SlotCounts;
+    /**
+     * Deprecated: send reservations
+     *
+     * @deprecated
      */
     minimums?: SlotCounts;
     /**
-     * The slots total the install line carries, 0..1024 and at least the minimums' sum; absent is the minimums' sum. Not stored: the runner reports its total
+     * The slots total the install line carries, 0..1024 and at least the reservations' sum; absent is the reservations' sum. Not stored: the runner reports its total
      */
     slots?: number;
 };
@@ -339,7 +345,13 @@ export type PatchTargetRequest = {
      */
     description?: string;
     /**
-     * Absent members leave theirs
+     * Slots reserved per type; absent members leave theirs
+     */
+    reservations?: SlotCounts;
+    /**
+     * Deprecated: send reservations
+     *
+     * @deprecated
      */
     minimums?: SlotCounts;
 };
@@ -357,7 +369,7 @@ export type ReplaceLeaseSpecRequest = {
 
 export type RotateTargetRegistrationTokenRequest = {
     /**
-     * The slots total the new install line carries, 0..1024 and at least the minimums' sum; absent is the reported total, or the minimums' sum when that is more. Not stored: the runner reports its total
+     * The slots total the new install line carries, 0..1024 and at least the reservations' sum; absent is the reported total, or the reservations' sum when that is more. Not stored: the runner reports its total
      */
     slots?: number;
 };
@@ -439,6 +451,15 @@ export type Target = {
      * What the runner said in its last hello
      */
     slotsTotal?: number;
+    /**
+     * Slots reserved per type. Not a limit: a type may use more while shared (unreserved) slots are free
+     */
+    reservations?: SlotCounts;
+    /**
+     * Deprecated: read reservations. Same values
+     *
+     * @deprecated
+     */
     minimums?: SlotCounts;
     /**
      * GRANTED, RUNNING and ENDING leases per type
@@ -1266,7 +1287,7 @@ export type CreateTargetData = {
 
 export type CreateTargetErrors = {
     /**
-     * A malformed name, description or minimum, or slots outside 0..1024 or below the minimums' sum
+     * A malformed name, description or reservation, or slots outside 0..1024 or below the reservations' sum
      */
     400: unknown;
     /**
@@ -1412,7 +1433,7 @@ export type PatchTargetData = {
 
 export type PatchTargetErrors = {
     /**
-     * A malformed description or minimum
+     * A malformed description or reservation
      */
     400: unknown;
     /**
@@ -1428,7 +1449,7 @@ export type PatchTargetErrors = {
      */
     404: unknown;
     /**
-     * MINIMUMS_EXCEED_TOTAL: their sum is above the total the runner reports
+     * RESERVATIONS_EXCEED_TOTAL: their sum is above the total the runner reports
      */
     409: unknown;
 };
@@ -1930,7 +1951,7 @@ export type RotateTargetRegistrationTokenData = {
 
 export type RotateTargetRegistrationTokenErrors = {
     /**
-     * slots outside 0..1024 or below the target's minimums' sum
+     * slots outside 0..1024 or below the target's reservations' sum
      */
     400: unknown;
     /**

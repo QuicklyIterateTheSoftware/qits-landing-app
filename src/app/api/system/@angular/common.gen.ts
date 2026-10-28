@@ -257,7 +257,7 @@ export const getTargetRequest = <ThrowOnError extends boolean = false>(options: 
 });
 
 /**
- * Change a target's description or minimums
+ * Change a target's description or reservations
  */
 export const patchTargetRequest = <ThrowOnError extends boolean = false>(options: Options<PatchTargetData, ThrowOnError>): HttpRequest<PatchTargetResponse> => (options?.client ?? client).requestOptions<PatchTargetResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -711,7 +711,7 @@ export const getTargetResource = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
- * Change a target's description or minimums
+ * Change a target's description or reservations
  */
 export const patchTargetResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchTargetData, ThrowOnError> | undefined) => httpResource<PatchTargetResponse>(() => {
     const opts = options ? options() : undefined;

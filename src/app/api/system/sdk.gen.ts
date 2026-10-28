@@ -256,7 +256,7 @@ export const getTarget = <ThrowOnError extends boolean = false>(options: Options
 });
 
 /**
- * Change a target's description or minimums
+ * Change a target's description or reservations
  */
 export const patchTarget = <ThrowOnError extends boolean = false>(options: Options<PatchTargetData, ThrowOnError>): RequestResult<PatchTargetResponses, PatchTargetErrors, ThrowOnError> => (options.client ?? client).patch<PatchTargetResponses, PatchTargetErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
