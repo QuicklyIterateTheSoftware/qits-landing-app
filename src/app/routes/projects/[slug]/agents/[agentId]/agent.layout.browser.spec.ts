@@ -9,7 +9,7 @@ import { provideHeyApiClient } from '../../../../../api/projects/client/client.g
 import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
-import { WorkAgentLayout } from './work-agent.layout';
+import { AgentLayout } from './agent.layout';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 
 /**
@@ -47,7 +47,7 @@ describe('AgentLayout (screenshots)', () => {
         provideRouter([
           {
             path: 'projects/:slug/agents/:agentId',
-            component: WorkAgentLayout,
+            component: AgentLayout,
             children: [{ path: '', children: [] }],
           },
         ]),

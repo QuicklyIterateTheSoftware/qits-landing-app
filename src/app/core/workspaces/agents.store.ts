@@ -38,7 +38,7 @@ import {
 /** How far a read got. `missing`: the service answered 404 (a slot that resolved, or none). */
 export type ReadStatus = 'loading' | 'loaded' | 'error' | 'missing';
 
-/** A project's Workspaces page: the wrapper's slots and its agents, as `loadProject` left them. */
+/** A project's slots (the Agents page's Workspaces heading) and the wrapper's agents, as `loadProject` left them. */
 export interface ProjectWorkspaces {
   readonly status: ReadStatus;
   /** The wrapper's ACTIVE slots. */

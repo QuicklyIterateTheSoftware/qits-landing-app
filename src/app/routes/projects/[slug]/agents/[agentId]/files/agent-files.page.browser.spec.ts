@@ -11,7 +11,7 @@ import { client as workspaceDaemonClient } from '../../../../../../api/workspace
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { WorkAgentLayout } from '../work-agent.layout';
+import { AgentLayout } from '../agent.layout';
 import { AgentFilesPage } from './agent-files.page';
 
 /**
@@ -51,7 +51,7 @@ describe('AgentFilesPage (screenshots)', () => {
         provideRouter([
           {
             path: 'projects/:slug/agents/:agentId',
-            component: WorkAgentLayout,
+            component: AgentLayout,
             children: [
               { path: '', children: [] },
               { path: 'files', component: AgentFilesPage },

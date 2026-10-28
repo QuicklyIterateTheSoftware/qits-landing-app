@@ -34,7 +34,7 @@ import {
  * qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside
  * `workspaces.store.pact.spec.ts`'s part:
  *
- * - "a project with workspace slots hosting agents": the Workspaces page's slots and agents — one
+ * - "a project with workspace slots hosting agents": the Agents page's slots and their agents — one
  *   slot RUNNING on runner `localhost`, the bug ticket's agent holding it and waiting on a release
  *   request, the epic's agent yielded in it, the improvement ticket's agent QUEUED;
  * - "a workspace slot hosting agents": the same, read by the slot (no start is running);

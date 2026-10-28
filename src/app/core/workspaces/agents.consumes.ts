@@ -14,7 +14,7 @@ import type { Consumed } from '@qits/angular';
  */
 
 /**
- * `AgentsStore.loadProject(repositoryId)`, the project's Workspaces page: the wrapper's slots
+ * `AgentsStore.loadProject(repositoryId)`, the Agents page's Workspaces: the wrapper's slots
  * (`listWorkspaces`, ACTIVE only), each with its label, container state and placement.
  *
  * No longer reads `workspace.runner` (epic qits-1481, ahead of qits-workspaces-service dropping

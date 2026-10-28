@@ -12,7 +12,7 @@ import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { WorkAgentLayout } from '../work-agent.layout';
+import { AgentLayout } from '../agent.layout';
 import { AgentTerminalPage } from './agent-terminal.page';
 
 /**
@@ -85,7 +85,7 @@ describe('AgentTerminalPage (screenshots)', () => {
         provideRouter([
           {
             path: 'projects/:slug/agents/:agentId',
-            component: WorkAgentLayout,
+            component: AgentLayout,
             children: [
               { path: '', children: [] },
               { path: 'terminal', component: AgentTerminalPage },

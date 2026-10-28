@@ -95,7 +95,18 @@ The agents menu (the robot beside the lightning, `patterns/agents/agents-menu/`;
 reads the open project's ACTIVE agents when the project opens and on each opening, and again after
 `AGENT_STATUS_EVENTS` about the project (`AgentsStore.followProject`, debounced 1 s); its waits'
 requests and items come from what `ProjectsStore` and `WorkStore` already hold.
-The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
+The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was Workspaces):
+`projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
+`agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
+under a Workspaces heading with the Targets link; `agents/<agent id>` (`AgentLayout`) reads the
+agent by id (`AgentsStore.loadAgent`, `getAgent`), its waits and attention from the project's list,
+shows its item (linked), a Workspace field (`ws-<slot id>` → `workspaces/<slot id>`) and the tabs
+(`AGENT_TABS`: `chat`, `files`, `terminal`, which resolve the agent by `:agentId` too). Redirects:
+`workspaces` → `agents`; an item's old address `work/detail/<id>/agent[/<tab>]` (`WorkAgentLayout`,
+still where the Workspace links on cards and the item page lead, as they know no agent id) finds
+the item's ACTIVE agent (`AgentsStore.loadItem`) and replaces itself with its page on the same tab,
+or with the item. `workspaces/<slot id>` stays, its agents linking `agents/<agent id>`.
+The workspace pages (the Agents page's slots, a slot, an agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
 name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A project's
 ACTIVE agents with their waits and attention (epic qits-1681, `AgentsStore.loadProjectAgents`,
@@ -107,7 +118,7 @@ the open project, or, for those naming no project, an agent or repository alread
 start's log is not a domain event: `ProcessLog` reads that one process's own stream on
 qits-workspaces' origin (`/workspaces/api/technical-processes/{id}/events`), through `EVENT_SOURCE`.
 
-An agent's terminal (`…/agent/terminal`, `AgentTerminalPage`) is a WebSocket, not a domain event:
+An agent's terminal (`agents/<agent id>/terminal`, `AgentTerminalPage`) is a WebSocket, not a domain event:
 the slot's daemon, through qits-workspaces' container proxy, at
 `wss://workspaces.<domain>/workspaces/container/<slot row id>/terminal/commands/<command id>`
 (`terminalSocketUrl`), opened through `WEB_SOCKET` (`core/platform/web-socket.ts`; specs fake it).
@@ -134,7 +145,7 @@ and says how many were scheduled. It does not read again on a timer (qits-1270 f
 timers, and qits-projects emits no event for a backup's outcome), so an "Auth needed" turns into
 an outcome on the next read. A refused sync is a quiet note under the terminal and nothing more.
 
-An agent's chat (`…/agent/chat`, `AgentChatPage`) shows the conversation and a prompt box. A harness
+An agent's chat (`agents/<agent id>/chat`, `AgentChatPage`) shows the conversation and a prompt box. A harness
 running as a `CHAT` is the daemon's other socket, `…/workspaces/container/<slot row
 id>/chat/commands/<command id>` (`ChatSocket`): it replays the whole conversation on every open (the
 lines are rebuilt, never diffed), streams one JSON object per line, and takes
@@ -150,7 +161,7 @@ hint channel (`WorkspaceHints`, `/workspaces/api/workspaces/{id}/events` through
 `commands` reads the harness again, `prompt-draft` adopts another device's draft. There is no
 speech input.
 
-An agent's files (`…/agent/files`, `AgentFilesPage`) are its worktree on the slot's daemon, through
+An agent's files (`agents/<agent id>/files`, `AgentFilesPage`) are its worktree on the slot's daemon, through
 the same proxy (`AgentFilesStore`: `listFiles`, `readFile`, `detect`): the whole eager tree in one
 read, every gitignored directory as a dimmed stub opened one level per read, and the detection
 (frameworks, the source-to-test graph), applied only while its `generation` is the tree's. The open
@@ -180,7 +191,7 @@ successful recreate or a forced discard, so their success paths are covered by p
 This app has no runners page of its own (epic qits-1481, ahead of qits-workspaces-service dropping
 its runner doors in qits-1532): `WorkspaceRunnersPage`, `RunnersStore` and the
 `patterns/workspaces/{runner-card,register-runner-form,install-line-panel}/` it used are retired.
-Beside the Workspaces page's Slots heading, Targets links to qits-system's Targets page
+Beside the Agents page's Workspaces heading, Targets links to qits-system's Targets page
 (`PlatformOrigins.page('system')` + `/system/targets`) instead, where execution targets are now
 managed. A slot's status strip no longer names which runner it is placed on
 (`patterns/workspaces/slot-status/`, `placementNote` in `core/workspaces/agent-labels.ts`): the

@@ -12,7 +12,7 @@ import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { WorkAgentLayout } from '../work-agent.layout';
+import { AgentLayout } from '../agent.layout';
 import { AgentChatPage } from './agent-chat.page';
 
 /**
@@ -75,7 +75,7 @@ describe('AgentChatPage (screenshots)', () => {
         provideRouter([
           {
             path: 'projects/:slug/agents/:agentId',
-            component: WorkAgentLayout,
+            component: AgentLayout,
             children: [
               { path: '', children: [] },
               { path: 'chat', component: AgentChatPage },
