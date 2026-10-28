@@ -129,9 +129,9 @@ describe('EpicListItem (screenshots)', () => {
       'contract-00000001-1',
       'Done epic',
     );
-    // The Archive starts every epic collapsed; a done one counts its verified tasks. Finishing the
-    // epic moved none of its IMPLEMENTED tasks (qits-763), but the epic takes them to the Archive.
-    await expect.element(locator).toMatchTextContent('0 / 2 ✅');
+    // The Archive starts every epic collapsed; a done one counts its finished tasks. Finishing the
+    // epic finishes its IMPLEMENTED tasks with it (qits-1685), so both count.
+    await expect.element(locator).toMatchTextContent('2 / 2 ✅');
     await expect.element(locator).toMatchScreenshot('all-done-collapsed');
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
