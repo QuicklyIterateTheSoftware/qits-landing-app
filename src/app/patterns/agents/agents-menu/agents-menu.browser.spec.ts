@@ -110,7 +110,11 @@ describe('AgentsMenu (screenshots)', () => {
     await userEvent.click(page.getByRole('button', { name: 'Agents' }));
     fixture.detectChanges();
     await settle();
-    http.expectNone(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`);
+    // Each opening reads the agents again, as the lightning menu reads its requests.
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
+      .flush(await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces'));
+    await answered(fixture);
     const panel = page.getByRole('region', { name: "The project's agents" });
     expect(panel.getByRole('listitem').elements()).toHaveLength(5);
     await expect
