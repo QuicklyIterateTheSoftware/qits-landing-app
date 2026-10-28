@@ -91,6 +91,10 @@ The lightning menu's active-run chips (`patterns/release-requests/active-runs/`,
 read qits-ci's active runs (`CiRunsStore.loadActive`, `/ci/api/runs/active`) on each opening until
 they load, and again after `BUILD_EVENTS` of a pending request's repository (`followActive`). The
 release request page draws the same chips from its repository's runs.
+The agents menu (the robot beside the lightning, `patterns/agents/agents-menu/`; epic qits-1681)
+reads the open project's ACTIVE agents when the project opens and on each opening, and again after
+`AGENT_STATUS_EVENTS` about the project (`AgentsStore.followProject`, debounced 1 s); its waits'
+requests and items come from what `ProjectsStore` and `WorkStore` already hold.
 The workspace pages (Workspaces, a slot, an item's agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
 name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A project's

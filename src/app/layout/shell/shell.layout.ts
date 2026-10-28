@@ -13,6 +13,7 @@ import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
+import { AgentsMenu } from '$patterns/agents/agents-menu/agents-menu';
 import { Breadcrumbs } from '$ui/components/breadcrumbs/breadcrumbs';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 
@@ -46,6 +47,7 @@ export interface NavNote {
   selector: 'app-shell-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AgentsMenu,
     Breadcrumbs,
     RouterLink,
     RouterLinkActive,
@@ -80,11 +82,12 @@ export interface NavNote {
           <a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a>
         </ui-breadcrumbs>
         <!-- The menus at the right end: the platform's version bumps and notifications (always), then the open
-             project's release requests and its settings (both hidden, not removed, while no
-             project is open). -->
+             project's agents, its release requests and its settings (all three hidden, not
+             removed, while no project is open). -->
         <div class="ml-auto flex items-center gap-1">
           <app-bumps-menu />
           <app-notifications-menu />
+          <app-agents-menu />
           <app-release-menu />
           <a
             class="size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"

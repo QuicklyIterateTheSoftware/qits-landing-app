@@ -6,6 +6,7 @@ import { provideRouter, Router } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
+import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Board } from '$ui/components/board/board';
@@ -70,6 +71,7 @@ describe('ShellLayout (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        provideHeyApiClient(workspacesClient),
         provideTestPlatformOrigins(),
         {
           provide: EVENT_SOURCE,
@@ -127,7 +129,7 @@ describe('ShellLayout (screenshots)', () => {
 
   /**
    * The layout at `path` below the recorded project, which is open; its menus answered, the
-   * release requests from the recorded `requests` state.
+   * release requests from the recorded `requests` state, the agents menu's read refused.
    */
   async function renderProject(path: string, requests = 'a project with no release requests') {
     const fixture = TestBed.createComponent(ShellLayout);
@@ -144,6 +146,11 @@ describe('ShellLayout (screenshots)', () => {
     http
       .expectOne(`/projects/api/projects/${project.id}/release-requests`)
       .flush(await goldenMaster(requests, 'listProjectReleaseRequests'));
+    // The agents menu's read, refused: its own browser spec draws agents; here its badge stays
+    // hidden and the bar shows only its icon.
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
+      .flush(null, { status: 403, statusText: 'Forbidden' });
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
