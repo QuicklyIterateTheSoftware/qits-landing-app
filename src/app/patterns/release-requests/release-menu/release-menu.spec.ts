@@ -200,12 +200,14 @@ describe('ReleaseMenu', () => {
     button.click();
     fixture.detectChanges();
     await settle();
-    http.expectOne(TARGETS).flush(systemGoldenMaster('a declared target', 'listTargets'));
+    http
+      .expectOne(TARGETS)
+      .flush(systemGoldenMaster('a connected target with leases', 'listTargets'));
     await settle();
     fixture.detectChanges();
     const line = panel.querySelector('app-runner-slots')!;
     expect(line.nextElementSibling?.tagName).toBe('UI-SPINNER');
-    expect(line.textContent).toContain('runners: 0');
+    expect(line.textContent).toContain('runners: 1');
     expect(line.textContent).toContain('slots:');
   });
 

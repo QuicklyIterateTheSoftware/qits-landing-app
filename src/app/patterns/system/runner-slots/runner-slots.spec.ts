@@ -18,7 +18,10 @@ describe('RunnerSlots', () => {
   const LIST = '/system/api/targets';
   let http: HttpTestingController;
   let events: Subject<DomainEvent>;
-  const recorded = systemGoldenMaster<TargetEntry[]>('a declared target', 'listTargets');
+  const recorded = systemGoldenMaster<TargetEntry[]>(
+    'a connected target with leases',
+    'listTargets',
+  );
 
   beforeEach(() => {
     events = new Subject<DomainEvent>();
@@ -96,12 +99,12 @@ describe('RunnerSlots', () => {
     expect(rows(element)).toEqual(['ci: 4/8', 'workspaces: 6/2', 'desk: 0/2', 'gpu: 1/1']);
   });
 
-  it('shows zeros for the recorded target, which is not connected', async () => {
+  it('shows the recorded target, connected and busy', async () => {
     const { element } = await render((request) => request.flush(recorded));
-    expect(element.textContent).toContain('runners: 0');
-    expect(element.textContent).toContain('slots: 0/0');
-    expect(element.textContent).toContain('shared: 0/0');
-    expect(rows(element)).toEqual(['ci: 0/0', 'workspaces: 0/0', 'desk: 0/0']);
+    expect(element.textContent).toContain('runners: 1');
+    expect(element.textContent).toContain('slots: 2/6');
+    expect(element.textContent).toContain('shared: 0/1');
+    expect(rows(element)).toEqual(['ci: 1/2', 'workspaces: 1/2', 'desk: 0/1']);
   });
 
   it('stays hidden when the read is refused', async () => {
@@ -116,6 +119,17 @@ describe('RunnerSlots', () => {
     await render((request) => request.flush(recorded));
     vi.useFakeTimers();
     events.next({ id: '1', name: 'TargetLeaseChanged', payload: '{}' });
+    vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
+    vi.useRealTimers();
+    await settle();
+    http.expectOne(LIST).flush(recorded);
+    await settle();
+  });
+
+  it('reads the targets again after a target connects or drops', async () => {
+    await render((request) => request.flush(recorded));
+    vi.useFakeTimers();
+    events.next({ id: '1', name: 'TargetConnectionChanged', payload: '{}' });
     vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
     vi.useRealTimers();
     await settle();

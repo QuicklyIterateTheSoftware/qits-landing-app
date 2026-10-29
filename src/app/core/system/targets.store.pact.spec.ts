@@ -52,7 +52,7 @@ describe('qits-landing-app → qits-system-service pact', () => {
   it('show-runner-slots: the store holds the targets', () =>
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
-      state: 'a declared target',
+      state: 'a connected target with leases',
       operationId: 'listTargets',
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-runner-slots' },
       consumes: LIST_TARGETS,
