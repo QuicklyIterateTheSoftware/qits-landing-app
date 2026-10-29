@@ -2,7 +2,10 @@ import type { Consumed } from '@qits/angular';
 import type {
   DiscardAgentResponses,
   EnsureWorkspaceContainerResponses,
+  InterruptAgentResponses,
   RecreateWorkspaceContainerResponses,
+  RestartAgentResponses,
+  StopAgentResponses,
   StopWorkspaceContainerResponses,
 } from '../../api/workspaces';
 
@@ -54,6 +57,34 @@ export type RecreatedContainer = Consumed<
   RecreateWorkspaceContainerResponses[200],
   typeof RECREATE_CONTAINER
 >;
+
+/**
+ * `AgentActionsStore.interruptAgent(agentId)` (epic qits-1667, `interruptAgent`): whether ESC
+ * reached the agent's harness, and what the service said about it. Its run state does not change.
+ */
+export const INTERRUPT_AGENT = ['interrupted', 'detail'] as const;
+
+/** An interrupt, cut to what the store reads. */
+export type InterruptedAgent = Consumed<InterruptAgentResponses[200], typeof INTERRUPT_AGENT>;
+
+/**
+ * `AgentActionsStore.stopAgent(agentId)` (epic qits-1667, `stopAgent`): the agent, now STOPPED: the
+ * scheduler starts it again only when a person restarts or prompts it. Its container is untouched.
+ */
+export const STOP_AGENT = ['runState'] as const;
+
+/** A stopped agent, cut to what the store reads. */
+export type StoppedAgent = Consumed<StopAgentResponses[200], typeof STOP_AGENT>;
+
+/**
+ * `AgentActionsStore.restartAgent(agentId)` (epic qits-1667, `restartAgent`): the agent, started
+ * again on its session (RUNNING) or handed back to the scheduler (YIELDED, or QUEUED without a
+ * workspace).
+ */
+export const RESTART_AGENT = ['runState'] as const;
+
+/** A restarted agent, cut to what the store reads. */
+export type RestartedAgent = Consumed<RestartAgentResponses[200], typeof RESTART_AGENT>;
 
 /** What a refusal says: the service's own words, and the refusal's name where it has one. */
 export const REFUSAL = ['message', 'code'] as const;

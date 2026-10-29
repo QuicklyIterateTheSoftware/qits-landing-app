@@ -15,6 +15,7 @@ const LEFTOVER = 'an agent with leftover work';
 const STOPPED = 'a stopped workspace slot';
 const RUNNING = 'a workspace slot running on a target';
 const OFFLINE = 'a workspace slot qits-system cannot be asked about';
+const AGENT = 'an agent with a saved prompt draft';
 
 const op = (state: string, operationId: string) =>
   workspacesGoldenMasters.operation(state, operationId);
@@ -98,6 +99,76 @@ describe('AgentActionsStore', () => {
     // has the same shape (the agent, REMOVED).
     request.flush(workspacesGoldenMaster(WAITING, 'discardAgent'));
     expect(await done).toMatchObject({ ok: true, value: { state: 'REMOVED' } });
+  });
+
+  /*
+   * The agent verbs (epic qits-1667) have no recording in the pinned golden masters yet. Stop and
+   * restart answer the agent (`AgentDto`), so their answers are the recorded `getAgent` of the
+   * same agent with the run state the verb leaves; interrupt answers `{ agentId, interrupted,
+   * detail }`, derived from that agent's id and the provider's recorded words.
+   */
+  const agent = () => workspacesGoldenMaster(AGENT, 'getAgent');
+
+  it('interrupts a running agent by its id', async () => {
+    const { agentId } = agent();
+    const done = store.interruptAgent(agentId);
+    await settle();
+    const request = http.expectOne(`/workspaces/api/agents/${agentId}/interrupt`);
+    expect(request.request.method).toBe('POST');
+    request.flush({ agentId, interrupted: true, detail: 'ESC was sent to the agent’s harness.' });
+    expect(await done).toMatchObject({ ok: true, value: { interrupted: true } });
+  });
+
+  it('says why an interrupt was refused', async () => {
+    const { agentId } = agent();
+    const done = store.interruptAgent(agentId);
+    await settle();
+    http
+      .expectOne(`/workspaces/api/agents/${agentId}/interrupt`)
+      .flush(
+        { message: 'The agent has no running harness.', code: 'AGENT_NOT_RUNNING' },
+        { status: 409, statusText: 'Conflict' },
+      );
+    expect(await done).toEqual({
+      ok: false,
+      status: 409,
+      message: 'The agent has no running harness.',
+      code: 'AGENT_NOT_RUNNING',
+    });
+  });
+
+  it('stops an agent by its id', async () => {
+    const { agentId } = agent();
+    const done = store.stopAgent(agentId);
+    await settle();
+    const request = http.expectOne(`/workspaces/api/agents/${agentId}/stop`);
+    expect(request.request.method).toBe('POST');
+    request.flush({ ...agent(), runState: 'STOPPED' });
+    expect(await done).toMatchObject({ ok: true, value: { runState: 'STOPPED' } });
+  });
+
+  it('restarts an agent by its id, and says why a restart was refused', async () => {
+    const { agentId } = agent();
+    const done = store.restartAgent(agentId);
+    await settle();
+    http
+      .expectOne(`/workspaces/api/agents/${agentId}/restart`)
+      .flush({ ...agent(), runState: 'YIELDED' });
+    expect(await done).toMatchObject({ ok: true, value: { runState: 'YIELDED' } });
+
+    const refused = store.restartAgent(agentId);
+    await settle();
+    http
+      .expectOne(`/workspaces/api/agents/${agentId}/restart`)
+      .flush(
+        { message: 'The agent has not started yet.' },
+        { status: 409, statusText: 'Conflict' },
+      );
+    expect(await refused).toMatchObject({
+      ok: false,
+      status: 409,
+      message: 'The agent has not started yet.',
+    });
   });
 
   it('starts a stopped slot’s container', async () => {

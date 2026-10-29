@@ -20,6 +20,7 @@ import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentStatus } from '$patterns/agents/agent-status/agent-status';
 import { AgentDiscard } from '$patterns/workspaces/agent-discard/agent-discard';
+import { AgentRunActions } from '$patterns/workspaces/agent-run-actions/agent-run-actions';
 import { StartingLog } from '$patterns/workspaces/starting-log/starting-log';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -30,11 +31,13 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * and a slot's page lead. The header: the agent's item, linked to the item's page, and its title;
  * how it runs (its lifecycle and run state, what it is doing); what it waits on (qits-1229; "waiting
  * on you" only when a person is awaited) with a line per open wait and, when it needs a person, why
- * and what to do (`app-agent-status`); its branch; Discard (`app-agent-discard`: confirmed, and with
- * force after the service refused); and a **Workspace** field — `ws-<slot id>`, a link to the slot's
+ * and what to do (`app-agent-status`); its branch; its verbs (`app-agent-run-actions`, epic
+ * qits-1667: Interrupt while it runs, Stop unless it is stopped, Restart while it runs, is yielded
+ * or stopped, the last two confirmed; by the agent, never by its slot); Discard
+ * (`app-agent-discard`: confirmed, and with force after the service refused); and a **Workspace** field — `ws-<slot id>`, a link to the slot's
  * page, where its container's status and verbs are (epic qits-1667: the agent page asks nothing of
  * the slot) — and the log of the start bringing the slot's container up while one runs
- * (`getAgentActiveProcess`, by the agent). After a discard the agent is read again.
+ * (`getAgentActiveProcess`, by the agent). After a verb or a discard the agent is read again.
  *
  * A layout: the agent's tabs (`AGENT_TABS`: `chat`, `files` and `terminal`) are its child routes,
  * in a row of links below the header, shown once the agent is known; the empty child shows the
@@ -54,6 +57,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AgentDiscard,
+    AgentRunActions,
     AgentStatus,
     Chip,
     PageLayoutComponent,
@@ -130,7 +134,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   </p>
                 }
                 @if (agent.agentId && agent.state !== 'REMOVED') {
-                  <app-agent-discard [agentId]="agent.agentId" (discarded)="reload()" />
+                  <div class="flex flex-wrap items-start gap-2">
+                    <app-agent-run-actions
+                      [agentId]="agent.agentId"
+                      [runState]="agent.runState"
+                      (changed)="reload()"
+                    />
+                    <app-agent-discard [agentId]="agent.agentId" (discarded)="reload()" />
+                  </div>
                 }
               </section>
 

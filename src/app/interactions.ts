@@ -232,6 +232,21 @@ export const INTERACTIONS = {
    * anyway removes the agent with `force`, throwing its leftover work away.
    */
   'force-discard-agent': 'Discard anyway removes a refused agent and its leftover work',
+  /**
+   * `agent-run-actions.ts` via `AgentActionsStore.interruptAgent` (epic qits-1667): Interrupt on a
+   * running agent sends ESC to its harness.
+   */
+  'interrupt-agent': 'Interrupt on a running agent sends ESC to its harness',
+  /**
+   * `agent-run-actions.ts` via `AgentActionsStore.stopAgent` (epic qits-1667): Stop, confirmed,
+   * makes the agent STOPPED; nothing starts it again until a person restarts or prompts it.
+   */
+  'stop-agent': 'Stop on an agent stops it until a person restarts or prompts it',
+  /**
+   * `agent-run-actions.ts` via `AgentActionsStore.restartAgent` (epic qits-1667): Restart,
+   * confirmed, starts the agent again on its session or hands it back to the scheduler.
+   */
+  'restart-agent': 'Restart on an agent starts it again on its session',
   /** `container-actions.ts` via `AgentActionsStore.ensureContainer`: Start on a slot's container. */
   'start-workspace-container': 'Start on a workspace slot brings its container up',
   /** `container-actions.ts` via `AgentActionsStore.stopContainer`: Stop on a slot's container. */

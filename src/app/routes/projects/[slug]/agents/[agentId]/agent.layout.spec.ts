@@ -130,6 +130,13 @@ describe('AgentLayout', () => {
     const workspace = element.querySelector('#agent-workspace');
     expect(workspace?.textContent?.trim()).toBe('Workspace');
     expect(link('ws-1')?.getAttribute('href')).toBe(`/projects/${SLUG}/workspaces/1`);
+    // The agent's own verbs, for a RUNNING agent; the container's are the workspace page's.
+    expect(
+      [...element.querySelectorAll('[role=group][aria-label=Agent] button')].map((b) =>
+        b.textContent?.trim(),
+      ),
+    ).toEqual(['Interrupt', 'Stop', 'Restart']);
+    expect(element.querySelector('[role=group][aria-label=Container]')).toBeNull();
     expect(
       [...element.querySelectorAll('nav[aria-label=Agent] a')].map((a) => a.getAttribute('href')),
     ).toEqual(

@@ -3,19 +3,28 @@ import { consume } from '@qits/angular';
 import {
   discardAgent,
   ensureWorkspaceContainer,
+  interruptAgent,
   recreateWorkspaceContainer,
+  restartAgent,
+  stopAgent,
   stopWorkspaceContainer,
 } from '../../api/workspaces';
 import {
   DISCARD_AGENT,
   ENSURE_CONTAINER,
+  INTERRUPT_AGENT,
   RECREATE_CONTAINER,
   REFUSAL,
   REFUSAL_MESSAGE,
+  RESTART_AGENT,
+  STOP_AGENT,
   STOP_CONTAINER,
   type DiscardedAgent,
   type EnsuredContainer,
+  type InterruptedAgent,
   type RecreatedContainer,
+  type RestartedAgent,
+  type StoppedAgent,
   type StoppedContainer,
 } from './agent-actions.consumes';
 
@@ -71,6 +80,12 @@ export function sentence(text: string): string {
  *   service refuses (409) an agent whose worktrees hold work that never reached the git host
  *   (`AGENT_HAS_LEFTOVER_WORK`), whose daemon does not answer (`AGENT_DAEMON_UNREACHABLE`) or that
  *   is still busy (`AGENT_BUSY`); the page then offers `force`.
+ * - `interruptAgent(agentId)`, `stopAgent(agentId)`, `restartAgent(agentId)` (epic qits-1667): the
+ *   agent page's verbs, by the agent (`…/agents/{id}/interrupt|stop|restart`). Interrupt sends ESC
+ *   to a running harness and changes no run state (409 when there is no running terminal harness);
+ *   Stop makes the agent STOPPED, yielding a running harness first, and never touches the
+ *   container; Restart starts a running agent again on its session, or hands a yielded or stopped
+ *   one back to the scheduler (409 for a queued or removed agent).
  * - `ensureContainer(id)`, `stopContainer(id)`, `recreateContainer(id)`: a slot's container verbs
  *   (`…/workspaces/{id}/ensure-container|stop-container|recreate-container`). A slot whose lease
  *   qits-system cannot be asked about is refused (409 `TARGET_UNAVAILABLE`); a recreate needs a
@@ -85,6 +100,33 @@ export const AgentActionsStore = signalStore(
       const { data, error, response } = await consume(
         discardAgent({ path: { id: agentId }, body: { force } }),
         DISCARD_AGENT,
+        REFUSAL,
+      );
+      if (error !== undefined || !data) return refusalOf(error, response);
+      return { ok: true, value: data };
+    },
+    async interruptAgent(agentId: string): Promise<ActionOutcome<InterruptedAgent>> {
+      const { data, error, response } = await consume(
+        interruptAgent({ path: { id: agentId } }),
+        INTERRUPT_AGENT,
+        REFUSAL,
+      );
+      if (error !== undefined || !data) return refusalOf(error, response);
+      return { ok: true, value: data };
+    },
+    async stopAgent(agentId: string): Promise<ActionOutcome<StoppedAgent>> {
+      const { data, error, response } = await consume(
+        stopAgent({ path: { id: agentId } }),
+        STOP_AGENT,
+        REFUSAL,
+      );
+      if (error !== undefined || !data) return refusalOf(error, response);
+      return { ok: true, value: data };
+    },
+    async restartAgent(agentId: string): Promise<ActionOutcome<RestartedAgent>> {
+      const { data, error, response } = await consume(
+        restartAgent({ path: { id: agentId } }),
+        RESTART_AGENT,
         REFUSAL,
       );
       if (error !== undefined || !data) return refusalOf(error, response);
