@@ -137,8 +137,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -611,7 +620,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -1361,8 +1418,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -1806,7 +1872,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -5287,8 +5401,17 @@
                   }
                 ],
                 "id": "00000000-0000-4000-8000-000000000003",
+                "items": [
+                  {
+                    "label": "bump/contract-service",
+                    "source": "bump/contract-service"
+                  }
+                ],
                 "mergedSha": "0000000000000000000000000000000000000007",
                 "mergedToMainAt": "",
+                "participants": [
+                  "contract-seeder"
+                ],
                 "pipeline": {
                   "gates": [
                     {
@@ -6209,8 +6332,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "priority": "HIGH",
               "qualityGates": [
                 {
@@ -6603,7 +6735,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -7331,8 +7511,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -7751,7 +7940,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -8899,8 +9136,17 @@
                   }
                 ],
                 "id": "00000000-0000-4000-8000-000000000002",
+                "items": [
+                  {
+                    "label": "ticket/contract-14",
+                    "source": "ticket/contract-14"
+                  }
+                ],
                 "mergedSha": "",
                 "mergedToMainAt": "",
+                "participants": [
+                  "contract-seeder"
+                ],
                 "priority": "MEDIUM",
                 "qualifiedId": "contract-service-rr-2",
                 "qualityGates": [
@@ -9812,8 +10058,12 @@
                   }
                 ],
                 "id": "00000000-0000-4000-8000-000000000002",
+                "items": [],
                 "mergedSha": "",
                 "mergedToMainAt": "",
+                "participants": [
+                  "contract-seeder"
+                ],
                 "priority": "MEDIUM",
                 "qualifiedId": "contract-service-rr-3",
                 "qualityGates": [
@@ -18102,8 +18352,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000002",
+              "items": [
+                {
+                  "label": "ticket/contract-14",
+                  "source": "ticket/contract-14"
+                }
+              ],
               "mergedSha": null,
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "priority": "MEDIUM",
               "qualifiedId": "contract-service-rr-2",
               "qualityGates": [
@@ -18282,6 +18541,48 @@
                 {
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -18650,8 +18951,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "0000000000000000000000000000000000000007",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -19120,7 +19430,49 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -19755,8 +20107,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "feature/export",
+                  "source": "feature/export"
+                }
+              ],
               "mergedSha": null,
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "priority": "HIGH",
               "qualityGates": [
                 {
@@ -20090,6 +20451,54 @@
                 {
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -20437,8 +20846,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000004",
+              "items": [
+                {
+                  "label": "ticket/contract-11",
+                  "source": "ticket/contract-11"
+                }
+              ],
               "mergedSha": null,
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "priority": "HIGH",
               "qualityGates": [
                 {
@@ -20626,6 +21044,60 @@
                 {
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -21000,8 +21472,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "feature/export",
+                  "source": "feature/export"
+                }
+              ],
               "mergedSha": "a1e24622a6b22ddf43a4f8d7674758a6d9b42a31",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -21236,7 +21717,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -21826,8 +22355,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -22246,7 +22784,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -22879,8 +23465,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "feature/export",
+                  "source": "feature/export"
+                }
+              ],
               "mergedSha": "cb9776855921387be1951de5bbbf0914aa54b1bf",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -23141,7 +23736,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -31379,8 +32022,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -31884,7 +32536,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
@@ -32539,8 +33239,17 @@
                 }
               ],
               "id": "00000000-0000-4000-8000-000000000003",
+              "items": [
+                {
+                  "label": "bump/contract-service",
+                  "source": "bump/contract-service"
+                }
+              ],
               "mergedSha": "bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14",
               "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
               "pipeline": {
                 "gates": [
                   {
@@ -32850,7 +33559,55 @@
                 }
               ]
             },
+            "$.request.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.request.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.request.participants[*]": {
               "combine": "AND",
               "matchers": [
                 {
