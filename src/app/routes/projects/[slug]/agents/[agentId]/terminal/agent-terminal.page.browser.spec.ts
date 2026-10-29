@@ -171,13 +171,13 @@ describe('AgentTerminalPage (screenshots)', () => {
     await answered(harness);
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '900px';
-    return { harness, element, slot, commandId: commands.entries[0].command.id as string };
+    return { harness, element, agentId: agent.agentId as string };
   }
 
   it('shows the agent’s terminal, attached, with its output', async () => {
-    const { harness, element, slot, commandId } = await render();
+    const { harness, element, agentId } = await render();
     expect(sockets.map((s) => s.url)).toEqual([
-      `wss://workspaces.test/workspaces/container/${slot}/terminal/commands/${commandId}`,
+      `wss://workspaces.test/workspaces/agent/${agentId}/terminal`,
     ]);
     sockets[0].open();
     sockets[0].deliver(

@@ -23,7 +23,7 @@ import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
 import { buildConversation, EMPTY_CONVERSATION } from '$core/workspaces/chat-model';
 import { formatRange } from '$core/workspaces/file-range';
 import type { CodeReference } from '$core/workspaces/picked-context';
-import { ChatSocket, chatSocketUrl, type ChatLink } from '$core/workspaces/chat-socket';
+import { agentChatSocketUrl, ChatSocket, type ChatLink } from '$core/workspaces/chat-socket';
 import { WorkspaceHints } from '$core/workspaces/workspace-hints';
 import { Conversation } from '$patterns/workspaces/conversation/conversation';
 import { deliveryNote, PromptComposer } from '$patterns/workspaces/prompt-composer/prompt-composer';
@@ -51,8 +51,9 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
  * from its slot's daemon (`AgentHarnessStore`), read again after a lifecycle event about the agent
  * or its slot and on the slot's `commands` hint (`WorkspaceHints`).
  *
- * - **A running chat** (`CHAT`): the tab attaches to its socket (`chatSocketUrl`, through
- *   `WEB_SOCKET`), which replays the whole conversation and then streams it; a message typed there
+ * - **A running chat** (`CHAT`): the tab attaches to the agent's chat on qits-workspaces' agent
+ *   proxy (`agentChatSocketUrl`, `/workspaces/agent/<agent id>/chat`, epic qits-1667; through
+ *   `WEB_SOCKET`), which the service joins to the running command, which replays the whole conversation and then streams it; a message typed there
  *   goes down the socket, and the turn shows when the daemon echoes it. Terminate ends the run.
  * - **An agent in a terminal** (the default): its screen is on the Terminal tab; here its
  *   transcript (`AgentChatStore.loadTranscript`), read again every {@link TRANSCRIPT_POLL_MS} while
@@ -437,7 +438,7 @@ export class AgentChatPage {
     this.detach();
     if (!key || !commandId) return;
     const socket = new ChatSocket(
-      chatSocketUrl(this.origins.api('workspaces'), rowId, commandId),
+      agentChatSocketUrl(this.origins.api('workspaces'), this.agentId()),
       this.openSocket,
       this.document,
     );

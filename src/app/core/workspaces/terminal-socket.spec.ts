@@ -1,5 +1,10 @@
 import { WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { TERMINAL_BACKOFF_MS, TerminalSocket, terminalSocketUrl } from './terminal-socket';
+import {
+  agentTerminalSocketUrl,
+  TERMINAL_BACKOFF_MS,
+  TerminalSocket,
+  terminalSocketUrl,
+} from './terminal-socket';
 
 class FakeSocket implements WebSocketLike {
   onopen: ((event: Event) => void) | null = null;
@@ -176,6 +181,17 @@ describe('TerminalSocket', () => {
     sockets[0].connect();
     terminal.resize(90.7, 20.2);
     expect(sockets[0].sent.at(-1)).toBe(JSON.stringify({ type: 'resize', cols: 90, rows: 20 }));
+  });
+});
+
+describe('agentTerminalSocketUrl', () => {
+  it('is the agent’s harness terminal behind qits-workspaces’ agent proxy, as ws(s)', () => {
+    expect(agentTerminalSocketUrl('https://workspaces.qits.example', 'a 1')).toBe(
+      'wss://workspaces.qits.example/workspaces/agent/a%201/terminal',
+    );
+    expect(agentTerminalSocketUrl('http://localhost:8080', 'a1')).toBe(
+      'ws://localhost:8080/workspaces/agent/a1/terminal',
+    );
   });
 });
 

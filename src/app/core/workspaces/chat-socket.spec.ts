@@ -1,5 +1,5 @@
 import { WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { ChatSocket, chatSocketUrl } from './chat-socket';
+import { agentChatSocketUrl, ChatSocket } from './chat-socket';
 import { RECONNECT_BACKOFF_MS } from './reconnecting-socket';
 
 class FakeSocket implements WebSocketLike {
@@ -137,13 +137,13 @@ describe('ChatSocket', () => {
   });
 });
 
-describe('chatSocketUrl', () => {
-  it('is the daemon’s chat socket behind qits-workspaces’ container proxy, as ws(s)', () => {
-    expect(chatSocketUrl('https://workspaces.qits.example', 1, 'c 1')).toBe(
-      'wss://workspaces.qits.example/workspaces/container/1/chat/commands/c%201',
+describe('agentChatSocketUrl', () => {
+  it('is the agent’s chat behind qits-workspaces’ agent proxy, as ws(s)', () => {
+    expect(agentChatSocketUrl('https://workspaces.qits.example', 'a 1')).toBe(
+      'wss://workspaces.qits.example/workspaces/agent/a%201/chat',
     );
-    expect(chatSocketUrl('http://localhost:8080', 2, 'c1')).toBe(
-      'ws://localhost:8080/workspaces/container/2/chat/commands/c1',
+    expect(agentChatSocketUrl('http://localhost:8080', 'a1')).toBe(
+      'ws://localhost:8080/workspaces/agent/a1/chat',
     );
   });
 });

@@ -22,6 +22,7 @@ import type { DomainEvent } from '$core/events/domain-events';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
 import {
+  agentTerminalSocketUrl,
   EMPTY_TERMINAL_FRAMES,
   TerminalSocket,
   terminalSocketUrl,
@@ -47,15 +48,19 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
  *
  * The agent is the layout's (`AgentsStore.agentOf`, by the URL's agent id); its harness's command comes
  * from its slot's daemon (`AgentHarnessStore`), read again after a lifecycle event about the agent
- * or its slot (a restart is a new command). The screen attaches to that command's PTY socket on
- * qits-workspaces' origin (`terminalSocketUrl`, through `WEB_SOCKET`): deployed with the session
- * cookie, under `ng serve` with the bearer as a subprotocol. A socket that closes says so on the
+ * or its slot (a restart is a new command). While that command runs as a terminal, the screen
+ * attaches to the agent's terminal on qits-workspaces' agent proxy (`agentTerminalSocketUrl`,
+ * `/workspaces/agent/<agent id>/terminal`, epic qits-1667; through `WEB_SOCKET`), which the
+ * service joins to the agent's running harness wherever the agent is placed: deployed with the
+ * session cookie, under `ng serve` with the bearer as a subprotocol. A new command is a new
+ * socket. A socket that closes says so on the
  * status line and attaches again (`TerminalSocket`); once the attempts are spent, a button tries
  * again. Leaving the tab only detaches: the harness keeps running.
  *
  * Above the screen, the sign-in notice (`app-sign-in-notice`): the slot's daemon reports a harness
  * nobody signed in (`AgentSignInStore`), and offers the sign-in terminal, which the screen then
- * attaches to instead, until its command ends. Below it, the plugins on the shared agent home
+ * attaches to instead, until its command ends: a command of the slot's own, not the agent's, so the
+ * screen reaches it by its slot and command (`terminalSocketUrl`). Below it, the plugins on the shared agent home
  * (`app-plugins-section`, `AgentPluginsStore`).
  *
  * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
@@ -285,8 +290,11 @@ export class AgentTerminalPage {
     if (key === this.socketFor) return;
     this.detach();
     if (!key || !commandId) return;
+    const origin = this.origins.api('workspaces');
     const socket = new TerminalSocket(
-      terminalSocketUrl(this.origins.api('workspaces'), rowId, commandId),
+      signIn
+        ? terminalSocketUrl(origin, rowId, commandId)
+        : agentTerminalSocketUrl(origin, this.agentId()),
       this.openSocket,
       this.document,
     );

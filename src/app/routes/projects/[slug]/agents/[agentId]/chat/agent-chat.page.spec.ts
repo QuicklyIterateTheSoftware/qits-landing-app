@@ -187,7 +187,7 @@ describe('AgentChatPage', () => {
   it('attaches to a running chat, shows what it replays, and sends what is said', async () => {
     await open(CHATTING);
     expect(sockets.map((s) => s.url)).toEqual([
-      `wss://workspaces.qits.example/workspaces/container/${workspaceRowId}/chat/commands/${commandId}`,
+      `wss://workspaces.qits.example/workspaces/agent/${agentId}/chat`,
     ]);
     expect(text()).toContain('Attaching…');
     sockets[0].open();

@@ -136,10 +136,10 @@ describe('AgentTerminalPage', () => {
     harness.detectChanges();
   }
 
-  it('attaches to the harness’s command through qits-workspaces’ container proxy', async () => {
+  it('attaches to the agent’s terminal through qits-workspaces’ agent proxy', async () => {
     await open();
     expect(sockets.map((s) => s.url)).toEqual([
-      `wss://workspaces.qits.example/workspaces/container/${workspaceRowId}/terminal/commands/${commandId}`,
+      `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`,
     ]);
     expect(text()).toContain('Attaching…');
     sockets[0].open();
@@ -241,6 +241,10 @@ describe('AgentTerminalPage', () => {
     expect(sockets[1].url).toBe(
       `wss://workspaces.qits.example/workspaces/container/${workspaceRowId}/terminal/commands/${terminal.command.id}`,
     );
+    // The sign-in terminal is the slot's own command, not the agent's harness.
+    expect(sockets[0].url).toBe(
+      `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`,
+    );
     // The sign-in ends: the terminal goes, the report is read again, and the harness is back.
     sockets[1].open();
     sockets[1].serverClose(1000);
@@ -252,7 +256,9 @@ describe('AgentTerminalPage', () => {
     await settle();
     harness.detectChanges();
     expect(text()).not.toContain('The sign-in terminal.');
-    expect(sockets[2].url).toContain(`/terminal/commands/${commandId}`);
+    expect(sockets[2].url).toBe(
+      `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`,
+    );
   });
 
   it('says why the sign-in terminal did not open', async () => {

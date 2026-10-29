@@ -188,9 +188,9 @@ describe('AgentChatPage (screenshots)', () => {
   });
 
   it('shows a live chat as the daemon replays it', async () => {
-    const { harness, element, commandId } = await render(CHATTING);
+    const { harness, element, agentId } = await render(CHATTING);
     expect(sockets.map((s) => s.url)).toEqual([
-      `wss://workspaces.test/workspaces/container/1/chat/commands/${commandId}`,
+      `wss://workspaces.test/workspaces/agent/${agentId}/chat`,
     ]);
     const log = await goldenMaster(TURNS, 'getCommandLog', 'qits-workspace-daemon');
     sockets[0].open();
