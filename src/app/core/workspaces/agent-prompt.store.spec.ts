@@ -126,9 +126,7 @@ describe('AgentPromptStore', () => {
     const request = http.expectOne(PROMPT);
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({ text: 'Carry on.', compactFirst: false });
-    // `promptAgent` answers the delivery door's `Delivery`; its own recording is not in the pinned
-    // golden masters yet, so this is the same state's recorded `deliverAgentTurn` answer.
-    const answer = workspacesGoldenMaster(WORKING, 'deliverAgentTurn');
+    const answer = workspacesGoldenMaster(WORKING, 'promptAgent');
     request.flush(answer);
     expect(await done).toEqual({ ok: true, value: answer });
   });

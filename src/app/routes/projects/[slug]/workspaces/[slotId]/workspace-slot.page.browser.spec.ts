@@ -23,11 +23,7 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  *
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
  *
- * The agents it hosts are read with `listWorkspaceAgents` (epic qits-1667), whose recording the
- * pinned golden masters do not hold yet. Until they do, its answer (`{ agents }`, as `listAgents`
- * answers) is the Agents page's recorded `listAgents` of "a project with workspace slots hosting
- * agents", which the pact binds: the same two agents in slot 1, and the improvement ticket's QUEUED
- * agent, which has no slot yet.
+ * The agents it hosts are read with `listWorkspaceAgents` (epic qits-1667).
  *
  * The container's harness install (epic qits-1667, moved here from the agent's Terminal tab) is
  * qits-workspace-daemon's slot 1: the harness signed in ("a workspace daemon with a signed-in
@@ -40,7 +36,6 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  */
 
 const SLOT = 'a workspace slot hosting agents';
-const PROJECT = 'a project with workspace slots hosting agents';
 const SIGNED_IN = 'a workspace daemon with a signed-in harness';
 const SIGNED_OUT = 'a workspace daemon with a harness nobody signed in';
 const PLUGINS = 'a workspace daemon with plugins installed';
@@ -119,7 +114,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
       .flush(await goldenMaster(SLOT, 'getWorkspaceActiveProcess', 'qits-workspaces'));
     http
       .expectOne(`/workspaces/api/workspaces/${id}/agents`)
-      .flush(await goldenMaster(PROJECT, 'listAgents', 'qits-workspaces'));
+      .flush(await goldenMaster(SLOT, 'listWorkspaceAgents', 'qits-workspaces'));
     await answered(harness);
     const base = `https://workspaces.test/workspaces/container/${id}`;
     http
@@ -140,9 +135,9 @@ describe('WorkspaceSlotPage (screenshots)', () => {
       .element(view.getByRole('heading', { name: 'Workspace ws-contract' }))
       .toBeVisible();
     await expect.element(view).toMatchTextContent('placed on a runner');
-    await expect.element(view).toMatchTextContent('3 agents');
+    await expect.element(view).toMatchTextContent('2 agents');
     await expect.element(view.getByRole('region', { name: 'Starting' })).not.toBeInTheDocument();
-    const hosted = await goldenMaster(PROJECT, 'listAgents', 'qits-workspaces');
+    const hosted = await goldenMaster(SLOT, 'listWorkspaceAgents', 'qits-workspaces');
     const agentId = hosted.agents.find(
       (a: { entityId?: string }) => a.entityId === 'contract-00000001-2',
     ).agentId;
@@ -170,7 +165,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent(
-        'Stopping the container affects its 3 agents: contract-00000001-11, contract-00000001-10, contract-00000001-2.',
+        'Stopping the container affects its 2 agents: contract-00000001-2, contract-00000001-10.',
       );
     await expect.element(view).toMatchScreenshot('confirm-stop');
   });

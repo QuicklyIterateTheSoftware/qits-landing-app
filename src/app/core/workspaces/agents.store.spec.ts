@@ -116,14 +116,12 @@ describe('AgentsStore', () => {
     http
       .expectOne(`${API}/workspaces/${id}/active-process`)
       .flush(workspacesGoldenMaster(SLOT, 'getWorkspaceActiveProcess'));
-    // `listWorkspaceAgents` answers `{ agents }` as `listAgents` does; its own recording of this
-    // state is not in the pinned golden masters yet, so this is the state's recorded `listAgents`.
     http
       .expectOne(`${API}/workspaces/${id}/agents`)
-      .flush(workspacesGoldenMaster(SLOT, 'listAgents'));
+      .flush(workspacesGoldenMaster(SLOT, 'listWorkspaceAgents'));
     await done;
     expect(store.slotOf(id)).toMatchObject({ status: 'loaded', processId: null });
-    expect(store.slotAgentsOf(id)?.agents.map((a) => a.runState)).toEqual(['RUNNING', 'YIELDED']);
+    expect(store.slotAgentsOf(id)?.agents.map((a) => a.runState)).toEqual(['YIELDED', 'RUNNING']);
   });
 
   it('calls a slot that answers 404 missing', async () => {
@@ -164,17 +162,13 @@ describe('AgentsStore', () => {
     await settle();
     http.expectOne(`${API}/agents/${agentId}`).flush(workspacesGoldenMaster(DRAFT, 'getAgent'));
     await settle();
-    // `getAgentActiveProcess` answers the slot lookup's `{ technicalProcessId }`; its own recording
-    // is not in the pinned golden masters yet, so this is the starting slot's recorded answer.
     http
       .expectOne(`${API}/agents/${agentId}/active-process`)
-      .flush(workspacesGoldenMaster(STARTING, 'getWorkspaceActiveProcess'));
+      .flush(workspacesGoldenMaster(SLOT, 'getAgentActiveProcess'));
     await done;
     expect(store.agentOf(agentId)?.status).toBe('loaded');
     expect(store.agentOf(agentId)?.agent?.entityId).toBe('contract-00000001-10');
-    expect(store.agentOf(agentId)?.processId).toBe(
-      workspacesGoldenMaster(STARTING, 'getWorkspaceActiveProcess').technicalProcessId,
-    );
+    expect(store.agentOf(agentId)?.processId).toBeNull();
     expect(store.slotOf(1)).toBeUndefined();
   });
 

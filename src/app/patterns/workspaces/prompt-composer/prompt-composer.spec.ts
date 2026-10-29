@@ -29,12 +29,8 @@ const WORKING = 'an agent working on a ticket';
 const { agentId } = workspacesGoldenMasters.operation(SAVED, 'getAgentPromptDraft').params;
 const DRAFT = `/workspaces/api/agents/${agentId}/prompt-draft`;
 const DELIVERY = `/workspaces/api/agents/${agentId}/prompt`;
-/**
- * qits-workspaces' answer to a prompt. `promptAgent` answers the work item delivery door's
- * `Delivery`, and its own recording ("an agent working on a ticket") is not in the pinned golden
- * masters yet, so this is that state's recorded `deliverAgentTurn` answer, the same body.
- */
-const DELIVERED = () => workspacesGoldenMaster(WORKING, 'deliverAgentTurn');
+/** qits-workspaces' recorded answer to a prompt. */
+const DELIVERED = () => workspacesGoldenMaster(WORKING, 'promptAgent');
 const ORIGIN = 'https://workspaces.test';
 
 @Component({

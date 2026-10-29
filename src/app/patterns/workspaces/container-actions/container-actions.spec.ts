@@ -24,7 +24,7 @@ const SLOT = `/workspaces/api/workspaces/${ID}`;
 /** The slot's agents, as qits-workspaces recorded them for "a workspace slot hosting agents". */
 const HOSTED: readonly HostedAgent[] = workspacesGoldenMaster(
   'a workspace slot hosting agents',
-  'listAgents',
+  'listWorkspaceAgents',
 ).agents;
 
 @Component({
@@ -100,16 +100,14 @@ describe('ContainerActions', () => {
     fixture.detectChanges();
     http.expectNone(`${SLOT}/stop-container`);
     expect(text()).toContain(
-      'Stopping the container affects its 2 agents: contract-00000001-10, contract-00000001-2.',
+      'Stopping the container affects its 2 agents: contract-00000001-2, contract-00000001-10.',
     );
     button('Confirm stop?').click();
     await settle();
-    // The pinned recording predates `affectedAgentIds` (epic qits-1667): the stop's answer is the
-    // recorded one with the slot's first agent named, as the service names the agents it stopped.
-    http.expectOne(`${SLOT}/stop-container`).flush({
-      ...workspacesGoldenMaster<object>(RUNNING, 'stopWorkspaceContainer'),
-      affectedAgentIds: [HOSTED[0].agentId],
-    });
+    // The recorded stop names the agent that held the slot, the bug ticket's.
+    http
+      .expectOne(`${SLOT}/stop-container`)
+      .flush(workspacesGoldenMaster(RUNNING, 'stopWorkspaceContainer'));
     await answered(fixture);
     expect(text()).toContain('Affected agent: contract-00000001-10.');
     expect(text()).not.toContain('Stopping the container affects');
@@ -122,16 +120,19 @@ describe('ContainerActions', () => {
     fixture.detectChanges();
     button('Confirm stop?').click();
     await settle();
-    http
-      .expectOne(`${SLOT}/stop-container`)
-      .flush(workspacesGoldenMaster(RUNNING, 'stopWorkspaceContainer'));
+    // No recording stops a slot that hosts no agent: the recorded stop, its list emptied, as the
+    // service answers when no agent was affected.
+    http.expectOne(`${SLOT}/stop-container`).flush({
+      ...workspacesGoldenMaster<object>(RUNNING, 'stopWorkspaceContainer'),
+      affectedAgentIds: [],
+    });
     await answered(fixture);
     expect(text()).toContain('The service says no agent was affected.');
   });
 
   it('names an agent it does not list by its id', () => {
     expect(agentName(undefined, '0123abcd-0000-4000-8000-000000000000')).toBe('agent 0123abcd');
-    expect(agentName(HOSTED[1], HOSTED[1].agentId ?? '')).toBe('contract-00000001-2');
+    expect(agentName(HOSTED[0], HOSTED[0].agentId ?? '')).toBe('contract-00000001-2');
   });
 
   it('shows a refused start in the service’s words, and still reads the slot again', async () => {

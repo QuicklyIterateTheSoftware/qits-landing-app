@@ -106,9 +106,9 @@ describe('AgentLayout (screenshots)', () => {
 
   /**
    * Answers the start running against the agent's slot, asked of the agent
-   * (`getAgentActiveProcess`, epic qits-1667). Its own recording is not in the pinned golden masters
-   * yet; it answers the slot lookup's `{ technicalProcessId }`, so this is the starting slot's
-   * recorded answer, which the slot page's pact binds.
+   * (`getAgentActiveProcess`, epic qits-1667). qits-workspaces records it only with no start
+   * running; a live start is recorded for the slot's own lookup (the same `{ technicalProcessId }`,
+   * which the slot page's pact binds), so this is that answer.
    */
   async function answerStart(harness: RouterTestingHarness, agentId: string) {
     const process = await goldenMaster(STARTING, 'getWorkspaceActiveProcess', 'qits-workspaces');

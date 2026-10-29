@@ -110,7 +110,7 @@ describe('AgentLayout', () => {
     // The agent page asks nothing of the slot: only the agent's start, which no start runs.
     http
       .expectOne(`/workspaces/api/agents/${AGENT_ID}/active-process`)
-      .flush({ technicalProcessId: null });
+      .flush(workspacesGoldenMaster('a workspace slot hosting agents', 'getAgentActiveProcess'));
     await answered(harness);
     const element = harness.routeNativeElement as HTMLElement;
     const link = (name: string) =>

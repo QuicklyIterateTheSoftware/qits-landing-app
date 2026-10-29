@@ -98,13 +98,10 @@ describe('AgentActionsStore', () => {
     expect(await done).toMatchObject({ ok: true, value: { state: 'REMOVED' } });
   });
 
-  /*
-   * The agent verbs (epic qits-1667) have no recording in the pinned golden masters yet. Stop and
-   * restart answer the agent (`AgentDto`), so their answers are the recorded `getAgent` of the
-   * same agent with the run state the verb leaves; interrupt answers `{ agentId, interrupted,
-   * detail }`, derived from that agent's id and the provider's recorded words.
-   */
+  /** The agent verbs' recorded answers (epic qits-1667), all the same agent. */
   const agent = () => workspacesGoldenMaster(AGENT, 'getAgent');
+  const recorded = (state: string, operationId: string) =>
+    workspacesGoldenMaster(state, operationId);
 
   it('interrupts a running agent by its id', async () => {
     const { agentId } = agent();
@@ -112,7 +109,7 @@ describe('AgentActionsStore', () => {
     await settle();
     const request = http.expectOne(`/workspaces/api/agents/${agentId}/interrupt`);
     expect(request.request.method).toBe('POST');
-    request.flush({ agentId, interrupted: true, detail: 'ESC was sent to the agent’s harness.' });
+    request.flush(recorded('an agent in the middle of a turn', 'interruptAgent'));
     expect(await done).toMatchObject({ ok: true, value: { interrupted: true } });
   });
 
@@ -140,7 +137,7 @@ describe('AgentActionsStore', () => {
     await settle();
     const request = http.expectOne(`/workspaces/api/agents/${agentId}/stop`);
     expect(request.request.method).toBe('POST');
-    request.flush({ ...agent(), runState: 'STOPPED' });
+    request.flush(recorded('an agent working on a ticket', 'stopAgent'));
     expect(await done).toMatchObject({ ok: true, value: { runState: 'STOPPED' } });
   });
 
@@ -150,7 +147,7 @@ describe('AgentActionsStore', () => {
     await settle();
     http
       .expectOne(`/workspaces/api/agents/${agentId}/restart`)
-      .flush({ ...agent(), runState: 'YIELDED' });
+      .flush(recorded('a stopped workspace slot', 'restartAgent'));
     expect(await done).toMatchObject({ ok: true, value: { runState: 'YIELDED' } });
 
     const refused = store.restartAgent(agentId);

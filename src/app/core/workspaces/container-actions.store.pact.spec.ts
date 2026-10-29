@@ -9,7 +9,7 @@ import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import type { InteractionSlug } from '../../interactions';
-import { heldBy, workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
+import { workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { REFUSAL_MESSAGE } from './agent-actions.consumes';
 import { ENSURE_CONTAINER, STOP_CONTAINER } from './container-actions.consumes';
@@ -22,9 +22,8 @@ import { ContainerActionsStore } from './container-actions.store';
  *
  * - `ensureWorkspaceContainer`: "a stopped workspace slot" starts (its WORKSPACE lease queued on
  *   qits-system's targets).
- * - `stopWorkspaceContainer`: "a workspace slot running on a target" stops. The row binds the
- *   paths of `STOP_CONTAINER` the recording holds (`heldBy`): the pinned golden masters predate
- *   `affectedAgentIds` (epic qits-1667), so it is bound once qits-maintenance bumps them.
+ * - `stopWorkspaceContainer`: "a workspace slot running on a target" stops, naming the agent it
+ *   affected (`affectedAgentIds`, epic qits-1667).
  * - `recreateWorkspaceContainer`: only its refusal is recorded — "an agent whose workspace daemon
  *   is not connected" (400: the working tree cannot be proved clean). A successful recreate has no
  *   recording, so the success path is covered by the plain spec only.
@@ -116,11 +115,12 @@ describe('qits-landing-app → qits-workspaces-service pact: a slot’s containe
       RUNNING,
       'stopWorkspaceContainer',
       'stop-workspace-container',
-      heldBy(masters, RUNNING, 'stopWorkspaceContainer', STOP_CONTAINER),
+      STOP_CONTAINER,
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
       const outcome = await store.stopContainer(slotOf(RUNNING, 'stopWorkspaceContainer'));
       expect(outcome.ok && outcome.value.runtimeStatus).toBe('STOPPED');
+      expect(outcome.ok && outcome.value.affectedAgentIds?.length).toBe(1);
     }));
 
   it('recreate-workspace-container: a working tree nobody can prove clean is refused', () =>

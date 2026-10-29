@@ -9,13 +9,10 @@ import { AgentRunActions } from './agent-run-actions';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-/*
- * The agent verbs (epic qits-1667) have no recording in the pinned golden masters yet. Stop and
- * restart answer the agent, so their answers are this recorded agent with the run state the verb
- * leaves; interrupt's is derived from its id and the provider's recorded words.
- */
-const AGENT = workspacesGoldenMaster('an agent with a saved prompt draft', 'getAgent');
-const AGENT_ID: string = AGENT.agentId;
+/** The agent verbs' recorded answers (epic qits-1667), all for the same agent. */
+const INTERRUPTED = workspacesGoldenMaster('an agent in the middle of a turn', 'interruptAgent');
+const STOPPED = workspacesGoldenMaster('an agent working on a ticket', 'stopAgent');
+const AGENT_ID: string = INTERRUPTED.agentId;
 const API = `/workspaces/api/agents/${AGENT_ID}`;
 
 @Component({
@@ -81,13 +78,9 @@ describe('AgentRunActions', () => {
     await settle();
     const request = http.expectOne(`${API}/interrupt`);
     expect(request.request.method).toBe('POST');
-    request.flush({
-      agentId: AGENT_ID,
-      interrupted: true,
-      detail: 'ESC was sent to the agent’s harness.',
-    });
+    request.flush(INTERRUPTED);
     await answered(fixture);
-    expect(text()).toContain('ESC was sent to the agent’s harness.');
+    expect(text()).toContain(INTERRUPTED.detail);
     expect(fixture.componentInstance.changed).toBe(1);
   });
 
@@ -99,7 +92,7 @@ describe('AgentRunActions', () => {
     expect(button('Cancel')).toBeTruthy();
     button('Confirm stop?').click();
     await settle();
-    http.expectOne(`${API}/stop`).flush({ ...AGENT, runState: 'STOPPED' });
+    http.expectOne(`${API}/stop`).flush(STOPPED);
     await answered(fixture);
     expect(button('Cancel')).toBeUndefined();
     expect(text()).not.toContain('did not work');

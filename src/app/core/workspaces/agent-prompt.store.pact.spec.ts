@@ -11,7 +11,12 @@ import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing'
 import type { InteractionSlug } from '../../interactions';
 import { workspacesGoldenMasters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { DELETE_PROMPT_DRAFT, GET_PROMPT_DRAFT, SAVE_PROMPT_DRAFT } from './agent-prompt.consumes';
+import {
+  DELETE_PROMPT_DRAFT,
+  GET_PROMPT_DRAFT,
+  PROMPT_AGENT,
+  SAVE_PROMPT_DRAFT,
+} from './agent-prompt.consumes';
 import { AgentPromptStore, draftText } from './agent-prompt.store';
 
 /**
@@ -24,11 +29,9 @@ import { AgentPromptStore, draftText } from './agent-prompt.store';
  *
  * The agent's id is a param, so the draft's path takes it as a provider-state expression.
  *
- * Not bound yet: the prompt itself (`AgentPromptStore.prompt`, `promptAgent`, epic qits-1667).
- * qits-workspaces records it ("an agent working on a ticket"), but the golden masters this app pins
- * (`@qits/workspaces-golden-masters`) predate that recording, and a row needs it; the interaction
- * is added here once qits-maintenance bumps the package. The work item delivery door the tab used
- * before (`deliverAgentTurn`) is no longer called, so it has no row.
+ * - "an agent working on a ticket": the prompt, sent to the agent by its id (`promptAgent`, epic
+ *   qits-1667), which it hears as its first turn. The recorded text is what the store sends. The
+ *   work item delivery door the tab used before (`deliverAgentTurn`) is no longer called.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-workspaces-service';
@@ -36,12 +39,14 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const SAVED = 'an agent with a saved prompt draft';
 const NONE = 'an agent with no prompt draft';
+const WORKING = 'an agent working on a ticket';
 
 /** What this spec owns in the shared pact file. */
 const OPERATIONS: readonly OwnedOperation[] = [
   'getAgentPromptDraft',
   'saveAgentPromptDraft',
   'deleteAgentPromptDraft',
+  'promptAgent',
 ];
 
 /**
@@ -150,4 +155,12 @@ describe('qits-landing-app → qits-workspaces-service pact: the agent’s promp
         },
       ));
   }
+
+  it('send-agent-prompt: the agent hears the prompt as its first turn', () =>
+    given(WORKING, 'promptAgent', 'send-agent-prompt', PROMPT_AGENT).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { text } = sent<{ text: string }>(WORKING, 'promptAgent');
+      const outcome = await store.prompt(agentOf(WORKING, 'promptAgent'), text);
+      expect(outcome.ok && outcome.value.launched).toBe(true);
+    }));
 });

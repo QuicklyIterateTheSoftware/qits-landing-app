@@ -223,16 +223,12 @@ refusal is shown in the service's words: the store reads the error body's `messa
 write the page reads its data again. No recording holds a
 successful recreate or a forced discard, so their success paths are covered by plain specs only.
 
-**Calls waiting for their recordings (epic qits-1667).** qits-workspaces records `promptAgent`,
+**The agent doors' recordings (epic qits-1667)** are qits-workspaces' `promptAgent`,
 `getAgentActiveProcess`, `stopAgent`, `restartAgent`, `interruptAgent` and `listWorkspaceAgents`,
-and `affectedAgentIds` on a stopped slot, but the `@qits/workspaces-golden-masters` this app pins
-predates them, and `addGoldenInteraction` needs the recording. Until qits-maintenance bumps the
-package, those calls have no pact row (the stop's row binds what its recording holds, `heldBy`), and
-the specs answer them with the recording of the call they replace, which has the same shape, saying
-so where they do. Once the bump lands: add their interactions to the stores' pact specs
-(`agents`, `agent-prompt`, `agent-actions`, `container-actions`; states "a workspace slot hosting agents", "an agent
-working on a ticket", "a stopped workspace slot", "an agent in the middle of a turn"), switch those
-specs to the new recordings, and regenerate the pact.
+and `affectedAgentIds` on a stopped slot, in `@qits/workspaces-golden-masters` from 2026.1029.225748
+on; the stores' pact specs bind them and the specs answer with them. The one answer still borrowed:
+the agent page's screenshot of a start in flight, since `getAgentActiveProcess` is recorded only with
+no start running; it shows the slot lookup's recorded live start (the same `{ technicalProcessId }`).
 
 This app has no runners page of its own (epic qits-1481, ahead of qits-workspaces-service dropping
 its runner doors in qits-1532): `WorkspaceRunnersPage`, `RunnersStore` and the
