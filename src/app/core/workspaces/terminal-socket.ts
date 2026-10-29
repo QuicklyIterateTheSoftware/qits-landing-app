@@ -1,12 +1,7 @@
 import { signal, type Signal } from '@angular/core';
 import type { WebSocketFactory } from '$core/platform/web-socket';
 import { agentSocketUrl } from './agent-proxy';
-import {
-  commandSocketUrl,
-  RECONNECT_BACKOFF_MS,
-  ReconnectingSocket,
-  type SocketLink,
-} from './reconnecting-socket';
+import { RECONNECT_BACKOFF_MS, ReconnectingSocket, type SocketLink } from './reconnecting-socket';
 
 const DEFAULT_COLS = 100;
 const DEFAULT_ROWS = 30;
@@ -34,16 +29,6 @@ export type TerminalLink = SocketLink;
  */
 export function agentTerminalSocketUrl(origin: string, agentId: string): string {
   return agentSocketUrl(origin, agentId, 'terminal');
-}
-
-/**
- * The daemon's terminal socket for one command, `WS /terminal/commands/{id}`, through
- * qits-workspaces' container proxy: `wss://workspaces.<domain>/workspaces/container/<slot row
- * id>/terminal/commands/<command id>` (`ws:` when qits-workspaces' origin is `http:`). Only for a
- * command of the slot's own, not an agent's: the sign-in terminal.
- */
-export function terminalSocketUrl(origin: string, workspaceRowId: number, commandId: string) {
-  return commandSocketUrl(origin, workspaceRowId, 'terminal', commandId);
 }
 
 /**

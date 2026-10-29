@@ -4,7 +4,6 @@ import {
   type WebSocketFactory,
   type WebSocketLike,
 } from '$core/platform/web-socket';
-import { containerBase } from './agent-harness.store';
 
 /** The wait before each reconnect. Five attempts, then the socket is `lost`. */
 export const RECONNECT_BACKOFF_MS: readonly number[] = [500, 1000, 2000, 4000, 4000];
@@ -14,21 +13,6 @@ export type SocketLink = 'connecting' | 'open' | 'reconnecting' | 'disconnected'
 
 /** A close code of 1000 from the server: the command is gone. Final. */
 const CLEAN_CLOSE = 1000;
-
-/**
- * One of the daemon's sockets for a command (`terminal` or `chat`), through qits-workspaces'
- * container proxy: `wss://workspaces.<domain>/workspaces/container/<slot row id>/<channel>/commands/
- * <command id>` (`ws:` when qits-workspaces' origin is `http:`).
- */
-export function commandSocketUrl(
-  origin: string,
-  workspaceRowId: number,
-  channel: 'terminal' | 'chat',
-  commandId: string,
-): string {
-  const base = containerBase(origin, workspaceRowId).replace(/^http(s?):/, 'ws$1:');
-  return `${base}/${channel}/commands/${encodeURIComponent(commandId)}`;
-}
 
 /** What a socket's user does with each attachment. */
 export interface SocketHandlers {

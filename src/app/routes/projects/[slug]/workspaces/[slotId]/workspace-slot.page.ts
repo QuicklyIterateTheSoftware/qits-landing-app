@@ -17,6 +17,7 @@ import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentRow } from '$patterns/workspaces/agent-row/agent-row';
 import { ContainerActions } from '$patterns/workspaces/container-actions/container-actions';
+import { HarnessSetup } from '$patterns/workspaces/harness-setup/harness-setup';
 import { SlotStatus } from '$patterns/workspaces/slot-status/slot-status';
 import { StartingLog } from '$patterns/workspaces/starting-log/starting-log';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -28,8 +29,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * (`app-container-actions`: start or stop, recreate; read again after each; a stop or recreate is
  * confirmed naming the agents it affects, and then names the agents the service says it affected:
  * epic qits-1667, the only page with container verbs), the log of the start bringing its container
- * up while one runs, and the agents it hosts (`listWorkspaceAgents`) — each a link to the agent's
- * page (`agents/<agent id>`, epic qits-1681).
+ * up while one runs, the agents it hosts (`listWorkspaceAgents`) — each a link to the agent's
+ * page (`agents/<agent id>`, epic qits-1681) — and the container's harness install
+ * (`app-harness-setup`: the harness sign-in and the plugins, moved here from the agent's Terminal
+ * tab in epic qits-1667, since they are the container's, not one agent's).
  *
  * Read by `AgentsStore.loadSlot`, again after a lifecycle event about this slot (at most once a
  * second). A slot that resolved answers 404: "This workspace is gone". In the browser only.
@@ -43,7 +46,15 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-workspace-slot-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AgentRow, ContainerActions, PageLayoutComponent, SlotStatus, Spinner, StartingLog],
+  imports: [
+    AgentRow,
+    ContainerActions,
+    HarnessSetup,
+    PageLayoutComponent,
+    SlotStatus,
+    Spinner,
+    StartingLog,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -88,6 +99,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   </ul>
                 </ui-spinner>
               </section>
+              @if (slot.id; as id) {
+                <app-harness-setup [workspaceRowId]="id" [harness]="harness()" />
+              }
             </div>
           }
         </ui-spinner>
@@ -115,6 +129,10 @@ export class WorkspaceSlotPage {
   protected readonly missing = computed(() => this.status()?.status === 'missing');
   protected readonly agents = computed(() => this.hostedRead()?.agents ?? []);
   protected readonly agentsLoaded = computed(() => this.hostedRead()?.status === 'loaded');
+  /** The harness the slot's agents run, for the sign-in notice; any when none is listed. */
+  protected readonly harness = computed(
+    () => this.agents().find((agent) => agent.harness)?.harness ?? null,
+  );
 
   protected readonly title = computed(
     () => `Workspace ${this.slot()?.workspaceId ?? `ws-${this.slotId() || ''}`}`,

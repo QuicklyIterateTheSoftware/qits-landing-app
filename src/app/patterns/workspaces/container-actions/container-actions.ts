@@ -8,11 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import {
-  AgentActionsStore,
   describeRefusal,
   sentence,
   type ActionOutcome,
 } from '$core/workspaces/agent-actions.store';
+import { ContainerActionsStore } from '$core/workspaces/container-actions.store';
 import type { SlotAgent, SlotDetail } from '$core/workspaces/agents.consumes';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
@@ -87,7 +87,7 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
   `,
 })
 export class ContainerActions {
-  private readonly store = inject(AgentActionsStore);
+  private readonly store = inject(ContainerActionsStore);
 
   readonly slot = input.required<Pick<SlotDetail, 'id' | 'runtimeStatus'>>();
 

@@ -5,6 +5,8 @@
  *
  * - `WS terminal`, `WS chat`: the agent's running harness command's terminal or chat socket;
  * - `GET log`: its harness command's log (the last one of a yielded or stopped agent too);
+ * - `POST prompt-refinements`: the daemon's prompt rewrite, over the harness installed in the
+ *   agent's container;
  * - `GET files[/…]`, `GET detection`, `GET component-map`: its worktree
  *   (`agent-worktrees/<agent id>/…` on the daemon).
  *
@@ -28,7 +30,8 @@ export function agentSocketUrl(origin: string, agentId: string, channel: 'termin
 }
 
 /** A route of the agent proxy that a daemon operation is reached at. */
-export type AgentRoute = 'files' | 'files/content' | 'detection' | 'component-map' | 'log';
+export type AgentRoute =
+  'files' | 'files/content' | 'detection' | 'component-map' | 'log' | 'prompt-refinements';
 
 /**
  * Where a daemon operation is reached through the agent proxy, as the generated call's `baseUrl`

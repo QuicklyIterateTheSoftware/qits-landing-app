@@ -183,7 +183,10 @@ export class PromptComposer {
   /** Whose draft this is. */
   readonly agentId = input.required<string>();
 
-  /** The agent's slot, for the rewrite; 0 while the agent is queued: no rewrite then. */
+  /**
+   * The agent's slot (its row id), only to tell whether it has a container to rewrite in: 0 while
+   * the agent is queued, no rewrite then. The rewrite itself is addressed by the agent.
+   */
   readonly workspaceRowId = input(0);
 
   /** What the work is about, for the rewrite. */
@@ -321,7 +324,7 @@ export class PromptComposer {
     if (!notes || this.refining()) return;
     this.refining.set(true);
     this.refineProblem.set(null);
-    const outcome = await this.chats.refine(this.workspaceRowId(), notes, this.preamble());
+    const outcome = await this.chats.refine(this.agentId(), notes, this.preamble());
     this.refining.set(false);
     if (outcome.ok) this.promote(outcome.value);
     else this.refineProblem.set(`The rewrite did not happen: ${why(outcome.status)}.`);

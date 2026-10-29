@@ -15,7 +15,7 @@ import { workspaceDaemonGoldenMasters as masters } from '../../../testing/golden
 import { assertPactPart } from '../../../testing/pact-part';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { DETECT, LIST_FILES, READ_FILE } from './agent-files.consumes';
-import { containerBase } from './agent-harness.store';
+import { containerBase } from './container-proxy';
 
 /**
  * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part `AgentFilesStore`

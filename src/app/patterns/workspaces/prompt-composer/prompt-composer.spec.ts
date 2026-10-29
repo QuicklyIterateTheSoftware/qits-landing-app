@@ -220,7 +220,7 @@ describe('PromptComposer', () => {
     type(notes(), 'uh so the login um it fails when the name has spaces');
     button('Refine into prompt')!.click();
     await settle();
-    const request = http.expectOne(`${ORIGIN}/workspaces/container/1/prompt-refinements`);
+    const request = http.expectOne(`${ORIGIN}/workspaces/agent/${agentId}/prompt-refinements`);
     expect(request.request.body).toEqual({
       transcript: 'uh so the login um it fails when the name has spaces',
       preamble: 'contract-00000001-10: Fix the login',

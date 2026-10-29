@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import { availableAgents, openSignInTerminal, type AgentType } from '../../api/workspace-daemon';
 import { PlatformOrigins } from '$core/platform/platform-origins';
-import { containerBase } from './agent-harness.store';
+import { containerBase } from './container-proxy';
 import {
   AVAILABLE_AGENTS,
   DAEMON_REFUSAL,

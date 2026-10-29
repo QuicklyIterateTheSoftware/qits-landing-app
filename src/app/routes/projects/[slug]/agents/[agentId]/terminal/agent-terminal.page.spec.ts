@@ -4,18 +4,13 @@ import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
-import { provideHeyApiClient } from '../../../../../../api/workspace-daemon/client/client.gen';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import type { DomainEvent } from '$core/events/domain-events';
+import { SelectedProject } from '$core/projects/selected-project';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
 import { TERMINAL_BACKOFF_MS } from '$core/workspaces/terminal-socket';
-import {
-  workspaceDaemonGoldenMaster,
-  workspaceDaemonGoldenMasters,
-  workspacesGoldenMaster,
-} from '../../../../../../../testing/golden-masters';
+import { workspacesGoldenMaster } from '../../../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { AgentTerminalPage } from './agent-terminal.page';
 
@@ -50,30 +45,26 @@ class FakeSocket implements WebSocketLike {
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-const RUNNING = 'a workspace daemon with an agent running';
-const SIGNED_IN = 'a workspace daemon with a signed-in harness';
-const SIGNED_OUT = 'a workspace daemon with a harness nobody signed in';
-const PLUGINS = 'a workspace daemon with plugins installed';
 const ORIGIN = 'https://workspaces.qits.example';
-const { agentId, workspaceRowId, commandId } = workspaceDaemonGoldenMasters.operation(
-  RUNNING,
-  'getAgentWorktree',
-).params;
-const BASE = `${ORIGIN}/workspaces/container/${workspaceRowId}`;
-// qits-workspaces' agent of the bug ticket, in slot 1: the same agent and slot the daemon's
-// "agent running" state names.
+// qits-workspaces' agent of the bug ticket, RUNNING in slot 1.
 const AGENT = workspacesGoldenMaster('an agent whose workspace is starting', 'listAgents')
   .agents[0];
+const agentId: string = AGENT.agentId;
+const SOCKET = `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`;
 
 describe('AgentTerminalPage', () => {
   let http: HttpTestingController;
   let sockets: FakeSocket[];
   let harness: RouterTestingHarness;
   let followed: unknown[][];
+  let loads: string[];
+  let agent: typeof AGENT;
 
   beforeEach(async () => {
     sockets = [];
     followed = [];
+    loads = [];
+    agent = AGENT;
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -85,12 +76,13 @@ describe('AgentTerminalPage', () => {
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
+        { provide: SelectedProject, useValue: { slug: () => 'contract-00000001' } },
         {
           provide: AgentsStore,
           useValue: {
-            agentOf: () => ({ status: 'loaded', agent: AGENT }),
+            agentOf: () => ({ status: 'loaded', agent }),
+            loadAgent: (id: string) => loads.push(id),
             follow: (...args: unknown[]) => followed.push(args),
           },
         },
@@ -109,38 +101,22 @@ describe('AgentTerminalPage', () => {
   });
 
   afterEach(() => {
+    // The tab asks nothing over HTTP: the agent is the layout's, the terminal a socket.
     http.verify();
     vi.useRealTimers();
   });
 
   const text = () => (harness.routeNativeElement as HTMLElement).textContent ?? '';
 
-  async function open(
-    list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands'),
-    report = SIGNED_IN,
-  ) {
+  async function open() {
     await harness.navigateByUrl(`/agent/${agentId}/terminal`);
-    await settle();
-    http
-      .expectOne(`${BASE}/agents/available`)
-      .flush(workspaceDaemonGoldenMaster(report, 'availableAgents'));
-    http
-      .expectOne(`${BASE}/agent-plugins`)
-      .flush(workspaceDaemonGoldenMaster(PLUGINS, 'listPlugins'));
-    http
-      .expectOne(`${BASE}/agent-worktrees/${agentId}`)
-      .flush(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
-    await settle();
-    http.expectOne(`${BASE}/commands`).flush(list);
     await settle();
     harness.detectChanges();
   }
 
-  it('attaches to the agent’s terminal through qits-workspaces’ agent proxy', async () => {
+  it('attaches to the running agent’s terminal through qits-workspaces’ agent proxy', async () => {
     await open();
-    expect(sockets.map((s) => s.url)).toEqual([
-      `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`,
-    ]);
+    expect(sockets.map((s) => s.url)).toEqual([SOCKET]);
     expect(text()).toContain('Attaching…');
     sockets[0].open();
     harness.detectChanges();
@@ -183,114 +159,53 @@ describe('AgentTerminalPage', () => {
     expect(text()).toContain('Attaching…');
   });
 
-  it('says the command ended on a clean close, and does not attach again', async () => {
+  it('says the harness ended on a clean close, and does not attach again', async () => {
     await open();
     vi.useFakeTimers();
     sockets[0].open();
     sockets[0].serverClose(1000);
     vi.advanceTimersByTime(30_000);
     harness.detectChanges();
-    expect(text()).toContain('Closed: the command has ended.');
+    expect(text()).toContain('Closed: the harness has ended.');
     expect(sockets).toHaveLength(1);
   });
 
-  it('opens no terminal for a harness that runs as a chat', async () => {
-    // The recorded list, with its one command a CHAT instead of a TERMINAL.
-    const list = workspaceDaemonGoldenMaster(RUNNING, 'listCommands');
-    list.entries[0].command.kind = 'CHAT';
-    await open(list);
+  it('opens no terminal for a stopped agent, and says how it comes back', async () => {
+    // The recorded agent, as a stop leaves it.
+    agent = { ...AGENT, runState: 'STOPPED' };
+    await open();
     expect(sockets).toEqual([]);
-    expect(text()).toContain('runs as a chat');
+    expect(text()).toContain('The agent was stopped');
+  });
+
+  it('opens no terminal for a yielded agent', async () => {
+    agent = { ...AGENT, runState: 'YIELDED' };
+    await open();
+    expect(sockets).toEqual([]);
+    expect(text()).toContain('The agent’s harness is not running.');
+  });
+
+  it('opens no terminal for an agent with no workspace', async () => {
+    agent = { ...AGENT, workspaceRowId: null, runState: 'QUEUED' };
+    await open();
+    expect(sockets).toEqual([]);
+    expect(text()).toContain('This agent has no workspace yet');
+  });
+
+  it('links the workspace’s page for the harness sign-in and the plugins', async () => {
+    await open();
+    const link = Array.from((harness.routeNativeElement as HTMLElement).querySelectorAll('a')).find(
+      (a) => a.textContent?.includes('the workspace’s page'),
+    );
+    expect(link?.getAttribute('href')).toBe('/projects/contract-00000001/workspaces/1');
+    expect(text()).not.toContain('Nobody has signed');
+    expect(text()).not.toContain('Plugins');
   });
 
   it('detaches when the tab is left', async () => {
     await open();
     await harness.navigateByUrl(`/agent/${agentId}`);
     expect(sockets[0].closed).toBe(true);
-  });
-
-  const button = (label: string) =>
-    Array.from((harness.routeNativeElement as HTMLElement).querySelectorAll('button')).find((b) =>
-      b.textContent?.includes(label),
-    )!;
-
-  it('shows no sign-in notice while the harness is signed in, and lists the plugins', async () => {
-    await open();
-    expect(text()).not.toContain('Nobody has signed');
-    expect(text()).toContain('Plugins');
-    expect(text()).toContain('Java language server');
-    expect(text()).toContain('installed, switched off');
-  });
-
-  it('says nobody signed the harness in, and attaches to the sign-in terminal it opens', async () => {
-    await open(undefined, SIGNED_OUT);
-    expect(text()).toContain('Nobody has signed Claude Code in');
-    sockets[0].open();
-    button('Open the sign-in terminal').click();
-    await settle();
-    const request = http.expectOne(`${BASE}/agents/sign-in`);
-    expect(request.request.body).toEqual({ agentType: 'CLAUDE' });
-    const terminal = workspaceDaemonGoldenMaster(SIGNED_OUT, 'openSignInTerminal');
-    request.flush(terminal);
-    await settle();
-    harness.detectChanges();
-    expect(text()).toContain('The sign-in terminal.');
-    expect(text()).not.toContain('Nobody has signed');
-    expect(sockets[0].closed).toBe(true);
-    // The daemon's recordings freeze both commands' ids to the same value; the socket is new.
-    expect(sockets[1].url).toBe(
-      `wss://workspaces.qits.example/workspaces/container/${workspaceRowId}/terminal/commands/${terminal.command.id}`,
-    );
-    // The sign-in terminal is the slot's own command, not the agent's harness.
-    expect(sockets[0].url).toBe(
-      `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`,
-    );
-    // The sign-in ends: the terminal goes, the report is read again, and the harness is back.
-    sockets[1].open();
-    sockets[1].serverClose(1000);
-    harness.detectChanges();
-    await settle();
-    http
-      .expectOne(`${BASE}/agents/available`)
-      .flush(workspaceDaemonGoldenMaster(SIGNED_IN, 'availableAgents'));
-    await settle();
-    harness.detectChanges();
-    expect(text()).not.toContain('The sign-in terminal.');
-    expect(sockets[2].url).toBe(
-      `wss://workspaces.qits.example/workspaces/agent/${agentId}/terminal`,
-    );
-  });
-
-  it('says why the sign-in terminal did not open', async () => {
-    await open(undefined, SIGNED_OUT);
-    button('Open the sign-in terminal').click();
-    await settle();
-    // No refused sign-in is recorded; an error answer is only a status and its message.
-    http
-      .expectOne(`${BASE}/agents/sign-in`)
-      .flush({ message: 'Coding agents are not wired yet.' }, { status: 503, statusText: 'No' });
-    await settle();
-    harness.detectChanges();
-    expect(text()).toContain('The sign-in terminal did not open — 503 Coding agents are not wired');
-  });
-
-  it('installs a plugin and shows the refreshed list', async () => {
-    await open();
-    const install = Array.from(
-      (harness.routeNativeElement as HTMLElement).querySelectorAll('li'),
-    ).find((li) => li.textContent?.includes('Python language server'))!;
-    install.querySelector('button')!.click();
-    await settle();
-    http
-      .expectOne(`${BASE}/agent-plugins/pyright-lsp/install`)
-      .flush(workspaceDaemonGoldenMaster(PLUGINS, 'installPlugin'));
-    await settle();
-    harness.detectChanges();
-    const row = Array.from((harness.routeNativeElement as HTMLElement).querySelectorAll('li')).find(
-      (li) => li.textContent?.includes('Python language server'),
-    )!;
-    expect(row.textContent).toContain('installed');
-    expect(row.querySelector('button')).toBeNull();
   });
 
   describe('after lifecycle events (qits-1270)', () => {
@@ -303,52 +218,25 @@ describe('AgentTerminalPage', () => {
         readonly string[],
       ];
       expect(events).toEqual(HARNESS_EVENTS);
-      expect(scope()).toEqual({ agentId, workspaceId: String(workspaceRowId) });
+      expect(scope()).toEqual({ agentId, workspaceId: '1' });
       refresh(names.map((name) => ({ name })));
       await settle();
+      harness.detectChanges();
     }
 
-    async function answerHarness() {
-      await settle();
-      http
-        .expectOne(`${BASE}/agent-worktrees/${agentId}`)
-        .flush(workspaceDaemonGoldenMaster(RUNNING, 'getAgentWorktree'));
-      await settle();
-      http
-        .expectOne(`${BASE}/commands`)
-        .flush(workspaceDaemonGoldenMaster(RUNNING, 'listCommands'));
-      await settle();
-    }
-
-    it('reads only the harness again after its exit', async () => {
+    it('reads the agent again after its harness exited, keeping the socket', async () => {
       await open();
       await burst('AgentHarnessExited');
-      http.expectNone(`${BASE}/agents/available`);
-      http.expectNone(`${BASE}/agent-plugins`);
-      await answerHarness();
+      expect(loads).toEqual([agentId]);
+      expect(sockets).toHaveLength(1);
     });
 
-    it('reads the sign-in report and the plugins again after the container started', async () => {
+    it('attaches anew after the harness started again', async () => {
       await open();
-      await burst('WorkspaceStarted');
-      http
-        .expectOne(`${BASE}/agents/available`)
-        .flush(workspaceDaemonGoldenMaster(SIGNED_IN, 'availableAgents'));
-      http
-        .expectOne(`${BASE}/agent-plugins`)
-        .flush(workspaceDaemonGoldenMaster(PLUGINS, 'listPlugins'));
-      await answerHarness();
-    });
-
-    it('reads the sign-in report again after a refused start', async () => {
-      await open();
-      await burst('AgentStartRefused');
-      http
-        .expectOne(`${BASE}/agents/available`)
-        .flush(workspaceDaemonGoldenMaster(SIGNED_OUT, 'availableAgents'));
-      http.expectNone(`${BASE}/agent-plugins`);
-      await answerHarness();
-      harness.detectChanges();
+      await burst('AgentStarted');
+      expect(loads).toEqual([agentId]);
+      expect(sockets[0].closed).toBe(true);
+      expect(sockets.map((s) => s.url)).toEqual([SOCKET, SOCKET]);
     });
   });
 });
