@@ -12,8 +12,9 @@
 export type AttentionCode =
   'WAIT_SUBJECT_PASSED' | 'BLOCKED_NO_DESK' | 'IDLE_NO_WAIT' | 'WAIT_OVERDUE';
 
-/** What a wait waits on. */
-export type SubjectKind = 'RELEASE_REQUEST' | 'CI_RUN' | 'WORK_ITEM' | 'COMMENTS' | 'OTHER';
+/** What a wait waits on. A `BRANCH` wait (qits-1721) reads as its label, as `OTHER` does. */
+export type SubjectKind =
+  'RELEASE_REQUEST' | 'CI_RUN' | 'WORK_ITEM' | 'COMMENTS' | 'BRANCH' | 'OTHER';
 
 /** An agent's open wait, as the listing gives it. */
 export interface WaitLike {
