@@ -22,11 +22,9 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const FILES = 'a workspace daemon with an agent whose worktree holds files';
 const IGNORED = 'a workspace daemon with an agent whose worktree has an ignored directory';
 const ORIGIN = 'https://workspaces.qits.example';
-const { agentId, workspaceRowId } = workspaceDaemonGoldenMasters.operation(
-  FILES,
-  'listFiles',
-).params;
-const WORKTREE = `${ORIGIN}/workspaces/container/${workspaceRowId}/agent-worktrees/${agentId}`;
+const { agentId } = workspaceDaemonGoldenMasters.operation(FILES, 'listFiles').params;
+/** The agent's worktree routes on qits-workspaces' agent proxy. */
+const WORKTREE = `${ORIGIN}/workspaces/agent/${agentId}`;
 const CONTENT = (path: string) => `${WORKTREE}/files/content?path=${encodeURIComponent(path)}`;
 const LOGIN = 'src/main/java/app/Login.java';
 const LOGIN_TEST = 'src/test/java/app/LoginTest.java';

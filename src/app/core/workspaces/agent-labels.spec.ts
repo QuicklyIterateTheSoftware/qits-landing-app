@@ -27,6 +27,9 @@ describe('agent labels', () => {
     expect(runStateLabel({ runState: 'RUNNING' })).toBe('running');
     expect(runStateLabel({ runState: 'YIELDED' })).toBe('yielded — idle, terminal stays live');
     expect(runStateLabel({ runState: 'QUEUED' })).toBe('queued — no free slot yet');
+    expect(runStateLabel({ runState: 'STOPPED' })).toBe(
+      'stopped — by a person; starts again when restarted or prompted',
+    );
     expect(runStateLabel({ runState: 'SOMETHING_NEW' })).toBe('something_new');
     expect(runStateLabel({})).toBe('unknown');
   });

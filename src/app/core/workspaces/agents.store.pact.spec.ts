@@ -26,7 +26,6 @@ import {
   LIST_ITEM_AGENTS,
   LIST_PROJECT_AGENTS,
   LIST_PROJECT_SLOTS,
-  LIST_SLOT_AGENTS,
   PROJECT_AGENTS,
 } from './agents.consumes';
 
@@ -38,9 +37,13 @@ import {
  * - "a project with workspace slots hosting agents": the Agents page's slots and their agents — one
  *   slot RUNNING on runner `localhost`, the bug ticket's agent holding it and waiting on a release
  *   request, the epic's agent yielded in it, the improvement ticket's agent QUEUED;
- * - "a workspace slot hosting agents": the same, read by the slot (no start is running);
+ * - "a workspace slot hosting agents": the same, read by the slot (no start is running). The agents
+ *   it hosts are `listWorkspaceAgents` (epic qits-1667), recorded by qits-workspaces but not yet in
+ *   the golden masters this app pins, so that read has no row until qits-maintenance bumps them;
  * - "an agent whose workspace is starting": the bug ticket's ACTIVE agent, which its old agent
- *   address leads to, and the agent page's slot while it is PROVISIONING and a start is live;
+ *   address leads to, and its slot's page while the slot is PROVISIONING and a start is live (the
+ *   agent page asks nothing of the slot since epic qits-1667: its start is `getAgentActiveProcess`,
+ *   by the agent, whose recording the pinned golden masters do not hold yet, so it has no row);
  * - "an agent with a saved prompt draft" and "no agent with that id": the agent page's agent, read
  *   by its id, and one the service does not know;
  * - "a project with agents needing attention": the project's ACTIVE agents with their open waits
@@ -68,12 +71,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'getAgent',
   {
     operationId: 'listAgents',
-    interactions: [
-      'show-project-workspaces',
-      'show-workspace-slot',
-      'show-work-item-agent',
-      'agents-menu',
-    ],
+    interactions: ['show-project-workspaces', 'show-work-item-agent', 'agents-menu'],
   },
 ];
 
@@ -177,17 +175,6 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
       expect(data?.workspace?.runtimeStatus).toBe('RUNNING');
     }));
 
-  it('show-workspace-slot: the agents it hosts', () =>
-    given(SLOT, 'listAgents', 'show-workspace-slot', LIST_SLOT_AGENTS).executeTest(
-      async (server) => {
-        const workspaceId = Number(param(SLOT, 'listAgents', 'workspaceId'));
-        const { data } = await at(server.url, () =>
-          consume(listAgents({ query: { workspaceId } }), LIST_SLOT_AGENTS),
-        );
-        expect(data?.agents?.length).toBe(2);
-      },
-    ));
-
   it('show-workspace-slot: no start is running against it', () =>
     given(SLOT, 'getWorkspaceActiveProcess', 'show-workspace-slot', GET_ACTIVE_PROCESS).executeTest(
       async (server) => {
@@ -225,8 +212,8 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
       expect(response?.status).toBe(404);
     }));
 
-  it('show-agent: its slot, starting', () =>
-    given(STARTING, 'getWorkspace', 'show-agent', GET_SLOT).executeTest(async (server) => {
+  it('show-workspace-slot: a slot whose container is coming up', () =>
+    given(STARTING, 'getWorkspace', 'show-workspace-slot', GET_SLOT).executeTest(async (server) => {
       const id = Number(param(STARTING, 'getWorkspace', 'workspaceId'));
       const { data } = await at(server.url, () =>
         consume(getWorkspace({ path: { id } }), GET_SLOT),
@@ -234,16 +221,19 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
       expect(data?.workspace?.runtimeStatus).toBe('PROVISIONING');
     }));
 
-  it('show-agent: the start running against its slot', () =>
-    given(STARTING, 'getWorkspaceActiveProcess', 'show-agent', GET_ACTIVE_PROCESS).executeTest(
-      async (server) => {
-        const id = Number(param(STARTING, 'getWorkspaceActiveProcess', 'workspaceId'));
-        const { data } = await at(server.url, () =>
-          consume(getWorkspaceActiveProcess({ path: { id } }), GET_ACTIVE_PROCESS),
-        );
-        expect(data?.technicalProcessId).toBeTruthy();
-      },
-    ));
+  it('show-workspace-slot: the start running against it', () =>
+    given(
+      STARTING,
+      'getWorkspaceActiveProcess',
+      'show-workspace-slot',
+      GET_ACTIVE_PROCESS,
+    ).executeTest(async (server) => {
+      const id = Number(param(STARTING, 'getWorkspaceActiveProcess', 'workspaceId'));
+      const { data } = await at(server.url, () =>
+        consume(getWorkspaceActiveProcess({ path: { id } }), GET_ACTIVE_PROCESS),
+      );
+      expect(data?.technicalProcessId).toBeTruthy();
+    }));
 
   it('agents-menu: the project’s ACTIVE agents, with their waits and attention', () =>
     given(NEEDING_ATTENTION, 'listAgents', 'agents-menu', PROJECT_AGENTS).executeTest(

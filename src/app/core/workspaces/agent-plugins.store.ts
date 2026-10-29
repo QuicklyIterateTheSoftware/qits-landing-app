@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import { installPlugin, listPlugins } from '../../api/workspace-daemon';
 import { PlatformOrigins } from '$core/platform/platform-origins';
-import { containerBase } from './agent-harness.store';
+import { containerBase } from './container-proxy';
 import { describeRefusal, refusalOf, sentence } from './agent-actions.store';
 import { INSTALL_PLUGIN, LIST_PLUGINS, type InstalledPlugin } from './agent-plugins.consumes';
 import { DAEMON_REFUSAL } from './agent-sign-in.consumes';

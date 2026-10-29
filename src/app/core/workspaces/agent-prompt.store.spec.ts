@@ -12,10 +12,9 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const SAVED = 'an agent with a saved prompt draft';
 const NONE = 'an agent with no prompt draft';
 const WORKING = 'an agent working on a ticket';
-const NO_AGENT = 'a work item with no workspaces';
 const { agentId } = workspacesGoldenMasters.operation(SAVED, 'getAgentPromptDraft').params;
 const DRAFT = `/workspaces/api/agents/${agentId}/prompt-draft`;
-const DELIVERY = '/workspaces/api/agent-dispatches/delivery';
+const PROMPT = `/workspaces/api/agents/${agentId}/prompt`;
 
 describe('draftContent and draftText', () => {
   it('write the prompt as the composition qits-workspaces records, and read it back', () => {
@@ -121,22 +120,23 @@ describe('AgentPromptStore', () => {
     expect(await done).toEqual({ ok: true, value: undefined });
   });
 
-  it('delivers a prompt to the item’s agent, without compacting first', async () => {
-    const done = store.deliver('w-1', 'Carry on.');
+  it('prompts the agent by its id, without compacting first', async () => {
+    const done = store.prompt(agentId, 'Carry on.');
     await settle();
-    const request = http.expectOne(DELIVERY);
-    expect(request.request.body).toEqual({ workId: 'w-1', text: 'Carry on.', compactFirst: false });
+    const request = http.expectOne(PROMPT);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ text: 'Carry on.', compactFirst: false });
+    // `promptAgent` answers the delivery door's `Delivery`; its own recording is not in the pinned
+    // golden masters yet, so this is the same state's recorded `deliverAgentTurn` answer.
     const answer = workspacesGoldenMaster(WORKING, 'deliverAgentTurn');
     request.flush(answer);
     expect(await done).toEqual({ ok: true, value: answer });
   });
 
-  it('answers a delivery no agent heard as it came', async () => {
-    const done = store.deliver('w-1', 'Carry on.');
+  it('says a refused prompt by its status', async () => {
+    const done = store.prompt(agentId, 'Carry on.');
     await settle();
-    const answer = workspacesGoldenMaster(NO_AGENT, 'deliverAgentTurn');
-    http.expectOne(DELIVERY).flush(answer);
-    const outcome = await done;
-    expect(outcome.ok && outcome.value.agentId).toBeNull();
+    http.expectOne(PROMPT).flush(null, { status: 404, statusText: 'Not Found' });
+    expect(await done).toEqual({ ok: false, status: 404 });
   });
 });

@@ -1,7 +1,7 @@
 import type { Consumed } from '@qits/angular';
 import type {
-  DeliverAgentTurnResponses,
   GetAgentPromptDraftResponses,
+  PromptAgentResponses,
   SaveAgentPromptDraftResponses,
 } from '../../api/workspaces';
 
@@ -31,20 +31,14 @@ export const SAVE_PROMPT_DRAFT = ['draft.updatedAt'] as const;
 export const DELETE_PROMPT_DRAFT = [] as const;
 
 /**
- * `AgentPromptStore.deliver(workId, text)`: what became of a prompt sent to the item's agent
- * (`deliverAgentTurn`): no agent (`agentId` null), or said at its next turn, as its first turn, or
- * to a yielded agent that resumes to hear it.
+ * `AgentPromptStore.prompt(agentId, text)`: what became of a prompt sent to the agent by its id
+ * (`promptAgent`, epic qits-1667; it answers as the work item's delivery door did): said at its next
+ * turn, as its first turn, or to a yielded or stopped agent that resumes to hear it.
  */
-export const DELIVER_AGENT_TURN = [
-  'agentId',
-  'delivered',
-  'launched',
-  'resumed',
-  'detail',
-] as const;
+export const PROMPT_AGENT = ['agentId', 'delivered', 'launched', 'resumed', 'detail'] as const;
 
 /** A delivery, cut to what the store reads. */
-export type AgentDelivery = Consumed<DeliverAgentTurnResponses[200], typeof DELIVER_AGENT_TURN>;
+export type AgentDelivery = Consumed<PromptAgentResponses[200], typeof PROMPT_AGENT>;
 
 /** The draft as the store reads it back: just written, or found. */
 export type WrittenPromptDraft = Consumed<

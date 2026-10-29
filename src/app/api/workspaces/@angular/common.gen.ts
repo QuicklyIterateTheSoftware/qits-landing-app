@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CancelAgentWaitData, CancelAgentWaitResponse, CancelDeskWaitData, CancelDeskWaitResponse, CreateAgentData, CreateAgentResponse, CreateAgentWaitData, CreateAgentWaitResponse, CreateDeskWaitData, CreateDeskWaitResponse, DeleteAgentPromptDraftData, DeleteAgentPromptDraftResponse, DeleteWorkspaceContainerData, DeleteWorkspaceContainerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DiscardWorkspaceData, DiscardWorkspaceResponse, DispatchAgentData, DispatchAgentResponse, EnsureWorkspaceContainerData, EnsureWorkspaceContainerResponse, GetAgentData, GetAgentPromptDraftData, GetAgentPromptDraftResponse, GetAgentResponse, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessResponse, GetWorkspaceAgentTranscriptData, GetWorkspaceAgentTranscriptResponse, GetWorkspaceData, GetWorkspaceHistoryData, GetWorkspaceHistoryResponse, GetWorkspaceResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentsResponse, ListAgentWaitsData, ListAgentWaitsResponse, ListDeskWaitsData, ListDeskWaitsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, ListWorkspaceAgentSessionsData, ListWorkspaceAgentSessionsResponse, ListWorkspacesData, ListWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, RecreateWorkspaceContainerData, RecreateWorkspaceContainerResponse, ResolveReleasedBranchData, ResolveReleasedBranchResponse, SaveAgentPromptDraftData, SaveAgentPromptDraftResponse, StopWorkspaceContainerData, StopWorkspaceContainerResponse, SweepBranchesData, SweepBranchesResponse } from '../types.gen';
+import type { CancelAgentWaitData, CancelAgentWaitResponse, CancelDeskWaitData, CancelDeskWaitResponse, CreateAgentData, CreateAgentResponse, CreateAgentWaitData, CreateAgentWaitResponse, CreateDeskWaitData, CreateDeskWaitResponse, DeleteAgentPromptDraftData, DeleteAgentPromptDraftResponse, DeleteWorkspaceContainerData, DeleteWorkspaceContainerResponse, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, DeleteWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, DeliverAgentTurnData, DeliverAgentTurnResponse, DiscardAgentData, DiscardAgentResponse, DiscardWorkspaceData, DiscardWorkspaceResponse, DispatchAgentData, DispatchAgentResponse, EnsureWorkspaceContainerData, EnsureWorkspaceContainerResponse, GetAgentActiveProcessData, GetAgentActiveProcessResponse, GetAgentData, GetAgentPromptDraftData, GetAgentPromptDraftResponse, GetAgentResponse, GetAgentTranscriptData, GetAgentTranscriptResponse, GetWorkspaceActiveProcessData, GetWorkspaceActiveProcessResponse, GetWorkspaceAgentTranscriptData, GetWorkspaceAgentTranscriptResponse, GetWorkspaceData, GetWorkspaceHistoryData, GetWorkspaceHistoryResponse, GetWorkspaceResponse, GetWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdContentData, GetWorkspacesApiAgentsByIdPromptAttachmentsData, GetWorkspacesApiAgentsByIdPromptAttachmentsResponse, GetWorkspacesApiHistoryData, GetWorkspacesApiHistoryResponse, InterruptAgentData, InterruptAgentResponse, ListAgentDispatchReferencesData, ListAgentDispatchReferencesResponse, ListAgentsData, ListAgentSessionsData, ListAgentSessionsResponse, ListAgentsResponse, ListAgentWaitsData, ListAgentWaitsResponse, ListDeskWaitsData, ListDeskWaitsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListOpenWorkspacesData, ListOpenWorkspacesResponse, ListWorkItemWorkspacesData, ListWorkItemWorkspacesResponse, ListWorkspaceAgentsData, ListWorkspaceAgentSessionsData, ListWorkspaceAgentSessionsResponse, ListWorkspaceAgentsResponse, ListWorkspacesData, ListWorkspacesResponse, MarkAgentDispatchBlockedData, MarkAgentDispatchBlockedResponse, MarkAgentDispatchEntityData, MarkAgentDispatchEntityResponse, PatchWorkspacesApiHistoryByIdData, PatchWorkspacesApiHistoryByIdResponse, PostWorkspacesApiAgentsByIdPromptAttachmentsData, PostWorkspacesApiAgentsByIdPromptAttachmentsResponse, PostWorkspacesApiBranchesCleanupData, PostWorkspacesApiBranchesCleanupResponse, PostWorkspacesApiBranchesMergeData, PostWorkspacesApiBranchesMergeResponse, PromptAgentData, PromptAgentResponse, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdData, PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse, RecreateWorkspaceContainerData, RecreateWorkspaceContainerResponse, ResolveReleasedBranchData, ResolveReleasedBranchResponse, RestartAgentData, RestartAgentResponse, SaveAgentPromptDraftData, SaveAgentPromptDraftResponse, StopAgentData, StopAgentResponse, StopWorkspaceContainerData, StopWorkspaceContainerResponse, SweepBranchesData, SweepBranchesResponse, YieldAgentData, YieldAgentResponse } from '../types.gen';
 
 /**
  * Dispatch
@@ -119,12 +119,46 @@ export const getAgentRequest = <ThrowOnError extends boolean = false>(options: O
 });
 
 /**
+ * Active Process
+ */
+export const getAgentActiveProcessRequest = <ThrowOnError extends boolean = false>(options: Options<GetAgentActiveProcessData, ThrowOnError>): HttpRequest<GetAgentActiveProcessResponse> => (options?.client ?? client).requestOptions<GetAgentActiveProcessResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}/active-process',
+    ...options
+});
+
+/**
  * Discard
  */
 export const discardAgentRequest = <ThrowOnError extends boolean = false>(options: Options<DiscardAgentData, ThrowOnError>): HttpRequest<DiscardAgentResponse> => (options?.client ?? client).requestOptions<DiscardAgentResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/workspaces/api/agents/{id}/discard',
+    ...options
+});
+
+/**
+ * Interrupt the agent's current turn
+ *
+ * ESC into its running TERMINAL harness, as a person at the terminal would press it. Never changes its run state.
+ */
+export const interruptAgentRequest = <ThrowOnError extends boolean = false>(options: Options<InterruptAgentData, ThrowOnError>): HttpRequest<InterruptAgentResponse> => (options?.client ?? client).requestOptions<InterruptAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/interrupt',
+    ...options
+});
+
+/**
+ * Say a turn to this agent
+ *
+ * The agent hears it once it is not busy, or after the launch window regardless. A STOPPED agent starts again with this turn.
+ */
+export const promptAgentRequest = <ThrowOnError extends boolean = false>(options: Options<PromptAgentData, ThrowOnError>): HttpRequest<PromptAgentResponse> => (options?.client ?? client).requestOptions<PromptAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/prompt',
     ...options
 });
 
@@ -205,6 +239,60 @@ export const saveAgentPromptDraftRequest = <ThrowOnError extends boolean = false
     responseStyle: 'data',
     method: 'PUT',
     url: '/workspaces/api/agents/{id}/prompt-draft',
+    ...options
+});
+
+/**
+ * Restart the agent's harness
+ */
+export const restartAgentRequest = <ThrowOnError extends boolean = false>(options: Options<RestartAgentData, ThrowOnError>): HttpRequest<RestartAgentResponse> => (options?.client ?? client).requestOptions<RestartAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/restart',
+    ...options
+});
+
+/**
+ * The agent's harness sessions
+ */
+export const listAgentSessionsRequest = <ThrowOnError extends boolean = false>(options: Options<ListAgentSessionsData, ThrowOnError>): HttpRequest<ListAgentSessionsResponse> => (options?.client ?? client).requestOptions<ListAgentSessionsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}/sessions',
+    ...options
+});
+
+/**
+ * One of the agent's sessions, raw
+ */
+export const getAgentTranscriptRequest = <ThrowOnError extends boolean = false>(options: Options<GetAgentTranscriptData, ThrowOnError>): HttpRequest<GetAgentTranscriptResponse> => (options?.client ?? client).requestOptions<GetAgentTranscriptResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/agents/{id}/sessions/{sessionId}/transcript',
+    ...options
+});
+
+/**
+ * Stop the agent
+ *
+ * The scheduler never places, resumes, nudges or drives a STOPPED agent. A wait that fires for it appends its turn, heard once it is restarted or prompted.
+ */
+export const stopAgentRequest = <ThrowOnError extends boolean = false>(options: Options<StopAgentData, ThrowOnError>): HttpRequest<StopAgentResponse> => (options?.client ?? client).requestOptions<StopAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/stop',
+    ...options
+});
+
+/**
+ * Give up the agent's workspace slot
+ *
+ * An agent may yield its own slot.
+ */
+export const yieldAgentRequest = <ThrowOnError extends boolean = false>(options: Options<YieldAgentData, ThrowOnError>): HttpRequest<YieldAgentResponse> => (options?.client ?? client).requestOptions<YieldAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/workspaces/api/agents/{id}/yield',
     ...options
 });
 
@@ -389,6 +477,16 @@ export const getWorkspaceActiveProcessRequest = <ThrowOnError extends boolean = 
 });
 
 /**
+ * The live agents placed in a workspace, oldest first
+ */
+export const listWorkspaceAgentsRequest = <ThrowOnError extends boolean = false>(options: Options<ListWorkspaceAgentsData, ThrowOnError>): HttpRequest<ListWorkspaceAgentsResponse> => (options?.client ?? client).requestOptions<ListWorkspaceAgentsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/workspaces/api/workspaces/{id}/agents',
+    ...options
+});
+
+/**
  * Delete Container
  */
 export const deleteWorkspaceContainerRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkspaceContainerData, ThrowOnError>): HttpRequest<DeleteWorkspaceContainerResponse> => (options?.client ?? client).requestOptions<DeleteWorkspaceContainerResponse, ThrowOnError>({
@@ -529,11 +627,39 @@ export const getAgentResource = <ThrowOnError extends boolean = false>(options: 
 });
 
 /**
+ * Active Process
+ */
+export const getAgentActiveProcessResource = <ThrowOnError extends boolean = false>(options: () => Options<GetAgentActiveProcessData, ThrowOnError> | undefined) => httpResource<GetAgentActiveProcessResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getAgentActiveProcessRequest(opts) : undefined;
+});
+
+/**
  * Discard
  */
 export const discardAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<DiscardAgentData, ThrowOnError> | undefined) => httpResource<DiscardAgentResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? discardAgentRequest(opts) : undefined;
+});
+
+/**
+ * Interrupt the agent's current turn
+ *
+ * ESC into its running TERMINAL harness, as a person at the terminal would press it. Never changes its run state.
+ */
+export const interruptAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<InterruptAgentData, ThrowOnError> | undefined) => httpResource<InterruptAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? interruptAgentRequest(opts) : undefined;
+});
+
+/**
+ * Say a turn to this agent
+ *
+ * The agent hears it once it is not busy, or after the launch window regardless. A STOPPED agent starts again with this turn.
+ */
+export const promptAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<PromptAgentData, ThrowOnError> | undefined) => httpResource<PromptAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? promptAgentRequest(opts) : undefined;
 });
 
 /**
@@ -598,6 +724,50 @@ export const getAgentPromptDraftResource = <ThrowOnError extends boolean = false
 export const saveAgentPromptDraftResource = <ThrowOnError extends boolean = false>(options: () => Options<SaveAgentPromptDraftData, ThrowOnError> | undefined) => httpResource<SaveAgentPromptDraftResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? saveAgentPromptDraftRequest(opts) : undefined;
+});
+
+/**
+ * Restart the agent's harness
+ */
+export const restartAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<RestartAgentData, ThrowOnError> | undefined) => httpResource<RestartAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? restartAgentRequest(opts) : undefined;
+});
+
+/**
+ * The agent's harness sessions
+ */
+export const listAgentSessionsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListAgentSessionsData, ThrowOnError> | undefined) => httpResource<ListAgentSessionsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listAgentSessionsRequest(opts) : undefined;
+});
+
+/**
+ * One of the agent's sessions, raw
+ */
+export const getAgentTranscriptResource = <ThrowOnError extends boolean = false>(options: () => Options<GetAgentTranscriptData, ThrowOnError> | undefined) => httpResource<GetAgentTranscriptResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getAgentTranscriptRequest(opts) : undefined;
+});
+
+/**
+ * Stop the agent
+ *
+ * The scheduler never places, resumes, nudges or drives a STOPPED agent. A wait that fires for it appends its turn, heard once it is restarted or prompted.
+ */
+export const stopAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<StopAgentData, ThrowOnError> | undefined) => httpResource<StopAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? stopAgentRequest(opts) : undefined;
+});
+
+/**
+ * Give up the agent's workspace slot
+ *
+ * An agent may yield its own slot.
+ */
+export const yieldAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<YieldAgentData, ThrowOnError> | undefined) => httpResource<YieldAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? yieldAgentRequest(opts) : undefined;
 });
 
 /**
@@ -742,6 +912,14 @@ export const getWorkspaceResource = <ThrowOnError extends boolean = false>(optio
 export const getWorkspaceActiveProcessResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkspaceActiveProcessData, ThrowOnError> | undefined) => httpResource<GetWorkspaceActiveProcessResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? getWorkspaceActiveProcessRequest(opts) : undefined;
+});
+
+/**
+ * The live agents placed in a workspace, oldest first
+ */
+export const listWorkspaceAgentsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListWorkspaceAgentsData, ThrowOnError> | undefined) => httpResource<ListWorkspaceAgentsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listWorkspaceAgentsRequest(opts) : undefined;
 });
 
 /**

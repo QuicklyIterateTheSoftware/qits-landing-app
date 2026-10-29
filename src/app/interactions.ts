@@ -174,7 +174,7 @@ export const INTERACTIONS = {
   'show-project-workspaces': 'The Agents page lists the project’s slots and their agents',
   /**
    * `workspace-slot.page.ts` via `AgentsStore.loadSlot`: one slot, its status strip (container,
-   * daemon), the start running against it, and the agents it hosts.
+   * daemon), the start running against it, and the agents it hosts (`listWorkspaceAgents`).
    */
   'show-workspace-slot': 'A slot’s page shows its status and the agents it hosts',
   /**
@@ -184,19 +184,20 @@ export const INTERACTIONS = {
   'show-work-item-agent': 'A work item’s agent address leads to its active agent’s page',
   /**
    * `agent.layout.ts` via `AgentsStore.loadAgent`: an agent's page, by its id — what it works on,
-   * how it runs, what it waits on, and its slot while the container comes up (epic qits-1681).
+   * how it runs, what it waits on (epic qits-1681), and the start bringing its slot's container up,
+   * asked of the agent (epic qits-1667).
    */
   'show-agent': 'An agent’s page shows the agent, what it waits on and its workspace',
   /**
-   * `agent-terminal.page.ts` via `AgentHarnessStore.load`: the agent's Terminal tab finds its
-   * harness's command on the slot's daemon, to attach the terminal to (epic qits-1230).
+   * `agent-terminal.page.ts`: the agent's Terminal tab attaches to its running harness through the
+   * agent proxy (epic qits-1667; before it, it looked the command up on the slot's daemon). No
+   * pact row: the socket is no recorded answer.
    */
   'show-agent-terminal': 'An agent’s Terminal tab attaches to the agent’s running harness',
   /**
    * `agent-chat.page.ts` via `AgentHarnessStore.load`, `AgentChatStore.loadTranscript` and
-   * `AgentPromptStore.readDraft` (`prompt-composer.ts`): the agent's Chat tab finds its harness on
-   * the slot's daemon, shows its conversation (a terminal's transcript; a chat's socket) and
-   * restores the saved prompt draft (epic qits-1230).
+   * `AgentPromptStore.readDraft` (`prompt-composer.ts`): the agent's Chat tab shows its transcript
+   * through the agent proxy and restores the saved prompt draft (epic qits-1230, qits-1667).
    */
   'show-agent-chat': 'An agent’s Chat tab shows its conversation and the saved prompt draft',
   /** `prompt-composer.ts` via `AgentPromptStore.saveDraft`: typing in the prompt box saves it. */
@@ -204,14 +205,18 @@ export const INTERACTIONS = {
   /** `prompt-composer.ts` via `AgentPromptStore.discardDraft`: the restored draft's Discard. */
   'discard-prompt-draft': 'Discarding a restored prompt draft deletes it',
   /**
-   * `prompt-composer.ts` via `AgentPromptStore.deliver`, then `discardDraft`: Send to the agent
-   * delivers the prompt to the item's agent and empties the draft.
+   * `prompt-composer.ts` via `AgentPromptStore.prompt`, then `discardDraft`: Send to the agent
+   * hands the prompt to the agent by its id (epic qits-1667; before it, to the work item's agent)
+   * and empties the draft.
    */
-  'send-agent-prompt': 'Sending a prompt delivers it to the work item’s agent',
+  'send-agent-prompt': 'Sending a prompt hands it to the agent',
   /** `prompt-composer.ts` via `AgentChatStore.refine`: rough notes rewritten into a prompt. */
   'refine-agent-prompt':
     'Refining rough notes rewrites them into a prompt in the agent’s container',
-  /** `agent-chat.page.ts` via `AgentChatStore.terminate`: Terminate ends a running chat. */
+  /**
+   * Retired (epic qits-1667): the Chat tab's Terminate, which ended a running chat; the agent page's
+   * Stop and Interrupt replace it. Kept so the slug is never reused.
+   */
   'terminate-agent-chat': 'Terminating an agent’s live chat ends its harness',
   /**
    * `agent-files.page.ts` via `AgentFilesStore.list` and `detect`: the agent's Files tab shows its
@@ -237,27 +242,47 @@ export const INTERACTIONS = {
    * anyway removes the agent with `force`, throwing its leftover work away.
    */
   'force-discard-agent': 'Discard anyway removes a refused agent and its leftover work',
-  /** `container-actions.ts` via `AgentActionsStore.ensureContainer`: Start on a slot's container. */
+  /**
+   * `agent-run-actions.ts` via `AgentActionsStore.interruptAgent` (epic qits-1667): Interrupt on a
+   * running agent sends ESC to its harness.
+   */
+  'interrupt-agent': 'Interrupt on a running agent sends ESC to its harness',
+  /**
+   * `agent-run-actions.ts` via `AgentActionsStore.stopAgent` (epic qits-1667): Stop, confirmed,
+   * makes the agent STOPPED; nothing starts it again until a person restarts or prompts it.
+   */
+  'stop-agent': 'Stop on an agent stops it until a person restarts or prompts it',
+  /**
+   * `agent-run-actions.ts` via `AgentActionsStore.restartAgent` (epic qits-1667): Restart,
+   * confirmed, starts the agent again on its session or hands it back to the scheduler.
+   */
+  'restart-agent': 'Restart on an agent starts it again on its session',
+  /** `container-actions.ts` via `ContainerActionsStore.ensureContainer`: Start on a slot's container. */
   'start-workspace-container': 'Start on a workspace slot brings its container up',
-  /** `container-actions.ts` via `AgentActionsStore.stopContainer`: Stop on a slot's container. */
+  /**
+   * `container-actions.ts` via `ContainerActionsStore.stopContainer`: Stop, confirmed naming the
+   * slot's agents, on a slot's container; the agents it affected are named after.
+   */
   'stop-workspace-container': 'Stop on a workspace slot stops its container',
   /**
-   * `container-actions.ts` via `AgentActionsStore.recreateContainer`: Recreate, confirmed, replaces
-   * a slot's container (refused unless its working tree is provably clean).
+   * `container-actions.ts` via `ContainerActionsStore.recreateContainer`: Recreate, confirmed naming
+   * the slot's agents, replaces a slot's container (refused unless its working tree is provably
+   * clean); the agents it affected are named after.
    */
   'recreate-workspace-container': 'Recreate on a workspace slot replaces its container',
   /**
-   * `agent-terminal.page.ts` via `AgentSignInStore.loadReport`: the Terminal tab reads the slot
-   * daemon's harness report, and says so when nobody signed the agent's harness in.
+   * `harness-setup.ts` via `AgentSignInStore.loadReport`: the workspace page reads the slot daemon's
+   * harness report, and says so when nobody signed the harness in (the agent's Terminal tab's
+   * before epic qits-1667).
    */
-  'show-agent-sign-in': 'An agent’s Terminal tab says when nobody signed its harness in',
+  'show-agent-sign-in': 'A workspace’s page says when nobody signed its harness in',
   /**
    * `sign-in-notice.ts` via `AgentSignInStore.open`: Open the sign-in terminal starts the harness's
-   * sign-in in the slot's container, which the Terminal tab then attaches to.
+   * sign-in in the slot's container, which the workspace page then attaches to.
    */
   'open-sign-in-terminal': 'Opening the sign-in terminal starts a harness sign-in in the container',
   /** `plugins-section.ts` via `AgentPluginsStore.load`: the plugins on the shared agent home. */
-  'show-agent-plugins': 'An agent’s Terminal tab lists the plugins on the shared agent home',
+  'show-agent-plugins': 'A workspace’s page lists the plugins on the shared agent home',
   /** `plugins-section.ts` via `AgentPluginsStore.install`: Install on a plugin not installed yet. */
   'install-agent-plugin': 'Install on a plugin installs it on the shared agent home',
   /**

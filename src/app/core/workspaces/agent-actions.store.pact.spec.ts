@@ -11,17 +11,11 @@ import { addGoldenInteraction } from '@qits/angular/testing';
 import type { InteractionSlug } from '../../interactions';
 import { workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import {
-  DISCARD_AGENT,
-  ENSURE_CONTAINER,
-  REFUSAL,
-  REFUSAL_MESSAGE,
-  STOP_CONTAINER,
-} from './agent-actions.consumes';
+import { DISCARD_AGENT, REFUSAL } from './agent-actions.consumes';
 import { AgentActionsStore } from './agent-actions.store';
 
 /**
- * qits-landing-app's pact with qits-workspaces-service, the part the workspace pages' writes make
+ * qits-landing-app's pact with qits-workspaces-service, the part the agent page's writes make
  * (epic qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside the other
  * stores' parts:
  *
@@ -30,16 +24,10 @@ import { AgentActionsStore } from './agent-actions.store';
  *   (409 `AGENT_HAS_LEFTOVER_WORK`) are refused, with the reason the page shows before it offers
  *   force. A forced discard (`force: true`) has no recording, so no interaction binds it; the plain
  *   spec covers it.
- * - `ensureWorkspaceContainer`: "a stopped workspace slot" starts (its WORKSPACE lease queued on
- *   qits-system's targets).
- * - `stopWorkspaceContainer`: "a workspace slot running on a target" stops.
- * - `recreateWorkspaceContainer`: only its refusal is recorded — "an agent whose workspace daemon
- *   is not connected" (400: the working tree cannot be proved clean). A successful recreate has no
- *   recording, so the success path is covered by the plain spec only.
  *
- * Does not bind the refusal of either write when qits-system cannot be asked about the slot's lease
- * (409 `TARGET_UNAVAILABLE`, "a workspace slot qits-system cannot be asked about"), the successor of
- * the retired offline-runner refusal (epic qits-1481, qits-1532); the plain spec covers it.
+ * The agent's own verbs (`interruptAgent`, `stopAgent`, `restartAgent`, epic qits-1667) are
+ * recorded by qits-workspaces but not in the golden masters this app pins, so they have no row
+ * until qits-maintenance bumps them. A slot's container verbs are `container-actions.store`'s part.
  *
  * Ids in a path are the states' params, sent as provider-state expressions.
  */
@@ -50,16 +38,9 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const WAITING = 'an agent waiting for a workspace slot';
 const UNREACHABLE = 'an agent whose workspace daemon is not connected';
 const LEFTOVER = 'an agent with leftover work';
-const STOPPED = 'a stopped workspace slot';
-const RUNNING = 'a workspace slot running on a target';
 
 /** What this spec owns in the shared pact file. */
-const OPERATIONS: readonly OwnedOperation[] = [
-  'discardAgent',
-  'ensureWorkspaceContainer',
-  'stopWorkspaceContainer',
-  'recreateWorkspaceContainer',
-];
+const OPERATIONS: readonly OwnedOperation[] = ['discardAgent'];
 
 const given = (
   state: string,
@@ -89,8 +70,6 @@ function storeAt(url: string) {
 }
 
 const params = (state: string, operationId: string) => masters.operation(state, operationId).params;
-const slotOf = (state: string, operationId: string) =>
-  Number(params(state, operationId)['workspaceId']);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-actions-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -130,45 +109,6 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
       const store = storeAt(server.url);
       const outcome = await store.discardAgent(params(LEFTOVER, 'discardAgent')['agentId']);
       expect(outcome).toMatchObject({ ok: false, status: 409, code: 'AGENT_HAS_LEFTOVER_WORK' });
-      expect(!outcome.ok && outcome.message).toBeTruthy();
-    }));
-
-  it('start-workspace-container: a stopped slot starts', () =>
-    given(
-      STOPPED,
-      'ensureWorkspaceContainer',
-      'start-workspace-container',
-      ENSURE_CONTAINER,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.ensureContainer(slotOf(STOPPED, 'ensureWorkspaceContainer'));
-      expect(outcome.ok && outcome.value.technicalProcessId).toBeTruthy();
-    }));
-
-  it('stop-workspace-container: a running slot stops', () =>
-    given(
-      RUNNING,
-      'stopWorkspaceContainer',
-      'stop-workspace-container',
-      STOP_CONTAINER,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.stopContainer(slotOf(RUNNING, 'stopWorkspaceContainer'));
-      expect(outcome.ok && outcome.value.runtimeStatus).toBe('STOPPED');
-    }));
-
-  it('recreate-workspace-container: a working tree nobody can prove clean is refused', () =>
-    given(
-      UNREACHABLE,
-      'recreateWorkspaceContainer',
-      'recreate-workspace-container',
-      REFUSAL_MESSAGE,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.recreateContainer(
-        slotOf(UNREACHABLE, 'recreateWorkspaceContainer'),
-      );
-      expect(outcome).toMatchObject({ ok: false, status: 400 });
       expect(!outcome.ok && outcome.message).toBeTruthy();
     }));
 });

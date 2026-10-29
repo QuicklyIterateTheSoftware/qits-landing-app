@@ -1,8 +1,10 @@
 import type {
+  GetAgentActiveProcessResponses,
   GetAgentResponses,
   GetWorkspaceActiveProcessResponses,
   GetWorkspaceResponses,
   ListAgentsResponses,
+  ListWorkspaceAgentsResponses,
   ListWorkspacesResponses,
 } from '../../api/workspaces';
 import type { Consumed } from '@qits/angular';
@@ -86,7 +88,10 @@ export type SlotDetail = NonNullable<
   Consumed<GetWorkspaceResponses[200], typeof GET_SLOT>['workspace']
 >;
 
-/** `AgentsStore.loadSlot(id)`: the agents a slot hosts (`listAgents?workspaceId=`). */
+/**
+ * `AgentsStore.loadSlot(id)`: the agents a slot hosts (`listWorkspaceAgents`, epic qits-1667: the
+ * workspace's own view of its agents), which the page lists and its container verbs name.
+ */
 export const LIST_SLOT_AGENTS = [
   'agents[].agentId',
   'agents[].entityId',
@@ -103,7 +108,7 @@ export const LIST_SLOT_AGENTS = [
 
 /** One agent a slot hosts, cut to what the store reads. */
 export type SlotAgent = NonNullable<
-  Consumed<ListAgentsResponses[200], typeof LIST_SLOT_AGENTS>['agents']
+  Consumed<ListWorkspaceAgentsResponses[200], typeof LIST_SLOT_AGENTS>['agents']
 >[number];
 
 /**
@@ -116,6 +121,19 @@ export const GET_ACTIVE_PROCESS = ['technicalProcessId'] as const;
 export type ActiveProcess = Consumed<
   GetWorkspaceActiveProcessResponses[200],
   typeof GET_ACTIVE_PROCESS
+>;
+
+/**
+ * `AgentsStore.loadAgent(agentId)`: the technical process starting the container of the slot the
+ * agent is placed in, if one is live (`getAgentActiveProcess`, epic qits-1667: by the agent, so the
+ * agent page asks nothing of the slot); its log is read from its own stream.
+ */
+export const GET_AGENT_ACTIVE_PROCESS = ['technicalProcessId'] as const;
+
+/** What the agent's active-process read answers, cut to what the store reads. */
+export type AgentActiveProcess = Consumed<
+  GetAgentActiveProcessResponses[200],
+  typeof GET_AGENT_ACTIVE_PROCESS
 >;
 
 /**

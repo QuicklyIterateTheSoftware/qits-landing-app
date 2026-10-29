@@ -17,12 +17,9 @@ const FILES = 'a workspace daemon with an agent whose worktree holds files';
 const IGNORED = 'a workspace daemon with an agent whose worktree has an ignored directory';
 const ORIGIN = 'https://workspaces.qits.example';
 
-const { agentId, workspaceRowId } = workspaceDaemonGoldenMasters.operation(
-  FILES,
-  'listFiles',
-).params;
-const ROW = Number(workspaceRowId);
-const WORKTREE = `${ORIGIN}/workspaces/container/${ROW}/agent-worktrees/${agentId}`;
+const { agentId } = workspaceDaemonGoldenMasters.operation(FILES, 'listFiles').params;
+/** The agent's routes on qits-workspaces' agent proxy, which forwards them to the daemon. */
+const WORKTREE = `${ORIGIN}/workspaces/agent/${agentId}`;
 
 /** `AgentFilesStore` on qits-workspace-daemon's recorded states (epic qits-1230). */
 describe('AgentFilesStore', () => {
@@ -44,8 +41,8 @@ describe('AgentFilesStore', () => {
 
   afterEach(() => http.verify());
 
-  it('lists the whole tree without a path, through the container proxy', async () => {
-    const done = store.list(ROW, agentId);
+  it('lists the whole tree without a path, through the agent proxy', async () => {
+    const done = store.list(agentId);
     await settle();
     const listing = workspaceDaemonGoldenMaster(FILES, 'listFiles');
     http.expectOne(`${WORKTREE}/files`).flush(listing);
@@ -53,7 +50,7 @@ describe('AgentFilesStore', () => {
   });
 
   it('lists a gitignored directory by its path', async () => {
-    const done = store.list(ROW, agentId, 'node_modules');
+    const done = store.list(agentId, 'node_modules');
     await settle();
     const listing = workspaceDaemonGoldenMaster(IGNORED, 'listFiles');
     http.expectOne(`${WORKTREE}/files?path=node_modules`).flush(listing);
@@ -61,7 +58,7 @@ describe('AgentFilesStore', () => {
   });
 
   it('reads a file, and says a path that names nothing is a 404', async () => {
-    const read = store.read(ROW, agentId, 'src/main/java/app/Login.java');
+    const read = store.read(agentId, 'src/main/java/app/Login.java');
     await settle();
     const file = workspaceDaemonGoldenMaster(FILES, 'readFile');
     http
@@ -69,7 +66,7 @@ describe('AgentFilesStore', () => {
       .flush(file);
     expect(await read).toEqual({ ok: true, value: file });
 
-    const missing = store.read(ROW, agentId, 'node_modules/missing.js');
+    const missing = store.read(agentId, 'node_modules/missing.js');
     await settle();
     http
       .expectOne(`${WORKTREE}/files/content?path=node_modules%2Fmissing.js`)
@@ -81,13 +78,13 @@ describe('AgentFilesStore', () => {
   });
 
   it('reads the detection, and a failure as its status', async () => {
-    const done = store.detect(ROW, agentId);
+    const done = store.detect(agentId);
     await settle();
     const detection = workspaceDaemonGoldenMaster(FILES, 'detect');
     http.expectOne(`${WORKTREE}/detection`).flush(detection);
     expect(await done).toEqual({ ok: true, value: detection });
 
-    const failing = store.detect(ROW, agentId);
+    const failing = store.detect(agentId);
     await settle();
     http.expectOne(`${WORKTREE}/detection`).flush(null, { status: 502, statusText: 'Bad Gateway' });
     expect(await failing).toEqual({ ok: false, status: 502 });

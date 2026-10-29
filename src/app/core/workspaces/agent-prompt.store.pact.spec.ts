@@ -11,12 +11,7 @@ import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing'
 import type { InteractionSlug } from '../../interactions';
 import { workspacesGoldenMasters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import {
-  DELETE_PROMPT_DRAFT,
-  DELIVER_AGENT_TURN,
-  GET_PROMPT_DRAFT,
-  SAVE_PROMPT_DRAFT,
-} from './agent-prompt.consumes';
+import { DELETE_PROMPT_DRAFT, GET_PROMPT_DRAFT, SAVE_PROMPT_DRAFT } from './agent-prompt.consumes';
 import { AgentPromptStore, draftText } from './agent-prompt.store';
 
 /**
@@ -26,12 +21,14 @@ import { AgentPromptStore, draftText } from './agent-prompt.store';
  *
  * - "an agent with a saved prompt draft": the draft restored, written and thrown away;
  * - "an agent with no prompt draft": nothing was ever composed (404);
- * - "an agent working on a ticket": a prompt delivered, which the agent hears as its first turn;
- * - "a work item with no workspaces": no agent works on the item, so nothing was said.
  *
- * The agent's id is a param, so the draft's path takes it as a provider-state expression. A
- * delivery's recorded body names the item as a param (`{ticketId}`): it travels as it is, and the
- * provider puts its run's value in its place.
+ * The agent's id is a param, so the draft's path takes it as a provider-state expression.
+ *
+ * Not bound yet: the prompt itself (`AgentPromptStore.prompt`, `promptAgent`, epic qits-1667).
+ * qits-workspaces records it ("an agent working on a ticket"), but the golden masters this app pins
+ * (`@qits/workspaces-golden-masters`) predate that recording, and a row needs it; the interaction
+ * is added here once qits-maintenance bumps the package. The work item delivery door the tab used
+ * before (`deliverAgentTurn`) is no longer called, so it has no row.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-workspaces-service';
@@ -39,15 +36,12 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const SAVED = 'an agent with a saved prompt draft';
 const NONE = 'an agent with no prompt draft';
-const WORKING = 'an agent working on a ticket';
-const NO_AGENT = 'a work item with no workspaces';
 
 /** What this spec owns in the shared pact file. */
 const OPERATIONS: readonly OwnedOperation[] = [
   'getAgentPromptDraft',
   'saveAgentPromptDraft',
   'deleteAgentPromptDraft',
-  'deliverAgentTurn',
 ];
 
 /**
@@ -156,31 +150,4 @@ describe('qits-landing-app → qits-workspaces-service pact: the agent’s promp
         },
       ));
   }
-
-  it('send-agent-prompt: the agent hears the prompt as its first turn', () =>
-    given(WORKING, 'deliverAgentTurn', 'send-agent-prompt', DELIVER_AGENT_TURN).executeTest(
-      async (server) => {
-        const store = storeAt(server.url);
-        const { workId, text } = sent<{ workId: string; text: string }>(
-          WORKING,
-          'deliverAgentTurn',
-        );
-        const outcome = await store.deliver(workId, text);
-        expect(outcome.ok && outcome.value.launched).toBe(true);
-        expect(outcome.ok && outcome.value.agentId).toBeTruthy();
-      },
-    ));
-
-  it('send-agent-prompt: no agent works on the item, so nothing is said', () =>
-    given(NO_AGENT, 'deliverAgentTurn', 'send-agent-prompt', DELIVER_AGENT_TURN).executeTest(
-      async (server) => {
-        const store = storeAt(server.url);
-        const { workId, text } = sent<{ workId: string; text: string }>(
-          NO_AGENT,
-          'deliverAgentTurn',
-        );
-        const outcome = await store.deliver(workId, text);
-        expect(outcome.ok && outcome.value.agentId).toBeNull();
-      },
-    ));
 });

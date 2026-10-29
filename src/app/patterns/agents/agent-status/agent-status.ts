@@ -13,9 +13,13 @@ import {
   type WaitSubject,
 } from '$core/workspaces/agent-attention';
 
-/** What the lines read of an agent: its id (for Prompt agent), its item, waits and attention. */
+/**
+ * What the lines read of an agent: its id (for Prompt agent), its run state (STOPPED is said), its
+ * item, waits and attention.
+ */
 export interface AgentStatusData extends AttentionAgent {
   readonly agentId?: string;
+  readonly runState?: string | null;
 }
 
 /** One wait's line. */
@@ -29,7 +33,9 @@ interface WaitLine {
  * and the agent page's header show it: a line per open wait (`waitSubject`: the subject, linked
  * where it has a page, and its state), then, when the agent needs a person, the attention's reason
  * in cinnabar with its action (`attentionAction`: Prompt agent → the agent page's Chat tab, Open
- * item → the item, or the overdue wait's subject). Shows nothing for an agent with neither.
+ * item → the item, or the overdue wait's subject). A STOPPED agent (epic qits-1667) says so first:
+ * a person stopped it, and nothing starts it again until somebody restarts or prompts it. Shows
+ * nothing for an agent with none of these.
  *
  * The context is what the app already holds: the open project's slug, its release requests
  * (`ProjectsStore`) and its work (`WorkStore`), and qits-ci's page origin; it reads nothing itself.
@@ -40,6 +46,12 @@ interface WaitLine {
   imports: [RouterLink],
   host: { class: 'block' },
   template: `
+    @if (agent().runState === 'STOPPED') {
+      <p class="m-0 text-sm text-charcoal-brown-600" data-stopped>
+        <strong class="font-semibold text-charcoal-brown-900">stopped</strong> by a person: it
+        starts again when somebody restarts or prompts it.
+      </p>
+    }
     @for (wait of waits(); track wait.id) {
       <p
         class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-charcoal-brown-600"

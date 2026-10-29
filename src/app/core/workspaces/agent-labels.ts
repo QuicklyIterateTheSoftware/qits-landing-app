@@ -41,6 +41,8 @@ export function runStateLabel(agent: RunStated): string {
       return 'yielded — idle, terminal stays live';
     case 'QUEUED':
       return 'queued — no free slot yet';
+    case 'STOPPED':
+      return 'stopped — by a person; starts again when restarted or prompted';
     default:
       return String(agent.runState ?? 'unknown').toLowerCase();
   }

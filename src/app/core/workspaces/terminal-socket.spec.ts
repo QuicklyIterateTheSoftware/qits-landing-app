@@ -1,5 +1,5 @@
 import { WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { TERMINAL_BACKOFF_MS, TerminalSocket, terminalSocketUrl } from './terminal-socket';
+import { agentTerminalSocketUrl, TERMINAL_BACKOFF_MS, TerminalSocket } from './terminal-socket';
 
 class FakeSocket implements WebSocketLike {
   onopen: ((event: Event) => void) | null = null;
@@ -179,13 +179,13 @@ describe('TerminalSocket', () => {
   });
 });
 
-describe('terminalSocketUrl', () => {
-  it('is the daemon’s terminal socket behind qits-workspaces’ container proxy, as ws(s)', () => {
-    expect(terminalSocketUrl('https://workspaces.qits.example', 7, 'c 1')).toBe(
-      'wss://workspaces.qits.example/workspaces/container/7/terminal/commands/c%201',
+describe('agentTerminalSocketUrl', () => {
+  it('is the agent’s harness terminal behind qits-workspaces’ agent proxy, as ws(s)', () => {
+    expect(agentTerminalSocketUrl('https://workspaces.qits.example', 'a 1')).toBe(
+      'wss://workspaces.qits.example/workspaces/agent/a%201/terminal',
     );
-    expect(terminalSocketUrl('http://localhost:8080', 7, 'c1')).toBe(
-      'ws://localhost:8080/workspaces/container/7/terminal/commands/c1',
+    expect(agentTerminalSocketUrl('http://localhost:8080', 'a1')).toBe(
+      'ws://localhost:8080/workspaces/agent/a1/terminal',
     );
   });
 });

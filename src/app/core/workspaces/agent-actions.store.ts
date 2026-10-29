@@ -1,22 +1,16 @@
 import { signalStore, withMethods } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import {
-  discardAgent,
-  ensureWorkspaceContainer,
-  recreateWorkspaceContainer,
-  stopWorkspaceContainer,
-} from '../../api/workspaces';
+import { discardAgent, interruptAgent, restartAgent, stopAgent } from '../../api/workspaces';
 import {
   DISCARD_AGENT,
-  ENSURE_CONTAINER,
-  RECREATE_CONTAINER,
+  INTERRUPT_AGENT,
   REFUSAL,
-  REFUSAL_MESSAGE,
-  STOP_CONTAINER,
+  RESTART_AGENT,
+  STOP_AGENT,
   type DiscardedAgent,
-  type EnsuredContainer,
-  type RecreatedContainer,
-  type StoppedContainer,
+  type InterruptedAgent,
+  type RestartedAgent,
+  type StoppedAgent,
 } from './agent-actions.consumes';
 
 /**
@@ -63,18 +57,20 @@ export function sentence(text: string): string {
 }
 
 /**
- * The workspace pages' writes on qits-workspaces (epic qits-1230), as qits-workspaces-frontend's
- * overview, workspace and agent pages made them. Each answers an {@link ActionOutcome}; the page
+ * The agent page's writes on qits-workspaces (epic qits-1230), by the agent; a slot's container
+ * verbs are `ContainerActionsStore`'s, on the workspace page only (epic qits-1667). Each answers an {@link ActionOutcome}; the page
  * reads its data again afterwards, and qits-workspaces' lifecycle events read it again too.
  *
  * - `discardAgent(agentId, force)`: remove the agent (`…/agents/{id}/discard`). Without `force` the
  *   service refuses (409) an agent whose worktrees hold work that never reached the git host
  *   (`AGENT_HAS_LEFTOVER_WORK`), whose daemon does not answer (`AGENT_DAEMON_UNREACHABLE`) or that
  *   is still busy (`AGENT_BUSY`); the page then offers `force`.
- * - `ensureContainer(id)`, `stopContainer(id)`, `recreateContainer(id)`: a slot's container verbs
- *   (`…/workspaces/{id}/ensure-container|stop-container|recreate-container`). A slot whose lease
- *   qits-system cannot be asked about is refused (409 `TARGET_UNAVAILABLE`); a recreate needs a
- *   working tree the service can prove clean (400 otherwise).
+ * - `interruptAgent(agentId)`, `stopAgent(agentId)`, `restartAgent(agentId)` (epic qits-1667): the
+ *   agent page's verbs, by the agent (`…/agents/{id}/interrupt|stop|restart`). Interrupt sends ESC
+ *   to a running harness and changes no run state (409 when there is no running terminal harness);
+ *   Stop makes the agent STOPPED, yielding a running harness first, and never touches the
+ *   container; Restart starts a running agent again on its session, or hands a yielded or stopped
+ *   one back to the scheduler (409 for a queued or removed agent).
  *
  * Staleness (qits-1270): holds no platform state; nothing to follow.
  */
@@ -90,29 +86,29 @@ export const AgentActionsStore = signalStore(
       if (error !== undefined || !data) return refusalOf(error, response);
       return { ok: true, value: data };
     },
-    async ensureContainer(id: number): Promise<ActionOutcome<EnsuredContainer>> {
+    async interruptAgent(agentId: string): Promise<ActionOutcome<InterruptedAgent>> {
       const { data, error, response } = await consume(
-        ensureWorkspaceContainer({ path: { id } }),
-        ENSURE_CONTAINER,
+        interruptAgent({ path: { id: agentId } }),
+        INTERRUPT_AGENT,
         REFUSAL,
       );
       if (error !== undefined || !data) return refusalOf(error, response);
       return { ok: true, value: data };
     },
-    async stopContainer(id: number): Promise<ActionOutcome<StoppedContainer>> {
+    async stopAgent(agentId: string): Promise<ActionOutcome<StoppedAgent>> {
       const { data, error, response } = await consume(
-        stopWorkspaceContainer({ path: { id } }),
-        STOP_CONTAINER,
+        stopAgent({ path: { id: agentId } }),
+        STOP_AGENT,
         REFUSAL,
       );
       if (error !== undefined || !data) return refusalOf(error, response);
       return { ok: true, value: data };
     },
-    async recreateContainer(id: number): Promise<ActionOutcome<RecreatedContainer>> {
+    async restartAgent(agentId: string): Promise<ActionOutcome<RestartedAgent>> {
       const { data, error, response } = await consume(
-        recreateWorkspaceContainer({ path: { id } }),
-        RECREATE_CONTAINER,
-        REFUSAL_MESSAGE,
+        restartAgent({ path: { id: agentId } }),
+        RESTART_AGENT,
+        REFUSAL,
       );
       if (error !== undefined || !data) return refusalOf(error, response);
       return { ok: true, value: data };

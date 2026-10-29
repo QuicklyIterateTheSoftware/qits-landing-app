@@ -59,8 +59,8 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
  *   as-is" takes them unchanged; either appends to the prompt and empties the notes. Without a
  *   container (a queued agent) there is no rewrite.
  * - **Flush, then send.** The draft is written first and a failed write stops the send; the prompt
- *   goes through the delivery door (`AgentPromptStore.deliver`), which resumes a yielded agent to
- *   hear it. A delivered prompt empties the box and the draft.
+ *   goes to the agent by its id (`AgentPromptStore.prompt`, `promptAgent`), which resumes a yielded
+ *   or stopped agent to hear it. A delivered prompt empties the box and the draft.
  * - **Picked context.** The line ranges picked in the agent's Files tab (`PickedContext`) are listed
  *   under the prompt: pressing one puts its label and lines in the prompt, ↗ opens it in the Files
  *   tab (`openReference`), ✕ drops it. They are saved with the draft (`picked`) and restored from
@@ -183,10 +183,10 @@ export class PromptComposer {
   /** Whose draft this is. */
   readonly agentId = input.required<string>();
 
-  /** The agent's work item, which the delivery door is keyed by. */
-  readonly workId = input.required<string>();
-
-  /** The agent's slot, for the rewrite; 0 while the agent is queued: no rewrite then. */
+  /**
+   * The agent's slot (its row id), only to tell whether it has a container to rewrite in: 0 while
+   * the agent is queued, no rewrite then. The rewrite itself is addressed by the agent.
+   */
   readonly workspaceRowId = input(0);
 
   /** What the work is about, for the rewrite. */
@@ -324,7 +324,7 @@ export class PromptComposer {
     if (!notes || this.refining()) return;
     this.refining.set(true);
     this.refineProblem.set(null);
-    const outcome = await this.chats.refine(this.workspaceRowId(), notes, this.preamble());
+    const outcome = await this.chats.refine(this.agentId(), notes, this.preamble());
     this.refining.set(false);
     if (outcome.ok) this.promote(outcome.value);
     else this.refineProblem.set(`The rewrite did not happen: ${why(outcome.status)}.`);
@@ -365,13 +365,9 @@ export class PromptComposer {
         this.sendProblem.set('The draft did not save, so nothing was sent. Try again.');
         return;
       }
-      const outcome = await this.prompts.deliver(this.workId(), text);
+      const outcome = await this.prompts.prompt(this.agentId(), text);
       if (!outcome.ok) {
         this.sendProblem.set(`The message was not sent: ${why(outcome.status)}.`);
-        return;
-      }
-      if (!outcome.value.agentId) {
-        this.sendProblem.set('No agent works on this item any more, so nothing was sent.');
         return;
       }
       this.sent.emit(outcome.value);

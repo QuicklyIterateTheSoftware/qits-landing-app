@@ -51,7 +51,7 @@ export type AgentHarness = 'CLAUDE' | 'KIMI';
 
 export type AgentLaunch = 'SCHEDULED' | 'SKIPPED_RUNNING' | 'QUEUED';
 
-export type AgentRunState = 'QUEUED' | 'RUNNING' | 'YIELDED';
+export type AgentRunState = 'QUEUED' | 'RUNNING' | 'YIELDED' | 'STOPPED';
 
 export type AgentState = 'ACTIVE' | 'OBSOLETE' | 'REMOVED';
 
@@ -221,6 +221,12 @@ export type EventSelectionCondition = {
 
 export type Instant = string;
 
+export type Interrupt = {
+    agentId?: string;
+    interrupted?: boolean;
+    detail?: string;
+};
+
 export type LaunchPin = {
     image?: string;
     version?: string;
@@ -254,6 +260,11 @@ export type MergeBranchRequest = {
     result?: string;
 };
 
+export type PromptAgentRequest = {
+    text: string;
+    compactFirst?: boolean;
+};
+
 export type PromptAttachmentSource = 'SKETCH' | 'PASTE';
 
 export type Reason = 'CONFLICT' | 'MERGE_CONFLICT' | 'NOT_FAST_FORWARD' | 'ALREADY_INTEGRATED' | 'PUSH_REJECTED' | 'RELEASE_REQUIRED';
@@ -271,34 +282,39 @@ export type ResolveReleasedBranchRequest = {
 };
 
 export type Response = {
-    agents?: Array<AgentDto>;
-};
-
-export type Response1 = {
-    entries?: Array<Entry>;
-};
-
-export type Response10 = {
-    workspace?: WorkspaceHistoryDetailDto;
-};
-
-export type Response11 = {
-    entries?: Array<Entry2>;
-};
-
-export type Response12 = {
-    workspace?: WorkspaceHistoryDetailDto;
-};
-
-export type Response13 = {
     lines?: Array<string>;
 };
 
-export type Response14 = {
+export type Response1 = {
     sessions?: Array<ArchivedSessionDto>;
 };
 
+export type Response10 = {
+    workspace?: WorkspaceDto;
+    technicalProcessId?: string;
+};
+
+export type Response11 = {
+    success?: boolean;
+};
+
+export type Response12 = {
+    agents?: Array<AgentDto>;
+};
+
+export type Response13 = {
+    workspace?: WorkspaceHistoryDetailDto;
+};
+
+export type Response14 = {
+    entries?: Array<Entry2>;
+};
+
 export type Response15 = {
+    workspace?: WorkspaceHistoryDetailDto;
+};
+
+export type Response16 = {
     id?: string;
     mimeType?: string;
     label?: string;
@@ -306,53 +322,53 @@ export type Response15 = {
     createdAt?: Instant;
 };
 
-export type Response16 = {
-    attachments?: Array<WorkspacePromptAttachmentDataDto>;
-};
-
 export type Response17 = {
-    draft?: WorkspacePromptDraftDto;
+    attachments?: Array<WorkspacePromptAttachmentDataDto>;
 };
 
 export type Response18 = {
     draft?: WorkspacePromptDraftDto;
 };
 
+export type Response19 = {
+    draft?: WorkspacePromptDraftDto;
+};
+
 export type Response2 = {
+    agents?: Array<AgentDto>;
+};
+
+export type Response3 = {
+    technicalProcessId?: string;
+};
+
+export type Response4 = {
+    entries?: Array<Entry>;
+};
+
+export type Response5 = {
     commitHash?: string;
     hasConflicts?: boolean;
     output?: string;
     cleanedUp?: boolean;
 };
 
-export type Response3 = {
-    success?: boolean;
-};
-
-export type Response4 = {
-    workspace?: WorkspaceDto;
-    technicalProcessId?: string;
-};
-
-export type Response5 = {
-    entries?: Array<Entry1>;
-};
-
 export type Response6 = {
-    workspace?: WorkspaceDto;
+    success?: boolean;
 };
 
 export type Response7 = {
     workspace?: WorkspaceDto;
     technicalProcessId?: string;
+    affectedAgentIds?: Array<string>;
 };
 
 export type Response8 = {
-    success?: boolean;
+    entries?: Array<Entry1>;
 };
 
 export type Response9 = {
-    technicalProcessId?: string;
+    workspace?: WorkspaceDto;
 };
 
 export type SavePromptDraftRequest = {
@@ -408,7 +424,7 @@ export type WaitView = {
     /**
      * What the selection waits on
      */
-    subjectKind?: 'RELEASE_REQUEST' | 'CI_RUN' | 'WORK_ITEM' | 'COMMENTS' | 'OTHER';
+    subjectKind?: 'RELEASE_REQUEST' | 'CI_RUN' | 'WORK_ITEM' | 'COMMENTS' | 'BRANCH' | 'OTHER';
     /**
      * The subject's id as the selection names it; null for OTHER
      */
@@ -493,6 +509,7 @@ export type WorkspaceDto = {
     leaseId?: Uuid;
     targetId?: Uuid;
     queuedAt?: Instant;
+    affectedAgentIds?: Array<string>;
 };
 
 export type WorkspaceEventDto = {
@@ -716,7 +733,7 @@ export type ListAgentDispatchReferencesResponses = {
     /**
      * OK
      */
-    200: Response1;
+    200: Response4;
 };
 
 export type ListAgentDispatchReferencesResponse = ListAgentDispatchReferencesResponses[keyof ListAgentDispatchReferencesResponses];
@@ -751,7 +768,7 @@ export type ListAgentsResponses = {
     /**
      * OK
      */
-    200: Response;
+    200: Response2;
 };
 
 export type ListAgentsResponse = ListAgentsResponses[keyof ListAgentsResponses];
@@ -944,6 +961,41 @@ export type GetAgentResponses = {
 
 export type GetAgentResponse = GetAgentResponses[keyof GetAgentResponses];
 
+export type GetAgentActiveProcessData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/active-process';
+};
+
+export type GetAgentActiveProcessErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+};
+
+export type GetAgentActiveProcessError = GetAgentActiveProcessErrors[keyof GetAgentActiveProcessErrors];
+
+export type GetAgentActiveProcessResponses = {
+    /**
+     * The technical process running against the agent's workspace, or null: none, or the agent has no workspace (QUEUED).
+     */
+    200: Response3;
+};
+
+export type GetAgentActiveProcessResponse = GetAgentActiveProcessResponses[keyof GetAgentActiveProcessResponses];
+
 export type DiscardAgentData = {
     body: DiscardAgentRequest;
     path: {
@@ -983,6 +1035,92 @@ export type DiscardAgentResponses = {
 
 export type DiscardAgentResponse = DiscardAgentResponses[keyof DiscardAgentResponses];
 
+export type InterruptAgentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/interrupt';
+};
+
+export type InterruptAgentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+    /**
+     * AGENT_NOT_RUNNING (no running session) or AGENT_NOT_INTERRUPTIBLE (the daemon's own refusal: no harness, not a terminal, not started yet — or a daemon too old to interrupt). Nothing was sent.
+     */
+    409: ApiError;
+    /**
+     * AGENT_DAEMON_UNREACHABLE: the agent's workspace daemon does not answer.
+     */
+    503: ApiError;
+};
+
+export type InterruptAgentError = InterruptAgentErrors[keyof InterruptAgentErrors];
+
+export type InterruptAgentResponses = {
+    /**
+     * ESC was written into the agent's harness.
+     */
+    200: Interrupt;
+};
+
+export type InterruptAgentResponse = InterruptAgentResponses[keyof InterruptAgentResponses];
+
+export type PromptAgentData = {
+    body: PromptAgentRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/prompt';
+};
+
+export type PromptAgentErrors = {
+    /**
+     * A blank text.
+     */
+    400: ApiError;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+    /**
+     * AGENT_REMOVED: the agent was removed; nothing was said.
+     */
+    409: ApiError;
+};
+
+export type PromptAgentError = PromptAgentErrors[keyof PromptAgentErrors];
+
+export type PromptAgentResponses = {
+    /**
+     * Answered, as the work-item delivery door answers: `delivered` (queued for the running agent), `launched` (its first turn, once it starts) or `resumed` (a yielded or stopped agent runs again to hear it).
+     */
+    200: Delivery;
+};
+
+export type PromptAgentResponse = PromptAgentResponses[keyof PromptAgentResponses];
+
 export type GetWorkspacesApiAgentsByIdPromptAttachmentsData = {
     body?: never;
     path: {
@@ -1013,7 +1151,7 @@ export type GetWorkspacesApiAgentsByIdPromptAttachmentsResponses = {
     /**
      * The attachments, oldest first.
      */
-    200: Response16;
+    200: Response17;
 };
 
 export type GetWorkspacesApiAgentsByIdPromptAttachmentsResponse = GetWorkspacesApiAgentsByIdPromptAttachmentsResponses[keyof GetWorkspacesApiAgentsByIdPromptAttachmentsResponses];
@@ -1056,7 +1194,7 @@ export type PostWorkspacesApiAgentsByIdPromptAttachmentsResponses = {
     /**
      * Attached; the row without its bytes.
      */
-    201: Response15;
+    201: Response16;
 };
 
 export type PostWorkspacesApiAgentsByIdPromptAttachmentsResponse = PostWorkspacesApiAgentsByIdPromptAttachmentsResponses[keyof PostWorkspacesApiAgentsByIdPromptAttachmentsResponses];
@@ -1136,7 +1274,7 @@ export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses =
     /**
      * Updated; the same row id is preserved.
      */
-    200: Response15;
+    200: Response16;
 };
 
 export type PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponse = PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses[keyof PutWorkspacesApiAgentsByIdPromptAttachmentsByAttachmentIdResponses];
@@ -1240,7 +1378,7 @@ export type GetAgentPromptDraftResponses = {
     /**
      * The saved draft.
      */
-    200: Response18;
+    200: Response19;
 };
 
 export type GetAgentPromptDraftResponse = GetAgentPromptDraftResponses[keyof GetAgentPromptDraftResponses];
@@ -1283,10 +1421,202 @@ export type SaveAgentPromptDraftResponses = {
     /**
      * The persisted draft, with its fresh updatedAt.
      */
-    200: Response17;
+    200: Response18;
 };
 
 export type SaveAgentPromptDraftResponse = SaveAgentPromptDraftResponses[keyof SaveAgentPromptDraftResponses];
+
+export type RestartAgentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/restart';
+};
+
+export type RestartAgentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+    /**
+     * AGENT_REMOVED, or AGENT_NOT_STARTED: a QUEUED agent has nothing to restart.
+     */
+    409: ApiError;
+    /**
+     * AGENT_DAEMON_UNREACHABLE: a RUNNING agent's workspace daemon does not answer.
+     */
+    503: ApiError;
+};
+
+export type RestartAgentError = RestartAgentErrors[keyof RestartAgentErrors];
+
+export type RestartAgentResponses = {
+    /**
+     * A RUNNING agent's harness is stopped and started again on its session; a STOPPED or YIELDED one is handed back to the scheduler as YIELDED (QUEUED without a workspace).
+     */
+    200: AgentDto;
+};
+
+export type RestartAgentResponse = RestartAgentResponses[keyof RestartAgentResponses];
+
+export type ListAgentSessionsData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/sessions';
+};
+
+export type ListAgentSessionsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+};
+
+export type ListAgentSessionsError = ListAgentSessionsErrors[keyof ListAgentSessionsErrors];
+
+export type ListAgentSessionsResponses = {
+    /**
+     * The agent's sessions, oldest first, read off the shared harness volume: they answer for a REMOVED agent too. An empty list is a valid answer.
+     */
+    200: Response1;
+};
+
+export type ListAgentSessionsResponse = ListAgentSessionsResponses[keyof ListAgentSessionsResponses];
+
+export type GetAgentTranscriptData = {
+    body?: never;
+    path: {
+        id: string;
+        sessionId: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/sessions/{sessionId}/transcript';
+};
+
+export type GetAgentTranscriptErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such agent, or a session that is not this agent's: answered exactly as one that never existed.
+     */
+    404: ApiError;
+};
+
+export type GetAgentTranscriptError = GetAgentTranscriptErrors[keyof GetAgentTranscriptErrors];
+
+export type GetAgentTranscriptResponses = {
+    /**
+     * The session's raw JSONL lines.
+     */
+    200: Response;
+};
+
+export type GetAgentTranscriptResponse = GetAgentTranscriptResponses[keyof GetAgentTranscriptResponses];
+
+export type StopAgentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/stop';
+};
+
+export type StopAgentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:desk` or `qits:desk-admin` caller whose token's `project` claim is not the agent's project. Nothing was changed.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+    /**
+     * AGENT_REMOVED: the agent was removed.
+     */
+    409: ApiError;
+};
+
+export type StopAgentError = StopAgentErrors[keyof StopAgentErrors];
+
+export type StopAgentResponses = {
+    /**
+     * STOPPED (already STOPPED: unchanged). A placed agent's harness is stopped on its daemon and its worktree and workspace stay; a QUEUED one gives up its place. A daemon that does not answer still leaves it STOPPED.
+     */
+    200: AgentDto;
+};
+
+export type StopAgentResponse = StopAgentResponses[keyof StopAgentResponses];
+
+export type YieldAgentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/workspaces/api/agents/{id}/yield';
+};
+
+export type YieldAgentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A `qits:agent` caller that is not this agent, or a desk caller of another project.
+     */
+    403: ApiError;
+    /**
+     * No such agent.
+     */
+    404: ApiError;
+    /**
+     * AGENT_NOT_RUNNING: only a running agent yields.
+     */
+    409: ApiError;
+};
+
+export type YieldAgentError = YieldAgentErrors[keyof YieldAgentErrors];
+
+export type YieldAgentResponses = {
+    /**
+     * YIELDED: the slot is free at once and the harness keeps running. Anything the agent should hear brings it back.
+     */
+    200: AgentDto;
+};
+
+export type YieldAgentResponse = YieldAgentResponses[keyof YieldAgentResponses];
 
 export type PostWorkspacesApiBranchesCleanupData = {
     body: CleanupBranchRequest;
@@ -1322,7 +1652,7 @@ export type PostWorkspacesApiBranchesCleanupResponses = {
     /**
      * Removed.
      */
-    200: Response3;
+    200: Response6;
 };
 
 export type PostWorkspacesApiBranchesCleanupResponse = PostWorkspacesApiBranchesCleanupResponses[keyof PostWorkspacesApiBranchesCleanupResponses];
@@ -1365,7 +1695,7 @@ export type PostWorkspacesApiBranchesMergeResponses = {
     /**
      * Merged.
      */
-    200: Response2;
+    200: Response5;
 };
 
 export type PostWorkspacesApiBranchesMergeResponse = PostWorkspacesApiBranchesMergeResponses[keyof PostWorkspacesApiBranchesMergeResponses];
@@ -1574,7 +1904,7 @@ export type GetWorkspacesApiHistoryResponses = {
     /**
      * OK
      */
-    200: Response11;
+    200: Response14;
 };
 
 export type GetWorkspacesApiHistoryResponse = GetWorkspacesApiHistoryResponses[keyof GetWorkspacesApiHistoryResponses];
@@ -1603,7 +1933,7 @@ export type GetWorkspaceHistoryResponses = {
     /**
      * OK
      */
-    200: Response12;
+    200: Response15;
 };
 
 export type GetWorkspaceHistoryResponse = GetWorkspaceHistoryResponses[keyof GetWorkspaceHistoryResponses];
@@ -1634,7 +1964,7 @@ export type PatchWorkspacesApiHistoryByIdResponses = {
     /**
      * The updated record.
      */
-    200: Response10;
+    200: Response13;
 };
 
 export type PatchWorkspacesApiHistoryByIdResponse = PatchWorkspacesApiHistoryByIdResponses[keyof PatchWorkspacesApiHistoryByIdResponses];
@@ -1663,7 +1993,7 @@ export type ListWorkspaceAgentSessionsResponses = {
     /**
      * OK
      */
-    200: Response14;
+    200: Response1;
 };
 
 export type ListWorkspaceAgentSessionsResponse = ListWorkspaceAgentSessionsResponses[keyof ListWorkspaceAgentSessionsResponses];
@@ -1693,7 +2023,7 @@ export type GetWorkspaceAgentTranscriptResponses = {
     /**
      * OK
      */
-    200: Response13;
+    200: Response;
 };
 
 export type GetWorkspaceAgentTranscriptResponse = GetWorkspaceAgentTranscriptResponses[keyof GetWorkspaceAgentTranscriptResponses];
@@ -1805,7 +2135,7 @@ export type ListWorkspacesResponses = {
     /**
      * OK
      */
-    200: Response5;
+    200: Response8;
 };
 
 export type ListWorkspacesResponse = ListWorkspacesResponses[keyof ListWorkspacesResponses];
@@ -1840,7 +2170,7 @@ export type GetWorkspaceResponses = {
     /**
      * The workspace.
      */
-    200: Response6;
+    200: Response9;
 };
 
 export type GetWorkspaceResponse = GetWorkspaceResponses[keyof GetWorkspaceResponses];
@@ -1869,10 +2199,45 @@ export type GetWorkspaceActiveProcessResponses = {
     /**
      * OK
      */
-    200: Response9;
+    200: Response3;
 };
 
 export type GetWorkspaceActiveProcessResponse = GetWorkspaceActiveProcessResponses[keyof GetWorkspaceActiveProcessResponses];
+
+export type ListWorkspaceAgentsData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/workspaces/api/workspaces/{id}/agents';
+};
+
+export type ListWorkspaceAgentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such workspace.
+     */
+    404: ApiError;
+};
+
+export type ListWorkspaceAgentsError = ListWorkspaceAgentsErrors[keyof ListWorkspaceAgentsErrors];
+
+export type ListWorkspaceAgentsResponses = {
+    /**
+     * The live agents on the workspace.
+     */
+    200: Response12;
+};
+
+export type ListWorkspaceAgentsResponse = ListWorkspaceAgentsResponses[keyof ListWorkspaceAgentsResponses];
 
 export type DeleteWorkspaceContainerData = {
     body?: never;
@@ -1937,7 +2302,7 @@ export type DiscardWorkspaceResponses = {
     /**
      * Discarded.
      */
-    200: Response8;
+    200: Response11;
 };
 
 export type DiscardWorkspaceResponse = DiscardWorkspaceResponses[keyof DiscardWorkspaceResponses];
@@ -1972,7 +2337,7 @@ export type EnsureWorkspaceContainerResponses = {
     /**
      * The start this call made, or the start under way that it joined.
      */
-    200: Response7;
+    200: Response10;
 };
 
 export type EnsureWorkspaceContainerResponse = EnsureWorkspaceContainerResponses[keyof EnsureWorkspaceContainerResponses];
@@ -2003,7 +2368,7 @@ export type RecreateWorkspaceContainerResponses = {
     /**
      * The recreate this call started.
      */
-    200: Response4;
+    200: Response7;
 };
 
 export type RecreateWorkspaceContainerResponse = RecreateWorkspaceContainerResponses[keyof RecreateWorkspaceContainerResponses];

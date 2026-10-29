@@ -19,7 +19,6 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const AGENT = 'an agent with a saved prompt draft';
 const NO_AGENT = 'no agent with that id';
-const STARTING = 'an agent whose workspace is starting';
 const SLUG = 'contract-00000001';
 const PROJECT_ID = 'p-1';
 const agentIdOf = (state: string) =>
@@ -108,11 +107,9 @@ describe('AgentLayout', () => {
       .flush(workspacesGoldenMaster(AGENT, 'getAgent'));
     http.expectOne(`/workspaces/api/agents?projectId=${PROJECT_ID}&state=ACTIVE`).flush(listed);
     await answered(harness);
+    // The agent page asks nothing of the slot: only the agent's start, which no start runs.
     http
-      .expectOne('/workspaces/api/workspaces/1')
-      .flush(workspacesGoldenMaster(STARTING, 'getWorkspace'));
-    http
-      .expectOne('/workspaces/api/workspaces/1/active-process')
+      .expectOne(`/workspaces/api/agents/${AGENT_ID}/active-process`)
       .flush({ technicalProcessId: null });
     await answered(harness);
     const element = harness.routeNativeElement as HTMLElement;
@@ -133,6 +130,13 @@ describe('AgentLayout', () => {
     const workspace = element.querySelector('#agent-workspace');
     expect(workspace?.textContent?.trim()).toBe('Workspace');
     expect(link('ws-1')?.getAttribute('href')).toBe(`/projects/${SLUG}/workspaces/1`);
+    // The agent's own verbs, for a RUNNING agent; the container's are the workspace page's.
+    expect(
+      [...element.querySelectorAll('[role=group][aria-label=Agent] button')].map((b) =>
+        b.textContent?.trim(),
+      ),
+    ).toEqual(['Interrupt', 'Stop', 'Restart']);
+    expect(element.querySelector('[role=group][aria-label=Container]')).toBeNull();
     expect(
       [...element.querySelectorAll('nav[aria-label=Agent] a')].map((a) => a.getAttribute('href')),
     ).toEqual(

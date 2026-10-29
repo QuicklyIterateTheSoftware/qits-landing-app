@@ -1,11 +1,7 @@
 import { signal, type Signal } from '@angular/core';
 import type { WebSocketFactory } from '$core/platform/web-socket';
-import {
-  commandSocketUrl,
-  RECONNECT_BACKOFF_MS,
-  ReconnectingSocket,
-  type SocketLink,
-} from './reconnecting-socket';
+import { agentSocketUrl } from './agent-proxy';
+import { RECONNECT_BACKOFF_MS, ReconnectingSocket, type SocketLink } from './reconnecting-socket';
 
 const DEFAULT_COLS = 100;
 const DEFAULT_ROWS = 30;
@@ -26,12 +22,13 @@ export const TERMINAL_BACKOFF_MS = RECONNECT_BACKOFF_MS;
 export type TerminalLink = SocketLink;
 
 /**
- * The daemon's terminal socket for one command, `WS /terminal/commands/{id}`, through
- * qits-workspaces' container proxy: `wss://workspaces.<domain>/workspaces/container/<slot row
- * id>/terminal/commands/<command id>` (`ws:` when qits-workspaces' origin is `http:`).
+ * An agent's harness terminal, through qits-workspaces' agent proxy (epic qits-1667):
+ * `wss://workspaces.<domain>/workspaces/agent/<agent id>/terminal` (`ws:` when qits-workspaces'
+ * origin is `http:`). The service attaches it to the agent's running harness command, wherever the
+ * agent is placed.
  */
-export function terminalSocketUrl(origin: string, workspaceRowId: number, commandId: string) {
-  return commandSocketUrl(origin, workspaceRowId, 'terminal', commandId);
+export function agentTerminalSocketUrl(origin: string, agentId: string): string {
+  return agentSocketUrl(origin, agentId, 'terminal');
 }
 
 /**

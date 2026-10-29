@@ -1,17 +1,18 @@
 import { signal, type Signal } from '@angular/core';
 import type { WebSocketFactory } from '$core/platform/web-socket';
-import { commandSocketUrl, ReconnectingSocket, type SocketLink } from './reconnecting-socket';
+import { agentSocketUrl } from './agent-proxy';
+import { ReconnectingSocket, type SocketLink } from './reconnecting-socket';
 
 /** Whether the conversation is attached, coming back, finished, or given up on. */
 export type ChatLink = SocketLink;
 
 /**
- * The daemon's chat socket for one command, `WS /chat/commands/{id}`, through qits-workspaces'
- * container proxy: `wss://workspaces.<domain>/workspaces/container/<slot row id>/chat/commands/
- * <command id>` (`ws:` when qits-workspaces' origin is `http:`).
+ * An agent's chat, through qits-workspaces' agent proxy (epic qits-1667):
+ * `wss://workspaces.<domain>/workspaces/agent/<agent id>/chat` (`ws:` when qits-workspaces' origin
+ * is `http:`). The service attaches it to the agent's running harness command.
  */
-export function chatSocketUrl(origin: string, workspaceRowId: number, commandId: string): string {
-  return commandSocketUrl(origin, workspaceRowId, 'chat', commandId);
+export function agentChatSocketUrl(origin: string, agentId: string): string {
+  return agentSocketUrl(origin, agentId, 'chat');
 }
 
 /**

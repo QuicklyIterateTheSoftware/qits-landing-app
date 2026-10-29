@@ -667,10 +667,10 @@ export class AgentFilesPage {
       this.readingIgnores.clear();
       this.listing.set({ status: 'loading' });
     }
-    void this.files.detect(rowId, agentId).then((outcome) => {
+    void this.files.detect(agentId).then((outcome) => {
       if (outcome.ok && this.resetFor === key) this.incoming.set(outcome.value);
     });
-    void this.files.list(rowId, agentId).then((outcome) => {
+    void this.files.list(agentId).then((outcome) => {
       if (this.resetFor !== key) return;
       if (!outcome.ok) {
         // A read again that fails keeps the tree on screen.
@@ -688,10 +688,9 @@ export class AgentFilesPage {
   }
 
   private async openStub(path: string): Promise<void> {
-    const rowId = this.rowId();
     const agentId = this.agentId();
     this.pending.update((pending) => new Set(pending).add(path));
-    const outcome = await this.files.list(rowId, agentId, path);
+    const outcome = await this.files.list(agentId, path);
     // A directory that will not open stays shut.
     if (outcome.ok) {
       this.opened.update((opened) => new Map(opened).set(path, outcome.value));
@@ -719,7 +718,7 @@ export class AgentFilesPage {
       this.file.set({ status: 'loading', binary: false, content: null });
     }
     this.fileFor = path;
-    const outcome = await this.files.read(rowId, agentId, path);
+    const outcome = await this.files.read(agentId, path);
     if (this.selectedPath() !== path) return;
     if (outcome.ok) {
       this.file.set({
@@ -745,7 +744,7 @@ export class AgentFilesPage {
       for (const source of ignoreSources(paths, name)) {
         if (this.ignoreText().has(source.path) || this.readingIgnores.has(source.path)) continue;
         this.readingIgnores.add(source.path);
-        void this.files.read(rowId, agentId, source.path).then((outcome) => {
+        void this.files.read(agentId, source.path).then((outcome) => {
           this.readingIgnores.delete(source.path);
           if (outcome.ok && !outcome.value.binary && outcome.value.content !== undefined) {
             const text = outcome.value.content;

@@ -104,13 +104,15 @@ describe('AgentLayout (screenshots)', () => {
     return { harness, element, project, agent };
   }
 
-  /** Answers the agent's slot, coming up, and the start running against it. */
-  async function answerSlot(harness: RouterTestingHarness, slot: number) {
-    http
-      .expectOne(`/workspaces/api/workspaces/${slot}`)
-      .flush(await goldenMaster(STARTING, 'getWorkspace', 'qits-workspaces'));
+  /**
+   * Answers the start running against the agent's slot, asked of the agent
+   * (`getAgentActiveProcess`, epic qits-1667). Its own recording is not in the pinned golden masters
+   * yet; it answers the slot lookup's `{ technicalProcessId }`, so this is the starting slot's
+   * recorded answer, which the slot page's pact binds.
+   */
+  async function answerStart(harness: RouterTestingHarness, agentId: string) {
     const process = await goldenMaster(STARTING, 'getWorkspaceActiveProcess', 'qits-workspaces');
-    http.expectOne(`/workspaces/api/workspaces/${slot}/active-process`).flush(process);
+    http.expectOne(`/workspaces/api/agents/${agentId}/active-process`).flush(process);
     await answered(harness);
     return process;
   }
@@ -118,7 +120,7 @@ describe('AgentLayout (screenshots)', () => {
   it('shows the agent, its item, its workspace and its slot coming up', async () => {
     const { harness, element, project, agent } = await render();
     const slot = agent.workspaceRowId;
-    const process = await answerSlot(harness, slot);
+    const process = await answerStart(harness, agent.agentId);
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('heading', { name: `Agent ${ITEM}` })).toBeVisible();
     await expect
@@ -128,7 +130,6 @@ describe('AgentLayout (screenshots)', () => {
     await expect
       .element(view.getByRole('link', { name: `ws-${slot}` }))
       .toHaveAttribute('href', `/projects/${project.slug}/workspaces/${slot}`);
-    await expect.element(view).toMatchTextContent('provisioning');
     await expect.element(view.getByRole('region', { name: 'Starting' })).toBeVisible();
     expect(streams).toEqual([
       `https://workspaces.test/workspaces/api/technical-processes/${process.technicalProcessId}/events`,
@@ -138,7 +139,7 @@ describe('AgentLayout (screenshots)', () => {
 
   it('shows a refused discard in the service’s words, and offers force', async () => {
     const { harness, element, agent } = await render();
-    await answerSlot(harness, agent.workspaceRowId);
+    await answerStart(harness, agent.agentId);
     const view = page.elementLocator(element);
     await view.getByRole('button', { name: 'Discard', exact: true }).click();
     harness.fixture.detectChanges();
