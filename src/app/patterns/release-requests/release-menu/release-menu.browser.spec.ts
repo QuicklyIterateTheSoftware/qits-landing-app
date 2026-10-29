@@ -134,7 +134,8 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect
       .element(panel.getByRole('link', { name: /contract-frontend/ }).first())
       .toHaveAttribute('title', 'Look: CI build');
-    await expect.element(panel).not.toMatchTextContent('Finalized release');
+    // The finalized request is not pending, so the menu leaves it out.
+    await expect.element(panel).not.toMatchTextContent('contract-service-rr-1');
     // The runners and slots line heads the panel: runners, slots and the shared pool at the left,
     // the types' reservations at the right.
     await expect.element(panel.getByText('runners: 0')).toBeVisible();

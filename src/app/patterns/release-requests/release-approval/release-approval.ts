@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import type { ApprovalOffer } from '$core/release-requests/approval-requirements';
+import { requestTitle } from '$core/projects/release-requests';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal, shortShaOrNone } from '$core/release-requests/release-request-model';
 import { movedFold } from '$core/release-requests/release-pipeline';
@@ -38,7 +39,7 @@ type Decision = 'approve' | 'decline';
           [value]="note()"
           (input)="noteTyped($event)"
           placeholder="A note (optional)"
-          [attr.aria-label]="'A note on the decision about ' + request().summary"
+          [attr.aria-label]="'A note on the decision about ' + title()"
         />
         <div class="flex">
           @if (offer().approve) {
@@ -71,6 +72,8 @@ export class ReleaseApproval {
   readonly offer = input<ApprovalOffer>({ approve: true, decline: true, note: null });
 
   protected readonly fold = computed(() => shortShaOrNone(this.request().mergedSha));
+  /** What the request carries, naming it in the note's label (qits-1673). */
+  protected readonly title = computed(() => requestTitle(this.request()));
 
   /** The decision pressed once, waiting for its confirmation. */
   protected readonly pending = signal<Decision | null>(null);

@@ -24,6 +24,12 @@ const notFound = (element: HTMLElement) =>
 /** The failure note with its Retry: always rendered, hidden by class unless the read failed. */
 const failure = (element: HTMLElement) => element.querySelector('ui-load-failure') as HTMLElement;
 
+/** The texts of what the head names the request by: one per item (or source branch). */
+const heading = (element: HTMLElement) =>
+  Array.from(element.querySelectorAll('h1 [data-item]')).map((item) =>
+    item.textContent?.replace(/\s+/g, ' ').trim(),
+  );
+
 /** The state whose recorded project answers the read of one of its requests. */
 const STATE = 'a project with release requests in every state';
 
@@ -122,7 +128,10 @@ describe('ReleaseRequestPage', () => {
     read(request.qualifiedId).flush(recorded);
     await answered();
     expect(element.textContent).toContain(request.qualifiedId);
-    expect(element.textContent).toContain(request.summary);
+    // The recording (qits-projects before qits-1673) has no items: the head names the sources.
+    expect(heading(element)).toEqual(
+      request.sources.map((source: { name: string }) => source.name),
+    );
     expect(notFound(element)?.classList.contains('hidden')).toBe(true);
     expect(failure(element).classList.contains('hidden')).toBe(true);
     // The project's whole list is never read: the request's own answer names its repository.
@@ -164,7 +173,63 @@ describe('ReleaseRequestPage', () => {
     read(request.qualifiedId).flush(recorded);
     await answered();
     expect(failure(element).classList.contains('hidden')).toBe(true);
-    expect(element.textContent).toContain(request.summary);
+    expect(heading(element)).toEqual(
+      request.sources.map((source: { name: string }) => source.name),
+    );
+  });
+
+  describe('what a request carries and who asked (qits-1673)', () => {
+    /** The facts' "asked by" line. */
+    const askedBy = (element: HTMLElement) =>
+      element.querySelector('[data-participants]')?.textContent?.replace(/\s+/g, ' ').trim();
+
+    it('names each item, its work item linked, and everyone who asked', async () => {
+      // Derived from the recording: the items and participants qits-projects answers from
+      // 2026.1028.230057 on, one item naming a work item and one a plain branch.
+      const carrying = {
+        request: {
+          ...request,
+          participants: ['agent@qits', 'dev'],
+          items: [
+            {
+              source: 'ticket/qits-1673',
+              label: 'ticket/qits-1673',
+              workItem: { qualifiedId: 'qits-1673', title: 'Show items and participants' },
+            },
+            { source: 'bump/contract-service', label: 'bump/contract-service', workItem: null },
+          ],
+        },
+      };
+      const { element, answered } = await render(request.qualifiedId);
+      read(request.qualifiedId).flush(carrying);
+      await answered();
+      const items = Array.from(element.querySelectorAll('h1 [data-item]'));
+      expect(items).toHaveLength(2);
+      const linked = items[0].querySelector('a[data-work-item]')!;
+      expect(linked.textContent?.trim()).toBe('qits-1673');
+      expect(linked.getAttribute('href')).toBe(`/projects/${project.slug}/work/detail/qits-1673`);
+      expect(items[0].textContent).toContain('Show items and participants');
+      expect(items[1].querySelector('[data-work-item]')).toBeNull();
+      expect(items[1].textContent?.trim()).toBe('bump/contract-service');
+      expect(askedBy(element)).toBe('asked by agent@qits, dev');
+    });
+
+    it('says nobody where the answer names no participants', async () => {
+      const { element, answered } = await render(request.qualifiedId);
+      read(request.qualifiedId).flush(recorded);
+      await answered();
+      expect(askedBy(element)).toBe('asked by —');
+    });
+
+    it('is a plain "Release request" when it names neither items nor sources', async () => {
+      // Derived from the recording: no items, participants empty, no sources.
+      const bare = { request: { ...request, items: [], participants: [], sources: [] } };
+      const { element, answered } = await render(request.qualifiedId);
+      read(request.qualifiedId).flush(bare);
+      await answered();
+      expect(element.querySelector('h1')?.textContent?.trim()).toBe('Release request');
+      expect(askedBy(element)).toBe('asked by —');
+    });
   });
 
   describe('the soft feature freeze (epic qits-1580)', () => {

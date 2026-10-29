@@ -5,6 +5,7 @@ import {
   latestReleaseRequest,
   releaseRequestName,
   requestBadge,
+  requestTitle,
 } from '$core/projects/release-requests';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { SelectedProject } from '$core/projects/selected-project';
@@ -203,7 +204,7 @@ export class ShellLayout {
       text,
       chip: badge.label,
       tone: badge.tone,
-      title: `${text}: ${latest.summary ?? ''} (${badge.label})`,
+      title: `${text}: ${requestTitle(latest)} (${badge.label})`,
     };
   });
 

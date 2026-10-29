@@ -16,13 +16,16 @@ import {
   freezeChip,
   freezeCount,
   nobodyWatching,
+  participantsOf,
   queuedBehind,
   releaseRequestRef,
   requestBadge,
+  requestItems,
   shortSha,
   utcMinute,
 } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
+import { workItemPath } from '$core/workspaces/agent-attention';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip, chipClass } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
@@ -39,13 +42,15 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  *
  * Each row shows the request's state (or "awaiting approval"), its priority, "nobody watching"
  * for a stopped request a machine asked for, its logical id (`<repository>-rr-<n>`; the repository
- * where an older answer has none), the summary, when it last changed, its
- * version, its merged commit, who asked, the service's detail, and its lifecycle as a line (cog,
+ * where an older answer has none), what it carries (qits-1673: per item, the work item its branch
+ * names, linked to the item's page, and its title, else the branch's label; the source branches on
+ * an older answer without items), when it last changed, its version, its merged commit, who asked
+ * (its participants, comma-joined, or `–`), the service's detail, and its lifecycle as a line (cog,
  * phase chips, gate shields). The soft feature freeze (epic qits-1580): a frozen request has a
  * `frozen 3/3` chip, a queued one `queued behind <id>` (a link to that request), and an open one
  * that is neither a quiet count of its counted branches (`1/3`). A request that needs a person is
  * ringed, with a link to that check. The logical id
- * and summary link to the request's own page, `release-requests/<logical id>` (its uuid where it
+ * and each item's text link to the request's own page, `release-requests/<logical id>` (its uuid where it
  * has no logical id). A request that can still be
  * called off has Withdraw.
  *
@@ -126,11 +131,27 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     [routerLink]="ref(request)"
                     >{{ request.qualifiedId ?? request.repoName }}</a
                   >
-                  <a
-                    class="min-w-48 flex-1 break-words text-gray-900 no-underline hover:underline"
-                    [routerLink]="ref(request)"
-                    >{{ request.summary }}</a
+                  <span
+                    class="flex min-w-48 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5 break-words"
                   >
+                    @for (item of items(request); track item.key) {
+                      <span class="inline-flex min-w-0 items-baseline gap-1" data-item>
+                        @if (item.qualifiedId) {
+                          <a
+                            class="font-mono text-sm whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
+                            [routerLink]="workItem(item.qualifiedId)"
+                            data-work-item
+                            >{{ item.qualifiedId }}</a
+                          >
+                        }
+                        <a
+                          class="break-words text-gray-900 no-underline hover:underline"
+                          [routerLink]="ref(request)"
+                          >{{ item.text }}</a
+                        >
+                      </span>
+                    }
+                  </span>
                   @if (count(request); as counted) {
                     <span
                       class="text-xs whitespace-nowrap text-gray-400"
@@ -151,7 +172,9 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   <span
                     >merged <span class="font-mono">{{ sha(request.mergedSha) || '–' }}</span></span
                   >
-                  <span>{{ request.requester || '–' }}</span>
+                  <span title="Who asked for this release" data-participants>{{
+                    participants(request)
+                  }}</span>
                   <ui-lifecycle-line [points]="summary(request)" />
                   @if (needs[0]; as first) {
                     <a
@@ -211,6 +234,13 @@ export class ReleaseRequestsPage {
   protected readonly count = freezeCount;
   protected readonly behind = queuedBehind;
   protected readonly queuedTone = chipClass('waiting');
+  protected readonly items = requestItems;
+  protected readonly participants = (request: ReleaseRequestEntry) => participantsOf(request);
+
+  /** The page of the work item a request's item names, in the open project. */
+  protected workItem(qualifiedId: string): string {
+    return workItemPath(this.selected.slug() ?? '', qualifiedId);
+  }
 
   private readonly answer = computed(() => {
     const id = this.selected.project()?.id;

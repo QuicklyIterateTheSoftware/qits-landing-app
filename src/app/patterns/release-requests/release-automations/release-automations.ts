@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { PlatformOrigins } from '$core/platform/platform-origins';
+import { requestTitle } from '$core/projects/release-requests';
 import type {
   ReleaseAutomation,
   ReleaseRequest,
@@ -97,7 +98,7 @@ export const ASKED =
             [value]="reason()"
             (input)="reasonTyped($event)"
             placeholder="Why this fold is waived"
-            [attr.aria-label]="'A reason for waiving automations on ' + request().summary"
+            [attr.aria-label]="'A reason for waiving automations on ' + title()"
           />
           <div class="flex">
             <ui-action-button [action]="confirmWaive()" join="start" />
@@ -127,6 +128,8 @@ export class ReleaseAutomations {
 
   protected readonly rows = computed(() => this.request().automations ?? []);
   protected readonly fold = computed(() => shortShaOrNone(this.request().mergedSha));
+  /** What the request carries, naming it in the reason's label (qits-1673). */
+  protected readonly title = computed(() => requestTitle(this.request()));
   protected readonly sentence = automationSentence;
   protected readonly rerunnable = automationRerunnable;
   protected readonly setAside = automationSetAside;

@@ -10,9 +10,12 @@ import {
   gateTone,
   latestReleaseRequest,
   nobodyWatching,
+  participantsOf,
   releaseRequestName,
   releaseRequestRef,
   requestBadge,
+  requestItems,
+  requestTitle,
   requestTone,
   shortSha,
   utcMinute,
@@ -152,5 +155,49 @@ describe('the soft feature freeze (epic qits-1580)', () => {
       freezeFact({ ...frozen, featureFreeze: { ...frozen.featureFreeze, source: 'PROJECT' } }),
     ).toBe('3 of 3 counted branches · frozen · threshold from project');
     expect(freezeFact({ ...frozen, featureFreeze: undefined })).toBeNull();
+  });
+});
+
+describe('what a request carries and who asked (qits-1673)', () => {
+  const items = [
+    {
+      source: 'ticket/qits-1673',
+      label: 'ticket/qits-1673',
+      workItem: { qualifiedId: 'qits-1673', title: 'Show items and participants' },
+    },
+    { source: 'fix/rounding', label: 'fix/rounding', workItem: null },
+    { source: 'feature/export' },
+  ];
+
+  it('names each item by its work item and title, else its label, else its branch', () => {
+    expect(requestItems({ items }).map(({ qualifiedId, text }) => ({ qualifiedId, text }))).toEqual(
+      [
+        { qualifiedId: 'qits-1673', text: 'Show items and participants' },
+        { qualifiedId: null, text: 'fix/rounding' },
+        { qualifiedId: null, text: 'feature/export' },
+      ],
+    );
+    expect(requestTitle({ items })).toBe(
+      'qits-1673 Show items and participants, fix/rounding, feature/export',
+    );
+  });
+
+  it('names the source branches where the answer has no items', () => {
+    const sources = [{ name: 'main' }, { name: 'bump/contract-service' }];
+    expect(requestItems({ sources }).map((item) => item.text)).toEqual([
+      'main',
+      'bump/contract-service',
+    ]);
+    expect(requestItems({ items: [], sources }).map((item) => item.text)).toEqual([
+      'main',
+      'bump/contract-service',
+    ]);
+    expect(requestTitle({})).toBe('');
+  });
+
+  it('joins the participants, or says nobody', () => {
+    expect(participantsOf({ participants: ['agent@qits', 'dev'] })).toBe('agent@qits, dev');
+    expect(participantsOf({ participants: [] })).toBe('–');
+    expect(participantsOf({}, '—')).toBe('—');
   });
 });

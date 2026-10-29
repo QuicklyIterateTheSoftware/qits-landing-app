@@ -197,7 +197,9 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await answered(fixture);
     http.expectOne((r) => r.url.endsWith(`/release-requests/${ref}`)).flush(recorded);
     await answered(fixture);
-    await expect.element(view).toMatchTextContent('Release the export across the suite');
+    await expect
+      .element(view.getByRole('heading', { level: 1 }))
+      .toMatchTextContent('bump/contract-service');
     expect(element.querySelector('ui-load-failure')?.classList.contains('hidden')).toBe(true);
     // The reads after it answer with errors: only the request is this spec's subject.
     for (let round = 0; round < 3; round++) {
@@ -230,8 +232,13 @@ describe('ReleaseRequestPage (screenshots)', () => {
 
   it('shows a pending request: head, facts and its lifecycle', async () => {
     const { view } = await shown('a release request awaiting approval');
-    await expect.element(view).toMatchTextContent('Release the export across the suite');
-    await expect.element(view).toMatchTextContent('asked by contract-seeder');
+    // The head names what the request carries (qits-1673): its items where the recording has
+    // them, else its sources; `bump/contract-service` is among both. Who asked is its
+    // participants, which a recording before qits-projects 2026.1028.230057 does not hold.
+    await expect
+      .element(view.getByRole('heading', { level: 1 }))
+      .toMatchTextContent('bump/contract-service');
+    await expect.element(view).toMatchTextContent(/asked by /);
     await expect.element(view).toMatchScreenshot('pending');
   });
 

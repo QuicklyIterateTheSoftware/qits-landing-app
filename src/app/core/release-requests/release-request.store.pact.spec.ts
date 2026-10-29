@@ -2,7 +2,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { PactV4 } from '@pact-foundation/pact';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as projectsClient } from '../../api/projects/client.gen';
@@ -26,6 +26,7 @@ import {
   GET_RELEASE_REQUEST,
   LIST_COMMIT_BUILDS,
   LIST_RELEASE_REQUEST_COMMITS,
+  UNBOUND_RELEASE_REQUEST,
   type ReleaseRequest,
 } from './release-request.consumes';
 import { ReleaseRequestStore } from './release-request.store';
@@ -82,6 +83,49 @@ const OPERATIONS = [
   'overrideReleaseRequestUpstream',
 ];
 
+/** The paths a pact binds of `consumes`: all but those the store reads unbound (qits-1673). */
+const UNBOUND: ReadonlySet<string> = new Set(UNBOUND_RELEASE_REQUEST);
+const bindable = (consumes: readonly string[]) => consumes.filter((path) => !UNBOUND.has(path));
+
+/** The request's arrays that grow with every ask (qits-1673), so no pact pins their length. */
+const GROWING = ['participants', 'items'] as const;
+
+interface WrittenPact {
+  readonly interactions: readonly {
+    readonly response: {
+      readonly body?: { readonly content?: { request?: Record<string, unknown> | null } };
+      readonly matchingRules?: { body?: Record<string, unknown> };
+    };
+  }[];
+}
+
+/**
+ * `addGoldenInteraction` pins every array to the length qits-projects recorded. A request's
+ * `participants` (everyone who asked) and `items` (one per explicit source) grow with every ask, so
+ * this opens them (`type`, min 0, no max) on every interaction whose recording holds them, and cuts
+ * each to its first recorded element: pact-jvm verifies every answered element against it, so it
+ * must hold no null (an item's `workItem`, null where the branch names no work item, is never
+ * bound: `UNBOUND_RELEASE_REQUEST`). An array recorded empty stays `[]`, unpinned. Runs on the pact
+ * this spec just generated, before `assertPactPart`, so the mock server still answered with the
+ * whole recording.
+ */
+function openEndedGrowingArrays(generated: string): void {
+  const written = JSON.parse(readFileSync(generated, 'utf8')) as WrittenPact;
+  for (const interaction of written.interactions) {
+    const request = interaction.response.body?.content?.request;
+    if (!request) continue;
+    for (const key of GROWING) {
+      const values = request[key];
+      if (!Array.isArray(values)) continue;
+      request[key] = values.slice(0, 1);
+      const rules = interaction.response.matchingRules?.body;
+      if (rules)
+        rules[`$.request.${key}`] = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
+    }
+  }
+  writeFileSync(generated, JSON.stringify(written, null, 2));
+}
+
 const given = (
   slug: InteractionSlug,
   state: string,
@@ -93,7 +137,7 @@ const given = (
     state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: heldBy(masters, state, operationId, consumes),
+    consumes: heldBy(masters, state, operationId, bindable(consumes)),
   });
 
 let dir = '';
@@ -139,6 +183,7 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
+      openEndedGrowingArrays(join(dir, `${CONSUMER}-${PROVIDER}.json`));
       assertPactPart(
         join(dir, `${CONSUMER}-${PROVIDER}.json`),
         COMMITTED,

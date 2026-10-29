@@ -24,9 +24,9 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
 /**
  * `loadReleaseRequests(projectId)`: one answer serves three readers. The top bar's release menu
  * lists each pending request by its logical id (`qualifiedId`, `<repository>-rr-<n>`; the
- * repository's name where an older answer has none), with its summary, state and gates. The sidebar's Release
+ * repository's name where an older answer has none), with what it carries, state and gates. The sidebar's Release
  * Requests entry shows the newest one (`updatedAt`). The Release Requests page lists them all, with
- * priority, version, merged commit, requester, detail and whether a person must approve or nobody
+ * priority, version, merged commit, who asked, detail and whether a person must approve or nobody
  * is watching. A request's own page finds its repository (`repoId`) here, because every read of
  * one request is addressed by repository. The menu and the page draw each request's lifecycle as a
  * line (`lifecycleSummary`, `attentionOf`): its merge, automations, phases and quality gates.
@@ -35,20 +35,27 @@ export const GET_PROJECT = ['project.id', 'project.name', 'project.slug'] as con
  * binds one field (`name`, `path`), because a pact cannot bind an element with none. The page
  * also shows the soft feature freeze (epic qits-1580): a frozen request's count (`featureFreeze`)
  * and the request a queued one waits behind (`queuedBehind*`; `queuedNext*` names the other way).
+ * qits-1673: what a request carries is its `items` (one per explicit source: the work item its
+ * branch names, else the branch's label) and who asked is its `participants`; `summary` and
+ * `requester` are no longer read, as qits-projects deprecated them and will drop them. An older
+ * answer without `items` or `participants` falls back to the source names (`requestItems`).
  */
 export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].id',
   'requests[].repoId',
   'requests[].qualifiedId',
   'requests[].repoName',
-  'requests[].summary',
   'requests[].state',
   'requests[].gates[].kind',
   'requests[].gates[].state',
   'requests[].priority',
   'requests[].version',
   'requests[].mergedSha',
-  'requests[].requester',
+  'requests[].participants[]',
+  'requests[].items[].source',
+  'requests[].items[].label',
+  'requests[].items[].workItem.qualifiedId',
+  'requests[].items[].workItem.title',
   'requests[].detail',
   'requests[].unattended',
   'requests[].approvalRequired',
@@ -91,6 +98,16 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
   'requests[].queuedBehindQualifiedId',
   'requests[].queuedNext',
   'requests[].queuedNextQualifiedId',
+] as const;
+
+/**
+ * The paths of {@link LIST_PROJECT_RELEASE_REQUESTS} the pact never binds, although the store reads
+ * them: an item's `workItem` is null where its branch names no work item, and pact cannot match "an
+ * object or null" (see `projects.store.pact.spec.ts`).
+ */
+export const UNBOUND_RELEASE_REQUESTS = [
+  'requests[].items[].workItem.qualifiedId',
+  'requests[].items[].workItem.title',
 ] as const;
 
 /** One release request, cut to what the menu, the sidebar and the page read. */

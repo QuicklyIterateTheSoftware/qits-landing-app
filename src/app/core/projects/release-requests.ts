@@ -213,3 +213,64 @@ export function freezeFact(request: FreezeFields): string | null {
   if (source) parts.push(`threshold from ${source}`);
   return parts.join(' · ');
 }
+
+/**
+ * What qits-1673 reads of a request to say what it carries and who asked: its `items` (one per
+ * explicit non-main source, in source order: the work item the branch names, or null, and the
+ * branch's label), its `participants` (everyone who asked, sorted) and, for an older qits-projects
+ * that answers neither, its source names. The list's entries and a request's own page both carry
+ * these fields; `summary` and `requester`, which they replace, are no longer read.
+ */
+export interface AttributionFields {
+  readonly items?: readonly {
+    readonly source?: string;
+    readonly label?: string;
+    readonly workItem?: { readonly qualifiedId?: string; readonly title?: string } | null;
+  }[];
+  readonly participants?: readonly string[];
+  readonly sources?: readonly { readonly name?: string }[];
+}
+
+/**
+ * One thing a request carries, as a row shows it: the work item's qualified id (linked to its page)
+ * where the branch names one, and a text (the work item's title, else the branch's label, else
+ * the branch).
+ */
+export interface RequestItem {
+  readonly key: string;
+  readonly qualifiedId: string | null;
+  readonly text: string;
+}
+
+/**
+ * What `request` carries: one {@link RequestItem} per item. Where the answer has no items (an older
+ * qits-projects, or a request with no explicit source), one per source branch, named by the branch.
+ */
+export function requestItems(request: AttributionFields): readonly RequestItem[] {
+  const items = (request.items ?? []).map((item, index): RequestItem => {
+    const qualifiedId = item.workItem?.qualifiedId || null;
+    const text = (qualifiedId ? item.workItem?.title : undefined) || item.label || item.source;
+    return { key: `${index}:${item.source ?? ''}`, qualifiedId, text: text ?? qualifiedId ?? '' };
+  });
+  if (items.length) return items;
+  return (request.sources ?? []).flatMap((source, index) =>
+    source.name ? [{ key: `${index}:${source.name}`, qualifiedId: null, text: source.name }] : [],
+  );
+}
+
+/**
+ * What `request` carries as one line of text, for a title, a tooltip or a label: each item as
+ * `<qualified id> <title>` or its label, comma-joined (the source names on an older answer). Empty
+ * when it names nothing.
+ */
+export function requestTitle(request: AttributionFields): string {
+  return requestItems(request)
+    .map((item) => (item.qualifiedId ? `${item.qualifiedId} ${item.text}` : item.text))
+    .join(', ');
+}
+
+/** Who asked for `request`: its participants, comma-joined; `none` when it names nobody. */
+export function participantsOf(request: AttributionFields, none = '–'): string {
+  const participants = (request.participants ?? []).filter(Boolean);
+  return participants.length ? participants.join(', ') : none;
+}

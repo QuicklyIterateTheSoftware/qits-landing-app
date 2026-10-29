@@ -27,7 +27,6 @@ function request(overrides: Partial<ReleaseRequest> = {}): ReleaseRequest {
     backingBranch: 'release/r1',
     mergedSha: FOLD,
     state: 'PENDING',
-    summary: 'A change worth releasing',
     ...overrides,
   };
 }
