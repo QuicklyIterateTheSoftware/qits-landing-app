@@ -95,7 +95,7 @@ describe('ProjectDeskPage (screenshots)', () => {
           commandId: 'desk-command-1',
           queuePosition: null,
           message:
-            'You are the delivery desk of project contract-00000001. Read /tmp/qits-delivery-brief.md and follow it, then act on what happened below.',
+            'You are the delivery desk of project contract-00000001. Run `qits help guide` and follow your brief. Its guide-hash is 0000000000000000: re-read the guide only when that differs from the hash you last read. Then act on what happened below.',
           events: [
             {
               source: 'work-verified',
