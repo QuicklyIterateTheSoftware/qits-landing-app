@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../../../testing/golden-masters';
+import { participantsOf, requestItems } from '$core/projects/release-requests';
 import { ReleaseRequestsPage } from './release-requests.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -66,14 +67,18 @@ describe('ReleaseRequestsPage', () => {
     const rows = element.querySelectorAll('li');
     expect(rows).toHaveLength(6);
     const first = rows[0];
-    const qualifiedId = listed.requests[0].qualifiedId!;
+    const recordedFirst = listed.requests[0];
+    const qualifiedId = recordedFirst.qualifiedId!;
     expect(qualifiedId).toMatch(/^contract-service-rr-\d+$/);
     expect(first.querySelector('a')?.textContent?.trim()).toBe(qualifiedId);
-    // The recording (qits-projects before qits-1673) has neither items nor participants, and no
-    // sources on these rows: the row names nothing it carries, and nobody who asked.
+    // What the row carries and who asked, exactly as the recording implies: qits-projects before
+    // qits-1673 answers neither items nor participants on these rows (and no sources), while
+    // 2026.1028.230057 on answers a participant but still no items here.
     expect(first.textContent).not.toContain('Waiting on its gates');
-    expect(first.querySelectorAll('[data-item]')).toHaveLength(0);
-    expect(first.querySelector('[data-participants]')?.textContent?.trim()).toBe('–');
+    expect(first.querySelectorAll('[data-item]')).toHaveLength(requestItems(recordedFirst).length);
+    expect(first.querySelector('[data-participants]')?.textContent?.trim()).toBe(
+      participantsOf(recordedFirst),
+    );
     expect(first.textContent).toContain('2026-01-01 00:00 UTC');
     expect(first.querySelector('ui-lifecycle-line [title="Test: pending"]')).not.toBeNull();
     // Every link of the row opens the request by its logical id.
@@ -183,14 +188,17 @@ describe('ReleaseRequestsPage', () => {
 
   it('names the source branches and nobody on an answer without items or participants', async () => {
     const { element, request, answered } = await render();
-    // Derived from the recorded pending request, as an older qits-projects answers it (no items,
-    // no participants), with two source branches set: the row falls back to their names.
+    // An explicit fixture for an older qits-projects answer (no items, no participants), with two
+    // source branches set: the row falls back to their names. Built without relying on whether the
+    // recording itself carries items/participants, since 2026.1028.230057 on it does.
     const listed = goldenMaster(
       'a project with pending release requests',
       'listProjectReleaseRequests',
     );
     const older = {
       ...listed.requests[0],
+      participants: [],
+      items: [],
       sources: [{ name: 'feature/export' }, { name: 'fix/rounding' }],
     };
     request.flush({ requests: [older] });

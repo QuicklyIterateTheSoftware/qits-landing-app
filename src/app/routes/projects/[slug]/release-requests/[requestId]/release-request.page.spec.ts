@@ -9,6 +9,7 @@ import { client as ciClient } from '../../../../../api/ci/client.gen';
 import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS, type EventSourceLike } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { ciGoldenMaster, goldenMaster } from '../../../../../../testing/golden-masters';
+import { type AttributionFields, requestItems } from '$core/projects/release-requests';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ReleaseRequestPage } from './release-request.page';
 
@@ -28,6 +29,16 @@ const failure = (element: HTMLElement) => element.querySelector('ui-load-failure
 const heading = (element: HTMLElement) =>
   Array.from(element.querySelectorAll('h1 [data-item]')).map((item) =>
     item.textContent?.replace(/\s+/g, ' ').trim(),
+  );
+
+/**
+ * What the head is expected to show for `request`, by the same rule the page draws it with: each
+ * {@link requestItems} entry as `<qualified id> <text>` where it names a work item, else its text
+ * alone (the source branches on an answer with no items).
+ */
+const expectedHeading = (request: AttributionFields) =>
+  requestItems(request).map((item) =>
+    item.qualifiedId ? `${item.qualifiedId} ${item.text}` : item.text,
   );
 
 /** The state whose recorded project answers the read of one of its requests. */
@@ -128,10 +139,10 @@ describe('ReleaseRequestPage', () => {
     read(request.qualifiedId).flush(recorded);
     await answered();
     expect(element.textContent).toContain(request.qualifiedId);
-    // The recording (qits-projects before qits-1673) has no items: the head names the sources.
-    expect(heading(element)).toEqual(
-      request.sources.map((source: { name: string }) => source.name),
-    );
+    // The head names what the recording implies it carries: the source branches where it answers
+    // no items (qits-projects before qits-1673), or its items where it does (2026.1028.230057 on,
+    // which excludes 'main' here, naming only 'bump/contract-service').
+    expect(heading(element)).toEqual(expectedHeading(request));
     expect(notFound(element)?.classList.contains('hidden')).toBe(true);
     expect(failure(element).classList.contains('hidden')).toBe(true);
     // The project's whole list is never read: the request's own answer names its repository.
@@ -173,9 +184,7 @@ describe('ReleaseRequestPage', () => {
     read(request.qualifiedId).flush(recorded);
     await answered();
     expect(failure(element).classList.contains('hidden')).toBe(true);
-    expect(heading(element)).toEqual(
-      request.sources.map((source: { name: string }) => source.name),
-    );
+    expect(heading(element)).toEqual(expectedHeading(request));
   });
 
   describe('what a request carries and who asked (qits-1673)', () => {
@@ -215,8 +224,12 @@ describe('ReleaseRequestPage', () => {
     });
 
     it('says nobody where the answer names no participants', async () => {
+      // An explicit fixture: the recording itself carries a participant from 2026.1028.230057 on,
+      // so relying on it bare would make this test track the pin rather than the "nobody asked"
+      // case it means to cover.
+      const nobody = { request: { ...request, participants: [] } };
       const { element, answered } = await render(request.qualifiedId);
-      read(request.qualifiedId).flush(recorded);
+      read(request.qualifiedId).flush(nobody);
       await answered();
       expect(askedBy(element)).toBe('asked by —');
     });
