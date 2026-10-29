@@ -20,12 +20,19 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  *
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
  *
+ * The agents it hosts are read with `listWorkspaceAgents` (epic qits-1667), whose recording the
+ * pinned golden masters do not hold yet. Until they do, its answer (`{ agents }`, as `listAgents`
+ * answers) is the Agents page's recorded `listAgents` of "a project with workspace slots hosting
+ * agents", which the pact binds: the same two agents in slot 1, and the improvement ticket's QUEUED
+ * agent, which has no slot yet.
+ *
  * No longer screenshots a refused Stop (epic qits-1481, ahead of qits-workspaces-service dropping
  * the offline-runner refusal in qits-1532): that case bound the pact's "a workspace slot on a
  * disconnected runner" / `stopWorkspaceContainer` interaction, which this epic's qits-1533 removed.
  */
 
 const SLOT = 'a workspace slot hosting agents';
+const PROJECT = 'a project with workspace slots hosting agents';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -92,8 +99,8 @@ describe('WorkspaceSlotPage (screenshots)', () => {
       .expectOne(`/workspaces/api/workspaces/${id}/active-process`)
       .flush(await goldenMaster(SLOT, 'getWorkspaceActiveProcess', 'qits-workspaces'));
     http
-      .expectOne(`/workspaces/api/agents?workspaceId=${id}`)
-      .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
+      .expectOne(`/workspaces/api/workspaces/${id}/agents`)
+      .flush(await goldenMaster(PROJECT, 'listAgents', 'qits-workspaces'));
     await answered(harness);
   }
 
@@ -106,9 +113,9 @@ describe('WorkspaceSlotPage (screenshots)', () => {
       .element(view.getByRole('heading', { name: 'Workspace ws-contract' }))
       .toBeVisible();
     await expect.element(view).toMatchTextContent('placed on a runner');
-    await expect.element(view).toMatchTextContent('2 agents');
+    await expect.element(view).toMatchTextContent('3 agents');
     await expect.element(view.getByRole('region', { name: 'Starting' })).not.toBeInTheDocument();
-    const hosted = await goldenMaster(SLOT, 'listAgents', 'qits-workspaces');
+    const hosted = await goldenMaster(PROJECT, 'listAgents', 'qits-workspaces');
     const agentId = hosted.agents.find(
       (a: { entityId?: string }) => a.entityId === 'contract-00000001-2',
     ).agentId;
@@ -122,6 +129,25 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect.element(view).toMatchScreenshot('slot');
   });
 
+  it('names the agents a stop affects before it is confirmed', async () => {
+    const id = '1';
+    const { harness, element } = await render(id);
+    await answerSlot(harness, id);
+    const view = page.elementLocator(element);
+    await view
+      .getByRole('group', { name: 'Container' })
+      .getByRole('button', { name: 'Stop' })
+      .click();
+    harness.fixture.detectChanges();
+    await expect.element(view.getByRole('button', { name: 'Confirm stop?' })).toBeVisible();
+    await expect
+      .element(view)
+      .toMatchTextContent(
+        'Stopping the container affects its 3 agents: contract-00000001-11, contract-00000001-10, contract-00000001-2.',
+      );
+    await expect.element(view).toMatchScreenshot('confirm-stop');
+  });
+
   it('says a slot that answers 404 is gone', async () => {
     const { harness, element } = await render('2');
     http
@@ -131,7 +157,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
       .expectOne('/workspaces/api/workspaces/2/active-process')
       .flush(null, { status: 404, statusText: 'Not Found' });
     http
-      .expectOne('/workspaces/api/agents?workspaceId=2')
+      .expectOne('/workspaces/api/workspaces/2/agents')
       .flush(null, { status: 404, statusText: 'Not Found' });
     await answered(harness);
     const view = page.elementLocator(element);

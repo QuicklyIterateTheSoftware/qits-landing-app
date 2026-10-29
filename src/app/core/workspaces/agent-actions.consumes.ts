@@ -37,8 +37,11 @@ export type EnsuredContainer = Consumed<
   typeof ENSURE_CONTAINER
 >;
 
-/** `AgentActionsStore.stopContainer(id)`: the slot, its container now stopped. */
-export const STOP_CONTAINER = ['runtimeStatus'] as const;
+/**
+ * `AgentActionsStore.stopContainer(id)`: the slot, its container now stopped, and the agents the
+ * stop affected (`affectedAgentIds`, epic qits-1667), which the workspace page names.
+ */
+export const STOP_CONTAINER = ['runtimeStatus', 'affectedAgentIds'] as const;
 
 /** A stopped slot, cut to what the store reads. */
 export type StoppedContainer = Consumed<
@@ -47,10 +50,11 @@ export type StoppedContainer = Consumed<
 >;
 
 /**
- * `AgentActionsStore.recreateContainer(id)`: the start of the new container. qits-workspaces
- * records no successful recreate (only its 400 refusal), so the pact does not bind this answer.
+ * `AgentActionsStore.recreateContainer(id)`: the start of the new container, and the agents the
+ * recreate affected (`affectedAgentIds`, epic qits-1667). qits-workspaces records no successful
+ * recreate (only its 400 refusal), so the pact does not bind this answer.
  */
-export const RECREATE_CONTAINER = ['technicalProcessId'] as const;
+export const RECREATE_CONTAINER = ['technicalProcessId', 'affectedAgentIds'] as const;
 
 /** A recreate, cut to what the store reads. */
 export type RecreatedContainer = Consumed<

@@ -116,8 +116,10 @@ describe('AgentsStore', () => {
     http
       .expectOne(`${API}/workspaces/${id}/active-process`)
       .flush(workspacesGoldenMaster(SLOT, 'getWorkspaceActiveProcess'));
+    // `listWorkspaceAgents` answers `{ agents }` as `listAgents` does; its own recording of this
+    // state is not in the pinned golden masters yet, so this is the state's recorded `listAgents`.
     http
-      .expectOne(`${API}/agents?workspaceId=${id}`)
+      .expectOne(`${API}/workspaces/${id}/agents`)
       .flush(workspacesGoldenMaster(SLOT, 'listAgents'));
     await done;
     expect(store.slotOf(id)).toMatchObject({ status: 'loaded', processId: null });

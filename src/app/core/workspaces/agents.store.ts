@@ -7,6 +7,7 @@ import {
   getWorkspace,
   getWorkspaceActiveProcess,
   listAgents,
+  listWorkspaceAgents,
   listWorkspaces,
 } from '../../api/workspaces';
 import type { DomainEvent } from '$core/events/domain-events';
@@ -125,7 +126,7 @@ const failedWith = (status: number | undefined): ReadStatus =>
  *   the project's agents (`listAgents`, every agent, of which it keeps those not removed that work
  *   in the wrapper or on one of the project's items, `<slug>-<n>`).
  * - `loadSlot(id)`: one slot's status (`loadSlotStatus`) and the agents it hosts
- *   (`listAgents?workspaceId=`).
+ *   (`listWorkspaceAgents`, epic qits-1667).
  * - `loadSlotStatus(id)`: the slot (`getWorkspace`) and the process starting its container, if one
  *   is live (`getWorkspaceActiveProcess`); its log comes from `ProcessLog`.
  * - `loadItem(workId)`: the item's agents (`listAgents?workId=`), of which it keeps the newest
@@ -288,7 +289,7 @@ export const AgentsStore = signalStore(
         if (!store.slotAgents()[id]) setSlotAgents(id, { status: 'loading', agents: [] });
         const [, agents] = await Promise.all([
           loadSlotStatus(id),
-          consume(listAgents({ query: { workspaceId: id } }), LIST_SLOT_AGENTS),
+          consume(listWorkspaceAgents({ path: { id } }), LIST_SLOT_AGENTS),
         ]);
         if (agents.error !== undefined || !agents.data) {
           if (store.slotAgents()[id]?.status !== 'loaded') {

@@ -4,6 +4,7 @@ import type {
   GetWorkspaceActiveProcessResponses,
   GetWorkspaceResponses,
   ListAgentsResponses,
+  ListWorkspaceAgentsResponses,
   ListWorkspacesResponses,
 } from '../../api/workspaces';
 import type { Consumed } from '@qits/angular';
@@ -87,7 +88,10 @@ export type SlotDetail = NonNullable<
   Consumed<GetWorkspaceResponses[200], typeof GET_SLOT>['workspace']
 >;
 
-/** `AgentsStore.loadSlot(id)`: the agents a slot hosts (`listAgents?workspaceId=`). */
+/**
+ * `AgentsStore.loadSlot(id)`: the agents a slot hosts (`listWorkspaceAgents`, epic qits-1667: the
+ * workspace's own view of its agents), which the page lists and its container verbs name.
+ */
 export const LIST_SLOT_AGENTS = [
   'agents[].agentId',
   'agents[].entityId',
@@ -104,7 +108,7 @@ export const LIST_SLOT_AGENTS = [
 
 /** One agent a slot hosts, cut to what the store reads. */
 export type SlotAgent = NonNullable<
-  Consumed<ListAgentsResponses[200], typeof LIST_SLOT_AGENTS>['agents']
+  Consumed<ListWorkspaceAgentsResponses[200], typeof LIST_SLOT_AGENTS>['agents']
 >[number];
 
 /**

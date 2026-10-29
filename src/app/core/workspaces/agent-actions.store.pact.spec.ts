@@ -9,7 +9,7 @@ import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import type { InteractionSlug } from '../../interactions';
-import { workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
+import { heldBy, workspacesGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
   DISCARD_AGENT,
@@ -32,7 +32,9 @@ import { AgentActionsStore } from './agent-actions.store';
  *   spec covers it.
  * - `ensureWorkspaceContainer`: "a stopped workspace slot" starts (its WORKSPACE lease queued on
  *   qits-system's targets).
- * - `stopWorkspaceContainer`: "a workspace slot running on a target" stops.
+ * - `stopWorkspaceContainer`: "a workspace slot running on a target" stops. The row binds the
+ *   paths of `STOP_CONTAINER` the recording holds (`heldBy`): the pinned golden masters predate
+ *   `affectedAgentIds` (epic qits-1667), so it is bound once qits-maintenance bumps them.
  * - `recreateWorkspaceContainer`: only its refusal is recorded — "an agent whose workspace daemon
  *   is not connected" (400: the working tree cannot be proved clean). A successful recreate has no
  *   recording, so the success path is covered by the plain spec only.
@@ -150,7 +152,7 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
       RUNNING,
       'stopWorkspaceContainer',
       'stop-workspace-container',
-      STOP_CONTAINER,
+      heldBy(masters, RUNNING, 'stopWorkspaceContainer', STOP_CONTAINER),
     ).executeTest(async (server) => {
       const store = storeAt(server.url);
       const outcome = await store.stopContainer(slotOf(RUNNING, 'stopWorkspaceContainer'));

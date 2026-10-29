@@ -25,9 +25,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * One workspace slot, at `/projects/<slug>/workspaces/<slot id>` (epic qits-1230), ported from
  * qits-workspaces-frontend's workspace page. A slot hosts agents and runs one working agent at a
  * time. Its status strip (container, runner, daemon, how many agents) with the container's verbs
- * (`app-container-actions`: start or stop, recreate; read again after each), the log of the start
- * bringing its container up while one runs, and the agents it hosts — each a link to the
- * agent's page (`agents/<agent id>`, epic qits-1681).
+ * (`app-container-actions`: start or stop, recreate; read again after each; a stop or recreate is
+ * confirmed naming the agents it affects, and then names the agents the service says it affected:
+ * epic qits-1667, the only page with container verbs), the log of the start bringing its container
+ * up while one runs, and the agents it hosts (`listWorkspaceAgents`) — each a link to the agent's
+ * page (`agents/<agent id>`, epic qits-1681).
  *
  * Read by `AgentsStore.loadSlot`, again after a lifecycle event about this slot (at most once a
  * second). A slot that resolved answers 404: "This workspace is gone". In the browser only.
@@ -64,7 +66,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 [slot]="slot"
                 [hosted]="agentsLoaded() ? agents().length : undefined"
               />
-              <app-container-actions [slot]="slot" (changed)="reload()" />
+              <app-container-actions [slot]="slot" [agents]="agents()" (changed)="reload()" />
               @if (processId(); as processId) {
                 <app-starting-log [processId]="processId" />
               }
