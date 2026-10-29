@@ -1,4 +1,5 @@
 import type {
+  GetAgentActiveProcessResponses,
   GetAgentResponses,
   GetWorkspaceActiveProcessResponses,
   GetWorkspaceResponses,
@@ -116,6 +117,19 @@ export const GET_ACTIVE_PROCESS = ['technicalProcessId'] as const;
 export type ActiveProcess = Consumed<
   GetWorkspaceActiveProcessResponses[200],
   typeof GET_ACTIVE_PROCESS
+>;
+
+/**
+ * `AgentsStore.loadAgent(agentId)`: the technical process starting the container of the slot the
+ * agent is placed in, if one is live (`getAgentActiveProcess`, epic qits-1667: by the agent, so the
+ * agent page asks nothing of the slot); its log is read from its own stream.
+ */
+export const GET_AGENT_ACTIVE_PROCESS = ['technicalProcessId'] as const;
+
+/** What the agent's active-process read answers, cut to what the store reads. */
+export type AgentActiveProcess = Consumed<
+  GetAgentActiveProcessResponses[200],
+  typeof GET_AGENT_ACTIVE_PROCESS
 >;
 
 /**

@@ -59,7 +59,7 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
  *   transcript (`AgentChatStore.loadTranscript`), read again every {@link TRANSCRIPT_POLL_MS} while
  *   the harness runs, and once more when it stops.
  * - Otherwise, and below a terminal's transcript: the prompt composer (`PromptComposer`), whose
- *   draft lives on the service and whose prompt the delivery door hands to the agent, with the line
+ *   draft lives on the service and whose prompt the agent's prompt door hands to it, with the line
  *   ranges picked in the Files tab; a pick's ↗ opens it there (`files?path=…&lines=…`).
  *
  * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
@@ -182,7 +182,6 @@ const LINK_LABELS: Readonly<Record<ChatLink, string>> = {
             }
             <app-prompt-composer
               [agentId]="agent.agentId ?? ''"
-              [workId]="agent.workId ?? ''"
               [workspaceRowId]="rowId()"
               [preamble]="preamble()"
               (sent)="onSent($event)"

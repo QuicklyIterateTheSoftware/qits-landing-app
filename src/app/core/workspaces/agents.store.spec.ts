@@ -156,20 +156,39 @@ describe('AgentsStore', () => {
     expect(store.itemOf('w-none')).toEqual({ status: 'loaded', agent: undefined });
   });
 
-  it('reads an agent by its id, then its slot and the start running against it', async () => {
+  it('reads an agent by its id, then, by the agent, the start running against its slot', async () => {
     const agentId = workspacesGoldenMasters.operation(DRAFT, 'getAgent').params['agentId'];
     const done = store.loadAgent(agentId);
     await settle();
     http.expectOne(`${API}/agents/${agentId}`).flush(workspacesGoldenMaster(DRAFT, 'getAgent'));
     await settle();
-    http.expectOne(`${API}/workspaces/1`).flush(workspacesGoldenMaster(STARTING, 'getWorkspace'));
+    // `getAgentActiveProcess` answers the slot lookup's `{ technicalProcessId }`; its own recording
+    // is not in the pinned golden masters yet, so this is the starting slot's recorded answer.
     http
-      .expectOne(`${API}/workspaces/1/active-process`)
+      .expectOne(`${API}/agents/${agentId}/active-process`)
       .flush(workspacesGoldenMaster(STARTING, 'getWorkspaceActiveProcess'));
     await done;
     expect(store.agentOf(agentId)?.status).toBe('loaded');
     expect(store.agentOf(agentId)?.agent?.entityId).toBe('contract-00000001-10');
-    expect(store.slotOf(1)?.slot?.runtimeStatus).toBe('PROVISIONING');
+    expect(store.agentOf(agentId)?.processId).toBe(
+      workspacesGoldenMaster(STARTING, 'getWorkspaceActiveProcess').technicalProcessId,
+    );
+    expect(store.slotOf(1)).toBeUndefined();
+  });
+
+  it('reads an agent whose start lookup fails without a start', async () => {
+    const agentId = workspacesGoldenMasters.operation(DRAFT, 'getAgent').params['agentId'];
+    const done = store.loadAgent(agentId);
+    await settle();
+    http.expectOne(`${API}/agents/${agentId}`).flush(workspacesGoldenMaster(DRAFT, 'getAgent'));
+    await settle();
+    http
+      .expectOne(`${API}/agents/${agentId}/active-process`)
+      .flush(null, { status: 503, statusText: 'Service Unavailable' });
+    await done;
+    expect(store.agentOf(agentId)).toEqual(
+      expect.objectContaining({ status: 'loaded', processId: null }),
+    );
   });
 
   it('marks an agent the service does not know as missing', async () => {

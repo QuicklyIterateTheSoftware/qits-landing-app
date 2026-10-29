@@ -20,8 +20,6 @@ import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentStatus } from '$patterns/agents/agent-status/agent-status';
 import { AgentDiscard } from '$patterns/workspaces/agent-discard/agent-discard';
-import { ContainerActions } from '$patterns/workspaces/container-actions/container-actions';
-import { SlotStatus } from '$patterns/workspaces/slot-status/slot-status';
 import { StartingLog } from '$patterns/workspaces/starting-log/starting-log';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -34,9 +32,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * on you" only when a person is awaited) with a line per open wait and, when it needs a person, why
  * and what to do (`app-agent-status`); its branch; Discard (`app-agent-discard`: confirmed, and with
  * force after the service refused); and a **Workspace** field — `ws-<slot id>`, a link to the slot's
- * page — with the slot's status strip and its container's verbs (`app-container-actions`), and the
- * log of the start bringing the slot's container up while one runs. After a discard or a container
- * verb the agent is read again.
+ * page, where its container's status and verbs are (epic qits-1667: the agent page asks nothing of
+ * the slot) — and the log of the start bringing the slot's container up while one runs
+ * (`getAgentActiveProcess`, by the agent). After a discard the agent is read again.
  *
  * A layout: the agent's tabs (`AGENT_TABS`: `chat`, `files` and `terminal`) are its child routes,
  * in a row of links below the header, shown once the agent is known; the empty child shows the
@@ -47,8 +45,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * which `getAgent` does not carry. In the browser only.
  *
  * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the agent (`agentId`) or its slot
- * (`workspaceId`) → the agent and its slot's status (`AgentsStore.loadAgent`, quietly, at most once
- * a second). `AGENT_STATUS_EVENTS` about the project → its waits and attention
+ * (`workspaceId`) → the agent and its start (`AgentsStore.loadAgent`, quietly, at most once a
+ * second). `AGENT_STATUS_EVENTS` about the project → its waits and attention
  * (`AgentsStore.followProject`). Not announced (see `AgentsStore`): the slot's container stopping.
  */
 @Component({
@@ -58,12 +56,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     AgentDiscard,
     AgentStatus,
     Chip,
-    ContainerActions,
     PageLayoutComponent,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
-    SlotStatus,
     Spinner,
     StartingLog,
   ],
@@ -146,15 +142,18 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   Workspace
                 </h2>
                 @if (agent.workspaceRowId; as rowId) {
-                  <a
-                    class="self-start font-mono text-sm text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="slotLink(rowId)"
-                    >ws-{{ rowId }}</a
+                  <p
+                    class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-charcoal-brown-600"
                   >
-                  @if (slot(); as slot) {
-                    <app-slot-status [slot]="slot" />
-                    <app-container-actions [slot]="slot" (changed)="reload()" />
-                  }
+                    <a
+                      class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                      [routerLink]="slotLink(rowId)"
+                      >ws-{{ rowId }}</a
+                    >
+                    <span
+                      >its container, and the agents it hosts, are on the workspace’s page.</span
+                    >
+                  </p>
                 } @else if (agent.state !== 'REMOVED') {
                   <p class="m-0 text-sm text-charcoal-brown-600">
                     No workspace yet: the agent waits for a free slot.
@@ -216,15 +215,8 @@ export class AgentLayout {
     return this.store.projectAgentsOf(id)?.agents.find((a) => a.agentId === agentId);
   });
 
-  private readonly slotStatus = computed(() => {
-    const rowId = this.agent()?.workspaceRowId;
-    return rowId ? this.store.slotOf(rowId) : undefined;
-  });
-
-  protected readonly slot = computed(() => this.slotStatus()?.slot);
-
-  /** The start bringing the slot's container up, while one is live. */
-  protected readonly processId = computed(() => this.slotStatus()?.processId ?? null);
+  /** The start bringing the agent's slot's container up, while one is live. */
+  protected readonly processId = computed(() => this.read()?.processId ?? null);
 
   protected readonly title = computed(() => {
     const item = this.agent()?.entityId;
@@ -292,7 +284,7 @@ export class AgentLayout {
     );
   }
 
-  /** Reads the agent and its slot again (after a lifecycle event, a discard, a container verb). */
+  /** Reads the agent again (after a lifecycle event, a discard, an agent verb). */
   protected reload(): void {
     const id = this.agentId();
     if (id) void this.store.loadAgent(id);

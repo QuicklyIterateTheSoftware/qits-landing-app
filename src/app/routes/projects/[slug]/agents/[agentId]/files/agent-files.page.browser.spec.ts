@@ -105,12 +105,10 @@ describe('AgentFilesPage (screenshots)', () => {
       .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
       .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
     await answered(harness);
-    const slot = agent.workspaceRowId;
+    // The agent's start, asked of the agent (`getAgentActiveProcess`); no recording of it is pinned
+    // yet, and it answers the slot lookup's shape, so this is the slot's recorded "no start".
     http
-      .expectOne(`/workspaces/api/workspaces/${slot}`)
-      .flush(await goldenMaster(SLOT, 'getWorkspace', 'qits-workspaces'));
-    http
-      .expectOne(`/workspaces/api/workspaces/${slot}/active-process`)
+      .expectOne(`/workspaces/api/agents/${agent.agentId}/active-process`)
       .flush(await goldenMaster(SLOT, 'getWorkspaceActiveProcess', 'qits-workspaces'));
     await answered(harness);
     const worktree = `https://workspaces.test/workspaces/agent/${agent.agentId}`;

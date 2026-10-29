@@ -3,6 +3,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
   getAgent,
+  getAgentActiveProcess,
   getWorkspace,
   getWorkspaceActiveProcess,
   listAgents,
@@ -13,6 +14,7 @@ import { injectRefreshOn } from '$core/events/refresh-on';
 import {
   GET_ACTIVE_PROCESS,
   GET_AGENT,
+  GET_AGENT_ACTIVE_PROCESS,
   GET_SLOT,
   LIST_ITEM_AGENTS,
   LIST_PROJECT_AGENTS,
@@ -79,6 +81,8 @@ export interface ItemAgents {
 export interface AgentRead {
   readonly status: ReadStatus;
   readonly agent?: AgentDetail;
+  /** The technical process starting the agent's slot's container, or null when none is live. */
+  readonly processId?: string | null;
 }
 
 interface AgentsState {
@@ -126,8 +130,9 @@ const failedWith = (status: number | undefined): ReadStatus =>
  *   is live (`getWorkspaceActiveProcess`); its log comes from `ProcessLog`.
  * - `loadItem(workId)`: the item's agents (`listAgents?workId=`), of which it keeps the newest
  *   ACTIVE one: where the item's old agent address leads.
- * - `loadAgent(agentId)` (epic qits-1681): one agent (`getAgent`), and its slot's status when it
- *   has a slot: the agent page and its tabs.
+ * - `loadAgent(agentId)` (epic qits-1681): one agent (`getAgent`), and, when it has a slot, the
+ *   start bringing that slot's container up (`getAgentActiveProcess`, by the agent: epic qits-1667's
+ *   agent page asks nothing of the slot itself): the agent page and its tabs.
  * - `loadProjectAgents(projectId)` (epic qits-1681): the project's ACTIVE agents
  *   (`listAgents?projectId=&state=ACTIVE`) with their open waits, their activity and their
  *   attention; `followProject` keeps them current (its comment has the mapping).
@@ -319,8 +324,21 @@ export const AgentsStore = signalStore(
           }
           return;
         }
-        setAgent(agentId, { status: 'loaded', agent: data });
-        if (data.workspaceRowId) await loadSlotStatus(data.workspaceRowId);
+        if (!data.workspaceRowId) {
+          setAgent(agentId, { status: 'loaded', agent: data, processId: null });
+          return;
+        }
+        // The agent shows at once; the start it may be waiting on keeps its last answer meanwhile.
+        const kept = store.agents()[agentId]?.processId ?? null;
+        setAgent(agentId, { status: 'loaded', agent: data, processId: kept });
+        // The start's log is an extra: a failed lookup shows none.
+        const process = await consume(
+          getAgentActiveProcess({ path: { id: agentId } }),
+          GET_AGENT_ACTIVE_PROCESS,
+        );
+        const processId =
+          process.error === undefined ? (process.data?.technicalProcessId ?? null) : null;
+        setAgent(agentId, { status: 'loaded', agent: data, processId });
       },
       agentOf(agentId: string): AgentRead | undefined {
         return store.agents()[agentId];

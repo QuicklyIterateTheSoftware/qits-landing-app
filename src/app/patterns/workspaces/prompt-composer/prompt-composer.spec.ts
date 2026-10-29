@@ -26,19 +26,22 @@ import { DRAFT_DEBOUNCE_MS, deliveryNote, PromptComposer } from './prompt-compos
 const SAVED = 'an agent with a saved prompt draft';
 const NONE = 'an agent with no prompt draft';
 const WORKING = 'an agent working on a ticket';
-const NO_AGENT = 'a work item with no workspaces';
 const { agentId } = workspacesGoldenMasters.operation(SAVED, 'getAgentPromptDraft').params;
 const DRAFT = `/workspaces/api/agents/${agentId}/prompt-draft`;
-const DELIVERY = '/workspaces/api/agent-dispatches/delivery';
+const DELIVERY = `/workspaces/api/agents/${agentId}/prompt`;
+/**
+ * qits-workspaces' answer to a prompt. `promptAgent` answers the work item delivery door's
+ * `Delivery`, and its own recording ("an agent working on a ticket") is not in the pinned golden
+ * masters yet, so this is that state's recorded `deliverAgentTurn` answer, the same body.
+ */
+const DELIVERED = () => workspacesGoldenMaster(WORKING, 'deliverAgentTurn');
 const ORIGIN = 'https://workspaces.test';
-const WORK_ID = 'w-1';
 
 @Component({
   imports: [PromptComposer],
   providers: [WorkspaceHints],
   template: `<app-prompt-composer
     [agentId]="agentId"
-    [workId]="workId"
     [workspaceRowId]="rowId()"
     preamble="contract-00000001-10: Fix the login"
     (sent)="sent.push($event)"
@@ -47,7 +50,6 @@ const WORK_ID = 'w-1';
 })
 class Host {
   readonly agentId = agentId;
-  readonly workId = WORK_ID;
   readonly rowId = signal(1);
   readonly sent: AgentDelivery[] = [];
   readonly opened: CodeReference[] = [];
@@ -197,11 +199,10 @@ describe('PromptComposer', () => {
     await settle();
     const delivery = http.expectOne(DELIVERY);
     expect(delivery.request.body).toEqual({
-      workId: WORK_ID,
       text: 'Check the rounding, then the totals.',
       compactFirst: false,
     });
-    const answer = workspacesGoldenMaster(WORKING, 'deliverAgentTurn');
+    const answer = DELIVERED();
     delivery.flush(answer);
     await settle();
     const discard = http.expectOne(DRAFT);
@@ -211,20 +212,6 @@ describe('PromptComposer', () => {
     fixture.detectChanges();
     expect(fixture.componentInstance.sent).toEqual([answer]);
     expect(prompt().value).toBe('');
-  });
-
-  it('keeps the prompt when no agent works on the item any more', async () => {
-    const { fixture, element, prompt, button } = await render();
-    button('Send to the agent')!.click();
-    await settle();
-    http.expectOne(DELIVERY).flush(workspacesGoldenMaster(NO_AGENT, 'deliverAgentTurn'));
-    await settle();
-    fixture.detectChanges();
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain(
-      'No agent works on this item any more',
-    );
-    expect(prompt().value).not.toBe('');
-    expect(fixture.componentInstance.sent).toEqual([]);
   });
 
   it('refines rough notes into the prompt, after what was typed', async () => {
@@ -338,7 +325,7 @@ describe('PromptComposer', () => {
     expect(delivery.request.body.text).toBe(
       `Trim the e-mail too.\n\nContext picked in the worktree:\n\n${referenceText(PICK)}`,
     );
-    delivery.flush(workspacesGoldenMaster(WORKING, 'deliverAgentTurn'));
+    delivery.flush(DELIVERED());
     await settle();
     http.expectOne(DRAFT).flush(null, { status: 204, statusText: 'No Content' });
     await settle();
@@ -356,7 +343,7 @@ describe('PromptComposer', () => {
 
 describe('deliveryNote', () => {
   it('says what became of a delivered prompt', () => {
-    expect(deliveryNote(workspacesGoldenMaster(WORKING, 'deliverAgentTurn'))).toBe(
+    expect(deliveryNote(DELIVERED())).toBe(
       'Sent. The agent hears it as its first turn, once it starts.',
     );
     expect(deliveryNote({ resumed: true })).toBe('Sent. The agent resumes to hear it.');

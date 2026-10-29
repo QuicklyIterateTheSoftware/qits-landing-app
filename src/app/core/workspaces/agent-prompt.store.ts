@@ -2,14 +2,14 @@ import { signalStore, withMethods } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import {
   deleteAgentPromptDraft,
-  deliverAgentTurn,
   getAgentPromptDraft,
+  promptAgent,
   saveAgentPromptDraft,
 } from '../../api/workspaces';
 import {
   DELETE_PROMPT_DRAFT,
-  DELIVER_AGENT_TURN,
   GET_PROMPT_DRAFT,
+  PROMPT_AGENT,
   SAVE_PROMPT_DRAFT,
   type AgentDelivery,
 } from './agent-prompt.consumes';
@@ -74,9 +74,9 @@ const failed = (response: { readonly status: number } | undefined) =>
  *   (the picks never pressed into the text appended). The answer's `updatedAt` is the tab's own
  *   echo on the `prompt-draft` hint.
  * - `discardDraft`: throw it away (a 204 whether or not there was one).
- * - `deliver`: send a prompt to the item's agent (`POST /workspaces/api/agent-dispatches/delivery`,
- *   `compactFirst: false`), which resumes a yielded agent to hear it: the browser never starts a
- *   harness itself.
+ * - `prompt`: send a prompt to the agent by its id (`POST /workspaces/api/agents/{id}/prompt`,
+ *   `promptAgent`, epic qits-1667; `compactFirst: false`), which resumes a yielded or stopped agent
+ *   to hear it: the browser never starts a harness itself.
  *
  * Staleness (qits-1270): none from qits-events, which by design never carries what a person wrote
  * (no prompt draft event). Another device's draft comes in on the slot's `prompt-draft` hint
@@ -132,10 +132,10 @@ export const AgentPromptStore = signalStore(
       );
       return answer.error === undefined ? { ok: true, value: undefined } : failed(answer.response);
     },
-    async deliver(workId: string, text: string): Promise<PromptOutcome<AgentDelivery>> {
+    async prompt(agentId: string, text: string): Promise<PromptOutcome<AgentDelivery>> {
       const answer = await consume(
-        deliverAgentTurn({ body: { workId, text, compactFirst: false } }),
-        DELIVER_AGENT_TURN,
+        promptAgent({ path: { id: agentId }, body: { text, compactFirst: false } }),
+        PROMPT_AGENT,
       );
       if (answer.error !== undefined || !answer.data) return failed(answer.response);
       return { ok: true, value: answer.data };
