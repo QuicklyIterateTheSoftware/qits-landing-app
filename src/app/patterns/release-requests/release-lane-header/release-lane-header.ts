@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import type { BranchLane } from '$core/release-requests/branch-graph';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import {
+  canMoveSource,
   canPrioritiseSource,
+  DEFAULT_MAIN_BRANCH,
   describeRefusal,
   isChangeable,
   priorityBadge,
@@ -31,6 +33,15 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
  *
  * A change goes to qits-projects at once (`ReleaseRequestStore.setSourcePriority`); the answered
  * request takes the shown one's place. A refusal is said under the select, which goes back.
+ *
+ * "Move to next request" (qits-1665), under a source that alone may hold the request back: shown
+ * where `canMoveSource` holds (a named branch that is not the repository's default `mainBranch`,
+ * on an open request that is not queued and keeps another branch). The first press asks for the
+ * reason, which is required; Move sends it (`ReleaseRequestStore.moveSource`), and both requests
+ * the answer names take the shown ones' place. A refusal is said under it in the service's words.
+ * The app reads no roles of its own, so who may move (qits:admin, qits:admin-agent, the project's
+ * delivery desk) is the service's to say: a 403 hides the action for the rest of the visit, as the
+ * automations waiver does.
  */
 @Component({
   selector: 'app-release-lane-header',
@@ -75,12 +86,56 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
           }
         </div>
       }
+      @if (movable()) {
+        @if (moving()) {
+          <input
+            class="mt-0.5 w-full rounded border border-charcoal-brown-300 px-0.5 text-xs"
+            type="text"
+            [value]="reason()"
+            (input)="reasonTyped($event)"
+            placeholder="Why (required)"
+            [attr.aria-label]="'Reason for moving ' + source.name + ' to the next request'"
+          />
+          <div class="mt-0.5 flex flex-wrap gap-1">
+            <button
+              type="button"
+              class="cursor-pointer rounded border border-charcoal-brown-300 bg-white px-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="!reason().trim() || moving() === 'sending'"
+              (click)="move()"
+            >
+              Move
+            </button>
+            <button
+              type="button"
+              class="cursor-pointer rounded border border-transparent px-1 text-xs text-charcoal-brown-600 disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="moving() === 'sending'"
+              (click)="cancelMove()"
+            >
+              Cancel
+            </button>
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="mt-0.5 cursor-pointer border-0 bg-transparent p-0 text-left text-xs text-ocean-deep-700 hover:underline"
+            title="Take this branch out of this request into the one queued after it, so the others release without it"
+            (click)="openMove()"
+          >
+            Move to next request
+          </button>
+        }
+      }
     } @else {
       <p class="m-0 mt-0.5 truncate text-xs text-charcoal-brown-500">{{ note() }}</p>
     }
     @if (failure(); as failure) {
       <p class="m-0 mt-0.5 text-xs break-words text-cinnabar-700" role="alert">
         Not set — {{ failure }}.
+      </p>
+    }
+    @if (moveFailure(); as failure) {
+      <p class="m-0 mt-0.5 text-xs break-words text-cinnabar-700" role="alert">
+        Not moved — {{ failure }}.
       </p>
     }
   `,
@@ -90,6 +145,8 @@ export class ReleaseLaneHeader {
 
   readonly lane = input.required<BranchLane>();
   readonly request = input.required<ReleaseRequest>();
+  /** The repository's default branch, which every request carries and no move takes away. */
+  readonly mainBranch = input<string>(DEFAULT_MAIN_BRANCH);
 
   /** The source this lane is, if it is one. */
   protected readonly source = computed(() =>
@@ -117,6 +174,57 @@ export class ReleaseLaneHeader {
 
   protected readonly busy = signal(false);
   protected readonly failure = signal<string | null>(null);
+
+  /** Refused 403 once: this viewer may not move sources, so the action stays hidden. */
+  private readonly forbidden = signal(false);
+
+  /** The source may move to the request queued after this one (qits-1665). */
+  protected readonly movable = computed(() => {
+    const source = this.source();
+    return (
+      !!source && !this.forbidden() && canMoveSource(this.request(), source, this.mainBranch())
+    );
+  });
+
+  /** Pressed once: the reason shows (`asking`); `sending` while the move is in flight. */
+  protected readonly moving = signal<false | 'asking' | 'sending'>(false);
+  protected readonly reason = signal('');
+  protected readonly moveFailure = signal<string | null>(null);
+
+  protected openMove(): void {
+    this.reason.set('');
+    this.moveFailure.set(null);
+    this.moving.set('asking');
+  }
+
+  protected cancelMove(): void {
+    this.moving.set(false);
+    this.reason.set('');
+  }
+
+  protected reasonTyped(event: Event): void {
+    this.reason.set((event.target as HTMLInputElement).value);
+  }
+
+  protected async move(): Promise<void> {
+    const source = this.source();
+    const reason = this.reason().trim();
+    if (!source?.name || !reason) return;
+    const request = this.request();
+    this.moving.set('sending');
+    this.moveFailure.set(null);
+    const outcome = await this.store.moveSource(
+      request.repoId ?? '',
+      request.id ?? '',
+      source.name,
+      reason,
+    );
+    this.moving.set(false);
+    this.reason.set('');
+    if (outcome.from) return;
+    if (outcome.status === 403) this.forbidden.set(true);
+    this.moveFailure.set(describeRefusal(outcome.status, outcome.message));
+  }
 
   protected async choose(event: Event): Promise<void> {
     const select = event.target as HTMLSelectElement;

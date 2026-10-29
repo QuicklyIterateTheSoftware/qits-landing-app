@@ -12,6 +12,7 @@ import {
   declineReleaseRequest,
   overrideReleaseRequestUpstream,
   rerunReleasePipelinePhase as rerunReleasePhase,
+  moveReleaseRequestSource,
   setReleaseSourcePriority,
   withdrawReleaseRequest,
 } from '../../api/projects';
@@ -23,6 +24,7 @@ import {
   LIST_COMMIT_BUILDS,
   CHANGED_RELEASE_REQUEST,
   LIST_RELEASE_REQUEST_COMMITS,
+  MOVED_RELEASE_REQUEST_SOURCE,
   type ApprovalEligibility,
   type CommitBuild,
   type ReleaseArtifacts,
@@ -47,6 +49,24 @@ const FAILED: Read<never> = { status: 'error' };
 export type ChangeOutcome =
   | { readonly request: ReleaseRequest; readonly status?: undefined; readonly message?: undefined }
   | { readonly request?: undefined; readonly status: number; readonly message?: string };
+
+/**
+ * What a source move answered (qits-1665): both requests as they are now, `from` (the one the
+ * branch left) and `to` (the one queued after it), or why it was refused, as {@link ChangeOutcome}.
+ */
+export type MoveOutcome =
+  | {
+      readonly from: ReleaseRequest;
+      readonly to: ReleaseRequest;
+      readonly status?: undefined;
+      readonly message?: undefined;
+    }
+  | {
+      readonly from?: undefined;
+      readonly to?: undefined;
+      readonly status: number;
+      readonly message?: string;
+    };
 
 /** The service's `message` on a refusal, if it sent one; the OpenAPI document gives it no body. */
 function messageOf(error: unknown): string | undefined {
@@ -118,7 +138,8 @@ interface ReleaseRequestState {
  * - The changes a person makes: `approve` and `decline` (the fold the reader saw travels with the
  *   decision; a moved fold is refused 409), `withdraw`, `rerunPhase`, `setSourcePriority`,
  *   `rerunAutomation`, `waiveAutomations` and `overrideUpstream` (epic qits-897). Each answers a {@link ChangeOutcome}; a change that
- *   answers the request puts it in place (`put`). `rerunAutomation` answers 202 and no request:
+ *   answers the request puts it in place (`put`). `moveSource` (qits-1665) answers both requests
+ *   (a {@link MoveOutcome}) and puts both in place. `rerunAutomation` answers 202 and no request:
  *   the automation's row moves on the next refresh.
  *
  * The page calls `load` in the browser, and `refresh` when a domain event says the request may
@@ -431,6 +452,31 @@ export const ReleaseRequestStore = signalStore(
             CHANGED_RELEASE_REQUEST,
           ),
         );
+      },
+      /**
+       * `POST …/{requestId}/sources/move` (qits-1665): `branch` leaves the request, which is folded
+       * again without it, and joins the one queued after it (minted when there is none). `reason`
+       * is required; a blank one is refused 400 by the service. Both requests the answer names are
+       * put in place, under every `ref` that shows them.
+       */
+      async moveSource(
+        repoId: string,
+        requestId: string,
+        branch: string,
+        reason: string,
+      ): Promise<MoveOutcome> {
+        const { data, error, response } = await consume(
+          moveReleaseRequestSource({
+            path: { repoId, requestId },
+            body: { branch, reason: reason.trim() },
+          }),
+          MOVED_RELEASE_REQUEST_SOURCE,
+        );
+        const from = error === undefined ? data?.from : undefined;
+        const to = error === undefined ? data?.to : undefined;
+        if (!from || !to) return { status: response?.status ?? 0, message: messageOf(error) };
+        await Promise.all([put(from), put(to)]);
+        return { from, to };
       },
       async waiveAutomations(repoId: string, requestId: string, foldSha: string, reason: string) {
         return changed(

@@ -174,7 +174,7 @@ export type BranchDeliveries = {
      */
     branch?: string;
     /**
-     * The branch's least advanced step across every repository of its project — PUSHED, JOINED, RELEASED or LIVE — however `repository` narrowed the deliveries; null when the branch has no row
+     * The branch's least advanced step across the repositories of its project it still ships to — PUSHED, JOINED, RELEASED or LIVE — leaving out the agent configuration and withdrawn rows, however `repository` narrowed the deliveries; null when no row counts
      */
     everywhere?: string | null;
     /**
@@ -511,12 +511,6 @@ export type CreateProjectRequest = {
 
 export type CreateReleaseRequest = {
     branch: string;
-    /**
-     * Ignored. What a request is about is derived from its sources: see items on the answer.
-     *
-     * @deprecated
-     */
-    summary?: string;
     priority?: string;
 };
 
@@ -1003,6 +997,10 @@ export type GuideResponse = {
      * The guide, as markdown.
      */
     markdown?: string;
+    /**
+     * The guide-hash: the first 16 lowercase hex characters of the SHA-256 of `markdown`'s UTF-8 bytes. A session re-reads the guide only when this differs from the hash it last read.
+     */
+    hash?: string;
 };
 
 export type GuideVariantDto = {
@@ -1127,6 +1125,16 @@ export type Membership = {
 export type MergeConflictDto = {
     target?: string;
     conflicts?: Array<ConflictedPath>;
+};
+
+export type MoveReleaseRequestSource = {
+    branch: string;
+    reason: string;
+};
+
+export type MoveReleaseRequestSourceResponse = {
+    from?: ReleaseRequestDto;
+    to?: ReleaseRequestDto;
 };
 
 export type NewAttachment = {
@@ -1349,14 +1357,6 @@ export type ReleaseRequestDto = {
     priority?: string;
     mergedSha?: string;
     state?: string;
-    /**
-     * @deprecated
-     */
-    summary?: string;
-    /**
-     * @deprecated
-     */
-    requester?: string;
     unattended?: boolean;
     gateTicketId?: string;
     detail?: string;
@@ -1390,6 +1390,7 @@ export type ReleaseRequestDto = {
     featureFreeze?: FeatureFreezeDto;
     participants?: Array<string>;
     items?: Array<ReleaseRequestItemDto>;
+    sourceMoves?: Array<ReleaseRequestSourceMoveDto>;
 };
 
 export type ReleaseRequestItemDto = {
@@ -1407,6 +1408,15 @@ export type ReleaseRequestSourceDto = {
     addedBy?: string;
     feature?: boolean;
     explicitJoin?: boolean;
+};
+
+export type ReleaseRequestSourceMoveDto = {
+    branch?: string;
+    fromQualifiedId?: string;
+    toQualifiedId?: string;
+    movedBy?: string;
+    reason?: string;
+    movedAt?: Instant;
 };
 
 export type ReleaseRequestWorkItemDto = {
@@ -5258,6 +5268,40 @@ export type AddReleaseRequestSourceResponses = {
 };
 
 export type AddReleaseRequestSourceResponse = AddReleaseRequestSourceResponses[keyof AddReleaseRequestSourceResponses];
+
+export type MoveReleaseRequestSourceData = {
+    body: MoveReleaseRequestSource;
+    path: {
+        repoId: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/sources/move';
+};
+
+export type MoveReleaseRequestSourceErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type MoveReleaseRequestSourceResponses = {
+    /**
+     * OK
+     */
+    200: MoveReleaseRequestSourceResponse;
+};
+
+export type MoveReleaseRequestSourceResponse2 = MoveReleaseRequestSourceResponses[keyof MoveReleaseRequestSourceResponses];
 
 export type SetReleaseSourcePriorityData = {
     body: SetReleaseSourcePriority;
