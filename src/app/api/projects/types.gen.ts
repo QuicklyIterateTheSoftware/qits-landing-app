@@ -6,7 +6,6 @@ export type ClientOptions = {
 
 export type AddReleaseRequestSource = {
     branch: string;
-    requester?: string;
     priority?: string;
 };
 
@@ -165,6 +164,64 @@ export type AuditEntryDto = {
 export type AuditOperation = 'CREATE' | 'UPDATE' | 'DELETE';
 
 export type BackupOutcome = 'SUCCEEDED' | 'AUTH_REQUIRED' | 'UNREACHABLE' | 'FAILED';
+
+/**
+ * Where one branch stands in each repository of its project.
+ */
+export type BranchDeliveries = {
+    /**
+     * The branch asked about
+     */
+    branch?: string;
+    /**
+     * The branch's least advanced step across every repository of its project — PUSHED, JOINED, RELEASED or LIVE — however `repository` narrowed the deliveries; null when the branch has no row
+     */
+    everywhere?: string | null;
+    /**
+     * One row per repository the branch was pushed to or delivered in
+     */
+    deliveries?: Array<BranchDelivery>;
+};
+
+/**
+ * The last delivery step one branch reached in one repository.
+ */
+export type BranchDelivery = {
+    projectId?: string;
+    repoId?: string;
+    /**
+     * The repository's name
+     */
+    repository?: string;
+    /**
+     * PUSHED, JOINED, MOVED, FAILED, CONFLICTED, WITHDRAWN, RELEASED or LIVE
+     */
+    step?: string;
+    /**
+     * The request carrying the branch; null on PUSHED
+     */
+    requestId?: string | null;
+    /**
+     * That request's qualified id
+     */
+    qualifiedId?: string | null;
+    /**
+     * The request's fold at the step; null before its first fold
+     */
+    foldSha?: string | null;
+    /**
+     * FAILED only: the red CI run or the newest automation run
+     */
+    runId?: string | null;
+    /**
+     * RELEASED and LIVE: the tag
+     */
+    version?: string | null;
+    /**
+     * When the step was written
+     */
+    changedAt?: Instant;
+};
 
 export type BranchDto = {
     name?: string;
@@ -454,8 +511,12 @@ export type CreateProjectRequest = {
 
 export type CreateReleaseRequest = {
     branch: string;
-    summary: string;
-    requester?: string;
+    /**
+     * Ignored. What a request is about is derived from its sources: see items on the answer.
+     *
+     * @deprecated
+     */
+    summary?: string;
     priority?: string;
 };
 
@@ -546,7 +607,7 @@ export type DesignDto = {
  */
 export type DeskTriggerEvent = {
     /**
-     * The source that admitted it: wait, work-verified, approval-needed or desk-mentioned
+     * The source that admitted it: wait, work-verified, approval-needed, desk-mentioned, request-failed, request-stalled or capacity-opened
      */
     source?: string;
     /**
@@ -554,7 +615,7 @@ export type DeskTriggerEvent = {
      */
     itemRef?: string;
     /**
-     * The item's own id, when the source knows one
+     * The item's own id, when the source knows one; for capacity-opened, the agent's id
      */
     itemId?: string | null;
     /**
@@ -1288,7 +1349,13 @@ export type ReleaseRequestDto = {
     priority?: string;
     mergedSha?: string;
     state?: string;
+    /**
+     * @deprecated
+     */
     summary?: string;
+    /**
+     * @deprecated
+     */
     requester?: string;
     unattended?: boolean;
     gateTicketId?: string;
@@ -1321,6 +1388,14 @@ export type ReleaseRequestDto = {
     queuedNext?: string;
     queuedNextQualifiedId?: string;
     featureFreeze?: FeatureFreezeDto;
+    participants?: Array<string>;
+    items?: Array<ReleaseRequestItemDto>;
+};
+
+export type ReleaseRequestItemDto = {
+    source?: string;
+    label?: string;
+    workItem?: ReleaseRequestWorkItemDto;
 };
 
 export type ReleaseRequestSourceDto = {
@@ -1332,6 +1407,11 @@ export type ReleaseRequestSourceDto = {
     addedBy?: string;
     feature?: boolean;
     explicitJoin?: boolean;
+};
+
+export type ReleaseRequestWorkItemDto = {
+    qualifiedId?: string;
+    title?: string;
 };
 
 export type RenameRepositoryRequest = {
@@ -1346,6 +1426,7 @@ export type RepositoryCoordinatesDto = {
     name?: string;
     mainBranch?: string;
     archetype?: RepositoryArchetype;
+    declared?: boolean;
 };
 
 export type RepositoryDto = {
@@ -1567,7 +1648,6 @@ export type SetMainBranchRequest = {
 export type SetReleaseSourcePriority = {
     branch: string;
     priority: string;
-    requester?: string;
 };
 
 export type SubmoduleChangesDto = {
@@ -2573,6 +2653,37 @@ export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses = {
 };
 
 export type GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse = GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses[keyof GetProjectsApiAgentSurfacesBySurfaceRevisionsResponses];
+
+export type GetBranchDeliveriesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        branch?: string;
+        project?: string;
+        repository?: string;
+    };
+    url: '/projects/api/branch-deliveries';
+};
+
+export type GetBranchDeliveriesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetBranchDeliveriesResponses = {
+    /**
+     * OK
+     */
+    200: BranchDeliveries;
+};
+
+export type GetBranchDeliveriesResponse = GetBranchDeliveriesResponses[keyof GetBranchDeliveriesResponses];
 
 export type CollectTagsData = {
     body: CollectTagsRequest;
