@@ -18,8 +18,9 @@ import { AgentChatPage } from './agent-chat.page';
 /**
  * Screenshots of an agent's Chat tab, at `agents/<agent id>/…`. The project is
  * qits-projects' "a project exists"; the agent is qits-workspaces' `getAgent` of "an agent with a
- * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents and the slot
- * "a workspace slot hosting agents"' (the agent RUNNING in slot 1). Its saved prompt draft is
+ * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents "an agent whose
+ * workspace is starting"'s and its start "a workspace slot hosting agents"' (the agent RUNNING in
+ * slot 1, no start). Its saved prompt draft is
  * qits-workspaces' "an agent with a saved prompt draft" (the same agent).
  *
  * Its transcript, read through the agent proxy (epic qits-1667), is qits-workspace-daemon's "a
@@ -28,6 +29,7 @@ import { AgentChatPage } from './agent-chat.page';
  */
 
 const SLOT = 'a workspace slot hosting agents';
+const STARTING = 'an agent whose workspace is starting';
 const DRAFTED = 'an agent with a saved prompt draft';
 const TURNS = 'a workspace daemon with an agent that has taken turns';
 const NOW = new Date('2026-01-01T00:04:00Z');
@@ -106,7 +108,9 @@ describe('AgentChatPage (screenshots)', () => {
     http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
     http
       .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
+      // The project's ACTIVE agents as the agent layout's spec answers them: the bug ticket's agent,
+      // with no waits ("an agent whose workspace is starting", which the pact binds).
+      .flush(await goldenMaster(STARTING, 'listAgents', 'qits-workspaces'));
     await answered(harness);
     // The agent's start, asked of the agent (`getAgentActiveProcess`): none is running.
     http

@@ -17,8 +17,9 @@ import { AgentFilesPage } from './agent-files.page';
 /**
  * Screenshots of an agent's Files tab, at `agents/<agent id>/…`. The project is
  * qits-projects' "a project exists"; the agent is qits-workspaces' `getAgent` of "an agent with a
- * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents and the slot
- * "a workspace slot hosting agents"' (the agent RUNNING in slot 1).
+ * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents "an agent whose
+ * workspace is starting"'s and its start "a workspace slot hosting agents"' (the agent RUNNING in
+ * slot 1, no start).
  *
  * Its worktree is qits-workspace-daemon's "a workspace daemon with an agent whose worktree holds
  * files" (the same agent in slot 1): the tree with `node_modules` gitignored, the Java / Quarkus
@@ -28,6 +29,7 @@ import { AgentFilesPage } from './agent-files.page';
  */
 
 const SLOT = 'a workspace slot hosting agents';
+const STARTING = 'an agent whose workspace is starting';
 const DRAFTED = 'an agent with a saved prompt draft';
 const FILES = 'a workspace daemon with an agent whose worktree holds files';
 const IGNORED = 'a workspace daemon with an agent whose worktree has an ignored directory';
@@ -103,7 +105,9 @@ describe('AgentFilesPage (screenshots)', () => {
     http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
     http
       .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
+      // The project's ACTIVE agents as the agent layout's spec answers them: the bug ticket's agent,
+      // with no waits ("an agent whose workspace is starting", which the pact binds).
+      .flush(await goldenMaster(STARTING, 'listAgents', 'qits-workspaces'));
     await answered(harness);
     // The agent's start, asked of the agent (`getAgentActiveProcess`): none is running.
     http

@@ -17,8 +17,9 @@ import { AgentTerminalPage } from './agent-terminal.page';
 /**
  * Screenshots of an agent's Terminal tab, at `agents/<agent id>/…`. The project is
  * qits-projects' "a project exists"; the agent is qits-workspaces' `getAgent` of "an agent with a
- * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents and the slot
- * "a workspace slot hosting agents"' (the agent RUNNING in slot 1), so the tab attaches to the
+ * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents "an agent whose
+ * workspace is starting"'s and its start "a workspace slot hosting agents"' (the agent RUNNING in
+ * slot 1, no start), so the tab attaches to the
  * agent's terminal on the agent proxy and asks the slot's daemon nothing (epic qits-1667); the
  * harness sign-in and the plugins are the workspace page's screenshots.
  *
@@ -27,6 +28,7 @@ import { AgentTerminalPage } from './agent-terminal.page';
  */
 
 const SLOT = 'a workspace slot hosting agents';
+const STARTING = 'an agent whose workspace is starting';
 const DRAFTED = 'an agent with a saved prompt draft';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
@@ -136,7 +138,9 @@ describe('AgentTerminalPage (screenshots)', () => {
     http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
     http
       .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      .flush(await goldenMaster(SLOT, 'listAgents', 'qits-workspaces'));
+      // The project's ACTIVE agents as the agent layout's spec answers them: the bug ticket's agent,
+      // with no waits ("an agent whose workspace is starting", which the pact binds).
+      .flush(await goldenMaster(STARTING, 'listAgents', 'qits-workspaces'));
     await answered(harness);
     // The agent's start, asked of the agent (`getAgentActiveProcess`): none is running.
     http
