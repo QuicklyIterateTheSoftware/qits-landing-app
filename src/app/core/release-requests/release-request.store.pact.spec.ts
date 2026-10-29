@@ -26,6 +26,7 @@ import {
   GET_RELEASE_REQUEST,
   LIST_COMMIT_BUILDS,
   LIST_RELEASE_REQUEST_COMMITS,
+  MOVED_RELEASE_REQUEST_SOURCE,
   UNBOUND_RELEASE_REQUEST,
   type ReleaseRequest,
 } from './release-request.consumes';
@@ -65,6 +66,16 @@ const STATES = {
  */
 const ELIGIBILITY = 'getReleaseRequestApprovalEligibility';
 
+/**
+ * The source move (qits-1665), recorded by qits-projects on the frozen state (rr-1's
+ * `ticket/contract-12` into rr-2) from the release that adds the door. The pinned
+ * `@qits/projects-golden-masters` may predate it: the interaction then skips itself (`isRecorded`,
+ * read off the installed package, as `desk-triggers.store.pact.spec.ts` does), the committed pact
+ * holds no move, and once qits-maintenance bumps the pin to a release that records it the test
+ * runs on its own and the pact is rewritten with `QITS_GOLDEN_UPDATE`.
+ */
+const MOVE = 'moveReleaseRequestSource';
+
 /** The operations this spec owns in that file. */
 const OPERATIONS = [
   ELIGIBILITY,
@@ -81,19 +92,32 @@ const OPERATIONS = [
   'rerunReleaseRequestAutomation',
   'waiveReleaseRequestAutomations',
   'overrideReleaseRequestUpstream',
+  MOVE,
 ];
 
 /** The paths a pact binds of `consumes`: all but those the store reads unbound (qits-1673). */
-const UNBOUND: ReadonlySet<string> = new Set(UNBOUND_RELEASE_REQUEST);
+const UNBOUND: ReadonlySet<string> = new Set(
+  // The move answers two requests, `from` and `to`, each read as `request` is.
+  ['request', 'from', 'to'].flatMap((key) =>
+    UNBOUND_RELEASE_REQUEST.map((path) => path.replace(/^request\./, `${key}.`)),
+  ),
+);
 const bindable = (consumes: readonly string[]) => consumes.filter((path) => !UNBOUND.has(path));
 
 /** The request's arrays that grow with every ask (qits-1673), so no pact pins their length. */
 const GROWING = ['participants', 'items'] as const;
 
+/** Where an answer holds a request: `request`, or the move's `from` and `to` (qits-1665). */
+const REQUEST_KEYS = ['request', 'from', 'to'] as const;
+
 interface WrittenPact {
   readonly interactions: readonly {
     readonly response: {
-      readonly body?: { readonly content?: { request?: Record<string, unknown> | null } };
+      readonly body?: {
+        readonly content?: Partial<
+          Record<(typeof REQUEST_KEYS)[number], Record<string, unknown> | null>
+        >;
+      };
       readonly matchingRules?: { body?: Record<string, unknown> };
     };
   }[];
@@ -112,15 +136,17 @@ interface WrittenPact {
 function openEndedGrowingArrays(generated: string): void {
   const written = JSON.parse(readFileSync(generated, 'utf8')) as WrittenPact;
   for (const interaction of written.interactions) {
-    const request = interaction.response.body?.content?.request;
-    if (!request) continue;
-    for (const key of GROWING) {
-      const values = request[key];
-      if (!Array.isArray(values)) continue;
-      request[key] = values.slice(0, 1);
-      const rules = interaction.response.matchingRules?.body;
-      if (rules)
-        rules[`$.request.${key}`] = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
+    for (const at of REQUEST_KEYS) {
+      const request = interaction.response.body?.content?.[at];
+      if (!request) continue;
+      for (const key of GROWING) {
+        const values = request[key];
+        if (!Array.isArray(values)) continue;
+        request[key] = values.slice(0, 1);
+        const rules = interaction.response.matchingRules?.body;
+        if (rules)
+          rules[`$.${at}.${key}`] = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
+      }
     }
   }
   writeFileSync(generated, JSON.stringify(written, null, 2));
@@ -166,6 +192,16 @@ function recorded(state: string, operationId: string) {
     body: (op.body ?? {}) as Record<string, string>,
     path: op.path,
   };
+}
+
+/** Whether `state`/`operationId` is recorded in the `@qits/projects-golden-masters` installed. */
+function isRecorded(state: string, operationId: string): boolean {
+  try {
+    masters.operation(state, operationId);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** One read the store makes after the request, made on its own against the mock server. */
@@ -418,6 +454,27 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
       const outcome = await store.withdraw(repoId, requestId, body['reason']);
       expect(outcome.request?.state).toBe('WITHDRAWN');
     }));
+
+  it.skipIf(!isRecorded(STATES.frozen, MOVE))(
+    'move-release-request-source: a branch leaves the frozen request for the one queued after it',
+    () =>
+      given(
+        'move-release-request-source',
+        STATES.frozen,
+        MOVE,
+        MOVED_RELEASE_REQUEST_SOURCE,
+      ).executeTest(async (server) => {
+        const store = storeAt(server.url);
+        const { repoId, requestId, body } = recorded(STATES.frozen, MOVE);
+        const outcome = await store.moveSource(repoId, requestId, body['branch'], body['reason']);
+        // The mock server answers each array's elements from the recorded first one, so which
+        // branches each side holds is the plain spec's to check (`release-request.store.spec.ts`).
+        expect(outcome.from?.id).toBe(requestId);
+        expect(outcome.to?.id).toBeTruthy();
+        expect(outcome.to?.id).not.toBe(requestId);
+        expect(outcome.to?.queuedBehind).toBe(requestId);
+      }),
+  );
 
   it('override-release-upstream: a person lets the request start QA past one upstream', () =>
     given(
