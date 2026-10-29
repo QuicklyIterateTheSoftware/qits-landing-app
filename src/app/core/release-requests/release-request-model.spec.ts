@@ -2,6 +2,7 @@ import type { ReleaseRequest, ReleaseSource } from './release-request.consumes';
 import {
   approvalOutstanding,
   awaitingApproval,
+  canMoveSource,
   canPrioritiseSource,
   describeRefusal,
   formatInstant,
@@ -18,6 +19,7 @@ import {
   releaseSources,
   shortShaOrNone,
   sourceMarks,
+  sourceMoves,
   sourceTitle,
 } from './release-request-model';
 
@@ -184,6 +186,57 @@ describe('release request model', () => {
     it('are set on the named branches, never on the tags the service added', () => {
       expect(canPrioritiseSource(source())).toBe(true);
       expect(canPrioritiseSource(TAG)).toBe(false);
+    });
+  });
+
+  describe('canMoveSource (qits-1665)', () => {
+    const one = source({ name: 'ticket/a', ref: 'refs/heads/ticket/a' });
+    const two = source({ name: 'ticket/b', ref: 'refs/heads/ticket/b' });
+    const shared = (overrides: Partial<ReleaseRequest> = {}) =>
+      request({ sources: [source(), one, two, TAG], ...overrides });
+
+    it('holds for a named branch of an open, unqueued request that keeps another branch', () => {
+      for (const state of ['PENDING', 'READY', 'FAILED', 'REJECTED', 'CONFLICTED']) {
+        expect(canMoveSource(shared({ state }), one)).toBe(true);
+      }
+    });
+
+    it('does not hold once the request is past changing or not yet open to it', () => {
+      for (const state of ['RELEASED', 'FINALIZED', 'WITHDRAWN', 'OBSOLETE', undefined]) {
+        expect(canMoveSource(shared({ state }), one)).toBe(false);
+      }
+    });
+
+    it('never moves the default branch or an automatic tag source', () => {
+      expect(canMoveSource(shared(), source())).toBe(false);
+      expect(canMoveSource(shared(), TAG)).toBe(false);
+    });
+
+    it('reads the default branch the repository names', () => {
+      const trunk = source({ name: 'trunk', ref: 'refs/heads/trunk' });
+      const onTrunk = request({ sources: [trunk, one, source()] });
+      expect(canMoveSource(onTrunk, trunk, 'trunk')).toBe(false);
+      // `main` is an ordinary branch on a repository whose default is `trunk`.
+      expect(canMoveSource(onTrunk, one, 'trunk')).toBe(true);
+      expect(canMoveSource(onTrunk, source(), 'trunk')).toBe(true);
+    });
+
+    it('does not hold on a request queued behind another', () => {
+      expect(canMoveSource(shared({ queuedBehind: 'r0' }), one)).toBe(false);
+      expect(canMoveSource(shared({ queuedBehindQualifiedId: 'qits-ci-rr-1' }), one)).toBe(false);
+    });
+
+    it('does not hold for the only branch besides the default one: that is withdraw', () => {
+      expect(canMoveSource(request({ sources: [source(), one, TAG] }), one)).toBe(false);
+    });
+  });
+
+  describe('sourceMoves', () => {
+    it('lists the moves oldest first, and none on an answer without them', () => {
+      const later = { branch: 'ticket/b', movedAt: '2026-10-02T00:00:00Z' };
+      const earlier = { branch: 'ticket/a', movedAt: '2026-10-01T00:00:00Z' };
+      expect(sourceMoves(request({ sourceMoves: [later, earlier] }))).toEqual([earlier, later]);
+      expect(sourceMoves(request())).toEqual([]);
     });
   });
 

@@ -5,6 +5,7 @@ import type {
   GetReleaseRequestResponses,
   GetProjectReleaseRequestResponses,
   GetReleaseRequestApprovalEligibilityResponses,
+  MoveReleaseRequestSourceResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
@@ -25,6 +26,9 @@ import type { Consumed } from '@qits/angular';
  * is queued behind or the one queued behind it (`queuedBehind*`, `queuedNext*`, null otherwise),
  * and per source whether it counts toward the freeze (`feature`) or joined a frozen request by name
  * (`explicitJoin`).
+ * qits-1665: the sources moved into or out of the request (`sourceMoves`: which branch, from which
+ * request to which, by whom, why and when). An older qits-projects answers none, and the page then
+ * lists none; the pact binds them only where a recording holds them (`heldBy`).
  */
 export const GET_RELEASE_REQUEST = [
   'request.id',
@@ -120,6 +124,12 @@ export const GET_RELEASE_REQUEST = [
   'request.queuedBehindQualifiedId',
   'request.queuedNext',
   'request.queuedNextQualifiedId',
+  'request.sourceMoves[].branch',
+  'request.sourceMoves[].fromQualifiedId',
+  'request.sourceMoves[].toQualifiedId',
+  'request.sourceMoves[].movedBy',
+  'request.sourceMoves[].reason',
+  'request.sourceMoves[].movedAt',
 ] as const;
 
 /**
@@ -211,6 +221,9 @@ export type ApprovalEligibility = NonNullable<
 /** One source branch of a request. */
 export type ReleaseSource = NonNullable<ReleaseRequest['sources']>[number];
 
+/** One move of a source into or out of a request (qits-1665). */
+export type ReleaseSourceMove = NonNullable<ReleaseRequest['sourceMoves']>[number];
+
 /** One automation row of a request. */
 export type ReleaseAutomation = NonNullable<ReleaseRequest['automations']>[number];
 
@@ -253,3 +266,31 @@ export type ReleaseArtifact = NonNullable<ReleaseArtifacts['artifacts']>[number]
  * request, which takes the shown one's place, so the same fields as {@link GET_RELEASE_REQUEST}.
  */
 export const CHANGED_RELEASE_REQUEST = GET_RELEASE_REQUEST;
+
+/** `paths` under `request.` moved under `to.` instead, element for element. */
+type Rebased<P extends readonly string[], To extends string> = {
+  readonly [K in keyof P]: P[K] extends `request.${infer Rest}` ? `${To}.${Rest}` : never;
+};
+
+function rebased<const P extends readonly string[], const To extends string>(
+  paths: P,
+  to: To,
+): Rebased<P, To> {
+  return paths.map((path) => path.replace(/^request\./, `${to}.`)) as unknown as Rebased<P, To>;
+}
+
+/**
+ * A source move's answer (`POST …/{requestId}/sources/move`, qits-1665): both requests, `from`
+ * (the one the branch left, folded again) and `to` (the one queued after it, which now carries
+ * the branch), each read as {@link CHANGED_RELEASE_REQUEST} reads the request.
+ */
+export const MOVED_RELEASE_REQUEST_SOURCE = [
+  ...rebased(CHANGED_RELEASE_REQUEST, 'from'),
+  ...rebased(CHANGED_RELEASE_REQUEST, 'to'),
+] as const;
+
+/** The move's answer, cut to what the store reads. */
+export type MovedReleaseRequestSource = Consumed<
+  MoveReleaseRequestSourceResponses[200],
+  typeof MOVED_RELEASE_REQUEST_SOURCE
+>;

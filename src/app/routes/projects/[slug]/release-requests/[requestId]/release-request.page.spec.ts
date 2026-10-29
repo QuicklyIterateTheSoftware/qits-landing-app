@@ -306,6 +306,59 @@ describe('ReleaseRequestPage', () => {
     });
   });
 
+  describe('moved sources (qits-1665)', () => {
+    const FROZEN = 'a frozen release request with a queued next request';
+    const queued = goldenMaster(FROZEN, 'getProjectReleaseRequest');
+    const frozen = goldenMaster(FROZEN, 'getReleaseRequest');
+
+    it('lists each move: the branch, from and to linked, who moved it, why and when', async () => {
+      const ref = queued.request.qualifiedId;
+      const { element, answered } = await render(ref);
+      // Derived from the queued recording: the pinned golden masters predate `sourceMoves`, so the
+      // move qits-projects records for this state (rr-1's ticket/contract-12 into rr-2) is added.
+      read(ref).flush({
+        request: {
+          ...queued.request,
+          sourceMoves: [
+            {
+              branch: 'ticket/contract-12',
+              fromQualifiedId: frozen.request.qualifiedId,
+              toQualifiedId: queued.request.qualifiedId,
+              movedBy: 'dev',
+              reason: 'It conflicts with ticket/contract-11.',
+              movedAt: '2026-01-01T00:00:00Z',
+            },
+          ],
+        },
+      });
+      await answered();
+      const section = element.querySelector('[aria-labelledby="source-moves"]')!;
+      const line = section.querySelector('[data-source-move]')!;
+      // One span per part, laid out with a gap: read them one by one.
+      expect(
+        [...line.children].map((part) => part.textContent?.replace(/\s+/g, ' ').trim()),
+      ).toEqual([
+        'ticket/contract-12',
+        `${frozen.request.qualifiedId} → ${queued.request.qualifiedId}`,
+        'by dev',
+        expect.any(String),
+        'It conflicts with ticket/contract-11.',
+      ]);
+      expect([...line.querySelectorAll('a')].map((a) => a.getAttribute('href'))).toEqual([
+        `/projects/${project.slug}/release-requests/${frozen.request.qualifiedId}`,
+        `/projects/${project.slug}/release-requests/${queued.request.qualifiedId}`,
+      ]);
+    });
+
+    it('lists nothing on an answer without moves', async () => {
+      const ref = queued.request.qualifiedId;
+      const { element, answered } = await render(ref);
+      read(ref).flush(queued);
+      await answered();
+      expect(element.querySelector('[aria-labelledby="source-moves"]')).toBeNull();
+    });
+  });
+
   describe('approval requirements (epic qits-1038)', () => {
     /** The recorded request awaiting a person's approval, with `approvalRequirements` as given. */
     const awaiting = (approvalRequirements?: readonly object[]) => {

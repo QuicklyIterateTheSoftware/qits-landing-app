@@ -133,6 +133,11 @@ export const INTERACTIONS = {
   /** `release-request.page.ts`: Withdraw calls a release request off. */
   'withdraw-release-request': 'Withdraw on a release request calls it off',
   /**
+   * `release-lane-header.ts`: Move to next request on a source branch of a request (qits-1665)
+   * takes it out of that request into the one queued after it, with a reason.
+   */
+  'move-release-request-source': 'Moving a source branch of a release request to the next request',
+  /**
    * `upstream-override.ts`: Override on an upstream request still holding a request's
    * upstream-in-flight gate (epic qits-897) lets it start QA without waiting for that one.
    */

@@ -1,5 +1,10 @@
 import type { ReleaseTone } from '$core/projects/release-requests';
-import type { ReleaseConflict, ReleaseRequest, ReleaseSource } from './release-request.consumes';
+import type {
+  ReleaseConflict,
+  ReleaseRequest,
+  ReleaseSource,
+  ReleaseSourceMove,
+} from './release-request.consumes';
 
 /**
  * Pure rules about one release request, ported from qits-projects-frontend's
@@ -94,6 +99,52 @@ export function priorityOptions(current: string | null | undefined): readonly st
 /** A branch added automatically (an unmerged earlier release) has no priority of its own to set. */
 export function canPrioritiseSource(source: ReleaseSource): boolean {
   return !source.implicit;
+}
+
+/** The states in which a source may move to the request queued after this one (qits-1665). */
+const MOVABLE_STATES: ReadonlySet<string> = new Set([
+  'PENDING',
+  'READY',
+  'FAILED',
+  'REJECTED',
+  'CONFLICTED',
+]);
+
+/** The branch a repository releases from when the page knows no other. */
+export const DEFAULT_MAIN_BRANCH = 'main';
+
+/**
+ * A source may be moved to the request queued after this one (qits-1665, `…/sources/move`): a
+ * named branch (not an automatic tag source) that is not the repository's default branch, on a
+ * request that is open to it (PENDING, READY, FAILED, REJECTED or CONFLICTED) and not itself
+ * queued behind another, and that keeps another branch besides the default one to release
+ * (moving the only one is withdraw's job). The service refuses every other case 409; this only
+ * keeps the action off where it would be.
+ */
+export function canMoveSource(
+  request: Pick<ReleaseRequest, 'state' | 'queuedBehind' | 'queuedBehindQualifiedId' | 'sources'>,
+  source: ReleaseSource,
+  mainBranch: string = DEFAULT_MAIN_BRANCH,
+): boolean {
+  const main = mainBranch.trim() || DEFAULT_MAIN_BRANCH;
+  const branch = (source: ReleaseSource) =>
+    !source.implicit &&
+    (source.kind ?? 'BRANCH') === 'BRANCH' &&
+    !!source.name &&
+    source.name !== main;
+  if (!branch(source)) return false;
+  if (!MOVABLE_STATES.has(request.state ?? '')) return false;
+  if (request.queuedBehind?.trim() || request.queuedBehindQualifiedId?.trim()) return false;
+  return (request.sources ?? []).some((other) => branch(other) && other.name !== source.name);
+}
+
+/** The moves of a source into or out of the request, oldest first; none on an older answer. */
+export function sourceMoves(
+  request: Pick<ReleaseRequest, 'sourceMoves'>,
+): readonly ReleaseSourceMove[] {
+  return [...(request.sourceMoves ?? [])].sort((left, right) =>
+    (left.movedAt ?? '').localeCompare(right.movedAt ?? ''),
+  );
 }
 
 /** The service's detail sentence, or null when it is blank. */

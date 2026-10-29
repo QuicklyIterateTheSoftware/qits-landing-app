@@ -39,6 +39,7 @@ import type {
   ReleaseRequest,
 } from '$core/release-requests/release-request.consumes';
 import {
+  DEFAULT_MAIN_BRANCH,
   formatInstant,
   formatRelativeTime,
   hasReleased,
@@ -47,6 +48,7 @@ import {
   priorityBadge,
   releaseDetail,
   shortShaOrNone,
+  sourceMoves,
 } from '$core/release-requests/release-request-model';
 import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
 import {
@@ -111,7 +113,11 @@ const UNATTENDED_TITLE =
  * threshold, frozen, and which level set it, or "off") and link the request it is queued behind,
  * or the one queued behind it; the commit graph marks each source counted toward it or joined past
  * it.
- * Withdraw sits in the page's actions while the request can be called off.
+ * Withdraw sits in the page's actions while the request can be called off. Each source's header
+ * offers "Move to next request" where the branch may move (qits-1665, `ReleaseLaneHeader`), and
+ * the overview lists the sources moved into or out of the request (`sourceMoves`: the branch, the
+ * request it left and the one it joined, each linked, who moved it, why and when); an older
+ * qits-projects answers no moves, and nothing is listed.
  *
  * On a repository's request the lifecycle follows the facts; on the project's estate release (its
  * wrapper repository) it comes first, because there the open question is the approval.
@@ -297,6 +303,7 @@ const UNATTENDED_TITLE =
                         class="w-36 rounded border border-charcoal-brown-200 px-1.5 py-1"
                         [lane]="{ label: name, kind: 'source' }"
                         [request]="request"
+                        [mainBranch]="mainBranch()"
                       />
                     }
                   </div>
@@ -313,7 +320,11 @@ const UNATTENDED_TITLE =
                     (more)="earlierFolds.set(!earlierFolds())"
                   />
                   <ng-template #laneHeader let-lane>
-                    <app-release-lane-header [lane]="lane" [request]="request" />
+                    <app-release-lane-header
+                      [lane]="lane"
+                      [request]="request"
+                      [mainBranch]="mainBranch()"
+                    />
                   </ng-template>
                   <ng-template #changeset let-hash>
                     <app-commit-changes [repoId]="repoId()" [sha]="hash" />
@@ -388,6 +399,57 @@ const UNATTENDED_TITLE =
 
               @if (detail(request); as sentence) {
                 <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
+              }
+
+              @let moved = moves(request);
+              @if (moved.length) {
+                <section
+                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                  aria-labelledby="source-moves"
+                >
+                  <h2 id="source-moves" class="m-0 mb-1 text-base font-semibold">Moved sources</h2>
+                  <ul class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+                    @for (move of moved; track $index) {
+                      <li class="flex flex-wrap items-baseline gap-x-2" data-source-move>
+                        <span class="font-mono font-semibold break-all">{{ move.branch }}</span>
+                        <span class="text-charcoal-brown-600">
+                          @if (move.fromQualifiedId) {
+                            <a
+                              class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                              [routerLink]="['..', move.fromQualifiedId]"
+                              >{{ move.fromQualifiedId }}</a
+                            >
+                          } @else {
+                            {{ none }}
+                          }
+                          →
+                          @if (move.toQualifiedId) {
+                            <a
+                              class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                              [routerLink]="['..', move.toQualifiedId]"
+                              >{{ move.toQualifiedId }}</a
+                            >
+                          } @else {
+                            {{ none }}
+                          }
+                        </span>
+                        <span class="text-xs text-charcoal-brown-500"
+                          >by {{ move.movedBy || none }}</span
+                        >
+                        <span
+                          class="text-xs text-charcoal-brown-500"
+                          [title]="instant(move.movedAt)"
+                          >{{ ago(move.movedAt) }}</span
+                        >
+                        @if (move.reason) {
+                          <span class="w-full break-words text-charcoal-brown-700">{{
+                            move.reason
+                          }}</span>
+                        }
+                      </li>
+                    }
+                  </ul>
+                </section>
               }
 
               @if (!wrapper()) {
@@ -529,6 +591,8 @@ export class ReleaseRequestPage {
   protected readonly behind = queuedBehind;
   protected readonly next = queuedNext;
   protected readonly participants = (request: ReleaseRequest) => participantsOf(request, NONE);
+  /** The sources moved into or out of the request (qits-1665); none on an older answer. */
+  protected readonly moves = sourceMoves;
 
   /** The open tab, from `?tab=`: `commits`, `runs`, `changes`, or the overview. */
   protected readonly tab = toSignal(
@@ -710,6 +774,17 @@ export class ReleaseRequestPage {
   protected artifactLinks(artifact: ReleaseArtifact) {
     return artifactLinks(artifact, this.scope()).map((link) => this.linked(link));
   }
+
+  /**
+   * The request's repository's default branch, which no source move takes away (qits-1665): from
+   * the project's repositories, `main` until they are read.
+   */
+  protected readonly mainBranch = computed(() => {
+    const id = this.projectId();
+    const entries = id ? this.repositories.byProject()[id]?.entries : undefined;
+    const repository = entries?.find((entry) => entry.repository?.id === this.repoId())?.repository;
+    return repository?.mainBranch?.trim() || DEFAULT_MAIN_BRANCH;
+  });
 
   /** A request of the project's wrapper repository: the project's own estate release. */
   protected readonly wrapper = computed(() => {
