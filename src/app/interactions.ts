@@ -169,7 +169,7 @@ export const INTERACTIONS = {
   'show-project-workspaces': 'The Agents page lists the project’s slots and their agents',
   /**
    * `workspace-slot.page.ts` via `AgentsStore.loadSlot`: one slot, its status strip (container,
-   * daemon), the start running against it, and the agents it hosts.
+   * daemon), the start running against it, and the agents it hosts (`listWorkspaceAgents`).
    */
   'show-workspace-slot': 'A slot’s page shows its status and the agents it hosts',
   /**
@@ -179,7 +179,8 @@ export const INTERACTIONS = {
   'show-work-item-agent': 'A work item’s agent address leads to its active agent’s page',
   /**
    * `agent.layout.ts` via `AgentsStore.loadAgent`: an agent's page, by its id — what it works on,
-   * how it runs, what it waits on, and its slot while the container comes up (epic qits-1681).
+   * how it runs, what it waits on (epic qits-1681), and the start bringing its slot's container up,
+   * asked of the agent (epic qits-1667).
    */
   'show-agent': 'An agent’s page shows the agent, what it waits on and its workspace',
   /**
@@ -199,10 +200,11 @@ export const INTERACTIONS = {
   /** `prompt-composer.ts` via `AgentPromptStore.discardDraft`: the restored draft's Discard. */
   'discard-prompt-draft': 'Discarding a restored prompt draft deletes it',
   /**
-   * `prompt-composer.ts` via `AgentPromptStore.deliver`, then `discardDraft`: Send to the agent
-   * delivers the prompt to the item's agent and empties the draft.
+   * `prompt-composer.ts` via `AgentPromptStore.prompt`, then `discardDraft`: Send to the agent
+   * hands the prompt to the agent by its id (epic qits-1667; before it, to the work item's agent)
+   * and empties the draft.
    */
-  'send-agent-prompt': 'Sending a prompt delivers it to the work item’s agent',
+  'send-agent-prompt': 'Sending a prompt hands it to the agent',
   /** `prompt-composer.ts` via `AgentChatStore.refine`: rough notes rewritten into a prompt. */
   'refine-agent-prompt':
     'Refining rough notes rewrites them into a prompt in the agent’s container',
@@ -249,11 +251,15 @@ export const INTERACTIONS = {
   'restart-agent': 'Restart on an agent starts it again on its session',
   /** `container-actions.ts` via `AgentActionsStore.ensureContainer`: Start on a slot's container. */
   'start-workspace-container': 'Start on a workspace slot brings its container up',
-  /** `container-actions.ts` via `AgentActionsStore.stopContainer`: Stop on a slot's container. */
+  /**
+   * `container-actions.ts` via `AgentActionsStore.stopContainer`: Stop, confirmed naming the
+   * slot's agents, on a slot's container; the agents it affected are named after.
+   */
   'stop-workspace-container': 'Stop on a workspace slot stops its container',
   /**
-   * `container-actions.ts` via `AgentActionsStore.recreateContainer`: Recreate, confirmed, replaces
-   * a slot's container (refused unless its working tree is provably clean).
+   * `container-actions.ts` via `AgentActionsStore.recreateContainer`: Recreate, confirmed naming
+   * the slot's agents, replaces a slot's container (refused unless its working tree is provably
+   * clean); the agents it affected are named after.
    */
   'recreate-workspace-container': 'Recreate on a workspace slot replaces its container',
   /**
