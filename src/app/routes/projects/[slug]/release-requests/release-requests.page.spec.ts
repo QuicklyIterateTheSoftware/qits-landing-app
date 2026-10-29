@@ -69,7 +69,11 @@ describe('ReleaseRequestsPage', () => {
     const qualifiedId = listed.requests[0].qualifiedId!;
     expect(qualifiedId).toMatch(/^contract-service-rr-\d+$/);
     expect(first.querySelector('a')?.textContent?.trim()).toBe(qualifiedId);
-    expect(first.textContent).toContain('Waiting on its gates');
+    // The recording (qits-projects before qits-1673) has neither items nor participants, and no
+    // sources on these rows: the row names nothing it carries, and nobody who asked.
+    expect(first.textContent).not.toContain('Waiting on its gates');
+    expect(first.querySelectorAll('[data-item]')).toHaveLength(0);
+    expect(first.querySelector('[data-participants]')?.textContent?.trim()).toBe('–');
     expect(first.textContent).toContain('2026-01-01 00:00 UTC');
     expect(first.querySelector('ui-lifecycle-line [title="Test: pending"]')).not.toBeNull();
     // Every link of the row opens the request by its logical id.
@@ -136,6 +140,69 @@ describe('ReleaseRequestsPage', () => {
     const row = element.querySelector('li')!;
     expect(row.textContent).toContain('1/3');
     expect(row.textContent).not.toContain('queued behind');
+  });
+
+  it('shows what a request carries, each work item linked, and who asked (qits-1673)', async () => {
+    const { element, request, answered } = await render();
+    // Derived from the recorded pending request: the items and participants qits-projects answers
+    // from 2026.1028.230057 on, one item naming a work item and one a plain branch.
+    const listed = goldenMaster(
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+    );
+    const carrying = {
+      ...listed.requests[0],
+      participants: ['agent@qits', 'dev'],
+      items: [
+        {
+          source: 'ticket/qits-1673',
+          label: 'ticket/qits-1673',
+          workItem: { qualifiedId: 'qits-1673', title: 'Show items and participants' },
+        },
+        { source: 'fix/rounding', label: 'fix/rounding', workItem: null },
+      ],
+    };
+    request.flush({ requests: [carrying] });
+    await answered();
+    const row = element.querySelector('li')!;
+    const items = Array.from(row.querySelectorAll('[data-item]'));
+    expect(items).toHaveLength(2);
+    const linked = items[0].querySelector('a[data-work-item]')!;
+    expect(linked.textContent?.trim()).toBe('qits-1673');
+    expect(linked.getAttribute('href')).toBe(`/projects/${project.slug}/work/detail/qits-1673`);
+    expect(items[0].textContent).toContain('Show items and participants');
+    expect(items[0].textContent).not.toContain('ticket/qits-1673');
+    // An item naming no work item shows its label, linking to the request like the rest.
+    expect(items[1].querySelector('[data-work-item]')).toBeNull();
+    expect(items[1].textContent?.trim()).toBe('fix/rounding');
+    expect(items[1].querySelector('a')?.getAttribute('href')).toBe(
+      `/projects/${project.slug}/release-requests/${carrying.qualifiedId}`,
+    );
+    expect(row.querySelector('[data-participants]')?.textContent?.trim()).toBe('agent@qits, dev');
+  });
+
+  it('names the source branches and nobody on an answer without items or participants', async () => {
+    const { element, request, answered } = await render();
+    // Derived from the recorded pending request, as an older qits-projects answers it (no items,
+    // no participants), with two source branches set: the row falls back to their names.
+    const listed = goldenMaster(
+      'a project with pending release requests',
+      'listProjectReleaseRequests',
+    );
+    const older = {
+      ...listed.requests[0],
+      sources: [{ name: 'feature/export' }, { name: 'fix/rounding' }],
+    };
+    request.flush({ requests: [older] });
+    await answered();
+    const row = element.querySelector('li')!;
+    const items = Array.from(row.querySelectorAll('[data-item]'));
+    expect(items.map((item) => item.textContent?.trim())).toEqual([
+      'feature/export',
+      'fix/rounding',
+    ]);
+    expect(row.querySelector('[data-work-item]')).toBeNull();
+    expect(row.querySelector('[data-participants]')?.textContent?.trim()).toBe('–');
   });
 
   it('says so when the project has no release requests', async () => {

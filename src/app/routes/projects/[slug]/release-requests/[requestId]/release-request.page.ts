@@ -25,11 +25,14 @@ import {
 import {
   FROZEN_TITLE,
   freezeFact,
+  participantsOf,
   queuedBehind,
   queuedNext,
   requestBadge,
+  requestItems,
 } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
+import { workItemPath } from '$core/workspaces/agent-attention';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import type {
   ReleaseArtifact,
@@ -86,7 +89,9 @@ const UNATTENDED_TITLE =
  * `<repository>-rr-<n>`), so the page reads that one request through its project
  * (`ReleaseRequestStore.load(projectId, ref)`, `getProjectReleaseRequest`), whatever its state or
  * age. The answer names the repository every later read and change is addressed by. The head names
- * the request by its logical id. A request the project does not have (404) is "not found" here; a
+ * the request by its logical id, and its title says what the request carries (qits-1673: its
+ * items, each work item linked; the source branches on an older answer). The facts say who asked:
+ * its participants, comma-joined. A request the project does not have (404) is "not found" here; a
  * read that fails otherwise says so, with Retry.
  *
  * Four tabs, in `?tab=`. The overview: the head, the facts, the release's whole lifecycle, the
@@ -150,8 +155,24 @@ const UNATTENDED_TITLE =
           <app-release-withdraw uiPageActions [request]="request" />
         }
         <div uiPageHeader class="flex min-w-0 flex-wrap items-baseline gap-2">
-          <h1 class="m-0 min-w-48 flex-1 text-3xl leading-[1.1] font-bold break-words">
-            {{ row()?.summary || 'Release request' }}
+          <h1
+            class="m-0 flex min-w-48 flex-1 flex-wrap items-baseline gap-x-4 gap-y-1 text-3xl leading-[1.1] font-bold break-words"
+          >
+            @for (item of items(); track item.key) {
+              <span class="inline-flex min-w-0 items-baseline gap-2" data-item>
+                @if (item.qualifiedId) {
+                  <a
+                    class="font-mono text-xl whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
+                    [routerLink]="workItem(item.qualifiedId)"
+                    data-work-item
+                    >{{ item.qualifiedId }}</a
+                  >
+                }
+                <span class="break-words">{{ item.text }}</span>
+              </span>
+            } @empty {
+              Release request
+            }
           </h1>
         </div>
         <p class="mt-0 mb-4 text-sm">
@@ -332,7 +353,7 @@ const UNATTENDED_TITLE =
                     short(request.mergedSha)
                   }}</span></span
                 >
-                <span>asked by {{ request.requester || none }}</span>
+                <span data-participants>asked by {{ participants(request) }}</span>
                 @if (request.gateTicketId) {
                   <a
                     class="text-sunflower-gold-800 underline"
@@ -507,6 +528,7 @@ export class ReleaseRequestPage {
   protected readonly frozenTitle = FROZEN_TITLE;
   protected readonly behind = queuedBehind;
   protected readonly next = queuedNext;
+  protected readonly participants = (request: ReleaseRequest) => participantsOf(request, NONE);
 
   /** The open tab, from `?tab=`: `commits`, `runs`, `changes`, or the overview. */
   protected readonly tab = toSignal(
@@ -540,6 +562,21 @@ export class ReleaseRequestPage {
   protected readonly view = computed(() => this.store.byId()[this.requestId()]);
 
   protected readonly row = computed(() => this.view()?.request.value);
+
+  /**
+   * What the request carries, as the head names it (qits-1673): per item the work item its branch
+   * names, linked to the item's page, and its title, else the branch's label; the source branches
+   * on an older answer without items. "Release request" while there is nothing to name.
+   */
+  protected readonly items = computed(() => {
+    const request = this.row();
+    return request ? requestItems(request) : [];
+  });
+
+  /** The page of the work item an item names, in the open project. */
+  protected workItem(qualifiedId: string): string {
+    return workItemPath(this.slug(), qualifiedId);
+  }
 
   /** The request's repository, from its answer; `''` until it is read. */
   protected readonly repoId = computed(() => this.row()?.repoId ?? '');

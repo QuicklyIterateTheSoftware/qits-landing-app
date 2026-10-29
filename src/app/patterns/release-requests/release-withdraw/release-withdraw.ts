@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ProjectsStore } from '$core/projects/projects.store';
+import { requestTitle, type AttributionFields } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal, isChangeable } from '$core/release-requests/release-request-model';
@@ -28,7 +29,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           [value]="reason()"
           (input)="reasonTyped($event)"
           placeholder="Why (optional)"
-          [attr.aria-label]="'Reason for withdrawing ' + request().summary"
+          [attr.aria-label]="'Reason for withdrawing ' + title()"
         />
       }
       <ui-action-button [action]="action()" />
@@ -45,7 +46,12 @@ export class ReleaseWithdraw {
   private readonly projects = inject(ProjectsStore);
   private readonly selected = inject(SelectedProject);
 
-  readonly request = input.required<Pick<ReleaseRequest, 'id' | 'repoId' | 'state' | 'summary'>>();
+  readonly request = input.required<
+    Pick<ReleaseRequest, 'id' | 'repoId' | 'state'> & AttributionFields
+  >();
+
+  /** What the request carries, naming it in the reason's label (qits-1673). */
+  protected readonly title = computed(() => requestTitle(this.request()));
 
   protected readonly withdrawable = computed(() => isChangeable(this.request()));
 

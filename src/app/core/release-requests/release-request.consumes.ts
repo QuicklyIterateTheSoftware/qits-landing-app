@@ -15,8 +15,12 @@ import type { Consumed } from '@qits/angular';
  */
 
 /**
- * The request itself, as its page shows it: the head (state, priority, summary), the facts, the
- * sources, the conflict, the pipeline with its gates and automations, the approval and the release.
+ * The request itself, as its page shows it: the head (state, priority, what it carries), the facts,
+ * the sources, the conflict, the pipeline with its gates and automations, the approval and the
+ * release. qits-1673: what the request carries is its `items` (one per explicit source: the work
+ * item the branch names, else the branch's label) and who asked is its `participants`; it no
+ * longer reads `summary` or `requester`, which qits-projects deprecated and will drop. An older
+ * answer without `items` or `participants` falls back to the source names (`requestItems`).
  * Epic qits-1580 (the soft feature freeze): the freeze in force (`featureFreeze`), the request it
  * is queued behind or the one queued behind it (`queuedBehind*`, `queuedNext*`, null otherwise),
  * and per source whether it counts toward the freeze (`feature`) or joined a frozen request by name
@@ -37,8 +41,11 @@ export const GET_RELEASE_REQUEST = [
   'request.priority',
   'request.mergedSha',
   'request.state',
-  'request.summary',
-  'request.requester',
+  'request.participants[]',
+  'request.items[].source',
+  'request.items[].label',
+  'request.items[].workItem.qualifiedId',
+  'request.items[].workItem.title',
   'request.unattended',
   'request.gateTicketId',
   'request.detail',
@@ -113,6 +120,17 @@ export const GET_RELEASE_REQUEST = [
   'request.queuedBehindQualifiedId',
   'request.queuedNext',
   'request.queuedNextQualifiedId',
+] as const;
+
+/**
+ * The paths of {@link GET_RELEASE_REQUEST} the pact never binds, although the page reads them: an
+ * item's `workItem` is null where its branch names no work item, and pact cannot match "an object
+ * or null" (see `projects.store.pact.spec.ts`), so binding the shape of one recorded item would
+ * fail every answer whose item has none. The page treats a missing work item as the label.
+ */
+export const UNBOUND_RELEASE_REQUEST = [
+  'request.items[].workItem.qualifiedId',
+  'request.items[].workItem.title',
 ] as const;
 
 /**

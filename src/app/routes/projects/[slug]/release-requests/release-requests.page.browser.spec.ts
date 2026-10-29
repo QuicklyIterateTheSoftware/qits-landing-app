@@ -79,7 +79,8 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     await answered(fixture);
     const view = page.elementLocator(element);
     expect(view.getByRole('listitem').elements()).toHaveLength(6);
-    await expect.element(view).toMatchTextContent('Finalized release');
+    // The finalized request, last: the rows no longer show a summary (qits-1673).
+    await expect.element(view).toMatchTextContent('contract-service-rr-1');
     await expect.element(view).toMatchTextContent('The sources cannot be folded.');
     await expect.element(view).toMatchScreenshot('requests');
   });

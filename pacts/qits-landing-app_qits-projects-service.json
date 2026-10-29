@@ -213,7 +213,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -245,7 +244,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -938,14 +936,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -1063,14 +1053,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -1461,7 +1443,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -1493,7 +1474,6 @@
                 }
               ],
               "state": "REJECTED",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -2211,14 +2191,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -2336,14 +2308,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -5369,14 +5333,12 @@
                 "releasedSha": "",
                 "repoId": "00000000-0000-4000-8000-000000000002",
                 "repoName": "contract-suite-app",
-                "requester": "contract-seeder",
                 "sources": [
                   {
                     "name": "main"
                   }
                 ],
                 "state": "PENDING",
-                "summary": "Release the export across the suite",
                 "unattended": false,
                 "updatedAt": "2026-01-01T00:00:00Z",
                 "version": ""
@@ -5434,17 +5396,6 @@
                           ]
                         },
                         "$.repoName": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
-                        },
-                        "$.summary": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -5530,7 +5481,47 @@
                             }
                           ]
                         },
-                        "$.requester": {
+                        "$.participants": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.participants[*]": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.items": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.items[*].source": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.items[*].label": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -6274,7 +6265,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -6306,7 +6296,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -6861,14 +6850,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -6986,14 +6967,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -7440,7 +7413,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -7472,7 +7444,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -8165,14 +8136,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -8290,14 +8253,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -8966,14 +8921,12 @@
                 "releasedSha": "",
                 "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
-                "requester": "contract-seeder",
                 "sources": [
                   {
                     "name": "main"
                   }
                 ],
                 "state": "PENDING",
-                "summary": "Release the PDF export",
                 "unattended": false,
                 "updatedAt": "2026-01-01T00:00:00Z",
                 "version": ""
@@ -9031,17 +8984,6 @@
                           ]
                         },
                         "$.repoName": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
-                        },
-                        "$.summary": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -9127,7 +9069,47 @@
                             }
                           ]
                         },
-                        "$.requester": {
+                        "$.participants": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.participants[*]": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.items": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.items[*].source": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.items[*].label": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -9852,10 +9834,8 @@
                 "releasedSha": "",
                 "repoId": "00000000-0000-4000-8000-000000000003",
                 "repoName": "contract-service",
-                "requester": "contract-seeder",
                 "sources": [],
                 "state": "PENDING",
-                "summary": "Waiting on its gates",
                 "unattended": false,
                 "updatedAt": "2026-01-01T00:00:00Z",
                 "version": ""
@@ -9913,17 +9893,6 @@
                           ]
                         },
                         "$.repoName": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
-                        },
-                        "$.summary": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -10009,7 +9978,47 @@
                             }
                           ]
                         },
-                        "$.requester": {
+                        "$.participants": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.participants[*]": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.items": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 0
+                            }
+                          ]
+                        },
+                        "$.items[*].source": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
+                        "$.items[*].label": {
                           "combine": "OR",
                           "matchers": [
                             {
@@ -18124,7 +18133,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000003",
               "repoName": "contract-service",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -18147,7 +18155,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the PDF export",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -18393,14 +18400,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -18497,14 +18496,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -18747,7 +18738,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -18770,7 +18760,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -19522,14 +19511,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -19626,14 +19607,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -19821,7 +19794,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -19853,7 +19825,6 @@
                 }
               ],
               "state": "CONFLICTED",
-              "summary": "Release the CSV export and the rounding fix",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -20227,14 +20198,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -20352,14 +20315,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -20512,7 +20467,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000003",
               "repoName": "contract-service",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -20553,7 +20507,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the CSV export",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -20783,14 +20736,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -20929,14 +20874,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -21140,7 +21077,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -21172,7 +21108,6 @@
                 }
               ],
               "state": "READY",
-              "summary": "Release the CSV export and the rounding fix",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -21619,14 +21554,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -21744,14 +21671,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -21989,7 +21908,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -22021,7 +21939,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -22714,14 +22631,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -22839,14 +22748,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -23084,7 +22985,6 @@
               "releasedSha": "cb9776855921387be1951de5bbbf0914aa54b1bf",
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -23107,7 +23007,6 @@
                 }
               ],
               "state": "RELEASED",
-              "summary": "Release the CSV export and the rounding fix",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -23701,14 +23600,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -23842,14 +23733,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -31578,7 +31461,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -31610,7 +31492,6 @@
                 }
               ],
               "state": "PENDING",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -32396,14 +32277,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -32521,14 +32394,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {
@@ -32736,7 +32601,6 @@
               "releasedSha": null,
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
-              "requester": "contract-seeder",
               "retryable": false,
               "sources": [
                 {
@@ -32768,7 +32632,6 @@
                 }
               ],
               "state": "WITHDRAWN",
-              "summary": "Release the export across the suite",
               "supersededBy": null,
               "unattended": false,
               "updatedAt": "2026-01-01T00:00:00Z",
@@ -33292,14 +33155,6 @@
                 }
               ]
             },
-            "$.request.requester": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
             "$.request.retryable": {
               "combine": "AND",
               "matchers": [
@@ -33417,14 +33272,6 @@
               ]
             },
             "$.request.state": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.request.summary": {
               "combine": "AND",
               "matchers": [
                 {

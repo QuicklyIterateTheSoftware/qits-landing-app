@@ -17,7 +17,7 @@ import {
 } from '$core/projects/release-request-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { releaseRequestRef, requestTone } from '$core/projects/release-requests';
+import { releaseRequestRef, requestTitle, requestTone } from '$core/projects/release-requests';
 import { attentionOf, lifecycleSummary } from '$core/release-requests/release-lifecycle';
 import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
@@ -130,7 +130,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
                     >{{ request.state }}</span
                   >
                 </div>
-                <span class="truncate text-[0.8125rem] text-gray-600">{{ request.summary }}</span>
+                <span class="truncate text-[0.8125rem] text-gray-600">{{ title(request) }}</span>
                 <ui-lifecycle-line [points]="row.summary" [spread]="true" />
               </a>
               <app-active-runs class="-mt-1 px-3 pb-2" [runs]="row.active" />
@@ -154,6 +154,7 @@ export class ReleaseMenu {
   private readonly ci = inject(CiRunsStore);
   protected readonly requestTone = requestTone;
   protected readonly ref = releaseRequestRef;
+  protected readonly title = requestTitle;
 
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);

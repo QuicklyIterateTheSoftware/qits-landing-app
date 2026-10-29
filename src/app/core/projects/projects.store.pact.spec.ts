@@ -18,6 +18,7 @@ import {
   LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECTS,
   SESSION_CHECK,
+  UNBOUND_RELEASE_REQUESTS,
 } from './projects.consumes';
 import { ProjectsStore } from './projects.store';
 
@@ -81,16 +82,22 @@ const UUID = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a
 const OPEN_ENDED: Rule = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
 const TYPE_OR_NULL: Rule = { combine: 'OR', matchers: [{ match: 'type' }, { match: 'null' }] };
 
+/** The paths a pact binds of `consumes`: all but those the store reads unbound (qits-1673). */
+const UNBOUND: ReadonlySet<string> = new Set(UNBOUND_RELEASE_REQUESTS);
+const bindable = (consumes: readonly string[]) => consumes.filter((path) => !UNBOUND.has(path));
+
 /**
  * What `listProjectReleaseRequests` asks of the one representative request, path by path (relative
  * to the request), made from `LIST_PROJECT_RELEASE_REQUESTS`: the id by its form, every other field
  * by type or null (most are null on some request: no version before the tag, no conflict, no
  * approver), and every array open-ended (`type`, min 0, no max). Arrays grow as qits-maintenance
  * learns automation kinds and qits-projects gates and phases, so none may be pinned to the length
- * it was recorded with (the trap qits-1075 hit with the archetype flows).
+ * it was recorded with (the trap qits-1075 hit with the archetype flows). `participants[]` and
+ * `items[]` (qits-1673) grow with every ask. An item's `workItem` is read but never bound
+ * (`UNBOUND_RELEASE_REQUESTS`): it is null where the branch names no work item.
  */
 const REQUEST_RULES: Rules = Object.fromEntries(
-  LIST_PROJECT_RELEASE_REQUESTS.flatMap((path) => {
+  bindable(LIST_PROJECT_RELEASE_REQUESTS).flatMap((path) => {
     const leaf = `$.${path.replace(/^requests\[\]\./, '')}`.replaceAll('[]', '[*]');
     const arrays = [...leaf.matchAll(/\[\*\]/g)].map((m) => leaf.slice(0, m.index));
     const rule: Rule =
@@ -188,7 +195,7 @@ const given = (
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
     // A field under a recorded `null` (no conflict) is bound in a state that has it.
-    consumes: heldBy(masters, state, operationId, consumes),
+    consumes: heldBy(masters, state, operationId, bindable(consumes)),
   });
 
 /**
