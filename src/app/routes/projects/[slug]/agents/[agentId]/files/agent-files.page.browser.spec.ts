@@ -113,7 +113,7 @@ describe('AgentFilesPage (screenshots)', () => {
       .expectOne(`/workspaces/api/workspaces/${slot}/active-process`)
       .flush(await goldenMaster(SLOT, 'getWorkspaceActiveProcess', 'qits-workspaces'));
     await answered(harness);
-    const worktree = `https://workspaces.test/workspaces/container/${slot}/agent-worktrees/${agent.agentId}`;
+    const worktree = `https://workspaces.test/workspaces/agent/${agent.agentId}`;
     http
       .expectOne(`${worktree}/detection`)
       .flush(await goldenMaster(FILES, 'detect', 'qits-workspace-daemon'));
