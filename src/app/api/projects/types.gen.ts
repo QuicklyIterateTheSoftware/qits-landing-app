@@ -1055,6 +1055,137 @@ export type HarnessCapabilityReport = {
     probeDetail?: string;
 };
 
+/**
+ * An idea of a project. Its status is derived, never written.
+ */
+export type Idea = {
+    id?: string;
+    projectId?: string;
+    /**
+     * One line: no line break, at most one '.', fewer than 20 whitespace characters.
+     */
+    title?: string;
+    /**
+     * At most 3 paragraphs and 600 characters.
+     */
+    description?: string | null;
+    /**
+     * The one idea of the same project enabling this one.
+     */
+    enabledBy?: string | null;
+    /**
+     * PLANNED (no counted work names it), QUEUED (some does, not all DONE) or DONE (every counted item DONE). DROPPED work is not counted.
+     */
+    status?: 'PLANNED' | 'QUEUED' | 'DONE';
+    archived?: boolean;
+    archiveReason?: string | null;
+    archivedAt?: Instant | null;
+    createdAt?: Instant;
+    updatedAt?: Instant;
+};
+
+/**
+ * Why the idea is archived.
+ */
+export type IdeaArchive = {
+    reason: string;
+};
+
+/**
+ * A new idea.
+ */
+export type IdeaCreate = {
+    /**
+     * The project: its id or its slug. Or name it as projectId.
+     */
+    project?: string;
+    /**
+     * The project's id, when project is not given.
+     */
+    projectId?: string;
+    /**
+     * One line: no line break, at most one '.', fewer than 20 whitespace characters.
+     */
+    title: string;
+    /**
+     * At most 3 paragraphs (blocks between blank lines) and 600 characters.
+     */
+    description?: string;
+    /**
+     * The one idea of the same project enabling this one; it must not itself be enabled by another.
+     */
+    enabledBy?: string;
+};
+
+/**
+ * One idea, with the work it inspired, the ideas it enables, and the idea enabling it.
+ */
+export type IdeaDetail = {
+    id?: string;
+    projectId?: string;
+    title?: string;
+    description?: string | null;
+    enabledBy?: string | null;
+    /**
+     * The enabling idea in brief, so a client can say when it is archived; null when enabledBy is.
+     */
+    enabledByIdea?: IdeaRef | null;
+    status?: 'PLANNED' | 'QUEUED' | 'DONE';
+    archived?: boolean;
+    archiveReason?: string | null;
+    archivedAt?: Instant | null;
+    createdAt?: Instant;
+    updatedAt?: Instant;
+    /**
+     * Every work item naming this idea as inspiredBy, oldest first.
+     */
+    inspired?: Array<IdeaInspiredWork>;
+    /**
+     * The ideas naming this one as their enabledBy, oldest first.
+     */
+    enables?: Array<IdeaRef>;
+};
+
+/**
+ * A work item naming the idea as its inspiration. DROPPED items are listed and are not counted by the idea's status.
+ */
+export type IdeaInspiredWork = {
+    id?: string;
+    qualifiedId?: string;
+    title?: string;
+    status?: string;
+    archetype?: Archetype;
+};
+
+/**
+ * A project's ideas, oldest first.
+ */
+export type IdeaList = {
+    ideas?: Array<Idea>;
+};
+
+/**
+ * A JSON merge patch (RFC 7396) of one idea: title, description, enabledBy. An absent property is left alone; null clears description or enabledBy. The status is derived and the archive has its own doors.
+ */
+export type IdeaPatch = {
+    /**
+     * Cannot be cleared.
+     */
+    title?: string;
+    description?: string | null;
+    enabledBy?: string | null;
+};
+
+/**
+ * Another idea, in brief.
+ */
+export type IdeaRef = {
+    id?: string;
+    title?: string;
+    status?: string;
+    archived?: boolean;
+};
+
 export type Instant = string;
 
 export type KeptTags = {
@@ -1809,6 +1940,7 @@ export type TransitionedEntity = {
     blockReason?: string;
     blockedBy?: string;
     waitingOn?: string;
+    inspiredBy?: string;
 };
 
 export type Uuid = string;
@@ -2037,6 +2169,10 @@ export type WorkCreate = {
      * An epic's or a ticket's acceptance criteria, in order.
      */
     acceptanceCriteria?: Array<string>;
+    /**
+     * An epic's, a ticket's or a campaign's inspiration: the id of an idea of the same project (GET /projects/api/ideas). Refused on a feature or a task.
+     */
+    inspiredBy?: string;
 };
 
 /**
@@ -2289,6 +2425,10 @@ export type WorkPatch = {
      * An epic's or ticket's acceptance criteria, the whole list in order; null or an empty list clears them. Each item is one line of Markdown: not blank, no line break, at most one '.', and fewer than 20 whitespace characters. Editable at REFINED (outside an epic's scope freeze); from READY_FOR_DEV on a changed list is a 409, and restating the same list passes.
      */
     acceptanceCriteria?: Array<string> | null;
+    /**
+     * An epic's, a ticket's or a campaign's inspiration: the id of an idea of the same project; null clears it. Editable at every status. Refused on a feature or a task. Setting, changing or clearing it re-derives the ideas' status.
+     */
+    inspiredBy?: string | null;
 };
 
 /**
@@ -2781,6 +2921,229 @@ export type ListDevelopmentGuideVariantsResponses = {
 };
 
 export type ListDevelopmentGuideVariantsResponse = ListDevelopmentGuideVariantsResponses[keyof ListDevelopmentGuideVariantsResponses];
+
+export type ListIdeasData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * true includes the archived ideas beside the others.
+         */
+        archived?: boolean;
+        /**
+         * The project: its id or its slug.
+         */
+        project: string;
+        /**
+         * Only the ideas at this status.
+         */
+        status?: 'PLANNED' | 'QUEUED' | 'DONE';
+    };
+    url: '/projects/api/ideas';
+};
+
+export type ListIdeasErrors = {
+    /**
+     * No project named, or a status naming none
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type ListIdeasResponses = {
+    /**
+     * The ideas
+     */
+    200: IdeaList;
+};
+
+export type ListIdeasResponse = ListIdeasResponses[keyof ListIdeasResponses];
+
+export type CreateIdeaData = {
+    body: IdeaCreate;
+    path?: never;
+    query?: never;
+    url: '/projects/api/ideas';
+};
+
+export type CreateIdeaErrors = {
+    /**
+     * No project, a title, description or enabledBy breaking its rule
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent creating in a project other than its own; nothing is written
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type CreateIdeaResponses = {
+    /**
+     * The idea as written
+     */
+    201: Idea;
+};
+
+export type CreateIdeaResponse = CreateIdeaResponses[keyof CreateIdeaResponses];
+
+export type GetIdeaData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/ideas/{id}';
+};
+
+export type GetIdeaErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No idea with this id
+     */
+    404: unknown;
+};
+
+export type GetIdeaResponses = {
+    /**
+     * The idea
+     */
+    200: IdeaDetail;
+};
+
+export type GetIdeaResponse = GetIdeaResponses[keyof GetIdeaResponses];
+
+export type PatchIdeaData = {
+    body: IdeaPatch;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/ideas/{id}';
+};
+
+export type PatchIdeaErrors = {
+    /**
+     * Not an object, empty, an unknown or server-owned property, a null title, or a value breaking its rule
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent editing an idea outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No idea with this id
+     */
+    404: unknown;
+};
+
+export type PatchIdeaResponses = {
+    /**
+     * The idea after the edit
+     */
+    200: Idea;
+};
+
+export type PatchIdeaResponse = PatchIdeaResponses[keyof PatchIdeaResponses];
+
+export type ArchiveIdeaData = {
+    body: IdeaArchive;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/ideas/{id}/archive';
+};
+
+export type ArchiveIdeaErrors = {
+    /**
+     * No reason
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent archiving an idea outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No idea with this id
+     */
+    404: unknown;
+};
+
+export type ArchiveIdeaResponses = {
+    /**
+     * The idea, archived
+     */
+    200: Idea;
+};
+
+export type ArchiveIdeaResponse = ArchiveIdeaResponses[keyof ArchiveIdeaResponses];
+
+export type UnarchiveIdeaData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/ideas/{id}/unarchive';
+};
+
+export type UnarchiveIdeaErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent unarchiving an idea outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No idea with this id
+     */
+    404: unknown;
+};
+
+export type UnarchiveIdeaResponses = {
+    /**
+     * The idea, not archived
+     */
+    200: Idea;
+};
+
+export type UnarchiveIdeaResponse = UnarchiveIdeaResponses[keyof UnarchiveIdeaResponses];
 
 export type ListLaunchPinsData = {
     body?: never;

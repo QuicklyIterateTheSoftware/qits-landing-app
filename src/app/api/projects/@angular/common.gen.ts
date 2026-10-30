@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, CollectTagsData, CollectTagsResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetBranchDeliveriesData, GetBranchDeliveriesResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveReleaseRequestSourceData, MoveReleaseRequestSourceResponse2, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
+import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, ArchiveIdeaData, ArchiveIdeaResponse, CollectTagsData, CollectTagsResponse, CreateIdeaData, CreateIdeaResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetBranchDeliveriesData, GetBranchDeliveriesResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetIdeaData, GetIdeaResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListIdeasData, ListIdeasResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveReleaseRequestSourceData, MoveReleaseRequestSourceResponse2, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchIdeaData, PatchIdeaResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UnarchiveIdeaData, UnarchiveIdeaResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
 
 /**
  * Catalogue
@@ -155,6 +155,78 @@ export const listDevelopmentGuideVariantsRequest = <ThrowOnError extends boolean
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/guide/variants',
+    ...options
+});
+
+/**
+ * List a project's ideas
+ *
+ * The project's ideas, oldest first. The archived ones are left out unless archived=true, which INCLUDES them beside the rest (it does not narrow to them); status narrows to one derived status. The project is its id or its slug.
+ */
+export const listIdeasRequest = <ThrowOnError extends boolean = false>(options: Options<ListIdeasData, ThrowOnError>): HttpRequest<ListIdeasResponse> => (options?.client ?? client).requestOptions<ListIdeasResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/ideas',
+    ...options
+});
+
+/**
+ * Create an idea
+ *
+ * A new idea of the project (id or slug, as project or projectId), PLANNED. The title is one line (no line break, at most one '.', fewer than 20 whitespace characters); the description at most 3 paragraphs and 600 characters; enabledBy one idea of the same project that is not itself enabled by another.
+ */
+export const createIdeaRequest = <ThrowOnError extends boolean = false>(options: Options<CreateIdeaData, ThrowOnError>): HttpRequest<CreateIdeaResponse> => (options?.client ?? client).requestOptions<CreateIdeaResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/ideas',
+    ...options
+});
+
+/**
+ * Read one idea
+ *
+ * The idea, the work items naming it as inspiredBy (DROPPED ones included, with their status), the ideas it enables, and the idea enabling it in brief.
+ */
+export const getIdeaRequest = <ThrowOnError extends boolean = false>(options: Options<GetIdeaData, ThrowOnError>): HttpRequest<GetIdeaResponse> => (options?.client ?? client).requestOptions<GetIdeaResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/ideas/{id}',
+    ...options
+});
+
+/**
+ * Edit an idea (JSON merge patch)
+ *
+ * Partial update of title, description and enabledBy. An absent property is left alone; null clears description or enabledBy. The rules are the create's; setting enabledBy on an idea that already enables others is refused.
+ */
+export const patchIdeaRequest = <ThrowOnError extends boolean = false>(options: Options<PatchIdeaData, ThrowOnError>): HttpRequest<PatchIdeaResponse> => (options?.client ?? client).requestOptions<PatchIdeaResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PATCH',
+    url: '/projects/api/ideas/{id}',
+    ...options
+});
+
+/**
+ * Archive an idea
+ *
+ * Hides the idea from the default listing, with the reason. Allowed at every status, and the status does not change. Archiving an archived idea restates the reason.
+ */
+export const archiveIdeaRequest = <ThrowOnError extends boolean = false>(options: Options<ArchiveIdeaData, ThrowOnError>): HttpRequest<ArchiveIdeaResponse> => (options?.client ?? client).requestOptions<ArchiveIdeaResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/ideas/{id}/archive',
+    ...options
+});
+
+/**
+ * Take an idea out of the archive
+ *
+ * Clears archived, archiveReason and archivedAt. An idea that is not archived is answered as it is.
+ */
+export const unarchiveIdeaRequest = <ThrowOnError extends boolean = false>(options: Options<UnarchiveIdeaData, ThrowOnError>): HttpRequest<UnarchiveIdeaResponse> => (options?.client ?? client).requestOptions<UnarchiveIdeaResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/ideas/{id}/unarchive',
     ...options
 });
 
@@ -1676,6 +1748,66 @@ export const getDevelopmentGuideResource = <ThrowOnError extends boolean = false
 export const listDevelopmentGuideVariantsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListDevelopmentGuideVariantsData, ThrowOnError> | undefined) => httpResource<ListDevelopmentGuideVariantsResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? listDevelopmentGuideVariantsRequest(opts) : undefined;
+});
+
+/**
+ * List a project's ideas
+ *
+ * The project's ideas, oldest first. The archived ones are left out unless archived=true, which INCLUDES them beside the rest (it does not narrow to them); status narrows to one derived status. The project is its id or its slug.
+ */
+export const listIdeasResource = <ThrowOnError extends boolean = false>(options: () => Options<ListIdeasData, ThrowOnError> | undefined) => httpResource<ListIdeasResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listIdeasRequest(opts) : undefined;
+});
+
+/**
+ * Create an idea
+ *
+ * A new idea of the project (id or slug, as project or projectId), PLANNED. The title is one line (no line break, at most one '.', fewer than 20 whitespace characters); the description at most 3 paragraphs and 600 characters; enabledBy one idea of the same project that is not itself enabled by another.
+ */
+export const createIdeaResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateIdeaData, ThrowOnError> | undefined) => httpResource<CreateIdeaResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createIdeaRequest(opts) : undefined;
+});
+
+/**
+ * Read one idea
+ *
+ * The idea, the work items naming it as inspiredBy (DROPPED ones included, with their status), the ideas it enables, and the idea enabling it in brief.
+ */
+export const getIdeaResource = <ThrowOnError extends boolean = false>(options: () => Options<GetIdeaData, ThrowOnError> | undefined) => httpResource<GetIdeaResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getIdeaRequest(opts) : undefined;
+});
+
+/**
+ * Edit an idea (JSON merge patch)
+ *
+ * Partial update of title, description and enabledBy. An absent property is left alone; null clears description or enabledBy. The rules are the create's; setting enabledBy on an idea that already enables others is refused.
+ */
+export const patchIdeaResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchIdeaData, ThrowOnError> | undefined) => httpResource<PatchIdeaResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? patchIdeaRequest(opts) : undefined;
+});
+
+/**
+ * Archive an idea
+ *
+ * Hides the idea from the default listing, with the reason. Allowed at every status, and the status does not change. Archiving an archived idea restates the reason.
+ */
+export const archiveIdeaResource = <ThrowOnError extends boolean = false>(options: () => Options<ArchiveIdeaData, ThrowOnError> | undefined) => httpResource<ArchiveIdeaResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? archiveIdeaRequest(opts) : undefined;
+});
+
+/**
+ * Take an idea out of the archive
+ *
+ * Clears archived, archiveReason and archivedAt. An idea that is not archived is answered as it is.
+ */
+export const unarchiveIdeaResource = <ThrowOnError extends boolean = false>(options: () => Options<UnarchiveIdeaData, ThrowOnError> | undefined) => httpResource<UnarchiveIdeaResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? unarchiveIdeaRequest(opts) : undefined;
 });
 
 /**
