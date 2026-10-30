@@ -343,7 +343,7 @@ describe('WorkItemPage', () => {
   describe('Close as done (qits-1757)', () => {
     /**
      * The registry with a CLOSE move to DONE out of `status` for `archetype`, before DROP as the
-     * service serves it: the recording installed here predates the CLOSE kind.
+     * service serves it, whether or not the installed recording already carries the CLOSE kind.
      */
     const withClose =
       (archetype: string, status: string) =>
@@ -353,7 +353,9 @@ describe('WorkItemPage', () => {
         ...recorded,
         archetypes: recorded.archetypes.map((a) => {
           if (a.archetype !== archetype) return a;
-          const moves = a.transitions[status] as { kind: string }[];
+          const moves = (a.transitions[status] as { kind: string }[]).filter(
+            (m) => m.kind !== 'CLOSE',
+          );
           const drop = moves.findIndex((m) => m.kind === 'DROP');
           const close = { to: 'DONE', kind: 'CLOSE', gates: ['CHILDREN_CLOSED'] };
           return {
