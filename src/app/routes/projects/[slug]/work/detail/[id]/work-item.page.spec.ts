@@ -150,6 +150,12 @@ describe('WorkItemPage', () => {
     }
   }
 
+  /** Answers derived from the recordings, each saying how in a comment at its use. */
+  interface Derive {
+    readonly work?: (recorded: any) => unknown;
+    readonly registry?: (recorded: any) => unknown;
+  }
+
   /**
    * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
    * a campaign's members too, from `campaignState`, and its description from "a campaign in
@@ -161,10 +167,12 @@ describe('WorkItemPage', () => {
     detail = false,
     campaignState = state,
     failHistory = false,
+    derive: Derive = {},
   ) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
-    const work = goldenMaster(state, 'listProjectWork');
+    const recorded = goldenMaster(state, 'listProjectWork');
+    const work = derive.work ? derive.work(recorded) : recorded;
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const harness = await RouterTestingHarness.create();
     const navigated = harness.navigateByUrl(
@@ -184,7 +192,8 @@ describe('WorkItemPage', () => {
       members: campaignState,
       described: [DETAIL],
     });
-    http.expectOne(REGISTRY).flush(goldenMaster('the archetype registry', 'listWorkArchetypes'));
+    const registry = goldenMaster('the archetype registry', 'listWorkArchetypes');
+    http.expectOne(REGISTRY).flush(derive.registry ? derive.registry(registry) : registry);
     await answerDetail(state, entity.qualifiedId, detail);
     await answerWorkspaces(failHistory);
     await settle();
@@ -329,6 +338,94 @@ describe('WorkItemPage', () => {
     const { element, children } = await shown(title, state);
     expect(element.querySelector(CHILDREN.replaceAll(' a', ''))).toBeNull();
     expect(children()).toEqual([]);
+  });
+
+  describe('Close as done (qits-1757)', () => {
+    /**
+     * The registry with a CLOSE move to DONE out of `status` for `archetype`, before DROP as the
+     * service serves it: the recording installed here predates the CLOSE kind.
+     */
+    const withClose =
+      (archetype: string, status: string) =>
+      (recorded: {
+        archetypes: { archetype: string; transitions: Record<string, unknown[]> }[];
+      }) => ({
+        ...recorded,
+        archetypes: recorded.archetypes.map((a) => {
+          if (a.archetype !== archetype) return a;
+          const moves = a.transitions[status] as { kind: string }[];
+          const drop = moves.findIndex((m) => m.kind === 'DROP');
+          const close = { to: 'DONE', kind: 'CLOSE', gates: ['CHILDREN_CLOSED'] };
+          return {
+            ...a,
+            transitions: {
+              ...a.transitions,
+              [status]: [...moves.slice(0, drop), close, ...moves.slice(drop)],
+            },
+          };
+        }),
+      });
+
+    /** "an epic with features and tasks" with the shipped feature's two tasks DONE and DROPPED. */
+    const tasksClosed = (recorded: { entities: { title: string; status: string }[] }) => ({
+      ...recorded,
+      entities: recorded.entities.map((e) =>
+        e.title === 'First shipped task'
+          ? { ...e, status: 'DONE' }
+          : e.title === 'Second shipped task'
+            ? { ...e, status: 'DROPPED' }
+            : e,
+      ),
+    });
+
+    it('offers it on a feature whose tasks are all closed, and moves it to DONE', async () => {
+      const { harness, entity, groups, press } = await shown(
+        'Shipped feature',
+        EPIC,
+        false,
+        EPIC,
+        false,
+        { work: tasksClosed, registry: withClose('FEATURE', 'IMPLEMENTED') },
+      );
+      expect(groups()).toEqual([
+        {
+          title: 'Status',
+          actions: [
+            'Mark verifying',
+            'Skip to verified',
+            'Back to implementing',
+            'Close as done',
+            'Drop',
+          ],
+        },
+      ]);
+      press('Close as done');
+      await settle();
+      const request = http.expectOne(`/projects/api/work/${entity.qualifiedId}/status`);
+      expect(request.request.body).toEqual({ target: 'DONE' });
+      // The recorded answer of "an implementing epic", with the status this move answers instead.
+      const answer = goldenMaster('an implementing epic', 'setWorkStatus');
+      request.flush({ ...answer, status: 'DONE' });
+      await settle();
+      await harness.fixture.whenStable();
+      expect(groups()).toEqual([]);
+    });
+
+    it('holds it back while a child is open', async () => {
+      // The shipped feature's tasks as recorded: IMPLEMENTED and READY_FOR_DEV.
+      const { groups } = await shown('Shipped feature', EPIC, false, EPIC, false, {
+        registry: withClose('FEATURE', 'IMPLEMENTED'),
+      });
+      expect(groups().flatMap((g) => g.actions)).not.toContain('Close as done');
+    });
+
+    it('holds it back on an epic with one feature still open', async () => {
+      const { groups } = await shown('Nested epic', EPIC, false, EPIC, false, {
+        work: tasksClosed,
+        registry: withClose('EPIC', 'READY_FOR_DEV'),
+      });
+      expect(groups().flatMap((g) => g.actions)).not.toContain('Close as done');
+    });
   });
 
   it('shows no actions for done work', async () => {

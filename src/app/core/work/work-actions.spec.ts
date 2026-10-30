@@ -1,6 +1,6 @@
 import { goldenMaster } from '../../../testing/golden-masters';
 import type { ArchetypeEntry, LegalMove } from './archetypes.consumes';
-import { lookOf, workActions, type WorkActionGroupId } from './work-actions';
+import { allClosed, lookOf, workActions, type WorkActionGroupId } from './work-actions';
 
 /** qits-projects' recorded registry ("the archetype registry"), by archetype. */
 const registry: Record<string, ArchetypeEntry> = Object.fromEntries(
@@ -11,11 +11,38 @@ const registry: Record<string, ArchetypeEntry> = Object.fromEntries(
 
 type Table = Partial<Record<WorkActionGroupId, readonly string[]>>;
 
-/** `workActions` as group id → each action's label. */
-const shown = (archetype: string, status: string | null, entry = registry[archetype]): Table =>
+/** `workActions` as group id → each action's label; `children` are the direct children's statuses. */
+const shown = (
+  archetype: string,
+  status: string | null,
+  entry = registry[archetype],
+  children?: readonly (string | null | undefined)[],
+): Table =>
   Object.fromEntries(
-    workActions(entry, archetype, status).map((g) => [g.id, g.actions.map((a) => lookOf(a).label)]),
+    workActions(entry, archetype, status, children).map((g) => [
+      g.id,
+      g.actions.map((a) => lookOf(a).label),
+    ]),
   );
+
+/**
+ * `archetype`'s recorded entry with a CLOSE move to DONE out of `status` (qits-1757), placed before
+ * DROP as the service serves it. Derived: the recording installed here predates the CLOSE kind.
+ */
+const withClose = (archetype: string, status: string): ArchetypeEntry => {
+  const entry = registry[archetype];
+  const moves = (entry.transitions?.[status] ?? []).filter((m) => m.kind !== 'CLOSE');
+  const drop = moves.findIndex((m) => m.kind === 'DROP');
+  const close: LegalMove = { to: 'DONE', kind: 'CLOSE', gates: ['CHILDREN_CLOSED'] };
+  const at = drop < 0 ? moves.length : drop;
+  return {
+    ...entry,
+    transitions: {
+      ...entry.transitions,
+      [status]: [...moves.slice(0, at), close, ...moves.slice(at)],
+    },
+  };
+};
 
 const PLAN = ['Edit', 'Reshape'];
 
@@ -99,6 +126,56 @@ describe('workActions', () => {
     });
   });
 
+  describe('Close as done (qits-1757)', () => {
+    const feature = withClose('FEATURE', 'IMPLEMENTED');
+    const featureMoves = (children?: readonly (string | null | undefined)[]) =>
+      shown('FEATURE', 'IMPLEMENTED', feature, children).status;
+
+    it('shows when every child is DONE or DROPPED', () => {
+      expect(featureMoves(['DONE', 'DROPPED', 'DONE'])).toEqual([
+        'Mark verifying',
+        'Skip to verified',
+        'Back to implementing',
+        'Close as done',
+        'Drop',
+      ]);
+      expect(featureMoves(['DROPPED'])).toContain('Close as done');
+    });
+
+    it('hides while one child is still open', () => {
+      expect(featureMoves(['DONE', 'VERIFIED'])).not.toContain('Close as done');
+      expect(featureMoves(['DONE', null])).not.toContain('Close as done');
+    });
+
+    it('hides when there are no children, or they are not known', () => {
+      expect(featureMoves([])).not.toContain('Close as done');
+      expect(featureMoves(undefined)).not.toContain('Close as done');
+    });
+
+    it('leaves a campaign’s start alone: CLOSE is not a forward move', () => {
+      const campaign = withClose('CAMPAIGN', 'REFINED');
+      expect(shown('CAMPAIGN', 'REFINED', campaign, ['DONE', 'DROPPED'])).toEqual({
+        agent: ['Start campaign'],
+        status: ['Mark ready for dev', 'Back to reported', 'Close as done', 'Drop', 'Block'],
+      });
+      expect(shown('CAMPAIGN', 'REFINED', campaign, ['DONE', 'REFINED'])).toEqual({
+        agent: ['Start campaign'],
+        status: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'],
+      });
+      // One start, whatever the CLOSE move beside it.
+      const reported = withClose('CAMPAIGN', 'REPORTED');
+      expect(shown('CAMPAIGN', 'REPORTED', reported, ['DONE']).agent).toEqual(['Start campaign']);
+    });
+
+    it('counts DONE and DROPPED as closed, and nothing else', () => {
+      expect(allClosed(['DONE', 'DROPPED'])).toBe(true);
+      expect(allClosed(['DONE', 'VERIFIED'])).toBe(false);
+      expect(allClosed(['DONE', undefined])).toBe(false);
+      expect(allClosed([])).toBe(false);
+      expect(allClosed(undefined)).toBe(false);
+    });
+  });
+
   it('lists the flow in the Dispatch popover', () => {
     const [agent] = workActions(registry['EPIC'], 'EPIC', 'READY_FOR_DEV');
     expect(lookOf(agent.actions[0]).details).toEqual({
@@ -108,7 +185,7 @@ describe('workActions', () => {
   });
 
   it('labels each kind of move, and an unknown kind as a plain move', () => {
-    const looks = ['FORWARD', 'SKIP', 'BACK', 'DROP', 'REOPEN', 'SIDEWAYS'].map((kind) =>
+    const looks = ['FORWARD', 'SKIP', 'BACK', 'DROP', 'REOPEN', 'CLOSE', 'SIDEWAYS'].map((kind) =>
       lookOf({ kind: 'move', move: { to: 'REFINED', kind: kind as LegalMove['kind'] } }),
     );
     expect(looks).toEqual([
@@ -117,6 +194,7 @@ describe('workActions', () => {
       { label: 'Back to refined', variant: 'muted' },
       { label: 'Drop', variant: 'danger' },
       { label: 'Reopen', variant: 'muted' },
+      { label: 'Close as done', variant: 'success' },
       { label: 'Move to refined', variant: 'muted' },
     ]);
   });

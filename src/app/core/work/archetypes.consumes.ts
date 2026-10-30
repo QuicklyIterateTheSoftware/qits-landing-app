@@ -21,7 +21,7 @@ export type ArchetypeEntry = NonNullable<
   Consumed<ListWorkArchetypesResponses[200], typeof LIST_WORK_ARCHETYPES>['archetypes']
 >[number];
 
-/** One legal move out of a status: where to, and its kind (FORWARD, SKIP, BACK, DROP, REOPEN). */
+/** One legal move out of a status: where to, and its kind (FORWARD, SKIP, BACK, CLOSE, DROP, REOPEN). */
 export type LegalMove = NonNullable<ArchetypeEntry['transitions']>[string][number];
 
 /** What a dispatch press runs from one status: the next phase, and the whole flow. */

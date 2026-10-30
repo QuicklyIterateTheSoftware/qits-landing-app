@@ -63,7 +63,9 @@ const notBuiltYet = (): void => undefined;
  * Last, the item's workspaces in every state, newest first (`WorkspacesStore.loadHistory`, by the
  * item's id); the page also loads the open workspaces once, for its cards' Workspace links.
  *
- * Wired: every Status move (`WorkStore.transition`, the item's entry takes the answered status),
+ * Wired: every Status move (`WorkStore.transition`, the item's entry takes the answered status;
+ * "Close as done", a CLOSE move, shows only while every direct child is DONE or DROPPED: a
+ * campaign's members, an epic's features or a feature's tasks as `SelectedWork`'s graph holds them),
  * Dispatch (`WorkStore.dispatch`, the whole flow) and the next phase's button (that phase alone).
  * Drop opens its own form instead of moving at once (`app-work-drop`, qits-248): it asks for the
  * outcome and, where the outcome needs one, a reference, then sends `WorkStore.drop`. Every other
@@ -217,8 +219,14 @@ export class WorkItemPage {
     const entry = this.entry();
     if (!entry) return [];
     const registry = this.archetypes.of(entry.archetype);
-    const status = this.work.graph().statusOf(entry);
-    return workActions(registry, entry.archetype, status).map((group) => ({
+    const graph = this.work.graph();
+    const status = graph.statusOf(entry);
+    // A CLOSE move's gate reads the direct children (qits-1757): a campaign's members, else the
+    // item's children in the work tree (an epic's features, a feature's tasks), by their own status.
+    const children = (
+      entry.archetype === 'CAMPAIGN' ? graph.membersOf(entry) : graph.nodeOf(entry).children
+    ).map((child) => child.entry.status);
+    return workActions(registry, entry.archetype, status, children).map((group) => ({
       title: GROUP_TITLES[group.id],
       actions: group.actions.map((action) => this.action(action, entry)),
     }));

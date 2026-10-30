@@ -19,7 +19,9 @@ import type { ArchetypeEntry, DispatchPhase, LegalMove } from './archetypes.cons
  *   REFINED, IMPLEMENTED), but the service starts a campaign only from REFINED, so a press at any
  *   other status is refused. TODO: take it from the registry once it says when a campaign starts.
  * - `status`: every move the registry serves out of the status, in its order (`transitions`), then
- *   Block (a placeholder) wherever the Agent group has something to run.
+ *   Block (a placeholder) wherever the Agent group has something to run. A CLOSE move ("Close as
+ *   done", qits-1757) shows only while every direct child is closed (`allClosed`): the service
+ *   refuses it otherwise (its CHILDREN_CLOSED gate), so the page holds it back until it can pass.
  * - `plan` (Edit, Reshape, Refinement room): placeholders. Edit and Reshape for every archetype
  *   but a campaign at REPORTED and REFINED; TODO: the registry does not say yet when the plan can
  *   change. Refinement room where the next phase is refine.
@@ -45,19 +47,33 @@ export interface WorkActionGroup {
 /** Statuses where the plan can still change. TODO: from the registry, once it says so. */
 const PLANNING: ReadonlySet<string> = new Set(['REPORTED', 'REFINED']);
 
+/** The statuses a child counts as closed in, for a CLOSE move's CHILDREN_CLOSED gate. */
+const CLOSED: ReadonlySet<string> = new Set(['DONE', 'DROPPED']);
+
+/**
+ * Whether a CLOSE move may show: the item has at least one direct child (a campaign's members, an
+ * epic's features, a feature's tasks) and every one of them is DONE or DROPPED. `children` are
+ * their own statuses; undefined (not known) counts as none.
+ */
+export function allClosed(children: readonly (string | null | undefined)[] | undefined): boolean {
+  return !!children?.length && children.every((status) => !!status && CLOSED.has(status));
+}
+
 /**
  * The actions available for `archetype` at `status`, by group; empty groups are left out.
  * `registry` is the archetype's registry entry: without it (not loaded yet) there are no Agent or
- * Status actions.
+ * Status actions. `children` are the statuses of the item's direct children, for `allClosed`.
  */
 export function workActions(
   registry: ArchetypeEntry | undefined,
   archetype: string | undefined,
   status: string | null | undefined,
+  children?: readonly (string | null | undefined)[],
 ): readonly WorkActionGroup[] {
   const s = status ?? '';
   const phases = registry?.phases?.[s];
-  const moves = registry?.transitions?.[s] ?? [];
+  const closable = allClosed(children);
+  const moves = (registry?.transitions?.[s] ?? []).filter((m) => m.kind !== 'CLOSE' || closable);
   const campaign = archetype === 'CAMPAIGN';
 
   const agent: WorkAction[] = [];
@@ -135,6 +151,8 @@ function moveLook(move: LegalMove): WorkActionLook {
       return { label: `Skip to ${to}`, variant: 'muted' };
     case 'BACK':
       return { label: `Back to ${to}`, variant: 'muted' };
+    case 'CLOSE':
+      return { label: 'Close as done', variant: 'success' };
     case 'DROP':
       return { label: 'Drop', variant: 'danger' };
     case 'REOPEN':
