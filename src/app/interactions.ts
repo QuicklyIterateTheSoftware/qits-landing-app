@@ -291,6 +291,32 @@ export const INTERACTIONS = {
    */
   'agents-menu':
     'The top bar’s agents menu lists the project’s agents with what they wait on and what needs attention',
+  /**
+   * The Ideas page (`routes/projects/[slug]/ideas/`) via `IdeasStore.loadList`: the open project's
+   * ideas, filtered by status, with or without the archived ones (epic qits-888). The work item
+   * page's inspiration picker reads the same list.
+   */
+  'list-ideas': 'The Ideas page lists the project’s ideas',
+  /** An idea's page via `IdeasStore.loadIdea`: the idea, what enables it, what it enables and inspired. */
+  'show-idea': 'An idea’s page shows the idea, the ideas around it and the work it inspired',
+  /** The idea form's Create via `IdeasStore.create`; a refusal shows the service's message. */
+  'create-idea': 'Create on the idea form adds an idea to the project',
+  /** The idea form's Save via `IdeasStore.update`: a merge patch of title, description, enabledBy. */
+  'edit-idea': 'Save on the idea form edits an idea',
+  /** Archive on an idea's page via `IdeasStore.archive`, with the reason it asks for. */
+  'archive-idea': 'Archive on an idea’s page archives it with a reason',
+  /** Unarchive on an archived idea's page via `IdeasStore.unarchive`. */
+  'unarchive-idea': 'Unarchive on an idea’s page brings it back',
+  /**
+   * The work create form (`routes/projects/[slug]/work/create/`) via `WorkWritesStore.create`: a
+   * root epic, ticket or campaign, inspired by an idea when opened from one (epic qits-888).
+   */
+  'create-work-item': 'Create on the work form files an epic, a ticket or a campaign',
+  /**
+   * The work item page's inspiration (`work-inspiration.ts`) via `WorkWritesStore.setInspiredBy`:
+   * names an idea of the project as an epic's, ticket's or campaign's inspiration, or clears it.
+   */
+  'set-work-inspiration': 'The work item page sets or clears the idea inspiring the item',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

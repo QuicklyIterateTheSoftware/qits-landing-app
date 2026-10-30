@@ -74,6 +74,17 @@ no event exists yet (qits-1270's thread lists them): project and repository crea
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
 counts.
 
+Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
+`ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
+`IdeasStore` (`core/ideas/`); the form (`patterns/ideas/idea-form/`) counts the service's rules
+live (`idea-rules.ts`: paragraphs x/3, characters x/600) and shows a 400's `message` as it is. They
+read again after `IDEA_EVENTS` (`IdeaCreated`, `IdeaUpdated`, `IdeaArchived`, `IdeaUnarchived`)
+whose `projectId` is the open project (`IdeasStore.follow`). An idea's Create epic / Create ticket
+open `work/create` (`WorkCreatePage`, `WorkWritesStore.create`) filled from the query and sending
+`inspiredBy`; the work item page shows and sets an epic's, ticket's or campaign's inspiration
+(`patterns/ideas/work-inspiration/`, `WorkWritesStore.setInspiredBy`, a `patchWork` of
+`inspiredBy` alone, which no recording holds yet, so it has no pact interaction).
+
 Users today: the lightning menu fetches the open project's release requests when the project opens
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
 (`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a

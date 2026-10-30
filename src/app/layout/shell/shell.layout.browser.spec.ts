@@ -230,6 +230,7 @@ describe('ShellLayout (screenshots)', () => {
       .map((a) => a.firstChild?.textContent?.trim());
     expect(labels).toEqual([
       'Work',
+      'Ideas',
       'Agents',
       'Release Requests',
       'Desk',

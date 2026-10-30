@@ -23,6 +23,11 @@ import { ProjectAgentsPage } from './routes/projects/[slug]/agents/project-agent
 import { WorkAgentLayout } from './routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout';
 import { WorkspaceSlotPage } from './routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page';
 import { ProjectPickerPage } from './routes/projects/project-picker.page';
+import { WorkCreatePage } from './routes/projects/[slug]/work/create/work-create.page';
+import { ProjectIdeasPage } from './routes/projects/[slug]/ideas/project-ideas.page';
+import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-create.page';
+import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
+import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -69,6 +74,10 @@ describe('work routes', () => {
 
   it('opens an item’s page at work/detail/<qualified id>, without the tabs', async () => {
     expect(await opened('/projects/qits/work/detail/qits-112')).toEqual([WorkItemPage]);
+  });
+
+  it('opens the create form at work/create, without the tabs', async () => {
+    expect(await opened('/projects/qits/work/create?archetype=EPIC')).toEqual([WorkCreatePage]);
   });
 
   it('has no archive at work-archive any more: the catch-all answers it', async () => {
@@ -121,5 +130,30 @@ describe('agents and workspaces routes', () => {
 
   it('opens a slot at workspaces/<slot id>', async () => {
     expect(await opened('/projects/x/workspaces/1')).toEqual([WorkspaceSlotPage]);
+  });
+});
+
+describe('ideas routes', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(work),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+        },
+      ],
+    }),
+  );
+
+  it.each([
+    ['ideas', ProjectIdeasPage],
+    ['ideas/create', IdeaCreatePage],
+    ['ideas/detail/i-1', IdeaPage],
+    ['ideas/detail/i-1/edit', IdeaEditPage],
+  ])('opens %s', async (path, page) => {
+    expect(await opened(`/projects/x/${path}`)).toEqual([page]);
   });
 });

@@ -1157,6 +1157,133 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "archiveIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "archive-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "archive-idea: archiveIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "reason": "Folded into the cache epic."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/ideas/${enabledIdeaId}/archive",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/ideas/00000000-0000-4000-8000-000000000002/archive"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archived": true,
+            "id": "00000000-0000-4000-8000-000000000002",
+            "status": "PLANNED",
+            "title": "Share the build cache"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "addWorkComment"
           },
           "qits-trigger": {
@@ -1289,6 +1416,284 @@
           }
         },
         "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "createIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "create-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "create-idea: createIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "project": "{projectId}",
+            "title": "Faster builds. Fewer waits. Less cost"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/projects/api/ideas"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "title has 2 '.' characters; at most one, so one title is one sentence"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 400
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "createIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "create-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "create-idea: createIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with no work",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "description": "Cache the dependencies between runs.",
+            "project": "{projectId}",
+            "title": "Faster builds"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/projects/api/ideas"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archived": false,
+            "id": "00000000-0000-4000-8000-000000000002",
+            "status": "PLANNED",
+            "title": "Faster builds"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "createWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "create-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "create-work-item: createWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with no work",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "archetype": "TICKET",
+            "impetus": "The CSV export answers 500 when the range holds no invoice.",
+            "project": "{projectId}",
+            "ticketType": "BUG",
+            "title": "Export fails for an empty quarter"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/projects/api/work"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "qualifiedId": "contract-00000001-1"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
       },
       "type": "Synchronous/HTTP"
     },
@@ -3226,6 +3631,133 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "patchIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "edit-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "edit-idea: patchIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "title": "Share the build cache across runners"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/ideas/${enabledIdeaId}",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "PATCH",
+        "path": "/projects/api/ideas/00000000-0000-4000-8000-000000000002"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archived": false,
+            "id": "00000000-0000-4000-8000-000000000002",
+            "status": "PLANNED",
+            "title": "Share the build cache across runners"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "setWorkStatus"
           },
           "qits-trigger": {
@@ -3395,6 +3927,143 @@
             "$.status": {
               "combine": "AND",
               "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listIdeas"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "list-ideas",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "list-ideas: listIdeas",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/projects/api/ideas",
+        "query": {
+          "project": [
+            "{projectId}"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "ideas": [
+              {
+                "archived": false,
+                "id": "00000000-0000-4000-8000-000000000003",
+                "status": "QUEUED",
+                "title": "Faster builds"
+              },
+              {
+                "archived": false,
+                "id": "00000000-0000-4000-8000-000000000003",
+                "status": "QUEUED",
+                "title": "Faster builds"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.ideas": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.ideas[*].archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ideas[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.ideas[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ideas[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
                 {
                   "match": "type"
                 }
@@ -10038,6 +10707,243 @@
               ]
             },
             "$.files[*].path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-idea: getIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/ideas/${ideaId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/ideas/00000000-0000-4000-8000-000000000003"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archiveReason": null,
+            "archived": false,
+            "description": "Cache the dependencies between runs.\n\nShare the cache across runners.",
+            "enabledBy": null,
+            "enables": [
+              {
+                "archived": false,
+                "id": "00000000-0000-4000-8000-000000000002",
+                "status": "PLANNED",
+                "title": "Share the build cache"
+              }
+            ],
+            "id": "00000000-0000-4000-8000-000000000003",
+            "inspired": [
+              {
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000005",
+                "qualifiedId": "contract-00000001-1",
+                "status": "REPORTED",
+                "title": "Cache the build dependencies"
+              }
+            ],
+            "status": "QUEUED",
+            "title": "Faster builds"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.enables": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.enables[*].archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.enables[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.enables[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.enables[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.inspired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.inspired[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.inspired[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.inspired[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.inspired[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.inspired[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.title": {
               "combine": "AND",
               "matchers": [
                 {
@@ -35258,6 +36164,121 @@
       },
       "response": {
         "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "unarchiveIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "unarchive-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "unarchive-idea: unarchiveIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/ideas/${archivedIdeaId}/unarchive",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/ideas/00000000-0000-4000-8000-000000000001/unarchive"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archived": false,
+            "id": "00000000-0000-4000-8000-000000000001",
+            "status": "PLANNED",
+            "title": "Nightly rebuilds"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archived": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
       },
       "type": "Synchronous/HTTP"
     },

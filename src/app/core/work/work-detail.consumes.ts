@@ -16,7 +16,8 @@ import type { Consumed } from '@qits/angular';
  * `getWork`, by qualified id: the item's own fields the detail views show. A ticket: its type,
  * impetus, assignee and whether it is blocked. A task: its repository, when it was started and
  * implemented, and what it depends on. A feature: what it depends on. Every archetype: its
- * description (Markdown).
+ * description (Markdown). An epic, a ticket or a campaign: the idea inspiring it (`inspiredBy`,
+ * epic qits-888; the answer omits it when none does, so no recording binds it yet).
  */
 export const GET_WORK = [
   'id',
@@ -30,6 +31,7 @@ export const GET_WORK = [
   'implementingAt',
   'implementedAt',
   'dependsOn',
+  'inspiredBy',
 ] as const;
 
 /**

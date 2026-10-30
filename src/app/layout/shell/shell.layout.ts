@@ -225,6 +225,7 @@ export class ShellLayout {
               path: `/projects/${slug}/work/${tab.segment}`,
             })),
           },
+          { label: 'Ideas', path: `/projects/${slug}/${IDEAS}` },
           { label: 'Agents', path: `/projects/${slug}/${AGENTS}` },
           {
             label: 'Release Requests',
@@ -322,6 +323,9 @@ export const RELEASE_REQUESTS = 'release-requests';
 
 /** The desk section's segment below a project: `/projects/<slug>/desk`. */
 export const DESK = 'desk';
+
+/** The ideas section's segment below a project: `/projects/<slug>/ideas` (epic qits-888). */
+export const IDEAS = 'ideas';
 
 /** True when `url` is `path` or a page below it, query and fragment ignored. */
 function within(url: string, path: string): boolean {

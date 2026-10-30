@@ -39,6 +39,7 @@ import { AgentsStore } from '$core/workspaces/agents.store';
 import { ACTIVE_AGENT_EVENTS } from '$core/workspaces/workspace-events';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
+import { WorkInspiration } from '$patterns/ideas/work-inspiration/work-inspiration';
 
 /** Each group's caption, shown below its buttons. */
 const GROUP_TITLES: Readonly<Record<WorkActionGroupId, string>> = {
@@ -60,6 +61,9 @@ const notBuiltYet = (): void => undefined;
  * body of its own per archetype (`$patterns/work/detail/`): the description (Markdown), the
  * archetype's facts, its children as the lists draw them, its dossier and its comments. The item
  * comes from what `SelectedWork` loads; the rest from `WorkDetailStore`, by the URL's qualified id.
+ * Below the body, an epic's, a ticket's or a campaign's inspiration (`app-work-inspiration`, epic
+ * qits-888): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`), after
+ * which the item's own data is read again.
  * Last, the item's workspaces in every state, newest first (`WorkspacesStore.loadHistory`, by the
  * item's id); the page also loads the open workspaces once, for its cards' Workspace links.
  *
@@ -99,6 +103,7 @@ const notBuiltYet = (): void => undefined;
     TaskDetail,
     TicketDetail,
     WorkDrop,
+    WorkInspiration,
     WorkWorkspaces,
   ],
   host: { class: 'block' },
@@ -145,6 +150,19 @@ const notBuiltYet = (): void => undefined;
               }
             }
           </ui-spinner>
+          @if (entry(); as entry) {
+            @if (detail()?.entity; as entity) {
+              <app-work-inspiration
+                class="mt-6"
+                [slug]="slug()"
+                [projectId]="projectId()"
+                [qualifiedId]="id()"
+                [archetype]="entry.archetype"
+                [inspiredBy]="entity.inspiredBy"
+                (changed)="inspirationChanged()"
+              />
+            }
+          }
           <app-work-workspaces
             class="mt-8"
             [class.hidden]="!entry()"
@@ -207,6 +225,15 @@ export class WorkItemPage {
   protected readonly detailPath = computed(
     () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
   );
+
+  /** The open project's slug, for the inspiration's link to its idea. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /** The item's inspiration changed: its own data holds `inspiredBy`, so it is read again. */
+  protected inspirationChanged(): void {
+    const ref = this.id();
+    if (ref) void this.details.refresh(ref);
+  }
 
   /** The open project's id, for `WorkStore.drop` (and every other write the page makes). */
   protected readonly projectId = computed(() => this.selected.project()?.id ?? '');

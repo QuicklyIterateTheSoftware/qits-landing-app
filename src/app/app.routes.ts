@@ -42,6 +42,14 @@ import { sessionGuard } from '$core/auth/session.guard';
  * nothing to bounce on, and the server answers `/work` with a 302 instead of rendering an empty
  * page.
  *
+ * A new epic, ticket or campaign is filed at `work/create` (`WorkCreatePage`, epic qits-888), its
+ * query filling the form (an idea's Create epic / Create ticket names the idea as `inspiredBy`).
+ *
+ * A project's ideas (epic qits-888) are at `projects/<slug>/ideas` (`ProjectIdeasPage`), a new one
+ * at `ideas/create` (`IdeaCreatePage`), one idea at `ideas/detail/<idea id>` (`IdeaPage`, in the
+ * work section's `detail` scheme so an id can never be taken for `create`) and its edit at
+ * `ideas/detail/<idea id>/edit` (`IdeaEditPage`).
+ *
  * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`),
  * one request at `release-requests/<requestId>` (`ReleaseRequestPage`).
  *
@@ -103,6 +111,42 @@ export const routes: Routes = [
           { path: '', children: [] },
           { path: ':tab', children: [] },
         ],
+      },
+      {
+        // Outside the layout like an item's page, and before it, so `create` is never a tab.
+        path: 'projects/:slug/work/create',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/work/create/work-create.page').then(
+            (m) => m.WorkCreatePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/ideas',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ideas/project-ideas.page').then(
+            (m) => m.ProjectIdeasPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/ideas/create',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ideas/create/idea-create.page').then(
+            (m) => m.IdeaCreatePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/ideas/detail/:ideaId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ideas/detail/[ideaId]/idea.page').then(
+            (m) => m.IdeaPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/ideas/detail/:ideaId/edit',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page').then(
+            (m) => m.IdeaEditPage,
+          ),
       },
       {
         path: 'projects/:slug/work',
