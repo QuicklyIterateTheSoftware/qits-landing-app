@@ -223,6 +223,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -1510,6 +1511,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -3503,6 +3505,1302 @@
                       }
                     }
                   ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "moveReleaseRequestSource"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "move-release-request-source",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "move-release-request-source: moveReleaseRequestSource",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a frozen release request with a queued next request",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "queuedRequestId": "00000000-0000-4000-8000-000000000002",
+            "queuedRequestQualifiedId": "contract-service-rr-2",
+            "repositoryId": "00000000-0000-4000-8000-000000000003",
+            "requestId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "branch": "ticket/contract-12",
+            "reason": "It conflicts with ticket/contract-11."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/repositories/${repositoryId}/release-requests/${requestId}/sources/move",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/repositories/00000000-0000-4000-8000-000000000003/release-requests/00000000-0000-4000-8000-000000000004/sources/move"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "from": {
+              "approvalNote": null,
+              "approvalRequired": false,
+              "approvalRequirements": [],
+              "approvalState": "NOT_REQUIRED",
+              "approvedAt": null,
+              "approvedBy": null,
+              "automations": [],
+              "backingBranch": "release/contract-service-rr-1",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "detail": "Waiting for a CI verdict for 5eed5eed5e",
+              "featureFreeze": {
+                "features": 2,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
+              "gateTicketId": null,
+              "gates": [
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PASSED"
+                },
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PASSED"
+                }
+              ],
+              "id": "00000000-0000-4000-8000-000000000004",
+              "items": [
+                {
+                  "label": "ticket/contract-11",
+                  "source": "ticket/contract-11"
+                }
+              ],
+              "mergedSha": "5eed5eed5eed5eed5eed5eed5eed5eed5eed0001",
+              "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
+              "priority": "MEDIUM",
+              "qualityGates": [
+                {
+                  "checks": [],
+                  "detail": null,
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PASSED"
+                },
+                {
+                  "checks": [],
+                  "detail": "Waiting for a CI verdict for 5eed5eed5e",
+                  "kind": "ci",
+                  "label": "CI build",
+                  "position": "qa-publish",
+                  "runId": null,
+                  "state": "PENDING"
+                }
+              ],
+              "queuedBehind": null,
+              "queuedBehindQualifiedId": null,
+              "queuedNext": "00000000-0000-4000-8000-000000000002",
+              "queuedNextQualifiedId": "contract-service-rr-2",
+              "releasedSha": null,
+              "repoId": "00000000-0000-4000-8000-000000000003",
+              "repoName": "contract-service",
+              "retryable": false,
+              "sourceMoves": [
+                {
+                  "branch": "ticket/contract-12",
+                  "fromQualifiedId": "contract-service-rr-1",
+                  "movedAt": "2026-01-01T00:00:00Z",
+                  "movedBy": "dev",
+                  "reason": "It conflicts with ticket/contract-11.",
+                  "toQualifiedId": "contract-service-rr-2"
+                }
+              ],
+              "sources": [
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                }
+              ],
+              "state": "PENDING",
+              "supersededBy": null,
+              "unattended": false,
+              "updatedAt": "2026-01-01T00:00:00Z",
+              "version": null
+            },
+            "to": {
+              "approvalNote": null,
+              "approvalRequired": false,
+              "approvalRequirements": [],
+              "approvalState": "NOT_REQUIRED",
+              "approvedAt": null,
+              "approvedBy": null,
+              "backingBranch": "release/contract-service-rr-2",
+              "createdAt": "2026-01-01T00:00:00Z",
+              "detail": "Queued behind contract-service-rr-1: it folds once that request has released",
+              "featureFreeze": {
+                "features": 2,
+                "frozen": false,
+                "source": "PLATFORM",
+                "threshold": 3
+              },
+              "gateTicketId": null,
+              "gates": [
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PENDING"
+                },
+                {
+                  "detail": null,
+                  "kind": "AUTOMATIONS",
+                  "state": "PENDING"
+                }
+              ],
+              "id": "00000000-0000-4000-8000-000000000002",
+              "items": [
+                {
+                  "label": "ticket/contract-12",
+                  "source": "ticket/contract-12"
+                }
+              ],
+              "mergedSha": null,
+              "mergedToMainAt": null,
+              "participants": [
+                "contract-seeder"
+              ],
+              "priority": "HIGH",
+              "qualityGates": [
+                {
+                  "checks": [],
+                  "detail": "Waiting for the automations to answer",
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PENDING"
+                },
+                {
+                  "checks": [],
+                  "detail": "Waiting for the automations to answer",
+                  "kind": "automations",
+                  "label": "Automations",
+                  "position": "pre-run-qa",
+                  "runId": null,
+                  "state": "PENDING"
+                }
+              ],
+              "queuedBehind": "00000000-0000-4000-8000-000000000004",
+              "queuedBehindQualifiedId": "contract-service-rr-1",
+              "queuedNext": null,
+              "queuedNextQualifiedId": null,
+              "releasedSha": null,
+              "repoId": "00000000-0000-4000-8000-000000000003",
+              "repoName": "contract-service",
+              "retryable": false,
+              "sourceMoves": [
+                {
+                  "branch": "ticket/contract-12",
+                  "fromQualifiedId": "contract-service-rr-1",
+                  "movedAt": "2026-01-01T00:00:00Z",
+                  "movedBy": "dev",
+                  "reason": "It conflicts with ticket/contract-11.",
+                  "toQualifiedId": "contract-service-rr-2"
+                }
+              ],
+              "sources": [
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                },
+                {
+                  "explicitJoin": false,
+                  "feature": false,
+                  "implicit": false,
+                  "kind": "BRANCH",
+                  "name": "main",
+                  "priority": "MEDIUM",
+                  "ref": "refs/heads/main"
+                }
+              ],
+              "state": "PENDING",
+              "supersededBy": null,
+              "unattended": false,
+              "updatedAt": "2026-01-01T00:00:00Z",
+              "version": null
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.from.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.approvalState": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.backingBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.from.detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.from.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.from.gates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.from.gates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.gates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.from.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.from.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.mergedSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.from.participants[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.qualityGates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.position": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.detail": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.position": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.from.queuedNext": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.from.queuedNextQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.from.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.retryable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sourceMoves": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.from.sourceMoves[*].branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sourceMoves[*].fromQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sourceMoves[*].movedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.from.sourceMoves[*].movedBy": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sourceMoves[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sourceMoves[*].toQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.from.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources[*].implicit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.sources[*].ref": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.unattended": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.from.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.to.approvalRequired": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.approvalState": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.backingBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.to.detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.featureFreeze.features": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.to.featureFreeze.frozen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.featureFreeze.source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.featureFreeze.threshold": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.to.gates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.to.gates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.gates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.to.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.to.items[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.items[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.participants": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ]
+            },
+            "$.to.participants[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.qualityGates": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.to.qualityGates[*].detail": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.qualityGates[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.qualityGates[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.qualityGates[*].position": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.qualityGates[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.queuedBehind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.to.queuedBehindQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.to.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.retryable": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sourceMoves": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.to.sourceMoves[*].branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sourceMoves[*].fromQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sourceMoves[*].movedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.to.sourceMoves[*].movedBy": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sourceMoves[*].reason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sourceMoves[*].toQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.to.sources[*].explicitJoin": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources[*].feature": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources[*].implicit": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.sources[*].ref": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.unattended": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.to.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
                 }
               ]
             }
@@ -6398,6 +7696,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -7603,6 +8902,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -18393,6 +19693,7 @@
               "repoId": "00000000-0000-4000-8000-000000000003",
               "repoName": "contract-service",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -19049,6 +20350,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -20156,6 +21458,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -20886,6 +22189,7 @@
               "repoId": "00000000-0000-4000-8000-000000000003",
               "repoName": "contract-service",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -21559,6 +22863,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -22447,6 +23752,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -23581,6 +24887,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-service",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -32114,6 +33421,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
@@ -33311,6 +34619,7 @@
               "repoId": "00000000-0000-4000-8000-000000000002",
               "repoName": "contract-suite-app",
               "retryable": false,
+              "sourceMoves": [],
               "sources": [
                 {
                   "explicitJoin": false,
