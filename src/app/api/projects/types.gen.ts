@@ -553,7 +553,7 @@ export type DeclaredArchetype = {
     permitted?: Array<EntityProperty>;
     legalStatuses?: Array<string>;
     /**
-     * The legal moves out of each status, keyed by every status in lifecycle order: FORWARD first, then SKIP, BACK, DROP/REOPEN. DONE maps to an empty list. Empty for a kind with no lifecycle. The status door (setWorkStatus) allows exactly these.
+     * The legal moves out of each status, keyed by every status in lifecycle order: FORWARD first, then SKIP, BACK, CLOSE, DROP/REOPEN. DONE maps to an empty list. Empty for a kind with no lifecycle. The status door (setWorkStatus) allows exactly these.
      */
     transitions?: {
         [key: string]: Array<LegalMove>;
@@ -1086,7 +1086,7 @@ export type LegalMove = {
     to?: string;
     kind?: TransitionKind;
     /**
-     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers). Only a FORWARD or SKIP move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
+     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers; CHILDREN_CLOSED: every child is DONE or DROPPED and a person or the delivery desk makes the move). Only a FORWARD, SKIP or CLOSE move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
      */
     gates?: Array<string>;
 };
@@ -1774,7 +1774,7 @@ export type TechnicalProcessFrame = {
 
 export type TicketType = 'BUG' | 'IMPROVEMENT' | 'MAINTENANCE';
 
-export type TransitionKind = 'FORWARD' | 'SKIP' | 'BACK' | 'DROP' | 'REOPEN';
+export type TransitionKind = 'FORWARD' | 'SKIP' | 'BACK' | 'CLOSE' | 'DROP' | 'REOPEN';
 
 export type TransitionedEntity = {
     id?: string;
