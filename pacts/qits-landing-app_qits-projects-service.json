@@ -28470,7 +28470,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 1,
                               "min": 1
                             }
                           ]
@@ -28496,7 +28495,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 4,
                               "min": 4
                             }
                           ]
@@ -28540,7 +28538,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 2,
                               "min": 2
                             }
                           ]
@@ -28572,7 +28569,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 4,
                               "min": 4
                             }
                           ]
@@ -28759,7 +28755,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]
@@ -28797,7 +28792,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]
@@ -29061,7 +29055,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 1,
                               "min": 1
                             }
                           ]
@@ -29087,7 +29080,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 4,
                               "min": 4
                             }
                           ]
@@ -29131,7 +29123,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 2,
                               "min": 2
                             }
                           ]
@@ -29163,7 +29154,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 4,
                               "min": 4
                             }
                           ]
@@ -29277,7 +29267,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 2,
                               "min": 2
                             }
                           ]
@@ -29309,7 +29298,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]
@@ -29347,7 +29335,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]
@@ -29398,7 +29385,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 1,
                               "min": 1
                             }
                           ]
@@ -29424,7 +29410,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]
@@ -29462,7 +29447,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]
@@ -29573,7 +29557,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 2,
                               "min": 2
                             }
                           ]
@@ -29605,7 +29588,6 @@
                           "matchers": [
                             {
                               "match": "type",
-                              "max": 3,
                               "min": 3
                             }
                           ]

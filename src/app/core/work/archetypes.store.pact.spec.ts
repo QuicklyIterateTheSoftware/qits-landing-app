@@ -99,11 +99,31 @@ function openEndedFlow(generated: string): void {
         'listWorkArchetypes no longer matches archetypes by shape: update openEndedFlow',
       );
     }
-    interaction.response.body.content.archetypes.forEach((archetype, i) =>
-      openEndedArchetype(archetype, variants[i].rules),
-    );
+    interaction.response.body.content.archetypes.forEach((archetype, i) => {
+      openEndedArchetype(archetype, variants[i].rules);
+      openEndedTransitions(variants[i].rules);
+    });
   }
   writeFileSync(generated, JSON.stringify(written, null, 2));
+}
+
+/**
+ * `addGoldenInteraction` also pins every `transitions.<STATUS>` array whose moves share one shape
+ * today (no move there carries `gates`) to the length qits-projects happened to record: `type`,
+ * min = max = that length. qits-projects is about to add a CLOSE move to several statuses of
+ * CAMPAIGN, EPIC and FEATURE (qits-1757), and the store never relies on an exact move count (only
+ * on the moves it finds), so this drops the max and keeps the recorded count as a floor. A status
+ * whose moves already differ in shape (REFINED everywhere; REPORTED for EPIC and TICKET, where one
+ * move alone carries `gates`) is matched with `arrayContains` already, which pins no length, so it
+ * is left as `addGoldenInteraction` built it.
+ */
+function openEndedTransitions(rules: Rules): void {
+  for (const [path, rule] of Object.entries(rules)) {
+    if (!/^\$\.transitions\.[A-Z_]+$/.test(path)) continue;
+    const matcher = rule.matchers.find((m) => m.match === 'type');
+    if (!matcher || matcher.min == null || matcher.max == null) continue;
+    delete matcher.max;
+  }
 }
 
 function openEndedArchetype(archetype: DeclaredArchetype, rules: Rules): void {
