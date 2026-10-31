@@ -22,6 +22,11 @@ declare module 'vitest/browser' {
     ) => Promise<T>;
     /** Moves the mouse to the page's top-left corner, so no element is hovered. */
     parkPointer: () => Promise<void>;
+    /**
+     * A real mouse step at (`x`, `y`) in the test page's viewport: `move` there (in `steps`
+     * moves), or move there and press (`down`) or release (`up`) the left button.
+     */
+    mouse: (action: 'move' | 'down' | 'up', x: number, y: number, steps?: number) => Promise<void>;
     /** Answers every request matching `pattern` with a plain grey image, without the network. */
     stubFigure: (pattern: string) => Promise<void>;
   }

@@ -68,6 +68,40 @@ const parkPointer: BrowserCommand<[]> = async (context) => {
 };
 
 /**
+ * `mouse`: one real, trusted mouse step from Playwright at (`x`, `y`) in the test page's own
+ * viewport (CSS px): `move` there (in `steps` intermediate moves, 1 unless given), or move there
+ * and press (`down`) or release (`up`) the left button. Synthetic `PointerEvent`s cannot set a
+ * pointer capture, so a drag spec needs these. The test page is an iframe of Vitest's own page,
+ * so the point is shifted (and scaled) by where that iframe sits.
+ */
+const mouse: BrowserCommand<
+  [action: 'move' | 'down' | 'up', x: number, y: number, steps?: number]
+> = async (context, action, x, y, steps = 1) => {
+  if (context.provider.name !== 'playwright') return;
+  type Mouse = {
+    move(x: number, y: number, options?: { steps?: number }): Promise<void>;
+    down(): Promise<void>;
+    up(): Promise<void>;
+  };
+  type Frame = {
+    frameElement(): Promise<{
+      boundingBox(): Promise<{ x: number; y: number; width: number } | null>;
+    }>;
+    evaluate<T>(fn: () => T): Promise<T>;
+  };
+  const playwright = context as unknown as { page: { mouse: Mouse }; frame(): Promise<Frame> };
+  const frame = await playwright.frame();
+  const box = await (await frame.frameElement()).boundingBox();
+  const width = await frame.evaluate(() => window.innerWidth);
+  const scale = box && width ? box.width / width : 1;
+  const at = { x: (box?.x ?? 0) + x * scale, y: (box?.y ?? 0) + y * scale };
+  const pointer = playwright.page.mouse;
+  await pointer.move(at.x, at.y, { steps });
+  if (action === 'down') await pointer.down();
+  if (action === 'up') await pointer.up();
+};
+
+/**
  * `stubFigure`: answers every request matching `pattern` (a Playwright URL glob) with a plain grey
  * 480x160 SVG, from Playwright, without touching the network. An image a page loads from a backend
  * (an epic's dossier figure, whose bytes no golden master records) then shows the same pixels on
@@ -124,7 +158,7 @@ export default defineConfig({
     // Vitest 5 moved the default to .vitest/attachments; keep the ignored path the docs name.
     attachmentsDir: '.vitest-attachments',
     browser: {
-      commands: { goldenMaster, parkPointer, stubFigure },
+      commands: { goldenMaster, parkPointer, mouse, stubFigure },
       // Vitest 5 made text locators exact by default. The specs locate by substring, as in vitest 4.
       locators: { exact: false },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A
