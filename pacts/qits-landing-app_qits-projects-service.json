@@ -10957,7 +10957,7 @@
                 "path": "src/export.txt"
               }
             ],
-            "parent": null
+            "parent": "edf350dfabb86b68f03f6d9448036d47924efc0a"
           },
           "contentType": "application/json",
           "encoded": false
@@ -11004,6 +11004,14 @@
               ]
             },
             "$.files[*].path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.parent": {
               "combine": "AND",
               "matchers": [
                 {
