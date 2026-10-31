@@ -4,7 +4,127 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { DeleteGithostApiRepositoriesByRepoIdBranchesByNameData, GetGithostApiRepositoriesByRepoIdBranchesByNameData, GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesData, GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesResponse, GetGithostApiRepositoriesByRepoIdContainsData, GetGithostApiRepositoriesByRepoIdData, GetGithostApiRepositoriesByRepoIdFileData, GetGithostApiRepositoriesByRepoIdTagsData, GetGithostApiRepositoriesByRepoIdTreeData, GetGithostApiRepositoriesData, GetGithostApiRepositoriesResponse, GetLocData, GetLocResponse, ListLocData, ListLocResponse, PostGithostApiRepositoriesByRepoIdCommitsData, PostGithostApiRepositoriesByRepoIdMergesData, PostGithostApiRepositoriesByRepoIdTagsData } from '../types.gen';
+import type { CommitFilesData, ContainsCommitData, CreateRepositoryData, CreateRepositoryResponse, CreateTagData, DeleteBranchData, DeleteRepositoryData, DeleteRepositoryResponse, DescribeRepositoryData, DescribeRepositoryResponse, GetBlobByIdData, GetBlobByIdResponse, GetBlobData, GetBlobResponse, GetGithostApiRepositoriesByRepoIdBranchesByNameData, GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesData, GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesResponse, GetGithostApiRepositoriesByRepoIdTagsData, GetGithostApiRepositoriesData, GetGithostApiRepositoriesResponse, GetLocData, GetLocResponse, GetRawData, GetRepositoryData, GetRepositoryFileData, GetRepositoryNamesData, GetRepositoryNamesResponse, GetRepositoryTreeData, GetRootTreeByIdData, GetRootTreeByIdResponse, GetRootTreeData, GetRootTreeResponse, GetTreeByIdData, GetTreeByIdResponse, GetTreeData, GetTreeResponse, ListGitRepositoriesData, ListGitRepositoriesResponse, ListLocData, ListLocResponse, MergeBranchesData, PutRepositoryNamesData, PutRepositoryNamesResponse } from '../types.gen';
+
+/**
+ * Every repository this host serves, by storage id, sorted
+ */
+export const listGitRepositoriesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListGitRepositoriesData, ThrowOnError>): HttpRequest<ListGitRepositoriesResponse> => (options?.client ?? client).requestOptions<ListGitRepositoriesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git',
+    ...options
+});
+
+/**
+ * Delete the repository
+ */
+export const deleteRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteRepositoryData, ThrowOnError>): HttpRequest<DeleteRepositoryResponse> => (options?.client ?? client).requestOptions<DeleteRepositoryResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/git/{repoId}',
+    ...options
+});
+
+/**
+ * The repository's id and default branch
+ */
+export const describeRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<DescribeRepositoryData, ThrowOnError>): HttpRequest<DescribeRepositoryResponse> => (options?.client ?? client).requestOptions<DescribeRepositoryResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{repoId}',
+    ...options
+});
+
+/**
+ * Create the repository, idempotently
+ */
+export const createRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<CreateRepositoryData, ThrowOnError>): HttpRequest<CreateRepositoryResponse> => (options?.client ?? client).requestOptions<CreateRepositoryResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/git/{repoId}',
+    ...options
+});
+
+/**
+ * The name set this host holds for the repository
+ */
+export const getRepositoryNamesRequest = <ThrowOnError extends boolean = false>(options: Options<GetRepositoryNamesData, ThrowOnError>): HttpRequest<GetRepositoryNamesResponse> => (options?.client ?? client).requestOptions<GetRepositoryNamesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{repoId}/names',
+    ...options
+});
+
+/**
+ * State the repository's whole name set at a revision
+ */
+export const putRepositoryNamesRequest = <ThrowOnError extends boolean = false>(options: Options<PutRepositoryNamesData, ThrowOnError>): HttpRequest<PutRepositoryNamesResponse> => (options?.client ?? client).requestOptions<PutRepositoryNamesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/git/{repoId}/names',
+    ...options
+});
+
+/**
+ * The root directory's entries at a revision
+ */
+export const getRootTreeRequest = <ThrowOnError extends boolean = false>(options: Options<GetRootTreeData, ThrowOnError>): HttpRequest<GetRootTreeResponse> => (options?.client ?? client).requestOptions<GetRootTreeResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{projectId}/{repoName}/tree/{rev}',
+    ...options
+});
+
+/**
+ * A directory's entries at a revision
+ */
+export const getTreeRequest = <ThrowOnError extends boolean = false>(options: Options<GetTreeData, ThrowOnError>): HttpRequest<GetTreeResponse> => (options?.client ?? client).requestOptions<GetTreeResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{projectId}/{repoName}/tree/{rev}/{path}',
+    ...options
+});
+
+/**
+ * A file's raw bytes at a revision
+ */
+export const getBlobRequest = <ThrowOnError extends boolean = false>(options: Options<GetBlobData, ThrowOnError>): HttpRequest<GetBlobResponse> => (options?.client ?? client).requestOptions<GetBlobResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{projectId}/{repoName}/blob/{rev}/{path}',
+    ...options
+});
+
+/**
+ * getRootTree, addressed by storage id
+ */
+export const getRootTreeByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetRootTreeByIdData, ThrowOnError>): HttpRequest<GetRootTreeByIdResponse> => (options?.client ?? client).requestOptions<GetRootTreeByIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{repoId}/tree/{rev}',
+    ...options
+});
+
+/**
+ * getTree, addressed by storage id
+ */
+export const getTreeByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetTreeByIdData, ThrowOnError>): HttpRequest<GetTreeByIdResponse> => (options?.client ?? client).requestOptions<GetTreeByIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{repoId}/tree/{rev}/{path}',
+    ...options
+});
+
+/**
+ * getBlob, addressed by storage id
+ */
+export const getBlobByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetBlobByIdData, ThrowOnError>): HttpRequest<GetBlobByIdResponse> => (options?.client ?? client).requestOptions<GetBlobByIdResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/git/{repoId}/blob/{rev}/{path}',
+    ...options
+});
 
 /**
  * Lines of code of every repository's default branch
@@ -29,9 +149,9 @@ export const getGithostApiRepositoriesRequest = <ThrowOnError extends boolean = 
 });
 
 /**
- * Describe
+ * The repository's default branch and branches
  */
-export const getGithostApiRepositoriesByRepoIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetGithostApiRepositoriesByRepoIdData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const getRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<GetRepositoryData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/githost/api/repositories/{repoId}',
@@ -39,9 +159,9 @@ export const getGithostApiRepositoriesByRepoIdRequest = <ThrowOnError extends bo
 });
 
 /**
- * Delete Branch
+ * Delete a branch
  */
-export const deleteGithostApiRepositoriesByRepoIdBranchesByNameRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteGithostApiRepositoriesByRepoIdBranchesByNameData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const deleteBranchRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteBranchData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'DELETE',
     url: '/githost/api/repositories/{repoId}/branches/{name}',
@@ -69,9 +189,9 @@ export const getGithostApiRepositoriesByRepoIdCommitSubjectBypassesRequest = <Th
 });
 
 /**
- * Commit
+ * Commit file changes onto a branch
  */
-export const postGithostApiRepositoriesByRepoIdCommitsRequest = <ThrowOnError extends boolean = false>(options: Options<PostGithostApiRepositoriesByRepoIdCommitsData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const commitFilesRequest = <ThrowOnError extends boolean = false>(options: Options<CommitFilesData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/githost/api/repositories/{repoId}/commits',
@@ -79,9 +199,9 @@ export const postGithostApiRepositoriesByRepoIdCommitsRequest = <ThrowOnError ex
 });
 
 /**
- * Contains
+ * Whether one commit is an ancestor of another
  */
-export const getGithostApiRepositoriesByRepoIdContainsRequest = <ThrowOnError extends boolean = false>(options: Options<GetGithostApiRepositoriesByRepoIdContainsData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const containsCommitRequest = <ThrowOnError extends boolean = false>(options: Options<ContainsCommitData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/githost/api/repositories/{repoId}/contains',
@@ -89,9 +209,9 @@ export const getGithostApiRepositoriesByRepoIdContainsRequest = <ThrowOnError ex
 });
 
 /**
- * File
+ * One file's content at a revision, as text
  */
-export const getGithostApiRepositoriesByRepoIdFileRequest = <ThrowOnError extends boolean = false>(options: Options<GetGithostApiRepositoriesByRepoIdFileData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const getRepositoryFileRequest = <ThrowOnError extends boolean = false>(options: Options<GetRepositoryFileData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/githost/api/repositories/{repoId}/file',
@@ -109,12 +229,22 @@ export const getLocRequest = <ThrowOnError extends boolean = false>(options: Opt
 });
 
 /**
- * Merge
+ * Fold branches into a target branch
  */
-export const postGithostApiRepositoriesByRepoIdMergesRequest = <ThrowOnError extends boolean = false>(options: Options<PostGithostApiRepositoriesByRepoIdMergesData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const mergeBranchesRequest = <ThrowOnError extends boolean = false>(options: Options<MergeBranchesData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/githost/api/repositories/{repoId}/merges',
+    ...options
+});
+
+/**
+ * One file's raw bytes at one revision (default: the default branch); raster images inline, anything else an attachment
+ */
+export const getRawRequest = <ThrowOnError extends boolean = false>(options: Options<GetRawData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/githost/api/repositories/{repoId}/raw',
     ...options
 });
 
@@ -129,9 +259,9 @@ export const getGithostApiRepositoriesByRepoIdTagsRequest = <ThrowOnError extend
 });
 
 /**
- * Tag
+ * Create an annotated tag
  */
-export const postGithostApiRepositoriesByRepoIdTagsRequest = <ThrowOnError extends boolean = false>(options: Options<PostGithostApiRepositoriesByRepoIdTagsData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const createTagRequest = <ThrowOnError extends boolean = false>(options: Options<CreateTagData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/githost/api/repositories/{repoId}/tags',
@@ -139,13 +269,109 @@ export const postGithostApiRepositoriesByRepoIdTagsRequest = <ThrowOnError exten
 });
 
 /**
- * Tree
+ * Every file path at a revision
  */
-export const getGithostApiRepositoriesByRepoIdTreeRequest = <ThrowOnError extends boolean = false>(options: Options<GetGithostApiRepositoriesByRepoIdTreeData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const getRepositoryTreeRequest = <ThrowOnError extends boolean = false>(options: Options<GetRepositoryTreeData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/githost/api/repositories/{repoId}/tree',
     ...options
+});
+
+/**
+ * Every repository this host serves, by storage id, sorted
+ */
+export const listGitRepositoriesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListGitRepositoriesData, ThrowOnError> | undefined) => httpResource<ListGitRepositoriesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listGitRepositoriesRequest(opts) : undefined;
+});
+
+/**
+ * Delete the repository
+ */
+export const deleteRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteRepositoryData, ThrowOnError> | undefined) => httpResource<DeleteRepositoryResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? deleteRepositoryRequest(opts) : undefined;
+});
+
+/**
+ * The repository's id and default branch
+ */
+export const describeRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<DescribeRepositoryData, ThrowOnError> | undefined) => httpResource<DescribeRepositoryResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? describeRepositoryRequest(opts) : undefined;
+});
+
+/**
+ * Create the repository, idempotently
+ */
+export const createRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateRepositoryData, ThrowOnError> | undefined) => httpResource<CreateRepositoryResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createRepositoryRequest(opts) : undefined;
+});
+
+/**
+ * The name set this host holds for the repository
+ */
+export const getRepositoryNamesResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRepositoryNamesData, ThrowOnError> | undefined) => httpResource<GetRepositoryNamesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getRepositoryNamesRequest(opts) : undefined;
+});
+
+/**
+ * State the repository's whole name set at a revision
+ */
+export const putRepositoryNamesResource = <ThrowOnError extends boolean = false>(options: () => Options<PutRepositoryNamesData, ThrowOnError> | undefined) => httpResource<PutRepositoryNamesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? putRepositoryNamesRequest(opts) : undefined;
+});
+
+/**
+ * The root directory's entries at a revision
+ */
+export const getRootTreeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRootTreeData, ThrowOnError> | undefined) => httpResource<GetRootTreeResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getRootTreeRequest(opts) : undefined;
+});
+
+/**
+ * A directory's entries at a revision
+ */
+export const getTreeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetTreeData, ThrowOnError> | undefined) => httpResource<GetTreeResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getTreeRequest(opts) : undefined;
+});
+
+/**
+ * A file's raw bytes at a revision
+ */
+export const getBlobResource = <ThrowOnError extends boolean = false>(options: () => Options<GetBlobData, ThrowOnError> | undefined) => httpResource<GetBlobResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getBlobRequest(opts) : undefined;
+});
+
+/**
+ * getRootTree, addressed by storage id
+ */
+export const getRootTreeByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRootTreeByIdData, ThrowOnError> | undefined) => httpResource<GetRootTreeByIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getRootTreeByIdRequest(opts) : undefined;
+});
+
+/**
+ * getTree, addressed by storage id
+ */
+export const getTreeByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetTreeByIdData, ThrowOnError> | undefined) => httpResource<GetTreeByIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getTreeByIdRequest(opts) : undefined;
+});
+
+/**
+ * getBlob, addressed by storage id
+ */
+export const getBlobByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetBlobByIdData, ThrowOnError> | undefined) => httpResource<GetBlobByIdResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getBlobByIdRequest(opts) : undefined;
 });
 
 /**
@@ -167,19 +393,19 @@ export const getGithostApiRepositoriesResource = <ThrowOnError extends boolean =
 });
 
 /**
- * Describe
+ * The repository's default branch and branches
  */
-export const getGithostApiRepositoriesByRepoIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetGithostApiRepositoriesByRepoIdData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const getRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRepositoryData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getGithostApiRepositoriesByRepoIdRequest(opts) : undefined;
+    return opts ? getRepositoryRequest(opts) : undefined;
 });
 
 /**
- * Delete Branch
+ * Delete a branch
  */
-export const deleteGithostApiRepositoriesByRepoIdBranchesByNameResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteGithostApiRepositoriesByRepoIdBranchesByNameData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const deleteBranchResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteBranchData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? deleteGithostApiRepositoriesByRepoIdBranchesByNameRequest(opts) : undefined;
+    return opts ? deleteBranchRequest(opts) : undefined;
 });
 
 /**
@@ -199,27 +425,27 @@ export const getGithostApiRepositoriesByRepoIdCommitSubjectBypassesResource = <T
 });
 
 /**
- * Commit
+ * Commit file changes onto a branch
  */
-export const postGithostApiRepositoriesByRepoIdCommitsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostGithostApiRepositoriesByRepoIdCommitsData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const commitFilesResource = <ThrowOnError extends boolean = false>(options: () => Options<CommitFilesData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postGithostApiRepositoriesByRepoIdCommitsRequest(opts) : undefined;
+    return opts ? commitFilesRequest(opts) : undefined;
 });
 
 /**
- * Contains
+ * Whether one commit is an ancestor of another
  */
-export const getGithostApiRepositoriesByRepoIdContainsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetGithostApiRepositoriesByRepoIdContainsData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const containsCommitResource = <ThrowOnError extends boolean = false>(options: () => Options<ContainsCommitData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getGithostApiRepositoriesByRepoIdContainsRequest(opts) : undefined;
+    return opts ? containsCommitRequest(opts) : undefined;
 });
 
 /**
- * File
+ * One file's content at a revision, as text
  */
-export const getGithostApiRepositoriesByRepoIdFileResource = <ThrowOnError extends boolean = false>(options: () => Options<GetGithostApiRepositoriesByRepoIdFileData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const getRepositoryFileResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRepositoryFileData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getGithostApiRepositoriesByRepoIdFileRequest(opts) : undefined;
+    return opts ? getRepositoryFileRequest(opts) : undefined;
 });
 
 /**
@@ -231,11 +457,19 @@ export const getLocResource = <ThrowOnError extends boolean = false>(options: ()
 });
 
 /**
- * Merge
+ * Fold branches into a target branch
  */
-export const postGithostApiRepositoriesByRepoIdMergesResource = <ThrowOnError extends boolean = false>(options: () => Options<PostGithostApiRepositoriesByRepoIdMergesData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const mergeBranchesResource = <ThrowOnError extends boolean = false>(options: () => Options<MergeBranchesData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postGithostApiRepositoriesByRepoIdMergesRequest(opts) : undefined;
+    return opts ? mergeBranchesRequest(opts) : undefined;
+});
+
+/**
+ * One file's raw bytes at one revision (default: the default branch); raster images inline, anything else an attachment
+ */
+export const getRawResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRawData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getRawRequest(opts) : undefined;
 });
 
 /**
@@ -247,17 +481,17 @@ export const getGithostApiRepositoriesByRepoIdTagsResource = <ThrowOnError exten
 });
 
 /**
- * Tag
+ * Create an annotated tag
  */
-export const postGithostApiRepositoriesByRepoIdTagsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostGithostApiRepositoriesByRepoIdTagsData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const createTagResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateTagData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postGithostApiRepositoriesByRepoIdTagsRequest(opts) : undefined;
+    return opts ? createTagRequest(opts) : undefined;
 });
 
 /**
- * Tree
+ * Every file path at a revision
  */
-export const getGithostApiRepositoriesByRepoIdTreeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetGithostApiRepositoriesByRepoIdTreeData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const getRepositoryTreeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetRepositoryTreeData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getGithostApiRepositoriesByRepoIdTreeRequest(opts) : undefined;
+    return opts ? getRepositoryTreeRequest(opts) : undefined;
 });

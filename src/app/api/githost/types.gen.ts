@@ -4,6 +4,69 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type GitRepositoryList = {
+    repositories?: Array<string>;
+};
+
+export type CreateGitRepository = {
+    defaultBranch?: string;
+};
+
+export type GitRepository = {
+    repoId?: string;
+    defaultBranch?: string;
+};
+
+/**
+ * One repository's whole name set, as qits-projects states it. Applied only when revision is newer than the one held.
+ */
+export type RepositoryNamesStatement = {
+    projectId: string;
+    projectSlug: string;
+    /**
+     * Each non-blank, at most 255 characters, no '/', no whitespace, no .git suffix
+     */
+    names: Array<string>;
+    revision: number;
+};
+
+/**
+ * The name set this host holds. A repository nobody stated names for answers a null project, no names and revision -1.
+ */
+export type RepositoryNames = {
+    repoId?: string;
+    projectId?: string | null;
+    projectSlug?: string | null;
+    names?: Array<string>;
+    revision?: number;
+};
+
+/**
+ * The set held after the statement; applied is false when the statement was not newer, and the set is then the one already held.
+ */
+export type RepositoryNamesApplied = {
+    repoId?: string;
+    projectId?: string | null;
+    projectSlug?: string | null;
+    names?: Array<string>;
+    revision?: number;
+    applied?: boolean;
+};
+
+export type GitTree = {
+    entries?: Array<GitTreeEntry>;
+};
+
+/**
+ * A gitlink (type commit) alone carries sha and mode
+ */
+export type GitTreeEntry = {
+    name?: string;
+    type?: 'tree' | 'blob' | 'commit';
+    sha?: string;
+    mode?: string;
+};
+
 export type Author = {
     name?: string;
     email?: string;
@@ -36,6 +99,10 @@ export type CommitRequest = {
         [key: string]: string;
     };
     author?: Author;
+    projectId?: string;
+    repoName?: string;
+    parent?: string;
+    expectedOld?: string;
 };
 
 export type ErrorBody = {
@@ -75,6 +142,11 @@ export type MergeRequest = {
     message?: string;
     author?: Author;
     resolutions?: Array<Resolution>;
+    projectId?: string;
+    repoName?: string;
+    versionPins?: boolean;
+    rebuild?: boolean;
+    gitlinkPins?: boolean;
 };
 
 export type RepositoriesResponse = {
@@ -96,9 +168,374 @@ export type TagRequest = {
     sha?: string;
     message?: string;
     author?: Author;
+    projectId?: string;
+    repoName?: string;
+};
+
+export type TooLargeBody = {
+    error?: string;
+    size?: number;
 };
 
 export type Uuid = string;
+
+export type RepoId = string;
+
+export type ProjectId = string;
+
+export type RepoName = string;
+
+/**
+ * A branch, a tag or a full commit sha
+ */
+export type Rev = string;
+
+/**
+ * A repository-relative path; it may hold slashes
+ */
+export type Path = string;
+
+export type ListGitRepositoriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/git';
+};
+
+export type ListGitRepositoriesResponses = {
+    /**
+     * The storage ids
+     */
+    200: GitRepositoryList;
+};
+
+export type ListGitRepositoriesResponse = ListGitRepositoriesResponses[keyof ListGitRepositoriesResponses];
+
+export type DeleteRepositoryData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/git/{repoId}';
+};
+
+export type DeleteRepositoryErrors = {
+    /**
+     * No such repository
+     */
+    404: unknown;
+};
+
+export type DeleteRepositoryResponses = {
+    /**
+     * Deleted
+     */
+    204: void;
+};
+
+export type DeleteRepositoryResponse = DeleteRepositoryResponses[keyof DeleteRepositoryResponses];
+
+export type DescribeRepositoryData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/git/{repoId}';
+};
+
+export type DescribeRepositoryErrors = {
+    /**
+     * No such repository
+     */
+    404: unknown;
+};
+
+export type DescribeRepositoryResponses = {
+    /**
+     * The repository exists
+     */
+    200: GitRepository;
+};
+
+export type DescribeRepositoryResponse = DescribeRepositoryResponses[keyof DescribeRepositoryResponses];
+
+export type CreateRepositoryData = {
+    body: CreateGitRepository;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/git/{repoId}';
+};
+
+export type CreateRepositoryErrors = {
+    /**
+     * An invalid id or default branch
+     */
+    400: unknown;
+};
+
+export type CreateRepositoryResponses = {
+    /**
+     * Already there
+     */
+    200: GitRepository;
+    /**
+     * Created by this call
+     */
+    201: GitRepository;
+};
+
+export type CreateRepositoryResponse = CreateRepositoryResponses[keyof CreateRepositoryResponses];
+
+export type GetRepositoryNamesData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/git/{repoId}/names';
+};
+
+export type GetRepositoryNamesErrors = {
+    /**
+     * No such repository
+     */
+    404: unknown;
+};
+
+export type GetRepositoryNamesResponses = {
+    /**
+     * The held set
+     */
+    200: RepositoryNames;
+};
+
+export type GetRepositoryNamesResponse = GetRepositoryNamesResponses[keyof GetRepositoryNamesResponses];
+
+export type PutRepositoryNamesData = {
+    body: RepositoryNamesStatement;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/git/{repoId}/names';
+};
+
+export type PutRepositoryNamesErrors = {
+    /**
+     * A malformed statement; nothing written
+     */
+    400: unknown;
+    /**
+     * No such repository; nothing written
+     */
+    404: unknown;
+};
+
+export type PutRepositoryNamesResponses = {
+    /**
+     * Applied, or not newer than the held set (applied false)
+     */
+    200: RepositoryNamesApplied;
+};
+
+export type PutRepositoryNamesResponse = PutRepositoryNamesResponses[keyof PutRepositoryNamesResponses];
+
+export type GetRootTreeData = {
+    body?: never;
+    path: {
+        projectId: string;
+        repoName: string;
+        /**
+         * A branch, a tag or a full commit sha
+         */
+        rev: string;
+    };
+    query?: never;
+    url: '/git/{projectId}/{repoName}/tree/{rev}';
+};
+
+export type GetRootTreeErrors = {
+    /**
+     * No such repository or revision
+     */
+    404: unknown;
+};
+
+export type GetRootTreeResponses = {
+    /**
+     * The directory's entries, in the tree's own order
+     */
+    200: GitTree;
+};
+
+export type GetRootTreeResponse = GetRootTreeResponses[keyof GetRootTreeResponses];
+
+export type GetTreeData = {
+    body?: never;
+    path: {
+        projectId: string;
+        repoName: string;
+        /**
+         * A branch, a tag or a full commit sha
+         */
+        rev: string;
+        /**
+         * A repository-relative path; it may hold slashes
+         */
+        path: string;
+    };
+    query?: never;
+    url: '/git/{projectId}/{repoName}/tree/{rev}/{path}';
+};
+
+export type GetTreeErrors = {
+    /**
+     * No such repository, revision or directory
+     */
+    404: unknown;
+};
+
+export type GetTreeResponses = {
+    /**
+     * The directory's entries, in the tree's own order
+     */
+    200: GitTree;
+};
+
+export type GetTreeResponse = GetTreeResponses[keyof GetTreeResponses];
+
+export type GetBlobData = {
+    body?: never;
+    path: {
+        projectId: string;
+        repoName: string;
+        /**
+         * A branch, a tag or a full commit sha
+         */
+        rev: string;
+        /**
+         * A repository-relative path; it may hold slashes
+         */
+        path: string;
+    };
+    query?: never;
+    url: '/git/{projectId}/{repoName}/blob/{rev}/{path}';
+};
+
+export type GetBlobErrors = {
+    /**
+     * No such repository, revision or file
+     */
+    404: unknown;
+};
+
+export type GetBlobResponses = {
+    /**
+     * The file's bytes
+     */
+    200: Blob | File;
+};
+
+export type GetBlobResponse = GetBlobResponses[keyof GetBlobResponses];
+
+export type GetRootTreeByIdData = {
+    body?: never;
+    path: {
+        repoId: string;
+        /**
+         * A branch, a tag or a full commit sha
+         */
+        rev: string;
+    };
+    query?: never;
+    url: '/git/{repoId}/tree/{rev}';
+};
+
+export type GetRootTreeByIdErrors = {
+    /**
+     * No such repository or revision
+     */
+    404: unknown;
+};
+
+export type GetRootTreeByIdResponses = {
+    /**
+     * The directory's entries, in the tree's own order
+     */
+    200: GitTree;
+};
+
+export type GetRootTreeByIdResponse = GetRootTreeByIdResponses[keyof GetRootTreeByIdResponses];
+
+export type GetTreeByIdData = {
+    body?: never;
+    path: {
+        repoId: string;
+        /**
+         * A branch, a tag or a full commit sha
+         */
+        rev: string;
+        /**
+         * A repository-relative path; it may hold slashes
+         */
+        path: string;
+    };
+    query?: never;
+    url: '/git/{repoId}/tree/{rev}/{path}';
+};
+
+export type GetTreeByIdErrors = {
+    /**
+     * No such repository, revision or directory
+     */
+    404: unknown;
+};
+
+export type GetTreeByIdResponses = {
+    /**
+     * The directory's entries, in the tree's own order
+     */
+    200: GitTree;
+};
+
+export type GetTreeByIdResponse = GetTreeByIdResponses[keyof GetTreeByIdResponses];
+
+export type GetBlobByIdData = {
+    body?: never;
+    path: {
+        repoId: string;
+        /**
+         * A branch, a tag or a full commit sha
+         */
+        rev: string;
+        /**
+         * A repository-relative path; it may hold slashes
+         */
+        path: string;
+    };
+    query?: never;
+    url: '/git/{repoId}/blob/{rev}/{path}';
+};
+
+export type GetBlobByIdErrors = {
+    /**
+     * No such repository, revision or file
+     */
+    404: unknown;
+};
+
+export type GetBlobByIdResponses = {
+    /**
+     * The file's bytes
+     */
+    200: Blob | File;
+};
+
+export type GetBlobByIdResponse = GetBlobByIdResponses[keyof GetBlobByIdResponses];
 
 export type ListLocData = {
     body?: never;
@@ -134,7 +571,7 @@ export type GetGithostApiRepositoriesResponses = {
 
 export type GetGithostApiRepositoriesResponse = GetGithostApiRepositoriesResponses[keyof GetGithostApiRepositoriesResponses];
 
-export type GetGithostApiRepositoriesByRepoIdData = {
+export type GetRepositoryData = {
     body?: never;
     path: {
         repoId: string;
@@ -143,24 +580,28 @@ export type GetGithostApiRepositoriesByRepoIdData = {
     url: '/githost/api/repositories/{repoId}';
 };
 
-export type GetGithostApiRepositoriesByRepoIdResponses = {
+export type GetRepositoryResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type DeleteGithostApiRepositoriesByRepoIdBranchesByNameData = {
+export type DeleteBranchData = {
     body?: never;
     path: {
         name: string;
         repoId: string;
     };
-    query?: never;
+    query?: {
+        expectedSha?: string;
+        projectId?: string;
+        repoName?: string;
+    };
     url: '/githost/api/repositories/{repoId}/branches/{name}';
 };
 
-export type DeleteGithostApiRepositoriesByRepoIdBranchesByNameErrors = {
+export type DeleteBranchErrors = {
     /**
      * Not Authorized
      */
@@ -171,7 +612,7 @@ export type DeleteGithostApiRepositoriesByRepoIdBranchesByNameErrors = {
     403: unknown;
 };
 
-export type DeleteGithostApiRepositoriesByRepoIdBranchesByNameResponses = {
+export type DeleteBranchResponses = {
     /**
      * OK
      */
@@ -235,7 +676,7 @@ export type GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesResponses = {
 
 export type GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesResponse = GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesResponses[keyof GetGithostApiRepositoriesByRepoIdCommitSubjectBypassesResponses];
 
-export type PostGithostApiRepositoriesByRepoIdCommitsData = {
+export type CommitFilesData = {
     body: CommitRequest;
     path: {
         repoId: string;
@@ -244,7 +685,7 @@ export type PostGithostApiRepositoriesByRepoIdCommitsData = {
     url: '/githost/api/repositories/{repoId}/commits';
 };
 
-export type PostGithostApiRepositoriesByRepoIdCommitsErrors = {
+export type CommitFilesErrors = {
     /**
      * Bad Request
      */
@@ -259,14 +700,14 @@ export type PostGithostApiRepositoriesByRepoIdCommitsErrors = {
     403: unknown;
 };
 
-export type PostGithostApiRepositoriesByRepoIdCommitsResponses = {
+export type CommitFilesResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type GetGithostApiRepositoriesByRepoIdContainsData = {
+export type ContainsCommitData = {
     body?: never;
     path: {
         repoId: string;
@@ -278,7 +719,7 @@ export type GetGithostApiRepositoriesByRepoIdContainsData = {
     url: '/githost/api/repositories/{repoId}/contains';
 };
 
-export type GetGithostApiRepositoriesByRepoIdContainsErrors = {
+export type ContainsCommitErrors = {
     /**
      * Not Authorized
      */
@@ -289,14 +730,14 @@ export type GetGithostApiRepositoriesByRepoIdContainsErrors = {
     403: unknown;
 };
 
-export type GetGithostApiRepositoriesByRepoIdContainsResponses = {
+export type ContainsCommitResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type GetGithostApiRepositoriesByRepoIdFileData = {
+export type GetRepositoryFileData = {
     body?: never;
     path: {
         repoId: string;
@@ -308,7 +749,7 @@ export type GetGithostApiRepositoriesByRepoIdFileData = {
     url: '/githost/api/repositories/{repoId}/file';
 };
 
-export type GetGithostApiRepositoriesByRepoIdFileResponses = {
+export type GetRepositoryFileResponses = {
     /**
      * OK
      */
@@ -344,7 +785,7 @@ export type GetLocResponses = {
 
 export type GetLocResponse = GetLocResponses[keyof GetLocResponses];
 
-export type PostGithostApiRepositoriesByRepoIdMergesData = {
+export type MergeBranchesData = {
     body: MergeRequest;
     path: {
         repoId: string;
@@ -353,7 +794,7 @@ export type PostGithostApiRepositoriesByRepoIdMergesData = {
     url: '/githost/api/repositories/{repoId}/merges';
 };
 
-export type PostGithostApiRepositoriesByRepoIdMergesErrors = {
+export type MergeBranchesErrors = {
     /**
      * Bad Request
      */
@@ -368,9 +809,44 @@ export type PostGithostApiRepositoriesByRepoIdMergesErrors = {
     403: unknown;
 };
 
-export type PostGithostApiRepositoriesByRepoIdMergesResponses = {
+export type MergeBranchesResponses = {
     /**
      * OK
+     */
+    200: unknown;
+};
+
+export type GetRawData = {
+    body?: never;
+    headers?: {
+        'If-None-Match'?: string;
+    };
+    path: {
+        repoId: string;
+    };
+    query?: {
+        path?: string;
+        rev?: string;
+    };
+    url: '/githost/api/repositories/{repoId}/raw';
+};
+
+export type GetRawErrors = {
+    /**
+     * No such repository, revision or path
+     */
+    404: ErrorBody;
+    /**
+     * The blob is past the raw read's size cap
+     */
+    413: TooLargeBody;
+};
+
+export type GetRawError = GetRawErrors[keyof GetRawErrors];
+
+export type GetRawResponses = {
+    /**
+     * The blob's bytes
      */
     200: unknown;
 };
@@ -393,7 +869,7 @@ export type GetGithostApiRepositoriesByRepoIdTagsResponses = {
     200: unknown;
 };
 
-export type PostGithostApiRepositoriesByRepoIdTagsData = {
+export type CreateTagData = {
     body: TagRequest;
     path: {
         repoId: string;
@@ -402,7 +878,7 @@ export type PostGithostApiRepositoriesByRepoIdTagsData = {
     url: '/githost/api/repositories/{repoId}/tags';
 };
 
-export type PostGithostApiRepositoriesByRepoIdTagsErrors = {
+export type CreateTagErrors = {
     /**
      * Bad Request
      */
@@ -417,14 +893,14 @@ export type PostGithostApiRepositoriesByRepoIdTagsErrors = {
     403: unknown;
 };
 
-export type PostGithostApiRepositoriesByRepoIdTagsResponses = {
+export type CreateTagResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type GetGithostApiRepositoriesByRepoIdTreeData = {
+export type GetRepositoryTreeData = {
     body?: never;
     path: {
         repoId: string;
@@ -435,7 +911,7 @@ export type GetGithostApiRepositoriesByRepoIdTreeData = {
     url: '/githost/api/repositories/{repoId}/tree';
 };
 
-export type GetGithostApiRepositoriesByRepoIdTreeResponses = {
+export type GetRepositoryTreeResponses = {
     /**
      * OK
      */
