@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../testing/golden-masters';
-import { inspirable, WorkWritesStore } from './work-writes.store';
+import { inspirable, isRoot, WorkWritesStore } from './work-writes.store';
 import { WorkStore } from './work.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -33,8 +33,19 @@ describe('WorkWritesStore', () => {
 
   afterEach(() => http.verify());
 
-  it('knows which archetypes an idea can inspire', () => {
+  it('knows which archetypes an idea can inspire (qits-1792: every archetype)', () => {
     expect(['EPIC', 'TICKET', 'CAMPAIGN', 'FEATURE', 'TASK', undefined].map(inspirable)).toEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+    ]);
+  });
+
+  it('knows which archetypes the create form files as a root (a feature or a task needs a parent)', () => {
+    expect(['EPIC', 'TICKET', 'CAMPAIGN', 'FEATURE', 'TASK', undefined].map(isRoot)).toEqual([
       true,
       true,
       true,

@@ -79,11 +79,21 @@ describe('WorkInspiration', () => {
     expect(link.getAttribute('href')).toBe(`/projects/contract/ideas/detail/${id}`);
   });
 
-  it('reads nothing for an item that names no idea, and shows nothing on a task', async () => {
+  it('reads nothing for an item that names no idea, and shows nothing on an unknown archetype', async () => {
     const ticket = await render('TICKET');
     expect(ticket.element.textContent).toContain('Inspired by no idea.');
+    const unknown = await render('SOMETHING_ELSE');
+    expect(unknown.element.querySelector('section')!.classList).toContain('hidden');
+  });
+
+  it('shows the editable picker on a feature and a task too (qits-1792)', async () => {
+    const feature = await render('FEATURE');
+    expect(feature.element.querySelector('section')!.classList).not.toContain('hidden');
+    expect(feature.element.textContent).toContain('Inspired by no idea.');
+    expect(feature.button('Choose an idea')).toBeTruthy();
     const task = await render('TASK');
-    expect(task.element.querySelector('section')!.classList).toContain('hidden');
+    expect(task.element.querySelector('section')!.classList).not.toContain('hidden');
+    expect(task.button('Choose an idea')).toBeTruthy();
   });
 
   it('sets an idea of the project, read when the picker opens', async () => {
