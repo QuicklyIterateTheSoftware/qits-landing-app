@@ -1,14 +1,14 @@
 import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { MatchersV3, PactV4 } from '@pact-foundation/pact';
+import { PactV4 } from '@pact-foundation/pact';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { consume } from '@qits/angular';
-import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing';
+import { addGoldenInteraction } from '@qits/angular/testing';
 import {
   getAgent,
   getAgentActiveProcess,
@@ -81,23 +81,11 @@ const OPERATIONS: readonly OwnedOperation[] = [
 ];
 
 /**
- * qits-workspaces' golden masters, with each recorded query value that names a param (`{x}`) sent
- * as a provider-state expression: the provider fills in the state's value, the mock server expects
- * the recorded one.
+ * qits-workspaces' golden masters. `addGoldenInteraction` itself sends each recorded query value
+ * that names a param (`{x}`) as a provider-state expression: the provider fills in the state's
+ * value, the mock server expects the recorded one.
  */
-const masters: GoldenMasters = {
-  operation(state, operationId) {
-    const op = workspacesGoldenMasters.operation(state, operationId);
-    const query = Object.fromEntries(
-      Object.entries(op.query).map(([key, value]) => {
-        const name = /^\{(\w+)}$/.exec(value)?.[1];
-        return [key, name ? MatchersV3.fromProviderState(`\${${name}}`, op.params[name]) : value];
-      }),
-    );
-    return { ...op, query: query as unknown as Record<string, string> };
-  },
-  body: (state, operationId) => workspacesGoldenMasters.body(state, operationId),
-};
+const masters = workspacesGoldenMasters;
 
 /** `state`'s param `name`, as the golden masters froze it. */
 const param = (state: string, operationId: string, name: string) =>
