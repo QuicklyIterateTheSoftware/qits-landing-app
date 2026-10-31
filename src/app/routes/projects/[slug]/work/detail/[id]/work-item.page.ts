@@ -61,9 +61,9 @@ const notBuiltYet = (): void => undefined;
  * body of its own per archetype (`$patterns/work/detail/`): the description (Markdown), the
  * archetype's facts, its children as the lists draw them, its dossier and its comments. The item
  * comes from what `SelectedWork` loads; the rest from `WorkDetailStore`, by the URL's qualified id.
- * Below the body, an epic's, a ticket's or a campaign's inspiration (`app-work-inspiration`, epic
- * qits-888): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`), after
- * which the item's own data is read again.
+ * Below the body, the item's inspiration (`app-work-inspiration`, epic qits-888, every archetype as
+ * of qits-1792): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`),
+ * after which the item's own data is read again.
  * Last, the item's workspaces in every state, newest first (`WorkspacesStore.loadHistory`, by the
  * item's id); the page also loads the open workspaces once, for its cards' Workspace links.
  *

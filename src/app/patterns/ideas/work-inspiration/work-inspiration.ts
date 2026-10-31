@@ -21,10 +21,11 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * A work item's inspiration on its page (epic qits-888): "Inspired by <idea title>", linking the
  * idea's page, when the item names one (`inspiredBy`; the idea's title from `IdeasStore.loadIdea`).
  *
- * On an epic, a ticket or a campaign it can be set or changed (Choose, then one of the project's
- * ideas, `IdeasStore.loadList`, read on the first opening) and cleared, through
+ * On any archetype it can be set or changed (Choose, then one of the project's ideas,
+ * `IdeasStore.loadList`, read on the first opening) and cleared, through
  * `WorkWritesStore.setInspiredBy`; `changed` fires once the service took it, and the page reads the
- * item again. A refusal shows in the service's words. A feature or a task never names an idea.
+ * item again. A refusal shows in the service's words. (qits-1792: a feature and a task used to be
+ * excluded; the backend now accepts `inspiredBy` on every archetype.)
  *
  * Nothing is read until the item names an idea or Choose is pressed, so an item without one costs
  * no request.

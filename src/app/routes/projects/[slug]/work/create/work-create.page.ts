@@ -14,11 +14,11 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { workItemPath } from '$core/workspaces/agent-attention';
 import { WorkStore } from '$core/work/work.store';
 import {
-  inspirable,
-  INSPIRABLE,
+  isRoot,
+  ROOT,
   TICKET_TYPES,
   WorkWritesStore,
-  type InspirableArchetype,
+  type RootArchetype,
 } from '$core/work/work-writes.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
@@ -140,14 +140,14 @@ export class WorkCreatePage {
   private readonly ideas = inject(IdeasStore);
   private readonly router = inject(Router);
 
-  protected readonly archetypes = INSPIRABLE;
+  protected readonly archetypes = ROOT;
   protected readonly ticketTypes = TICKET_TYPES;
 
   private readonly query = inject(ActivatedRoute).snapshot.queryParamMap;
 
-  protected readonly archetype = signal<InspirableArchetype>(
-    inspirable(this.query.get('archetype') ?? undefined)
-      ? (this.query.get('archetype') as InspirableArchetype)
+  protected readonly archetype = signal<RootArchetype>(
+    isRoot(this.query.get('archetype') ?? undefined)
+      ? (this.query.get('archetype') as RootArchetype)
       : 'EPIC',
   );
   protected readonly title = signal(this.query.get('title') ?? '');
@@ -191,7 +191,7 @@ export class WorkCreatePage {
   }
 
   protected setArchetype(value: string): void {
-    if (inspirable(value)) this.archetype.set(value);
+    if (isRoot(value)) this.archetype.set(value);
   }
 
   protected ideaLink(ideaId: string): string {

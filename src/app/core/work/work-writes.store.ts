@@ -13,14 +13,24 @@ import {
 } from './work-writes.consumes';
 import { WorkStore } from './work.store';
 
-/** The archetypes an idea can inspire, and so the ones the create form makes. */
-export const INSPIRABLE = ['EPIC', 'TICKET', 'CAMPAIGN'] as const;
+/** The archetypes an idea can inspire: every archetype (qits-1792). */
+export const INSPIRABLE = ['EPIC', 'TICKET', 'CAMPAIGN', 'FEATURE', 'TASK'] as const;
 
 export type InspirableArchetype = (typeof INSPIRABLE)[number];
 
-/** Whether an item of `archetype` can name an idea as its inspiration (not a feature or a task). */
+/** Whether an item of `archetype` can name an idea as its inspiration. */
 export function inspirable(archetype: string | undefined): archetype is InspirableArchetype {
   return (INSPIRABLE as readonly (string | undefined)[]).includes(archetype);
+}
+
+/** The archetypes the create form files as a new root of a project. */
+export const ROOT = ['EPIC', 'TICKET', 'CAMPAIGN'] as const;
+
+export type RootArchetype = (typeof ROOT)[number];
+
+/** Whether `archetype` is one the create form can file as a root. */
+export function isRoot(archetype: string | undefined): archetype is RootArchetype {
+  return (ROOT as readonly (string | undefined)[]).includes(archetype);
 }
 
 /** A ticket's kinds a person files (MAINTENANCE is the platform's own). */
@@ -28,7 +38,7 @@ export const TICKET_TYPES = ['BUG', 'IMPROVEMENT'] as const;
 
 /** A new root item of a project, as the create form fills it. */
 export interface WorkDraft {
-  readonly archetype: InspirableArchetype;
+  readonly archetype: RootArchetype;
   /** The project's id. */
   readonly project: string;
   readonly title: string;
@@ -67,7 +77,8 @@ export function workWriteRefusal(error: unknown, httpStatus: number | undefined)
  *   idea inspiring it (`inspiredBy`) when the form was opened from an idea. Blank optional fields
  *   are not sent. Answers the new item's qualified id.
  * - `setInspiredBy(qualifiedId, ideaId)` names an idea as the item's inspiration, or clears it with
- *   `null` (`patchWork`, a JSON merge patch of `inspiredBy` alone). Refused on a feature or a task.
+ *   `null` (`patchWork`, a JSON merge patch of `inspiredBy` alone). Accepted on every archetype
+ *   (qits-1792).
  * - `reprioritize(projectId, qualifiedId, anchor)` puts an item directly above or below one of its
  *   open siblings (`reprioritizeWork`, qits-753): a drag in the Backlog or on the board. The
  *   renumbered siblings the service answers go into `WorkStore` at once
