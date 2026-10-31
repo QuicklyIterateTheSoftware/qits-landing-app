@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finishControl } from '$core/work/finish-control';
+import { movable, WorkReorders } from '$core/work/work-reorder';
 import { taskDistribution, type WorkNode } from '$core/work/work-tree';
+import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { ListLane } from '$ui/components/list/list-lane';
+import { REORDER } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
@@ -29,19 +32,44 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  * In the Archive the epic (unless it is only context) also shows its final state, in a campaign its
  * own status. A VERIFIED epic in Acceptance (not in a campaign) carries the finish button ("Mark <id> done") on the lane's bottom-right corner:
  * it hides the epic at once and moves it to DONE a few seconds later, unless the toast's Undo takes
- * it back (`finishControl`). When `leaving` is set, the lane shrinks away (`uiLeave`), then emits
- * `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
+ * it back (`finishControl`).
+ *
+ * In the Backlog an open epic, feature or task (not context, not DONE or DROPPED) carries the drag
+ * handle ("Move <id>", `ui-drag-handle`; qits-753): the epic on the lane's bottom-right corner, a
+ * feature on its row's, a task on its card's. The lane is an item (`uiReorderItem`) of the list it
+ * is drawn in, which must be a `[uiReorderList]`; its features are a list of their own, and each
+ * feature's tasks another (`app-feature-list-row`). A drop there is sent as the item's place among
+ * its drawn siblings (`WorkReorders`). Elsewhere the lists are disabled. When `leaving` is set, the
+ * lane shrinks away (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
  * is itself the list's item.
  */
 @Component({
   selector: 'app-epic-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListLane, FeatureListRow, FinishButton, Leave, Tag, WorkRef, WorkspaceLink],
+  imports: [
+    RouterLink,
+    ListLane,
+    FeatureListRow,
+    DragHandle,
+    FinishButton,
+    Leave,
+    REORDER,
+    Tag,
+    WorkRef,
+    WorkspaceLink,
+  ],
   host: { class: 'contents' },
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
-    <ui-list-lane collapsible [collapsed]="collapsed()" [uiLeave]="leaving()" (left)="left.emit()">
+    <ui-list-lane
+      collapsible
+      [collapsed]="collapsed()"
+      uiReorderItem
+      [reorderItemLabel]="n.entry.qualifiedId ?? ''"
+      [uiLeave]="leaving()"
+      (left)="left.emit()"
+    >
       <span lane-summary>{{ summary() }}</span>
       <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
       @for (campaign of n.campaigns; track campaign.id) {
@@ -59,8 +87,24 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         [label]="'Mark ' + n.entry.qualifiedId + ' done'"
         (finish)="finishing.finish()"
       />
-      @for (feature of n.children; track feature.entry.id) {
-        <app-feature-list-row [node]="feature" [base]="base()" />
+      <ui-drag-handle
+        lane-action
+        [shown]="reorderable() && movable(n)"
+        [label]="'Move ' + n.entry.qualifiedId"
+      />
+      @if (n.children.length) {
+        <!-- The features, a list of their own: the same gap as the lane's own. -->
+        <div
+          class="flex flex-col gap-4"
+          uiReorderList
+          reorderLabel="Features"
+          [reorderDisabled]="!reorderable()"
+          (reordered)="reorders.move(n.children, $event)"
+        >
+          @for (feature of n.children; track feature.entry.id) {
+            <app-feature-list-row [node]="feature" [base]="base()" [reorderable]="reorderable()" />
+          }
+        </div>
       }
     </ui-list-lane>
   `,
@@ -76,6 +120,11 @@ export class EpicListItem {
   readonly left = output<void>();
 
   protected readonly finishing = finishControl(this.node);
+  protected readonly reorders = inject(WorkReorders);
+  protected readonly movable = movable;
+
+  /** Whether the epic, its features and their tasks can be dragged: in the Backlog (qits-753). */
+  protected readonly reorderable = computed(() => this.view() === 'backlog');
 
   /** Whether the lane starts collapsed: in the Archive and in a campaign. */
   protected readonly collapsed = computed(

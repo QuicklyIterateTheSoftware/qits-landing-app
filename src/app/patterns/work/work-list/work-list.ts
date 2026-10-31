@@ -2,13 +2,16 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  inject,
   input,
   linkedSignal,
 } from '@angular/core';
 import { hasEpicBoard } from '$core/work/epic-board';
 import { withLeaving, type RowState } from '$core/work/leaving';
+import { WorkReorders, type WorkMove } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
 import { SelectionHighlight } from '$ui/components/highlight/highlight';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicBoard } from '$patterns/work/epic-board/epic-board';
 import { EpicListItem } from '$patterns/work/epic-list-item/epic-list-item';
 import { TicketListItem } from '$patterns/work/ticket-list-item/ticket-list-item';
@@ -25,18 +28,34 @@ import type { WorkListView } from './work-list-view';
  *
  * A node that leaves the tree (finished, here or in another tab) stays in its place while it
  * shrinks away, and goes when it has (`withLeaving`). No clipping box around the items: the finish
- * button sits on an item's corner, partly outside it, and must stay clickable.
+ * button and the drag handle sit on an item's corner, partly outside it, and must stay clickable.
+ *
+ * The items are a reorder list (`uiReorderList`, qits-753), enabled in the Backlog only: there an
+ * open epic or ticket is dragged by its handle, and a drop is sent as its place among the drawn
+ * items (`WorkReorders`; an epic's features and a feature's tasks are lists of their own). A
+ * refused drop says why above the list, in the service's words, until the next drop.
  */
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EpicBoard, EpicListItem, TicketListItem],
+  imports: [EpicBoard, EpicListItem, ReorderList, TicketListItem],
   hostDirectives: [SelectionHighlight],
   host: { class: 'block' },
   template: `
+    <p
+      role="alert"
+      class="m-0 mb-4 text-sm text-cinnabar-700"
+      [class.hidden]="view() !== 'backlog' || !reorders.refusal()"
+    >
+      {{ reorders.refusal() }}
+    </p>
     <div
       class="flex-col gap-12 [&_ui-board-card]:self-stretch"
       [class]="rows().length ? 'flex' : 'hidden'"
+      uiReorderList
+      reorderLabel="Work"
+      [reorderDisabled]="view() !== 'backlog'"
+      (reordered)="move($event)"
     >
       @for (row of rows(); track row.node.entry.id) {
         @if (epicBoards() && row.node.entry.archetype === 'EPIC' && boarded(row.node)) {
@@ -85,6 +104,16 @@ export class WorkList {
     source: this.tree,
     computation: (next, previous) => withLeaving(previous?.value ?? [], next),
   });
+
+  protected readonly reorders = inject(WorkReorders);
+
+  /** A drop among the drawn items, the leaving ones included: they are still in the list. */
+  protected move(move: WorkMove): void {
+    this.reorders.move(
+      this.rows().map((row) => row.node),
+      move,
+    );
+  }
 
   protected boarded(node: WorkNode): boolean {
     return !node.context && hasEpicBoard(node.entry);

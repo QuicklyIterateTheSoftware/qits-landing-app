@@ -13,6 +13,7 @@ import {
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicListItem } from './epic-list-item';
 
 /**
@@ -22,6 +23,8 @@ import { EpicListItem } from './epic-list-item';
  */
 @Component({
   imports: [EpicListItem],
+  // The list the work list draws the item in (qits-753).
+  hostDirectives: [ReorderList],
   host: { class: 'flex w-[40rem] flex-col gap-12 p-4 pb-8 [&_ui-board-card]:self-stretch' },
   template: `
     @if (node(); as node) {
@@ -42,6 +45,7 @@ class OneEpic {
 const EVERY_STATUS = 'a project with work in every status';
 const VERIFIED_COMPLETE = 'a verified epic with every task implemented';
 const DONE_COMPLETE = 'a done epic with every task implemented';
+const TASKS_EVERY_STATUS = 'an epic with tasks in every status';
 
 /** One case: the screenshot's name, the view, the state, the epic's qualified id and title. */
 type Case = readonly [
@@ -96,11 +100,47 @@ describe('EpicListItem (screenshots)', () => {
     const lane = element.querySelector('ui-list-lane') as HTMLElement;
     const finish = lane.querySelector('button[aria-label="Mark contract-00000001-13 done"]');
     expect(finish?.classList.contains('hidden')).toBe(false);
+    // Acceptance is not where work is ranked: no drag handle beside the finish button (qits-753).
+    const handle = lane.querySelector('button[aria-label="Move contract-00000001-13"]');
+    expect(handle?.classList.contains('hidden')).toBe(true);
     const box = lane.getBoundingClientRect();
     const button = (finish as HTMLElement).getBoundingClientRect();
     // Centred on the corner.
     expect(Math.abs(button.left + button.width / 2 - box.right)).toBeLessThanOrEqual(1.5);
     expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
+  });
+
+  it('draws the drag handle on the bottom-right corner of a REPORTED epic in the Backlog', async () => {
+    const { element } = await shown(
+      'backlog',
+      EVERY_STATUS,
+      'contract-00000001-1',
+      'Reported epic',
+    );
+    const lane = element.querySelector('ui-list-lane') as HTMLElement;
+    const handle = lane.querySelector('button[aria-label="Move contract-00000001-1"]');
+    expect(handle?.classList.contains('hidden')).toBe(false);
+    const box = lane.getBoundingClientRect();
+    const button = (handle as HTMLElement).getBoundingClientRect();
+    expect(Math.abs(button.left + button.width / 2 - box.right)).toBeLessThanOrEqual(1.5);
+    expect(Math.abs(button.top + button.height / 2 - box.bottom)).toBeLessThanOrEqual(1.5);
+  });
+
+  // In the Backlog only the REPORTED task is of the list's own phase: its epic and feature are
+  // context, which is not dragged (qits-753).
+  it('draws the drag handle on a REPORTED task in the Backlog, not on its context', async () => {
+    const { element, locator } = await shown(
+      'backlog',
+      TASKS_EVERY_STATUS,
+      'contract-00000001-1',
+      'Epic in flight',
+    );
+    const hidden = (id: string) =>
+      element.querySelector(`button[aria-label="Move ${id}"]`)?.classList.contains('hidden');
+    expect(hidden('contract-00000001-1')).toBe(true);
+    expect(hidden('contract-00000001-2')).toBe(true);
+    expect(hidden('contract-00000001-3')).toBe(false);
+    await expect.element(locator).toMatchScreenshot('backlog-task-handle');
   });
 
   // This epic's tasks are IMPLEMENTED by their own status (qits-763), so they are on the board,

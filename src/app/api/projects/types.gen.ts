@@ -849,6 +849,7 @@ export type EntitySummary = {
     dependsOn?: string;
     parent?: string;
     position?: number;
+    priority?: number;
     createdAt?: Instant;
     updatedAt?: Instant;
     changedBy?: string;
@@ -1931,6 +1932,7 @@ export type TransitionedEntity = {
     dependsOn?: string;
     parent?: string;
     position?: number;
+    priority?: number;
     createdAt?: Instant;
     updatedAt?: Instant;
     changedBy?: string;
@@ -2429,6 +2431,25 @@ export type WorkPatch = {
      * An epic's, a ticket's or a campaign's inspiration: the id of an idea of the same project; null clears it. Editable at every status. Refused on a feature or a task. Setting, changing or clearing it re-derives the ideas' status.
      */
     inspiredBy?: string | null;
+    /**
+     * The ranking among siblings, on every archetype: higher sorts first, null after every number, then by number. Editable at every status but DONE and DROPPED (409), outside every scope freeze; null clears it. PUT /projects/api/work/{qualifiedId}/priority ranks by drop instead.
+     */
+    priority?: number | null;
+};
+
+/**
+ * The siblings a drop renumbered — the moved item and every one above it — in their new order, highest first.
+ */
+export type WorkPriorities = {
+    items?: Array<WorkPriority>;
+};
+
+/**
+ * One sibling and the priority it now holds.
+ */
+export type WorkPriority = {
+    qualifiedId?: string;
+    priority?: number;
 };
 
 /**
@@ -2443,6 +2464,20 @@ export type WorkProgressAnswer = {
  */
 export type WorkRefinementAnswer = {
     refinement?: RefinementDto;
+};
+
+/**
+ * Where a dropped work item now sits among its siblings: directly above or directly below one of them. Exactly one of above and below.
+ */
+export type WorkReprioritize = {
+    /**
+     * The sibling the item now sits directly above, by qualified id or UUID.
+     */
+    above?: string;
+    /**
+     * The sibling the item now sits directly below, by qualified id or UUID.
+     */
+    below?: string;
 };
 
 /**
@@ -6093,7 +6128,7 @@ export type PatchWorkErrors = {
      */
     404: unknown;
     /**
-     * The owning epic's status freezes what the patch touches, or the acceptance criteria are changed from READY_FOR_DEV on
+     * The owning epic's status freezes what the patch touches, the acceptance criteria are changed from READY_FOR_DEV on, or a priority is written on a DONE or DROPPED entity
      */
     409: unknown;
 };
@@ -7111,6 +7146,47 @@ export type MoveWorkMemberResponses = {
 };
 
 export type MoveWorkMemberResponse = MoveWorkMemberResponses[keyof MoveWorkMemberResponses];
+
+export type ReprioritizeWorkData = {
+    body: WorkReprioritize;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/priority';
+};
+
+export type ReprioritizeWorkErrors = {
+    /**
+     * Both anchors or neither; an anchor naming no entity, naming the item itself, or naming no open sibling (another parent, another project, a campaign, a DONE or DROPPED item); or the item is a campaign
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent ranking outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+    /**
+     * The item is DONE or DROPPED
+     */
+    409: unknown;
+};
+
+export type ReprioritizeWorkResponses = {
+    /**
+     * The siblings the drop renumbered, highest first
+     */
+    200: WorkPriorities;
+};
+
+export type ReprioritizeWorkResponse = ReprioritizeWorkResponses[keyof ReprioritizeWorkResponses];
 
 export type GetWorkProgressData = {
     body?: never;

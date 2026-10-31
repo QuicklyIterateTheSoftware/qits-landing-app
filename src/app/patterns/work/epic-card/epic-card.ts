@@ -1,12 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
+import { movable } from '$core/work/work-reorder';
 import { taskDistribution, type WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { BoardCount } from '$ui/components/board/board-count';
 import { BoardLane } from '$ui/components/board/board-lane';
 import { BoardRow } from '$ui/components/board/board-row';
+import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { Leave } from '$ui/components/leave/leave';
+import { ReorderItem } from '$ui/components/reorder/reorder';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
@@ -26,6 +29,11 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * - each task is a card (`ui-board-card`) in its column of the feature's row, with its campaigns,
  *   and a Workspace bubble in its bottom-right corner while it has an ACTIVE workspace.
  *
+ * The lane is an item (`uiReorderItem`) of the board's reorder list (`app-kanban-board`,
+ * qits-753), and an open epic (not context) carries the drag handle ("Move <id>",
+ * `ui-drag-handle`) on the lane's bottom-right corner. Its features and tasks are not dragged on
+ * the board.
+ *
  * A VERIFIED epic is not on the board: it waits in the Acceptance list (`epic-list-item`), with
  * its finish button. When `leaving` is set (the epic left the board), the lane shrinks away
  * (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
@@ -34,12 +42,30 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 @Component({
   selector: 'app-epic-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, BoardLane, BoardRow, BoardCard, BoardCount, Leave, WorkRef, WorkspaceLink],
+  imports: [
+    RouterLink,
+    BoardLane,
+    BoardRow,
+    BoardCard,
+    BoardCount,
+    DragHandle,
+    Leave,
+    ReorderItem,
+    WorkRef,
+    WorkspaceLink,
+  ],
   host: { class: 'contents' },
   template: `
     @let n = node();
     @let link = base() + '/' + n.entry.qualifiedId;
-    <ui-board-lane collapsible [uiLeave]="leaving()" (left)="left.emit()">
+    <ui-board-lane
+      collapsible
+      uiReorderItem
+      [reorderItemLabel]="n.entry.qualifiedId ?? ''"
+      [uiLeave]="leaving()"
+      (left)="left.emit()"
+    >
+      <ui-drag-handle lane-action [shown]="movable(n)" [label]="'Move ' + n.entry.qualifiedId" />
       @for (tile of tiles(); track tile.column) {
         <ui-board-count
           lane-summary
@@ -107,6 +133,8 @@ export class EpicCard {
   /** The epic is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
+
+  protected readonly movable = movable;
 
   /** The collapsed lane's tiles: one per column with tasks, then the verified ones' in the gutter. */
   protected readonly tiles = computed(() => {

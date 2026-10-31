@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { finishControl } from '$core/work/finish-control';
+import { movable } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
+import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
+import { ReorderItem } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
@@ -20,13 +23,16 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  * A VERIFIED ticket (in Acceptance) carries the finish button ("Mark <id> done") on the card's
  * bottom-right corner: it hides the ticket at once and moves it to DONE a few seconds later, unless
  * the toast's Undo takes it back (`finishControl`); not in a campaign, where finishing is not
- * the page's job. When `leaving` is set, the card shrinks away
+ * the page's job. In the Backlog an open ticket (not context, not DONE or DROPPED) carries the
+ * drag handle ("Move <id>", `ui-drag-handle`) on that corner instead: the card is an item
+ * (`uiReorderItem`) of the list it is drawn in, which must be a `[uiReorderList]` (disabled where
+ * the order is not the page's job, qits-753). When `leaving` is set, the card shrinks away
  * (`uiLeave`), then emits `left`. `display: contents`, so the card is itself the list's item.
  */
 @Component({
   selector: 'app-ticket-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, FinishButton, Leave, Tag, WorkRef, WorkspaceLink],
+  imports: [BoardCard, DragHandle, FinishButton, Leave, ReorderItem, Tag, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -35,6 +41,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       [title]="n.entry.title ?? ''"
       [kind]="n.entry.archetype?.toLowerCase() ?? ''"
       [link]="base() + '/' + n.entry.qualifiedId"
+      uiReorderItem
+      [reorderItemLabel]="n.entry.qualifiedId ?? ''"
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
@@ -61,6 +69,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         [label]="'Mark ' + n.entry.qualifiedId + ' done'"
         (finish)="finishing.finish()"
       />
+      <ui-drag-handle card-action [shown]="draggable()" [label]="'Move ' + n.entry.qualifiedId" />
     </ui-board-card>
   `,
 })
@@ -74,6 +83,9 @@ export class TicketListItem {
   readonly left = output<void>();
 
   protected readonly finishing = finishControl(this.node);
+
+  /** Whether the drag handle shows: in the Backlog, on an open ticket of its own (qits-753). */
+  protected readonly draggable = computed(() => this.view() === 'backlog' && movable(this.node()));
 
   /**
    * In the Archive, which final state the ticket is in; in a campaign, its own status (statuses

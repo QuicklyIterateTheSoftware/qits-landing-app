@@ -1,9 +1,13 @@
-import type { CreateWorkResponses, PatchWorkResponses } from '../../api/projects';
+import type {
+  CreateWorkResponses,
+  PatchWorkResponses,
+  ReprioritizeWorkResponses,
+} from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
  * What `WorkWritesStore` reads from qits-projects' answers to the work create form and the work
- * item page's inspiration (epic qits-888). The store passes each list to `consume(...)`, so it
+ * item page's inspiration (epic qits-888), and to a drag in the Backlog or on the board (qits-753). The store passes each list to `consume(...)`, so it
  * cannot read any other field, and its pact spec passes the same lists as `consumes`.
  */
 
@@ -21,6 +25,15 @@ export const PATCH_WORK_INSPIRATION = ['qualifiedId', 'inspiredBy'] as const;
 
 /** A patched item, cut to what the store reads. */
 export type PatchedWork = Consumed<PatchWorkResponses[200], typeof PATCH_WORK_INSPIRATION>;
+
+/**
+ * `reprioritizeWork`: the siblings the drop renumbered (the moved item and every one above it), each
+ * with the priority it now holds, which the store writes into the work list at once.
+ */
+export const REPRIORITIZE_WORK = ['items[].qualifiedId', 'items[].priority'] as const;
+
+/** A drop's renumbered siblings, cut to what the store reads. */
+export type WorkPriorities = Consumed<ReprioritizeWorkResponses[200], typeof REPRIORITIZE_WORK>;
 
 /** A refusal (400, 409): the service's own words. */
 export const WORK_REFUSAL = ['message'] as const;

@@ -6,6 +6,7 @@ import type { WorkEntry } from '$core/work/work.consumes';
 import { WorkStore } from '$core/work/work.store';
 import type { WorkNode } from '$core/work/work-tree';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { TicketListItem } from './ticket-list-item';
 
 /** A list node for `entry`, as `WorkGraph` builds one: inline, the tree is not under test. */
@@ -20,6 +21,8 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
 /** The item in a list (by default Acceptance), as the work list draws it. */
 @Component({
   imports: [TicketListItem],
+  // The list the work list draws the item in (qits-753).
+  hostDirectives: [ReorderList],
   template: `<app-ticket-list-item
     [node]="node()"
     base="/projects/qits/work/detail"

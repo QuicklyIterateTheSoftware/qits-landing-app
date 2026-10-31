@@ -4,6 +4,7 @@ import { SelectedWork } from '$core/work/selected-work';
 import type { WorkDetail } from '$core/work/work-detail.store';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicBoard } from '$patterns/work/epic-board/epic-board';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import { WorkComments } from '$patterns/work/detail/work-comments/work-comments';
@@ -19,7 +20,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
 @Component({
   selector: 'app-epic-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, EpicBoard, FeatureListRow, WorkComments, WorkDossier],
+  imports: [Markdown, EpicBoard, FeatureListRow, ReorderList, WorkComments, WorkDossier],
   host: { class: 'flex flex-col gap-8' },
   template: `
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
@@ -28,9 +29,12 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
       @if (boarded()) {
         <app-epic-board [node]="node()" [base]="base()" [header]="false" />
       } @else {
+        <!-- A disabled reorder list: a row is an item of one wherever it is drawn (qits-753). -->
         <div
           class="flex-col gap-4 pr-6 [--lane-chin:--spacing(4)]"
           [class]="features().length ? 'flex' : 'hidden'"
+          uiReorderList
+          reorderDisabled
         >
           @for (feature of features(); track feature.entry.id) {
             <app-feature-list-row [node]="feature" [base]="base()" />

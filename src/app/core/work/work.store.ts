@@ -156,6 +156,9 @@ interface WorkState {
  *   `outcome` and, for the outcomes that need one, `supersededBy` (qits-248; `work-outcome.ts`).
  *   The answer, including a refusal, is also returned, so the form that asked for the outcome can
  *   show it without reading the store's state.
+ * - `applyPriorities(projectId, items)` writes the priorities a drop answered (qits-753,
+ *   `WorkWritesStore.reprioritize`) into the entries they name by qualified id, so the trees order
+ *   the dropped item where it was put at once.
  * - `dispatch(entry, mode)` presses dispatch (`dispatchWork`): `FLOW` runs every
  *   phase left, `PHASE` the next one. The answer names the phase it started (`dispatched`); the
  *   status the platform moves the item to arrives as an event, like any other move.
@@ -470,6 +473,23 @@ export const WorkStore = signalStore(
         target: WorkStatus,
       ): Promise<void> {
         await Promise.all(entries.map((entry) => transition(projectId, entry, target)));
+      },
+      /** Writes each item's answered priority into its entry, found by qualified id. */
+      applyPriorities(
+        projectId: string,
+        items: readonly { readonly qualifiedId?: string; readonly priority?: number }[],
+      ): void {
+        const work = store.byProject()[projectId];
+        if (!work || !items.length) return;
+        const priorities = new Map(
+          items.flatMap((item) => (item.qualifiedId ? [[item.qualifiedId, item.priority]] : [])),
+        );
+        const entries = work.entries.map((e) =>
+          e.qualifiedId && priorities.has(e.qualifiedId)
+            ? { ...e, priority: priorities.get(e.qualifiedId) }
+            : e,
+        );
+        set(projectId, { ...work, entries });
       },
       /** Presses dispatch for `entry`; a running press is not repeated. */
       async dispatch(entry: WorkEntry, mode: DispatchMode): Promise<void> {

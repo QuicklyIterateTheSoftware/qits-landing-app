@@ -3,6 +3,7 @@ import { SelectedWork } from '$core/work/selected-work';
 import type { WorkDetail } from '$core/work/work-detail.store';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import { WorkComments } from '$patterns/work/detail/work-comments/work-comments';
 import {
@@ -19,14 +20,19 @@ import {
 @Component({
   selector: 'app-feature-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, FeatureListRow, WorkComments, WorkFields],
+  imports: [Markdown, FeatureListRow, ReorderList, WorkComments, WorkFields],
   host: { class: 'flex flex-col gap-8' },
   template: `
     <app-work-fields [class.hidden]="!fields().length" [fields]="fields()" />
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
     <section class="flex flex-col gap-4" aria-label="Tasks">
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Tasks</h2>
-      <div class="flex flex-col gap-4 pr-6 [--lane-chin:--spacing(4)]">
+      <!-- A disabled reorder list: the row is an item of one wherever it is drawn (qits-753). -->
+      <div
+        class="flex flex-col gap-4 pr-6 [--lane-chin:--spacing(4)]"
+        uiReorderList
+        reorderDisabled
+      >
         <app-feature-list-row [node]="node()" [base]="base()" />
       </div>
     </section>
