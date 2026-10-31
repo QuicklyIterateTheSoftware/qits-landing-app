@@ -26,7 +26,8 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
  *   any tree.
  * - **Order**: one order everywhere, independent of status, column and update time
- *   (`byNumber`): the roots (epics and tickets together) by the number of their qualified id, and
+ *   (`byPriority`, qits-753): the roots (epics and tickets together) by their priority, highest
+ *   first, those nobody ranked after every ranked one, ties by the number of their qualified id;
  *   inside each parent its children the same way. Removing an item leaves the rest in place.
  * - **Campaigns** (`campaigns`, `membersOf`): span the phases, so they have a list of their own
  *   while open (`openCampaigns`); once in a final state they go to the archive like any other work
@@ -121,17 +122,17 @@ export class WorkGraph {
     return (entry.id && this.campaignsByMember.get(entry.id)) || [];
   }
 
-  /** The project's campaigns, in the board's order (`byNumber`). */
+  /** The project's campaigns, by number (`byNumber`). */
   campaigns(): readonly WorkEntry[] {
     return this.entries.filter((entry) => entry.archetype === 'CAMPAIGN').sort(byNumber);
   }
 
-  /** The campaigns not in the archive (their phase by `PHASE_BY_STATUS`), in the board's order. */
+  /** The campaigns not in the archive (their phase by `PHASE_BY_STATUS`), by number. */
   openCampaigns(): readonly WorkEntry[] {
     return this.campaigns().filter((campaign) => this.phaseOf(campaign) !== 'archive');
   }
 
-  /** The campaigns in the archive (DONE, DROPPED), in the board's order. */
+  /** The campaigns in the archive (DONE, DROPPED), by number. */
   archivedCampaigns(): readonly WorkEntry[] {
     return this.campaigns().filter((campaign) => this.phaseOf(campaign) === 'archive');
   }
@@ -182,7 +183,7 @@ export class WorkGraph {
 
   /**
    * The Schedule tab's two lists, epics and tickets only (a feature or a task moves with its epic),
-   * each in the board's order (`byNumber`): `toSchedule`, every REFINED one; `scheduled`, every
+   * each by number (`byNumber`): `toSchedule`, every REFINED one; `scheduled`, every
    * READY_FOR_DEV one (scheduled, not started: started is IMPLEMENTING).
    */
   scheduling(): {
@@ -259,7 +260,7 @@ export class WorkGraph {
     }
     const roots = this.entries
       .filter((entry) => entry.id && included.has(entry.id) && !this.parentOf.has(entry.id))
-      .sort(byNumber);
+      .sort(byPriority);
     return roots.map((root) => this.node(root, matches, board, included));
   }
 
@@ -272,7 +273,7 @@ export class WorkGraph {
     const children = (this.childrenOf.get(entry.id!) ?? [])
       .filter((id) => included.has(id))
       .map((id) => this.byId.get(id)!)
-      .sort(byNumber)
+      .sort(byPriority)
       .map((child) => this.node(child, matches, board, included));
     const context = !matches(entry);
     const campaigns = this.campaignsOf(entry);
@@ -286,7 +287,7 @@ export class WorkGraph {
   private subtree(entry: WorkEntry, campaign?: WorkEntry): WorkNode {
     const children = (this.childrenOf.get(entry.id!) ?? [])
       .map((id) => this.byId.get(id)!)
-      .sort(byNumber)
+      .sort(byPriority)
       .map((child) => this.subtree(child, campaign));
     const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign?.id);
     return { entry, children, context: false, campaigns, tasks: this.tasksBelow(entry) };
@@ -347,7 +348,7 @@ export function numberOf(entry: WorkEntry): number | undefined {
 }
 
 /**
- * The board's order: by the number of the qualified id, numerically (`qits-9` before `qits-10`);
+ * By the number of the qualified id, numerically (`qits-9` before `qits-10`), {@link byPriority}'s tie-break;
  * an entry without one after those with one, by its raw id.
  */
 export function byNumber(a: WorkEntry, b: WorkEntry): number {
@@ -357,6 +358,19 @@ export function byNumber(a: WorkEntry, b: WorkEntry): number {
   if (x !== undefined && y === undefined) return -1;
   if (x === undefined && y !== undefined) return 1;
   return (a.id ?? '').localeCompare(b.id ?? '');
+}
+
+/**
+ * The trees' order (qits-753): by `priority`, highest first; an entry nobody ranked (no priority)
+ * after every ranked one; equal priorities, and two unranked entries, by {@link byNumber}.
+ */
+export function byPriority(a: WorkEntry, b: WorkEntry): number {
+  const x = a.priority ?? undefined;
+  const y = b.priority ?? undefined;
+  if (x !== undefined && y !== undefined && x !== y) return y - x;
+  if (x !== undefined && y === undefined) return -1;
+  if (x === undefined && y !== undefined) return 1;
+  return byNumber(a, b);
 }
 
 /** Where a node's tasks (its descendants that are tasks) are. */

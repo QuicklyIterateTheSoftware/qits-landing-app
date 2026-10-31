@@ -28,7 +28,7 @@ let nextListLaneId = 0;
  * - A link projected as `[lane-header]` stretches over the whole lane and casts a shadow while
  *   hovered; rows and cards sit above it with their own links.
  * - With `collapsible`, the round button on the bottom edge switches between the children and
- *   `[lane-summary]`; `collapsed` sets where it starts. `[lane-action]` (a `ui-finish-button`)
+ *   `[lane-summary]`; `collapsed` sets where it starts. `[lane-action]` (a `ui-finish-button` or a `ui-drag-handle`)
  *   sits on the lane's bottom-right corner, outside every clip. Both views are always rendered and
  *   switched by class, so a server render hydrates as is. Collapsed children are hidden until
  *   found: find-in-page searches them and opens the lane on a match.

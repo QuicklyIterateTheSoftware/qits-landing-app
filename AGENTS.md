@@ -85,6 +85,19 @@ open `work/create` (`WorkCreatePage`, `WorkWritesStore.create`) filled from the 
 (`patterns/ideas/work-inspiration/`, `WorkWritesStore.setInspiredBy`, a `patchWork` of
 `inspiredBy` alone, which no recording holds yet, so it has no pact interaction).
 
+Prioritising work (qits-753): the trees order siblings by `priority` (highest first, unranked
+after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`). In the Backlog
+(the roots, an epic's features, a feature's tasks) and on the board (the top-level epics and
+tickets only) an open item carries a drag handle (`ui-drag-handle`, the finish button's twin on the
+same corner); a drop is sent as `reprioritizeWork` with the sibling now directly below it
+(`above`), or, dropped last, the one directly above it (`below`) (`reorderAnchor`, `WorkReorders`
+in `core/work/work-reorder.ts`, `WorkWritesStore.reprioritize`), and the answered priorities go
+into `WorkStore` at once (`applyPriorities`); a refusal reads the work again. Every work card, lane
+and row the work patterns draw is a `uiReorderItem`, which needs a `[uiReorderList]` around it:
+where the order is not the page's job (Acceptance, the Archive, a campaign, a work item's page) the
+list is there and `reorderDisabled`, and a spec host drawing one item alone gives itself
+`hostDirectives: [ReorderList]`.
+
 Users today: the lightning menu fetches the open project's release requests when the project opens
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
 (`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a

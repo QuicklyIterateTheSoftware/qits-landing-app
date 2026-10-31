@@ -5,11 +5,14 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../testing/golden-masters';
 import { inspirable, WorkWritesStore } from './work-writes.store';
+import { WorkStore } from './work.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const NO_WORK = 'a project with no work';
+const RANKED = 'three reported tickets, one with a priority';
+const PROJECT = '00000000-0000-4000-8000-000000000001';
 
 /** `WorkWritesStore` (epic qits-888). */
 describe('WorkWritesStore', () => {
@@ -107,5 +110,75 @@ describe('WorkWritesStore', () => {
     expect(second.request.body).toEqual({ inspiredBy: null });
     second.flush(null, { status: 404, statusText: 'Not Found' });
     expect(await cleared).toEqual({ ok: false, refusal: 'The service refused it (HTTP 404).' });
+  });
+
+  describe('reprioritize (qits-753)', () => {
+    /** The recorded three tickets, loaded into `WorkStore`. */
+    async function loaded() {
+      const work = TestBed.inject(WorkStore);
+      const load = work.load(PROJECT);
+      await settle();
+      http
+        .expectOne(`/projects/api/projects/${PROJECT}/work`)
+        .flush(goldenMaster(RANKED, 'listProjectWork'));
+      await load;
+      return work;
+    }
+    const priorities = (work: InstanceType<typeof WorkStore>) =>
+      Object.fromEntries(
+        (work.byProject()[PROJECT]?.entries ?? []).map((e) => [e.qualifiedId, e.priority]),
+      );
+
+    it('puts the item below its anchor and writes the answered priorities into the work', async () => {
+      const work = await loaded();
+      expect(priorities(work)).toEqual({
+        'contract-00000001-1': 2,
+        'contract-00000001-2': null,
+        'contract-00000001-3': null,
+      });
+      const done = store.reprioritize(PROJECT, 'contract-00000001-3', {
+        below: 'contract-00000001-1',
+      });
+      await settle();
+      const request = http.expectOne('/projects/api/work/contract-00000001-3/priority');
+      expect(request.request.method).toBe('PUT');
+      expect(request.request.body).toEqual({ below: 'contract-00000001-1' });
+      request.flush(goldenMaster(RANKED, 'reprioritizeWork'));
+      expect((await done).ok).toBe(true);
+      expect(priorities(work)).toEqual({
+        'contract-00000001-1': 2,
+        'contract-00000001-2': null,
+        'contract-00000001-3': 1,
+      });
+    });
+
+    it('sends an anchor above as such', async () => {
+      const done = store.reprioritize(PROJECT, 'contract-00000001-2', {
+        above: 'contract-00000001-1',
+      });
+      await settle();
+      const request = http.expectOne('/projects/api/work/contract-00000001-2/priority');
+      expect(request.request.body).toEqual({ above: 'contract-00000001-1' });
+      request.flush(goldenMaster(RANKED, 'reprioritizeWork'));
+      expect((await done).ok).toBe(true);
+    });
+
+    it('reads the work again after a refusal, and hands back its message', async () => {
+      const work = await loaded();
+      const done = store.reprioritize(PROJECT, 'contract-00000001-3', {
+        above: 'contract-00000001-9',
+      });
+      await settle();
+      http
+        .expectOne('/projects/api/work/contract-00000001-3/priority')
+        .flush({ message: 'not an open sibling' }, { status: 400, statusText: 'Bad Request' });
+      expect(await done).toEqual({ ok: false, refusal: 'not an open sibling' });
+      await settle();
+      http
+        .expectOne(`/projects/api/projects/${PROJECT}/work`)
+        .flush(goldenMaster(RANKED, 'listProjectWork'));
+      await settle();
+      expect(priorities(work)['contract-00000001-3']).toBeNull();
+    });
   });
 });

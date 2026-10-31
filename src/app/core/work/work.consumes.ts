@@ -16,8 +16,9 @@ import type { Consumed } from '@qits/angular';
 /**
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered (`listProjectWork`), one
  * request shared by the card and the work section. The card counts entries by status ({@link countsAsWork}); the work
- * section shows each entity as a small card (qualified id, title, archetype), placed by its own status
- * and nested under its `parent`.
+ * section shows each entity as a small card (qualified id, title, archetype), placed by its own status,
+ * nested under its `parent` and ranked among its siblings by its `priority` (qits-753; null when
+ * nobody ranked it).
  */
 export const LIST_PROJECT_WORK = [
   'entities[].id',
@@ -26,6 +27,7 @@ export const LIST_PROJECT_WORK = [
   'entities[].archetype',
   'entities[].status',
   'entities[].parent',
+  'entities[].priority',
 ] as const;
 
 /** One work entity, cut to what the store reads. */

@@ -1,5 +1,12 @@
 import type { WorkEntry } from './work.consumes';
-import { byNumber, taskDistribution, WorkGraph, withoutHidden, type WorkNode } from './work-tree';
+import {
+  byNumber,
+  byPriority,
+  taskDistribution,
+  WorkGraph,
+  withoutHidden,
+  type WorkNode,
+} from './work-tree';
 
 /**
  * The tree, its columns and its campaign tags, on inline entries: this is a pure function of entries and campaign
@@ -410,6 +417,66 @@ describe('WorkGraph', () => {
         numbered('a', 'qits-2', 'TICKET'),
       ].sort(byNumber);
       expect(sorted.map((e) => e.id)).toEqual(['a', 'y', 'z']);
+    });
+
+    describe('by priority (qits-753)', () => {
+      const ranked = (
+        id: string,
+        qualifiedId: string,
+        priority: number | null,
+        archetype = 'TICKET',
+        parent?: string,
+      ) => ({ ...numbered(id, qualifiedId, archetype, parent), priority }) as WorkEntry;
+      const roots = (list: WorkEntry[]) =>
+        new WorkGraph(list).tree('board').map((node) => node.entry.id);
+
+      it('puts a higher priority first, whatever the number', () => {
+        const list = [ranked('a', 'qits-1', 1), ranked('b', 'qits-2', 5), ranked('c', 'qits-3', 3)];
+        expect(roots(list)).toEqual(['b', 'c', 'a']);
+      });
+
+      it('puts an entry nobody ranked after every ranked one', () => {
+        const list = [
+          ranked('a', 'qits-1', null),
+          ranked('b', 'qits-9', 0),
+          ranked('c', 'qits-5', -2),
+        ];
+        expect(roots(list)).toEqual(['b', 'c', 'a']);
+        expect([ranked('x', 'qits-1', null), ranked('y', 'qits-2', 1)].sort(byPriority)).toEqual([
+          expect.objectContaining({ id: 'y' }),
+          expect.objectContaining({ id: 'x' }),
+        ]);
+      });
+
+      it('falls back to the number for equal priorities, and for two unranked entries', () => {
+        const list = [
+          ranked('a', 'qits-12', 2),
+          ranked('b', 'qits-3', 2),
+          ranked('c', 'qits-10', null),
+          ranked('d', 'qits-9', null),
+        ];
+        expect(roots(list)).toEqual(['b', 'a', 'd', 'c']);
+      });
+
+      it('sorts each parent’s children among themselves', () => {
+        const list = [
+          ranked('e1', 'qits-1', null, 'EPIC'),
+          ranked('f2', 'qits-2', null, 'FEATURE', 'e1'),
+          ranked('f3', 'qits-3', 1, 'FEATURE', 'e1'),
+          ranked('k4', 'qits-4', 1, 'TASK', 'f2'),
+          ranked('k5', 'qits-5', 7, 'TASK', 'f2'),
+          ranked('k6', 'qits-6', null, 'TASK', 'f2'),
+          ranked('t7', 'qits-7', 3),
+        ];
+        expect(new WorkGraph(list).tree('board').map(shape)).toEqual([
+          't7@0',
+          'e1@0(f3@0 f2@0(k5@0 k4@0 k6@0))',
+        ]);
+        expect(new WorkGraph(list).nodeOf(list[0]).children.map((node) => node.entry.id)).toEqual([
+          'f3',
+          'f2',
+        ]);
+      });
     });
   });
 });

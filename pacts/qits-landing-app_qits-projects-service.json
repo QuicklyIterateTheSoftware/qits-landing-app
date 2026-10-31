@@ -9181,6 +9181,138 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "reprioritizeWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "reprioritize-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "reprioritize-work-item: reprioritizeWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "three reported tickets, one with a priority",
+          "params": {
+            "anchor": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-3",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "below": "{anchor}"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}/priority",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "PUT",
+        "path": "/projects/api/work/contract-00000001-3/priority"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "items": [
+              {
+                "priority": 2,
+                "qualifiedId": "contract-00000001-1"
+              },
+              {
+                "priority": 2,
+                "qualifiedId": "contract-00000001-1"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.items[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.items[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "setWorkStatus"
           },
           "qits-trigger": {
@@ -14100,6 +14232,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -14108,6 +14241,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -14323,6 +14457,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -14331,6 +14466,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -14535,6 +14671,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Campaign in flight"
@@ -14543,6 +14680,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000008",
                 "parent": "00000000-0000-4000-8000-000000000002",
+                "priority": null,
                 "qualifiedId": "contract-00000001-5",
                 "status": "DONE",
                 "title": "Done feature"
@@ -14746,6 +14884,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Card campaign"
@@ -14754,6 +14893,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Card campaign"
@@ -14762,6 +14902,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Card campaign"
@@ -14770,6 +14911,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Card campaign"
@@ -14778,6 +14920,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Card campaign"
@@ -14786,6 +14929,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Card campaign"
@@ -15002,6 +15146,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "DONE",
                 "title": "Done epic"
@@ -15010,6 +15155,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000002",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "DONE",
                 "title": "Shipped feature"
@@ -15225,6 +15371,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -15233,6 +15380,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -15448,6 +15596,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -15456,6 +15605,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -15652,6 +15802,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REPORTED",
                 "title": "Reported epic"
@@ -15660,6 +15811,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000015",
                 "parent": "00000000-0000-4000-8000-000000000014",
+                "priority": null,
                 "qualifiedId": "contract-00000001-20",
                 "status": "IMPLEMENTING",
                 "title": "Started feature"
@@ -15875,6 +16027,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -15883,6 +16036,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -16079,6 +16233,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Bug ticket"
@@ -16087,6 +16242,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Bug ticket"
@@ -16095,6 +16251,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Bug ticket"
@@ -16263,6 +16420,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Verified epic"
@@ -16271,6 +16429,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000002",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "Shipped feature"
@@ -16486,6 +16645,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -16494,6 +16654,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -16695,6 +16856,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "First campaign"
@@ -16703,6 +16865,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "First campaign"
@@ -16711,6 +16874,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "First campaign"
@@ -16880,6 +17044,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic in flight"
@@ -16888,6 +17053,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "READY_FOR_DEV",
                 "title": "Feature pending verification"
@@ -17085,6 +17251,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic in flight"
@@ -17093,6 +17260,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "VERIFIED",
                 "title": "Verified feature"
@@ -17289,6 +17457,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "READY_FOR_DEV",
                 "title": "Nested epic"
@@ -17297,6 +17466,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000002",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "Shipped feature"
@@ -17494,6 +17664,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic in flight"
@@ -17502,6 +17673,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTING",
                 "title": "Feature in flight"
@@ -17700,6 +17872,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTED",
                 "title": "Database runs out of connection slots during deploys"
@@ -17837,6 +18010,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic with mixed features"
@@ -17845,6 +18019,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
+                "priority": null,
                 "qualifiedId": "contract-00000001-2",
                 "status": "VERIFIED",
                 "title": "Verified feature"
@@ -18060,6 +18235,7 @@
                 "archetype": "CAMPAIGN",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Invoicing for the Q4 close"
@@ -18068,6 +18244,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": "00000000-0000-4000-8000-000000000006",
+                "priority": null,
                 "qualifiedId": "contract-00000001-3",
                 "status": "IMPLEMENTED",
                 "title": "CSV export"
@@ -18157,6 +18334,214 @@
                           ]
                         },
                         "$.parent": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.title": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listProjectWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "three reported tickets, one with a priority",
+          "params": {
+            "anchor": "contract-00000001-1",
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-3",
+            "ticketId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/work",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entities": [
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000003",
+                "parent": null,
+                "priority": 2,
+                "qualifiedId": "contract-00000001-1",
+                "status": "REPORTED",
+                "title": "Checkout times out under load"
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000004",
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-2",
+                "status": "REPORTED",
+                "title": "Invoice totals round the wrong way"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entities": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.title": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -19575,6 +19960,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -19583,6 +19969,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -19591,6 +19978,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -19599,6 +19987,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"
@@ -19607,6 +19996,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
+                "priority": null,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic"

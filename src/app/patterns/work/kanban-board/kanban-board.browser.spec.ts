@@ -4,10 +4,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { HIGHLIGHT_FADES } from '$ui/components/highlight/highlight';
-import { page } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { openRecordedWork } from '../../../../testing/browser/recorded-work';
 import { KanbanBoard } from './kanban-board';
 
@@ -28,6 +29,10 @@ class WholeBoard {
 
 const EVERY_STATUS = 'a project with work in every status';
 const NESTED = 'an epic with features and tasks';
+const RANKED = 'three reported tickets, one with a priority';
+
+/** The generated client builds its request after a few awaits; let them run. */
+const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 describe('KanbanBoard (screenshots)', () => {
   let http: HttpTestingController;
@@ -106,6 +111,34 @@ describe('KanbanBoard (screenshots)', () => {
     change(document.getSelection()!);
     document.dispatchEvent(new Event('selectionchange'));
   }
+
+  it('draws the drag handle on the top-level epics and tickets, not on an epic’s tasks', async () => {
+    const { element } = await shown(NESTED);
+    const hidden = (id: string) =>
+      element.querySelector(`button[aria-label="Move ${id}"]`)?.classList.contains('hidden');
+    expect(hidden('contract-00000001-1')).toBe(false);
+    // The epic's features and tasks have no handle on the board at all.
+    expect(element.querySelectorAll('ui-board-lane ui-board-card ui-drag-handle')).toHaveLength(0);
+    expect(element.querySelectorAll('ui-drag-handle')).toHaveLength(1);
+  });
+
+  it('sends a keyboard drop as the item’s place above the one now below it (qits-753)', async () => {
+    const { element } = await shown(EVERY_STATUS);
+    const handle = element.querySelector<HTMLElement>(
+      'button[aria-label="Move contract-00000001-5"]',
+    )!;
+    handle.focus();
+    // Picked up, one place down, dropped: the Ready for Dev epic now sits above the implementing one.
+    await userEvent.keyboard('[Space]');
+    await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('[Space]');
+    await settle();
+    const request = http.expectOne('/projects/api/work/contract-00000001-5/priority');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual({ above: 'contract-00000001-7' });
+    request.flush(await goldenMaster(RANKED, 'reprioritizeWork'));
+    await settle();
+  });
 
   it('highlights the card the text selection is in', async () => {
     const { element, locator } = await shown(EVERY_STATUS);

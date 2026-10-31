@@ -17,6 +17,7 @@ import {
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
 import type { CampaignReads } from '../../../../testing/campaign-reads';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicCard } from './epic-card';
 
 /**
@@ -30,6 +31,8 @@ import { EpicCard } from './epic-card';
  */
 @Component({
   imports: [Board, EpicCard],
+  // The list the board's items are in (qits-753).
+  hostDirectives: [ReorderList],
   host: { class: 'block w-[48rem] p-4' },
   template: `
     <ui-board [columns]="columns" gutter>

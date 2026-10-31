@@ -1,8 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
+import { movable } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
+import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { Leave } from '$ui/components/leave/leave';
+import { ReorderItem } from '$ui/components/reorder/reorder';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
@@ -12,13 +15,17 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * corner while it has an ACTIVE workspace (`app-workspace-link`). A VERIFIED ticket is not on the board:
  * it waits in the Acceptance list (`ticket-list-item`), with its finish button.
  *
+ * The card is an item (`uiReorderItem`) of the board's reorder list (`app-kanban-board`,
+ * qits-753), and an open ticket (not context) carries the drag handle ("Move <id>",
+ * `ui-drag-handle`) on its bottom-right corner, the bubble beside it.
+ *
  * When `leaving` is set (the ticket left the board), the card shrinks away (`uiLeave`), then emits
  * `left`. `display: contents`, so the card is itself the grid item of the board.
  */
 @Component({
   selector: 'app-ticket-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, Leave, WorkRef, WorkspaceLink],
+  imports: [BoardCard, DragHandle, Leave, ReorderItem, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -29,6 +36,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       [kind]="n.entry.archetype?.toLowerCase() ?? ''"
       [border]="border()"
       [link]="base() + '/' + n.entry.qualifiedId"
+      uiReorderItem
+      [reorderItemLabel]="n.entry.qualifiedId ?? ''"
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
@@ -45,6 +54,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         [workId]="n.entry.id"
         [qualifiedId]="n.entry.qualifiedId"
       />
+      <ui-drag-handle card-action [shown]="movable(n)" [label]="'Move ' + n.entry.qualifiedId" />
     </ui-board-card>
   `,
 })
@@ -55,6 +65,8 @@ export class TicketCard {
   /** The ticket is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
+
+  protected readonly movable = movable;
 
   protected readonly border = computed(
     () => BOARD_COLUMNS[this.node().column ?? 0]?.cardBorder ?? 'border-charcoal-brown-200',

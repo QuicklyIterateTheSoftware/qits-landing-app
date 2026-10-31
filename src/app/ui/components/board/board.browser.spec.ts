@@ -3,7 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
 import { RouterLink } from '@angular/router';
+import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { FinishButton } from '$ui/components/finish-button/finish-button';
+import { REORDER } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
 import { TagLink } from '$ui/components/tag-link/tag-link';
 import { Board, type BoardColumnSpec } from './board';
@@ -152,6 +154,39 @@ class Finishing {
   `,
 })
 class CornerAndFinish {
+  readonly columns = COLUMNS;
+}
+
+/**
+ * A board whose top-level lane and cards are a reorder list, each with its drag handle (qits-753):
+ * one card with a corner bubble, which moves beside the handle, and one whose handle is not shown.
+ */
+@Component({
+  imports: [Board, BoardLane, BoardCard, DragHandle, REORDER, TagLink],
+  host: { class: 'block w-[48rem] p-4' },
+  template: `
+    <ui-board [columns]="columns" gutter uiReorderList>
+      <ui-board-lane collapsible collapsed uiReorderItem>
+        <span lane-header class="font-semibold">An epic</span>
+        <span lane-gutter class="font-mono">qits-50</span>
+        <span lane-summary>3 tasks</span>
+        <ui-drag-handle lane-action label="Move qits-50" />
+      </ui-board-lane>
+      <ui-board-card [column]="0" code="qits-51" title="A ticket" kind="ticket" uiReorderItem>
+        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-drag-handle card-action label="Move qits-51" />
+      </ui-board-card>
+      <ui-board-card [column]="1" code="qits-52" title="Another ticket" kind="ticket" uiReorderItem>
+        <ui-drag-handle card-action label="Move qits-52" />
+      </ui-board-card>
+      <ui-board-card [column]="2" code="qits-53" title="Not movable" kind="ticket" uiReorderItem>
+        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-drag-handle card-action label="Move qits-53" [shown]="false" />
+      </ui-board-card>
+    </ui-board>
+  `,
+})
+class Dragging {
   readonly columns = COLUMNS;
 }
 
@@ -325,6 +360,24 @@ describe('Board (screenshots)', () => {
     expect(Math.round(card.right - alone.right)).toBe(1);
     expect(Math.round(card.bottom - alone.bottom)).toBe(1);
     await expect.element(page.elementLocator(element)).toMatchScreenshot('corner-and-finish');
+  });
+
+  it('draws the drag handle on a lane and on cards, the corner bubble beside it', async () => {
+    const fixture = TestBed.createComponent(Dragging);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const [withBubble, , hidden] = [...element.querySelectorAll('ui-board-card')];
+    const bubble = withBubble.querySelector('ui-tag-link a')!.getBoundingClientRect();
+    const handle = withBubble.querySelector('ui-drag-handle button')!.getBoundingClientRect();
+    expect(bubble.right).toBeLessThan(handle.left);
+    expect(withBubble.querySelector('ui-drag-handle button')!.getAttribute('aria-label')).toBe(
+      'Move qits-51',
+    );
+    // A handle not shown leaves the bubble flush in the corner (inside the 1px border).
+    const card = hidden.getBoundingClientRect();
+    const alone = hidden.querySelector('ui-tag-link a')!.getBoundingClientRect();
+    expect(Math.round(card.right - alone.right)).toBe(1);
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('dragging');
   });
 
   it('draws the finish button on verified items, idle, running and failed', async () => {

@@ -299,6 +299,16 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
+  it('show-project-work-board: work ranked by priority, and work nobody ranked', () =>
+    given('show-project-work-board', 'three reported tickets, one with a priority').executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const projectId = projectOf('three reported tickets, one with a priority');
+        await store.load(projectId);
+        expect(store.byProject()[projectId]?.status).toBe('loaded');
+      },
+    ));
+
   it('show-project-work: a project with no work counts zero', () =>
     given('show-project-work', 'a project with no work').executeTest(async (server) => {
       const store = storeAt(server.url);

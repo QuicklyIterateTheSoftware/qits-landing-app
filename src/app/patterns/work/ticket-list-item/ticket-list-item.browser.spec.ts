@@ -13,6 +13,7 @@ import {
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
+import { ReorderList } from '$ui/components/reorder/reorder';
 import { TicketListItem } from './ticket-list-item';
 
 /**
@@ -22,6 +23,8 @@ import { TicketListItem } from './ticket-list-item';
  */
 @Component({
   imports: [TicketListItem],
+  // The list the work list draws the item in (qits-753).
+  hostDirectives: [ReorderList],
   host: { class: 'flex w-[40rem] flex-col gap-12 p-4 pb-8 [&_ui-board-card]:self-stretch' },
   template: `
     @if (node(); as node) {

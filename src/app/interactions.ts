@@ -317,6 +317,11 @@ export const INTERACTIONS = {
    * names an idea of the project as an epic's, ticket's or campaign's inspiration, or clears it.
    */
   'set-work-inspiration': 'The work item page sets or clears the idea inspiring the item',
+  /**
+   * A drop of a dragged work item in the Backlog or on the board (`WorkReorders`) via
+   * `WorkWritesStore.reprioritize`: puts it directly above or below a sibling (qits-753).
+   */
+  'reprioritize-work-item': 'Dragging a work item among its siblings sets its priority',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
