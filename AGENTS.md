@@ -340,7 +340,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | Provider                | Store and pact spec                                                                          | Pact file                                             | Golden masters                          |
 | ----------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
 | qits-projects-service   | `core/projects/projects.store*.ts`                                                           | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
-| qits-githost-service    | `core/loc/loc.store*.ts`                                                                     | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-githost-service    | `core/loc/loc.store*.ts`, `core/githost/raw-images.store*.ts`                                | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
 | qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon   | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 | qits-system-service     | `core/system/targets.store*.ts`                                                              | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
@@ -351,6 +351,15 @@ shown like a counted one), one never counted (`PENDING`, left out; "Counting lin
 is counted), one without a commit ("No lines yet"), and a mix of counted and never counted. The
 card shows CODE languages only; data (JSON, YAML, …) and docs (Markdown) are left out. The plain and
 screenshot specs cover the same cases from the same golden masters.
+
+A changed image (png, jpg, jpeg, gif, webp; not SVG) on a release request's Changes tab or in an
+opened commit shows as the image, before and after (`ui-image-diff`, qits-734), instead of its text
+diff: `RawImagesStore` (`core/githost/`) reads qits-githost's `getRaw` through the generated client
+as a Blob (so it carries the cookie or the dev bearer), at full commit shas: the fold's `base` and
+`mergedSha`, a pin's two shas in the sibling (`repositoryId`), a commit's `parent` and itself. Its
+pact interaction (`raw-images.store.pact.spec.ts`, state `a repository with an image on main`)
+binds the status and an `image/png` body, not the bytes. Each githost pact spec owns its
+operations' part of the file (`assertPactPart`).
 
 - **Pacts name both sides by repository name**, never by application name, so a component's
   frontend and backend stay distinct: consumer `qits-landing-app`, provider

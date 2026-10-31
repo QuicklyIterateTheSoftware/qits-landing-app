@@ -149,6 +149,11 @@ export const INTERACTIONS = {
    */
   'show-release-request-changes':
     'The Changes tab of a release request shows what its fold changed',
+  /**
+   * `release-changes.ts` and `commit-changes.ts` via `RawImagesStore` (qits-734): a changed image,
+   * chosen on the Changes tab or in an opened commit, shows as the image before and after.
+   */
+  'show-changed-image': 'Choosing a changed image on a release request shows it as an image',
   /** `notifications-menu.ts`: the top bar's notifications menu, on its first opening. */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */

@@ -24,8 +24,11 @@ import {
   shortShaOrNone,
 } from '$core/release-requests/release-request-model';
 import { changesLede, gitlinkOf, hoistedFile } from '$core/release-requests/release-changes';
+import { imageReads, isImagePath, type ImageChange } from '$core/githost/raw-image';
+import { RawImagesStore } from '$core/githost/raw-images.store';
 import { ChangeList, type ChangeEntry } from '$ui/components/change-list/change-list';
 import { DiffViewer } from '$ui/components/diff-viewer/diff-viewer';
+import { ImageDiff } from '$ui/components/image-diff/image-diff';
 import { Spinner } from '$ui/components/spinner/spinner';
 
 /**
@@ -38,11 +41,16 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * them, and its changed files join the list under the pin's path; choosing one of those shows its
  * diff inside the sibling. A file no longer in the fold (the fold moved) says so. Every read is
  * per fold (`ChangesStore`), so a poll that changed nothing costs nothing.
+ *
+ * An image (`isImagePath`, qits-734) shows as images instead of its diff, which would only say the
+ * binary differs: the fold's own image read in the request's repository at the base release
+ * (`base`) and at the fold (`mergedSha`), one inside a pin in the sibling (`repositoryId`) at the
+ * two pins, through `RawImagesStore`. Its text diff is not asked for.
  */
 @Component({
   selector: 'app-release-changes',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ChangeList, DiffViewer, Spinner],
+  imports: [ChangeList, DiffViewer, ImageDiff, Spinner],
   host: { class: 'block' },
   template: `
     <ui-spinner [state]="changes()?.status ?? 'loading'" class="min-h-24">
@@ -117,6 +125,13 @@ import { Spinner } from '$ui/components/spinner/spinner';
             <p class="m-0 p-3 text-sm text-charcoal-brown-500">
               {{ path() }} is not changed by this fold.
             </p>
+          } @else if (image(); as shown) {
+            <h3 class="m-0 mb-2 font-mono text-sm font-semibold break-all">{{ path() }}</h3>
+            <ui-image-diff
+              [changeType]="shown.changeType"
+              [before]="shown.before"
+              [after]="shown.after"
+            />
           } @else {
             <ui-spinner [state]="diff()?.status ?? 'loaded'" class="min-h-12">
               <ui-diff-viewer [patch]="diff()?.value?.diff ?? ''" [path]="diff() ? path() : ''" />
@@ -129,6 +144,7 @@ import { Spinner } from '$ui/components/spinner/spinner';
 })
 export class ReleaseChangesView {
   private readonly store = inject(ChangesStore);
+  private readonly images = inject(RawImagesStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -219,10 +235,40 @@ export class ReleaseChangesView {
     return this.files().some((file) => file.path === path) || !!this.hoisted();
   });
 
+  /**
+   * The chosen image and where each side is read: the fold's file in the request's repository at
+   * `base` and `mergedSha`, a file inside a pin in the sibling at the two pins. Null for anything
+   * that is not an image, or until the list naming it is read.
+   */
+  private readonly imageChange = computed(() => {
+    const path = this.path();
+    if (!isImagePath(path) || this.pin()) return null;
+    const inside = this.hoisted();
+    if (inside) {
+      const moved = this.expansions().get(inside.gitlink);
+      const file = moved?.files?.find((entry) => entry.path === inside.file);
+      return file ? this.planned(file, moved?.repositoryId, moved?.oldSha, moved?.newSha) : null;
+    }
+    const set = this.changes()?.value;
+    const file = this.files().find((entry) => entry.path === path);
+    return file ? this.planned(file, this.repoId(), set?.base, set?.mergedSha) : null;
+  });
+
+  /** The chosen image's sides, as `ui-image-diff` draws them; null when no image is chosen. */
+  protected readonly image = computed(() => {
+    const change = this.imageChange();
+    if (!change) return null;
+    return {
+      changeType: change.changeType,
+      before: this.images.side(change.reads.before),
+      after: this.images.side(change.reads.after),
+    };
+  });
+
   /** The diff to draw: the fold's file, or a file inside a pin. */
   protected readonly diff = computed(() => {
     const path = this.path();
-    if (!path || this.pin() || !this.inChangeSet()) return undefined;
+    if (!path || this.pin() || !this.inChangeSet() || isImagePath(path)) return undefined;
     const inside = this.hoisted();
     const key = inside
       ? changeKeys.submoduleDiff(this.requestId(), this.fold(), inside.gitlink, inside.file)
@@ -242,16 +288,33 @@ export class ReleaseChangesView {
       const path = this.path();
       const fileKnown = this.inChangeSet() && !this.pin();
       const inside = this.hoisted();
+      const image = this.imageChange();
       untracked(() => {
         if (!repoId || !requestId) return;
         this.store.releaseChanges(repoId, requestId, fold);
         if (gitlink) this.store.submoduleChanges(repoId, requestId, fold, gitlink);
         if (!fileKnown) return;
+        // An image is read as bytes, never as a diff.
+        if (isImagePath(path)) {
+          for (const read of [image?.reads.before, image?.reads.after]) {
+            if (read) this.images.image(read.repoId, read.rev, read.path);
+          }
+          return;
+        }
         if (inside)
           this.store.submoduleFileDiff(repoId, requestId, fold, inside.gitlink, inside.file);
         else this.store.releaseFileDiff(repoId, requestId, fold, path);
       });
     });
+  }
+
+  private planned(
+    file: ImageChange,
+    repoId: string | undefined,
+    before: string | null | undefined,
+    after: string | null | undefined,
+  ) {
+    return { changeType: file.changeType, reads: imageReads(file, repoId, before, after) };
   }
 
   protected open(path: string): void {

@@ -12,8 +12,11 @@ import type { Consumed } from '@qits/angular';
  * `consume(...)`, and its pact spec binds exactly them.
  */
 
-/** A changed file, as every file list reads it. */
-const FILE = ['path', 'oldPath', 'changeType'] as const;
+/**
+ * A changed file, as every file list reads it. `oldSha` and `newSha` are its blobs before and
+ * after (null on the side an added or deleted file lacks): an image shows only the sides it has.
+ */
+const FILE = ['path', 'oldPath', 'changeType', 'oldSha', 'newSha'] as const;
 
 /** A changed file that may be a submodule pin. */
 const FILE_WITH_PIN = [
@@ -28,9 +31,14 @@ const FILE_WITH_PIN = [
 const files = <const T extends readonly string[]>(paths: T) =>
   paths.map((path) => `files[].${path}`) as { [K in keyof T]: `files[].${T[K] & string}` };
 
-/** The files a request's fold changes, against the newest release tag not holding it. */
+/**
+ * The files a request's fold changes, against the newest release tag not holding it. `base` is
+ * that tag's commit (null when the repository never released): a changed image is read there and
+ * at `mergedSha`.
+ */
 export const LIST_RELEASE_REQUEST_CHANGES = [
   'mergedSha',
+  'base',
   'baseTag',
   ...files(FILE_WITH_PIN),
   'truncated',
@@ -40,8 +48,12 @@ export const LIST_RELEASE_REQUEST_CHANGES = [
 /** One file's patch: the fold's, a submodule's, or a commit's. */
 export const GET_FILE_DIFF = ['path', 'changeType', 'diff'] as const;
 
-/** A submodule pin the fold moves: the sibling's commits and changed files between the pins. */
+/**
+ * A submodule pin the fold moves: the sibling's commits and changed files between the pins. A
+ * changed image inside it is read from the sibling (`repositoryId`) at the two pins.
+ */
 export const GET_SUBMODULE_CHANGES = [
+  'repositoryId',
   'name',
   'oldSha',
   'newSha',
@@ -55,7 +67,10 @@ export const GET_SUBMODULE_CHANGES = [
   'detail',
 ] as const;
 
-/** The files one commit changes, against its first parent. */
+/**
+ * The files one commit changes, against its first parent (`parent`, null for a root commit); a
+ * changed image is read at the two.
+ */
 export const LIST_COMMIT_CHANGES = ['commit', 'parent', ...files(FILE_WITH_PIN)] as const;
 
 /** The fold's changes. */

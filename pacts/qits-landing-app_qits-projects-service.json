@@ -10684,7 +10684,9 @@
             "files": [
               {
                 "changeType": "ADDED",
+                "newSha": "ee9055ccdb2bfa77f38610857e2a00ad69ffb4c5",
                 "oldPath": null,
+                "oldSha": null,
                 "path": "src/export.txt"
               }
             ],
@@ -10719,6 +10721,14 @@
               ]
             },
             "$.files[*].changeType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.files[*].newSha": {
               "combine": "AND",
               "matchers": [
                 {
@@ -20070,23 +20080,23 @@
             "files": [
               {
                 "changeType": "MODIFIED",
+                "newSha": "6fe0d928f526e702a761ee14f250998a0ff257ad",
                 "oldPath": null,
+                "oldSha": "22b4cdd1e9aa8f6a1f65252647e56fe9db425929",
                 "path": "README.md"
               },
               {
-                "changeType": "MODIFIED",
+                "changeType": "ADDED",
+                "newSha": "ee9055ccdb2bfa77f38610857e2a00ad69ffb4c5",
                 "oldPath": null,
-                "path": "README.md"
-              },
-              {
-                "changeType": "MODIFIED",
-                "oldPath": null,
-                "path": "README.md"
+                "oldSha": null,
+                "path": "src/export.txt"
               }
             ],
             "name": "contract-service",
             "newSha": "cb9776855921387be1951de5bbbf0914aa54b1bf",
             "oldSha": "edf350dfabb86b68f03f6d9448036d47924efc0a",
+            "repositoryId": "00000000-0000-4000-8000-000000000004",
             "truncated": false
           },
           "contentType": "application/json",
@@ -20202,37 +20212,75 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "max": 3,
-                  "min": 3
-                }
-              ]
-            },
-            "$.files[*].changeType": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.files[*].path": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.changeType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.newSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.oldSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.path": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.changeType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.newSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.path": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -20257,6 +20305,15 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.repositoryId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -20336,18 +20393,23 @@
       "response": {
         "body": {
           "content": {
+            "base": "5eab9635f653a85136ce4d8babd44edfa83cf1da",
             "baseTag": "2026.101.100000",
             "detail": null,
             "files": [
               {
                 "changeType": "MODIFIED",
+                "newSha": "0f79179575bc37b34af3ad4aae0ff07ac39eb2af",
                 "oldPath": null,
+                "oldSha": "dab97c3b6e97345f158d40c78e4857db8d019b59",
                 "path": "README.md",
                 "submodule": null
               },
               {
                 "changeType": "MODIFIED",
+                "newSha": "cb9776855921387be1951de5bbbf0914aa54b1bf",
                 "oldPath": null,
+                "oldSha": "edf350dfabb86b68f03f6d9448036d47924efc0a",
                 "path": "components/contract/contract-service",
                 "submodule": {
                   "detail": null,
@@ -20371,6 +20433,14 @@
         },
         "matchingRules": {
           "body": {
+            "$.base": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$.baseTag": {
               "combine": "AND",
               "matchers": [
@@ -20396,6 +20466,22 @@
                             }
                           ]
                         },
+                        "$.newSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.oldSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.path": {
                           "combine": "AND",
                           "matchers": [
@@ -20410,6 +20496,22 @@
                       "index": 1,
                       "rules": {
                         "$.changeType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.newSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.oldSha": {
                           "combine": "AND",
                           "matchers": [
                             {

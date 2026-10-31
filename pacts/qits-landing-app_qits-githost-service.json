@@ -8,6 +8,131 @@
         "references": {
           "qits-call": {
             "app": "qits-githost-service",
+            "operationId": "getRaw"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-changed-image",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-changed-image: getRaw",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with an image on main",
+          "params": {
+            "body": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPQqr8CAAJUAX5kvxnrAAAAAElFTkSuQmCC",
+            "path": "docs/screenshot.png",
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repoName": "contract-service",
+            "repositoryId": "00000000-0000-4000-8000-000000000002",
+            "rev": "main",
+            "sha": "0000000000000000000000000000000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/githost/api/repositories/${repositoryId}/raw",
+            "type": "ProviderState"
+          },
+          "query": {
+            "path": {
+              "expression": "${path}",
+              "type": "ProviderState"
+            },
+            "rev": {
+              "expression": "${rev}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          },
+          "query": {
+            "path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "rev": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/githost/api/repositories/00000000-0000-4000-8000-000000000002/raw",
+        "query": {
+          "path": [
+            "docs/screenshot.png"
+          ],
+          "rev": [
+            "main"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPQqr8CAAJUAX5kvxnrAAAAAElFTkSuQmCC",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "image/png"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "image/png"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "image/png.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-githost-service",
             "operationId": "listLoc"
           },
           "qits-trigger": {

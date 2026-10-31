@@ -7,7 +7,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as githostClient } from '../../api/githost/client.gen';
 import { provideHeyApiClient } from '../../api/githost/client/client.gen';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction } from '@qits/angular/testing';
+import { assertPactPart } from '../../../testing/pact-part';
 import { githostGoldenMasters as masters } from '../../../testing/golden-masters';
 import { LIST_LOC } from './loc.consumes';
 import { LocStore } from './loc.store';
@@ -16,8 +17,8 @@ import { LocStore } from './loc.store';
  * qits-landing-app's pact with qits-githost-service (epic qits-112), in
  * `pacts/qits-landing-app_qits-githost-service.json`.
  *
- * The store is the only user of the qits-githost client, so this file is the whole pact. It has one
- * interaction per kind of list the cards meet, each from its own provider state: a repository
+ * This spec owns the file's `listLoc` interactions; `raw-images.store.pact.spec.ts` owns the raw
+ * read's (qits-734). It has one interaction per kind of list the cards meet, each from its own provider state: a repository
  * counted, one counted at an older commit (STALE), one never counted, one without a commit, and a
  * list mixing counted and never counted.
  * Each binds only `LIST_LOC`, the list the store passes to `consume(...)`. See
@@ -63,7 +64,12 @@ describe('qits-landing-app → qits-githost-service pact', () => {
   afterAll(() => {
     githostClient.setConfig({ baseUrl: '' });
     try {
-      assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        ['listLoc'],
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
