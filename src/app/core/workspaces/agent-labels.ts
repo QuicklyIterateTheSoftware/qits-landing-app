@@ -63,31 +63,59 @@ export function agentWaitLabel(agent: Waiting, now?: Date): string | null {
 }
 
 /**
- * What the agent is doing, from its daemon's hooks; null when nothing is reported. WAITING is
- * "waiting on you" only when the agent declared no wait: one that waits on a release request, a CI
- * run or a work item is not waiting on a person, and {@link agentWaitLabel} says what it waits on.
+ * What a finished item's agent reads as (qits-1776): `done, awaiting acceptance` while its item is
+ * VERIFIED (the work is finished and only waits for a person to accept it), `done` once it is DONE;
+ * null for any other status. Case-insensitive.
  */
-export function activityLabel(
-  activity: string | null | undefined,
-  waitingOn?: string | null,
-): string | null {
-  switch (activity) {
-    case 'BUSY':
-      return 'working';
-    case 'WAITING':
-      return waitingOn?.trim() ? null : 'waiting on you';
-    case 'IDLE':
-      return 'idle';
-    case 'ENDED':
-      return 'ended';
+export function itemDoneLabel(entityStatus: string | null | undefined): string | null {
+  switch (entityStatus?.trim().toUpperCase()) {
+    case 'VERIFIED':
+      return 'done, awaiting acceptance';
+    case 'DONE':
+      return 'done';
     default:
       return null;
   }
 }
 
-/** Whether a person is awaited: the agent waits for input and declared no wait of its own. */
-export function waitsOnYou(agent: { readonly activity?: string | null } & Waiting): boolean {
-  return activityLabel(agent.activity, agent.waitingOn) === 'waiting on you';
+/**
+ * What the agent is doing, from its daemon's hooks; null when nothing is reported. WAITING is
+ * "waiting on you" only when the agent declared no wait: one that waits on a release request, a CI
+ * run or a work item is not waiting on a person, and {@link agentWaitLabel} says what it waits on.
+ * An agent that is neither working nor ended, on a VERIFIED or DONE item, is done
+ * ({@link itemDoneLabel}, qits-1776), not idle and not waiting on you.
+ */
+export function activityLabel(
+  activity: string | null | undefined,
+  waitingOn?: string | null,
+  entityStatus?: string | null,
+): string | null {
+  switch (activity) {
+    case 'BUSY':
+      return 'working';
+    case 'ENDED':
+      return 'ended';
+  }
+  const done = itemDoneLabel(entityStatus);
+  if (done) return done;
+  switch (activity) {
+    case 'WAITING':
+      return waitingOn?.trim() ? null : 'waiting on you';
+    case 'IDLE':
+      return 'idle';
+    default:
+      return null;
+  }
+}
+
+/**
+ * Whether a person is awaited: the agent waits for input and declared no wait of its own, and its
+ * item is not already VERIFIED or DONE.
+ */
+export function waitsOnYou(
+  agent: { readonly activity?: string | null; readonly entityStatus?: string | null } & Waiting,
+): boolean {
+  return activityLabel(agent.activity, agent.waitingOn, agent.entityStatus) === 'waiting on you';
 }
 
 /** What an agent is called on screen: its work item's qualified id, else its id. */

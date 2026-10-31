@@ -3127,6 +3127,7 @@
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a5",
                 "entityId": "contract-00000001-11",
+                "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Remember the last export format",
                 "repositoryId": "00000000-0000-4000-8000-000000000013",
                 "runState": "QUEUED",
@@ -3140,6 +3141,7 @@
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a1",
                 "entityId": "contract-00000001-10",
+                "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Invoice totals are off by one cent",
                 "repositoryId": "00000000-0000-4000-8000-000000000013",
                 "runState": "RUNNING",
@@ -3153,6 +3155,7 @@
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a4",
                 "entityId": "contract-00000001-2",
+                "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Export invoices for the accountants",
                 "repositoryId": "00000000-0000-4000-8000-000000000013",
                 "runState": "YIELDED",
@@ -3200,6 +3203,14 @@
                           ]
                         },
                         "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -3263,6 +3274,14 @@
                           ]
                         },
                         "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -3351,6 +3370,14 @@
                           ]
                         },
                         "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -4494,6 +4521,7 @@
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a4",
                 "entityId": "contract-00000001-2",
+                "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Export invoices for the accountants",
                 "harness": "CLAUDE",
                 "runState": "YIELDED",
@@ -4507,6 +4535,7 @@
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a1",
                 "entityId": "contract-00000001-10",
+                "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Invoice totals are off by one cent",
                 "harness": "CLAUDE",
                 "runState": "RUNNING",
@@ -4554,6 +4583,14 @@
                           ]
                         },
                         "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -4624,6 +4661,14 @@
                           ]
                         },
                         "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
                           "combine": "AND",
                           "matchers": [
                             {

@@ -26,6 +26,7 @@ import {
   type WaitSubject,
 } from '$core/workspaces/agent-attention';
 import type { ProjectStatusAgent } from '$core/workspaces/agents.consumes';
+import { itemDoneLabel } from '$core/workspaces/agent-labels';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
@@ -43,12 +44,15 @@ export function clockTime(iso: string | null | undefined): string {
 /** The activity chip: what the agent is doing, in a word or three, and its tone. */
 export function activityChip(agent: {
   readonly activity?: string | null;
+  readonly entityStatus?: string | null;
   readonly waitingSince?: string | null;
   readonly waits?: readonly unknown[] | null;
 }): { readonly label: string; readonly tone: ChipTone } {
   if (agent.activity === 'ENDED') return { label: 'Ended', tone: 'neutral' };
   if (agent.activity === 'BUSY') return { label: 'Working', tone: 'ok' };
   if (agent.waits?.length) return { label: 'Waiting', tone: 'waiting' };
+  const done = itemDoneLabel(agent.entityStatus);
+  if (done) return { label: done.charAt(0).toUpperCase() + done.slice(1), tone: 'ok' };
   const since = clockTime(agent.waitingSince);
   return { label: since ? `Idle since ${since}` : 'Idle', tone: 'neutral' };
 }
@@ -101,7 +105,8 @@ interface AgentMenuRow {
  * The top bar's agents menu (epic qits-1681), beside the lightning menu: the open project's ACTIVE
  * agents (`AgentsStore.loadProjectAgents`), each with its item linked to the agent's page
  * (`agents/<agent id>`), an
- * activity chip (Working, Waiting, Idle since HH:mm, Ended), a line per open wait
+ * activity chip (Working, Waiting, Done, awaiting acceptance / Done (qits-1776), Idle since HH:mm,
+ * Ended), a line per open wait
  * (`waitSubject`: a request with its state and lifecycle line, a run, an item, comments, or the
  * wait's label), "Blocked since HH:mm" when its item is blocked (the work list carries no block
  * reason), and, when it needs a person (`needsAttention`), the attention's reason in cinnabar with

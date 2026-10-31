@@ -248,7 +248,7 @@ export class AgentLayout {
 
   protected readonly doing = computed(() => {
     const agent = this.agent();
-    return agent ? activityLabel(agent.activity, agent.waitingOn) : null;
+    return agent ? activityLabel(agent.activity, agent.waitingOn, agent.entityStatus) : null;
   });
 
   protected readonly wait = computed(() => {

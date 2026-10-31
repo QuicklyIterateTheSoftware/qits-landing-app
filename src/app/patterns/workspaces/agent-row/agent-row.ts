@@ -14,6 +14,7 @@ export interface AgentRowData {
   readonly agentId?: string;
   readonly entityId?: string;
   readonly entityTitle?: string;
+  readonly entityStatus?: string;
   readonly state?: string;
   readonly runState?: string;
   readonly admin?: boolean;
@@ -100,7 +101,7 @@ export class AgentRow {
   );
   protected readonly runState = computed(() => runStateLabel(this.agent()));
   protected readonly doing = computed(() =>
-    activityLabel(this.agent().activity, this.agent().waitingOn),
+    activityLabel(this.agent().activity, this.agent().waitingOn, this.agent().entityStatus),
   );
   protected readonly wait = computed(() => agentWaitLabel(this.agent()));
   protected readonly link = computed(() => {

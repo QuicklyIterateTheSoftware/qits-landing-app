@@ -58,6 +58,24 @@ describe('AgentRow', () => {
     expect(element.querySelector('[role=status]')).toBeNull();
   });
 
+  it('says an idle or waiting agent on a VERIFIED item is done, awaiting acceptance (qits-1776)', () => {
+    const element = render({ entityId: 'qits-617', activity: 'WAITING', entityStatus: 'VERIFIED' });
+    expect(element.textContent).toContain('done, awaiting acceptance');
+    expect(element.textContent).not.toContain('waiting on you');
+  });
+
+  it('says an idle agent on a DONE item is done (qits-1776)', () => {
+    const idle = render({ entityId: 'qits-617', activity: 'IDLE', entityStatus: 'DONE' });
+    expect(idle.textContent).toContain('done');
+    expect(idle.textContent).not.toContain('idle');
+  });
+
+  it('keeps a working agent on a VERIFIED item working (qits-1776)', () => {
+    const element = render({ entityId: 'qits-617', activity: 'BUSY', entityStatus: 'VERIFIED' });
+    expect(element.textContent).toContain('working');
+    expect(element.textContent).not.toContain('done');
+  });
+
   it('has no link without a project', () => {
     expect(render({ agentId: 'a-617', entityId: 'qits-617' }, '').querySelector('a')).toBeNull();
   });

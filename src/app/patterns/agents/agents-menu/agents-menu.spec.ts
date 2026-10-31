@@ -13,7 +13,7 @@ import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { AgentsMenu, clockTime } from './agents-menu';
+import { activityChip, AgentsMenu, clockTime } from './agents-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -169,6 +169,49 @@ describe('AgentsMenu', () => {
     );
     expect(chips).toEqual(['Working', 'Waiting', `Idle since ${clockTime(idleSince)}`, 'Ended']);
     expect(clockTime(idleSince)).toMatch(/^\d\d:\d\d$/);
+  });
+
+  it('says an agent whose item is VERIFIED or DONE is done, not idle (qits-1776)', async () => {
+    const idleSince = '2026-10-28T09:41:00Z';
+    const { panel, open } = await render([
+      agent(4, { entityStatus: 'VERIFIED' }),
+      agent(3, { activity: 'IDLE', entityStatus: 'VERIFIED', waitingSince: idleSince }),
+      agent(2, { activity: 'WAITING', entityStatus: 'DONE', waitingSince: idleSince }),
+      agent(1, { activity: 'ENDED', entityStatus: 'VERIFIED' }),
+    ]);
+    await open();
+    const chips = Array.from(panel.querySelectorAll('[data-activity]')).map((c) =>
+      c.textContent?.trim(),
+    );
+    expect(chips).toEqual(['Working', 'Done, awaiting acceptance', 'Done', 'Ended']);
+  });
+
+  it('orders the activity chip: ended, working, waits, a finished item, then idle (qits-1776)', () => {
+    const waits = [{ id: 'w' }];
+    expect(activityChip({ activity: 'ENDED', entityStatus: 'VERIFIED' })).toEqual({
+      label: 'Ended',
+      tone: 'neutral',
+    });
+    expect(activityChip({ activity: 'BUSY', entityStatus: 'VERIFIED' })).toEqual({
+      label: 'Working',
+      tone: 'ok',
+    });
+    expect(activityChip({ activity: 'IDLE', entityStatus: 'VERIFIED', waits })).toEqual({
+      label: 'Waiting',
+      tone: 'waiting',
+    });
+    expect(activityChip({ activity: 'IDLE', entityStatus: 'verified' })).toEqual({
+      label: 'Done, awaiting acceptance',
+      tone: 'ok',
+    });
+    expect(activityChip({ activity: 'WAITING', entityStatus: 'DONE' })).toEqual({
+      label: 'Done',
+      tone: 'ok',
+    });
+    expect(activityChip({ activity: 'IDLE', entityStatus: 'IMPLEMENTING' })).toEqual({
+      label: 'Idle',
+      tone: 'neutral',
+    });
   });
 
   it('gives each wait a line: a request with its state and lifecycle, a run, an item, comments, a label', async () => {
