@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { signalStore, withMethods, withProps } from '@ngrx/signals';
 import { consume } from '@qits/angular';
 import { createWork, patchWork, reprioritizeWork } from '../../api/projects';
+import type { ReorderAnchor } from '$core/reorder/reorder-anchor';
 import {
   CREATE_WORK,
   PATCH_WORK_INSPIRATION,
@@ -54,7 +55,7 @@ export interface WorkDraft {
  * Where a dragged item now sits among its siblings: directly above one (`above`), or, dropped last,
  * directly below one (`below`). Exactly one of the two.
  */
-export type WorkAnchor = { readonly above: string } | { readonly below: string };
+export type WorkAnchor = ReorderAnchor;
 
 /** What a write answered: the value, or why not, for a person. */
 export type WorkWriteOutcome<T> =

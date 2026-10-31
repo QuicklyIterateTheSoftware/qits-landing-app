@@ -27,6 +27,8 @@ const IDEAS = 'a project with ideas';
 /**
  * Screenshots of the Ideas page (epic qits-888), answered with qits-projects' recordings: "a
  * project with ideas"' list (a queued and a planned idea). The open project is "a project exists"'.
+ * Both ideas are rankable (qits-1791), so each row has a drag handle on its bottom-right corner;
+ * an archived or DONE idea's missing handle is the unit spec's, as no recorded list holds one.
  */
 describe('ProjectIdeasPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -84,6 +86,11 @@ describe('ProjectIdeasPage (screenshots)', () => {
     listRead().flush(await goldenMaster(IDEAS, 'listIdeas'));
     await answered(harness.fixture);
     await expect.element(view).toMatchTextContent('Share the build cache');
+    // Both recorded ideas are rankable (QUEUED, PLANNED, neither archived): each has a handle.
+    await expect.element(view.getByRole('button', { name: 'Move Faster builds' })).toBeVisible();
+    await expect
+      .element(view.getByRole('button', { name: 'Move Share the build cache' }))
+      .toBeVisible();
     await expect.element(view).toMatchScreenshot('list');
   });
 

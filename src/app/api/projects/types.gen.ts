@@ -82,6 +82,12 @@ export type AgentMcpCatalogEntryDto = {
     attachedBy?: Array<string>;
 };
 
+export type AgentMcpCredentialDto = {
+    key?: string;
+    updatedAt?: Instant;
+    updatedBy?: string;
+};
+
 export type AgentPermissionMode = 'SKIP_PERMISSIONS' | 'PROMPT';
 
 export type AgentResolvedMcpServerDto = {
@@ -367,7 +373,7 @@ export type CatalogEntryRequest = {
      */
     headerName?: string;
     /**
-     * The qits-configuration key holding that header's value — `env.<VAR>` under the reserved `qits-agent-mcp` application. Empty exactly when headerName is. The value lives there and never here.
+     * The credential key holding that header's value — `env.<VAR>`, set through PUT /agent-mcp-catalog/credentials/{key}. Empty exactly when headerName is. The value lives in the credential store and never here.
      */
     credentialKey?: string;
     /**
@@ -382,10 +388,6 @@ export type CatalogListResponse = {
      * Keys an entry may not claim: the platform's own server and the retired ones.
      */
     reservedKeys?: Array<string>;
-    /**
-     * The qits-configuration application every credentialKey lives under. Reserved: nothing deploys under it, so these keys are never rendered into any application's environment.
-     */
-    credentialApplication?: string;
 };
 
 export type CollectTagsRequest = {
@@ -512,6 +514,17 @@ export type CreateProjectRequest = {
 export type CreateReleaseRequest = {
     branch: string;
     priority?: string;
+};
+
+export type CredentialListResponse = {
+    credentials?: Array<AgentMcpCredentialDto>;
+};
+
+export type CredentialRequest = {
+    /**
+     * The header value, verbatim. Write-only: no door answers it back.
+     */
+    value?: string;
 };
 
 export type CriterionApprovalDto = {
@@ -1081,6 +1094,10 @@ export type Idea = {
     archived?: boolean;
     archiveReason?: string | null;
     archivedAt?: Instant | null;
+    /**
+     * The ranking among the project's rankable ideas (not archived, not DONE): higher sorts first, null after every number. Null until ranked; the archive clears it.
+     */
+    priority?: number | null;
     createdAt?: Instant;
     updatedAt?: Instant;
 };
@@ -1135,6 +1152,10 @@ export type IdeaDetail = {
     archived?: boolean;
     archiveReason?: string | null;
     archivedAt?: Instant | null;
+    /**
+     * The ranking; null until ranked.
+     */
+    priority?: number | null;
     createdAt?: Instant;
     updatedAt?: Instant;
     /**
@@ -1159,14 +1180,14 @@ export type IdeaInspiredWork = {
 };
 
 /**
- * A project's ideas, oldest first.
+ * A project's ideas: priority descending, null last, then oldest first.
  */
 export type IdeaList = {
     ideas?: Array<Idea>;
 };
 
 /**
- * A JSON merge patch (RFC 7396) of one idea: title, description, enabledBy. An absent property is left alone; null clears description or enabledBy. The status is derived and the archive has its own doors.
+ * A JSON merge patch (RFC 7396) of one idea: title, description, enabledBy, priority. An absent property is left alone; null clears description, enabledBy or priority. The status is derived and the archive has its own doors.
  */
 export type IdeaPatch = {
     /**
@@ -1175,6 +1196,25 @@ export type IdeaPatch = {
     title?: string;
     description?: string | null;
     enabledBy?: string | null;
+    /**
+     * The ranking: an integer, or null to clear it. Written only on an idea that is neither archived nor DONE (else 409). PUT /projects/api/ideas/{id}/priority ranks by drop instead.
+     */
+    priority?: number | null;
+};
+
+/**
+ * The ideas a drop renumbered — the moved idea and every rankable idea above it — in their new order, highest first.
+ */
+export type IdeaPriorities = {
+    items?: Array<IdeaPriority>;
+};
+
+/**
+ * One idea and the priority it now holds.
+ */
+export type IdeaPriority = {
+    id?: string;
+    priority?: number;
 };
 
 /**
@@ -1185,6 +1225,20 @@ export type IdeaRef = {
     title?: string;
     status?: string;
     archived?: boolean;
+};
+
+/**
+ * Where a dropped idea now sits among its project's rankable ideas: directly above or directly below one of them. Exactly one of above and below.
+ */
+export type IdeaReprioritize = {
+    /**
+     * The idea this one now sits directly above, by id.
+     */
+    above?: string;
+    /**
+     * The idea this one now sits directly below, by id.
+     */
+    below?: string;
 };
 
 export type Instant = string;
@@ -2172,7 +2226,7 @@ export type WorkCreate = {
      */
     acceptanceCriteria?: Array<string>;
     /**
-     * An epic's, a ticket's or a campaign's inspiration: the id of an idea of the same project (GET /projects/api/ideas). Refused on a feature or a task.
+     * The work's inspiration, on every archetype: the id of an idea of the same project (GET /projects/api/ideas).
      */
     inspiredBy?: string;
 };
@@ -2428,7 +2482,7 @@ export type WorkPatch = {
      */
     acceptanceCriteria?: Array<string> | null;
     /**
-     * An epic's, a ticket's or a campaign's inspiration: the id of an idea of the same project; null clears it. Editable at every status. Refused on a feature or a task. Setting, changing or clearing it re-derives the ideas' status.
+     * The work's inspiration, on every archetype: the id of an idea of the same project; null clears it. Editable at every status. Setting, changing or clearing it re-derives the ideas' status.
      */
     inspiredBy?: string | null;
     /**
@@ -2631,6 +2685,93 @@ export type GetProjectsApiAgentMcpCatalogResponses = {
 };
 
 export type GetProjectsApiAgentMcpCatalogResponse = GetProjectsApiAgentMcpCatalogResponses[keyof GetProjectsApiAgentMcpCatalogResponses];
+
+export type GetProjectsApiAgentMcpCatalogCredentialsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/projects/api/agent-mcp-catalog/credentials';
+};
+
+export type GetProjectsApiAgentMcpCatalogCredentialsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetProjectsApiAgentMcpCatalogCredentialsResponses = {
+    /**
+     * OK
+     */
+    200: CredentialListResponse;
+};
+
+export type GetProjectsApiAgentMcpCatalogCredentialsResponse = GetProjectsApiAgentMcpCatalogCredentialsResponses[keyof GetProjectsApiAgentMcpCatalogCredentialsResponses];
+
+export type DeleteProjectsApiAgentMcpCatalogCredentialsByKeyData = {
+    body?: never;
+    path: {
+        key: string;
+    };
+    query?: never;
+    url: '/projects/api/agent-mcp-catalog/credentials/{key}';
+};
+
+export type DeleteProjectsApiAgentMcpCatalogCredentialsByKeyErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type DeleteProjectsApiAgentMcpCatalogCredentialsByKeyResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PutProjectsApiAgentMcpCatalogCredentialsByKeyData = {
+    body: CredentialRequest;
+    path: {
+        key: string;
+    };
+    query?: never;
+    url: '/projects/api/agent-mcp-catalog/credentials/{key}';
+};
+
+export type PutProjectsApiAgentMcpCatalogCredentialsByKeyErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type PutProjectsApiAgentMcpCatalogCredentialsByKeyResponses = {
+    /**
+     * OK
+     */
+    200: AgentMcpCredentialDto;
+};
+
+export type PutProjectsApiAgentMcpCatalogCredentialsByKeyResponse = PutProjectsApiAgentMcpCatalogCredentialsByKeyResponses[keyof PutProjectsApiAgentMcpCatalogCredentialsByKeyResponses];
 
 export type DeleteProjectsApiAgentMcpCatalogByKeyData = {
     body?: never;
@@ -3099,6 +3240,10 @@ export type PatchIdeaErrors = {
      * No idea with this id
      */
     404: unknown;
+    /**
+     * A priority written on an archived or DONE idea; nothing is written
+     */
+    409: unknown;
 };
 
 export type PatchIdeaResponses = {
@@ -3146,6 +3291,47 @@ export type ArchiveIdeaResponses = {
 };
 
 export type ArchiveIdeaResponse = ArchiveIdeaResponses[keyof ArchiveIdeaResponses];
+
+export type ReprioritizeIdeaData = {
+    body: IdeaReprioritize;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/ideas/{id}/priority';
+};
+
+export type ReprioritizeIdeaErrors = {
+    /**
+     * Both anchors or neither; an anchor naming no idea, naming the idea itself, naming another project's idea, or naming an archived or DONE idea
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent ranking outside its own project; nothing is written
+     */
+    403: unknown;
+    /**
+     * No idea with this id
+     */
+    404: unknown;
+    /**
+     * The idea is archived or DONE
+     */
+    409: unknown;
+};
+
+export type ReprioritizeIdeaResponses = {
+    /**
+     * The ideas the drop renumbered, highest first
+     */
+    200: IdeaPriorities;
+};
+
+export type ReprioritizeIdeaResponse = ReprioritizeIdeaResponses[keyof ReprioritizeIdeaResponses];
 
 export type UnarchiveIdeaData = {
     body?: never;

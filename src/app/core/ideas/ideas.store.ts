@@ -8,25 +8,33 @@ import {
   getIdea,
   listIdeas,
   patchIdea,
+  reprioritizeIdea,
   unarchiveIdea,
 } from '../../api/projects';
 import type { DomainEvent } from '$core/events/domain-events';
 import { injectRefreshOn } from '$core/events/refresh-on';
+import type { ReorderAnchor } from '$core/reorder/reorder-anchor';
+import { inIdeaRank } from './idea-rank';
 import { IDEA_EVENTS } from './idea-events';
 import {
   GET_IDEA,
   IDEA_REFUSAL,
   IDEA_WRITTEN,
   LIST_IDEAS,
+  REPRIORITIZE_IDEA,
   type IdeaDetail,
   type IdeaEntry,
+  type IdeaPriorities,
   type WrittenIdea,
 } from './ideas.consumes';
 
 /** A project's ideas, as `loadList` left them. */
 export interface IdeaList {
   readonly status: 'loading' | 'loaded' | 'error';
-  /** Oldest first, as the service answers; empty while loading and after an error. */
+  /**
+   * In rank order (`byIdeaRank`, qits-1791): as the service answers, and sorted again after a
+   * drop's priorities are written in. Empty while loading and after an error.
+   */
   readonly ideas: readonly IdeaEntry[];
 }
 
@@ -39,6 +47,14 @@ export interface IdeaView {
 /** What a write answered: the idea as written, or why not. */
 export type IdeaOutcome =
   | { readonly ok: true; readonly idea: WrittenIdea }
+  | { readonly ok: false; readonly refusal: string };
+
+/** Where a dragged idea now sits: directly above one rankable idea, or directly below one. */
+export type IdeaAnchor = ReorderAnchor;
+
+/** What a drop answered: the renumbered ideas, or why not. */
+export type IdeaRankOutcome =
+  | { readonly ok: true; readonly priorities: IdeaPriorities }
   | { readonly ok: false; readonly refusal: string };
 
 /** A new idea: its title, and optionally its description and the idea enabling it. */
@@ -73,11 +89,16 @@ interface IdeasState {
   readonly lists: Readonly<Record<string, IdeaList>>;
   /** Each idea's page data, by its id. */
   readonly ideas: Readonly<Record<string, IdeaView>>;
+  /** Why each project's last drop was refused, by project id; gone when the next drop starts. */
+  readonly rankRefusals: Readonly<Record<string, string | undefined>>;
 }
 
 /** A list's key: the project, and whether the archived ideas are in it. */
 const listKey = (projectId: string, archived: boolean) =>
   `${projectId}|${archived ? 'all' : 'open'}`;
+
+/** Both of a project's list keys: without and with the archived ideas. */
+const listKeys = (projectId: string) => [listKey(projectId, false), listKey(projectId, true)];
 
 /**
  * A project's ideas (epic qits-888), from qits-projects' `/ideas` doors.
@@ -91,6 +112,12 @@ const listKey = (projectId: string, archived: boolean) =>
  * - `create(projectId, draft)`, `update(id, patch)`, `archive(id, reason)`, `unarchive(id)`: the
  *   writes. Each answers an {@link IdeaOutcome}; a refusal carries the service's `message`. The
  *   pages read again what they show afterwards.
+ * - `reprioritize(projectId, ideaId, anchor)` puts a rankable idea directly above or below another
+ *   one (`reprioritizeIdea`, qits-1791): a drop on the Ideas page. The renumbered ideas the service
+ *   answers are written into the project's cached lists at once, which are sorted again, so the
+ *   idea stays where it was dropped. A refusal (400 for an anchor that is no rankable idea of the
+ *   project, 404, 409 for an archived or DONE idea) reads the project's lists again, so the idea
+ *   goes back, and is kept for the page (`rankRefusalOf(projectId)`) until the next drop.
  * - `follow(destroy, projectId, refresh)`: calls `refresh` after the idea events about the
  *   project `projectId()` names when the event arrives.
  *
@@ -98,13 +125,14 @@ const listKey = (projectId: string, archived: boolean) =>
  * `IdeaUnarchived`) whose `projectId` is the open project → the Ideas page's list
  * (`refreshList`), and on an idea's page that idea (`refreshIdea`: any idea of the project can be
  * the one it enables or is enabled by, so every such event reads it again), each through `follow`,
- * debounced 1 s. An event about another project reads nothing. The work an idea inspired moves on
+ * debounced 1 s. An event about another project reads nothing. A drop announces `IdeaUpdated` for
+ * each idea it renumbered, so other open lists follow it the same way. The work an idea inspired moves on
  * `EntityTransitioned`, which the idea's derived status follows as an `IdeaUpdated`; a move that
  * does not change the status shows on the next visit.
  */
 export const IdeasStore = signalStore(
   { providedIn: 'root' },
-  withState<IdeasState>({ lists: {}, ideas: {} }),
+  withState<IdeasState>({ lists: {}, ideas: {}, rankRefusals: {} }),
   withMethods((store) => {
     const refreshOn = injectRefreshOn();
 
@@ -120,13 +148,41 @@ export const IdeasStore = signalStore(
       const query = archived ? { project: projectId, archived: true } : { project: projectId };
       const { data, error } = await consume(listIdeas({ query }), LIST_IDEAS);
       if (error !== undefined || !data) return { status: 'error', ideas: [] };
-      return { status: 'loaded', ideas: data.ideas ?? [] };
+      return { status: 'loaded', ideas: inIdeaRank(data.ideas ?? []) };
     }
 
     async function fetchIdea(id: string): Promise<IdeaView> {
       const { data, error } = await consume(getIdea({ path: { id } }), GET_IDEA);
       if (error !== undefined || !data) return { status: 'error' };
       return { status: 'loaded', idea: data };
+    }
+
+    async function refreshList(projectId: string, archived: boolean): Promise<void> {
+      const key = listKey(projectId, archived);
+      const next = await fetchList(projectId, archived);
+      if (next.status === 'loaded' || !store.lists()[key]) setList(key, next);
+    }
+
+    function setRankRefusal(projectId: string, refusal: string | undefined): void {
+      patchState(store, { rankRefusals: { ...store.rankRefusals(), [projectId]: refusal } });
+    }
+
+    /** Writes a drop's priorities into the project's cached lists, and sorts them again. */
+    function applyPriorities(projectId: string, priorities: IdeaPriorities): void {
+      const written = new Map(
+        (priorities.items ?? []).flatMap((item) => (item.id ? [[item.id, item.priority]] : [])),
+      );
+      if (!written.size) return;
+      const lists = { ...store.lists() };
+      for (const key of listKeys(projectId)) {
+        const list = lists[key];
+        if (list?.status !== 'loaded') continue;
+        const ideas = list.ideas.map((idea) =>
+          idea.id && written.has(idea.id) ? { ...idea, priority: written.get(idea.id) } : idea,
+        );
+        lists[key] = { ...list, ideas: inIdeaRank(ideas) };
+      }
+      patchState(store, { lists });
     }
 
     function written(answer: {
@@ -150,10 +206,8 @@ export const IdeasStore = signalStore(
         setList(key, await fetchList(projectId, archived));
       },
       /** Reads again; the old list stays until the answer is in, and stays if it fails. */
-      async refreshList(projectId: string, archived = false): Promise<void> {
-        const key = listKey(projectId, archived);
-        const next = await fetchList(projectId, archived);
-        if (next.status === 'loaded' || !store.lists()[key]) setList(key, next);
+      refreshList(projectId: string, archived = false): Promise<void> {
+        return refreshList(projectId, archived);
       },
       listOf(projectId: string, archived = false): IdeaList | undefined {
         return store.lists()[listKey(projectId, archived)];
@@ -214,6 +268,38 @@ export const IdeasStore = signalStore(
       },
       async unarchive(id: string): Promise<IdeaOutcome> {
         return written(await consume(unarchiveIdea({ path: { id } }), IDEA_WRITTEN, IDEA_REFUSAL));
+      },
+      /**
+       * Sends a drop; the answer's priorities order the cached lists at once. A refusal reads the
+       * project's loaded lists again and is kept in `rankRefusalOf(projectId)`.
+       */
+      async reprioritize(
+        projectId: string,
+        ideaId: string,
+        anchor: IdeaAnchor,
+      ): Promise<IdeaRankOutcome> {
+        setRankRefusal(projectId, undefined);
+        const { data, error, response } = await consume(
+          reprioritizeIdea({ path: { id: ideaId }, body: anchor }),
+          REPRIORITIZE_IDEA,
+          IDEA_REFUSAL,
+        );
+        if (error !== undefined || !data) {
+          const refusal = ideaRefusal(error, response?.status);
+          setRankRefusal(projectId, refusal);
+          for (const archived of [false, true]) {
+            if (store.lists()[listKey(projectId, archived)]) {
+              void refreshList(projectId, archived);
+            }
+          }
+          return { ok: false, refusal };
+        }
+        applyPriorities(projectId, data);
+        return { ok: true, priorities: data };
+      },
+      /** Why the project's last drop was refused, in the service's words; none after a success. */
+      rankRefusalOf(projectId: string): string | undefined {
+        return store.rankRefusals()[projectId];
       },
       follow(
         destroy: DestroyRef,

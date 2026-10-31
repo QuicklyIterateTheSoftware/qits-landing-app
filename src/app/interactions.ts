@@ -313,6 +313,11 @@ export const INTERACTIONS = {
   /** Unarchive on an archived idea's page via `IdeasStore.unarchive`. */
   'unarchive-idea': 'Unarchive on an idea’s page brings it back',
   /**
+   * A drop of a dragged idea on the Ideas page via `IdeasStore.reprioritize`: puts it directly
+   * above or below another rankable idea of the project (qits-1791).
+   */
+  'reprioritize-idea': 'Dragging an idea among the project’s ideas ranks it',
+  /**
    * The work create form (`routes/projects/[slug]/work/create/`) via `WorkWritesStore.create`: a
    * root epic, ticket or campaign, inspired by an idea when opened from one (epic qits-888).
    */

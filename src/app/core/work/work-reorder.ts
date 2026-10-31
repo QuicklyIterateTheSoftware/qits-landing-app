@@ -1,8 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SelectedProject } from '$core/projects/selected-project';
+import { reorderAnchor, type ReorderIndexMove } from '$core/reorder/reorder-anchor';
 import { workRef } from './work.store';
 import type { WorkNode } from './work-tree';
-import { WorkWritesStore, type WorkAnchor } from './work-writes.store';
+import { WorkWritesStore } from './work-writes.store';
 
 /**
  * Prioritising work by dragging it (qits-753): in the Backlog, the roots, an epic's features and a
@@ -10,24 +11,10 @@ import { WorkWritesStore, type WorkAnchor } from './work-writes.store';
  */
 
 /** A list's move: the item's index among the list's drawn items before it, and after it. */
-export interface WorkMove {
-  readonly from: number;
-  readonly to: number;
-}
+export type WorkMove = ReorderIndexMove;
 
-/**
- * Where the item moved in `move` sits after it, among `ids` (the list's drawn items, in order,
- * before the move): directly above the item now below it, or, moved to the end, directly below the
- * item now above it. None for no move (`from === to`), an index outside the list, or a list of one.
- */
-export function reorderAnchor(ids: readonly string[], move: WorkMove): WorkAnchor | undefined {
-  const { from, to } = move;
-  if (from === to || from < 0 || to < 0 || from >= ids.length || to >= ids.length) return undefined;
-  const after = ids.filter((_, index) => index !== from);
-  after.splice(to, 0, ids[from]);
-  if (to + 1 < after.length) return { above: after[to + 1] };
-  return to > 0 ? { below: after[to - 1] } : undefined;
-}
+/** The shared index-to-anchor translation, here for the work lists' callers. */
+export { reorderAnchor };
 
 /**
  * Whether `node` can be dragged: an item of the list's own phase (not context) that is still open

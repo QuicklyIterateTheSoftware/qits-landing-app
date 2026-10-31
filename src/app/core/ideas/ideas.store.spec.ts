@@ -173,6 +173,74 @@ describe('IdeasStore', () => {
     expect(outcome.ok && outcome.idea.archived).toBe(false);
   });
 
+  describe('reprioritize (qits-1791)', () => {
+    const idea = (id: string, priority: number | null, status = 'PLANNED', archived = false) => ({
+      id,
+      title: id,
+      status,
+      archived,
+      priority,
+    });
+
+    /** Loads `p1`'s open list: c ranked 3, a and b unranked (oldest first), as the service answers. */
+    async function loaded() {
+      const done = store.loadList('p1');
+      await settle();
+      listReads()[0].flush({ ideas: [idea('c', 3), idea('a', null), idea('b', null)] });
+      await done;
+    }
+
+    const titles = () => store.listOf('p1')?.ideas.map((entry) => entry.id);
+
+    it('sends the anchor, and orders the list by the priorities it answers at once', async () => {
+      await loaded();
+      const done = store.reprioritize('p1', 'b', { above: 'c' });
+      await settle();
+      const request = http.expectOne(`${API}/b/priority`);
+      expect(request.request.method).toBe('PUT');
+      expect(request.request.body).toEqual({ above: 'c' });
+      request.flush({
+        items: [
+          { id: 'b', priority: 4 },
+          { id: 'c', priority: 3 },
+        ],
+      });
+      const outcome = await done;
+      expect(outcome.ok).toBe(true);
+      expect(titles()).toEqual(['b', 'c', 'a']);
+      expect(store.listOf('p1')?.ideas[0]?.priority).toBe(4);
+      expect(store.rankRefusalOf('p1')).toBeUndefined();
+      expect(listReads()).toHaveLength(0);
+    });
+
+    it('reads the list again on a refusal, and keeps the service’s words until the next drop', async () => {
+      await loaded();
+      const done = store.reprioritize('p1', 'b', { below: 'x' });
+      await settle();
+      http.expectOne(`${API}/b/priority`).flush(
+        { message: 'below names no idea of this project' },
+        {
+          status: 400,
+          statusText: 'Bad Request',
+        },
+      );
+      expect(await done).toEqual({ ok: false, refusal: 'below names no idea of this project' });
+      expect(store.rankRefusalOf('p1')).toBe('below names no idea of this project');
+      await settle();
+      const reads = listReads();
+      expect(reads).toHaveLength(1);
+      reads[0].flush({ ideas: [idea('c', 3), idea('a', null), idea('b', null)] });
+      await settle();
+      expect(titles()).toEqual(['c', 'a', 'b']);
+
+      const next = store.reprioritize('p1', 'a', { above: 'c' });
+      expect(store.rankRefusalOf('p1')).toBeUndefined();
+      await settle();
+      http.expectOne(`${API}/a/priority`).flush({ items: [] });
+      await next;
+    });
+  });
+
   it('follows the idea events about the open project only, at most once a second', async () => {
     const event = (name: string, payload: object) => ({ name, payload: JSON.stringify(payload) });
     const refreshed: (readonly DomainEvent[])[] = [];

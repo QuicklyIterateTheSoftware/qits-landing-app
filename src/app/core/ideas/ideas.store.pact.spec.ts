@@ -11,7 +11,13 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { GET_IDEA, IDEA_REFUSAL, IDEA_WRITTEN, LIST_IDEAS } from './ideas.consumes';
+import {
+  GET_IDEA,
+  IDEA_REFUSAL,
+  IDEA_WRITTEN,
+  LIST_IDEAS,
+  REPRIORITIZE_IDEA,
+} from './ideas.consumes';
 import { IdeasStore } from './ideas.store';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
@@ -24,6 +30,8 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  *   `archiveIdea` (Archive, with its reason), `unarchiveIdea`, and `createIdea` refused (400: a
  *   title of three sentences), whose `message` the form shows.
  * - "a project with no work": `createIdea` (Create on the form, a title and a description).
+ * - "a project with three ideas, one with a priority": `reprioritizeIdea` (a drop on the Ideas
+ *   page, directly below the ranked idea; qits-1791).
  *
  * Each test drives the store's own method with what the recording sent, against a pact mock server
  * answering with qits-projects' golden master. `getIdea` binds the fields of `GET_IDEA` the
@@ -43,10 +51,12 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'patchIdea',
   'archiveIdea',
   'unarchiveIdea',
+  'reprioritizeIdea',
 ];
 
 const IDEAS = 'a project with ideas';
 const NO_WORK = 'a project with no work';
+const RANKED = 'a project with three ideas, one with a priority';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-ideas-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -165,4 +175,19 @@ describe('qits-landing-app → qits-projects-service pact: ideas', () => {
       const outcome = await store.unarchive(id);
       expect(outcome.ok && outcome.idea.archived).toBe(false);
     }));
+
+  it('reprioritize-idea: an idea dropped directly below the ranked one', () =>
+    given(RANKED, 'reprioritizeIdea', 'reprioritize-idea', REPRIORITIZE_IDEA).executeTest(
+      async (server) => {
+        // The anchor as the recording sent it: the provider's verification fills in `{anchor}`
+        // from the state's params.
+        const below = sent(RANKED, 'reprioritizeIdea')['below'];
+        const outcome = await storeAt(server.url).reprioritize(
+          params(RANKED, 'reprioritizeIdea')['projectId'],
+          params(RANKED, 'reprioritizeIdea')['ideaId'],
+          { below },
+        );
+        expect(outcome.ok && outcome.priorities.items?.length).toBeGreaterThan(0);
+      },
+    ));
 });

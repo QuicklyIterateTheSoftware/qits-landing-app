@@ -56,7 +56,7 @@ describe('ProjectIdeasPage', () => {
   const queryOf = (read: { request: { urlWithParams: string } }, name: string) =>
     new URL(read.request.urlWithParams, 'http://localhost').searchParams.get(name);
 
-  async function shown() {
+  async function shown(answer: unknown = goldenMaster(IDEAS, 'listIdeas')) {
     const list = goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
@@ -68,7 +68,7 @@ describe('ProjectIdeasPage', () => {
     const [read] = listReads();
     expect(queryOf(read, 'project')).toBe(project.id);
     expect(queryOf(read, 'archived')).toBeNull();
-    read.flush(goldenMaster(IDEAS, 'listIdeas'));
+    read.flush(answer as object);
     await settle();
     await harness.fixture.whenStable();
     return { harness, project, element: harness.routeNativeElement as HTMLElement };
@@ -189,5 +189,135 @@ describe('ProjectIdeasPage', () => {
     await settle();
     await harness.fixture.whenStable();
     expect(titles(element)).toHaveLength(2);
+  });
+
+  describe('ranking by drag (qits-1791)', () => {
+    /** A recorded idea, with the status, archived flag and priority given. */
+    const idea = (title: string, status: string, priority: number | null, archived = false) => ({
+      ...goldenMaster(IDEAS, 'listIdeas').ideas[1],
+      id: title.toLowerCase().replace(/ /g, '-'),
+      title,
+      status,
+      priority,
+      archived,
+    });
+    const ranked = () => ({
+      ideas: [
+        idea('Ranked', 'PLANNED', 2),
+        idea('Older', 'QUEUED', null),
+        idea('Finished', 'DONE', null),
+        idea('Newer', 'PLANNED', null),
+      ],
+    });
+
+    /** The drag handles, each with its label and whether it is shown. */
+    const handles = (element: HTMLElement) =>
+      [...element.querySelectorAll('ul[aria-label=Ideas] li button[uiReorderHandle]')].map(
+        (button) => ({
+          button: button as HTMLButtonElement,
+          label: button.getAttribute('aria-label'),
+          shown: !button.classList.contains('hidden'),
+        }),
+      );
+
+    function key(target: Element, name: string): void {
+      target.dispatchEvent(new KeyboardEvent('keydown', { key: name, bubbles: true }));
+    }
+
+    /** Picks up the idea `title` from the keyboard, moves it with `keys` and drops it. */
+    async function dragged(element: HTMLElement, title: string, keys: readonly string[]) {
+      const handle = handles(element).find((h) => h.label === `Move ${title}`)!.button;
+      key(handle, ' ');
+      for (const name of keys) key(handle, name);
+      key(handle, ' ');
+      await settle();
+    }
+
+    const drops = () => http.match((req) => req.method === 'PUT' && req.url.endsWith('/priority'));
+
+    it('lists in rank order, with a handle on every rankable idea only', async () => {
+      const { element } = await shown({
+        ideas: [
+          idea('Older', 'QUEUED', null),
+          idea('Finished', 'DONE', 1),
+          idea('Ranked', 'PLANNED', 2),
+        ],
+      });
+      expect(titles(element)).toEqual(['Ranked', 'Finished', 'Older']);
+      expect(handles(element).map(({ label, shown }) => [label, shown])).toEqual([
+        ['Move Ranked', true],
+        ['Move Finished', false],
+        ['Move Older', true],
+      ]);
+    });
+
+    it('gives an archived idea no handle', async () => {
+      const { element, harness } = await shown(ranked());
+      (element.querySelector('input[aria-label="Show archived"]') as HTMLInputElement).click();
+      await ticked();
+      listReads()[0].flush({ ideas: [...ranked().ideas, idea('Shelved', 'PLANNED', null, true)] });
+      await settle();
+      await harness.fixture.whenStable();
+      const shelved = handles(element).find((h) => h.label === 'Move Shelved');
+      expect(shelved?.shown).toBe(false);
+    });
+
+    it('sends a drop as its place among the rankable ideas, and orders by the answer', async () => {
+      const { element, harness } = await shown(ranked());
+      await dragged(element, 'Newer', ['Home']);
+      const [drop] = drops();
+      expect(drop.request.url).toBe(`${API}/newer/priority`);
+      expect(drop.request.body).toEqual({ above: 'ranked' });
+      drop.flush({
+        items: [
+          { id: 'newer', priority: 3 },
+          { id: 'ranked', priority: 2 },
+        ],
+      });
+      await settle();
+      await harness.fixture.whenStable();
+      expect(titles(element)).toEqual(['Newer', 'Ranked', 'Older', 'Finished']);
+      expect(listReads()).toHaveLength(0);
+    });
+
+    it('anchors below the last rankable idea when dropped at the end', async () => {
+      const { element } = await shown(ranked());
+      await dragged(element, 'Ranked', ['End']);
+      const [drop] = drops();
+      expect(drop.request.body).toEqual({ below: 'newer' });
+      drop.flush({ items: [] });
+      await settle();
+    });
+
+    it('sends nothing for a cancelled drag, a drop in place, or one past a DONE idea only', async () => {
+      const { element } = await shown(ranked());
+      const handle = handles(element).find((h) => h.label === 'Move Newer')!.button;
+      key(handle, ' ');
+      key(handle, 'ArrowUp');
+      key(handle, 'Escape');
+      await dragged(element, 'Newer', ['ArrowUp', 'ArrowDown']);
+      await dragged(element, 'Newer', ['ArrowUp']);
+      expect(drops()).toHaveLength(0);
+    });
+
+    it('says why a drop was refused above the list, and reads the list again', async () => {
+      const { element, harness } = await shown(ranked());
+      await dragged(element, 'Newer', ['Home']);
+      drops()[0].flush(
+        { message: 'The idea is archived or DONE' },
+        { status: 409, statusText: 'Conflict' },
+      );
+      await settle();
+      await harness.fixture.whenStable();
+      const alert = element.querySelector('p[role=alert]') as HTMLElement;
+      expect(alert.classList.contains('hidden')).toBe(false);
+      expect(alert.textContent?.trim()).toBe('The idea is archived or DONE');
+      const reads = listReads();
+      expect(reads).toHaveLength(1);
+      reads[0].flush(ranked());
+      await settle();
+      await harness.fixture.whenStable();
+      expect(titles(element)).toEqual(['Ranked', 'Older', 'Finished', 'Newer']);
+    });
   });
 });

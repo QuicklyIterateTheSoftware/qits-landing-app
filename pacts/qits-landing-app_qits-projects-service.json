@@ -4012,12 +4012,14 @@
               {
                 "archived": false,
                 "id": "00000000-0000-4000-8000-000000000003",
+                "priority": null,
                 "status": "QUEUED",
                 "title": "Faster builds"
               },
               {
                 "archived": false,
                 "id": "00000000-0000-4000-8000-000000000003",
+                "priority": null,
                 "status": "QUEUED",
                 "title": "Faster builds"
               }
@@ -9156,6 +9158,139 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "reprioritizeIdea"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "reprioritize-idea",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "reprioritize-idea: reprioritizeIdea",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with three ideas, one with a priority",
+          "params": {
+            "anchor": "00000000-0000-4000-8000-000000000001",
+            "ideaId": "00000000-0000-4000-8000-000000000002",
+            "projectId": "00000000-0000-4000-8000-000000000003"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "below": "{anchor}"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/ideas/${ideaId}/priority",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "PUT",
+        "path": "/projects/api/ideas/00000000-0000-4000-8000-000000000002/priority"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "items": [
+              {
+                "id": "00000000-0000-4000-8000-000000000001",
+                "priority": 2
+              },
+              {
+                "id": "00000000-0000-4000-8000-000000000001",
+                "priority": 2
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.items[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.items[*].priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }

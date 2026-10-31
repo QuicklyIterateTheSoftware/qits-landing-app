@@ -1,4 +1,9 @@
-import type { CreateIdeaResponses, GetIdeaResponses, ListIdeasResponses } from '../../api/projects';
+import type {
+  CreateIdeaResponses,
+  GetIdeaResponses,
+  ListIdeasResponses,
+  ReprioritizeIdeaResponses,
+} from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -9,7 +14,8 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * `listIdeas`, by project: each idea's id (the link), title, derived status and whether it is
- * archived (the list's chip, and the status filter). The list's ideas differ in which of
+ * archived (the list's chip, and the status filter), and its rank (`priority`, null for an idea
+ * nobody ranked; qits-1791), which orders the list. The list's ideas differ in which of
  * `description`/`enabledBy` are null, so neither is read here: the detail page reads them.
  */
 export const LIST_IDEAS = [
@@ -17,6 +23,7 @@ export const LIST_IDEAS = [
   'ideas[].title',
   'ideas[].status',
   'ideas[].archived',
+  'ideas[].priority',
 ] as const;
 
 /** One idea of the list, cut to what the store reads. */
@@ -64,5 +71,14 @@ export const IDEA_WRITTEN = ['id', 'title', 'status', 'archived'] as const;
 /** A written idea, cut to what the store reads. */
 export type WrittenIdea = Consumed<CreateIdeaResponses[201], typeof IDEA_WRITTEN>;
 
-/** A refusal (400): the service's own words, shown as they are. */
+/**
+ * `reprioritizeIdea` (qits-1791): the ideas a drop renumbered (the moved one and every rankable idea
+ * above it), each with the priority it now holds, which the store writes into the cached lists.
+ */
+export const REPRIORITIZE_IDEA = ['items[].id', 'items[].priority'] as const;
+
+/** A drop's renumbered ideas, cut to what the store reads. */
+export type IdeaPriorities = Consumed<ReprioritizeIdeaResponses[200], typeof REPRIORITIZE_IDEA>;
+
+/** A refusal (400, 404, 409): the service's own words, shown as they are. */
 export const IDEA_REFUSAL = ['message'] as const;
