@@ -327,7 +327,11 @@ const UNATTENDED_TITLE =
                     />
                   </ng-template>
                   <ng-template #changeset let-hash>
-                    <app-commit-changes [repoId]="repoId()" [sha]="hash" />
+                    <app-commit-changes
+                      [repoId]="repoId()"
+                      [sha]="hash"
+                      [parent]="firstParent(hash)"
+                    />
                   </ng-template>
                   <p
                     class="m-0 py-2 text-sm text-charcoal-brown-500"
@@ -804,6 +808,21 @@ export class ReleaseRequestPage {
 
   /** The earlier fold merges are shown (they are folded away at first). */
   protected readonly earlierFolds = signal(false);
+
+  /** Each of the fold's commits' first parent, by hash: where an opened commit's images were before. */
+  private readonly firstParents = computed(
+    () =>
+      new Map(
+        (this.view()?.commits?.value?.commits ?? []).map((commit) => [
+          commit.hash ?? '',
+          commit.parents?.[0],
+        ]),
+      ),
+  );
+
+  protected firstParent(hash: string): string | undefined {
+    return this.firstParents().get(hash);
+  }
 
   /**
    * The fold's commits as a graph. With every commit's parents, a branch graph (`branchGraph`):

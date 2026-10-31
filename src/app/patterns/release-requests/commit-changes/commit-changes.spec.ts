@@ -41,10 +41,11 @@ describe('CommitChangesView', () => {
     URL.revokeObjectURL = original.revoke;
   });
 
-  async function render() {
+  async function render(parent?: string) {
     const fixture = TestBed.createComponent(CommitChangesView);
     fixture.componentRef.setInput('repoId', REPO);
     fixture.componentRef.setInput('sha', SHA);
+    if (parent) fixture.componentRef.setInput('parent', parent);
     fixture.detectChanges();
     await settle();
     const step = async () => {
@@ -76,6 +77,35 @@ describe('CommitChangesView', () => {
     const panes = [...element.querySelectorAll('ui-image-diff figure')];
     expect(panes.map((pane) => pane.querySelector('figcaption')?.textContent?.trim())).toEqual([
       'After',
+    ]);
+    expect(panes[0].querySelector('img')?.getAttribute('src')).toBe('blob:1');
+  });
+
+  it('reads a deleted image before at the parent the page names, as qits-projects names none', async () => {
+    const parent = 'a'.repeat(40);
+    const { element, step } = await render(parent);
+    // qits-projects answers `parent` null when none is asked for, even for a commit that has one.
+    const changes = goldenMaster(STATE, 'listCommitChanges');
+    changes.parent = null;
+    changes.files[0] = {
+      ...changes.files[0],
+      path: 'docs/shot.png',
+      changeType: 'DELETED',
+      oldSha: 'b'.repeat(40),
+      newSha: null,
+    };
+    http.expectOne(CHANGES).flush(changes);
+    await step();
+
+    http
+      .expectOne(`/githost/api/repositories/${REPO}/raw?rev=${parent}&path=docs%2Fshot.png`)
+      .flush(new Blob(['png'], { type: 'image/png' }));
+    await step();
+    await step();
+
+    const panes = [...element.querySelectorAll('ui-image-diff figure')];
+    expect(panes.map((pane) => pane.querySelector('figcaption')?.textContent?.trim())).toEqual([
+      'Before',
     ]);
     expect(panes[0].querySelector('img')?.getAttribute('src')).toBe('blob:1');
   });

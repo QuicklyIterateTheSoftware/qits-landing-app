@@ -24,8 +24,10 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * `ChangesStore`, once per commit and file.
  *
  * An image (`isImagePath`, qits-734) shows as images instead of its diff: read through
- * `RawImagesStore` at the first parent (`parent`; a root commit has none) and at the commit. Its
- * text diff is not asked for.
+ * `RawImagesStore` at the first parent and at the commit. Its text diff is not asked for. The
+ * first parent comes from the page (`parent`, from the fold's commit list): qits-projects answers
+ * `parent` null whenever none is asked for, so its own field names no commit to read the before
+ * side at.
  */
 @Component({
   selector: 'app-commit-changes',
@@ -72,6 +74,8 @@ export class CommitChangesView {
 
   readonly repoId = input.required<string>();
   readonly sha = input.required<string>();
+  /** The commit's first parent, as the fold's commit list names it; none for a root commit. */
+  readonly parent = input<string | null | undefined>(undefined);
 
   /** The file the reader chose; the first file until then. */
   protected readonly chosen = signal<string | null>(null);
@@ -91,7 +95,12 @@ export class CommitChangesView {
     const changes = this.changes()?.value;
     const file = changes?.files?.find((entry) => entry.path === path);
     if (!file) return null;
-    const reads = imageReads(file, this.repoId(), changes?.parent, changes?.commit ?? this.sha());
+    const reads = imageReads(
+      file,
+      this.repoId(),
+      changes?.parent ?? this.parent(),
+      changes?.commit ?? this.sha(),
+    );
     return { changeType: file.changeType, reads };
   });
 
