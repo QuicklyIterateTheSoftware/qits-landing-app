@@ -3977,11 +3977,31 @@
         }
       ],
       "request": {
+        "generators": {
+          "query": {
+            "project": {
+              "expression": "${projectId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "project": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
         "method": "GET",
         "path": "/projects/api/ideas",
         "query": {
           "project": [
-            "{projectId}"
+            "00000000-0000-4000-8000-000000000004"
           ]
         }
       },

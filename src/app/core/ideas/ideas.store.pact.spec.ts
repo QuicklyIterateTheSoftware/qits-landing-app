@@ -5,7 +5,7 @@ import { PactV4 } from '@pact-foundation/pact';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { addGoldenInteraction } from '@qits/angular/testing';
+import { addGoldenInteraction, exampleQuery } from '@qits/angular/testing';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
@@ -101,9 +101,9 @@ describe('qits-landing-app → qits-projects-service pact: ideas', () => {
   it('list-ideas: a project’s ideas', () =>
     given(IDEAS, 'listIdeas', 'list-ideas', LIST_IDEAS).executeTest(async (server) => {
       const store = storeAt(server.url);
-      // The project as the recording asked for it: its query, which the provider's verification
-      // fills in from the state's params.
-      const projectId = masters.operation(IDEAS, 'listIdeas').query['project'];
+      // The query's example is the state's projectId, which the provider's verification fills in
+      // from the provider state.
+      const projectId = exampleQuery(masters.operation(IDEAS, 'listIdeas'))['project'];
       await store.loadList(projectId);
       const list = store.listOf(projectId);
       expect(list?.status).toBe('loaded');
