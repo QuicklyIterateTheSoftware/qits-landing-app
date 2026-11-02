@@ -17,9 +17,9 @@ import type { ArchetypeEntry, DispatchPhase, LegalMove } from './archetypes.cons
  *   INTERIM for a campaign: its press is its start, and the registry serves no campaign phases.
  *   Since qits-650 a campaign's status is derived from its members (the lowest member status
  *   wins), its only manual moves are DROP and REOPEN, and the service starts it at any status
- *   that is neither DONE nor DROPPED. "Start campaign" still shows only while the registry
- *   serves the campaign a FORWARD move short of DONE, which it no longer does. TODO: take it from
- *   the registry once it says when a campaign starts.
+ *   that is neither DONE nor DROPPED. "Start campaign" shows on that same rule: whenever the
+ *   campaign's status is set and is neither DONE nor DROPPED (the `CLOSED` set below, the same
+ *   one a CLOSE move gates on).
  * - `status`: every move the registry serves out of the status, in its order (`transitions`), then
  *   Block (a placeholder) wherever the Agent group has something to run. A CLOSE move ("Close as
  *   done", qits-1757) shows only while every direct child is closed (`allClosed`): the service
@@ -83,7 +83,7 @@ export function workActions(
   const flow = phases?.flow ?? [];
   if (flow.length) agent.push({ kind: 'dispatch', flow });
   if (phases?.next) agent.push({ kind: 'nextPhase', phase: phases.next });
-  if (campaign && moves.some((m) => m.kind === 'FORWARD' && m.to !== 'DONE')) {
+  if (campaign && s && !CLOSED.has(s)) {
     agent.push({ kind: 'startCampaign' });
   }
 

@@ -122,8 +122,19 @@ describe('workActions', () => {
       status: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'],
     });
     expect(shown('CAMPAIGN', 'VERIFIED')).toEqual({
-      status: ['Mark done', 'Back to implemented', 'Drop'],
+      agent: ['Start campaign'],
+      status: ['Mark done', 'Back to implemented', 'Drop', 'Block'],
     });
+  });
+
+  // Since qits-650 "Start campaign" follows `status` alone, not a FORWARD move short of DONE:
+  // it shows at any status that is neither DONE nor DROPPED, REPORTED and IMPLEMENTED included,
+  // and disappears exactly at DONE and DROPPED.
+  it('offers the campaign start while its status is neither DONE nor DROPPED', () => {
+    expect(shown('CAMPAIGN', 'REPORTED').agent).toEqual(['Start campaign']);
+    expect(shown('CAMPAIGN', 'IMPLEMENTED').agent).toEqual(['Start campaign']);
+    expect(shown('CAMPAIGN', 'DONE')).toEqual({});
+    expect(shown('CAMPAIGN', 'DROPPED')).toEqual({ status: ['Reopen'] });
   });
 
   describe('Close as done (qits-1757)', () => {
