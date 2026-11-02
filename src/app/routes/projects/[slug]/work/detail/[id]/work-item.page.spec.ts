@@ -246,7 +246,7 @@ describe('WorkItemPage', () => {
     // REFINED: the start, the served moves; no plan for a campaign.
     expect(groups()).toEqual([
       { title: 'Agent', actions: ['Start campaign'] },
-      { title: 'Status', actions: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'] },
+      { title: 'Status', actions: ['Drop', 'Block'] },
     ]);
     const titles = children()
       .map(([text]) => text)

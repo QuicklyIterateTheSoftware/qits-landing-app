@@ -119,11 +119,11 @@ describe('workActions', () => {
   it('gives a campaign its moves and the interim start, and no plan', () => {
     expect(shown('CAMPAIGN', 'REFINED')).toEqual({
       agent: ['Start campaign'],
-      status: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'],
+      status: ['Drop', 'Block'],
     });
     expect(shown('CAMPAIGN', 'VERIFIED')).toEqual({
       agent: ['Start campaign'],
-      status: ['Mark done', 'Back to implemented', 'Drop', 'Block'],
+      status: ['Drop', 'Block'],
     });
   });
 
@@ -167,11 +167,11 @@ describe('workActions', () => {
       const campaign = withClose('CAMPAIGN', 'REFINED');
       expect(shown('CAMPAIGN', 'REFINED', campaign, ['DONE', 'DROPPED'])).toEqual({
         agent: ['Start campaign'],
-        status: ['Mark ready for dev', 'Back to reported', 'Close as done', 'Drop', 'Block'],
+        status: ['Close as done', 'Drop', 'Block'],
       });
       expect(shown('CAMPAIGN', 'REFINED', campaign, ['DONE', 'REFINED'])).toEqual({
         agent: ['Start campaign'],
-        status: ['Mark ready for dev', 'Back to reported', 'Drop', 'Block'],
+        status: ['Drop', 'Block'],
       });
       // One start, whatever the CLOSE move beside it.
       const reported = withClose('CAMPAIGN', 'REPORTED');

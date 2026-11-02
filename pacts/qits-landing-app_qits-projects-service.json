@@ -15039,7 +15039,7 @@
                 "parent": null,
                 "priority": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "REPORTED",
                 "title": "Card campaign"
               },
               {
@@ -15048,7 +15048,7 @@
                 "parent": null,
                 "priority": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "REPORTED",
                 "title": "Card campaign"
               },
               {
@@ -15057,7 +15057,7 @@
                 "parent": null,
                 "priority": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "REPORTED",
                 "title": "Card campaign"
               },
               {
@@ -15066,7 +15066,7 @@
                 "parent": null,
                 "priority": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "REPORTED",
                 "title": "Card campaign"
               },
               {
@@ -15075,7 +15075,7 @@
                 "parent": null,
                 "priority": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "REPORTED",
                 "title": "Card campaign"
               },
               {
@@ -15084,7 +15084,7 @@
                 "parent": null,
                 "priority": null,
                 "qualifiedId": "contract-00000001-1",
-                "status": "REFINED",
+                "status": "REPORTED",
                 "title": "Card campaign"
               }
             ]
@@ -29979,32 +29979,32 @@
                   ],
                   "IMPLEMENTED": [
                     {
-                      "to": "VERIFIED",
-                      "kind": "FORWARD"
+                      "to": "DROPPED",
+                      "kind": "DROP"
                     }
                   ],
                   "READY_FOR_DEV": [
                     {
-                      "to": "IMPLEMENTED",
-                      "kind": "FORWARD"
+                      "to": "DROPPED",
+                      "kind": "DROP"
                     }
                   ],
                   "REFINED": [
                     {
-                      "to": "REPORTED",
-                      "kind": "BACK"
+                      "to": "DROPPED",
+                      "kind": "DROP"
                     }
                   ],
                   "REPORTED": [
                     {
-                      "to": "REFINED",
-                      "kind": "FORWARD"
+                      "to": "DROPPED",
+                      "kind": "DROP"
                     }
                   ],
                   "VERIFIED": [
                     {
-                      "to": "DONE",
-                      "kind": "FORWARD"
+                      "to": "DROPPED",
+                      "kind": "DROP"
                     }
                   ]
                 }
