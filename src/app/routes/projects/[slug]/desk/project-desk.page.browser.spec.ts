@@ -56,6 +56,9 @@ describe('ProjectDeskPage (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
+    http
+      .expectOne(`/projects/api/projects/${project.id}/work`)
+      .flush(await goldenMaster('a project with no work', 'listProjectWork'));
     const element = harness.routeNativeElement as HTMLElement;
     element.style.width = '900px';
     return {

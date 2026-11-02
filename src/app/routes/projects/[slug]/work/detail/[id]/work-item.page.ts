@@ -144,6 +144,9 @@ const notBuiltYet = (): void => undefined;
                 @case ('TICKET') {
                   <app-ticket-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
                 }
+                @case ('ISSUE') {
+                  <app-ticket-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
+                }
                 @case ('CAMPAIGN') {
                   <app-campaign-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
                 }

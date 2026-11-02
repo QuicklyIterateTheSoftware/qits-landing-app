@@ -253,7 +253,9 @@ export class WorkGraph {
   private treeWhere(matches: (entry: WorkEntry) => boolean, board: boolean): readonly WorkNode[] {
     const included = new Set<string>();
     for (const entry of this.entries) {
-      if (!entry.id || entry.archetype === 'CAMPAIGN' || !matches(entry)) continue;
+      // A campaign has its own lists, and an issue is not work: the Desk page shows it (qits-1819).
+      if (!entry.id || entry.archetype === 'CAMPAIGN' || entry.archetype === 'ISSUE') continue;
+      if (!matches(entry)) continue;
       for (let id: string | undefined = entry.id; id; id = this.parentOf.get(id)) {
         included.add(id);
       }

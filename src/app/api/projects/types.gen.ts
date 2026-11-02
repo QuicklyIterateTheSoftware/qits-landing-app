@@ -136,7 +136,7 @@ export type ApproveReleaseRequest = {
     note?: string;
 };
 
-export type Archetype = 'EPIC' | 'TICKET' | 'FEATURE' | 'TASK' | 'CAMPAIGN';
+export type Archetype = 'EPIC' | 'TICKET' | 'FEATURE' | 'TASK' | 'CAMPAIGN' | 'ISSUE';
 
 export type ArchetypeRegistryDocument = {
     properties?: Array<EntityProperty>;
@@ -154,7 +154,7 @@ export type AttachmentDto = {
     dataBase64?: string;
 };
 
-export type AuditEntityType = 'EPIC' | 'FEATURE' | 'TASK' | 'TICKET' | 'CAMPAIGN' | 'COMMENT' | 'DOSSIER_PAGE';
+export type AuditEntityType = 'EPIC' | 'FEATURE' | 'TASK' | 'TICKET' | 'CAMPAIGN' | 'ISSUE' | 'COMMENT' | 'DOSSIER_PAGE';
 
 export type AuditEntryDto = {
     id?: string;
@@ -284,6 +284,7 @@ export type CampaignMemberDto = {
     dispatchRefusedAt?: Instant;
     dispatchError?: string;
     groups?: Array<CriterionGroupDto>;
+    holdsStatus?: boolean;
 };
 
 export type CampaignMemberEntityDto = {
@@ -296,6 +297,7 @@ export type CampaignMemberEntityDto = {
     blockSource?: string;
     blockReason?: string;
     blockedBy?: string;
+    tags?: Array<WorkTag>;
 };
 
 export type CampaignMemberProgressDto = {
@@ -325,6 +327,7 @@ export type CampaignProgressCampaignDto = {
     blockSource?: string;
     blockReason?: string;
     blockedBy?: string;
+    heldBy?: Array<string>;
 };
 
 export type CampaignProgressDto = {
@@ -837,7 +840,7 @@ export type EntityDispatchStateDto = {
     waitingOn?: string;
 };
 
-export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA';
+export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA' | 'RELATED_TO';
 
 export type EntitySummary = {
     id?: string;
@@ -871,6 +874,7 @@ export type EntitySummary = {
     blockReason?: string;
     blockedBy?: string;
     waitingOn?: string;
+    tags?: Array<WorkTag>;
 };
 
 export type EntityTransition = {
@@ -1616,6 +1620,16 @@ export type RenameRepositoryRequest = {
 
 export type RepositoryArchetype = 'PROJECT' | 'SERVICE' | 'DAEMON' | 'LIBRARY' | 'FRONTEND' | 'APP' | 'CLI' | 'IMAGE' | 'SERVICE_TEMPLATE' | 'FORK' | 'AGENT_CONFIG';
 
+export type RepositoryArchiveDto = {
+    outcome?: string;
+    archived?: boolean;
+    branch?: string;
+    commit?: string;
+    releaseRequestId?: string;
+    qualifiedId?: string;
+    detail?: string;
+};
+
 export type RepositoryCoordinatesDto = {
     id?: string;
     projectId?: string;
@@ -1960,7 +1974,7 @@ export type TechnicalProcessFrame = {
 
 export type TicketType = 'BUG' | 'IMPROVEMENT' | 'MAINTENANCE';
 
-export type TransitionKind = 'FORWARD' | 'SKIP' | 'BACK' | 'CLOSE' | 'DROP' | 'REOPEN';
+export type TransitionKind = 'FORWARD' | 'SKIP' | 'BACK' | 'CLOSE' | 'DROP' | 'REOPEN' | 'SETTLE';
 
 export type TransitionedEntity = {
     id?: string;
@@ -1997,6 +2011,9 @@ export type TransitionedEntity = {
     blockedBy?: string;
     waitingOn?: string;
     inspiredBy?: string;
+    tags?: Array<WorkTag>;
+    heldBy?: Array<string>;
+    relatedTo?: string;
 };
 
 export type Uuid = string;
@@ -2178,11 +2195,11 @@ export type WorkConditionGroup = {
 };
 
 /**
- * A new work entity of any archetype: the archetype, plus exactly the body GET /projects/api/work/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, CAMPAIGN) names its project, a node (FEATURE, TASK) its parent.
+ * A new work entity of any archetype: the archetype, plus exactly the body GET /projects/api/work/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, CAMPAIGN, ISSUE) names its project, a node (FEATURE, TASK) its parent.
  */
 export type WorkCreate = {
     /**
-     * EPIC, TICKET, FEATURE, TASK or CAMPAIGN
+     * EPIC, TICKET, FEATURE, TASK, CAMPAIGN or ISSUE
      */
     archetype: Archetype;
     /**
@@ -2229,6 +2246,14 @@ export type WorkCreate = {
      * The work's inspiration, on every archetype: the id of an idea of the same project (GET /projects/api/ideas).
      */
     inspiredBy?: string;
+    /**
+     * The work's tags, on every archetype: RESERVED_FOR_HUMAN marks work an agent cannot complete — a person does it, and no agent is dispatched onto it.
+     */
+    tags?: Array<WorkTag>;
+    /**
+     * An issue's one related work item of the same project, by qualified id or UUID.
+     */
+    relatedTo?: string;
 };
 
 /**
@@ -2489,6 +2514,10 @@ export type WorkPatch = {
      * The ranking among siblings, on every archetype: higher sorts first, null after every number, then by number. Editable at every status but DONE and DROPPED (409), outside every scope freeze; null clears it. PUT /projects/api/work/{qualifiedId}/priority ranks by drop instead.
      */
     priority?: number | null;
+    /**
+     * The work's tags, on every archetype, the whole set: RESERVED_FOR_HUMAN marks work an agent cannot complete — a person does it and moves its status by hand, and no agent is dispatched onto it (say why in the description). Editable at every status, outside every scope freeze; an empty array or null clears them. An unknown tag is a 400 naming the legal ones. A transition never changes them.
+     */
+    tags?: Array<WorkTag> | null;
 };
 
 /**
@@ -2550,7 +2579,13 @@ export type WorkStatusMove = {
      * The item that answers for the drop, by qualified id (<projectSlug>-<n>) or UUID: required with outcome DUPLICATE, RESOLVED_ELSEWHERE or SUPERSEDED, refused with OBSOLETE, INVALID or WONT_DO and with any move not into DROPPED. It must name an item of the same project, never the item itself. Reopening clears it.
      */
     supersededBy?: string | null;
+    /**
+     * An issue's move only, written on its thread: required and one line with OBSOLETE, optional with RESOLVED (the answer). Refused on every other archetype.
+     */
+    reason?: string | null;
 };
+
+export type WorkTag = 'RESERVED_FOR_HUMAN';
 
 /**
  * The workspaces a dispatch stood on a work entity's branch.
@@ -3163,7 +3198,7 @@ export type CreateIdeaErrors = {
      */
     401: unknown;
     /**
-     * An agent creating in a project other than its own; nothing is written
+     * A plain agent (qits:agent without the desk roles) is refused every idea write, and the delivery desk is refused outside its own project; nothing is written
      */
     403: unknown;
     /**
@@ -3233,7 +3268,7 @@ export type PatchIdeaErrors = {
      */
     401: unknown;
     /**
-     * An agent editing an idea outside its own project; nothing is written
+     * A plain agent (qits:agent without the desk roles) is refused every idea write, and the delivery desk is refused outside its own project; nothing is written
      */
     403: unknown;
     /**
@@ -3274,7 +3309,7 @@ export type ArchiveIdeaErrors = {
      */
     401: unknown;
     /**
-     * An agent archiving an idea outside its own project; nothing is written
+     * A plain agent (qits:agent without the desk roles) is refused every idea write, and the delivery desk is refused outside its own project; nothing is written
      */
     403: unknown;
     /**
@@ -3311,7 +3346,7 @@ export type ReprioritizeIdeaErrors = {
      */
     401: unknown;
     /**
-     * An agent ranking outside its own project; nothing is written
+     * A plain agent (qits:agent without the desk roles) is refused every idea write, and the delivery desk is refused outside its own project; nothing is written
      */
     403: unknown;
     /**
@@ -3348,7 +3383,7 @@ export type UnarchiveIdeaErrors = {
      */
     401: unknown;
     /**
-     * An agent unarchiving an idea outside its own project; nothing is written
+     * A plain agent (qits:agent without the desk roles) is refused every idea write, and the delivery desk is refused outside its own project; nothing is written
      */
     403: unknown;
     /**
@@ -4196,13 +4231,17 @@ export type ListProjectWorkData = {
          * Only the items naming this entity (qualified id or UUID) as their supersededBy.
          */
         supersededBy?: string;
+        /**
+         * Only the items carrying this tag: RESERVED_FOR_HUMAN (any case, or its kebab form reserved-for-human).
+         */
+        tag?: string;
     };
     url: '/projects/api/projects/{project}/work';
 };
 
 export type ListProjectWorkErrors = {
     /**
-     * An archetype, a status or an outcome naming none
+     * An archetype, a status, an outcome or a tag naming none
      */
     400: unknown;
     /**
@@ -4973,6 +5012,59 @@ export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponses = {
 };
 
 export type GetProjectsApiRepositoriesByRepoIdActiveProcessResponse = GetProjectsApiRepositoriesByRepoIdActiveProcessResponses[keyof GetProjectsApiRepositoriesByRepoIdActiveProcessResponses];
+
+export type ArchiveRepositoryData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/archive';
+};
+
+export type ArchiveRepositoryErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * The delivery desk naming another project's repository
+     */
+    403: unknown;
+    /**
+     * No such repository
+     */
+    404: unknown;
+    /**
+     * The repository has no name, the existing branch conflicts with main, or the branch moved during the write
+     */
+    409: unknown;
+    /**
+     * The file cannot be edited safely; nothing was written
+     */
+    422: unknown;
+    /**
+     * The git host could not be asked
+     */
+    502: unknown;
+    /**
+     * No git host address or credential
+     */
+    503: unknown;
+};
+
+export type ArchiveRepositoryResponses = {
+    /**
+     * main already says repository.archived: true; nothing was opened
+     */
+    200: RepositoryArchiveDto;
+    /**
+     * The edit is committed on the branch and the branch is on a release request
+     */
+    202: RepositoryArchiveDto;
+};
+
+export type ArchiveRepositoryResponse = ArchiveRepositoryResponses[keyof ArchiveRepositoryResponses];
 
 export type PostProjectsApiRepositoriesByRepoIdBackupSyncData = {
     body?: never;
@@ -6047,6 +6139,59 @@ export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponses = {
 
 export type GetProjectsApiRepositoriesByRepoIdSyncStatusResponse = GetProjectsApiRepositoriesByRepoIdSyncStatusResponses[keyof GetProjectsApiRepositoriesByRepoIdSyncStatusResponses];
 
+export type UnarchiveRepositoryData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/unarchive';
+};
+
+export type UnarchiveRepositoryErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * The delivery desk naming another project's repository
+     */
+    403: unknown;
+    /**
+     * No such repository
+     */
+    404: unknown;
+    /**
+     * The repository has no name, the existing branch conflicts with main, or the branch moved during the write
+     */
+    409: unknown;
+    /**
+     * The file cannot be edited safely; nothing was written
+     */
+    422: unknown;
+    /**
+     * The git host could not be asked
+     */
+    502: unknown;
+    /**
+     * No git host address or credential
+     */
+    503: unknown;
+};
+
+export type UnarchiveRepositoryResponses = {
+    /**
+     * main does not say repository.archived: true; nothing was opened
+     */
+    200: RepositoryArchiveDto;
+    /**
+     * The edit is committed on the branch and the branch is on a release request
+     */
+    202: RepositoryArchiveDto;
+};
+
+export type UnarchiveRepositoryResponse = UnarchiveRepositoryResponses[keyof UnarchiveRepositoryResponses];
+
 export type GetProjectsApiTechnicalProcessesByIdEventsData = {
     body?: never;
     path: {
@@ -6093,7 +6238,7 @@ export type CreateWorkErrors = {
      */
     401: unknown;
     /**
-     * An agent creating in a project other than its own; nothing is written
+     * An agent creating in a project other than its own, or a plain agent (qits:agent without the desk roles) naming inspiredBy — only the delivery desk and admins link work to an idea; nothing is written
      */
     403: unknown;
     /**
@@ -6306,7 +6451,7 @@ export type PatchWorkErrors = {
      */
     401: unknown;
     /**
-     * An agent writing an entity outside its own project; nothing is written
+     * An agent writing an entity outside its own project, or a plain agent (qits:agent without the desk roles) naming inspiredBy, null included — only the delivery desk and admins link work to an idea; nothing is written
      */
     403: unknown;
     /**
@@ -6532,7 +6677,7 @@ export type CreateWorkChildErrors = {
      */
     401: unknown;
     /**
-     * An agent outside its own project
+     * An agent outside its own project, or a plain agent (qits:agent without the desk roles) naming inspiredBy; nothing is written
      */
     403: unknown;
     /**
@@ -7162,7 +7307,7 @@ export type AddWorkMemberErrors = {
      */
     404: unknown;
     /**
-     * The entity cannot join: already a member, a feature or a task, a closed campaign
+     * The entity cannot join: already a member, a feature or a task, a DROPPED campaign
      */
     409: unknown;
 };

@@ -34,6 +34,14 @@ function shape(node: WorkNode): string {
 }
 
 describe('WorkGraph', () => {
+  it('keeps an issue off every work list: the Desk page shows it', () => {
+    const graph = new WorkGraph([entry('issue', 'ISSUE', 'OPEN')]);
+    expect(graph.tree('backlog')).toEqual([]);
+    expect(graph.tree('board')).toEqual([]);
+    expect(graph.scheduling().toSchedule).toEqual([]);
+    expect(graph.count('backlog')).toBe(0);
+  });
+
   // An IMPLEMENTING epic: one implemented feature (one of its tasks implemented, one started), one
   // scheduled feature, not started. Features and tasks hold their own status (qits-763).
   const epic = [

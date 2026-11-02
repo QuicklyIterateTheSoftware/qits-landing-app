@@ -17,6 +17,7 @@ import { commentAnchor } from '$core/work/comment-anchor';
 import { WORK_DETAIL } from '$core/work/work-tabs';
 import { RELEASE_REQUESTS } from '$layout/shell/shell.layout';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { OpenIssues } from '$patterns/desk/open-issues/open-issues';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -63,6 +64,8 @@ function when(instant: string | null | undefined): string {
  * The messages come from `DeskTriggersStore`, read once per project. A read that fails says so,
  * with Retry.
  *
+ * Above them, the project's open issues (`OpenIssues`, qits-1819).
+ *
  * Staleness (qits-1270): none yet. No domain event marks a window opening, closing or being
  * delivered — a gap the "Live domain events" section of `AGENTS.md` lists others like — so Retry
  * is the only way to read this page again today.
@@ -70,11 +73,14 @@ function when(instant: string | null | undefined): string {
 @Component({
   selector: 'app-project-desk-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, RouterLink, Spinner],
+  imports: [Chip, LoadFailure, OpenIssues, PageLayoutComponent, RouterLink, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Desk">
+        @if (selected.project()?.id; as projectId) {
+          <app-open-issues [projectId]="projectId" [slug]="selected.slug() ?? ''" />
+        }
         <p class="mt-0 mb-4 text-sm text-gray-600">
           The messages this project’s delivery desk was sent by its desk triggers, newest first.
         </p>
@@ -149,7 +155,7 @@ function when(instant: string | null | undefined): string {
   `,
 })
 export class ProjectDeskPage {
-  private readonly selected = inject(SelectedProject);
+  protected readonly selected = inject(SelectedProject);
   private readonly store = inject(DeskTriggersStore);
 
   protected readonly when = when;

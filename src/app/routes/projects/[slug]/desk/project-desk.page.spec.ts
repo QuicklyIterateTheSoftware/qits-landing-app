@@ -128,6 +128,7 @@ describe('ProjectDeskPage', () => {
     await settle();
     TestBed.tick();
     await settle();
+    http.expectOne(`/projects/api/projects/${project.id}/work`).flush({ entities: [] });
     const request = http.expectOne(`/projects/api/projects/${project.id}/desk-triggers`);
     const answered = async () => {
       await settle();
