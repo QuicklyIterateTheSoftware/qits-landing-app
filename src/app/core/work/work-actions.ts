@@ -15,16 +15,19 @@ import type { ArchetypeEntry, DispatchPhase, LegalMove } from './archetypes.cons
  *   `flow` empty; a feature, a task and a campaign have no phases).
  *
  *   INTERIM for a campaign: its press is its start, and the registry serves no campaign phases.
- *   "Start campaign" shows while the campaign has a forward move short of DONE (REPORTED,
- *   REFINED, IMPLEMENTED), but the service starts a campaign only from REFINED, so a press at any
- *   other status is refused. TODO: take it from the registry once it says when a campaign starts.
+ *   Since qits-650 a campaign's status is derived from its members (the lowest member status
+ *   wins), its only manual moves are DROP and REOPEN, and the service starts it at any status
+ *   that is neither DONE nor DROPPED. "Start campaign" still shows only while the registry
+ *   serves the campaign a FORWARD move short of DONE, which it no longer does. TODO: take it from
+ *   the registry once it says when a campaign starts.
  * - `status`: every move the registry serves out of the status, in its order (`transitions`), then
  *   Block (a placeholder) wherever the Agent group has something to run. A CLOSE move ("Close as
  *   done", qits-1757) shows only while every direct child is closed (`allClosed`): the service
  *   refuses it otherwise (its CHILDREN_CLOSED gate), so the page holds it back until it can pass.
- * - `plan` (Edit, Reshape, Refinement room): placeholders. Edit and Reshape for every archetype
- *   but a campaign at REPORTED and REFINED; TODO: the registry does not say yet when the plan can
- *   change. Refinement room where the next phase is refine.
+ * - `plan` (Edit, Reshape, Refinement room): placeholders. Edit and Reshape at REPORTED and
+ *   REFINED, never for a campaign, although since qits-650 the service lets a campaign's plan
+ *   change at any status that is neither DONE nor DROPPED; TODO: the registry does not say yet
+ *   when the plan can change. Refinement room where the next phase is refine.
  */
 
 /** One action a work item's page can offer. */
