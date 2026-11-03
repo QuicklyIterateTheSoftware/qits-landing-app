@@ -67,38 +67,107 @@ const parkPointer: BrowserCommand<[]> = async (context) => {
   ).page.mouse.move(0, 0);
 };
 
+/** The Playwright side of a command's context, as far as the pointer commands use it. */
+type PlaywrightContext = {
+  page: {
+    mouse: {
+      move(x: number, y: number, options?: { steps?: number }): Promise<void>;
+      down(): Promise<void>;
+      up(): Promise<void>;
+    };
+    context(): { newCDPSession(page: unknown): Promise<CdpSession> };
+  };
+  frame(): Promise<{
+    frameElement(): Promise<{
+      boundingBox(): Promise<{ x: number; y: number; width: number } | null>;
+    }>;
+    evaluate<T>(fn: () => T): Promise<T>;
+  }>;
+};
+
+type CdpSession = { send(method: string, params?: object): Promise<unknown> };
+
+/**
+ * The point (`x`, `y`) of the test page's own viewport (CSS px) on Playwright's page. The test page
+ * is an iframe of Vitest's own page, so the point is shifted (and scaled) by where that iframe sits.
+ */
+async function onPage(playwright: PlaywrightContext, x: number, y: number) {
+  const frame = await playwright.frame();
+  const box = await (await frame.frameElement()).boundingBox();
+  const width = await frame.evaluate(() => window.innerWidth);
+  const scale = box && width ? box.width / width : 1;
+  return { x: (box?.x ?? 0) + x * scale, y: (box?.y ?? 0) + y * scale };
+}
+
 /**
  * `mouse`: one real, trusted mouse step from Playwright at (`x`, `y`) in the test page's own
  * viewport (CSS px): `move` there (in `steps` intermediate moves, 1 unless given), or move there
  * and press (`down`) or release (`up`) the left button. Synthetic `PointerEvent`s cannot set a
- * pointer capture, so a drag spec needs these. The test page is an iframe of Vitest's own page,
- * so the point is shifted (and scaled) by where that iframe sits.
+ * pointer capture, so a drag spec needs these.
  */
 const mouse: BrowserCommand<
   [action: 'move' | 'down' | 'up', x: number, y: number, steps?: number]
 > = async (context, action, x, y, steps = 1) => {
   if (context.provider.name !== 'playwright') return;
-  type Mouse = {
-    move(x: number, y: number, options?: { steps?: number }): Promise<void>;
-    down(): Promise<void>;
-    up(): Promise<void>;
-  };
-  type Frame = {
-    frameElement(): Promise<{
-      boundingBox(): Promise<{ x: number; y: number; width: number } | null>;
-    }>;
-    evaluate<T>(fn: () => T): Promise<T>;
-  };
-  const playwright = context as unknown as { page: { mouse: Mouse }; frame(): Promise<Frame> };
-  const frame = await playwright.frame();
-  const box = await (await frame.frameElement()).boundingBox();
-  const width = await frame.evaluate(() => window.innerWidth);
-  const scale = box && width ? box.width / width : 1;
-  const at = { x: (box?.x ?? 0) + x * scale, y: (box?.y ?? 0) + y * scale };
+  const playwright = context as unknown as PlaywrightContext;
+  const at = await onPage(playwright, x, y);
   const pointer = playwright.page.mouse;
   await pointer.move(at.x, at.y, { steps });
   if (action === 'down') await pointer.down();
   if (action === 'up') await pointer.up();
+};
+
+/** Each page's DevTools session, and where its one finger is (page px), while it is down. */
+const touchSessions = new WeakMap<object, { cdp: CdpSession; at?: { x: number; y: number } }>();
+
+/**
+ * `touch`: one real, trusted touch step with one finger at (`x`, `y`) in the test page's own
+ * viewport (CSS px), through Chromium's DevTools protocol (`Input.dispatchTouchEvent`), which
+ * Playwright's own touchscreen cannot do short of a tap: `down` puts the finger there, `move`
+ * slides it there in `steps` moves (1 unless given), `up` lifts it there, and `cancel` has the
+ * browser abandon the touch (a `pointercancel`). The page sees `pointerType` `touch` events it
+ * can capture, as from a phone.
+ */
+const touch: BrowserCommand<
+  [action: 'down' | 'move' | 'up' | 'cancel', x: number, y: number, steps?: number]
+> = async (context, action, x, y, steps = 1) => {
+  if (context.provider.name !== 'playwright') return;
+  const playwright = context as unknown as PlaywrightContext;
+  let session = touchSessions.get(playwright.page);
+  if (!session) {
+    session = { cdp: await playwright.page.context().newCDPSession(playwright.page) };
+    touchSessions.set(playwright.page, session);
+  }
+  const at = await onPage(playwright, x, y);
+  const send = (type: string, points: { x: number; y: number }[]) =>
+    session.cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints: points.map((point) => ({ ...point, id: 1, radiusX: 1, radiusY: 1, force: 1 })),
+    });
+  if (action === 'down') {
+    await send('touchStart', [at]);
+    session.at = at;
+    return;
+  }
+  const from = session.at;
+  if (!from) return;
+  if (action === 'cancel') {
+    await send('touchCancel', []);
+    session.at = undefined;
+    return;
+  }
+  for (let i = 1; i <= steps; i++) {
+    const point = {
+      x: from.x + ((at.x - from.x) * i) / steps,
+      y: from.y + ((at.y - from.y) * i) / steps,
+    };
+    if (point.x !== session.at?.x || point.y !== session.at?.y) await send('touchMove', [point]);
+    session.at = point;
+  }
+  if (action === 'up') {
+    await send('touchEnd', []);
+    session.at = undefined;
+  }
 };
 
 /**
@@ -158,7 +227,7 @@ export default defineConfig({
     // Vitest 5 moved the default to .vitest/attachments; keep the ignored path the docs name.
     attachmentsDir: '.vitest-attachments',
     browser: {
-      commands: { goldenMaster, parkPointer, mouse, stubFigure },
+      commands: { goldenMaster, parkPointer, mouse, touch, stubFigure },
       // Vitest 5 made text locators exact by default. The specs locate by substring, as in vitest 4.
       locators: { exact: false },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A

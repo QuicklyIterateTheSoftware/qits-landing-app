@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { REORDER, type ReorderMove } from './reorder';
 import { REORDER_MESSAGES } from './reorder-messages';
 import { edgeScrollStep, EDGE_SCROLL_MAX_PX, gapY, slotAt, targetIndex } from './slots';
+import { cancelArmed, overscrollRange, TOUCH_CANCEL_PX } from './touch-drag';
 
 /** Rects stacked from y = 0 with the given heights and a 10px gap between them. */
 function stack(...heights: number[]) {
@@ -79,6 +80,50 @@ describe('edgeScrollStep', () => {
     expect(edgeScrollStep(600, 0, 600)).toBe(EDGE_SCROLL_MAX_PX);
     expect(edgeScrollStep(560, 0, 600)).toBeLessThan(edgeScrollStep(590, 0, 600));
     expect(edgeScrollStep(60, 56, 600)).toBeLessThan(0);
+  });
+});
+
+describe('cancelArmed', () => {
+  it('arms once the finger is TOUCH_CANCEL_PX or more left of the press', () => {
+    expect(TOUCH_CANCEL_PX).toBe(64);
+    expect(cancelArmed(200, 137)).toBe(false);
+    expect(cancelArmed(200, 136)).toBe(true);
+    expect(cancelArmed(200, 135)).toBe(true);
+  });
+
+  it('never arms to the right', () => {
+    expect(cancelArmed(200, 300)).toBe(false);
+  });
+});
+
+describe('overscrollRange', () => {
+  // 0–40, 50–90, 100–140.
+  const rects = stack(40, 40, 40);
+
+  it('lets the first top or the last bottom go just past the line, both ways', () => {
+    expect(overscrollRange(rects, 70)).toEqual({ min: -71, max: 71 });
+    // Shifted to either end, the line is in slot 0 or slot n.
+    expect(
+      slotAt(
+        rects.map((r) => ({ top: r.top + 71, bottom: r.bottom + 71 })),
+        70,
+      ),
+    ).toBe(0);
+    expect(
+      slotAt(
+        rects.map((r) => ({ top: r.top - 71, bottom: r.bottom - 71 })),
+        70,
+      ),
+    ).toBe(3);
+  });
+
+  it('allows no shift towards an end the line is already past', () => {
+    expect(overscrollRange(rects, -20)).toEqual({ min: 0, max: 161 });
+    expect(overscrollRange(rects, 200)).toEqual({ min: -201, max: 0 });
+  });
+
+  it('allows none in an empty list', () => {
+    expect(overscrollRange([], 70)).toEqual({ min: 0, max: 0 });
   });
 });
 
@@ -294,22 +339,61 @@ describe('Reorder directives', () => {
     expect(host.inner).toEqual([{ from: 1, to: 2 }]);
   });
 
-  it('a touch press on a handle starts nothing', () => {
-    const { host, handles, items } = render();
+  it('a touch press on a handle starts the touch drag, whose clone stays put', () => {
+    const { host, handles, items, live } = render();
     const down = new PointerEvent('pointerdown', {
       bubbles: true,
       cancelable: true,
       pointerId: 1,
       pointerType: 'touch',
+      clientX: 100,
+      clientY: 10,
     });
     handles()[1].dispatchEvent(down);
-    expect(down.defaultPrevented).toBe(false);
-    pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 0, clientY: 80 });
-    expect(document.querySelector('[data-reorder-clone]')).toBeNull();
-    pointer(handles()[1], 'pointerup', { pointerType: 'touch', clientX: 0, clientY: 80 });
+    expect(down.defaultPrevented).toBe(true);
+    pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 100, clientY: 40 });
+    const clone = document.querySelector<HTMLElement>('[data-reorder-clone]')!;
+    expect(clone.getAttribute('aria-hidden')).toBe('true');
+    expect(items()[1].style.opacity).toBe('0.4');
+    // The mouse's clone would follow the finger down; this one stays where the item was.
+    expect(clone.style.top).toBe('0px');
+    const label = clone.querySelector<HTMLElement>('[data-reorder-cancel]')!;
+    expect(label.style.display).toBe('none');
+    pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 36, clientY: 10 });
+    expect(label.style.display).toBe('');
+    expect(label.textContent).toContain(REORDER_MESSAGES.releaseToCancel);
+    expect(document.querySelector<HTMLElement>('[data-reorder-marker]')!.style.display).toBe(
+      'none',
+    );
+    expect(clone.style.opacity).toBe('');
+    pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 37, clientY: 10 });
+    expect(label.style.display).toBe('none');
+    pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 30, clientY: 10 });
+    pointer(handles()[1], 'pointerup', { pointerType: 'touch', clientX: 30, clientY: 10 });
+    expect(host.cancels).toBe(1);
+    expect(host.moves).toEqual([]);
+    expect(live()).toBe('Move of Banana cancelled.');
     expect(items()[1].getAttribute('style')).toBeNull();
+  });
+
+  it('a touch shorter than the threshold is a tap', () => {
+    const { host, handles, items } = render();
+    pointer(handles()[0], 'pointerdown', { pointerType: 'touch', clientX: 10, clientY: 10 });
+    pointer(handles()[0], 'pointermove', { pointerType: 'touch', clientX: 15, clientY: 15 });
+    expect(document.querySelector('[data-reorder-clone]')).toBeNull();
+    pointer(handles()[0], 'pointerup', { pointerType: 'touch', clientX: 15, clientY: 15 });
+    expect(items()[0].getAttribute('style')).toBeNull();
     expect(host.moves).toEqual([]);
     expect(host.cancels).toBe(0);
+  });
+
+  it('a pointercancel during a touch drag cancels it', () => {
+    const { host, handles } = render();
+    pointer(handles()[2], 'pointerdown', { pointerType: 'touch', clientX: 10, clientY: 10 });
+    pointer(handles()[2], 'pointermove', { pointerType: 'touch', clientX: 10, clientY: 30 });
+    pointer(handles()[2], 'pointermove', { pointerType: 'touch', clientX: 10, clientY: 10 });
+    pointer(handles()[2], 'pointercancel', { pointerType: 'touch' });
+    expect(host.cancels).toBe(1);
   });
 
   it('a mouse press elsewhere on the item starts nothing', () => {

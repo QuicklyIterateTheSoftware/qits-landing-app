@@ -1,7 +1,8 @@
 /**
  * What a drag engine and the reorder list agree on, and the visuals both the engines and the
  * keyboard mode draw. The list picks an engine by the press's `pointerType` (the mouse's in
- * `mouse-drag.ts`; a touch engine beside it), hands it a {@link DragContext} and hears the
+ * `mouse-drag.ts`, where the clone follows the pointer; touch's in `touch-drag.ts`, where the page
+ * moves under a fixed clone), hands it a {@link DragContext} and hears the
  * outcome once through `end`. An engine never reorders anything: it measures, draws and reports.
  */
 
@@ -24,6 +25,8 @@ export interface DragContext {
   readonly from: number;
   /** The list's items' rects in index order, read now. */
   rects(): readonly DOMRect[];
+  /** The list's items' elements in index order. */
+  items(): readonly HTMLElement[];
   /** The press became a drag (past the engine's threshold). */
   started(): void;
   /** The gesture is over and everything it drew is gone. Called exactly once. */
