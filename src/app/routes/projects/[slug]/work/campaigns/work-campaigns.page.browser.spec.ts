@@ -94,7 +94,7 @@ describe('WorkCampaignsPage (screenshots)', () => {
     await expect
       .element(element.getByRole('heading', { level: 1 }))
       .toMatchTextContent('Campaigns');
-    const title = element.getByRole('link', { name: 'Card campaign' });
+    const title = element.getByRole('link', { name: 'Card campaign', exact: true });
     await expect
       .element(title)
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-1$/));
@@ -106,11 +106,13 @@ describe('WorkCampaignsPage (screenshots)', () => {
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     await expect.element(element).not.toMatchTextContent('Ticket outside the campaign');
-    await expect.element(element.getByRole('link', { name: 'Done ticket' })).toBeVisible();
+    await expect
+      .element(element.getByRole('link', { name: 'Done ticket', exact: true }))
+      .toBeVisible();
     await expect.element(element).toMatchTextContent('reported');
     await expect.element(element).toMatchTextContent('done');
     await expect
-      .element(element.getByRole('link', { name: 'Reported ticket' }))
+      .element(element.getByRole('link', { name: 'Reported ticket', exact: true }))
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-4$/));
     // The refined epic is not on the board (it waits to be scheduled), so it has no board of its
     // own: it is drawn as a list item, as the tickets are.
@@ -130,7 +132,7 @@ describe('WorkCampaignsPage (screenshots)', () => {
       described: [PAST_THE_BOARD],
     });
     await expect
-      .element(element.getByRole('link', { name: 'Campaign in flight' }))
+      .element(element.getByRole('link', { name: 'Campaign in flight', exact: true }))
       .toHaveAttribute('href', expect.stringMatching(/\/work\/detail\/contract-00000001-1$/));
     const root = element.element();
     const members = [
