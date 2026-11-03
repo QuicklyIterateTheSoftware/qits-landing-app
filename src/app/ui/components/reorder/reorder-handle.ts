@@ -2,8 +2,8 @@ import { computed, DestroyRef, Directive, ElementRef, inject } from '@angular/co
 import { ReorderItem } from './reorder-item';
 
 /**
- * The handle that moves the nearest `[uiReorderItem]`: a press and a drag on it with a mouse or a
- * pen, or Space or Enter while it has focus. The owner makes it a `<button type="button">` with
+ * The handle that moves the nearest `[uiReorderItem]`: a press and a drag on it with a mouse, a
+ * pen or a finger, or Space or Enter while it has focus. The owner makes it a `<button type="button">` with
  * its own `aria-label` and look. The directive adds `touch-action: none`, the grab cursor
  * (`grabbing` while its item moves), `aria-roledescription="drag handle"` and
  * `aria-describedby` naming the list's instructions. A disabled list ignores it.

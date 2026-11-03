@@ -1,7 +1,7 @@
 /**
- * The geometry of a reorder, shared by every drag engine (the mouse's, and touch's beside it)
- * and by the keyboard mode: pure functions over the items' rects, and the numbers both engines
- * use. Nothing here reads the DOM.
+ * The geometry of a reorder, shared by every drag engine (the mouse's and touch's) and by the
+ * keyboard mode: pure functions over the items' rects, and the numbers both engines use. Nothing
+ * here reads the DOM.
  *
  * A list of `n` items has `n + 1` slots, the gaps an item can land in: slot 0 is above the first
  * item, slot `k` between items `k - 1` and `k`, slot `n` below the last. An item's own two gaps,

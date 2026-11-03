@@ -24,6 +24,7 @@ import { MouseDrag } from './mouse-drag';
 import type { ReorderItem } from './reorder-item';
 import { REORDER_MESSAGES } from './reorder-messages';
 import { gapY, slotFor } from './slots';
+import { TouchDrag } from './touch-drag';
 
 /** A move a list reports: the item's index before it (`from`) and after it (`to`); never equal. */
 export interface ReorderMove {
@@ -32,12 +33,13 @@ export interface ReorderMove {
 }
 
 /**
- * The drag engine for each `pointerType`. A press of any other kind starts nothing; a touch
- * engine, when there is one, goes here.
+ * The drag engine for each `pointerType`: the clone follows a mouse or a pen (`MouseDrag`), the
+ * page moves under a finger (`TouchDrag`). A press of any other kind starts nothing.
  */
 const ENGINES: Readonly<Record<string, DragEngineFactory>> = {
   mouse: (context, press) => new MouseDrag(context, press),
   pen: (context, press) => new MouseDrag(context, press),
+  touch: (context, press) => new TouchDrag(context, press),
 };
 
 /** The keyboard move in progress: the item picked up, where it started and where it would land. */
@@ -59,15 +61,16 @@ let nextReorderListId = 0;
  *
  * It never moves the DOM or the data. A drop emits `reordered` with the item's index before and
  * after the move, and the owner moves its array; a drop where the item already was, a release
- * outside the list, Escape or a lost pointer emit `reorderCancelled`. Everything drawn during the
- * move is gone before either fires. When focus has fallen to `body` after the owner's render, the
- * handle of the item now at `to` gets it back.
+ * outside the list (with a finger, a release after dragging left), Escape or a lost pointer emit
+ * `reorderCancelled`. Everything drawn during the move is gone before either fires. When focus has
+ * fallen to `body` after the owner's render, the handle of the item now at `to` gets it back.
  *
  * Items register through DI with the nearest list, and are indexed in DOM order, so lists nest:
  * a list inside an item moves only its own items. Each list holds a visually hidden polite live
  * region that announces every pick-up, move, drop and cancel (`REORDER_MESSAGES`), and the
  * instructions its handles are described by. The press is handed to the drag engine for its
- * `pointerType` (`mouse-drag.ts` for a mouse or a pen); `reorderDisabled` ignores every handle.
+ * `pointerType` (`mouse-drag.ts` for a mouse or a pen, `touch-drag.ts` for a finger);
+ * `reorderDisabled` ignores every handle.
  *
  * ```html
  * <ul uiReorderList reorderLabel="Rows" (reordered)="move($event)">

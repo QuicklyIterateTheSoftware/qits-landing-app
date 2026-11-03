@@ -27,6 +27,17 @@ declare module 'vitest/browser' {
      * moves), or move there and press (`down`) or release (`up`) the left button.
      */
     mouse: (action: 'move' | 'down' | 'up', x: number, y: number, steps?: number) => Promise<void>;
+    /**
+     * A real touch step of one finger at (`x`, `y`) in the test page's viewport: `down` puts it
+     * there, `move` slides it there (in `steps` moves), `up` lifts it there, `cancel` has the
+     * browser abandon the touch. Does nothing while no finger is down, except `down`.
+     */
+    touch: (
+      action: 'down' | 'move' | 'up' | 'cancel',
+      x: number,
+      y: number,
+      steps?: number,
+    ) => Promise<void>;
     /** Answers every request matching `pattern` with a plain grey image, without the network. */
     stubFigure: (pattern: string) => Promise<void>;
   }
