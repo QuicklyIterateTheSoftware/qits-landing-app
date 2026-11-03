@@ -65,7 +65,7 @@ export class SelectedWork {
   });
 
   constructor() {
-    // In the browser only: the server render has no session cookie to send. Only the project id
+    // In the browser only: the server render holds no token to send. Only the project id
     // is tracked: `loadWork` reads the store's state, and tracking that would fetch without end.
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {

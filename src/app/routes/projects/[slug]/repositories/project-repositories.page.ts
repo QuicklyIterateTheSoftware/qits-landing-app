@@ -213,7 +213,7 @@ export class ProjectRepositoriesPage {
   });
 
   constructor() {
-    // In the browser only (the server render has no session cookie). Only the project id is
+    // In the browser only (the server render holds no token). Only the project id is
     // tracked: `load` reads the store's state, and tracking that would fetch again on every answer.
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {

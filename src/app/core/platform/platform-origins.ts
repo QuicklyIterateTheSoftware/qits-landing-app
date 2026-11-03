@@ -49,8 +49,8 @@ export function hostOrigin(app: PlatformApp, domain: string): string {
  *
  * Both are `https://<label>.<domain>`: deployed, the domain is this page's hostname
  * ({@link HostPlatformOrigins}); under `ng serve`, it is `platformDomain` from
- * `environment.development.ts` ({@link DomainPlatformOrigins}), and the calls carry a bearer
- * (`core/auth/dev-bearer.ts`). A spec provides its own.
+ * `environment.development.ts` ({@link DomainPlatformOrigins}). Either way the calls carry the
+ * bearer (`@qits/angular`'s `qitsBearerInterceptor`, `app.config.ts`). A spec provides its own.
  */
 @Injectable({
   providedIn: 'root',
@@ -67,7 +67,7 @@ export abstract class PlatformOrigins {
 /**
  * Deployed: the app is served at the platform's apex, so every application is a name under this
  * page's hostname. On the server both answers are `''`: the server never calls a backend (it has
- * no session cookie), and its request host need not be the public one.
+ * no token), and its request host need not be the public one.
  */
 @Injectable()
 export class HostPlatformOrigins extends PlatformOrigins {

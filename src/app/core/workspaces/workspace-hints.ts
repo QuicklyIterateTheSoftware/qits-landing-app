@@ -26,8 +26,8 @@ export const WORKSPACE_HINTS_PATH = (workspaceRowId: number) =>
  * effect and fetches again when the number moves. A topic this build does not know is ignored.
  *
  * The service offers no replay, so after the stream errored the next frame moves every counter:
- * whatever the gap missed is read again. The source is `EVENT_SOURCE`'s, so the session (or, under
- * `ng serve`, the bearer) goes with it. Provided by the page that watches; closed with it; never
+ * whatever the gap missed is read again. The source is `EVENT_SOURCE`'s, so the bearer goes with
+ * it. Provided by the page that watches; closed with it; never
  * connects on the server.
  *
  * Staleness (qits-1270): a second stream, allowed by name until qits-events can replace it. Per

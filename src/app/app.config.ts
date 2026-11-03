@@ -7,7 +7,11 @@ import {
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter, withNavigationErrorHandler } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideQitsIntegration } from '@qits/angular';
+import {
+  provideQitsBearerSignIn,
+  provideQitsIntegration,
+  qitsBearerInterceptor,
+} from '@qits/angular';
 import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
@@ -41,19 +45,13 @@ const CLIENTS = [
 
 /**
  * Points each generated client at its backend's origin (`PlatformOrigins.api`), synchronously, as
- * the injector is created and so before any call. Deployed, a cross-origin client sends the
- * session cookie (`credentials: 'include'`); the edge answers credentialed CORS for every host of
- * the platform. Under `ng serve` it sends no cookie: the bearer interceptor signs each call.
+ * the injector is created and so before any call. No call sends a cookie: `qitsBearerInterceptor`
+ * signs each one with the bearer.
  */
 function provideBackendOrigins() {
   return provideEnvironmentInitializer(() => {
     const origins = inject(PlatformOrigins);
-    for (const [client, app] of CLIENTS) {
-      const baseUrl = origins.api(app);
-      client.setConfig(
-        baseUrl && environment.sendCookie ? { baseUrl, credentials: 'include' } : { baseUrl },
-      );
-    }
+    for (const [client, app] of CLIENTS) client.setConfig({ baseUrl: origins.api(app) });
   });
 }
 
@@ -68,7 +66,15 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     // Error records and Navigation spans; dark unless `main.ts` found a telemetry target.
     provideQitsIntegration(),
-    provideHttpClient(withFetch(), withInterceptors(environment.interceptors)),
+    // The bearer sign-in (epic qits-543): the idp's authorization code with PKCE, the bearer on
+    // every platform call, the event stream through `fetch()`, WebSockets with the bearer as a
+    // subprotocol. `auth/callback` is placed in `app.routes.ts`, outside the session guard.
+    provideQitsBearerSignIn({
+      clientId: environment.signInClientId,
+      platformDomain: environment.platformDomain,
+      callbackRoute: false,
+    }),
+    provideHttpClient(withFetch(), withInterceptors([qitsBearerInterceptor])),
     // Each generated client sends its calls through this app's HttpClient.
     provideHeyApiClient(projectsClient),
     provideHeyApiClient(githostClient),
@@ -79,7 +85,5 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(ciClient),
     provideHeyApiClient(systemClient),
     provideBackendOrigins(),
-    // `ng serve` only: the bearer sign-in. Deployed: nothing.
-    ...environment.providers,
   ],
 };

@@ -75,7 +75,7 @@ export class WorkInProgressPage {
   );
 
   constructor() {
-    // In the browser only, as the work: the server render has no session cookie to send. The
+    // In the browser only, as the work: the server render holds no token to send. The
     // layout's `follow` reads the agents again after work moves.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       void this.workspaces.loadAgents();

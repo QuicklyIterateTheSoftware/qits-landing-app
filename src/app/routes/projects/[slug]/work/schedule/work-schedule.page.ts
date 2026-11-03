@@ -224,7 +224,7 @@ export class WorkSchedulePage {
   );
 
   constructor() {
-    // In the browser only, as the work: the server render has no session cookie to send.
+    // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       effect(() => {
         const { toSchedule, scheduled } = this.lists();

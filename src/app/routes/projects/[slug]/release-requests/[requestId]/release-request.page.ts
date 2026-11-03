@@ -906,7 +906,7 @@ export class ReleaseRequestPage {
   }
 
   constructor() {
-    // In the browser only (the server render has no session cookie).
+    // In the browser only (the server render holds no token).
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
       const id = this.projectId();

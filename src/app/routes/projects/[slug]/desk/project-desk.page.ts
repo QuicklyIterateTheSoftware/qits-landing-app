@@ -215,7 +215,7 @@ export class ProjectDeskPage {
   }
 
   constructor() {
-    // In the browser only (the server render has no session cookie). The store fetches once per
+    // In the browser only (the server render holds no token). The store fetches once per
     // project.
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {

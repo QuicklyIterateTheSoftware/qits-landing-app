@@ -68,7 +68,7 @@ export class WorkLayout {
   constructor() {
     const destroy = inject(DestroyRef);
     this.work.followTransitions(destroy);
-    // In the browser only, as the work: the server render has no session cookie to send.
+    // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       const workspaces = inject(WorkspacesStore);
       void workspaces.load();

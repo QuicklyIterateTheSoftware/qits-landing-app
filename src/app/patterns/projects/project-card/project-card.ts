@@ -223,7 +223,7 @@ export class ProjectCard {
   }
 
   constructor() {
-    // In the browser only: the server render has no `qits-session` cookie to send. Only the
+    // In the browser only: the server render holds no token to send. Only the
     // project id is tracked: the loads read the store's state, and tracking that would
     // fetch again every time an answer lands, without end after an error.
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
