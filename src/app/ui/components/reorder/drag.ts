@@ -25,6 +25,8 @@ export interface DragContext {
   readonly from: number;
   /** The list's items' rects in index order, read now. */
   rects(): readonly DOMRect[];
+  /** The list's items' elements in index order. */
+  items(): readonly HTMLElement[];
   /** The press became a drag (past the engine's threshold). */
   started(): void;
   /** The gesture is over and everything it drew is gone. Called exactly once. */

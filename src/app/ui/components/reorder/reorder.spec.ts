@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { REORDER, type ReorderMove } from './reorder';
 import { REORDER_MESSAGES } from './reorder-messages';
 import { edgeScrollStep, EDGE_SCROLL_MAX_PX, gapY, slotAt, targetIndex } from './slots';
-import { cancelArmed, TOUCH_CANCEL_PX } from './touch-drag';
+import { cancelArmed, overscrollRange, TOUCH_CANCEL_PX } from './touch-drag';
 
 /** Rects stacked from y = 0 with the given heights and a 10px gap between them. */
 function stack(...heights: number[]) {
@@ -93,6 +93,37 @@ describe('cancelArmed', () => {
 
   it('never arms to the right', () => {
     expect(cancelArmed(200, 300)).toBe(false);
+  });
+});
+
+describe('overscrollRange', () => {
+  // 0–40, 50–90, 100–140.
+  const rects = stack(40, 40, 40);
+
+  it('lets the first top or the last bottom go just past the line, both ways', () => {
+    expect(overscrollRange(rects, 70)).toEqual({ min: -71, max: 71 });
+    // Shifted to either end, the line is in slot 0 or slot n.
+    expect(
+      slotAt(
+        rects.map((r) => ({ top: r.top + 71, bottom: r.bottom + 71 })),
+        70,
+      ),
+    ).toBe(0);
+    expect(
+      slotAt(
+        rects.map((r) => ({ top: r.top - 71, bottom: r.bottom - 71 })),
+        70,
+      ),
+    ).toBe(3);
+  });
+
+  it('allows no shift towards an end the line is already past', () => {
+    expect(overscrollRange(rects, -20)).toEqual({ min: 0, max: 161 });
+    expect(overscrollRange(rects, 200)).toEqual({ min: -201, max: 0 });
+  });
+
+  it('allows none in an empty list', () => {
+    expect(overscrollRange([], 70)).toEqual({ min: 0, max: 0 });
   });
 });
 
@@ -331,6 +362,9 @@ describe('Reorder directives', () => {
     pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 36, clientY: 10 });
     expect(label.style.display).toBe('');
     expect(label.textContent).toContain(REORDER_MESSAGES.releaseToCancel);
+    expect(document.querySelector<HTMLElement>('[data-reorder-marker]')!.style.display).toBe(
+      'none',
+    );
     expect(clone.style.opacity).toBe('');
     pointer(handles()[1], 'pointermove', { pointerType: 'touch', clientX: 37, clientY: 10 });
     expect(label.style.display).toBe('none');

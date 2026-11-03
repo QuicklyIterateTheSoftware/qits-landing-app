@@ -290,4 +290,67 @@ describe('Reorder (browser)', () => {
     expect(clicks).toBe(1);
     view.expectClean();
   });
+
+  it('draws the marker in the gap under the clone, and hides it over the own slot', async () => {
+    const view = await render(30);
+    window.scrollTo(0, 200);
+    const marker = () => document.querySelector<HTMLElement>('[data-reorder-marker]')!;
+    const start = await fingerPickUp(view, 8, 0);
+    await commands.touch('move', start.x, start.y - 100, 4);
+    await frames();
+    expect(window.scrollY).toBe(100);
+    // Row 9's middle is now over row 6's: it would land between rows 6 and 7.
+    expect(marker().style.display).not.toBe('none');
+    expect(marker().style.top).toBe(`${view.gap(6) - 1}px`);
+    await expect
+      .element(page.elementLocator(document.body))
+      .toMatchScreenshot('reorder-touch-marker');
+    await commands.touch('move', start.x, start.y, 4);
+    await frames();
+    expect(window.scrollY).toBe(200);
+    expect(marker().style.display).toBe('none');
+    await commands.touch('move', start.x, start.y - 100, 4);
+    await commands.touch('up', start.x, start.y - 100);
+    expect(view.host.moves).toEqual([{ from: 8, to: 6 }]);
+    expect(window.scrollY).toBe(100);
+    view.expectClean();
+  });
+
+  it('shifts the rows down at the top of the page, so the first slot is reached', async () => {
+    const view = await render(30);
+    const at = view.items[5].getBoundingClientRect();
+    const middle = at.top + at.height / 2;
+    const start = await fingerPickUp(view, 5, 0);
+    // Into the top edge band: the page cannot scroll up, so the rows come down instead.
+    await commands.touch('move', start.x, 20, 6);
+    await frames(30);
+    expect(window.scrollY).toBe(0);
+    // Just far enough: the first row's top 1px below the clone's middle.
+    expect(view.items[0].getBoundingClientRect().top).toBe(middle + 1);
+    expect(view.items[29].style.transform).toBe(view.items[0].style.transform);
+    const marker = document.querySelector<HTMLElement>('[data-reorder-marker]')!;
+    expect(marker.style.top).toBe(`${middle}px`);
+    await expect.element(page.elementLocator(document.body)).toMatchScreenshot('reorder-touch-end');
+    await commands.touch('up', start.x, 20);
+    expect(view.host.moves).toEqual([{ from: 5, to: 0 }]);
+    view.expectClean();
+  });
+
+  it('keeps scrolling while a finger is held near the bottom edge, then shifts to the last slot', async () => {
+    const view = await render(30);
+    const at = view.items[12].getBoundingClientRect();
+    const middle = at.top + at.height / 2;
+    const start = await fingerPickUp(view, 12, 0);
+    await commands.touch('move', start.x, window.innerHeight - 10, 4);
+    await frames(5);
+    const scrolled = window.scrollY;
+    await frames(5);
+    expect(window.scrollY).toBeGreaterThan(scrolled);
+    await frames(120);
+    expect(window.scrollY).toBe(document.documentElement.scrollHeight - window.innerHeight);
+    expect(view.items[29].getBoundingClientRect().bottom).toBe(middle - 1);
+    await commands.touch('up', start.x, window.innerHeight - 10);
+    expect(view.host.moves).toEqual([{ from: 12, to: 29 }]);
+    view.expectClean();
+  });
 });

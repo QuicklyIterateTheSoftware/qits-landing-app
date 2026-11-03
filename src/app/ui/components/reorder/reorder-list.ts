@@ -154,6 +154,7 @@ export class ReorderList {
         handle,
         from,
         rects: () => this.items().map((each) => each.element.getBoundingClientRect()),
+        items: () => this.items().map((each) => each.element),
         started: () => this.moving.set(item),
         end: (outcome) => {
           this.gesture = undefined;

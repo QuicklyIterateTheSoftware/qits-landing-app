@@ -1,6 +1,13 @@
-import { type DragContext, type DragEngine, type DragOutcome, placeholder } from './drag';
+import {
+  type DragContext,
+  type DragEngine,
+  type DragOutcome,
+  Marker,
+  pinnedHeight,
+  placeholder,
+} from './drag';
 import { REORDER_MESSAGES } from './reorder-messages';
-import { slotAt, targetIndex } from './slots';
+import { edgeScrollStep, gapY, slotAt, type SlotRect, targetIndex } from './slots';
 
 /** How far a touch must move before it is a drag, in px; anything shorter is a tap. */
 export const TOUCH_DRAG_THRESHOLD_PX = 8;
@@ -17,25 +24,48 @@ export function cancelArmed(startX: number, x: number): boolean {
 }
 
 /**
+ * How far past the ends of the page the items may be shifted, as the range of the overscroll (px
+ * the content has moved up beyond the bottom of the page, negative beyond the top), so the line at
+ * `y` (the clone's middle) can reach the first and the last slot: the first item's top, or the
+ * last item's bottom, just past `y` and no further. `rects` are the items' rects unshifted.
+ */
+export function overscrollRange(
+  rects: readonly SlotRect[],
+  y: number,
+): { readonly min: number; readonly max: number } {
+  if (rects.length === 0) return { min: 0, max: 0 };
+  return {
+    min: Math.min(0, rects[0].top - y - 1),
+    max: Math.max(0, rects[rects.length - 1].bottom - y + 1),
+  };
+}
+
+/**
  * The touch drag (`pointerType` `touch`), started by the reorder list for one press on a handle.
  * It is inverted: the item does not follow the finger, the page moves under the item. It captures
  * the pointer, and once the finger has moved {@link TOUCH_DRAG_THRESHOLD_PX} it dims the item into
  * a placeholder and puts a clone of it in `document.body`, fixed where the item was on the screen;
  * the clone stays there until the end. Moving the finger down scrolls the document down by as
  * much (and up, up), in the next animation frame, so the rows pass under the clone; the slot under
- * the clone's middle is where it lands. Moving the finger sideways means nothing, except that
+ * the clone's middle is where it lands, and the marker shows its gap (hidden over the item's own
+ * slot). Held near the top or bottom of the visible area, the finger keeps the page scrolling
+ * (`edgeScrollStep`). Where the page can scroll no further, the rest of the movement shifts the
+ * items (`translateY` on each), just far enough that the first and the last slot can be reached
+ * (`overscrollRange`). Moving the finger sideways means nothing, except that
  * {@link TOUCH_CANCEL_PX} or more to the left of the press arms the cancel: a veil over the clone
- * fades it and says "Release to cancel" until the finger comes back.
+ * fades it and says "Release to cancel", and the marker hides, until the finger comes back.
  *
  * It ends once: a release over a new slot is a drop and leaves the page where it is; a release
  * with the cancel armed or over its own slot is a cancel, and scrolls the page back to where it
  * was at the pick-up. `pointercancel`, a lost capture, the window losing focus or `cancel()`
  * cancel the same way. A touch lifted before the threshold is a tap and is left alone. Every end
- * removes the clone, the placeholder style, the listeners, the capture and the pending frame before
- * `end` hears the outcome. There are no animations, so reduced motion needs no branch.
+ * removes the clone, the marker, the placeholder style, the items' shift, the listeners, the
+ * capture and the pending frame before `end` hears the outcome. There are no animations, so
+ * reduced motion needs no branch.
  */
 export class TouchDrag implements DragEngine {
   private readonly window: Window;
+  private marker?: Marker;
   private clone?: HTMLElement;
   private label?: HTMLElement;
   private restoreItem?: () => void;
@@ -53,6 +83,12 @@ export class TouchDrag implements DragEngine {
   private startScrollY = 0;
   /** The clone's vertical middle, in viewport coordinates: fixed for the whole drag. */
   private cloneCentreY = 0;
+  /** The top of the visible area, below what is pinned there. */
+  private visibleTop = 0;
+  /** The list's items, shifted past the ends of the page, and their own inline transforms. */
+  private shifted: readonly { readonly element: HTMLElement; readonly transform: string }[] = [];
+  /** How far the items are shifted up past the end of the page, in px (negative: down). */
+  private overscroll = 0;
 
   constructor(
     private readonly context: DragContext,
@@ -117,6 +153,11 @@ export class TouchDrag implements DragEngine {
     const rect = item.getBoundingClientRect();
     this.startScrollY = this.window.scrollY;
     this.cloneCentreY = rect.top + rect.height / 2;
+    this.visibleTop = pinnedHeight(document, this.context.list);
+    this.shifted = this.context.items().map((element) => ({
+      element,
+      transform: element.style.getPropertyValue('transform'),
+    }));
 
     const clone = item.cloneNode(true) as HTMLElement;
     clone.removeAttribute('id');
@@ -151,14 +192,22 @@ export class TouchDrag implements DragEngine {
     document.body.append(clone);
     this.clone = clone;
     this.label = label;
+    this.marker = new Marker(document);
     this.restoreItem = placeholder(item);
     this.context.started();
+    this.draw();
     this.frame = this.window.requestAnimationFrame(this.onFrame);
   }
 
   private readonly onFrame = () => {
     if (this.ended) return;
+    this.pending += edgeScrollStep(
+      this.y,
+      this.visibleTop,
+      this.context.document.documentElement.clientHeight,
+    );
     this.scroll();
+    this.draw();
     this.frame = this.window.requestAnimationFrame(this.onFrame);
   };
 
@@ -169,13 +218,63 @@ export class TouchDrag implements DragEngine {
   }
 
   /**
-   * Applies the pending scroll to the document in whole px, keeping the fraction for later: the
-   * browser rounds every scroll, and rounding each small step would drift from the finger.
+   * Applies the pending scroll in whole px, keeping the fraction for later: the browser rounds
+   * every scroll, and rounding each small step would drift from the finger. A movement back first
+   * takes back the items' shift, then scrolls the document; what the document cannot take shifts
+   * the items, within `overscrollRange`.
    */
   private scroll(): void {
-    const step = Math.round(this.pending);
+    let step = Math.round(this.pending);
     this.pending -= step;
-    if (step) this.window.scrollBy({ top: step, behavior: 'instant' });
+    if (!step) return;
+    if (this.overscroll && Math.sign(step) !== Math.sign(this.overscroll)) {
+      const back = Math.sign(step) * Math.min(Math.abs(step), Math.abs(this.overscroll));
+      this.shift(this.overscroll + back);
+      step -= back;
+    }
+    if (step) {
+      const before = this.window.scrollY;
+      this.window.scrollBy({ top: step, behavior: 'instant' });
+      step -= this.window.scrollY - before;
+    }
+    if (step) {
+      const unshifted = this.context.rects().map((rect) => ({
+        top: rect.top + this.overscroll,
+        bottom: rect.bottom + this.overscroll,
+      }));
+      const { min, max } = overscrollRange(unshifted, this.cloneCentreY);
+      this.shift(Math.max(min, Math.min(max, this.overscroll + step)));
+    }
+  }
+
+  /** Shifts the items up by `overscroll` px (down when negative) over their own transforms. */
+  private shift(overscroll: number): void {
+    if (overscroll === this.overscroll) return;
+    this.overscroll = overscroll;
+    for (const { element, transform } of this.shifted) {
+      const own = transform && transform !== 'none' ? `${transform} ` : '';
+      element.style.transform = overscroll ? `${own}translateY(${-overscroll}px)` : transform;
+    }
+  }
+
+  /** Puts the items' own transforms back, and drops a `style` the shift alone left. */
+  private unshift(): void {
+    for (const { element, transform } of this.shifted) {
+      if (transform) element.style.transform = transform;
+      else element.style.removeProperty('transform');
+      if (!element.getAttribute('style')) element.removeAttribute('style');
+    }
+  }
+
+  /** Draws the marker in the gap under the clone's middle; hidden over its own slot or armed. */
+  private draw(): void {
+    const rects = this.context.rects();
+    const slot = slotAt(rects, this.cloneCentreY);
+    if (this.armed || targetIndex(this.context.from, slot) === this.context.from) {
+      this.marker!.hide();
+      return;
+    }
+    this.marker!.show(this.context.list.getBoundingClientRect(), gapY(rects, slot)!);
   }
 
   /**
@@ -187,6 +286,7 @@ export class TouchDrag implements DragEngine {
     if (armed === this.armed) return;
     this.armed = armed;
     this.label!.style.display = armed ? '' : 'none';
+    this.draw();
   }
 
   /** The index a release now drops the item at, or `undefined` when a release cancels. */
@@ -220,6 +320,8 @@ export class TouchDrag implements DragEngine {
     }
     this.window.cancelAnimationFrame(this.frame);
     this.clone?.remove();
+    this.marker?.remove();
+    this.unshift();
     this.restoreItem?.();
     if (outcome.kind === 'cancel' && this.window.scrollY !== this.startScrollY) {
       this.window.scrollTo({
