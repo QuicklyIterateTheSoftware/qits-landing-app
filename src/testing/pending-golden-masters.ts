@@ -10,7 +10,7 @@ import { projectsGoldenMasters } from './golden-masters';
  * milestone" and "a campaign member waiting on a milestone" are committed on qits-projects-service's
  * `epic/qits-615` branch (`golden-masters/`, at c4943945) and reach the npm package only with the
  * release that carries them; qits-maintenance then bumps the devDependency. `pending-golden-masters/`
- * holds copies of those three states. files and their index entries (as prettier formats them).
+ * holds copies of those three states' files and their index entries (as prettier formats them).
  *
  * {@link pendingGoldenMaster} reads the installed package first, so once the pin carries a state
  * the specs answer with the published recording and these copies are dead weight: delete this file

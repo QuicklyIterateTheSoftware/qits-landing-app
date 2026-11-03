@@ -14,9 +14,10 @@ import { SelectedProject } from '$core/projects/selected-project';
  * dashed border and a flag, and it never says "waiting". Its accessible name says it in full:
  * "Needs milestone <name>, not met yet".
  *
- * `display: contents`, so each mark is itself an item of the row it is put in (a card's tags, a
- * lane's tags, the item page's facts). Each link is positioned, so it sits above a card's
- * stretched title link and takes its own clicks.
+ * A long name (a migrated campaign condition's generated one: `Before "<member>" in
+ * "<campaign>"`) wraps rather than overflowing a card. `display: contents`, so each mark is itself
+ * an item of the row it is put in (a card's tags, a lane's tags, the item page's facts). Each link
+ * is positioned, so it sits above a card's stretched title link and takes its own clicks.
  */
 @Component({
   selector: 'app-milestone-needs',
@@ -26,11 +27,11 @@ import { SelectedProject } from '$core/projects/selected-project';
   template: `
     @for (milestone of unmet(); track milestone.id) {
       <a
-        class="relative z-10 inline-flex w-fit items-center gap-1 rounded-sm border border-dashed border-ocean-deep-400 bg-ocean-deep-50 px-1.5 text-[0.6875rem] leading-4 font-medium whitespace-nowrap text-ocean-deep-800 no-underline hover:underline"
+        class="relative z-10 inline-block max-w-full rounded-sm border border-dashed border-ocean-deep-400 bg-ocean-deep-50 px-1.5 text-[0.6875rem] leading-4 font-medium wrap-anywhere text-ocean-deep-800 no-underline hover:underline"
         data-milestone-needs
         [routerLink]="link(milestone)"
         [attr.aria-label]="'Needs milestone ' + (milestone.displayName ?? '') + ', not met yet'"
-        ><span aria-hidden="true">⚑</span>{{ label(milestone) }}</a
+        ><span class="mr-1" aria-hidden="true">⚑</span>{{ label(milestone) }}</a
       >
     }
   `,

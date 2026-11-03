@@ -85,6 +85,28 @@ open `work/create` (`WorkCreatePage`, `WorkWritesStore.create`) filled from the 
 (`patterns/ideas/work-inspiration/`, `WorkWritesStore.setInspiredBy`, a `patchWork` of
 `inspiredBy` alone, which no recording holds yet, so it has no pact interaction).
 
+Milestones (epic qits-615): what work needs before it may start, a named condition (OR'd groups of
+AND'd criteria: `ENTITY_STATUS`, `DEPLOYMENT_ACTIVE`, `SCM_RELEASE`, `APPROVAL`) shared by any number
+of work items and campaign memberships, through `MilestonesStore` (`core/milestones/`). The work
+section's last tab, `work/milestones` (`WorkMilestonesPage`), lists them (met since, made, how many
+items and memberships need it; filtered met/not met in the page) and makes one (name and condition,
+`patterns/milestones/milestone-editor/`); `work/milestones/<id>` (`MilestonePage`, under the tabs)
+shows the dates of the milestone, each group and each criterion, the evidence or approval, what
+needs it, and Rename, Edit criteria (`setMilestoneGroups`, the whole condition; a criterion kept as
+it was keeps its id and latch) and Approve on an APPROVAL criterion not given yet (a person's: the
+app runs on a person's session, and anyone else's 403 shows in the service's words). Work lists,
+the board and the item page mark each unmet milestone an item needs "⚑ needs: <name>"
+(`patterns/milestones/milestone-needs/`, ocean blue, dashed), apart from the Blocked fact and an
+agent's wait; the words "waiting"/"waiting on" are never used for a milestone. The item page attaches
+and detaches them (`patterns/milestones/work-milestones/`), a campaign's page sets each
+membership's (`patterns/milestones/member-milestones/`, from `WorkStore`'s members read). Staleness:
+`MilestoneMet`/`MilestoneUnmet` by `projectId` → the project's work (`SelectedWork.followTransitions`),
+the Milestones pages (`MilestonesStore.follow`), and the item page's own data when the event names
+one of its milestones; attach, detach, rename and create send no event, so the pages read again
+after their own writes. Until `@qits/projects-golden-masters` carries the milestone states, their
+pact interactions and screenshots are skipped (`published()`), and the plain specs read copies of
+the recordings (`src/testing/pending-golden-masters.ts`, to be deleted once the pin carries them).
+
 Prioritising work (qits-753): the trees order siblings by `priority` (highest first, unranked
 after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`). In the Backlog
 (the roots, an epic's features, a feature's tasks) and on the board (the top-level epics and
