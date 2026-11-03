@@ -3,10 +3,6 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-// Keep `./app.routes` above `domain-events`. Under `ng test` the environment is the development
-// one, which closes an import cycle (platform-origins › environment › dev-bearer › dev-tokens ›
-// session › platform-origins). The other order loads `dev-tokens` before `session` and breaks
-// sixteen spec files with "Class extends value undefined".
 import { routes } from './app.routes';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkAcceptancePage } from './routes/projects/[slug]/work/acceptance/work-acceptance.page';

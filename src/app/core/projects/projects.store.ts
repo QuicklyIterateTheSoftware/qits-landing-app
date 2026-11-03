@@ -17,7 +17,6 @@ import {
   isPendingRelease,
   LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECTS,
-  SESSION_CHECK,
   type FetchedProject,
   type ListedProject,
   type ReleaseRequestEntry,
@@ -56,7 +55,7 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  * Every project the app has seen, from qits-projects.
  *
  * - `load()` fetches the list once. The `onInit` hook calls it, in the browser only: the server
- *   render has no `qits-session` cookie to send.
+ *   render holds no token to send.
  * - `refresh()` fetches the list again.
  * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when a project
@@ -66,7 +65,6 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  *   `listProjectReleaseRequests` call runs for a project at a time, and any refresh asked for while
  *   one is already running is coalesced into exactly one follow-up fetch afterwards, rather than
  *   piling up a call per event.
- * - `hasSession()` asks qits-projects whether the visitor has a session. It changes no state.
  *
  * Staleness (qits-1270):
  * - The release requests: `RELEASE_REQUEST_EVENTS` about the open project →
@@ -200,11 +198,6 @@ export const ProjectsStore = signalStore(
        */
       refreshReleaseRequests(projectId: string): Promise<void> {
         return runReleaseRequestsFetch(projectId);
-      },
-      /** False only when the edge answers 401: no valid `qits-session` cookie. */
-      async hasSession(): Promise<boolean> {
-        const { response } = await consume(listProjects(), SESSION_CHECK);
-        return response?.status !== 401;
       },
     };
   }),

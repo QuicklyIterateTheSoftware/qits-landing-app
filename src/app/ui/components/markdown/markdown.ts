@@ -1,12 +1,18 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  DOCUMENT,
   effect,
+  inject,
   input,
+  PLATFORM_ID,
   signal,
   untracked,
 } from '@angular/core';
+import { isPlatformUrl, QITS_SIGN_IN, QitsBearerFetch } from '@qits/angular';
 
 /** Turns Markdown into HTML; `resolveUrl` rewrites each image's address first. */
 type Render = (text: string, resolveUrl: (url: string) => string) => string;
@@ -43,6 +49,11 @@ const loaded = signal<Render | undefined>(undefined);
  *   browser render match.
  * - `resolveUrl` rewrites an image's address before it renders (an epic's dossier names its
  *   figures by an address relative to its service).
+ * - An image on a platform host (`isPlatformUrl`: a dossier figure, whose route is role-guarded) is
+ *   fetched with the bearer (`QitsBearerFetch`, epic qits-543), since an `<img>` cannot send a
+ *   header, and shown from an object URL; it has no `src` until its bytes are in. Each object URL
+ *   is revoked when the component goes. Without the bearer sign-in, and on the server, an image
+ *   keeps its address.
  *
  * Styling is Tailwind on the container (`[&_h2]:…`); the parts follow the app's text sizes.
  */
@@ -70,17 +81,70 @@ export class Markdown {
   /** Rewrites an image's address (default: as written). */
   readonly resolveUrl = input<(url: string) => string>((url) => url);
 
+  private readonly bearer = inject(QitsBearerFetch, { optional: true });
+  private readonly signIn = inject(QITS_SIGN_IN, { optional: true });
+  private readonly page = inject(DOCUMENT).location;
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** Each image fetched with the bearer: its object URL by its address, once its bytes are in. */
+  private readonly objectUrls = signal<ReadonlyMap<string, string>>(new Map());
+  /** The addresses already asked for, so each is fetched once. */
+  private readonly asked = new Set<string>();
+  private destroyed = false;
+
   /** The rendered HTML, once the parser is in; empty before, and for empty text. */
-  protected readonly html = computed(() => {
+  private readonly rendered = computed(() => {
     const render = loaded();
     const text = this.text();
-    return render && text ? render(text, this.resolveUrl()) : '';
+    const wanted: string[] = [];
+    if (!render || !text) return { html: '', wanted };
+    const resolve = this.resolveUrl();
+    const objectUrls = this.objectUrls();
+    const html = render(text, (url) => {
+      const resolved = resolve(url);
+      if (!this.withBearer(resolved)) return resolved;
+      wanted.push(resolved);
+      return objectUrls.get(resolved) ?? '';
+    });
+    return { html, wanted };
   });
+
+  protected readonly html = computed(() => this.rendered().html);
 
   constructor() {
     // The first text to render loads the parser.
     effect(() => {
       if (this.text() && !untracked(loaded)) void loadParser().then((r) => loaded.set(r));
     });
+    // Each platform image the text names is fetched with the bearer, once.
+    effect(() => {
+      for (const url of this.rendered().wanted) this.fetch(url);
+    });
+    inject(DestroyRef).onDestroy(() => {
+      this.destroyed = true;
+      for (const objectUrl of this.objectUrls().values()) URL.revokeObjectURL(objectUrl);
+    });
+  }
+
+  /** True for an image to fetch with the bearer: on a platform host, in the browser. */
+  private withBearer(url: string): boolean {
+    if (!this.browser || !this.bearer || !this.signIn) return false;
+    return isPlatformUrl(url, this.page.href, this.signIn.platformDomain);
+  }
+
+  private fetch(url: string): void {
+    if (this.asked.has(url) || !this.bearer) return;
+    this.asked.add(url);
+    this.bearer.fetchObjectUrl(url).then(
+      (objectUrl) => {
+        if (this.destroyed) {
+          URL.revokeObjectURL(objectUrl);
+          return;
+        }
+        this.objectUrls.update((urls) => new Map(urls).set(url, objectUrl));
+      },
+      // The image stays without a `src`, showing its alt text; nothing retries it.
+      (error: unknown) => console.warn(`Could not load the image ${url}.`, error),
+    );
   }
 }

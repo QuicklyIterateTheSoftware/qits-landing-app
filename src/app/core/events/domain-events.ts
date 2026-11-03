@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { QITS_EVENT_SOURCE, type EventSourceLike } from '@qits/angular';
 import { EMPTY, Observable, Subject, filter, share } from 'rxjs';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import type { EventEntry } from './events.consumes';
@@ -8,22 +9,14 @@ import type { EventEntry } from './events.consumes';
 export type DomainEvent = EventEntry;
 
 /** The part of `EventSource` the service uses, so a spec can hand it a fake. */
-export interface EventSourceLike {
-  onmessage: ((event: MessageEvent<string>) => void) | null;
-  onerror: ((event: Event) => void) | null;
-  readonly readyState: number;
-  close(): void;
-}
+export type { EventSourceLike } from '@qits/angular';
 
 /**
- * Opens an event source on a URL; the browser's `EventSource`, with the session cookie, which a
- * stream on qits-events' own origin needs. Under `ng serve`, `provideDevBearer` swaps in a
- * `fetch()` reader that sends the bearer instead.
+ * Opens an event source on a platform URL: `@qits/angular`'s `QITS_EVENT_SOURCE`, the same token
+ * under the name the app uses. With the bearer sign-in (`app.config.ts`) it is a `fetch()` reader
+ * that sends `Authorization: Bearer`, which `EventSource` cannot.
  */
-export const EVENT_SOURCE = new InjectionToken<(url: string) => EventSourceLike>('EVENT_SOURCE', {
-  providedIn: 'root',
-  factory: () => (url) => new EventSource(url, { withCredentials: true }),
-});
+export const EVENT_SOURCE = QITS_EVENT_SOURCE;
 
 /**
  * qits-events' Server-Sent Events route, on qits-events' origin (`PlatformOrigins.api`); `?names=` is the

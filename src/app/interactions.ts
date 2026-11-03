@@ -8,8 +8,6 @@
  * The value is a one-line title, for people.
  */
 export const INTERACTIONS = {
-  /** `session.guard.ts`: the session check before any page under the layout renders. */
-  'sign-in-landing': 'Arriving at the landing page checks the visitor has a session',
   /** `projects.store.ts`, `load()` from the store's `onInit`: the picker's list. */
   'list-projects': 'The project picker lists every project',
   /** `projects.store.ts`, `refresh(id)`: a project the store does not hold yet. */

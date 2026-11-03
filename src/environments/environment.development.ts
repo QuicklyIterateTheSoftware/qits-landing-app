@@ -1,16 +1,9 @@
-import type { HttpInterceptorFn } from '@angular/common/http';
-import type { Provider } from '@angular/core';
-import { devBearerInterceptor, provideDevBearer } from '$core/auth/dev-bearer';
-
 /**
- * `ng serve`: the app calls the platform's applications directly, with a bearer from the idp's
- * public PKCE client instead of the session cookie, which never reaches localhost
- * (`core/auth/dev-bearer.ts`). See `environment.ts`. The only file that imports the bearer code,
- * so the deployed bundle holds none of it.
+ * `ng serve`: the app calls the platform's applications directly, under `platformDomain`, and
+ * signs in with the idp's public client for loopback pages, `qits-landing-dev` (its only redirect is
+ * `http://{localhost|127.0.0.1|[::1]}:<port>/auth/callback`). See `environment.ts`.
  */
 export const environment = {
   platformDomain: 'qits.wohlben.eu' as string | null,
-  sendCookie: false,
-  providers: provideDevBearer() as Provider[],
-  interceptors: [devBearerInterceptor] as HttpInterceptorFn[],
+  signInClientId: 'qits-landing-dev',
 };

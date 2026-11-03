@@ -27,8 +27,8 @@ Three things make that true and each is easy to undo:
   `RenderMode.Prerender`. Prerender writes the html during `ng build` and serves it as a static
   file — the text would be in the response and would prove nothing about the server.
 - the page's own text lives in its template, not behind a fetch. Data that needs the visitor's
-  session — the project list — loads in the browser: the server render has no `qits-session`
-  cookie to send, so it renders the heading and a loading state.
+  session — the project list — loads in the browser: the server render holds no token to send,
+  so it renders the heading and a loading state.
 - every backend call goes through a client generated from that service's `docs/openapi.yml`, so a
   wrong path, parameter or field is a compile error. `npm run generate:api` regenerates
   `src/app/api/<service>/` from the sibling checkouts in the wrapper; `openapi-ts.config.ts` lists
@@ -50,49 +50,38 @@ npm run serve:ssr     # node dist/qits-landing-app/server/server.mjs, on :8080
 
 **Node 22.22.3 or newer** (or 24.15+): Angular 22 refuses older versions.
 
-`npm start` runs `ng serve` on :4200, with server rendering. See "Signing in under `ng serve`"
-below.
+`npm start` runs `ng serve` on :4200, with server rendering. See "Signing in" below.
 
-**Where the backends are called.** Deployed, every backend is called at its own application's
-origin (`https://projects.<domain>/projects/api/…`), with the session cookie
-(`credentials: 'include'`, `EventSource` `withCredentials`). The edge routes an application's paths
-on its own host only and answers credentialed CORS for every host under the platform's domain (epic
-qits-528). The origins come from code: `https://<label>.<this page's hostname>`
-(`core/platform/platform-origins.ts`, wired in `app.config.ts`). A visitor without a session goes to
-`<idp origin>/idp/login?return_host=<this host>&return_path=<path>`. Under `ng serve` the domain
-is `platformDomain` in `environment.development.ts`.
+**Where the backends are called.** Every backend is called at its own application's origin
+(`https://projects.<domain>/projects/api/…`). The edge routes an application's paths on its own
+host only (epic qits-528). The origins come from code: `https://<label>.<this page's hostname>`
+deployed (`core/platform/platform-origins.ts`, wired in `app.config.ts`); under `ng serve` the
+domain is `platformDomain` in `environment.development.ts`. There is no dev proxy.
 
-### Signing in under `ng serve`
+### Signing in
 
-The `qits-session` cookie never reaches localhost, so under `ng serve` the app signs in with a
-bearer token instead and calls the platform's applications directly, at
-`https://<label>.<platformDomain>` (`environment.development.ts`). There is no dev proxy.
+The app signs in with `@qits/angular`'s bearer sign-in (`provideQitsBearerSignIn`, epic qits-543),
+deployed and under `ng serve` alike; no call sends a cookie. Only the idp client differs:
+`qits-spa` deployed (`environment.ts`, redirect `https://<a name under the platform
+domain>/auth/callback`), `qits-landing-dev` under `ng serve` (`environment.development.ts`,
+redirect `http://{localhost|127.0.0.1|[::1]}:<port>/auth/callback`).
 
-1. Open http://localhost:4200 (or `127.0.0.1`, any port). Without a token, the app sends you to the
-   idp's authorize page (`https://idp.<platformDomain>/idp/authorize`, client `qits-landing-dev`,
-   PKCE S256). Sign in there as usual.
-2. The idp sends you back to `http://localhost:<port>/auth/callback`. That page swaps the code for
-   tokens and goes on to the page you asked for.
-3. Every call to a platform host carries `Authorization: Bearer`. The access token lasts 15
-   minutes and is refreshed a minute before it ends, one refresh at a time (the idp rotates the
+1. Without a token, a page under the shell (`qitsSignedInGuard`) sends you to the idp's authorize
+   page (`https://idp.<platform domain>/idp/authorize`, PKCE S256). Sign in there as usual.
+2. The idp sends you back to `<this origin>/auth/callback` (`qitsAuthCallbackRoute`, first in
+   `app.routes.ts`). That page swaps the code for tokens and goes on to the page you asked for.
+3. Every call to a platform host carries `Authorization: Bearer` (`qitsBearerInterceptor`). The
+   access token is refreshed a minute before it ends, one refresh at a time (the idp rotates the
    refresh token and revokes the family when one is reused). A 401 gets one refresh and one retry;
    after that you go back to sign in. The event stream is read with `fetch()`, since `EventSource`
-   cannot send a header. A WebSocket (an agent's terminal) offers the token as a subprotocol,
-   `['qits.bearer', <token>]`, which the edge takes from a loopback origin only (qits-1246).
+   cannot send a header. A WebSocket (an agent's terminal or chat) offers the token as a
+   subprotocol, `['qits.bearer', <token>]`. A dossier figure, whose route is role-guarded, is
+   fetched with the bearer and shown from an object URL (`ui/components/markdown`).
 4. The tokens live in memory and in this tab's `sessionStorage`: a reload keeps you signed in, a
    new tab signs in again. To sign out, clear the tab's session storage (or close the tab).
 
 A sign-in that fails stays on `/auth/callback` with the reason in the browser console; open `/` to
 try again.
-
-This needs the idp's public client `qits-landing-dev` (qits-idp `external/spa-dev-client`) and the
-edge's CORS for localhost origins with the `authorization` header and no credentials (qits-edge
-`external/localhost-cors`). Until both are released, sign-in under `ng serve` fails.
-
-None of this is in the deployed bundle: only `environment.development.ts` imports
-`core/auth/dev-bearer.ts`, and `fileReplacements` puts that file in the `development` build only.
-The deployed app keeps the cookie. Check with `npm run build` and
-`grep -r qits-landing-dev dist/qits-landing-app/browser`, which must find nothing.
 
 **Generate the lockfile with npm 11 or newer.** npm 10.9.8 — the version on the current workstation
 image — crashes with `Cannot read properties of null (reading 'edgesOut')` while resolving the

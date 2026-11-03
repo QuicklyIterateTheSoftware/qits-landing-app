@@ -256,20 +256,6 @@ describe('ProjectsStore', () => {
     expect(store.releaseRequests()[id]).toEqual({ status: 'loaded', requests: [], pending: [] });
   });
 
-  it('has a session unless the list answers 401', async () => {
-    const store = await loadedStore();
-    const answered = store.hasSession();
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list());
-    expect(await answered).toBe(true);
-    const refused = store.hasSession();
-    await settle();
-    http
-      .expectOne('/projects/api/projects')
-      .flush(null, { status: 401, statusText: 'Unauthorized' });
-    expect(await refused).toBe(false);
-  });
-
   it('reports a failed list', async () => {
     const store = TestBed.inject(ProjectsStore);
     await settle();

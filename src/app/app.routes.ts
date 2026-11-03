@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { sessionGuard } from '$core/auth/session.guard';
+import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
 
 /**
  * Routes live on the filesystem: `routes/` mirrors the URL. A route's full path (its parents'
@@ -32,7 +32,8 @@ import { sessionGuard } from '$core/auth/session.guard';
  * strips it, which is one fewer thing that has to be true for the front door to work.
  *
  * `ShellLayout` is the root route component, so the chrome survives navigation and only the outlet
- * beneath it changes. `sessionGuard` sends a visitor without a session to the idp's login page.
+ * beneath it changes. `qitsSignedInGuard` sends a visitor who holds no token to sign in (`@qits/angular`'s
+ * bearer sign-in, `app.config.ts`), back to the page they asked for.
  *
  * The work section: `projects/<slug>/work` is `WorkLayout`, a row of tabs over its pages
  * (`campaigns`, `refinement`, `schedule`, `in-progress`, `acceptance`, `archive`, `milestones`;
@@ -69,19 +70,16 @@ import { sessionGuard } from '$core/auth/session.guard';
  * the execution targets a slot is placed on are qits-system's, at its own Targets page, which the
  * Agents page links to directly rather than routing through here.
  *
- * `auth/callback` is where the `ng serve` sign-in comes back to (`AuthCallbackPage`); it sits
- * outside the shell, so the guard does not run on it.
+ * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
+ * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
+ * shell, so the guard does not run on it and the catch-all never takes it.
  */
 export const routes: Routes = [
-  {
-    path: 'auth/callback',
-    loadComponent: () =>
-      import('./routes/auth/callback/auth-callback.page').then((m) => m.AuthCallbackPage),
-  },
+  qitsAuthCallbackRoute,
   {
     path: '',
     loadComponent: () => import('$layout/shell/shell.layout').then((m) => m.ShellLayout),
-    canActivate: [sessionGuard],
+    canActivate: [qitsSignedInGuard],
     children: [
       { path: '', loadComponent: () => import('./routes/root.page').then((m) => m.RootPage) },
       {

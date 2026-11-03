@@ -3,7 +3,7 @@ import type {
   GetProjectResponses,
   ListProjectsResponses,
 } from '../../api/projects';
-import { NOTHING, type Consumed } from '@qits/angular';
+import type { Consumed } from '@qits/angular';
 
 /**
  * What `ProjectsStore` reads from each qits-projects answer (epic qits-546). The store passes
@@ -136,9 +136,6 @@ const PENDING_RELEASE_STATES: ReadonlySet<string> = new Set([
 export function isPendingRelease(entry: ReleaseRequestEntry): boolean {
   return entry.state !== undefined && PENDING_RELEASE_STATES.has(entry.state);
 }
-
-/** `hasSession()`: the status only. */
-export const SESSION_CHECK = NOTHING;
 
 /** A project as the list answer gives it, cut to what the store reads. */
 export type ListedProject = NonNullable<

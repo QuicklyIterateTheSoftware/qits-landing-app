@@ -17,7 +17,6 @@ import {
   GET_PROJECT,
   LIST_PROJECT_RELEASE_REQUESTS,
   LIST_PROJECTS,
-  SESSION_CHECK,
   UNBOUND_RELEASE_REQUESTS,
 } from './projects.consumes';
 import { ProjectsStore } from './projects.store';
@@ -225,13 +224,6 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
-
-  it('sign-in-landing: a visitor whose list call is answered has a session', () =>
-    given('sign-in-landing', 'a project exists', 'listProjects', SESSION_CHECK).executeTest(
-      async (server) => {
-        expect(await storeAt(server.url).hasSession()).toBe(true);
-      },
-    ));
 
   it('list-projects: the store loads the list', () =>
     given('list-projects', 'a project exists', 'listProjects', LIST_PROJECTS).executeTest(
