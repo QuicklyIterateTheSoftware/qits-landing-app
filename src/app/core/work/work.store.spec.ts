@@ -127,6 +127,7 @@ describe('WorkStore', () => {
       entries: [],
       campaigns: {},
       campaignDescriptions: {},
+      memberships: {},
     });
   });
 

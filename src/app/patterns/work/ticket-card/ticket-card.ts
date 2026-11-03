@@ -6,12 +6,15 @@ import { BoardCard } from '$ui/components/board/board-card';
 import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { Leave } from '$ui/components/leave/leave';
 import { ReorderItem } from '$ui/components/reorder/reorder';
+import { unmetOf } from '$core/milestones/milestone-criteria';
+import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
  * A ticket on the board: a card (`ui-board-card`) in its column, its id down the left edge, its
- * title linking to it, its kind, its campaigns as tags, and a Workspace bubble in its bottom-right
+ * title linking to it, its kind, its campaigns as tags, a "needs: <milestone>" mark for each
+ * milestone it needs that is not met yet (`app-milestone-needs`, epic qits-615), and a Workspace bubble in its bottom-right
  * corner while it has an ACTIVE workspace (`app-workspace-link`). A VERIFIED ticket is not on the board:
  * it waits in the Acceptance list (`ticket-list-item`), with its finish button.
  *
@@ -25,7 +28,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 @Component({
   selector: 'app-ticket-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, DragHandle, Leave, ReorderItem, WorkRef, WorkspaceLink],
+  imports: [BoardCard, DragHandle, Leave, MilestoneNeeds, ReorderItem, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -41,11 +44,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
-      @if (n.campaigns.length) {
+      @if (n.campaigns.length || needs()) {
         <div class="mt-1 flex flex-wrap gap-1">
           @for (campaign of n.campaigns; track campaign.id) {
             <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
           }
+          <app-milestone-needs [milestones]="n.entry.milestones" />
         </div>
       }
       <app-workspace-link
@@ -67,6 +71,9 @@ export class TicketCard {
   readonly left = output<void>();
 
   protected readonly movable = movable;
+
+  /** Whether it needs a milestone that is not met yet: its marks then show in the tag row. */
+  protected readonly needs = computed(() => unmetOf(this.node().entry.milestones).length > 0);
 
   protected readonly border = computed(
     () => BOARD_COLUMNS[this.node().column ?? 0]?.cardBorder ?? 'border-charcoal-brown-200',

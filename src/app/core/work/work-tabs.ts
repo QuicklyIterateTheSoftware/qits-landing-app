@@ -5,14 +5,15 @@ export interface WorkTab {
   /** The URL segment after `work/`. */
   readonly segment: string;
   readonly label: string;
-  /** The number the tab shows once the work is loaded. */
-  readonly count: (graph: WorkGraph) => number;
+  /** The number the tab shows once the work is loaded; a tab without one shows none. */
+  readonly count?: (graph: WorkGraph) => number;
 }
 
 /**
  * The work section's pages: first the open campaigns, which span the phases, then the phases in the
  * order work moves through them: the backlog, the schedule, the board, the acceptance list and the
- * archive.
+ * archive. Last, the milestones (epic qits-615), which span the phases too: what work needs before
+ * it may start. It shows no count: the project's work does not hold the milestones.
  * `/work` itself opens In Progress.
  */
 export const WORK_TABS: readonly WorkTab[] = [
@@ -35,6 +36,7 @@ export const WORK_TABS: readonly WorkTab[] = [
     // The page shows the archived campaigns too, so the count does.
     count: (graph) => graph.count('archive') + graph.archivedCampaigns().length,
   },
+  { segment: 'milestones', label: 'Milestones' },
 ];
 
 /**

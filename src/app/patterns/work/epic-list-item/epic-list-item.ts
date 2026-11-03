@@ -9,6 +9,7 @@ import { Leave } from '$ui/components/leave/leave';
 import { ListLane } from '$ui/components/list/list-lane';
 import { REORDER } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
+import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
@@ -53,6 +54,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
     DragHandle,
     FinishButton,
     Leave,
+    MilestoneNeeds,
     REORDER,
     Tag,
     WorkRef,
@@ -78,6 +80,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       @if (status(); as status) {
         <ui-tag lane-tags [label]="status" />
       }
+      <app-milestone-needs lane-tags [milestones]="n.entry.milestones" />
       <app-workspace-link lane-tags [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
       <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
       <ui-finish-button

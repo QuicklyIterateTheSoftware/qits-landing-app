@@ -84,6 +84,22 @@ export interface ProjectWork {
   readonly campaigns: Readonly<Record<string, readonly string[]>>;
   /** Each campaign's description, by campaign id; a campaign without one has no key. */
   readonly campaignDescriptions: Readonly<Record<string, string>>;
+  /**
+   * Each campaign's memberships, by campaign id, in campaign order: the member's entity id, the
+   * membership's id and the milestones it needs (epic qits-615).
+   */
+  readonly memberships: Readonly<Record<string, readonly CampaignMembership[]>>;
+}
+
+/** One campaign membership: which entity, its id, and the milestones it needs. */
+export interface CampaignMembership {
+  readonly entityId: string;
+  readonly membershipId?: string;
+  readonly milestones: readonly {
+    readonly id?: string;
+    readonly displayName?: string;
+    readonly satisfiedAt?: string | null;
+  }[];
 }
 
 /**
@@ -101,6 +117,7 @@ const NO_WORK: ProjectWork = {
   entries: [],
   campaigns: {},
   campaignDescriptions: {},
+  memberships: {},
 };
 
 interface WorkState {
@@ -392,6 +409,22 @@ export const WorkStore = signalStore(
           (a.data?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
         ]),
       );
+      const memberships = Object.fromEntries(
+        members.map((a, i) => [
+          campaignList[i].id,
+          (a.data?.members ?? []).flatMap((m): CampaignMembership[] =>
+            m.entity?.id
+              ? [
+                  {
+                    entityId: m.entity.id,
+                    membershipId: m.membershipId,
+                    milestones: m.milestones ?? [],
+                  },
+                ]
+              : [],
+          ),
+        ]),
+      );
       const campaignDescriptions = Object.fromEntries(
         described.flatMap((a, i) => {
           const description = a.error === undefined ? a.data?.description : undefined;
@@ -406,6 +439,7 @@ export const WorkStore = signalStore(
             entries,
             campaigns,
             campaignDescriptions,
+            memberships,
           };
       return { work, startedAt };
     }

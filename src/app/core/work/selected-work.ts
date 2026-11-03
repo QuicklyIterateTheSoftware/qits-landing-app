@@ -9,6 +9,7 @@ import {
   untracked,
 } from '@angular/core';
 import { injectRefreshOn, REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
+import { MILESTONE_EVENTS } from '$core/milestones/milestone-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { WorkGraph, withoutHidden } from './work-tree';
 import { WorkStore } from './work.store';
@@ -50,6 +51,12 @@ export class SelectedWork {
   /** Each campaign's description, by campaign id; a campaign without one has no key. */
   readonly campaignDescriptions = computed(() => this.work()?.campaignDescriptions ?? {});
 
+  /**
+   * Each campaign's memberships, by campaign id, in campaign order: the membership's id and the
+   * milestones it needs (epic qits-615).
+   */
+  readonly memberships = computed(() => this.work()?.memberships ?? {});
+
   /** Loading until the project is known and its work answered; an error if either failed. */
   readonly state = computed((): LoadState => {
     if (this.store.status() === 'error') return 'error';
@@ -83,14 +90,19 @@ export class SelectedWork {
    *
    * Staleness (qits-1270): `EntityTransitioned` whose `entities[].projectId` names the open
    * project → the open project's work (`WorkStore.refresh`: the list, its campaigns' members and
-   * descriptions). qits-projects sends no event for a work item created, edited, deleted, reshaped
-   * or blocked, nor for a campaign's members changing: those reach the lists on the next load.
+   * descriptions). `MilestoneMet` or `MilestoneUnmet` whose `projectId` is the open project → the
+   * same read (epic qits-615): the "needs" marks of the work and of the campaigns' members follow
+   * the milestone. qits-projects sends no event for a work item created, edited, deleted, reshaped
+   * or blocked, nor for a campaign's members changing, nor for a milestone attached, detached or
+   * renamed: those reach the lists on the next load.
    */
   followTransitions(destroy: DestroyRef): void {
     this.refreshOn(
       {
-        names: WORK_EVENTS,
+        names: [...WORK_EVENTS, ...MILESTONE_EVENTS],
         debounceMs: WORK_REFRESH_DEBOUNCE_MS,
+        // `projectIds` holds `entities[].projectId` (EntityTransitioned) and `projectId` (the
+        // milestone events) alike.
         when: (_, ids) => {
           const id = this.selected.project()?.id;
           return !!id && ids.projectIds.includes(id);

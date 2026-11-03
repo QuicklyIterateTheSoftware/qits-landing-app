@@ -11,6 +11,8 @@ import { routes } from './app.routes';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkAcceptancePage } from './routes/projects/[slug]/work/acceptance/work-acceptance.page';
 import { WorkArchivePage } from './routes/projects/[slug]/work/archive/work-archive.page';
+import { WorkMilestonesPage } from './routes/projects/[slug]/work/milestones/work-milestones.page';
+import { MilestonePage } from './routes/projects/[slug]/work/milestones/[milestoneId]/milestone.page';
 import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-item.page';
 import { WorkInProgressPage } from './routes/projects/[slug]/work/in-progress/work-in-progress.page';
 import { WorkRefinementPage } from './routes/projects/[slug]/work/refinement/work-refinement.page';
@@ -68,6 +70,8 @@ describe('work routes', () => {
     ['in-progress', WorkInProgressPage],
     ['acceptance', WorkAcceptancePage],
     ['archive', WorkArchivePage],
+    ['milestones', WorkMilestonesPage],
+    [`milestones/00000000-0000-4000-8000-000000000002`, MilestonePage],
   ])('opens work/%s in the work layout', async (tab, page) => {
     expect(await opened(`/projects/qits/work/${tab}`)).toEqual([WorkLayout, page]);
   });

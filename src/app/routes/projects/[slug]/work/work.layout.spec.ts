@@ -109,7 +109,7 @@ describe('WorkLayout', () => {
     return { harness, links, counts, answered };
   }
 
-  it('links Campaigns, then the five phases in workflow order, and marks the current one', async () => {
+  it('links Campaigns, then the five phases in workflow order, then Milestones, and marks the current one', async () => {
     const { links, answered } = await shown('acceptance');
     await answered('a project with no work');
     expect(links().map((a) => [a.firstChild?.textContent?.trim(), a.getAttribute('href')])).toEqual(
@@ -120,6 +120,7 @@ describe('WorkLayout', () => {
         ['In Progress', `/projects/${project.slug}/work/in-progress`],
         ['Acceptance', `/projects/${project.slug}/work/acceptance`],
         ['Archive', `/projects/${project.slug}/work/archive`],
+        ['Milestones', `/projects/${project.slug}/work/milestones`],
       ],
     );
     expect(links().map((a) => a.getAttribute('aria-current'))).toEqual([
@@ -129,16 +130,25 @@ describe('WorkLayout', () => {
       null,
       'page',
       null,
+      null,
     ]);
   });
 
   it('counts the epics and tickets on each page once the work is loaded', async () => {
     const { counts, answered } = await shown('in-progress');
-    expect(counts()).toEqual([undefined, undefined, undefined, undefined, undefined, undefined]);
+    expect(counts()).toEqual([
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ]);
     await answered('a project with work in every status');
     // Schedule: the REFINED and the READY_FOR_DEV epic and ticket. In Progress: an epic and a
     // ticket per board status (READY_FOR_DEV first), and the started epic; not its feature.
-    expect(counts()).toEqual([0, 2, 4, 9, 2, 4]);
+    expect(counts()).toEqual([0, 2, 4, 9, 2, 4, undefined]);
   });
 
   it('counts the campaigns, which no phase counts', async () => {
@@ -160,7 +170,7 @@ describe('WorkLayout', () => {
     await settle();
     await harness.fixture.whenStable();
     // Two campaigns; their one member, a REFINED epic, waits on the Schedule tab.
-    expect(counts()).toEqual([2, 0, 1, 0, 0, 0]);
+    expect(counts()).toEqual([2, 0, 1, 0, 0, 0, undefined]);
   });
 
   it('counts a dropped campaign in the Archive, not in Campaigns', async () => {
@@ -182,7 +192,7 @@ describe('WorkLayout', () => {
     await settle();
     await harness.fixture.whenStable();
     // Schedule: the refined epic and tickets. Archive: the done ticket and the dropped campaign.
-    expect(counts()).toEqual([0, 1, 3, 0, 0, 2]);
+    expect(counts()).toEqual([0, 1, 3, 0, 0, 2, undefined]);
   });
 
   it('asks for the work once while moving between the pages', async () => {
@@ -205,7 +215,7 @@ describe('WorkLayout', () => {
     vi.useRealTimers();
     await settle();
     http.expectNone(entities);
-    expect(counts()).toEqual([0, 2, 4, 9, 2, 4]);
+    expect(counts()).toEqual([0, 2, 4, 9, 2, 4, undefined]);
     // The open workspaces are `WorkspacesStore.follow`'s, narrowed (or not) on their own.
     for (const read of http.match(OPEN_WORKSPACES)) {
       read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
@@ -221,7 +231,7 @@ describe('WorkLayout', () => {
     vi.useRealTimers();
     await settle();
     await answered('a project with no work');
-    expect(counts()).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(counts()).toEqual([0, 0, 0, 0, 0, 0, undefined]);
     // The open workspaces follow qits-workspaces' agent events, not a work item's move (qits-1270).
     http.expectNone(OPEN_WORKSPACES);
   });

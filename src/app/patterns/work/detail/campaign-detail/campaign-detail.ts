@@ -5,17 +5,19 @@ import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
 import { WorkComments } from '$patterns/work/detail/work-comments/work-comments';
 import { WorkList } from '$patterns/work/work-list/work-list';
+import { MemberMilestones } from '$patterns/milestones/member-milestones/member-milestones';
 
 /**
  * A campaign's page body: its description (Markdown), its members in campaign order as the
  * Campaigns page draws them (`app-work-list`, view `campaign`; a member epic on the board with
- * its own board), and its comments. A campaign has
+ * its own board), the milestones each membership needs, set there (`app-member-milestones`, epic
+ * qits-615), and its comments. A campaign has
  * no dossier.
  */
 @Component({
   selector: 'app-campaign-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, WorkComments, WorkList],
+  imports: [Markdown, MemberMilestones, WorkComments, WorkList],
   host: { class: 'flex flex-col gap-8' },
   template: `
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
@@ -23,6 +25,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Members</h2>
       <app-work-list [tree]="members()" [base]="base()" view="campaign" epicBoards />
     </section>
+    <app-member-milestones [campaign]="entry()" [base]="base()" />
     <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
   `,
 })
