@@ -36444,39 +36444,6 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjects"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "sign-in-landing",
-            "kind": "ui"
-          }
-        }
-      },
-      "description": "sign-in-landing: listProjects",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "a project exists",
-          "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/projects/api/projects"
-      },
-      "response": {
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
             "operationId": "backupSyncProject"
           },
           "qits-trigger": {

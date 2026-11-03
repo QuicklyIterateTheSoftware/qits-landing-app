@@ -87,10 +87,6 @@ function stalenessBans() {
     { files: ['**/*.spec.ts', 'src/testing/**/*.ts'], rules: { 'no-restricted-syntax': 'off' } },
     // A container start's log: one process's own byte stream, not a domain event.
     except(['src/app/core/workspaces/process-log.ts'], 'eventSource'),
-    // Under `ng serve` only: provides EVENT_SOURCE with the bearer, plumbing rather than staleness.
-    except(['src/app/core/auth/dev-bearer.ts'], 'eventSource'),
-    // Under `ng serve` only: refreshes the dev bearer before it expires, not platform state.
-    except(['src/app/core/auth/dev-tokens.ts'], 'refreshTimer'),
     // TEMPORARY (qits-1270): qits-workspaces' per-slot hint channel (`commands`, `prompt-draft`,
     // `files`), which no qits-events event replaces yet.
     except(['src/app/core/workspaces/workspace-hints.ts'], 'eventSource'),

@@ -45,8 +45,8 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
  * to attach to is the agent's own run state (`AgentsStore.agentOf`, the layout's `getAgent`): while
  * it is RUNNING, the screen attaches to the agent's terminal on qits-workspaces' agent proxy
  * (`agentTerminalSocketUrl`, `/workspaces/agent/<agent id>/terminal`, through `WEB_SOCKET`), which
- * the service joins to the agent's running harness command wherever the agent is placed: deployed
- * with the session cookie, under `ng serve` with the bearer as a subprotocol. A socket that closes
+ * the service joins to the agent's running harness command wherever the agent is placed, signed
+ * in with the bearer as a subprotocol (`@qits/angular`'s `BearerWebSocket`). A socket that closes
  * says so on the status line and attaches again (`TerminalSocket`); once the attempts are spent, a
  * button tries again. A harness started again (`AgentStarted`, a restart) is a new socket. Leaving
  * the tab only detaches: the harness keeps running.

@@ -219,7 +219,7 @@ export class ProjectIdeasPage {
   }
 
   constructor() {
-    // In the browser only (the server render has no session cookie).
+    // In the browser only (the server render holds no token).
     if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
     effect(() => {
       const id = this.projectId();

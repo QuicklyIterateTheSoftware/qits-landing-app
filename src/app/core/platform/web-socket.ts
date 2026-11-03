@@ -1,37 +1,19 @@
-import { InjectionToken } from '@angular/core';
+import { QITS_WEB_SOCKET } from '@qits/angular';
 
 /**
- * The part of `WebSocket` the app uses, named so a spec can hand over a fake: a socket is opened by
- * the browser and never goes through `HttpClient`, so `HttpTestingController` has nothing to
- * intercept. One handler each is all anything here sets.
- *
- * `close()` takes no code on purpose: only the server's close code is read, and a 1000 from the
- * server (the command is gone) is something the client must not be able to fake.
+ * The part of `WebSocket` the app uses, named so a spec can hand over a fake (`@qits/angular`'s):
+ * a socket is opened by the browser and never goes through `HttpClient`, so
+ * `HttpTestingController` has nothing to intercept.
  */
-export interface WebSocketLike {
-  onopen: ((event: Event) => void) | null;
-  onmessage: ((event: MessageEvent<string>) => void) | null;
-  onclose: ((event: CloseEvent) => void) | null;
-  onerror: ((event: Event) => void) | null;
-  readonly readyState: number;
-  send(data: string): void;
-  close(): void;
-}
+export type { WebSocketFactory, WebSocketLike } from '@qits/angular';
 
 /** `WebSocket.CONNECTING`, `OPEN` and `CLOSED`, without reading the global (absent on the server). */
-export const WEB_SOCKET_CONNECTING = 0;
-export const WEB_SOCKET_OPEN = 1;
-export const WEB_SOCKET_CLOSED = 3;
-
-/** Opens a socket at an absolute `ws://` or `wss://` URL, offering `protocols` if given. */
-export type WebSocketFactory = (url: string, protocols?: string[]) => WebSocketLike;
+export { WEB_SOCKET_CLOSED, WEB_SOCKET_CONNECTING, WEB_SOCKET_OPEN } from '@qits/angular';
 
 /**
- * How the app opens a WebSocket. Deployed, the browser's own: the session cookie rides the
- * handshake, and a WebSocket needs no CORS. Under `ng serve`, `provideDevBearer` swaps in
- * `devWebSocket`, which offers the bearer as a subprotocol (`core/auth/dev-web-socket.ts`).
+ * How the app opens a WebSocket on a platform host: `@qits/angular`'s `QITS_WEB_SOCKET`, the same
+ * token under the name the app uses. With the bearer sign-in (`app.config.ts`) it opens a
+ * `BearerWebSocket`, which offers the bearer as a subprotocol (`qits.bearer`, then the token),
+ * since a browser WebSocket cannot send a header. Only ever give it a platform URL.
  */
-export const WEB_SOCKET = new InjectionToken<WebSocketFactory>('WEB_SOCKET', {
-  providedIn: 'root',
-  factory: () => (url, protocols) => new WebSocket(url, protocols) as WebSocketLike,
-});
+export const WEB_SOCKET = QITS_WEB_SOCKET;

@@ -113,8 +113,7 @@ const CLOSED = 2;
  * Follows one technical process's log (a container start), as qits-workspaces-frontend's Starting
  * tab did: an event source on `/workspaces/api/technical-processes/{id}/events` at qits-workspaces'
  * origin. Not a domain event, so not `DomainEvents`: the log is a payload stream of one process,
- * on the service that runs it. The source is `EVENT_SOURCE`'s, so the session (or, under `ng
- * serve`, the bearer) goes with it.
+ * on the service that runs it. The source is `EVENT_SOURCE`'s, so the bearer goes with it.
  *
  * `follow(id)` starts over on a new id and does nothing for the one it follows; the stream is
  * closed on the terminal frame, by `stop()`, and with the injector that made it. A stream the

@@ -29,9 +29,8 @@ interface RawImagesState {
 /**
  * Images at a revision, from qits-githost's raw read (`GET /githost/api/repositories/{repoId}/raw`,
  * qits-734): the Changes tab and a commit's changeset show a changed image as the image, before and
- * after. The bytes come through the generated client as a Blob, so they carry the session cookie
- * (deployed) or the dev bearer (`ng serve`) like every other call; a bare `<img src>` would carry
- * neither under `ng serve`.
+ * after. The bytes come through the generated client as a Blob, so they carry the bearer
+ * (`qitsBearerInterceptor`) like every other call; a bare `<img src>` cannot send it.
  *
  * Each read is a fact about a commit, so it is read once per key and kept; a read that failed is
  * read again when asked again. `image(...)` starts the read if it is not held and answers its key;
