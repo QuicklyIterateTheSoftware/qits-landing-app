@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, ArchiveIdeaData, ArchiveIdeaResponse, ArchiveRepositoryData, ArchiveRepositoryResponse, CollectTagsData, CollectTagsResponse, CreateIdeaData, CreateIdeaResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiAgentMcpCatalogCredentialsByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetBranchDeliveriesData, GetBranchDeliveriesResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetIdeaData, GetIdeaResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogCredentialsData, GetProjectsApiAgentMcpCatalogCredentialsResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListIdeasData, ListIdeasResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveReleaseRequestSourceData, MoveReleaseRequestSourceResponse2, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchIdeaData, PatchIdeaResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentMcpCatalogCredentialsByKeyData, PutProjectsApiAgentMcpCatalogCredentialsByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, ReprioritizeIdeaData, ReprioritizeIdeaResponse, ReprioritizeWorkData, ReprioritizeWorkResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UnarchiveIdeaData, UnarchiveIdeaResponse, UnarchiveRepositoryData, UnarchiveRepositoryResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
+import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveMilestoneCriterionData, ApproveMilestoneCriterionResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, ArchiveIdeaData, ArchiveIdeaResponse, ArchiveRepositoryData, ArchiveRepositoryResponse, AttachWorkMilestoneData, AttachWorkMilestoneResponse, CollectTagsData, CollectTagsResponse, CreateIdeaData, CreateIdeaResponse, CreateMilestoneData, CreateMilestoneResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiAgentMcpCatalogCredentialsByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DetachWorkMilestoneData, DetachWorkMilestoneResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetBranchDeliveriesData, GetBranchDeliveriesResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetIdeaData, GetIdeaResponse, GetMilestoneData, GetMilestoneResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogCredentialsData, GetProjectsApiAgentMcpCatalogCredentialsResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListIdeasData, ListIdeasResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectMilestonesData, ListProjectMilestonesResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkData, ListProjectWorkResponse, ListProjectWorkWorkspacesData, ListProjectWorkWorkspacesResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkMilestonesData, ListWorkMilestonesResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveReleaseRequestSourceData, MoveReleaseRequestSourceResponse2, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchIdeaData, PatchIdeaResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentMcpCatalogCredentialsByKeyData, PutProjectsApiAgentMcpCatalogCredentialsByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, RenameMilestoneData, RenameMilestoneResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, ReprioritizeIdeaData, ReprioritizeIdeaResponse, ReprioritizeWorkData, ReprioritizeWorkResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetMilestoneGroupsData, SetMilestoneGroupsResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkMemberMilestonesData, SetWorkMemberMilestonesResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UnarchiveIdeaData, UnarchiveIdeaResponse, UnarchiveRepositoryData, UnarchiveRepositoryResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
 
 /**
  * Catalogue
@@ -273,6 +273,54 @@ export const unarchiveIdeaRequest = <ThrowOnError extends boolean = false>(optio
 });
 
 /**
+ * Read one milestone
+ *
+ * The milestone with its groups and criteria — each with createdAt and satisfiedAt, a criterion with its evidence or approval — whether it is met and since when, the work entities that wait on it (qualified id, title, status) and the campaign memberships it gates.
+ */
+export const getMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<GetMilestoneData, ThrowOnError>): HttpRequest<GetMilestoneResponse> => (options?.client ?? client).requestOptions<GetMilestoneResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/milestones/{milestoneId}',
+    ...options
+});
+
+/**
+ * Rename a milestone
+ *
+ * Changes its displayName and nothing else: no criterion, latch or date moves, and no event is sent. A bound agent renames only in its own project.
+ */
+export const renameMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<RenameMilestoneData, ThrowOnError>): HttpRequest<RenameMilestoneResponse> => (options?.client ?? client).requestOptions<RenameMilestoneResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PATCH',
+    url: '/projects/api/milestones/{milestoneId}',
+    ...options
+});
+
+/**
+ * A person's yes on a milestone's APPROVAL criterion
+ *
+ * qits:admin, and then a person this service verified itself; the name recorded is the proof's. The milestone's own project's delivery desk (qits:desk, its own delivery token) may approve too, recorded under its token subject. Sends MilestoneMet when the approval makes the milestone hold. Refused when the criterion is not APPROVAL or is already approved.
+ */
+export const approveMilestoneCriterionRequest = <ThrowOnError extends boolean = false>(options: Options<ApproveMilestoneCriterionData, ThrowOnError>): HttpRequest<ApproveMilestoneCriterionResponse> => (options?.client ?? client).requestOptions<ApproveMilestoneCriterionResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/milestones/{milestoneId}/criteria/{criterionId}/approve',
+    ...options
+});
+
+/**
+ * Replace a milestone's condition
+ *
+ * PUT semantics: every group and criterion. A criterion restating an existing id with the same kind and predicate keeps its latch; a changed or new one starts unlatched, its floor moved to now; an omitted one is deleted. A milestone that stops holding loses its satisfiedAt and MilestoneUnmet is sent; one that comes to hold sends MilestoneMet. A bound agent edits only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
+ */
+export const setMilestoneGroupsRequest = <ThrowOnError extends boolean = false>(options: Options<SetMilestoneGroupsData, ThrowOnError>): HttpRequest<SetMilestoneGroupsResponse> => (options?.client ?? client).requestOptions<SetMilestoneGroupsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/projects/api/milestones/{milestoneId}/groups',
+    ...options
+});
+
+/**
  * The container images a launch by this service would pull right now
  */
 export const listLaunchPinsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListLaunchPinsData, ThrowOnError>): HttpRequest<ListLaunchPinsResponse> => (options?.client ?? client).requestOptions<ListLaunchPinsResponse, ThrowOnError>({
@@ -431,7 +479,7 @@ export const promptFrontDeskRequest = <ThrowOnError extends boolean = false>(opt
 /**
  * Re-assert a project's domain through the dns registrar
  *
- * Project creation registers the dns record fire-and-forget, so a receiver that was down when a project was created leaves the record missing with nothing to carry it forward. This re-asserts it synchronously and reports the outcome; the receiver is idempotent, so it is safe to repeat, and it is also how a project created before the hook existed gets its record. No registrar is wired at present, so the outcome is FAILED saying so and dns records are configured by hand at the external provider.
+ * Project creation registers the dns record fire-and-forget, so a receiver that was down when a project was created leaves the record missing with nothing to carry it forward. This re-asserts it synchronously and reports the outcome; the receiver is idempotent, so it is safe to repeat, and it is also how a project created before the hook existed gets its record. No registrar is wired at present, so the outcome is FAILED saying so and dns records are configured by hand at the external provider. It also re-asserts the project's announced configuration: the wrapper's project.yml is read again and ProjectChanged restates supportsEnvironments and frontDeskLifecycle as stored, best effort and absent from the answer.
  */
 export const postProjectsApiProjectsByProjectIdReconcileRequest = <ThrowOnError extends boolean = false>(options: Options<PostProjectsApiProjectsByProjectIdReconcileData, ThrowOnError>): HttpRequest<PostProjectsApiProjectsByProjectIdReconcileResponse> => (options?.client ?? client).requestOptions<PostProjectsApiProjectsByProjectIdReconcileResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -541,14 +589,50 @@ export const postProjectsApiProjectsByProjectIdRepositoriesReconcileRequest = <T
 });
 
 /**
+ * List a project's milestones
+ *
+ * Every milestone of the project, oldest first, each whole: its groups and criteria with their dates, whether it is met and since when, and what waits on it. The project is its id or its slug. met=false lists the unmet ones only — what work still needs — and met=true the met ones.
+ */
+export const listProjectMilestonesRequest = <ThrowOnError extends boolean = false>(options: Options<ListProjectMilestonesData, ThrowOnError>): HttpRequest<ListProjectMilestonesResponse> => (options?.client ?? client).requestOptions<ListProjectMilestonesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/projects/{project}/milestones',
+    ...options
+});
+
+/**
+ * Create a milestone
+ *
+ * A new milestone of the project, named and with its whole condition. A bound agent creates only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
+ */
+export const createMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<CreateMilestoneData, ThrowOnError>): HttpRequest<CreateMilestoneResponse> => (options?.client ?? client).requestOptions<CreateMilestoneResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/projects/{project}/milestones',
+    ...options
+});
+
+/**
  * List a project's work of every archetype
  *
- * The project's whole planning tree, flat: each root oldest first, its descendants depth-first in position order. Optionally narrowed to one archetype, one status, the direct children of one parent (qualified id or UUID), one drop outcome, and the items naming one entity (qualified id or UUID) as their supersededBy — what that entity closed as a duplicate, resolved elsewhere or superseded, and the items carrying one tag. The project is its id or its slug.
+ * The project's whole planning tree, flat: each root oldest first, its descendants depth-first in position order. Optionally narrowed to one archetype, one status, the direct children of one parent (qualified id or UUID), one drop outcome, and the items naming one entity (qualified id or UUID) as their supersededBy — what that entity closed as a duplicate, resolved elsewhere or superseded, and the items carrying one tag. The project is its id or its slug. No entry carries its description: a ticket or an epic answers an excerpt instead, a short plain-text lead of it, and every other archetype answers null.
  */
 export const listProjectWorkRequest = <ThrowOnError extends boolean = false>(options: Options<ListProjectWorkData, ThrowOnError>): HttpRequest<ListProjectWorkResponse> => (options?.client ?? client).requestOptions<ListProjectWorkResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/projects/{project}/work',
+    ...options
+});
+
+/**
+ * The workspaces naming every ticket and epic of a project
+ *
+ * For each of the project's tickets and epics, in every status, every workspace a dispatch stood on its branch, live and resolved alike, each with its status: one entry per entity that has any, naming it by id and qualified id, in the project listing's tree order. An entity with no workspaces has no entry; the list is empty when qits-workspaces cannot be asked. The project is its id or its slug.
+ */
+export const listProjectWorkWorkspacesRequest = <ThrowOnError extends boolean = false>(options: Options<ListProjectWorkWorkspacesData, ThrowOnError>): HttpRequest<ListProjectWorkWorkspacesResponse> => (options?.client ?? client).requestOptions<ListProjectWorkWorkspacesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/projects/{project}/work/workspaces',
     ...options
 });
 
@@ -753,7 +837,7 @@ export const stopRefinementSessionRequest = <ThrowOnError extends boolean = fals
 /**
  * Every repository with its public coordinates
  *
- * The machine-readable catalogue: row id, project, addressable name, main branch, archetype and wrapper membership, sorted by project then name. A repository that owns no name is listed with a null name; one whose name declares no role suffix carries a null archetype. declared is false when no entry of the project's wrapper .gitmodules names this repository, so it is no longer part of its project — the same reading as declared on listProjectRepositories, and true for the wrapper itself, for archetypes that are not components of their project, and for a project whose wrapper declares nothing.
+ * The machine-readable catalogue: row id, project, addressable name, main branch, archetype and wrapper membership, sorted by project then name. A repository that owns no name is listed with a null name; one nobody has stated a kind for (at creation or in its own .config/qits/repository.yml) carries a null archetype. declared is false when no entry of the project's wrapper .gitmodules names this repository, so it is no longer part of its project — the same reading as declared on listProjectRepositories, and true for the wrapper itself, for archetypes that are not components of their project, and for a project whose wrapper declares nothing.
  */
 export const listRepositoriesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListRepositoriesData, ThrowOnError>): HttpRequest<ListRepositoriesResponse> => (options?.client ?? client).requestOptions<ListRepositoriesResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -787,7 +871,7 @@ export const getRepositoryRequest = <ThrowOnError extends boolean = false>(optio
 /**
  * Rename a repository
  *
- * Gives the repository a new project-scoped addressable name. Nothing moves on the git host — a bare is keyed by the repository's id — so /git/<project>/<newName> serves it immediately and the old name stops resolving. The archetype is re-derived from the new name's role suffix (-service, -daemon, -frontend, -cli, -oci, -javalib, -jslib) and left as it was when the new name declares none. The project's wrapper is NOT rewritten: update the .gitmodules entry to the new name and push, or the repository reads as UNDECLARED until you do. The backup twin self-heals from the wrapper on the next reconcile.
+ * Gives the repository a new project-scoped addressable name. Nothing moves on the git host — a bare is keyed by the repository's id — so /git/<project>/<newName> serves it immediately and the old name stops resolving. The archetype is left as it was: a name decides nothing about the kind. The project's wrapper is NOT rewritten: update the .gitmodules entry to the new name and push, or the repository reads as UNDECLARED until you do. The backup twin self-heals from the wrapper on the next reconcile.
  */
 export const patchProjectsApiRepositoriesByRepoIdRequest = <ThrowOnError extends boolean = false>(options: Options<PatchProjectsApiRepositoriesByRepoIdData, ThrowOnError>): HttpRequest<PatchProjectsApiRepositoriesByRepoIdResponse> => (options?.client ?? client).requestOptions<PatchProjectsApiRepositoriesByRepoIdResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1623,6 +1707,18 @@ export const approveWorkMemberCriterionRequest = <ThrowOnError extends boolean =
 });
 
 /**
+ * Set the milestones a membership waits on
+ *
+ * PUT semantics: the membership is dispatched once every listed milestone is met, and an empty list waits on nothing. Each must be an existing milestone of the campaign's project; the member entity is attached to each, so it shows what it needs. A milestone left off stays attached to the member entity — except the membership's generated condition (the one PUT …/condition edits), which is detached from it and deleted once nothing waits on it. Refused once the member was claimed (a claim freezes it) and at a DROPPED campaign. A bound agent edits only in its own project.
+ */
+export const setWorkMemberMilestonesRequest = <ThrowOnError extends boolean = false>(options: Options<SetWorkMemberMilestonesData, ThrowOnError>): HttpRequest<SetWorkMemberMilestonesResponse> => (options?.client ?? client).requestOptions<SetWorkMemberMilestonesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/milestones',
+    ...options
+});
+
+/**
  * Move a membership within its campaign
  *
  * Answers the members as the move left them.
@@ -1631,6 +1727,42 @@ export const moveWorkMemberRequest = <ThrowOnError extends boolean = false>(opti
     responseStyle: 'data',
     method: 'PUT',
     url: '/projects/api/work/{qualifiedId}/members/{membershipId}/position',
+    ...options
+});
+
+/**
+ * The milestones a work entity waits on
+ *
+ * Each its id, its displayName and since when it is met (satisfiedAt, null while it is not). The entity needs something while any is unmet.
+ */
+export const listWorkMilestonesRequest = <ThrowOnError extends boolean = false>(options: Options<ListWorkMilestonesData, ThrowOnError>): HttpRequest<ListWorkMilestonesResponse> => (options?.client ?? client).requestOptions<ListWorkMilestonesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/work/{qualifiedId}/milestones',
+    ...options
+});
+
+/**
+ * A work entity no longer waits on a milestone
+ *
+ * The milestone itself stays, and so does every campaign membership waiting on it. Answers what the entity waits on now. A bound agent detaches only in its own project.
+ */
+export const detachWorkMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<DetachWorkMilestoneData, ThrowOnError>): HttpRequest<DetachWorkMilestoneResponse> => (options?.client ?? client).requestOptions<DetachWorkMilestoneResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'DELETE',
+    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}',
+    ...options
+});
+
+/**
+ * A work entity waits on a milestone
+ *
+ * Idempotent. The milestone must be of the entity's project. Answers what the entity waits on now. A bound agent attaches only in its own project.
+ */
+export const attachWorkMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<AttachWorkMilestoneData, ThrowOnError>): HttpRequest<AttachWorkMilestoneResponse> => (options?.client ?? client).requestOptions<AttachWorkMilestoneResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'PUT',
+    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}',
     ...options
 });
 
@@ -1923,6 +2055,46 @@ export const unarchiveIdeaResource = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
+ * Read one milestone
+ *
+ * The milestone with its groups and criteria — each with createdAt and satisfiedAt, a criterion with its evidence or approval — whether it is met and since when, the work entities that wait on it (qualified id, title, status) and the campaign memberships it gates.
+ */
+export const getMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<GetMilestoneData, ThrowOnError> | undefined) => httpResource<GetMilestoneResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getMilestoneRequest(opts) : undefined;
+});
+
+/**
+ * Rename a milestone
+ *
+ * Changes its displayName and nothing else: no criterion, latch or date moves, and no event is sent. A bound agent renames only in its own project.
+ */
+export const renameMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<RenameMilestoneData, ThrowOnError> | undefined) => httpResource<RenameMilestoneResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? renameMilestoneRequest(opts) : undefined;
+});
+
+/**
+ * A person's yes on a milestone's APPROVAL criterion
+ *
+ * qits:admin, and then a person this service verified itself; the name recorded is the proof's. The milestone's own project's delivery desk (qits:desk, its own delivery token) may approve too, recorded under its token subject. Sends MilestoneMet when the approval makes the milestone hold. Refused when the criterion is not APPROVAL or is already approved.
+ */
+export const approveMilestoneCriterionResource = <ThrowOnError extends boolean = false>(options: () => Options<ApproveMilestoneCriterionData, ThrowOnError> | undefined) => httpResource<ApproveMilestoneCriterionResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? approveMilestoneCriterionRequest(opts) : undefined;
+});
+
+/**
+ * Replace a milestone's condition
+ *
+ * PUT semantics: every group and criterion. A criterion restating an existing id with the same kind and predicate keeps its latch; a changed or new one starts unlatched, its floor moved to now; an omitted one is deleted. A milestone that stops holding loses its satisfiedAt and MilestoneUnmet is sent; one that comes to hold sends MilestoneMet. A bound agent edits only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
+ */
+export const setMilestoneGroupsResource = <ThrowOnError extends boolean = false>(options: () => Options<SetMilestoneGroupsData, ThrowOnError> | undefined) => httpResource<SetMilestoneGroupsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? setMilestoneGroupsRequest(opts) : undefined;
+});
+
+/**
  * The container images a launch by this service would pull right now
  */
 export const listLaunchPinsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListLaunchPinsData, ThrowOnError> | undefined) => httpResource<ListLaunchPinsResponse>(() => {
@@ -2051,7 +2223,7 @@ export const promptFrontDeskResource = <ThrowOnError extends boolean = false>(op
 /**
  * Re-assert a project's domain through the dns registrar
  *
- * Project creation registers the dns record fire-and-forget, so a receiver that was down when a project was created leaves the record missing with nothing to carry it forward. This re-asserts it synchronously and reports the outcome; the receiver is idempotent, so it is safe to repeat, and it is also how a project created before the hook existed gets its record. No registrar is wired at present, so the outcome is FAILED saying so and dns records are configured by hand at the external provider.
+ * Project creation registers the dns record fire-and-forget, so a receiver that was down when a project was created leaves the record missing with nothing to carry it forward. This re-asserts it synchronously and reports the outcome; the receiver is idempotent, so it is safe to repeat, and it is also how a project created before the hook existed gets its record. No registrar is wired at present, so the outcome is FAILED saying so and dns records are configured by hand at the external provider. It also re-asserts the project's announced configuration: the wrapper's project.yml is read again and ProjectChanged restates supportsEnvironments and frontDeskLifecycle as stored, best effort and absent from the answer.
  */
 export const postProjectsApiProjectsByProjectIdReconcileResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiProjectsByProjectIdReconcileData, ThrowOnError> | undefined) => httpResource<PostProjectsApiProjectsByProjectIdReconcileResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2141,13 +2313,43 @@ export const postProjectsApiProjectsByProjectIdRepositoriesReconcileResource = <
 });
 
 /**
+ * List a project's milestones
+ *
+ * Every milestone of the project, oldest first, each whole: its groups and criteria with their dates, whether it is met and since when, and what waits on it. The project is its id or its slug. met=false lists the unmet ones only — what work still needs — and met=true the met ones.
+ */
+export const listProjectMilestonesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListProjectMilestonesData, ThrowOnError> | undefined) => httpResource<ListProjectMilestonesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listProjectMilestonesRequest(opts) : undefined;
+});
+
+/**
+ * Create a milestone
+ *
+ * A new milestone of the project, named and with its whole condition. A bound agent creates only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
+ */
+export const createMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateMilestoneData, ThrowOnError> | undefined) => httpResource<CreateMilestoneResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createMilestoneRequest(opts) : undefined;
+});
+
+/**
  * List a project's work of every archetype
  *
- * The project's whole planning tree, flat: each root oldest first, its descendants depth-first in position order. Optionally narrowed to one archetype, one status, the direct children of one parent (qualified id or UUID), one drop outcome, and the items naming one entity (qualified id or UUID) as their supersededBy — what that entity closed as a duplicate, resolved elsewhere or superseded, and the items carrying one tag. The project is its id or its slug.
+ * The project's whole planning tree, flat: each root oldest first, its descendants depth-first in position order. Optionally narrowed to one archetype, one status, the direct children of one parent (qualified id or UUID), one drop outcome, and the items naming one entity (qualified id or UUID) as their supersededBy — what that entity closed as a duplicate, resolved elsewhere or superseded, and the items carrying one tag. The project is its id or its slug. No entry carries its description: a ticket or an epic answers an excerpt instead, a short plain-text lead of it, and every other archetype answers null.
  */
 export const listProjectWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<ListProjectWorkData, ThrowOnError> | undefined) => httpResource<ListProjectWorkResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? listProjectWorkRequest(opts) : undefined;
+});
+
+/**
+ * The workspaces naming every ticket and epic of a project
+ *
+ * For each of the project's tickets and epics, in every status, every workspace a dispatch stood on its branch, live and resolved alike, each with its status: one entry per entity that has any, naming it by id and qualified id, in the project listing's tree order. An entity with no workspaces has no entry; the list is empty when qits-workspaces cannot be asked. The project is its id or its slug.
+ */
+export const listProjectWorkWorkspacesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListProjectWorkWorkspacesData, ThrowOnError> | undefined) => httpResource<ListProjectWorkWorkspacesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listProjectWorkWorkspacesRequest(opts) : undefined;
 });
 
 /**
@@ -2313,7 +2515,7 @@ export const stopRefinementSessionResource = <ThrowOnError extends boolean = fal
 /**
  * Every repository with its public coordinates
  *
- * The machine-readable catalogue: row id, project, addressable name, main branch, archetype and wrapper membership, sorted by project then name. A repository that owns no name is listed with a null name; one whose name declares no role suffix carries a null archetype. declared is false when no entry of the project's wrapper .gitmodules names this repository, so it is no longer part of its project — the same reading as declared on listProjectRepositories, and true for the wrapper itself, for archetypes that are not components of their project, and for a project whose wrapper declares nothing.
+ * The machine-readable catalogue: row id, project, addressable name, main branch, archetype and wrapper membership, sorted by project then name. A repository that owns no name is listed with a null name; one nobody has stated a kind for (at creation or in its own .config/qits/repository.yml) carries a null archetype. declared is false when no entry of the project's wrapper .gitmodules names this repository, so it is no longer part of its project — the same reading as declared on listProjectRepositories, and true for the wrapper itself, for archetypes that are not components of their project, and for a project whose wrapper declares nothing.
  */
 export const listRepositoriesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListRepositoriesData, ThrowOnError> | undefined) => httpResource<ListRepositoriesResponse>(() => {
     const opts = options ? options() : undefined;
@@ -2341,7 +2543,7 @@ export const getRepositoryResource = <ThrowOnError extends boolean = false>(opti
 /**
  * Rename a repository
  *
- * Gives the repository a new project-scoped addressable name. Nothing moves on the git host — a bare is keyed by the repository's id — so /git/<project>/<newName> serves it immediately and the old name stops resolving. The archetype is re-derived from the new name's role suffix (-service, -daemon, -frontend, -cli, -oci, -javalib, -jslib) and left as it was when the new name declares none. The project's wrapper is NOT rewritten: update the .gitmodules entry to the new name and push, or the repository reads as UNDECLARED until you do. The backup twin self-heals from the wrapper on the next reconcile.
+ * Gives the repository a new project-scoped addressable name. Nothing moves on the git host — a bare is keyed by the repository's id — so /git/<project>/<newName> serves it immediately and the old name stops resolving. The archetype is left as it was: a name decides nothing about the kind. The project's wrapper is NOT rewritten: update the .gitmodules entry to the new name and push, or the repository reads as UNDECLARED until you do. The backup twin self-heals from the wrapper on the next reconcile.
  */
 export const patchProjectsApiRepositoriesByRepoIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchProjectsApiRepositoriesByRepoIdData, ThrowOnError> | undefined) => httpResource<PatchProjectsApiRepositoriesByRepoIdResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3033,6 +3235,16 @@ export const approveWorkMemberCriterionResource = <ThrowOnError extends boolean 
 });
 
 /**
+ * Set the milestones a membership waits on
+ *
+ * PUT semantics: the membership is dispatched once every listed milestone is met, and an empty list waits on nothing. Each must be an existing milestone of the campaign's project; the member entity is attached to each, so it shows what it needs. A milestone left off stays attached to the member entity — except the membership's generated condition (the one PUT …/condition edits), which is detached from it and deleted once nothing waits on it. Refused once the member was claimed (a claim freezes it) and at a DROPPED campaign. A bound agent edits only in its own project.
+ */
+export const setWorkMemberMilestonesResource = <ThrowOnError extends boolean = false>(options: () => Options<SetWorkMemberMilestonesData, ThrowOnError> | undefined) => httpResource<SetWorkMemberMilestonesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? setWorkMemberMilestonesRequest(opts) : undefined;
+});
+
+/**
  * Move a membership within its campaign
  *
  * Answers the members as the move left them.
@@ -3040,6 +3252,36 @@ export const approveWorkMemberCriterionResource = <ThrowOnError extends boolean 
 export const moveWorkMemberResource = <ThrowOnError extends boolean = false>(options: () => Options<MoveWorkMemberData, ThrowOnError> | undefined) => httpResource<MoveWorkMemberResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? moveWorkMemberRequest(opts) : undefined;
+});
+
+/**
+ * The milestones a work entity waits on
+ *
+ * Each its id, its displayName and since when it is met (satisfiedAt, null while it is not). The entity needs something while any is unmet.
+ */
+export const listWorkMilestonesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListWorkMilestonesData, ThrowOnError> | undefined) => httpResource<ListWorkMilestonesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listWorkMilestonesRequest(opts) : undefined;
+});
+
+/**
+ * A work entity no longer waits on a milestone
+ *
+ * The milestone itself stays, and so does every campaign membership waiting on it. Answers what the entity waits on now. A bound agent detaches only in its own project.
+ */
+export const detachWorkMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<DetachWorkMilestoneData, ThrowOnError> | undefined) => httpResource<DetachWorkMilestoneResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? detachWorkMilestoneRequest(opts) : undefined;
+});
+
+/**
+ * A work entity waits on a milestone
+ *
+ * Idempotent. The milestone must be of the entity's project. Answers what the entity waits on now. A bound agent attaches only in its own project.
+ */
+export const attachWorkMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<AttachWorkMilestoneData, ThrowOnError> | undefined) => httpResource<AttachWorkMilestoneResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? attachWorkMilestoneRequest(opts) : undefined;
 });
 
 /**
