@@ -199,10 +199,15 @@ describe('WorkItemPage', () => {
     await settle();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
-    /** Each link in the children's region but the Workspace links: its text and where it leads. */
+    /**
+     * Each link in the children's region but the Workspace links and the "needs" marks: its text
+     * and where it leads.
+     */
     const children = () =>
       [...element.querySelectorAll(CHILDREN)]
         .filter((a) => !a.getAttribute('href')?.endsWith('/agent'))
+        // A member's "needs" marks (epic qits-615) link milestones, not children.
+        .filter((a) => !a.hasAttribute('data-milestone-needs'))
         .map((a) => [a.textContent?.trim(), a.getAttribute('href')?.split('/').pop()]);
     const groups = () =>
       [...element.querySelectorAll('[role=group]')].map((g) => ({

@@ -13,7 +13,7 @@ export type AdoptProjectRepositoryRequest = {
     repositoryId: string;
     name: string;
     url?: string;
-    archetype: RepositoryArchetype;
+    archetype?: RepositoryArchetype;
 };
 
 export type AgentCapabilityCatalogueDto = {
@@ -285,6 +285,7 @@ export type CampaignMemberDto = {
     dispatchError?: string;
     groups?: Array<CriterionGroupDto>;
     holdsStatus?: boolean;
+    milestones?: Array<MilestoneRef>;
 };
 
 export type CampaignMemberEntityDto = {
@@ -849,6 +850,7 @@ export type EntitySummary = {
     number?: number;
     qualifiedId?: string;
     title?: string;
+    excerpt?: string;
     slug?: string;
     slugScope?: string;
     status?: string;
@@ -875,6 +877,8 @@ export type EntitySummary = {
     blockedBy?: string;
     waitingOn?: string;
     tags?: Array<WorkTag>;
+    milestones?: Array<MilestoneRef>;
+    unmetMilestones?: number;
 };
 
 export type EntityTransition = {
@@ -1317,6 +1321,161 @@ export type MergeConflictDto = {
     conflicts?: Array<ConflictedPath>;
 };
 
+/**
+ * One milestone.
+ */
+export type MilestoneAnswer = {
+    milestone?: MilestoneDto;
+};
+
+/**
+ * A person's yes on an APPROVAL criterion.
+ */
+export type MilestoneApproval = {
+    /**
+     * Why, optionally.
+     */
+    note?: string;
+};
+
+/**
+ * A new milestone: its name and its condition.
+ */
+export type MilestoneCreate = {
+    /**
+     * What it is called, e.g. "bootstrap test node".
+     */
+    displayName: string;
+    /**
+     * At least one group of at least one criterion.
+     */
+    groups: Array<MilestoneGroupSpec>;
+};
+
+/**
+ * One AND'd criterion of a milestone.
+ */
+export type MilestoneCriterionDto = {
+    id?: string;
+    kind?: string;
+    predicate?: {
+        [key: string]: unknown;
+    };
+    seeded?: boolean;
+    createdAt?: Instant;
+    satisfiedAt?: Instant;
+    evidence?: CriterionEvidenceDto;
+    approval?: CriterionApprovalDto;
+};
+
+/**
+ * One criterion of a milestone, as stated.
+ */
+export type MilestoneCriterionSpec = {
+    /**
+     * An existing criterion's id, to keep its latch; omitted states a new one.
+     */
+    id?: string;
+    /**
+     * ENTITY_STATUS, DEPLOYMENT_ACTIVE, SCM_RELEASE or APPROVAL
+     */
+    kind: string;
+    /**
+     * The kind's predicate; an ENTITY_STATUS predicate's entityId takes a qualified id or a UUID. APPROVAL takes {}.
+     */
+    predicate?: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * A milestone, its condition and what waits on it.
+ */
+export type MilestoneDto = {
+    id?: string;
+    projectId?: string;
+    displayName?: string;
+    createdAt?: Instant;
+    satisfiedAt?: Instant;
+    met?: boolean;
+    groups?: Array<MilestoneGroupDto>;
+    entities?: Array<MilestoneWorkDto>;
+    memberships?: Array<MilestoneMembershipDto>;
+};
+
+/**
+ * One OR'd group of a milestone's condition.
+ */
+export type MilestoneGroupDto = {
+    id?: string;
+    position?: number;
+    createdAt?: Instant;
+    satisfiedAt?: Instant;
+    criteria?: Array<MilestoneCriterionDto>;
+};
+
+/**
+ * One OR'd group of a milestone, as stated.
+ */
+export type MilestoneGroupSpec = {
+    criteria?: Array<MilestoneCriterionSpec>;
+};
+
+/**
+ * A milestone's whole condition.
+ */
+export type MilestoneGroups = {
+    /**
+     * At least one group of at least one criterion.
+     */
+    groups: Array<MilestoneGroupSpec>;
+};
+
+/**
+ * A project's milestones, oldest first.
+ */
+export type MilestoneList = {
+    milestones?: Array<MilestoneDto>;
+};
+
+/**
+ * A campaign membership waiting on a milestone.
+ */
+export type MilestoneMembershipDto = {
+    membershipId?: string;
+    campaignId?: string;
+    campaignQualifiedId?: string;
+    campaignTitle?: string;
+    entityId?: string;
+    entityQualifiedId?: string;
+    claimedAt?: Instant;
+    generatedCondition?: boolean;
+};
+
+export type MilestoneRef = {
+    id?: string;
+    displayName?: string;
+    satisfiedAt?: Instant;
+};
+
+/**
+ * A milestone's new name.
+ */
+export type MilestoneRename = {
+    displayName: string;
+};
+
+/**
+ * A work entity waiting on a milestone.
+ */
+export type MilestoneWorkDto = {
+    id?: string;
+    qualifiedId?: string;
+    archetype?: string;
+    title?: string;
+    status?: string;
+};
+
 export type MoveReleaseRequestSource = {
     branch: string;
     reason: string;
@@ -1401,6 +1560,13 @@ export type ProjectDto = {
  */
 export type ProjectReleaseRequest = {
     request?: ReleaseRequestDto;
+};
+
+/**
+ * The workspaces a dispatch stood on each of a project's tickets and epics: one entry per entity that has any, in the project listing's tree order.
+ */
+export type ProjectWorkWorkspaces = {
+    workspaces?: Array<WorkEntityWorkspaces>;
 };
 
 export type RefinementDto = {
@@ -2014,6 +2180,8 @@ export type TransitionedEntity = {
     tags?: Array<WorkTag>;
     heldBy?: Array<string>;
     relatedTo?: string;
+    milestones?: Array<MilestoneRef>;
+    unmetMilestones?: number;
 };
 
 export type Uuid = string;
@@ -2405,6 +2573,24 @@ export type WorkDossierPageWrite = {
 };
 
 /**
+ * The workspaces a dispatch stood on one ticket's or epic's branch.
+ */
+export type WorkEntityWorkspaces = {
+    /**
+     * The work entity's id (UUID).
+     */
+    workId?: string;
+    /**
+     * The work entity's qualified id, <projectSlug>-<n>.
+     */
+    qualifiedId?: string;
+    /**
+     * Its workspaces, live and resolved alike; never empty.
+     */
+    workspaces?: Array<WorkspaceReferenceDto>;
+};
+
+/**
  * A project's work entities, in tree order.
  */
 export type WorkList = {
@@ -2451,6 +2637,16 @@ export type WorkMemberList = {
 };
 
 /**
+ * The milestones a membership waits on, by id, whole.
+ */
+export type WorkMemberMilestones = {
+    /**
+     * Existing milestones of the campaign's project.
+     */
+    milestoneIds: Array<string>;
+};
+
+/**
  * Where a membership should now sit.
  */
 export type WorkMemberMove = {
@@ -2458,6 +2654,13 @@ export type WorkMemberMove = {
      * The new position, 0-based.
      */
     position: number;
+};
+
+/**
+ * The milestones a work entity waits on, in the order attached.
+ */
+export type WorkMilestoneList = {
+    milestones?: Array<MilestoneRef>;
 };
 
 export type WorkOutcome = 'DUPLICATE' | 'RESOLVED_ELSEWHERE' | 'SUPERSEDED' | 'OBSOLETE' | 'INVALID' | 'WONT_DO';
@@ -3401,6 +3604,155 @@ export type UnarchiveIdeaResponses = {
 
 export type UnarchiveIdeaResponse = UnarchiveIdeaResponses[keyof UnarchiveIdeaResponses];
 
+export type GetMilestoneData = {
+    body?: never;
+    path: {
+        milestoneId: string;
+    };
+    query?: never;
+    url: '/projects/api/milestones/{milestoneId}';
+};
+
+export type GetMilestoneErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No milestone with this id
+     */
+    404: unknown;
+};
+
+export type GetMilestoneResponses = {
+    /**
+     * The milestone
+     */
+    200: MilestoneAnswer;
+};
+
+export type GetMilestoneResponse = GetMilestoneResponses[keyof GetMilestoneResponses];
+
+export type RenameMilestoneData = {
+    body: MilestoneRename;
+    path: {
+        milestoneId: string;
+    };
+    query?: never;
+    url: '/projects/api/milestones/{milestoneId}';
+};
+
+export type RenameMilestoneErrors = {
+    /**
+     * No name
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No milestone with this id
+     */
+    404: unknown;
+};
+
+export type RenameMilestoneResponses = {
+    /**
+     * The milestone renamed
+     */
+    200: MilestoneAnswer;
+};
+
+export type RenameMilestoneResponse = RenameMilestoneResponses[keyof RenameMilestoneResponses];
+
+export type ApproveMilestoneCriterionData = {
+    body: MilestoneApproval;
+    path: {
+        criterionId: string;
+        milestoneId: string;
+    };
+    query?: never;
+    url: '/projects/api/milestones/{milestoneId}/criteria/{criterionId}/approve';
+};
+
+export type ApproveMilestoneCriterionErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Neither a verified person nor this milestone's project's delivery desk
+     */
+    403: unknown;
+    /**
+     * No milestone, or no such criterion on it
+     */
+    404: unknown;
+    /**
+     * Not an APPROVAL, or already approved
+     */
+    409: unknown;
+};
+
+export type ApproveMilestoneCriterionResponses = {
+    /**
+     * The milestone with the criterion approved
+     */
+    200: MilestoneAnswer;
+};
+
+export type ApproveMilestoneCriterionResponse = ApproveMilestoneCriterionResponses[keyof ApproveMilestoneCriterionResponses];
+
+export type SetMilestoneGroupsData = {
+    body: MilestoneGroups;
+    path: {
+        milestoneId: string;
+    };
+    query?: never;
+    url: '/projects/api/milestones/{milestoneId}/groups';
+};
+
+export type SetMilestoneGroupsErrors = {
+    /**
+     * No groups, an empty group, a predicate the service cannot read, a restated id that is not this milestone's, or an ENTITY_STATUS target outside the project
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No milestone with this id
+     */
+    404: unknown;
+};
+
+export type SetMilestoneGroupsResponses = {
+    /**
+     * The milestone as the edit left it
+     */
+    200: MilestoneAnswer;
+};
+
+export type SetMilestoneGroupsResponse = SetMilestoneGroupsResponses[keyof SetMilestoneGroupsResponses];
+
 export type ListLaunchPinsData = {
     body?: never;
     path?: never;
@@ -4051,7 +4403,7 @@ export type CreateProjectRepositoryData = {
 
 export type CreateProjectRepositoryErrors = {
     /**
-     * Neither or both of url/name, an archetype that is not a component of a project (PROJECT, SERVICE_TEMPLATE, FORK, AGENT_CONFIG), a name that carries no role suffix when no archetype is stated, a name already taken in the project, or a wrapper commit the git host refused
+     * Neither or both of url/name, an archetype that is not a component of a project (PROJECT, SERVICE_TEMPLATE, FORK, AGENT_CONFIG), a name already taken in the project, or a wrapper commit the git host refused
      */
     400: unknown;
     /**
@@ -4214,6 +4566,81 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses = {
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse = PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses];
 
+export type ListProjectMilestonesData = {
+    body?: never;
+    path: {
+        project: string;
+    };
+    query?: {
+        /**
+         * Only the met (true) or the unmet (false) milestones.
+         */
+        met?: boolean;
+    };
+    url: '/projects/api/projects/{project}/milestones';
+};
+
+export type ListProjectMilestonesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type ListProjectMilestonesResponses = {
+    /**
+     * The milestones
+     */
+    200: MilestoneList;
+};
+
+export type ListProjectMilestonesResponse = ListProjectMilestonesResponses[keyof ListProjectMilestonesResponses];
+
+export type CreateMilestoneData = {
+    body: MilestoneCreate;
+    path: {
+        project: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{project}/milestones';
+};
+
+export type CreateMilestoneErrors = {
+    /**
+     * No name, no groups, an empty group, a predicate the service cannot read, or an ENTITY_STATUS target outside the project
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type CreateMilestoneResponses = {
+    /**
+     * The milestone as written, latched from the current state
+     */
+    201: MilestoneAnswer;
+};
+
+export type CreateMilestoneResponse = CreateMilestoneResponses[keyof CreateMilestoneResponses];
+
 export type ListProjectWorkData = {
     body?: never;
     path: {
@@ -4266,6 +4693,39 @@ export type ListProjectWorkResponses = {
 };
 
 export type ListProjectWorkResponse = ListProjectWorkResponses[keyof ListProjectWorkResponses];
+
+export type ListProjectWorkWorkspacesData = {
+    body?: never;
+    path: {
+        project: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{project}/work/workspaces';
+};
+
+export type ListProjectWorkWorkspacesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type ListProjectWorkWorkspacesResponses = {
+    /**
+     * The workspaces, one entry per work entity
+     */
+    200: ProjectWorkWorkspaces;
+};
+
+export type ListProjectWorkWorkspacesResponse = ListProjectWorkWorkspacesResponses[keyof ListProjectWorkWorkspacesResponses];
 
 export type GetProjectsApiRefinementsByIdData = {
     body?: never;
@@ -7440,6 +7900,48 @@ export type ApproveWorkMemberCriterionResponses = {
 
 export type ApproveWorkMemberCriterionResponse = ApproveWorkMemberCriterionResponses[keyof ApproveWorkMemberCriterionResponses];
 
+export type SetWorkMemberMilestonesData = {
+    body: WorkMemberMilestones;
+    path: {
+        membershipId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/milestones';
+};
+
+export type SetWorkMemberMilestonesErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No campaign, no such membership on it, or no such milestone
+     */
+    404: unknown;
+    /**
+     * Claimed, a DROPPED campaign, or a milestone of another project
+     */
+    409: unknown;
+};
+
+export type SetWorkMemberMilestonesResponses = {
+    /**
+     * The member with its milestones
+     */
+    200: WorkMemberAnswer;
+};
+
+export type SetWorkMemberMilestonesResponse = SetWorkMemberMilestonesResponses[keyof SetWorkMemberMilestonesResponses];
+
 export type MoveWorkMemberData = {
     body: WorkMemberMove;
     path: {
@@ -7477,6 +7979,111 @@ export type MoveWorkMemberResponses = {
 };
 
 export type MoveWorkMemberResponse = MoveWorkMemberResponses[keyof MoveWorkMemberResponses];
+
+export type ListWorkMilestonesData = {
+    body?: never;
+    path: {
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/milestones';
+};
+
+export type ListWorkMilestonesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No entity with this id
+     */
+    404: unknown;
+};
+
+export type ListWorkMilestonesResponses = {
+    /**
+     * The milestones
+     */
+    200: WorkMilestoneList;
+};
+
+export type ListWorkMilestonesResponse = ListWorkMilestonesResponses[keyof ListWorkMilestonesResponses];
+
+export type DetachWorkMilestoneData = {
+    body?: never;
+    path: {
+        milestoneId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}';
+};
+
+export type DetachWorkMilestoneErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No entity with this id, or it does not wait on this milestone
+     */
+    404: unknown;
+};
+
+export type DetachWorkMilestoneResponses = {
+    /**
+     * The milestones it waits on now
+     */
+    200: WorkMilestoneList;
+};
+
+export type DetachWorkMilestoneResponse = DetachWorkMilestoneResponses[keyof DetachWorkMilestoneResponses];
+
+export type AttachWorkMilestoneData = {
+    body?: never;
+    path: {
+        milestoneId: string;
+        qualifiedId: string;
+    };
+    query?: never;
+    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}';
+};
+
+export type AttachWorkMilestoneErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * An agent outside its own project
+     */
+    403: unknown;
+    /**
+     * No entity, or no milestone, with this id
+     */
+    404: unknown;
+    /**
+     * The milestone is of another project
+     */
+    409: unknown;
+};
+
+export type AttachWorkMilestoneResponses = {
+    /**
+     * The milestones it waits on now
+     */
+    200: WorkMilestoneList;
+};
+
+export type AttachWorkMilestoneResponse = AttachWorkMilestoneResponses[keyof AttachWorkMilestoneResponses];
 
 export type ReprioritizeWorkData = {
     body: WorkReprioritize;

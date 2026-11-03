@@ -15,8 +15,9 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 /**
  * A project's work section, at `/projects/<slug>/work/…`: a row of links to its pages
  * (Campaigns, then Refinement, Schedule, In Progress, Acceptance, Archive, in the order work moves
- * through them), each with its count once the work is loaded (open campaigns; epics and tickets;
- * on Schedule both its lists, REFINED and READY_FOR_DEV; in the Archive also its campaigns), and the page below. `/work` opens In Progress.
+ * through them, and Milestones), each with its count once the work is loaded (open campaigns;
+ * epics and tickets; on Schedule both its lists, REFINED and READY_FOR_DEV; in the Archive also its
+ * campaigns; Milestones has none), and the page below. `/work` opens In Progress.
  *
  * The pages share the open project's work (`SelectedWork`, one request per project), so moving
  * between them fetches nothing. The layout keeps that work current while any of them is open.
@@ -41,7 +42,7 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
               >{{ tab.label }}
               <span
                 class="rounded-full bg-gray-100 px-1.5 text-xs font-normal text-gray-700 tabular-nums"
-                [class.hidden]="work.state() !== 'loaded'"
+                [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
                 >{{ tab.count }}</span
               ></a
             >
@@ -61,7 +62,7 @@ export class WorkLayout {
     return WORK_TABS.map((tab) => ({
       segment: tab.segment,
       label: tab.label,
-      count: tab.count(graph),
+      count: tab.count?.(graph),
     }));
   });
 

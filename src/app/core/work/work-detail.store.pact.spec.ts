@@ -16,6 +16,7 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
+import { published } from '../../../testing/pending-golden-masters';
 import {
   GET_WORK,
   GET_WORK_CRITERIA,
@@ -170,6 +171,25 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
         expect(data?.archetype).toBeTruthy();
       }),
   );
+
+  // The item's milestones (epic qits-615): skipped until `@qits/projects-golden-masters` records
+  // the states (see `milestones.store.pact.spec.ts`). The campaign member's state names its ticket
+  // `ticketQualifiedId`.
+  for (const [state, ref] of [
+    ['a ticket waiting on an unmet milestone', 'qualifiedId'],
+    ['a ticket waiting on a met milestone', 'qualifiedId'],
+    ['a campaign member waiting on a milestone', 'ticketQualifiedId'],
+  ] as const) {
+    it.skipIf(!published(state, 'getWork'))(`show-work-item: the milestones of ${state}`, () =>
+      given(state, 'getWork', GET_WORK).executeTest(async (server) => {
+        const qualifiedId = param(state, 'getWork', ref);
+        const { data } = await at(server.url, () =>
+          consume(getWork({ path: { qualifiedId } }), GET_WORK),
+        );
+        expect(data?.milestones?.[0]?.displayName).toBeTruthy();
+      }),
+    );
+  }
 
   it.each([EPIC, 'an improvement ticket in detail'])(
     'show-schedule-criteria: the acceptance criteria of %s',

@@ -6,6 +6,8 @@ import { BoardCard } from '$ui/components/board/board-card';
 import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { ListRow } from '$ui/components/list/list-row';
 import { REORDER } from '$ui/components/reorder/reorder';
+import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
+import { needsMilestone } from '$core/milestones/milestone-criteria';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
@@ -30,7 +32,16 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 @Component({
   selector: 'app-feature-list-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ListRow, BoardCard, DragHandle, REORDER, WorkRef, WorkspaceLink],
+  imports: [
+    RouterLink,
+    ListRow,
+    BoardCard,
+    DragHandle,
+    MilestoneNeeds,
+    REORDER,
+    WorkRef,
+    WorkspaceLink,
+  ],
   host: { class: 'contents' },
   template: `
     @let feature = node();
@@ -53,11 +64,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               uiReorderItem
               [reorderItemLabel]="task.entry.qualifiedId ?? ''"
             >
-              @if (task.campaigns.length) {
+              @if (task.campaigns.length || needsMilestone(task.entry)) {
                 <div class="mt-1 flex flex-wrap gap-1">
                   @for (campaign of task.campaigns; track campaign.id) {
                     <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
                   }
+                  <app-milestone-needs [milestones]="task.entry.milestones" />
                 </div>
               }
               <app-workspace-link
@@ -93,6 +105,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   `,
 })
 export class FeatureListRow {
+  /** Whether a task needs a milestone that is not met yet: its marks then show (epic qits-615). */
+  protected readonly needsMilestone = needsMilestone;
+
   /** The feature's node: its children are its tasks. */
   readonly node = input.required<WorkNode>();
   /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */

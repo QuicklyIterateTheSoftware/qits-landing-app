@@ -97,7 +97,7 @@ describe('WorkLayout (screenshots)', () => {
     return { locate: () => page.elementLocator(element), work, answered, project };
   }
 
-  it('shows Campaigns, then the tabs in workflow order, each with its count, and marks the current one', async () => {
+  it('shows Campaigns, then the tabs in workflow order, each with its count, then Milestones, and marks the current one', async () => {
     const { locate, work, answered, project } = await shown('in-progress');
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
@@ -111,6 +111,7 @@ describe('WorkLayout (screenshots)', () => {
       'In Progress 9',
       'Acceptance 2',
       'Archive 4',
+      'Milestones',
     ]);
     expect(tabs.elements().map((a) => a.getAttribute('href'))).toEqual([
       `/projects/${project.slug}/work/campaigns`,
@@ -119,6 +120,7 @@ describe('WorkLayout (screenshots)', () => {
       `/projects/${project.slug}/work/in-progress`,
       `/projects/${project.slug}/work/acceptance`,
       `/projects/${project.slug}/work/archive`,
+      `/projects/${project.slug}/work/milestones`,
     ]);
     await expect.element(tabs.nth(3)).toHaveAttribute('aria-current', 'page');
     await expect.element(tabs.nth(0)).not.toHaveAttribute('aria-current');

@@ -17,7 +17,9 @@ import type { Consumed } from '@qits/angular';
  * impetus, assignee and whether it is blocked. A task: its repository, when it was started and
  * implemented, and what it depends on. A feature: what it depends on. Every archetype: its
  * description (Markdown). An epic, a ticket or a campaign: the idea inspiring it (`inspiredBy`,
- * epic qits-888; the answer omits it when none does, so no recording binds it yet).
+ * epic qits-888; the answer omits it when none does, so no recording binds it yet). Every
+ * archetype: the milestones it needs, in the order attached, each with since when it is met
+ * (epic qits-615; the page's "needs" marks and its attach and detach).
  */
 export const GET_WORK = [
   'id',
@@ -32,6 +34,9 @@ export const GET_WORK = [
   'implementedAt',
   'dependsOn',
   'inspiredBy',
+  'milestones[].id',
+  'milestones[].displayName',
+  'milestones[].satisfiedAt',
 ] as const;
 
 /**

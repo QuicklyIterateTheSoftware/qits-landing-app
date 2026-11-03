@@ -40,6 +40,9 @@ import { ACTIVE_AGENT_EVENTS } from '$core/workspaces/workspace-events';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
 import { WorkInspiration } from '$patterns/ideas/work-inspiration/work-inspiration';
+import { MILESTONE_EVENTS } from '$core/milestones/milestone-events';
+import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
+import { WorkMilestones } from '$patterns/milestones/work-milestones/work-milestones';
 
 /** Each group's caption, shown below its buttons. */
 const GROUP_TITLES: Readonly<Record<WorkActionGroupId, string>> = {
@@ -61,6 +64,10 @@ const notBuiltYet = (): void => undefined;
  * body of its own per archetype (`$patterns/work/detail/`): the description (Markdown), the
  * archetype's facts, its children as the lists draw them, its dossier and its comments. The item
  * comes from what `SelectedWork` loads; the rest from `WorkDetailStore`, by the URL's qualified id.
+ * Beside its id, archetype and status, a "needs: <milestone>" mark for each milestone it needs that
+ * is not met yet (`app-milestone-needs`, epic qits-615), apart from the Blocked fact and an agent's
+ * wait; below the body, its milestones, attached and detached there (`app-work-milestones`), after
+ * which its own data and the project's work are read again.
  * Below the body, the item's inspiration (`app-work-inspiration`, epic qits-888, every archetype as
  * of qits-1792): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`),
  * after which the item's own data is read again.
@@ -79,7 +86,9 @@ const notBuiltYet = (): void => undefined;
  * (`SelectedWork.followTransitions`: the item's status, its children, its actions); naming this
  * item among its `entities[].entityId` → the item's own data (`WorkDetailStore.refresh`: its
  * started/implemented times move with its status). `EntityCommented` naming this item as its
- * `entityId` → the same read, which brings the new comment (qits-1660). A child's or the parent's
+ * `entityId` → the same read, which brings the new comment (qits-1660). `MilestoneMet` or
+ * `MilestoneUnmet` naming one of the item's milestones (`milestoneId`) → the same read (its
+ * marks and dates); the project's work follows them in `SelectedWork`. A child's or the parent's
  * move changes only their rows in the work, which the first refetch reads. qits-projects sends no
  * event for a comment's edit, a dossier page or figure, an edit of the item's fields (description, criteria,
  * assignee…), a block or unblock, or a campaign's members: those show on the next visit.
@@ -104,6 +113,8 @@ const notBuiltYet = (): void => undefined;
     TicketDetail,
     WorkDrop,
     WorkInspiration,
+    WorkMilestones,
+    MilestoneNeeds,
     WorkWorkspaces,
   ],
   host: { class: 'block' },
@@ -120,8 +131,12 @@ const notBuiltYet = (): void => undefined;
           />
         }
         <ui-spinner [state]="work.state()" class="min-h-48">
-          <p class="m-0 text-sm text-charcoal-brown-600" [class.hidden]="!entry()">
-            {{ facts() }}
+          <p
+            class="m-0 flex-wrap items-center gap-2 text-sm text-charcoal-brown-600"
+            [class]="entry() ? 'flex' : 'hidden'"
+          >
+            <span>{{ facts() }}</span>
+            <app-milestone-needs [milestones]="milestones()" />
           </p>
           <p
             class="m-0 text-sm text-charcoal-brown-600"
@@ -155,6 +170,14 @@ const notBuiltYet = (): void => undefined;
           </ui-spinner>
           @if (entry(); as entry) {
             @if (detail()?.entity; as entity) {
+              <app-work-milestones
+                class="mt-6"
+                [slug]="slug()"
+                [projectId]="projectId()"
+                [qualifiedId]="id()"
+                [milestones]="entity.milestones ?? []"
+                (changed)="milestonesChanged()"
+              />
               <app-work-inspiration
                 class="mt-6"
                 [slug]="slug()"
@@ -232,6 +255,25 @@ export class WorkItemPage {
   /** The open project's slug, for the inspiration's link to its idea. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
+  /**
+   * The milestones the item needs: its own data's once read (it follows an attach at once), else
+   * the project's work's.
+   */
+  protected readonly milestones = computed(
+    () => this.detail()?.entity?.milestones ?? this.entry()?.milestones ?? [],
+  );
+
+  /**
+   * An attach or a detach went through: the item's own data and the project's work hold its
+   * milestones, so both are read again (no event follows either).
+   */
+  protected milestonesChanged(): void {
+    const ref = this.id();
+    if (ref) void this.details.refresh(ref);
+    const projectId = this.projectId();
+    if (projectId) void this.store.refresh(projectId);
+  }
+
   /** The item's inspiration changed: its own data holds `inspiredBy`, so it is read again. */
   protected inspirationChanged(): void {
     const ref = this.id();
@@ -280,6 +322,21 @@ export class WorkItemPage {
           when: (event, ids) => {
             const id = this.entryId();
             return !!id && (ids.workIds.includes(id) || payloadField(event, 'entityId') === id);
+          },
+          refresh: () => {
+            const ref = this.id();
+            if (ref) void this.details.refresh(ref);
+          },
+        },
+        destroy,
+      );
+      // A milestone the item needs came to hold or stopped holding: its marks and dates move.
+      refreshOn(
+        {
+          names: MILESTONE_EVENTS,
+          when: (event) => {
+            const milestoneId = payloadField(event, 'milestoneId');
+            return !!milestoneId && this.milestones().some((m) => m.id === milestoneId);
           },
           refresh: () => {
             const ref = this.id();

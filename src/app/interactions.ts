@@ -330,6 +330,28 @@ export const INTERACTIONS = {
    * `WorkWritesStore.reprioritize`: puts it directly above or below a sibling (qits-753).
    */
   'reprioritize-work-item': 'Dragging a work item among its siblings sets its priority',
+  /**
+   * The Milestones page (`routes/projects/[slug]/work/milestones/`) via
+   * `MilestonesStore.loadList`: the project's milestones, met or not (epic qits-615). The work
+   * item page's and the campaign page's milestone pickers read the same list.
+   */
+  'list-milestones': 'The Milestones page lists the project’s milestones',
+  /** A milestone's page via `MilestonesStore.load`: its condition, dates and what needs it. */
+  'show-milestone': 'A milestone’s page shows its criteria, their dates and what needs it',
+  /** Create on the Milestones page's form via `MilestonesStore.create`: a name and a condition. */
+  'create-milestone': 'Create on the Milestones page makes a milestone with its criteria',
+  /** Rename on a milestone's page via `MilestonesStore.rename`. */
+  'rename-milestone': 'Rename on a milestone’s page renames it',
+  /** Save criteria on a milestone's page via `MilestonesStore.setGroups`: the whole condition. */
+  'edit-milestone-criteria': 'Save criteria on a milestone’s page restates its condition',
+  /** Approve on an APPROVAL criterion via `MilestonesStore.approve`: a person's yes. */
+  'approve-milestone-criterion': 'Approve on a milestone’s criterion records a person’s approval',
+  /** Attach on the work item page's milestones via `MilestonesStore.attach`. */
+  'attach-work-milestone': 'Attach on the work item page makes the item need a milestone',
+  /** Detach on the work item page's milestones via `MilestonesStore.detach`. */
+  'detach-work-milestone': 'Detach on the work item page makes the item no longer need a milestone',
+  /** Save on a campaign member's milestones via `MilestonesStore.setMemberMilestones`. */
+  'set-member-milestones': 'Save on a campaign member’s milestones sets what it needs',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
