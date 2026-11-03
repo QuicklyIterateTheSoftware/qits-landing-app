@@ -30008,6 +30008,24 @@
                     }
                   ]
                 }
+              },
+              {
+                "archetype": "ISSUE",
+                "phases": {},
+                "transitions": {
+                  "OBSOLETE": [],
+                  "OPEN": [
+                    {
+                      "kind": "SETTLE",
+                      "to": "RESOLVED"
+                    },
+                    {
+                      "kind": "SETTLE",
+                      "to": "RESOLVED"
+                    }
+                  ],
+                  "RESOLVED": []
+                }
               }
             ]
           },
@@ -32981,6 +32999,50 @@
                         "$.transitions.VERIFIED[*].kind": {
                           "combine": "AND",
                           "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 5,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.OPEN": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.transitions.OPEN[*].kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.transitions.OPEN[*].to": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
                             {
                               "match": "type"
                             }
