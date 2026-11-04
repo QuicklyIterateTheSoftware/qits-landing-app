@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { REORDER, type ReorderMove } from './reorder';
 import { REORDER_MESSAGES } from './reorder-messages';
-import { edgeScrollStep, EDGE_SCROLL_MAX_PX, gapY, slotAt, targetIndex } from './slots';
+import { edgeScrollStep, EDGE_SCROLL_MAX_PX, gapY, referenceY, slotAt, targetIndex } from './slots';
 import { cancelArmed, overscrollRange, TOUCH_CANCEL_PX } from './touch-drag';
 
 /** Rects stacked from y = 0 with the given heights and a 10px gap between them. */
@@ -53,6 +53,33 @@ describe('slotAt', () => {
     expect(gapY(rects, 0)).toBe(0);
     expect(gapY(rects, 1)).toBe(45);
     expect(gapY(rects, 3)).toBe(140);
+  });
+});
+
+describe('referenceY', () => {
+  // The visible area runs from 56 (below a pinned header) to 600.
+
+  it('is the middle of a fully visible clone, as before', () => {
+    expect(referenceY(100, 140, 56, 600)).toBe(120);
+    expect(referenceY(56, 600, 56, 600)).toBe(328);
+  });
+
+  it('is the middle of the visible area for a clone taller than it', () => {
+    expect(referenceY(-500, 1100, 56, 600)).toBe(328);
+  });
+
+  it('is the middle of the visible part of a clone partly above the area', () => {
+    expect(referenceY(-1000, 600, 56, 600)).toBe(328);
+    expect(referenceY(0, 100, 56, 600)).toBe(78);
+  });
+
+  it('is the middle of the visible part of a clone partly below the area', () => {
+    expect(referenceY(500, 2100, 56, 600)).toBe(550);
+  });
+
+  it('clamps the middle of a clone wholly outside the area to its nearer edge', () => {
+    expect(referenceY(-200, -100, 56, 600)).toBe(56);
+    expect(referenceY(700, 900, 56, 600)).toBe(600);
   });
 });
 

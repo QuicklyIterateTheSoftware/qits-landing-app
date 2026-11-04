@@ -3,9 +3,13 @@ import { TestBed } from '@angular/core/testing';
 import { commands, page, userEvent } from 'vitest/browser';
 import { REORDER, type ReorderMove } from './reorder';
 
-/** A plain list of fixed-height rows, each with its handle: inline data, it is UI. */
+/**
+ * A plain list of fixed-height rows, each with its handle: inline data, it is UI. The row at
+ * `tall`, if set, is taller than the viewport, with its handle at its bottom.
+ */
 @Component({
   imports: [REORDER],
+  styles: '.tall { height: 1200px; align-items: flex-end; padding-bottom: 8px; }',
   host: { class: 'block p-4', '[style.padding-left.px]': 'indent()' },
   template: `
     <ul
@@ -15,10 +19,11 @@ import { REORDER, type ReorderMove } from './reorder';
       (reordered)="moves.push($event)"
       (reorderCancelled)="cancels = cancels + 1"
     >
-      @for (row of rows(); track row) {
+      @for (row of rows(); track row; let i = $index) {
         <li
           uiReorderItem
           class="flex h-10 items-center gap-2 border-b border-gray-200 bg-white px-2"
+          [class.tall]="i === tall()"
         >
           <button
             type="button"
@@ -38,6 +43,8 @@ class Rows {
   readonly count = input(12);
   /** Room left of the list, in px, for a finger to drag left into; the default padding if unset. */
   readonly indent = input<number | null>(null);
+  /** The index of the row taller than the viewport; none if unset. */
+  readonly tall = input<number | null>(null);
   readonly moves: ReorderMove[] = [];
   cancels = 0;
   rows() {
@@ -51,10 +58,11 @@ async function frames(n = 2): Promise<void> {
 }
 
 describe('Reorder (browser)', () => {
-  async function render(count = 12, indent: number | null = null) {
+  async function render(count = 12, indent: number | null = null, tall: number | null = null) {
     const fixture = TestBed.createComponent(Rows);
     fixture.componentRef.setInput('count', count);
     fixture.componentRef.setInput('indent', indent);
+    fixture.componentRef.setInput('tall', tall);
     fixture.detectChanges();
     await fixture.whenStable();
     const root = fixture.nativeElement as HTMLElement;
@@ -351,6 +359,61 @@ describe('Reorder (browser)', () => {
     expect(view.items[29].getBoundingClientRect().bottom).toBe(middle - 1);
     await commands.touch('up', start.x, window.innerHeight - 10);
     expect(view.host.moves).toEqual([{ from: 12, to: 29 }]);
+    view.expectClean();
+  });
+  /**
+   * Renders 30 rows with row 6 taller than the viewport, and scrolls until its bottom, where its
+   * handle is, sits 100px below the top of the viewport: its middle is far above the screen.
+   */
+  async function renderTall() {
+    const view = await render(30, null, 5);
+    const rect = view.items[5].getBoundingClientRect();
+    expect(rect.height).toBeGreaterThan(window.innerHeight);
+    window.scrollTo(0, window.scrollY + rect.bottom - 100);
+    const at = view.items[5].getBoundingClientRect();
+    expect(at.bottom).toBe(100);
+    expect(at.top + at.height / 2).toBeLessThan(0);
+    return view;
+  }
+
+  /** The marker is drawn, and on the screen. */
+  function expectMarkerOnScreen() {
+    const marker = document.querySelector<HTMLElement>('[data-reorder-marker]')!;
+    expect(marker.style.display).not.toBe('none');
+    const top = marker.getBoundingClientRect().top;
+    expect(top).toBeGreaterThanOrEqual(0);
+    expect(top).toBeLessThanOrEqual(window.innerHeight);
+  }
+
+  it('reads the slot of a row taller than the viewport at the middle of its visible part (touch)', async () => {
+    const view = await renderTall();
+    const scrolled = window.scrollY;
+    const start = await fingerPickUp(view, 5, 0);
+    // The visible part is 0–100, so the line is at 50; 90 down carries it past row 7's middle.
+    await commands.touch('move', start.x, start.y + 90, 4);
+    await frames();
+    expect(window.scrollY).toBe(scrolled + 90);
+    expectMarkerOnScreen();
+    expect(document.querySelector<HTMLElement>('[data-reorder-marker]')!.style.top).toBe(
+      `${view.gap(7) - 1}px`,
+    );
+    await commands.touch('up', start.x, start.y + 90);
+    expect(view.host.moves).toEqual([{ from: 5, to: 6 }]);
+    view.expectClean();
+  });
+
+  it('reads the slot of a row taller than the viewport at the middle of its visible part (mouse)', async () => {
+    const view = await renderTall();
+    const start = await pickUp(view, 5);
+    // The clone's visible part becomes 0–280, so the line is at 140: between rows 7 and 8.
+    await commands.mouse('move', start.x, start.y + 180, 5);
+    await frames();
+    expectMarkerOnScreen();
+    expect(document.querySelector<HTMLElement>('[data-reorder-marker]')!.style.top).toBe(
+      `${view.gap(7) - 1}px`,
+    );
+    await commands.mouse('up', start.x, start.y + 180);
+    expect(view.host.moves).toEqual([{ from: 5, to: 6 }]);
     view.expectClean();
   });
 });

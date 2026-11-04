@@ -6,7 +6,7 @@ import {
   pinnedHeight,
   placeholder,
 } from './drag';
-import { edgeScrollStep, gapY, overTarget, slotAt, targetIndex } from './slots';
+import { edgeScrollStep, gapY, overTarget, referenceY, slotAt, targetIndex } from './slots';
 
 /** How far a mouse press must move before it is a drag, in px; anything shorter is a click. */
 export const MOUSE_DRAG_THRESHOLD_PX = 4;
@@ -19,10 +19,12 @@ const OUTSIDE_OPACITY = '0.5';
  * press on a handle. It captures the pointer, and once the pointer has moved
  * {@link MOUSE_DRAG_THRESHOLD_PX} it dims the item into a placeholder, puts a clone of it in
  * `document.body` that follows the pointer vertically (keeping where it was grabbed; it stays in
- * the item's column), and draws the marker in the gap the clone's middle is nearest. Over the
- * item's own gaps the marker hides and the placeholder is the preview; outside the list (its rect,
- * widened by `TARGET_SLACK_PX`) the marker hides and the clone fades. Near the top or bottom of
- * the visible area the document scrolls (`edgeScrollStep`). Everything is measured again each
+ * the item's column), and draws the marker in the gap nearest the middle of the clone's visible
+ * part (`referenceY`: its middle unless the item is taller than the visible area or partly off it,
+ * measured again as the clone moves), so the marker stays on the screen. Over the item's own gaps
+ * the marker hides and the placeholder is the preview; outside the list (its rect, widened by
+ * `TARGET_SLACK_PX`) the marker hides and the clone fades. Near the top or bottom of the visible
+ * area the document scrolls (`edgeScrollStep`). Everything is measured again each
  * animation frame from `getBoundingClientRect()`, so the wheel keeps working.
  *
  * It ends once: a release over a new slot is a drop, a release over its own slot or outside the
@@ -170,7 +172,15 @@ export class MouseDrag implements DragEngine {
     }
     clone.style.removeProperty('opacity');
     const rects = this.context.rects();
-    const slot = slotAt(rects, top + itemRect.height / 2);
+    const slot = slotAt(
+      rects,
+      referenceY(
+        top,
+        top + itemRect.height,
+        this.visibleTop,
+        this.context.document.documentElement.clientHeight,
+      ),
+    );
     const to = targetIndex(from, slot);
     if (to === from) {
       this.marker!.hide();

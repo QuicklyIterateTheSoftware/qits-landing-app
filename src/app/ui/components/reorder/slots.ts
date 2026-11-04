@@ -41,6 +41,25 @@ export function slotAt(rects: readonly SlotRect[], y: number): number {
 }
 
 /**
+ * The y a dragged clone running from `top` to `bottom` reads its slot at, when the visible area
+ * runs from `visibleTop` (below whatever is pinned there) to `visibleBottom`: the middle of the
+ * clone's visible part, so the marker it draws is on the screen even for an item taller than the
+ * viewport. A fully visible clone gives its own middle. A clone wholly outside the visible area
+ * gives its middle pulled to the nearer edge of it.
+ */
+export function referenceY(
+  top: number,
+  bottom: number,
+  visibleTop: number,
+  visibleBottom: number,
+): number {
+  const from = Math.max(top, visibleTop);
+  const to = Math.min(bottom, visibleBottom);
+  if (from <= to) return (from + to) / 2;
+  return Math.max(visibleTop, Math.min(visibleBottom, (top + bottom) / 2));
+}
+
+/**
  * The index an item has after it moves from index `from` into `slot`. Below its own place the
  * item's removal shifts the slot up by one; at or above it the slot is the index. Both of its own
  * slots give `from`: no move.
