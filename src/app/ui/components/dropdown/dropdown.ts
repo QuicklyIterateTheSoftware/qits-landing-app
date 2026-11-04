@@ -30,6 +30,11 @@ let nextDropdownId = 0;
  * Opening moves the focus into the panel; Escape closes it and returns the focus to the button; a
  * click outside or the button itself closes it too. A link in the panel calls `close()` as it
  * navigates.
+ *
+ * `align` says which edge of the button the panel hangs from. `end` (the default, the top bar's
+ * menus at the right end) lines its right edge up with the button's and gives it a fixed width.
+ * `start` lines its left edge up with the button's and lets it take the width of its content, but
+ * never more than the window less a margin, so a panel opened near the left edge stays on screen.
  */
 @Component({
   selector: 'ui-dropdown',
@@ -56,7 +61,8 @@ let nextDropdownId = 0;
       #panel
       [id]="panelId()"
       tabindex="-1"
-      class="absolute top-full right-0 z-20 mt-1 w-80 rounded-xl border border-gray-200 bg-white shadow-lg outline-none"
+      class="absolute top-full z-20 mt-1 rounded-xl border border-gray-200 bg-white shadow-lg outline-none"
+      [class]="align() === 'start' ? 'left-0 w-max max-w-[calc(100vw-4rem)]' : 'right-0 w-80'"
       [class.hidden]="!open()"
       role="region"
       [attr.aria-label]="panelLabel()"
@@ -74,6 +80,9 @@ export class Dropdown {
 
   /** The panel's id, which the button's `aria-controls` names; unique unless given. */
   readonly panelId = input(`dropdown-${nextDropdownId++}`);
+
+  /** Which edge of the button the panel lines up with: `end` (fixed width) or `start` (fits). */
+  readonly align = input<'start' | 'end'>('end');
 
   /** Fires each time the panel opens. */
   readonly opened = output<void>();

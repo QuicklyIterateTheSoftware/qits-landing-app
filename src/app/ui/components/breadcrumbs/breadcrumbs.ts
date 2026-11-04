@@ -1,13 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  input,
-} from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Dropdown } from '$ui/components/dropdown/dropdown';
 
 /** One step of the trail. */
 export interface Crumb {
@@ -16,141 +9,139 @@ export interface Crumb {
 }
 
 /**
- * The breadcrumb trail. The projected content is its first item (the brand link home); then one
- * link per crumb, the last one marked as the current page.
+ * The breadcrumb trail: the brand (`home`, the bold link home), then one link per crumb, the last
+ * one the current page (not a link).
  *
  * ```html
- * <ui-breadcrumbs [crumbs]="crumbs"><a routerLink="/">qits</a></ui-breadcrumbs>
+ * <ui-breadcrumbs [crumbs]="crumbs" />
  * ```
  *
- * Below 768px (the layout's burger breakpoint) only the first crumb and the last two show. One "…"
- * icon stands for the crumbs between them, names them in its label and takes the place of the
- * separators around it ("Projects … Work › qits-112"). With three crumbs or fewer nothing hides
- * and there is no "…". The breakpoint is CSS, so the server renders the same markup as the
- * browser, and the full trail stays in the DOM.
+ * From 768px up (the layout's burger breakpoint) the whole trail shows: "qits › Projects › qits ›
+ * Work › qits-112". Below that only the current page and its parent show, after a "…" menu button
+ * and with no separator between the "…" and the parent ("… Work › qits-112"). The breakpoint is CSS,
+ * so the server renders the same markup as the browser, and the full trail stays in the DOM.
  *
- * Where even that does not fit, the crumbs before the current page (and the brand) give way first:
- * each truncates with an ellipsis and then goes with its separator. The current page truncates only
- * once they are gone; the "…" never shrinks. The spacing is the separators' and the "…"'s own
- * padding, so a crumb that has gone leaves no gap.
+ * The "…" is a `ui-dropdown` whose panel hangs from its left edge and lists the whole path, one
+ * row each, top-down: the brand, every crumb before the current page as a link, then the current
+ * page, in full and wrapping, never truncated. Its label names the rows before the current page.
+ * Following a link in the panel closes it; Escape or a click outside does too, as for any dropdown.
+ * The "…" sits outside the trail's list, which clips, so nothing clips the panel.
  *
- * The "…" is a button. While focus is inside the trail (`group-focus-within`), the whole trail
- * shows; a tap elsewhere or Escape takes the focus away and collapses it again. A press on a link
- * does not move the focus: the trail does not open or close under the pointer between press and
- * release, so the link's click lands. After that click the focus leaves the trail.
+ * Where even the two crumbs do not fit, the parent gives way first (a thousand times faster than
+ * the current page): it truncates with an ellipsis and then goes, its separator with it (below
+ * 768px the separator is the parent's own, after its label), so at worst the trail reads
+ * "… qits-112". The current page truncates only once the parent is gone.
  */
 @Component({
   selector: 'ui-breadcrumbs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, RouterLink],
-  host: { class: 'block min-w-0 overflow-hidden' },
+  imports: [Dropdown, RouterLink],
+  host: { class: 'flex min-w-0 items-center' },
   template: `
-    <nav aria-label="Breadcrumb" (keydown.escape)="blur()">
-      <ol
-        class="group m-0 flex list-none items-center p-0"
-        (mousedown)="keepFocus($event)"
-        (click)="leaveAfterLink($event)"
-      >
-        <li class="min-w-0 shrink-[1000] truncate *:focus-visible:-outline-offset-2">
-          <ng-content />
-        </li>
-        @for (crumb of crumbs().slice(0, 1); track crumb.path) {
-          <ng-container *ngTemplateOutlet="item; context: { $implicit: crumb, index: 0 }" />
-        }
-        <li
-          class="shrink-0 items-center px-2 md:hidden group-focus-within:sr-only"
-          [class]="collapsed() ? 'flex' : 'hidden'"
-          data-crumbs-ellipsis
+    <nav aria-label="Breadcrumb" class="flex min-w-0 items-center">
+      <div class="flex shrink-0 md:hidden" data-crumbs-ellipsis>
+        <ui-dropdown
+          align="start"
+          [label]="'Show the full path: ' + ancestors()"
+          panelLabel="Full path"
         >
-          <button
-            type="button"
-            class="inline-flex cursor-pointer rounded-md border-0 bg-transparent p-0 text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
-            [attr.aria-label]="collapsed() ? 'Show the full path: ' + collapsed() : null"
-            [attr.title]="collapsed() ? 'Show the full path: ' + collapsed() : null"
-            (click)="focus($event)"
+          <svg
+            dropdown-trigger
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            class="size-5"
+            fill="currentColor"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true" class="size-5" fill="currentColor">
-              <circle cx="5" cy="12" r="1.75" />
-              <circle cx="12" cy="12" r="1.75" />
-              <circle cx="19" cy="12" r="1.75" />
-            </svg>
-          </button>
+            <circle cx="5" cy="12" r="1.75" />
+            <circle cx="12" cy="12" r="1.75" />
+            <circle cx="19" cy="12" r="1.75" />
+          </svg>
+          <ol dropdown-panel class="m-0 list-none py-1 pl-0 text-sm">
+            @for (row of path(); track row.path; let last = $last) {
+              <li>
+                @if (last) {
+                  <span
+                    class="block px-3 py-1.5 font-medium whitespace-normal break-words text-gray-900"
+                    aria-current="page"
+                    >{{ row.label }}</span
+                  >
+                } @else {
+                  <a
+                    class="block px-3 py-1.5 whitespace-normal break-words text-gray-600 no-underline hover:bg-gray-100 hover:text-gray-900 focus-visible:-outline-offset-2"
+                    [routerLink]="row.path"
+                    (click)="dropdown().close()"
+                    >{{ row.label }}</a
+                  >
+                }
+              </li>
+            }
+          </ol>
+        </ui-dropdown>
+      </div>
+      <ol class="m-0 flex min-w-0 list-none items-center overflow-hidden p-0">
+        <li
+          class="hidden min-w-0 shrink-[1000] truncate *:focus-visible:-outline-offset-2 md:block"
+        >
+          <a class="font-bold text-gray-900 no-underline" [routerLink]="home().path">{{
+            home().label
+          }}</a>
         </li>
-        @for (crumb of crumbs().slice(1); track crumb.path; let index = $index) {
-          <ng-container *ngTemplateOutlet="item; context: { $implicit: crumb, index: index + 1 }" />
+        @for (crumb of crumbs(); track crumb.path; let index = $index) {
+          <!-- A crumb before the current page shrinks a thousand times faster than the current page,
+               and its separators go with it (the li clips). -->
+          <li
+            class="min-w-0 items-center overflow-hidden"
+            [class]="
+              (index < crumbs().length - 2 ? 'hidden md:flex' : 'flex') +
+              (index === crumbs().length - 1 ? '' : ' shrink-[1000]')
+            "
+          >
+            <!-- Below 768px nothing separates the "…" from the first crumb that shows. -->
+            <span
+              aria-hidden="true"
+              class="shrink-0 px-2 text-gray-400"
+              [class]="index >= crumbs().length - 2 ? 'hidden md:inline' : ''"
+              >›</span
+            >
+            <!-- One element for both cases (no @if): the last crumb is the current page. -->
+            <a
+              class="min-w-0 truncate text-gray-600 focus-visible:-outline-offset-2 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
+              [routerLink]="crumb.path"
+              [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
+              >{{ crumb.label }}</a
+            >
+            <!-- Below 768px the parent carries the separator before the current page, so it goes
+                 with the parent when the parent gives way. Drawn as generated content, so the
+                 trail's text still has one "›" between the parent and the current page. -->
+            @if (index === crumbs().length - 2) {
+              <span
+                aria-hidden="true"
+                class="shrink-0 px-2 text-gray-400 after:content-['›'] md:hidden"
+              ></span>
+            }
+          </li>
         }
       </ol>
     </nav>
-    <ng-template #item let-crumb let-index="index">
-      <!-- A crumb before the current page shrinks a thousand times faster than the current page,
-           and its separator goes with it (the li clips). -->
-      <li
-        class="min-w-0 items-center overflow-hidden"
-        [class]="
-          (hides(index) ? 'hidden group-focus-within:flex md:flex' : 'flex') +
-          (index === crumbs().length - 1 ? '' : ' shrink-[1000]')
-        "
-      >
-        <!-- On a narrow screen the "…" replaces the separator of the crumb after it. -->
-        <span
-          aria-hidden="true"
-          class="shrink-0 px-2 text-gray-400"
-          [class]="followsEllipsis(index) ? 'hidden group-focus-within:inline md:inline' : ''"
-          >›</span
-        >
-        <!-- One element for both cases (no @if): the last crumb is the current page. -->
-        <a
-          class="min-w-0 truncate text-gray-600 focus-visible:-outline-offset-2 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
-          [routerLink]="crumb.path"
-          [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
-          >{{ crumb.label }}</a
-        >
-      </li>
-    </ng-template>
   `,
 })
 export class Breadcrumbs {
   readonly crumbs = input.required<readonly Crumb[]>();
 
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  /** The trail's first item, ahead of the crumbs: the brand, linking home. */
+  readonly home = input<Crumb>({ label: 'qits', path: '/' });
 
-  /** The "…" takes the focus on a tap: Safari does not focus a button on click by itself. */
-  protected focus(event: MouseEvent): void {
-    (event.currentTarget as HTMLButtonElement).focus();
-  }
+  /** The "…" menu, which a link in its panel closes as it navigates. */
+  protected readonly dropdown = viewChild.required(Dropdown);
 
-  /** A press on a link keeps the focus where it is, so the trail does not change under it. */
-  protected keepFocus(event: MouseEvent): void {
-    if ((event.target as Element).closest('a')) event.preventDefault();
-  }
+  /** The whole path, as the "…" panel lists it: the brand, then every crumb. */
+  protected readonly path = computed(() => [this.home(), ...this.crumbs()]);
 
-  /** After a link's click, the focus leaves the trail and it collapses. */
-  protected leaveAfterLink(event: MouseEvent): void {
-    if ((event.target as Element).closest('a')) this.blur();
-  }
-
-  /** Takes the focus out of the trail, which collapses it. */
-  protected blur(): void {
-    const active = this.host.nativeElement.ownerDocument.activeElement;
-    if (active instanceof HTMLElement && this.host.nativeElement.contains(active)) active.blur();
-  }
-
-  /** The crumbs between the first and the last two, which hide on a narrow screen. */
-  private readonly middle = computed(() => this.crumbs().slice(1, -2));
-
-  /** True for a crumb (by index) that hides on a narrow screen. */
-  protected hides(index: number): boolean {
-    return index >= 1 && index < 1 + this.middle().length;
-  }
-
-  /** True for the crumb right after the "…", whose separator hides on a narrow screen. */
-  protected followsEllipsis(index: number): boolean {
-    return this.middle().length > 0 && index === 1 + this.middle().length;
-  }
-
-  /** The hidden crumbs' labels as one trail ("qits"), or undefined when none hide. */
-  protected readonly collapsed = computed(() => {
-    const hidden = this.middle();
-    return hidden.length ? hidden.map((crumb) => crumb.label).join(' › ') : undefined;
-  });
+  /** The labels of the panel's rows before the current page, as one trail ("qits › Projects"). */
+  protected readonly ancestors = computed(() =>
+    this.path()
+      .slice(0, -1)
+      .map((crumb) => crumb.label)
+      .join(' › '),
+  );
 }

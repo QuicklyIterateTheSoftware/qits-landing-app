@@ -64,6 +64,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/work', component: TestPage },
           { path: 'projects/:slug/work/acceptance', component: TestPage },
           { path: 'projects/:slug/work/campaigns', component: TestPage },
+          { path: 'projects/:slug/work/refinement', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
           { path: 'projects/:slug/release-requests', component: TestPage },
@@ -261,40 +262,84 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('work-item-wide');
   });
 
-  it('collapses a work item’s breadcrumbs to the first, … and the last two on a narrow screen', async () => {
-    // Below md, but wide enough for the collapsed trail beside the menus.
-    await page.viewport(600, 600);
-    const { project, layout } = await renderProject('/work/detail/qits-112');
+  /** True when `element`'s box lies within the window, left to right. */
+  function inWindow(element: Element): boolean {
+    const box = element.getBoundingClientRect();
+    return box.width > 0 && box.left >= 0 && box.right <= window.innerWidth;
+  }
+
+  it('collapses a work item’s breadcrumbs to the …, the parent and the current page on a phone', async () => {
+    await page.viewport(390, 844);
+    const { fixture, project, layout } = await renderProject('/work/detail/qits-112');
+    const root = fixture.nativeElement as HTMLElement;
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    const ellipsis = breadcrumb.getByRole('button', {
+      name: `Show the full path: qits › Projects › ${project.name} › Work`,
+    });
+    await expect.element(ellipsis).toBeVisible();
+    await expect.element(ellipsis).toHaveAttribute('aria-haspopup', 'true');
+    await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'false');
+    // Only the parent and the current page show after the "…"; the panel is closed.
+    const trail = root.querySelector('nav[aria-label="Breadcrumb"] > ol')!;
+    const visible = [...trail.querySelectorAll<HTMLElement>('a')].filter(
+      (link) => link.getBoundingClientRect().width > 0,
+    );
+    expect(visible.map((link) => link.textContent?.trim())).toEqual(['Work', 'qits-112']);
     await expect
-      .element(breadcrumb.getByRole('button', { name: `Show the full path: ${project.name}` }))
-      .toBeVisible();
-    await expect.element(breadcrumb.getByRole('link', { name: 'Projects' })).toBeVisible();
-    await expect
-      .element(
-        breadcrumb.getByRole('link', { name: project.name, exact: true, includeHidden: true }),
-      )
+      .element(page.getByRole('region', { name: 'Full path', includeHidden: true }))
       .not.toBeVisible();
-    await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
-    await expect.element(breadcrumb.getByRole('link', { name: 'qits-112' })).toBeVisible();
     await expect.element(layout).toMatchScreenshot('work-item-narrow');
   });
 
-  it('opens the whole trail from the … on a narrow screen until focus leaves it', async () => {
-    // Below md, but wide enough for the collapsed trail beside the menus.
-    await page.viewport(600, 600);
-    const { project, layout } = await renderProject('/work/detail/qits-112');
+  it('opens the whole path from the … on a phone, and closes it', async () => {
+    await page.viewport(390, 844);
+    const { fixture, project, layout } = await renderProject('/work/detail/qits-112');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
-    const name = breadcrumb.getByRole('link', {
-      name: project.name,
-      exact: true,
-      includeHidden: true,
-    });
-    await userEvent.click(breadcrumb.getByRole('button', { name: /^Show the full path/ }));
-    await expect.element(name).toBeVisible();
+    const ellipsis = breadcrumb.getByRole('button', { name: /^Show the full path/ });
+    const panel = page.getByRole('region', { name: 'Full path', includeHidden: true });
+    const open = async () => {
+      await userEvent.click(ellipsis);
+      fixture.detectChanges();
+      await expect.element(panel).toBeVisible();
+      await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'true');
+    };
+
+    await open();
+    for (const name of ['qits', 'Projects', project.name, 'Work']) {
+      const link = panel.getByRole('link', { name, exact: true });
+      await expect.element(link).toBeVisible();
+      expect(inWindow(link.element())).toBe(true);
+    }
+    // The current page: not a link, whole.
+    const current = panel.getByText('qits-112', { exact: true });
+    await expect.element(current).toHaveAttribute('aria-current', 'page');
+    expect(current.element().tagName).toBe('SPAN');
+    expect(current.element().scrollWidth).toBeLessThanOrEqual(current.element().clientWidth);
+    expect(inWindow(current.element())).toBe(true);
+    expect(inWindow(panel.element())).toBe(true);
     await expect.element(layout).toMatchScreenshot('work-item-narrow-expanded');
+
+    // Escape closes it and gives the focus back to the "…".
+    await userEvent.keyboard('{Escape}');
+    fixture.detectChanges();
+    await expect.element(panel).not.toBeVisible();
+    await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'false');
+    expect(document.activeElement).toBe(ellipsis.element());
+
+    // A click outside closes it.
+    await open();
     await userEvent.click(page.getByText('Page content'));
-    await expect.element(name).not.toBeVisible();
+    fixture.detectChanges();
+    await expect.element(panel).not.toBeVisible();
+
+    // Following a link in it navigates and closes it.
+    await open();
+    await userEvent.click(panel.getByRole('link', { name: 'Work', exact: true }));
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(TestBed.inject(Router).url).toBe(`/projects/${project.slug}/work`);
+    await expect.element(panel).not.toBeVisible();
+    await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('keeps a work item’s page within a phone’s width', async () => {
@@ -309,14 +354,34 @@ describe('ShellLayout (screenshots)', () => {
     expect(menus.lastElementChild!.getBoundingClientRect().right).toBeLessThanOrEqual(
       window.innerWidth,
     );
-    // The earlier crumbs give way first: the current page stays on screen and in the trail.
+    // The parent gives way first: the current page stays on screen and in the trail.
     const trail = root.querySelector('ui-breadcrumbs')!.getBoundingClientRect();
-    const current = root.querySelector('[aria-current=page]')!.getBoundingClientRect();
+    const current = root
+      .querySelector('nav[aria-label="Breadcrumb"] > ol [aria-current=page]')!
+      .getBoundingClientRect();
     expect(current.left).toBeGreaterThanOrEqual(0);
     expect(current.right).toBeLessThanOrEqual(window.innerWidth);
     expect(
       Math.min(current.right, trail.right) - Math.max(current.left, trail.left),
     ).toBeGreaterThan(0);
+  });
+
+  it('shows a work tab’s name whole beside all five menus on a phone', async () => {
+    await page.viewport(390, 844);
+    const { fixture } = await renderProject('/work/refinement');
+    const root = fixture.nativeElement as HTMLElement;
+    const menus = root.querySelector('header')!.lastElementChild!;
+    // All five menus show: the project is open.
+    expect(
+      [...menus.children].filter((menu) => menu.getBoundingClientRect().width > 0),
+    ).toHaveLength(5);
+    const current = root.querySelector<HTMLElement>(
+      'nav[aria-label="Breadcrumb"] > ol [aria-current=page]',
+    )!;
+    expect(current.textContent?.trim()).toBe('Refinement');
+    expect(current.scrollWidth).toBeLessThanOrEqual(current.clientWidth);
+    expect(inWindow(current)).toBe(true);
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   });
 
   it('pins the top bar, the page’s actions below it and the board’s headings below those', async () => {

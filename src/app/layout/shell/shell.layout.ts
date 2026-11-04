@@ -48,6 +48,9 @@ export interface NavNote {
  * The page's column is `minmax(0,1fr)`, not `1fr` or an implicit track: those grow to the top
  * bar's min-content (the trail and the menus, which do not wrap), and on a phone that widened the
  * whole page past the screen. The trail truncates instead.
+ *
+ * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
+ * "…" and the current page beside the burger and all five menus.
  */
 @Component({
   selector: 'app-shell-layout',
@@ -72,7 +75,7 @@ export interface NavNote {
     >
       <!-- Pinned to the top of the window, always: the document scrolls, not the shell. -->
       <header
-        class="sticky top-0 z-50 col-span-full flex items-center gap-3 border-b border-gray-200 bg-white px-4"
+        class="sticky top-0 z-50 col-span-full flex items-center gap-1 border-b border-gray-200 bg-white px-2 md:gap-3 md:px-4"
       >
         <button
           type="button"
@@ -86,9 +89,7 @@ export interface NavNote {
           <span class="block h-0.5 bg-gray-700"></span>
           <span class="block h-0.5 bg-gray-700"></span>
         </button>
-        <ui-breadcrumbs [crumbs]="crumbs()">
-          <a class="font-bold text-gray-900 no-underline" routerLink="/">qits</a>
-        </ui-breadcrumbs>
+        <ui-breadcrumbs [crumbs]="crumbs()" />
         <!-- The menus at the right end: the platform's version bumps and notifications (always), then the open
              project's agents, its release requests and its settings (all three hidden, not
              removed, while no project is open). -->

@@ -21,6 +21,17 @@ class Host {
   opened = 0;
 }
 
+@Component({
+  imports: [Dropdown],
+  template: `
+    <ui-dropdown label="Path" panelLabel="Full path" panelId="path" align="start">
+      <span dropdown-trigger>…</span>
+      <p dropdown-panel>Panel content</p>
+    </ui-dropdown>
+  `,
+})
+class StartHost {}
+
 describe('Dropdown', () => {
   function render() {
     const fixture = TestBed.createComponent(Host);
@@ -75,5 +86,30 @@ describe('Dropdown', () => {
     fixture.detectChanges();
     expect(panel.classList.contains('hidden')).toBe(true);
     expect(document.activeElement).toBe(button);
+  });
+
+  it('hangs the panel from the button’s right edge at a fixed width by default', () => {
+    const { panel } = render();
+    expect(panel.classList).toContain('right-0');
+    expect(panel.classList).toContain('w-80');
+    expect(panel.classList).not.toContain('left-0');
+  });
+
+  it('hangs the panel from the button’s left edge, as wide as its content, with align="start"', () => {
+    const fixture = TestBed.createComponent(StartHost);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const button = element.querySelector<HTMLButtonElement>('ui-dropdown button')!;
+    const panel = element.querySelector<HTMLElement>('#path')!;
+    expect(panel.classList).toContain('left-0');
+    expect(panel.classList).toContain('w-max');
+    expect(panel.classList).toContain('max-w-[calc(100vw-4rem)]');
+    expect(panel.classList).not.toContain('right-0');
+    expect(panel.classList).not.toContain('w-80');
+    expect(panel.classList).toContain('hidden');
+    button.click();
+    fixture.detectChanges();
+    expect(panel.classList).not.toContain('hidden');
+    expect(panel.classList).toContain('left-0');
   });
 });
