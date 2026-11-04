@@ -60,8 +60,8 @@ describe('Breadcrumbs', () => {
       'hidden items-center md:flex min-w-0 overflow-hidden shrink-[1000]',
       'hidden items-center md:flex min-w-0 overflow-hidden shrink-[1000]',
       'flex items-center min-w-0 overflow-hidden shrink-[1000]',
-      // The current page shrinks last.
-      'flex items-center min-w-0 overflow-hidden',
+      // The current page shrinks last, and below md comes first in the reversed, wrapping list.
+      'flex items-center max-md:-order-1 min-w-0 overflow-hidden',
     ]);
   });
 
@@ -145,7 +145,7 @@ describe('Breadcrumbs', () => {
     const { brand, button, panel, items } = render(trail.slice(0, 1));
     expect(classes(brand)).toContain('hidden');
     expect(items).toHaveLength(1);
-    expect(classes(items[0])).toBe('flex items-center min-w-0 overflow-hidden');
+    expect(classes(items[0])).toBe('flex items-center max-md:-order-1 min-w-0 overflow-hidden');
     expect(classes(items[0].querySelector('span[aria-hidden="true"]'))).toBe(
       'hidden md:inline px-2 shrink-0 text-gray-400',
     );

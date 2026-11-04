@@ -380,6 +380,12 @@ describe('ShellLayout (screenshots)', () => {
     )!;
     expect(current.textContent?.trim()).toBe('Refinement');
     expect(current.scrollWidth).toBeLessThanOrEqual(current.clientWidth);
+    // The parent shows whole on the trail's line or not at all: never a clipped sliver.
+    const trail = current.closest('ol')!;
+    const parent = trail.children[trail.children.length - 2] as HTMLElement;
+    if (parent.getBoundingClientRect().top < trail.getBoundingClientRect().bottom) {
+      expect(parent.scrollWidth).toBeLessThanOrEqual(parent.clientWidth);
+    }
     expect(inWindow(current)).toBe(true);
     expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   });

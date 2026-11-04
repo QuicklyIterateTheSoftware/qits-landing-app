@@ -27,10 +27,12 @@ export interface Crumb {
  * Following a link in the panel closes it; Escape or a click outside does too, as for any dropdown.
  * The "…" sits outside the trail's list, which clips, so nothing clips the panel.
  *
- * Where even the two crumbs do not fit, the parent gives way first (a thousand times faster than
- * the current page): it truncates with an ellipsis and then goes, its separator with it (below
- * 768px the separator is the parent's own, after its label), so at worst the trail reads
- * "… qits-112". The current page truncates only once the parent is gone.
+ * Below 768px, where the two crumbs do not fit, the parent goes whole, its separator with it (the
+ * separator is then the parent's own, after its label): the list wraps within one line's height,
+ * reversed with the current page first, so the parent drops to the hidden second line rather
+ * than shrinking to a sliver, and the current page keeps the whole width ("… Refinement"). It
+ * truncates only when it is wider than the trail by itself. From 768px up the crumbs before the
+ * current page give way first, a thousand times faster than the current page.
  */
 @Component({
   selector: 'ui-breadcrumbs',
@@ -78,7 +80,12 @@ export interface Crumb {
           </ol>
         </ui-dropdown>
       </div>
-      <ol class="m-0 flex min-w-0 list-none items-center overflow-hidden p-0">
+      <!-- Below 768px the list runs reversed and wraps within one line's height, with the current
+           page ordered first: the current page always takes the visible line, and the parent stays
+           on it only when it fits whole, else it wraps out of sight. -->
+      <ol
+        class="m-0 flex min-w-0 list-none items-center overflow-hidden p-0 max-md:h-6 max-md:flex-row-reverse max-md:flex-wrap max-md:content-start max-md:justify-end"
+      >
         <li
           class="hidden min-w-0 shrink-[1000] truncate *:focus-visible:-outline-offset-2 md:block"
         >
@@ -93,7 +100,7 @@ export interface Crumb {
             class="min-w-0 items-center overflow-hidden"
             [class]="
               (index < crumbs().length - 2 ? 'hidden md:flex' : 'flex') +
-              (index === crumbs().length - 1 ? '' : ' shrink-[1000]')
+              (index === crumbs().length - 1 ? ' max-md:-order-1' : ' shrink-[1000]')
             "
           >
             <!-- Below 768px nothing separates the "…" from the first crumb that shows. -->
