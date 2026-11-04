@@ -29,6 +29,11 @@ export interface Crumb {
  * and there is no "…". The breakpoint is CSS, so the server renders the same markup as the
  * browser, and the full trail stays in the DOM.
  *
+ * Where even that does not fit, the crumbs before the current page (and the brand) give way first:
+ * each truncates with an ellipsis and then goes with its separator. The current page truncates only
+ * once they are gone; the "…" never shrinks. The spacing is the separators' and the "…"'s own
+ * padding, so a crumb that has gone leaves no gap.
+ *
  * The "…" is a button. While focus is inside the trail (`group-focus-within`), the whole trail
  * shows; a tap elsewhere or Escape takes the focus away and collapses it again. A press on a link
  * does not move the focus: the trail does not open or close under the pointer between press and
@@ -38,20 +43,22 @@ export interface Crumb {
   selector: 'ui-breadcrumbs',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet, RouterLink],
-  host: { class: 'block min-w-0' },
+  host: { class: 'block min-w-0 overflow-hidden' },
   template: `
     <nav aria-label="Breadcrumb" (keydown.escape)="blur()">
       <ol
-        class="group m-0 flex list-none items-center gap-2 p-0"
+        class="group m-0 flex list-none items-center p-0"
         (mousedown)="keepFocus($event)"
         (click)="leaveAfterLink($event)"
       >
-        <li><ng-content /></li>
+        <li class="min-w-0 shrink-[1000] truncate *:focus-visible:-outline-offset-2">
+          <ng-content />
+        </li>
         @for (crumb of crumbs().slice(0, 1); track crumb.path) {
           <ng-container *ngTemplateOutlet="item; context: { $implicit: crumb, index: 0 }" />
         }
         <li
-          class="items-center md:hidden group-focus-within:sr-only"
+          class="shrink-0 items-center px-2 md:hidden group-focus-within:sr-only"
           [class]="collapsed() ? 'flex' : 'hidden'"
           data-crumbs-ellipsis
         >
@@ -75,20 +82,25 @@ export interface Crumb {
       </ol>
     </nav>
     <ng-template #item let-crumb let-index="index">
+      <!-- A crumb before the current page shrinks a thousand times faster than the current page,
+           and its separator goes with it (the li clips). -->
       <li
-        class="items-center gap-2"
-        [class]="hides(index) ? 'hidden group-focus-within:flex md:flex' : 'flex'"
+        class="min-w-0 items-center overflow-hidden"
+        [class]="
+          (hides(index) ? 'hidden group-focus-within:flex md:flex' : 'flex') +
+          (index === crumbs().length - 1 ? '' : ' shrink-[1000]')
+        "
       >
         <!-- On a narrow screen the "…" replaces the separator of the crumb after it. -->
         <span
           aria-hidden="true"
-          class="text-gray-400"
+          class="shrink-0 px-2 text-gray-400"
           [class]="followsEllipsis(index) ? 'hidden group-focus-within:inline md:inline' : ''"
           >›</span
         >
         <!-- One element for both cases (no @if): the last crumb is the current page. -->
         <a
-          class="text-gray-600 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
+          class="min-w-0 truncate text-gray-600 focus-visible:-outline-offset-2 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
           [routerLink]="crumb.path"
           [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
           >{{ crumb.label }}</a

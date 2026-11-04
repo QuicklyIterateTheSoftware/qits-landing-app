@@ -47,10 +47,11 @@ describe('Breadcrumbs', () => {
   it('hides the crumbs between the first and the last two on a narrow screen only', () => {
     const { items } = render(trail);
     expect(items.map((item) => item.className.split(' ').sort().join(' '))).toEqual([
-      'flex gap-2 items-center',
-      'gap-2 group-focus-within:flex hidden items-center md:flex',
-      'flex gap-2 items-center',
-      'flex gap-2 items-center',
+      'flex items-center min-w-0 overflow-hidden shrink-[1000]',
+      'group-focus-within:flex hidden items-center md:flex min-w-0 overflow-hidden shrink-[1000]',
+      'flex items-center min-w-0 overflow-hidden shrink-[1000]',
+      // The current page shrinks last.
+      'flex items-center min-w-0 overflow-hidden',
     ]);
   });
 
@@ -73,10 +74,10 @@ describe('Breadcrumbs', () => {
     expect(ellipsis.textContent).not.toContain('›');
     const separators = items.map((item) => item.querySelector('span[aria-hidden="true"]')!);
     expect(separators.map((separator) => separator.className.split(' ').sort().join(' '))).toEqual([
-      'text-gray-400',
-      'text-gray-400',
-      'group-focus-within:inline hidden md:inline text-gray-400',
-      'text-gray-400',
+      'px-2 shrink-0 text-gray-400',
+      'px-2 shrink-0 text-gray-400',
+      'group-focus-within:inline hidden md:inline px-2 shrink-0 text-gray-400',
+      'px-2 shrink-0 text-gray-400',
     ]);
   });
 

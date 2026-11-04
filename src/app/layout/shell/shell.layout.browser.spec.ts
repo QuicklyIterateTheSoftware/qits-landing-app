@@ -262,7 +262,8 @@ describe('ShellLayout (screenshots)', () => {
   });
 
   it('collapses a work item’s breadcrumbs to the first, … and the last two on a narrow screen', async () => {
-    await page.viewport(400, 600);
+    // Below md, but wide enough for the collapsed trail beside the menus.
+    await page.viewport(600, 600);
     const { project, layout } = await renderProject('/work/detail/qits-112');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect
@@ -280,7 +281,8 @@ describe('ShellLayout (screenshots)', () => {
   });
 
   it('opens the whole trail from the … on a narrow screen until focus leaves it', async () => {
-    await page.viewport(400, 600);
+    // Below md, but wide enough for the collapsed trail beside the menus.
+    await page.viewport(600, 600);
     const { project, layout } = await renderProject('/work/detail/qits-112');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     const name = breadcrumb.getByRole('link', {
@@ -293,6 +295,28 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('work-item-narrow-expanded');
     await userEvent.click(page.getByText('Page content'));
     await expect.element(name).not.toBeVisible();
+  });
+
+  it('keeps a work item’s page within a phone’s width', async () => {
+    await page.viewport(390, 844);
+    const { fixture } = await renderProject('/work/detail/qits-112');
+    const root = fixture.nativeElement as HTMLElement;
+    const main = root.querySelector('main')!;
+    const menus = root.querySelector('header')!.lastElementChild!;
+    // The top bar's trail and menus do not widen the page: nothing scrolls sideways.
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+    expect(main.getBoundingClientRect().right).toBeLessThanOrEqual(window.innerWidth);
+    expect(menus.lastElementChild!.getBoundingClientRect().right).toBeLessThanOrEqual(
+      window.innerWidth,
+    );
+    // The earlier crumbs give way first: the current page stays on screen and in the trail.
+    const trail = root.querySelector('ui-breadcrumbs')!.getBoundingClientRect();
+    const current = root.querySelector('[aria-current=page]')!.getBoundingClientRect();
+    expect(current.left).toBeGreaterThanOrEqual(0);
+    expect(current.right).toBeLessThanOrEqual(window.innerWidth);
+    expect(
+      Math.min(current.right, trail.right) - Math.max(current.left, trail.left),
+    ).toBeGreaterThan(0);
   });
 
   it('pins the top bar, the page’s actions below it and the board’s headings below those', async () => {

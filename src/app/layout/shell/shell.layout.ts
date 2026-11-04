@@ -44,6 +44,10 @@ export interface NavNote {
  *
  * From 768px up the sidebar is always shown. Below that, the burger shows and hides it. The
  * breakpoint is CSS, so the server renders the same markup as the browser.
+ *
+ * The page's column is `minmax(0,1fr)`, not `1fr` or an implicit track: those grow to the top
+ * bar's min-content (the trail and the menus, which do not wrap), and on a phone that widened the
+ * whole page past the screen. The trail truncates instead.
  */
 @Component({
   selector: 'app-shell-layout',
@@ -63,14 +67,16 @@ export interface NavNote {
   // board's headings) reads it; outside the shell it is unset and they pin at 0.
   host: { class: 'block [--app-header-h:3.5rem]' },
   template: `
-    <div class="grid min-h-screen grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_1fr]">
+    <div
+      class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_minmax(0,1fr)]"
+    >
       <!-- Pinned to the top of the window, always: the document scrolls, not the shell. -->
       <header
         class="sticky top-0 z-50 col-span-full flex items-center gap-3 border-b border-gray-200 bg-white px-4"
       >
         <button
           type="button"
-          class="inline-flex size-9 cursor-pointer flex-col justify-center gap-1 rounded-md border-0 bg-transparent p-2 md:hidden"
+          class="inline-flex size-9 shrink-0 cursor-pointer flex-col justify-center gap-1 rounded-md border-0 bg-transparent p-2 md:hidden"
           aria-controls="layout-nav"
           [attr.aria-expanded]="navOpen()"
           aria-label="Navigation"
