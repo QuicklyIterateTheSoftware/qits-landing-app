@@ -90,6 +90,24 @@ describe('TicketListItem', () => {
     ]);
   });
 
+  // The board stacked below md (qits-1861): its own status, as the board's column would say.
+  it.each([
+    ['IMPLEMENTING', false, true],
+    ['VERIFYING', false, true],
+    ['IMPLEMENTING', true, false],
+  ] as const)(
+    'on the board, a ticket in %s (context: %s) shows its status and drag handle: %s',
+    (status, context, shown) => {
+      const element = render(node({ status }, context), 'board');
+      expect(button(element).classList.contains('hidden')).toBe(true);
+      expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual(
+        shown ? [status.toLowerCase()] : [],
+      );
+      const handle = element.querySelector('button[aria-label="Move qits-1"]')!;
+      expect(handle.classList.contains('hidden')).toBe(!shown);
+    },
+  );
+
   it('shows no status in Acceptance', () => {
     const element = render(node({ status: 'VERIFIED' }));
     expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([]);

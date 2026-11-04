@@ -2,6 +2,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
   linkedSignal,
@@ -19,8 +20,9 @@ import type { WorkListView } from './work-list-view';
 
 /**
  * A list of work, drawn like the board: the Backlog (`WorkGraph.tree('backlog')`), the Acceptance
- * list (`tree('acceptance')`, VERIFIED work with its finish button) or the Archive
- * (`tree('archive')`). Each top-level epic is an `app-epic-list-item` (a lane, with its features
+ * list (`tree('acceptance')`, VERIFIED work with its finish button), the Archive
+ * (`tree('archive')`), or the board's own tree stacked (`tree('board')`, view `board`: In Progress
+ * below `md`, where the board's columns do not fit, qits-1861; each item with its own status). Each top-level epic is an `app-epic-list-item` (a lane, with its features
  * and tasks), anything else an `app-ticket-list-item`, stacked. An empty tree says "Nothing here".
  * Both are always rendered and switched by class, so a server render hydrates as is. The card, row
  * or lane the text selection is in is highlighted (`SelectionHighlight`). With `epicBoards`, an epic
@@ -30,10 +32,12 @@ import type { WorkListView } from './work-list-view';
  * shrinks away, and goes when it has (`withLeaving`). No clipping box around the items: the finish
  * button and the drag handle sit on an item's corner, partly outside it, and must stay clickable.
  *
- * The items are a reorder list (`uiReorderList`, qits-753), enabled in the Backlog only: there an
- * open epic or ticket is dragged by its handle, and a drop is sent as its place among the drawn
- * items (`WorkReorders`; an epic's features and a feature's tasks are lists of their own). A
- * refused drop says why above the list, in the service's words, until the next drop.
+ * The items are a reorder list (`uiReorderList`, qits-753), enabled in the Backlog and on the board
+ * only: there an open epic or ticket is dragged by its handle, and a drop is sent as its place
+ * among the drawn items (`WorkReorders`). An epic's features and a feature's tasks are lists of
+ * their own, enabled in the Backlog only: on the board, as on `app-kanban-board`, they keep the
+ * trees' order. A refused drop says why above the list, in the service's words, until the next
+ * drop.
  */
 @Component({
   selector: 'app-work-list',
@@ -45,7 +49,7 @@ import type { WorkListView } from './work-list-view';
     <p
       role="alert"
       class="m-0 mb-4 text-sm text-cinnabar-700"
-      [class.hidden]="view() !== 'backlog' || !reorders.refusal()"
+      [class.hidden]="!reorderable() || !reorders.refusal()"
     >
       {{ reorders.refusal() }}
     </p>
@@ -54,7 +58,7 @@ import type { WorkListView } from './work-list-view';
       [class]="rows().length ? 'flex' : 'hidden'"
       uiReorderList
       reorderLabel="Work"
-      [reorderDisabled]="view() !== 'backlog'"
+      [reorderDisabled]="!reorderable()"
       (reordered)="move($event)"
     >
       @for (row of rows(); track row.node.entry.id) {
@@ -106,6 +110,11 @@ export class WorkList {
   });
 
   protected readonly reorders = inject(WorkReorders);
+
+  /** Whether the items are a reorder list: in the Backlog and on the board (qits-753, qits-1861). */
+  protected readonly reorderable = computed(
+    () => this.view() === 'backlog' || this.view() === 'board',
+  );
 
   /** A drop among the drawn items, the leaving ones included: they are still in the list. */
   protected move(move: WorkMove): void {

@@ -15,19 +15,20 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
- * A ticket in a list (Backlog, Acceptance, Archive, a campaign's members): the board's small card
+ * A ticket in a list (Backlog, the board stacked, Acceptance, Archive, a campaign's members): the
+ * board's small card
  * (`ui-board-card`), its id down the left edge, its title linking to it, its kind and its
  * campaigns as tags, and a Workspace bubble in its bottom-right corner while it has an ACTIVE
  * workspace (`app-workspace-link`). Beside its status, a "needs: <milestone>" mark for each milestone
  * it needs that is not met yet (`app-milestone-needs`, epic qits-615). In the Archive it also shows its final state (Done and Dropped mix there), in
- * a campaign its own status (any phase). A campaign's member that is not a ticket (a feature or
- * task) is drawn the same way.
+ * a campaign and on the board its own status (any phase; the board's columns are not drawn). A
+ * top-level member that is not a ticket (a feature or task) is drawn the same way.
  *
  * A VERIFIED ticket (in Acceptance) carries the finish button ("Mark <id> done") on the card's
  * bottom-right corner: it hides the ticket at once and moves it to DONE a few seconds later, unless
  * the toast's Undo takes it back (`finishControl`); not in a campaign, where finishing is not
- * the page's job. In the Backlog an open ticket (not context, not DONE or DROPPED) carries the
- * drag handle ("Move <id>", `ui-drag-handle`) on that corner instead: the card is an item
+ * the page's job. In the Backlog and on the board (qits-1861) an open ticket (not context, not
+ * DONE or DROPPED) carries the drag handle ("Move <id>", `ui-drag-handle`) on that corner instead: the card is an item
  * (`uiReorderItem`) of the list it is drawn in, which must be a `[uiReorderList]` (disabled where
  * the order is not the page's job, qits-753). When `leaving` is set, the card shrinks away
  * (`uiLeave`), then emits `left`. `display: contents`, so the card is itself the list's item.
@@ -101,15 +102,21 @@ export class TicketListItem {
   /** Whether it needs a milestone that is not met yet: its marks then show in the tag row. */
   protected readonly needs = computed(() => unmetOf(this.node().entry.milestones).length > 0);
 
-  /** Whether the drag handle shows: in the Backlog, on an open ticket of its own (qits-753). */
-  protected readonly draggable = computed(() => this.view() === 'backlog' && movable(this.node()));
+  /**
+   * Whether the drag handle shows: in the Backlog and on the board, on an open ticket of its own
+   * (qits-753, qits-1861). It is always a list's top-level item: a feature's tasks are its row's.
+   */
+  protected readonly draggable = computed(
+    () => (this.view() === 'backlog' || this.view() === 'board') && movable(this.node()),
+  );
 
   /**
-   * In the Archive, which final state the ticket is in; in a campaign, its own status (statuses
-   * mix there).
+   * In the Archive, which final state the ticket is in; in a campaign and on the board, its own
+   * status (statuses mix there, and the board's columns are not drawn).
    */
   protected readonly status = computed(() =>
-    (this.view() === 'archive' || this.view() === 'campaign') && !this.node().context
+    (this.view() === 'archive' || this.view() === 'campaign' || this.view() === 'board') &&
+    !this.node().context
       ? this.node().entry.status?.toLowerCase()
       : undefined,
   );

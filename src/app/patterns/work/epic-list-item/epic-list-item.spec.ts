@@ -110,6 +110,42 @@ describe('EpicListItem', () => {
     expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([]);
   });
 
+  // The board stacked below md (qits-1861): no columns, so every item says its own status, and
+  // only the epic itself is dragged, as on the board.
+  it('on the board, shows every item’s own status, and the drag handle on the epic only', () => {
+    const child = (id: string, archetype: 'FEATURE' | 'TASK', status: string, context = false) =>
+      node({ id, qualifiedId: id, archetype, status }, context);
+    const epic = {
+      ...node({ status: 'IMPLEMENTING' }),
+      children: [
+        {
+          ...child('qits-2', 'FEATURE', 'IMPLEMENTING'),
+          children: [
+            child('qits-3', 'TASK', 'IMPLEMENTED'),
+            child('qits-4', 'TASK', 'REPORTED', true),
+          ],
+        },
+      ],
+      tasks: { verified: 0, total: 2 },
+    };
+    const element = render(epic, 'board');
+    expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([
+      'implementing',
+      'implemented',
+      'implementing',
+    ]);
+    const hidden = (id: string) =>
+      element.querySelector(`button[aria-label="Move ${id}"]`)?.classList.contains('hidden');
+    expect(hidden('qits-1')).toBe(false);
+    expect(hidden('qits-2')).toBe(true);
+    expect(hidden('qits-3')).toBe(true);
+    expect(button(element).classList.contains('hidden')).toBe(true);
+    expect(element.querySelector('[lane-summary]')?.textContent).toBe('2 tasks');
+    expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(
+      'true',
+    );
+  });
+
   it('in a campaign, sums up a DONE epic’s verified tasks, and starts collapsed', () => {
     const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
     const epic = {

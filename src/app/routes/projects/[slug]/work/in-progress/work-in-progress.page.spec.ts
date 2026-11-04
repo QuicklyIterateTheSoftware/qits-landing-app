@@ -96,6 +96,40 @@ describe('WorkInProgressPage', () => {
     expect(after.textContent).not.toContain('Implementing ticket');
   });
 
+  // The board's columns do not fit a phone: below md the same tree is drawn stacked (qits-1861).
+  // Both are rendered, and the breakpoint picks one by class, so a server render hydrates as is.
+  it('draws the board from md up, and the same work stacked below it', async () => {
+    const element = await shown([]);
+    const board = element.querySelector<HTMLElement>('app-kanban-board')!;
+    expect(board.parentElement!.className.split(' ').sort()).toEqual(['hidden', 'md:block']);
+    const lists = [...element.querySelectorAll<HTMLElement>('app-work-list')].filter(
+      (list) => !list.closest('section'),
+    );
+    expect(lists).toHaveLength(1);
+    const [stacked] = lists;
+    expect(stacked.parentElement!.className).toBe('md:hidden');
+    for (const title of [
+      'Ready for dev epic',
+      'Ready for dev ticket',
+      'Implementing ticket',
+      'Verifying epic',
+      'Started feature',
+      'Started task',
+    ]) {
+      expect(stacked.textContent).toContain(title);
+      expect(board.textContent).toContain(title);
+    }
+    expect(stacked.textContent).not.toContain('Reported ticket');
+    expect(stacked.textContent).not.toContain('Verified ticket');
+    // Each top-level item with its own status, as the board's column would say.
+    const ticket = [...stacked.querySelectorAll('app-ticket-list-item')].find((item) =>
+      item.textContent?.includes('Implementing ticket'),
+    )!;
+    expect([...ticket.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toContain(
+      'implementing',
+    );
+  });
+
   it('shows no agent section when no agent is on this project’s work', async () => {
     const element = await shown([]);
     expect(section(element, 'Agents on earlier work').className).toContain('hidden');

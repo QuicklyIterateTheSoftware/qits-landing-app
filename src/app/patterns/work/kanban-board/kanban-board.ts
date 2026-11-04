@@ -30,7 +30,9 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
 /**
  * The Work board: the board's work tree (`WorkGraph.tree('board')`) over the status columns, each
  * column headed with how many items sit in it. Each top-level epic is an `app-epic-card` (a lane,
- * with its features and tasks), anything else an `app-ticket-card`.
+ * with its features and tasks), anything else an `app-ticket-card`. At least 40rem wide: In
+ * Progress draws it from `md` up, and below that the same tree stacked (`app-work-list`, view
+ * `board`; qits-1861).
  *
  * A node that leaves the tree (verified, here or in another tab) stays in its place while it
  * shrinks away, and goes when it has (`withLeaving`). No scrolling or clipping box around the

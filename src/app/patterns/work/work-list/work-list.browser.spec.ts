@@ -47,6 +47,8 @@ class WholeList {
 }
 
 const EVERY_STATUS = 'a project with work in every status';
+/** The answer to a reorder, recorded for this write (`reprioritizeWork`). */
+const RANKED = 'three reported tickets, one with a priority';
 /** The answer to the finish's move to DONE, recorded for this write (`finish-epic`). */
 const VERIFIED_EPIC = 'a verified epic';
 
@@ -109,6 +111,49 @@ describe('WorkList (screenshots)', () => {
     await expect.element(list).toMatchTextContent('Done ticket');
     await expect.element(list).toMatchTextContent('Dropped epic');
     await expect.element(list).toMatchScreenshot('archive');
+  });
+
+  // The board stacked, as In Progress draws it below md (qits-1861).
+  it('the board: each item with its own status, handles on the top-level items only', async () => {
+    const { element, locator: list } = await shown('board', EVERY_STATUS);
+    await expect.element(list).toMatchTextContent('Implementing ticket');
+    await expect.element(list).toMatchTextContent('Started task');
+    await expect.element(list).not.toMatchTextContent('Reported ticket');
+    await expect.element(list).not.toMatchTextContent('Verified ticket');
+    const items = [...element.querySelectorAll('app-epic-list-item, app-ticket-list-item')];
+    expect(items.length).toBeGreaterThan(0);
+    for (const item of items) {
+      expect(item.querySelector('ui-tag'), item.textContent ?? '').not.toBeNull();
+    }
+    const tags = (title: string) =>
+      [...element.querySelectorAll('ui-board-card')]
+        .find((item) => item.querySelector('a')?.textContent?.trim() === title)!
+        .querySelectorAll('ui-tag');
+    expect([...tags('Started task')].map((t) => t.textContent?.trim())).toEqual(['implementing']);
+    const shownHandles = [...element.querySelectorAll('ui-drag-handle > button')].filter(
+      (button) => !button.classList.contains('hidden'),
+    );
+    expect(shownHandles.length).toBeGreaterThan(0);
+    for (const handle of shownHandles) expect(handle.closest('app-feature-list-row')).toBeNull();
+    expect(element.querySelector('button[aria-label^="Mark "]:not(.hidden)')).toBeNull();
+  });
+
+  it('the board: a keyboard drop is sent as the item’s place above the one now below it', async () => {
+    const { element } = await shown('board', EVERY_STATUS);
+    const handle = element.querySelector<HTMLElement>(
+      'button[aria-label="Move contract-00000001-5"]',
+    )!;
+    handle.focus();
+    // Picked up, one place down, dropped: the Ready for Dev epic now sits above the implementing one.
+    await userEvent.keyboard('[Space]');
+    await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('[Space]');
+    await new Promise((resolve) => setTimeout(resolve));
+    const request = http.expectOne('/projects/api/work/contract-00000001-5/priority');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual({ above: 'contract-00000001-7' });
+    request.flush(await goldenMaster(RANKED, 'reprioritizeWork'));
+    await new Promise((resolve) => setTimeout(resolve));
   });
 
   it('an empty list says so', async () => {

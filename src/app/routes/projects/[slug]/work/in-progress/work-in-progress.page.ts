@@ -10,7 +10,10 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 
 /**
  * The work being worked on, at `/projects/<slug>/work/in-progress`: the board, nested epic ›
- * feature › task, each epic a lane over the columns it and its descendants are in.
+ * feature › task, each epic a lane over the columns it and its descendants are in. Below `md` the
+ * columns do not fit a phone's width, so the same tree is drawn stacked instead, each item with its
+ * own status (`app-work-list`, view `board`; qits-1861). Both are always rendered and switched by
+ * class, so a server render hydrates as is.
  *
  * Work an agent is on (an ACTIVE agent in qits-workspaces, `WorkspacesStore.loadAgents`) is in
  * progress too, whatever its status. On a board status it is on the board already. Before the board
@@ -37,7 +40,12 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             </h2>
             <app-work-list [tree]="before()" [base]="detailPath()" view="campaign" />
           </section>
-          <app-kanban-board [tree]="board()" [base]="detailPath()" />
+          <div class="hidden md:block">
+            <app-kanban-board [tree]="board()" [base]="detailPath()" />
+          </div>
+          <div class="md:hidden">
+            <app-work-list [tree]="board()" [base]="detailPath()" view="board" />
+          </div>
           <section
             class="mt-10 flex flex-col gap-4"
             aria-label="Agents on later work"

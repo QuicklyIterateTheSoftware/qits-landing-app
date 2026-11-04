@@ -46,8 +46,15 @@ describe('WorkInProgressPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  /** The page of the recorded project, with the list and its work answered. */
-  async function shown(answerWork = true, workState = 'a project with work in every status') {
+  /**
+   * The page of the recorded project, with the list and its work answered, `width` wide (`''`: as
+   * wide as the viewport).
+   */
+  async function shown(
+    answerWork = true,
+    workState = 'a project with work in every status',
+    width = '760px',
+  ) {
     const list = await goldenMaster('a project exists', 'listProjects');
     const project = list.entries[0].project;
     const harness = await RouterTestingHarness.create();
@@ -77,7 +84,7 @@ describe('WorkInProgressPage (screenshots)', () => {
       harness.fixture.detectChanges();
     }
     const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '760px';
+    if (width) element.style.width = width;
     return { element: page.elementLocator(element), work, project };
   }
 
@@ -111,6 +118,35 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Shipped feature');
     await expect.element(element).toMatchTextContent('Open task');
     await expect.element(element).toMatchScreenshot('nested');
+  });
+
+  // At 390px the board's columns overflowed the page, its epics' handles off-screen (qits-1861):
+  // below md the board's tree is drawn stacked instead, within the phone's width.
+  it('stacks the board’s work within a phone’s width, every handle on screen', async () => {
+    await page.viewport(390, 844);
+    const { element } = await shown(true, 'a project with work in every status', '');
+    const root = element.element();
+    const board = root.querySelector<HTMLElement>('app-kanban-board')!;
+    expect(board.getBoundingClientRect().width).toBe(0);
+    const stacked = root.querySelector<HTMLElement>('.md\\:hidden > app-work-list')!;
+    expect(stacked.getBoundingClientRect().width).toBeGreaterThan(0);
+    await expect.element(page.elementLocator(stacked)).toMatchTextContent('Implementing ticket');
+    await expect.element(page.elementLocator(stacked)).toMatchTextContent('Started task');
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+    // The top-level epics and tickets carry a handle, as on the board; an epic's features and
+    // tasks none.
+    const handles = [...root.querySelectorAll<HTMLElement>('ui-drag-handle > button')].filter(
+      (handle) => handle.getBoundingClientRect().width > 0,
+    );
+    expect(handles.length).toBeGreaterThan(0);
+    for (const handle of handles) {
+      expect(stacked.contains(handle)).toBe(true);
+      expect(handle.closest('app-feature-list-row')).toBeNull();
+      const box = handle.getBoundingClientRect();
+      const label = handle.getAttribute('aria-label');
+      expect(box.left, `${label}`).toBeGreaterThanOrEqual(0);
+      expect(box.right, `${label}`).toBeLessThanOrEqual(window.innerWidth);
+    }
   });
 
   it('shows that the work is loading', async () => {
