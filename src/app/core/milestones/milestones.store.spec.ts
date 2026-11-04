@@ -7,7 +7,7 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
-import { pendingGoldenMaster, pendingParams } from '../../../testing/pending-golden-masters';
+import { goldenMaster, projectsGoldenMasters } from '../../../testing/golden-masters';
 import { MilestonesStore } from './milestones.store';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -17,10 +17,10 @@ const UNMET = 'a ticket waiting on an unmet milestone';
 const MET = 'a ticket waiting on a met milestone';
 const MEMBER = 'a campaign member waiting on a milestone';
 
-/**
- * `MilestonesStore` on qits-projects' recorded milestone states (epic qits-615), read through
- * `pendingGoldenMaster` until `@qits/projects-golden-masters` carries them.
- */
+const params = (state: string, operationId: string) =>
+  projectsGoldenMasters.operation(state, operationId).params;
+
+/** `MilestonesStore` on qits-projects' recorded milestone states (epic qits-615). */
 describe('MilestonesStore', () => {
   let http: HttpTestingController;
   let store: InstanceType<typeof MilestonesStore>;
@@ -49,12 +49,12 @@ describe('MilestonesStore', () => {
   afterEach(() => http.verify());
 
   it('reads a project’s milestones once, every one, met or not', async () => {
-    const { projectId } = pendingParams(MET);
+    const { projectId } = params(MET, 'listProjectMilestones');
     const done = store.loadList(projectId);
     await settle();
     const read = http.expectOne(`/projects/api/projects/${projectId}/milestones`);
     expect(read.request.method).toBe('GET');
-    read.flush(pendingGoldenMaster(MET, 'listProjectMilestones'));
+    read.flush(goldenMaster(MET, 'listProjectMilestones'));
     await done;
     const list = store.listOf(projectId);
     expect(list?.status).toBe('loaded');
@@ -80,7 +80,7 @@ describe('MilestonesStore', () => {
     await settle();
     http
       .expectOne('/projects/api/projects/p1/milestones')
-      .flush(pendingGoldenMaster(UNMET, 'listProjectMilestones'));
+      .flush(goldenMaster(UNMET, 'listProjectMilestones'));
     await again;
     const refresh = store.refreshList('p1');
     await settle();
@@ -93,12 +93,12 @@ describe('MilestonesStore', () => {
   });
 
   it('reads one milestone with its groups, criteria and what needs it', async () => {
-    const { milestoneId } = pendingParams(MEMBER);
+    const { milestoneId } = params(MEMBER, 'getMilestone');
     const done = store.load(milestoneId);
     await settle();
     http
       .expectOne(`/projects/api/milestones/${milestoneId}`)
-      .flush(pendingGoldenMaster(MEMBER, 'getMilestone'));
+      .flush(goldenMaster(MEMBER, 'getMilestone'));
     await done;
     const milestone = store.of(milestoneId)?.milestone;
     expect(milestone?.groups?.[0]?.criteria?.[0]?.kind).toBe('APPROVAL');
@@ -106,7 +106,7 @@ describe('MilestonesStore', () => {
   });
 
   it('creates a milestone with its name trimmed and keeps the answer as its page', async () => {
-    const { projectId } = pendingParams(UNMET);
+    const { projectId } = params(UNMET, 'createMilestone');
     const groups = [
       { criteria: [{ kind: 'ENTITY_STATUS', predicate: { entityId: 'q-1', status: 'DONE' } }] },
     ];
@@ -115,7 +115,7 @@ describe('MilestonesStore', () => {
     const write = http.expectOne(`/projects/api/projects/${projectId}/milestones`);
     expect(write.request.method).toBe('POST');
     expect(write.request.body).toEqual({ displayName: 'bootstrap ticket done', groups });
-    const answer = pendingGoldenMaster(UNMET, 'createMilestone');
+    const answer = goldenMaster(UNMET, 'createMilestone');
     write.flush(answer, { status: 201, statusText: 'Created' });
     const outcome = await done;
     expect(outcome.ok).toBe(true);
@@ -125,14 +125,14 @@ describe('MilestonesStore', () => {
   });
 
   it('renames, restates the condition and approves, each answered with the milestone', async () => {
-    const { milestoneId, criterionId } = pendingParams(UNMET);
+    const { milestoneId, criterionId } = params(UNMET, 'renameMilestone');
 
     const renamed = store.rename(milestoneId, 'bootstrap test node (arm64)');
     await settle();
     const rename = http.expectOne(`/projects/api/milestones/${milestoneId}`);
     expect(rename.request.method).toBe('PATCH');
     expect(rename.request.body).toEqual({ displayName: 'bootstrap test node (arm64)' });
-    rename.flush(pendingGoldenMaster(UNMET, 'renameMilestone'));
+    rename.flush(goldenMaster(UNMET, 'renameMilestone'));
     expect((await renamed).ok).toBe(true);
     expect(store.of(milestoneId)?.milestone?.displayName).toBe('bootstrap test node (arm64)');
 
@@ -142,7 +142,7 @@ describe('MilestonesStore', () => {
     const put = http.expectOne(`/projects/api/milestones/${milestoneId}/groups`);
     expect(put.request.method).toBe('PUT');
     expect(put.request.body).toEqual({ groups });
-    put.flush(pendingGoldenMaster(UNMET, 'setMilestoneGroups'));
+    put.flush(goldenMaster(UNMET, 'setMilestoneGroups'));
     expect((await restated).ok).toBe(true);
     expect(store.of(milestoneId)?.milestone?.groups).toHaveLength(2);
 
@@ -152,7 +152,7 @@ describe('MilestonesStore', () => {
       `/projects/api/milestones/${milestoneId}/criteria/${criterionId}/approve`,
     );
     expect(approve.request.body).toEqual({ note: 'Node 7 is up.' });
-    approve.flush(pendingGoldenMaster(UNMET, 'approveMilestoneCriterion'));
+    approve.flush(goldenMaster(UNMET, 'approveMilestoneCriterion'));
     expect((await approved).ok).toBe(true);
     expect(store.of(milestoneId)?.milestone?.met).toBe(true);
   });
@@ -170,12 +170,12 @@ describe('MilestonesStore', () => {
   });
 
   it('attaches and detaches a work item’s milestone', async () => {
-    const { qualifiedId, milestoneId, otherMilestoneId } = pendingParams(UNMET);
+    const { qualifiedId, milestoneId, otherMilestoneId } = params(UNMET, 'attachWorkMilestone');
     const attached = store.attach(qualifiedId, otherMilestoneId);
     await settle();
     const put = http.expectOne(`/projects/api/work/${qualifiedId}/milestones/${otherMilestoneId}`);
     expect(put.request.method).toBe('PUT');
-    put.flush(pendingGoldenMaster(UNMET, 'attachWorkMilestone'));
+    put.flush(goldenMaster(UNMET, 'attachWorkMilestone'));
     const attach = await attached;
     expect(attach.ok && attach.value.milestones?.length).toBeGreaterThan(0);
 
@@ -183,13 +183,16 @@ describe('MilestonesStore', () => {
     await settle();
     const del = http.expectOne(`/projects/api/work/${qualifiedId}/milestones/${milestoneId}`);
     expect(del.request.method).toBe('DELETE');
-    del.flush(pendingGoldenMaster(UNMET, 'detachWorkMilestone'));
+    del.flush(goldenMaster(UNMET, 'detachWorkMilestone'));
     const detach = await detached;
     expect(detach.ok && detach.value.milestones).toEqual([]);
   });
 
   it('states every milestone a campaign membership needs', async () => {
-    const { qualifiedId, membershipId, milestoneId, otherMilestoneId } = pendingParams(MEMBER);
+    const { qualifiedId, membershipId, milestoneId, otherMilestoneId } = params(
+      MEMBER,
+      'setWorkMemberMilestones',
+    );
     const done = store.setMemberMilestones(qualifiedId, membershipId, [
       milestoneId,
       otherMilestoneId,
@@ -199,7 +202,7 @@ describe('MilestonesStore', () => {
       `/projects/api/work/${qualifiedId}/members/${membershipId}/milestones`,
     );
     expect(put.request.body).toEqual({ milestoneIds: [milestoneId, otherMilestoneId] });
-    put.flush(pendingGoldenMaster(MEMBER, 'setWorkMemberMilestones'));
+    put.flush(goldenMaster(MEMBER, 'setWorkMemberMilestones'));
     const outcome = await done;
     expect(outcome.ok && outcome.value.member?.milestones?.map((m) => m.displayName)).toEqual([
       'bootstrap test node',

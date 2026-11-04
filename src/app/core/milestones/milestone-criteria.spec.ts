@@ -1,4 +1,4 @@
-import { pendingGoldenMaster } from '../../../testing/pending-golden-masters';
+import { goldenMaster } from '../../../testing/golden-masters';
 import {
   describeCriterion,
   draftOf,
@@ -13,7 +13,7 @@ import {
 
 describe('milestone criteria', () => {
   it('turns a recorded condition into drafts and back into the same groups, ids kept', () => {
-    const { milestone } = pendingGoldenMaster(
+    const { milestone } = goldenMaster(
       'a ticket waiting on an unmet milestone',
       'setMilestoneGroups',
     );

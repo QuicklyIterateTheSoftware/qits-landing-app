@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
-import { pendingGoldenMaster } from '../../../../testing/pending-golden-masters';
+import { goldenMaster } from '../../../../testing/golden-masters';
 import { MilestoneNeeds } from './milestone-needs';
 
 /** The "needs" marks (epic qits-615), on the recorded work items' milestones. */
@@ -24,7 +24,7 @@ describe('MilestoneNeeds', () => {
   }
 
   it('marks an unmet milestone "needs: <name>", linked to its page and named in full', () => {
-    const work = pendingGoldenMaster('a ticket waiting on an unmet milestone', 'listProjectWork');
+    const work = goldenMaster('a ticket waiting on an unmet milestone', 'listProjectWork');
     const [mark, ...rest] = render(work.entities[0].milestones);
     expect(rest).toHaveLength(0);
     expect(mark.textContent?.replace('⚑', '').trim()).toBe('needs: bootstrap test node');
@@ -38,7 +38,7 @@ describe('MilestoneNeeds', () => {
   });
 
   it('draws nothing for a met milestone, or for none', () => {
-    const work = pendingGoldenMaster('a ticket waiting on a met milestone', 'listProjectWork');
+    const work = goldenMaster('a ticket waiting on a met milestone', 'listProjectWork');
     expect(render(work.entities[0].milestones)).toHaveLength(0);
     expect(render(undefined)).toHaveLength(0);
   });

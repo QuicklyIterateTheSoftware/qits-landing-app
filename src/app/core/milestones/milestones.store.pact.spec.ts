@@ -2,7 +2,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { PactV4 } from '@pact-foundation/pact';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { addGoldenInteraction } from '@qits/angular/testing';
@@ -12,7 +12,6 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { published } from '../../../testing/pending-golden-masters';
 import {
   LIST_PROJECT_MILESTONES,
   MEMBER_MILESTONES,
@@ -40,15 +39,7 @@ import { MilestonesStore } from './milestones.store';
  * recording holds (`heldBy`: an `evidence` or `approval` recorded as `null` binds nothing below
  * it). Array lengths bind as recorded, and a list whose elements differ in which fields are null
  * (a met and an unmet milestone) binds one variant per shape (`arrayContaining`), so the store
- * relies on neither.
- *
- * **Skipped until the recordings are published.** The three states are committed on
- * qits-projects-service's `epic/qits-615` branch but are not in the installed
- * `@qits/projects-golden-masters` (a devDependency qits-maintenance bumps once the service
- * releases). `published()` reads the installed package, so each test starts running on its own
- * once the pin carries its state, and the committed pact then grows these interactions
- * (`QITS_GOLDEN_UPDATE=true npm test`). The `met=` query has no recording: the page filters the
- * one answer itself.
+ * relies on neither. The `met=` query has no recording: the page filters the one answer itself.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -103,56 +94,47 @@ const params = (state: string, operationId: string) => masters.operation(state, 
 const sent = <T>(state: string, operationId: string) =>
   masters.operation(state, operationId).body as T;
 
-/** Whether the installed package records `operationId` in `state`; the test is skipped if not. */
-const unpublished = (state: string, operationId: string) => !published(state, operationId);
-
 describe('qits-landing-app → qits-projects-service pact: milestones', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
-    const generated = join(dir, `${CONSUMER}-${PROVIDER}.json`);
     try {
-      // Nothing ran while no state is published: there is no pact to compare, and the committed
-      // file holds none of these operations.
-      if (existsSync(generated)) {
-        assertPactPart(generated, COMMITTED, OPERATIONS, 'QITS_GOLDEN_UPDATE');
-      }
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        OPERATIONS,
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
   });
 
-  it.skipIf(unpublished(UNMET, 'listProjectMilestones'))(
-    'list-milestones: a project’s milestones, none met',
-    () =>
-      given(UNMET, 'listProjectMilestones', 'list-milestones', LIST_PROJECT_MILESTONES).executeTest(
-        async (server) => {
-          const store = storeAt(server.url);
-          const projectId = params(UNMET, 'listProjectMilestones')['projectId'];
-          await store.loadList(projectId);
-          const list = store.listOf(projectId);
-          expect(list?.status).toBe('loaded');
-          expect(list?.milestones[0]?.displayName).toBe('bootstrap test node');
-          expect(list?.milestones[0]?.satisfiedAt).toBeNull();
-        },
-      ),
-  );
+  it('list-milestones: a project’s milestones, none met', () =>
+    given(UNMET, 'listProjectMilestones', 'list-milestones', LIST_PROJECT_MILESTONES).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const projectId = params(UNMET, 'listProjectMilestones')['projectId'];
+        await store.loadList(projectId);
+        const list = store.listOf(projectId);
+        expect(list?.status).toBe('loaded');
+        expect(list?.milestones[0]?.displayName).toBe('bootstrap test node');
+        expect(list?.milestones[0]?.satisfiedAt).toBeNull();
+      },
+    ));
 
-  it.skipIf(unpublished(MET, 'listProjectMilestones'))(
-    'list-milestones: a met milestone beside an unmet one',
-    () =>
-      given(MET, 'listProjectMilestones', 'list-milestones', LIST_PROJECT_MILESTONES).executeTest(
-        async (server) => {
-          const store = storeAt(server.url);
-          const projectId = params(MET, 'listProjectMilestones')['projectId'];
-          await store.loadList(projectId);
-          const milestones = store.listOf(projectId)?.milestones ?? [];
-          expect(milestones.some((m) => !!m.satisfiedAt)).toBe(true);
-        },
-      ),
-  );
+  it('list-milestones: a met milestone beside an unmet one', () =>
+    given(MET, 'listProjectMilestones', 'list-milestones', LIST_PROJECT_MILESTONES).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const projectId = params(MET, 'listProjectMilestones')['projectId'];
+        await store.loadList(projectId);
+        const milestones = store.listOf(projectId)?.milestones ?? [];
+        expect(milestones.some((m) => !!m.satisfiedAt)).toBe(true);
+      },
+    ));
 
   for (const state of [UNMET, MET, MEMBER]) {
-    it.skipIf(unpublished(state, 'getMilestone'))(`show-milestone: the milestone of ${state}`, () =>
+    it(`show-milestone: the milestone of ${state}`, () =>
       given(state, 'getMilestone', 'show-milestone', MILESTONE).executeTest(async (server) => {
         const store = storeAt(server.url);
         const id = params(state, 'getMilestone')['milestoneId'];
@@ -160,67 +142,51 @@ describe('qits-landing-app → qits-projects-service pact: milestones', () => {
         const milestone = store.of(id)?.milestone;
         expect(milestone?.displayName).toBeTruthy();
         expect(milestone?.groups?.[0]?.criteria?.[0]?.kind).toBe('APPROVAL');
-      }),
-    );
+      }));
   }
 
-  it.skipIf(unpublished(UNMET, 'createMilestone'))(
-    'create-milestone: a name and one criterion make a milestone',
-    () =>
-      given(UNMET, 'createMilestone', 'create-milestone', MILESTONE).executeTest(async (server) => {
+  it('create-milestone: a name and one criterion make a milestone', () =>
+    given(UNMET, 'createMilestone', 'create-milestone', MILESTONE).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const body = sent<{ displayName: string; groups: MilestoneGroupSpec[] }>(
+        UNMET,
+        'createMilestone',
+      );
+      const outcome = await store.create(
+        params(UNMET, 'createMilestone')['projectId'],
+        body.displayName,
+        body.groups,
+      );
+      expect(outcome.ok && outcome.value.displayName).toBe(body.displayName);
+    }));
+
+  it('rename-milestone: a milestone takes a new name', () =>
+    given(UNMET, 'renameMilestone', 'rename-milestone', MILESTONE).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const body = sent<{ displayName: string }>(UNMET, 'renameMilestone');
+      const outcome = await store.rename(
+        params(UNMET, 'renameMilestone')['milestoneId'],
+        body.displayName,
+      );
+      expect(outcome.ok && outcome.value.displayName).toBe(body.displayName);
+    }));
+
+  it('edit-milestone-criteria: the whole condition, an approval kept OR a work item done', () =>
+    given(UNMET, 'setMilestoneGroups', 'edit-milestone-criteria', MILESTONE).executeTest(
+      async (server) => {
         const store = storeAt(server.url);
-        const body = sent<{ displayName: string; groups: MilestoneGroupSpec[] }>(
-          UNMET,
-          'createMilestone',
-        );
-        const outcome = await store.create(
-          params(UNMET, 'createMilestone')['projectId'],
-          body.displayName,
+        const body = sent<{ groups: MilestoneGroupSpec[] }>(UNMET, 'setMilestoneGroups');
+        const outcome = await store.setGroups(
+          params(UNMET, 'setMilestoneGroups')['milestoneId'],
           body.groups,
         );
-        expect(outcome.ok && outcome.value.displayName).toBe(body.displayName);
-      }),
-  );
+        expect(outcome.ok && outcome.value.groups?.length).toBe(2);
+      },
+    ));
 
-  it.skipIf(unpublished(UNMET, 'renameMilestone'))(
-    'rename-milestone: a milestone takes a new name',
-    () =>
-      given(UNMET, 'renameMilestone', 'rename-milestone', MILESTONE).executeTest(async (server) => {
-        const store = storeAt(server.url);
-        const body = sent<{ displayName: string }>(UNMET, 'renameMilestone');
-        const outcome = await store.rename(
-          params(UNMET, 'renameMilestone')['milestoneId'],
-          body.displayName,
-        );
-        expect(outcome.ok && outcome.value.displayName).toBe(body.displayName);
-      }),
-  );
-
-  it.skipIf(unpublished(UNMET, 'setMilestoneGroups'))(
-    'edit-milestone-criteria: the whole condition, an approval kept OR a work item done',
-    () =>
-      given(UNMET, 'setMilestoneGroups', 'edit-milestone-criteria', MILESTONE).executeTest(
-        async (server) => {
-          const store = storeAt(server.url);
-          const body = sent<{ groups: MilestoneGroupSpec[] }>(UNMET, 'setMilestoneGroups');
-          const outcome = await store.setGroups(
-            params(UNMET, 'setMilestoneGroups')['milestoneId'],
-            body.groups,
-          );
-          expect(outcome.ok && outcome.value.groups?.length).toBe(2);
-        },
-      ),
-  );
-
-  it.skipIf(unpublished(UNMET, 'approveMilestoneCriterion'))(
-    'approve-milestone-criterion: a person approves, with a note',
-    () =>
-      given(
-        UNMET,
-        'approveMilestoneCriterion',
-        'approve-milestone-criterion',
-        MILESTONE,
-      ).executeTest(async (server) => {
+  it('approve-milestone-criterion: a person approves, with a note', () =>
+    given(UNMET, 'approveMilestoneCriterion', 'approve-milestone-criterion', MILESTONE).executeTest(
+      async (server) => {
         const store = storeAt(server.url);
         const { milestoneId, criterionId } = params(UNMET, 'approveMilestoneCriterion');
         const body = sent<{ note: string }>(UNMET, 'approveMilestoneCriterion');
@@ -228,53 +194,40 @@ describe('qits-landing-app → qits-projects-service pact: milestones', () => {
         expect(outcome.ok && outcome.value.groups?.[0]?.criteria?.[0]?.approval?.note).toBe(
           body.note,
         );
-      }),
-  );
+      },
+    ));
 
-  it.skipIf(unpublished(UNMET, 'attachWorkMilestone'))(
-    'attach-work-milestone: a ticket needs one more milestone',
-    () =>
-      given(UNMET, 'attachWorkMilestone', 'attach-work-milestone', WORK_MILESTONES).executeTest(
-        async (server) => {
-          const store = storeAt(server.url);
-          const { qualifiedId, otherMilestoneId } = params(UNMET, 'attachWorkMilestone');
-          const outcome = await store.attach(qualifiedId, otherMilestoneId);
-          expect(outcome.ok && outcome.value.milestones?.length).toBeGreaterThan(0);
-        },
-      ),
-  );
-
-  it.skipIf(unpublished(UNMET, 'detachWorkMilestone'))(
-    'detach-work-milestone: a ticket no longer needs its milestone',
-    () =>
-      given(UNMET, 'detachWorkMilestone', 'detach-work-milestone', WORK_MILESTONES).executeTest(
-        async (server) => {
-          const store = storeAt(server.url);
-          const { qualifiedId, milestoneId } = params(UNMET, 'detachWorkMilestone');
-          const outcome = await store.detach(qualifiedId, milestoneId);
-          expect(outcome.ok && outcome.value.milestones).toEqual([]);
-        },
-      ),
-  );
-
-  it.skipIf(unpublished(MEMBER, 'setWorkMemberMilestones'))(
-    'set-member-milestones: a membership needs two milestones',
-    () =>
-      given(
-        MEMBER,
-        'setWorkMemberMilestones',
-        'set-member-milestones',
-        MEMBER_MILESTONES,
-      ).executeTest(async (server) => {
+  it('attach-work-milestone: a ticket needs one more milestone', () =>
+    given(UNMET, 'attachWorkMilestone', 'attach-work-milestone', WORK_MILESTONES).executeTest(
+      async (server) => {
         const store = storeAt(server.url);
-        const { qualifiedId, membershipId } = params(MEMBER, 'setWorkMemberMilestones');
-        const body = sent<{ milestoneIds: string[] }>(MEMBER, 'setWorkMemberMilestones');
-        const outcome = await store.setMemberMilestones(
-          qualifiedId,
-          membershipId,
-          body.milestoneIds,
-        );
-        expect(outcome.ok && outcome.value.member?.milestones?.length).toBe(2);
-      }),
-  );
+        const { qualifiedId, otherMilestoneId } = params(UNMET, 'attachWorkMilestone');
+        const outcome = await store.attach(qualifiedId, otherMilestoneId);
+        expect(outcome.ok && outcome.value.milestones?.length).toBeGreaterThan(0);
+      },
+    ));
+
+  it('detach-work-milestone: a ticket no longer needs its milestone', () =>
+    given(UNMET, 'detachWorkMilestone', 'detach-work-milestone', WORK_MILESTONES).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        const { qualifiedId, milestoneId } = params(UNMET, 'detachWorkMilestone');
+        const outcome = await store.detach(qualifiedId, milestoneId);
+        expect(outcome.ok && outcome.value.milestones).toEqual([]);
+      },
+    ));
+
+  it('set-member-milestones: a membership needs two milestones', () =>
+    given(
+      MEMBER,
+      'setWorkMemberMilestones',
+      'set-member-milestones',
+      MEMBER_MILESTONES,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { qualifiedId, membershipId } = params(MEMBER, 'setWorkMemberMilestones');
+      const body = sent<{ milestoneIds: string[] }>(MEMBER, 'setWorkMemberMilestones');
+      const outcome = await store.setMemberMilestones(qualifiedId, membershipId, body.milestoneIds);
+      expect(outcome.ok && outcome.value.member?.milestones?.length).toBe(2);
+    }));
 });

@@ -13,7 +13,6 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { published } from '../../../testing/pending-golden-masters';
 import {
   DISPATCH_WORK,
   GET_CAMPAIGN_DESCRIPTION,
@@ -35,9 +34,7 @@ import { WorkStore, type DispatchMode, type WorkStatus } from './work.store';
  * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against
  * a pact mock server answering with qits-projects' golden master, binding only the fields in
  * `work.consumes.ts` that the state's recording holds (`heldBy`): the milestones an entity or a
- * membership needs (epic qits-615) are in the recordings only from the qits-projects-service
- * release that adds them, so until `@qits/projects-golden-masters` reaches it they bind nothing,
- * and the interactions grow them when it does (`QITS_GOLDEN_UPDATE=true`).
+ * membership needs (epic qits-615).
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -229,37 +226,30 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     ));
 
   // The "needs" marks (epic qits-615): a ticket needing an unmet milestone, and one whose milestone
-  // is met. Skipped until `@qits/projects-golden-masters` records the states (see
-  // `milestones.store.pact.spec.ts`).
+  // is met.
   for (const state of [
     'a ticket waiting on an unmet milestone',
     'a ticket waiting on a met milestone',
   ]) {
-    it.skipIf(!published(state, 'listProjectWork'))(
-      `show-project-work-board: the milestones of ${state}`,
-      () =>
-        given('show-project-work-board', state).executeTest(async (server) => {
-          const entries = await workOf(server.url, state);
-          expect(entries[0]?.milestones?.[0]?.displayName).toBeTruthy();
-        }),
-    );
+    it(`show-project-work-board: the milestones of ${state}`, () =>
+      given('show-project-work-board', state).executeTest(async (server) => {
+        const entries = await workOf(server.url, state);
+        expect(entries[0]?.milestones?.[0]?.displayName).toBeTruthy();
+      }));
   }
 
-  it.skipIf(!published('a campaign member waiting on a milestone', 'listWorkMembers'))(
-    'show-project-work-board: the milestones a campaign membership needs',
-    () =>
-      givenCampaign(
-        'show-project-work-board',
+  it('show-project-work-board: the milestones a campaign membership needs', () =>
+    givenCampaign(
+      'show-project-work-board',
+      'a campaign member waiting on a milestone',
+    ).executeTest(async (server) => {
+      const members = await membersOf(
+        server.url,
         'a campaign member waiting on a milestone',
-      ).executeTest(async (server) => {
-        const members = await membersOf(
-          server.url,
-          'a campaign member waiting on a milestone',
-          'qualifiedId',
-        );
-        expect(members[0]?.milestones?.[0]?.displayName).toBeTruthy();
-      }),
-  );
+        'qualifiedId',
+      );
+      expect(members[0]?.milestones?.[0]?.displayName).toBeTruthy();
+    }));
 
   // The card screenshots' states (`epic-card`, `ticket-card`, the list items, `epic-board`).
   it.each([

@@ -4,14 +4,14 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { pendingGoldenMaster, pendingParams } from '../../../../testing/pending-golden-masters';
+import { goldenMaster, projectsGoldenMasters } from '../../../../testing/golden-masters';
 import { WorkMilestones } from './work-milestones';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const UNMET = 'a ticket waiting on an unmet milestone';
-const params = pendingParams(UNMET);
+const params = projectsGoldenMasters.operation(UNMET, 'getWork').params;
 
 /**
  * A work item's milestones on its page (epic qits-615), on "a ticket waiting on an unmet
@@ -57,8 +57,8 @@ describe('WorkMilestones', () => {
   }
 
   it('lists the milestones the item needs, met or not, each linked', () => {
-    const met = pendingGoldenMaster('a ticket waiting on a met milestone', 'getWork').milestones;
-    const unmet = pendingGoldenMaster(UNMET, 'getWork').milestones;
+    const met = goldenMaster('a ticket waiting on a met milestone', 'getWork').milestones;
+    const unmet = goldenMaster(UNMET, 'getWork').milestones;
     const { element } = render([...unmet, { ...met[0], id: 'other', displayName: 'arm64' }]);
     const rows = [...element.querySelectorAll('[data-work-milestone]')];
     const parts = (row: Element) =>
@@ -73,15 +73,13 @@ describe('WorkMilestones', () => {
   });
 
   it('attaches another of the project’s milestones, picked from the list', async () => {
-    const { fixture, element, button, changed } = render(
-      pendingGoldenMaster(UNMET, 'getWork').milestones,
-    );
+    const { fixture, element, button, changed } = render(goldenMaster(UNMET, 'getWork').milestones);
     button('Add a milestone')!.click();
     fixture.detectChanges();
     await settle();
     http
       .expectOne(`/projects/api/projects/${params['projectId']}/milestones`)
-      .flush(pendingGoldenMaster(UNMET, 'listProjectMilestones'));
+      .flush(goldenMaster(UNMET, 'listProjectMilestones'));
     await answered(fixture);
     const select = element.querySelector<HTMLSelectElement>('select[aria-label="Milestone"]')!;
     // The one it needs already is not offered again.
@@ -98,16 +96,14 @@ describe('WorkMilestones', () => {
       .expectOne(
         `/projects/api/work/${params['qualifiedId']}/milestones/${params['otherMilestoneId']}`,
       )
-      .flush(pendingGoldenMaster(UNMET, 'attachWorkMilestone'));
+      .flush(goldenMaster(UNMET, 'attachWorkMilestone'));
     await answered(fixture);
     expect(changed()).toBe(1);
     expect(element.querySelector('select')).toBeNull();
   });
 
   it('detaches a milestone, and shows a refusal in the service’s words', async () => {
-    const { fixture, element, button, changed } = render(
-      pendingGoldenMaster(UNMET, 'getWork').milestones,
-    );
+    const { fixture, element, button, changed } = render(goldenMaster(UNMET, 'getWork').milestones);
     button('Detach')!.click();
     await settle();
     http
@@ -121,7 +117,7 @@ describe('WorkMilestones', () => {
     await settle();
     http
       .expectOne(`/projects/api/work/${params['qualifiedId']}/milestones/${params['milestoneId']}`)
-      .flush(pendingGoldenMaster(UNMET, 'detachWorkMilestone'));
+      .flush(goldenMaster(UNMET, 'detachWorkMilestone'));
     await answered(fixture);
     expect(changed()).toBe(1);
   });

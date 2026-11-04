@@ -8,14 +8,14 @@ import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { WorkStore } from '$core/work/work.store';
-import { pendingGoldenMaster, pendingParams } from '../../../../testing/pending-golden-masters';
+import { goldenMaster, projectsGoldenMasters } from '../../../../testing/golden-masters';
 import { MemberMilestones } from './member-milestones';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const MEMBER = 'a campaign member waiting on a milestone';
-const params = pendingParams(MEMBER);
+const params = projectsGoldenMasters.operation(MEMBER, 'listWorkMembers').params;
 
 /**
  * A campaign's member milestones (epic qits-615), on "a campaign member waiting on a milestone"'
@@ -29,7 +29,7 @@ describe('MemberMilestones', () => {
 
   beforeEach(() => {
     refresh.mockClear();
-    const members = pendingGoldenMaster(MEMBER, 'listWorkMembers').members;
+    const members = goldenMaster(MEMBER, 'listWorkMembers').members;
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -99,9 +99,7 @@ describe('MemberMilestones', () => {
     await settle();
     http
       .expectOne(`/projects/api/projects/${params['projectId']}/milestones`)
-      .flush(
-        pendingGoldenMaster('a ticket waiting on an unmet milestone', 'listProjectMilestones'),
-      );
+      .flush(goldenMaster('a ticket waiting on an unmet milestone', 'listProjectMilestones'));
     await answered(fixture);
     const boxes = [...element.querySelectorAll<HTMLInputElement>('input[type=checkbox]')];
     expect(boxes.map((b) => b.checked)).toEqual([true, false]);
@@ -115,7 +113,7 @@ describe('MemberMilestones', () => {
     expect(put.request.body).toEqual({
       milestoneIds: [params['milestoneId'], params['otherMilestoneId']],
     });
-    put.flush(pendingGoldenMaster(MEMBER, 'setWorkMemberMilestones'));
+    put.flush(goldenMaster(MEMBER, 'setWorkMemberMilestones'));
     await answered(fixture);
     expect(refresh).toHaveBeenCalledWith(params['projectId']);
     expect(element.querySelector('fieldset')).toBeNull();

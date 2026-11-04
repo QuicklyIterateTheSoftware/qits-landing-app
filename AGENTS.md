@@ -103,9 +103,7 @@ membership's (`patterns/milestones/member-milestones/`, from `WorkStore`'s membe
 `MilestoneMet`/`MilestoneUnmet` by `projectId` → the project's work (`SelectedWork.followTransitions`),
 the Milestones pages (`MilestonesStore.follow`), and the item page's own data when the event names
 one of its milestones; attach, detach, rename and create send no event, so the pages read again
-after their own writes. Until `@qits/projects-golden-masters` carries the milestone states, their
-pact interactions and screenshots are skipped (`published()`), and the plain specs read copies of
-the recordings (`src/testing/pending-golden-masters.ts`, to be deleted once the pin carries them).
+after their own writes.
 
 Prioritising work (qits-753): the trees order siblings by `priority` (highest first, unranked
 after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`). In the Backlog

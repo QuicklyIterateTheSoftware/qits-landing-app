@@ -13,9 +13,8 @@ import { MilestonePage } from './milestone.page';
  * Screenshots of a milestone's page (epic qits-615). The open project is the recorded one ("a
  * project exists"), its work "a project with no work".
  *
- * `getMilestone` is answered from qits-projects' golden master only in the tests below that are
- * skipped and say why: `@qits/projects-golden-masters` does not carry the milestone states yet
- * (see `milestones.store.pact.spec.ts`). Loading and a failed read need no recording.
+ * `getMilestone` is answered from qits-projects' golden master only in the tests below. Loading and
+ * a failed read need no recording.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -79,9 +78,7 @@ describe('MilestonePage (screenshots)', () => {
     fixture.detectChanges();
   }
 
-  // Skipped until `@qits/projects-golden-masters` carries "a ticket waiting on an unmet milestone"
-  // (committed on qits-projects-service's `epic/qits-615` branch, not released yet).
-  it.skip('shows an unmet milestone, its approval criterion with Approve, and what needs it', async () => {
+  it('shows an unmet milestone, its approval criterion with Approve, and what needs it', async () => {
     const { fixture, element, request } = await render();
     request.flush(await goldenMaster('a ticket waiting on an unmet milestone', 'getMilestone'));
     await answered(fixture);
@@ -93,8 +90,7 @@ describe('MilestonePage (screenshots)', () => {
     await expect.element(view).toMatchScreenshot('unmet');
   });
 
-  // Skipped until `@qits/projects-golden-masters` carries "a ticket waiting on a met milestone".
-  it.skip('shows a met milestone with its approval and the dates of each level', async () => {
+  it('shows a met milestone with its approval and the dates of each level', async () => {
     const { fixture, element, request } = await render();
     request.flush(await goldenMaster('a ticket waiting on a met milestone', 'getMilestone'));
     await answered(fixture);

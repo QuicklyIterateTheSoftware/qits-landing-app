@@ -14,10 +14,8 @@ import { WorkMilestonesPage } from './work-milestones.page';
  * project exists"), found by the URL's slug in the recorded project list, as on the other project
  * pages.
  *
- * `listProjectMilestones` is answered from qits-projects' golden master only in the test below that
- * is skipped and says why: `@qits/projects-golden-masters` does not carry the milestone states yet
- * (see `milestones.store.pact.spec.ts`), and the guard refuses a body the committed pact does not
- * use. Loading and a failed read need no recording.
+ * `listProjectMilestones` is answered from qits-projects' golden master only in the test below.
+ * Loading and a failed read need no recording.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -71,11 +69,7 @@ describe('WorkMilestonesPage (screenshots)', () => {
     fixture.detectChanges();
   }
 
-  // Skipped: "a ticket waiting on a met milestone" is committed on qits-projects-service's
-  // `epic/qits-615` branch but not released, so `@qits/projects-golden-masters` does not carry it
-  // and the committed pact does not use it. Unskip once the pin carries it (the pact spec's
-  // interaction for it then runs, and the pact holds it).
-  it.skip('lists a met and an unmet milestone, with their dates and what needs them', async () => {
+  it('lists a met and an unmet milestone, with their dates and what needs them', async () => {
     const { fixture, element, request } = await render();
     request.flush(
       await goldenMaster('a ticket waiting on a met milestone', 'listProjectMilestones'),

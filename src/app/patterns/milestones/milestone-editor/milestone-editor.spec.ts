@@ -6,7 +6,7 @@ import {
   newGroup,
   type GroupDraft,
 } from '$core/milestones/milestone-criteria';
-import { pendingGoldenMaster } from '../../../../testing/pending-golden-masters';
+import { goldenMaster } from '../../../../testing/golden-masters';
 import { MilestoneEditor } from './milestone-editor';
 
 @Component({
@@ -32,7 +32,7 @@ describe('MilestoneEditor', () => {
   }
 
   it('draws a recorded condition: an approval, or a work item done', () => {
-    const { milestone } = pendingGoldenMaster(
+    const { milestone } = goldenMaster(
       'a ticket waiting on an unmet milestone',
       'setMilestoneGroups',
     );

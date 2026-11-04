@@ -9,7 +9,6 @@ import { provideHeyApiClient } from '../../../../../api/projects/client/client.g
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { goldenMaster } from '../../../../../../testing/golden-masters';
-import { pendingGoldenMaster } from '../../../../../../testing/pending-golden-masters';
 import { WorkMilestonesPage } from './work-milestones.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -69,7 +68,7 @@ describe('WorkMilestonesPage', () => {
     await navigated;
     await ticked();
     const url = `/projects/api/projects/${project.id}/milestones`;
-    http.expectOne(url).flush(pendingGoldenMaster(MET, 'listProjectMilestones'));
+    http.expectOne(url).flush(goldenMaster(MET, 'listProjectMilestones'));
     await ticked();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
@@ -94,7 +93,7 @@ describe('WorkMilestonesPage', () => {
       },
       { name: 'arm64 runner', chip: 'not met', neededBy: 'Nothing needs it' },
     ]);
-    const answer = pendingGoldenMaster(MET, 'listProjectMilestones');
+    const answer = goldenMaster(MET, 'listProjectMilestones');
     expect(element.querySelector('[data-milestone] a')!.getAttribute('href')).toBe(
       `/projects/${project.slug}/work/milestones/${answer.milestones[0].id}`,
     );
@@ -127,12 +126,12 @@ describe('WorkMilestonesPage', () => {
       displayName: 'bootstrap ticket done',
       groups: [{ criteria: [{ kind: 'APPROVAL', predicate: {} }] }],
     });
-    const created = pendingGoldenMaster(UNMET, 'createMilestone');
+    const created = goldenMaster(UNMET, 'createMilestone');
     write.flush(created, { status: 201, statusText: 'Created' });
     await ticked();
     http
       .expectOne((req) => req.method === 'GET' && req.url === url)
-      .flush(pendingGoldenMaster(UNMET, 'listProjectMilestones'));
+      .flush(goldenMaster(UNMET, 'listProjectMilestones'));
     await ticked();
     expect(TestBed.inject(Router).url).toBe(
       `/projects/${project.slug}/work/milestones/${created.milestone.id}`,
@@ -184,7 +183,7 @@ describe('WorkMilestonesPage', () => {
       vi.useRealTimers();
     }
     await settle();
-    http.expectOne(url).flush(pendingGoldenMaster(MET, 'listProjectMilestones'));
+    http.expectOne(url).flush(goldenMaster(MET, 'listProjectMilestones'));
     await settle();
   });
 });

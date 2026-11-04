@@ -8,11 +8,7 @@ import { client as projectsClient } from '../../../../../../api/projects/client.
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
-import { goldenMaster } from '../../../../../../../testing/golden-masters';
-import {
-  pendingGoldenMaster,
-  pendingParams,
-} from '../../../../../../../testing/pending-golden-masters';
+import { goldenMaster, projectsGoldenMasters } from '../../../../../../../testing/golden-masters';
 import { MilestonePage } from './milestone.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -21,7 +17,10 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const UNMET = 'a ticket waiting on an unmet milestone';
 const MET = 'a ticket waiting on a met milestone';
 const MEMBER = 'a campaign member waiting on a milestone';
-const { milestoneId, criterionId } = pendingParams(UNMET);
+const { milestoneId, criterionId } = projectsGoldenMasters.operation(
+  UNMET,
+  'renameMilestone',
+).params;
 const API = `/projects/api/milestones/${milestoneId}`;
 
 /**
@@ -79,7 +78,7 @@ describe('MilestonePage', () => {
     http
       .expectOne(`/projects/api/projects/${project.id}/work`)
       .flush(goldenMaster('a project with no work', 'listProjectWork'));
-    http.expectOne(API).flush(pendingGoldenMaster(state, 'getMilestone'));
+    http.expectOne(API).flush(goldenMaster(state, 'getMilestone'));
     await ticked();
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
@@ -141,7 +140,7 @@ describe('MilestonePage', () => {
     await settle();
     const approve = http.expectOne(`${API}/criteria/${criterionId}/approve`);
     expect(approve.request.body).toEqual({ note: 'Node 7 is up.' });
-    approve.flush(pendingGoldenMaster(UNMET, 'approveMilestoneCriterion'));
+    approve.flush(goldenMaster(UNMET, 'approveMilestoneCriterion'));
     await answered();
     expect(element.textContent).toContain('Approved by dev: Node 7 is up.');
     expect(button('Approve')).toBeUndefined();
@@ -173,7 +172,7 @@ describe('MilestonePage', () => {
     const patch = http.expectOne(API);
     expect(patch.request.method).toBe('PATCH');
     expect(patch.request.body).toEqual({ displayName: 'bootstrap test node (arm64)' });
-    patch.flush(pendingGoldenMaster(UNMET, 'renameMilestone'));
+    patch.flush(goldenMaster(UNMET, 'renameMilestone'));
     await answered();
     expect(element.querySelector('form')).toBeNull();
   });
@@ -193,7 +192,7 @@ describe('MilestonePage', () => {
         { criteria: [{ kind: 'APPROVAL', predicate: {} }] },
       ],
     });
-    put.flush(pendingGoldenMaster(UNMET, 'setMilestoneGroups'));
+    put.flush(goldenMaster(UNMET, 'setMilestoneGroups'));
     await answered();
     expect(element.querySelectorAll('[data-group]')).toHaveLength(2);
   });
@@ -211,7 +210,7 @@ describe('MilestonePage', () => {
       vi.useRealTimers();
     }
     await settle();
-    http.expectOne(API).flush(pendingGoldenMaster(MET, 'getMilestone'));
+    http.expectOne(API).flush(goldenMaster(MET, 'getMilestone'));
     await settle();
   });
 });
