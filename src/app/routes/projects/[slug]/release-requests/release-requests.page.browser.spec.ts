@@ -109,4 +109,44 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
     await expect.element(view).toMatchScreenshot('error');
   });
+
+  // At 390px an item's text, read as one unbroken word (a long test name, which qits-projects can
+  // send as a branch's label or a work item's title), overflowed the page (qits-1864): the text <a>
+  // is a flex item whose min-width is auto (min-content), and `break-words` does not lower it.
+  // `wrap-anywhere` on the <a> does. No recorded answer carries a word that long, so the one
+  // recorded item's text is swapped for it directly, after the real page renders with the real
+  // golden master and the real CSS classes.
+  it('keeps a long unbroken item word on screen at 390px (qits-1864)', async () => {
+    await page.viewport(390, 844);
+    const list = await goldenMaster('a project exists', 'listProjects');
+    const project = list.entries[0].project;
+    const harness = await RouterTestingHarness.create();
+    const navigated = harness.navigateByUrl(`/projects/${project.slug}/release-requests`);
+    await settle();
+    http.expectOne('/projects/api/projects').flush(list);
+    await navigated;
+    harness.fixture.detectChanges();
+    await settle();
+    TestBed.tick();
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${project.id}/release-requests`)
+      .flush(
+        await goldenMaster(
+          'a project with release requests in every state',
+          'listProjectReleaseRequests',
+        ),
+      );
+    await answered(harness.fixture);
+    const element = harness.routeNativeElement as HTMLElement;
+    const item = element.querySelector('[data-item]')!;
+    const link = item.querySelector('a:not([data-work-item])') as HTMLAnchorElement;
+    link.textContent =
+      'qits-projects-service: AgentTunnelProxyTest.aNonceIsSingleUseAndExpiresAfterTheFirstDial';
+    const li = link.closest('li')!;
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+    expect(link.getBoundingClientRect().right).toBeLessThanOrEqual(
+      li.getBoundingClientRect().right,
+    );
+  });
 });

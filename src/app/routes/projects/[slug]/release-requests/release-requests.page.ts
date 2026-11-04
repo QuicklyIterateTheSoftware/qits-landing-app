@@ -131,9 +131,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     [routerLink]="ref(request)"
                     >{{ request.qualifiedId ?? request.repoName }}</a
                   >
-                  <span
-                    class="flex min-w-48 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5 break-words"
-                  >
+                  <span class="flex min-w-48 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5">
                     @for (item of items(request); track item.key) {
                       <span class="inline-flex min-w-0 items-baseline gap-1" data-item>
                         @if (item.qualifiedId) {
@@ -145,7 +143,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                           >
                         }
                         <a
-                          class="break-words text-gray-900 no-underline hover:underline"
+                          class="wrap-anywhere text-gray-900 no-underline hover:underline"
                           [routerLink]="ref(request)"
                           >{{ item.text }}</a
                         >
