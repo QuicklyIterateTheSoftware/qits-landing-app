@@ -17,7 +17,8 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
  * the open project's work through `SelectedWork`, as the work section's pages do, and draws the
  * one top-level node whose qualified id the URL names ({@link nodeOf}), or the whole tree. {@link openRecordedWork}
  * navigates there and answers every request with a recording: the project list from "a project
- * exists", the work (and each campaign's reads, `answerCampaignReads`) from the case's state. {@link openWorkspaces} then
+ * exists", the work (and each campaign's reads, `answerCampaignReads`) from the case's state, and
+ * the wrapper closings a VERIFIED ticket's line asks for ({@link answerWrapperClosings}). {@link openWorkspaces} then
  * loads the open workspaces, for the cards' Workspace links.
  */
 
@@ -74,7 +75,33 @@ export async function openRecordedWork(
   }
   await harness.fixture.whenStable();
   harness.fixture.detectChanges();
+  await answerWrapperClosings(http, project.id);
+  await harness.fixture.whenStable();
+  harness.fixture.detectChanges();
   return { element: harness.routeNativeElement as HTMLElement, harness };
+}
+
+/** The recorded wrapper closings: one VERIFIED ticket per verdict (qits-1873). */
+export const WRAPPER_CLOSINGS = 'a project with VERIFIED tickets in every wrapper verdict';
+
+/**
+ * Answers the wrapper closings a VERIFIED ticket's line asks for (`app-wrapper-closing`,
+ * qits-1873), when one asked, from {@link WRAPPER_CLOSINGS}. Its tickets are numbered apart from
+ * every recorded work's (no state records both), so a line of the recorded work keeps "Closes once
+ * its release lands". Whether one asked.
+ */
+export async function answerWrapperClosings(
+  http: HttpTestingController,
+  projectId: string,
+): Promise<boolean> {
+  TestBed.tick();
+  await settle();
+  const asked = http.match(`/projects/api/projects/${projectId}/wrapper-closings`);
+  if (!asked.length) return false;
+  const closings = await goldenMaster(WRAPPER_CLOSINGS, 'listWrapperClosings');
+  for (const request of asked) request.flush(closings);
+  await settle();
+  return true;
 }
 
 /**

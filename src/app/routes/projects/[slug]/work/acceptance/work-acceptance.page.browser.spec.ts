@@ -8,12 +8,17 @@ import { client as projectsClient } from '../../../../../api/projects/client.gen
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
 import { WorkAcceptancePage } from './work-acceptance.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
+import { answerWrapperClosings } from '../../../../../../testing/browser/recorded-work';
 
 /**
  * Screenshots of a project's Acceptance page, answered with qits-projects' golden masters: the
  * project list as recorded, and "a project with work in every status" (one epic and one ticket per
  * status) or "a project with no work" for its work. The finish and its Undo are the list's spec
- * (`work-list.browser.spec.ts`).
+ * (`work-list.browser.spec.ts`). A VERIFIED ticket's line asks for the project's wrapper closings
+ * (qits-1873), answered from "a project with VERIFIED tickets in every wrapper verdict"
+ * (`answerWrapperClosings`): its tickets are numbered apart from the recorded work's, and no state
+ * records both, so the ticket here keeps "Closes once its release lands". What each verdict says,
+ * and its screenshot, is the line's spec (`wrapper-closing.browser.spec.ts`).
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -58,13 +63,16 @@ describe('WorkAcceptancePage (screenshots)', () => {
       await harness.fixture.whenStable();
       harness.fixture.detectChanges();
     };
-    return { element: page.elementLocator(element), work, answered };
+    return { element: page.elementLocator(element), work, answered, projectId: project.id };
   }
 
   // qits-150: the epic carries its finish button; the ticket shows the quiet hint instead.
   it('shows the verified work, the epic with its finish button, the ticket with its hint', async () => {
-    const { element, work, answered } = await shown();
+    const { element, work, answered, projectId } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
+    await answered();
+    // qits-1873: the ticket's line asks for the closings, which do not name it.
+    expect(await answerWrapperClosings(http, projectId)).toBe(true);
     await answered();
     await expect
       .element(element.getByRole('heading', { level: 1 }))
@@ -76,6 +84,21 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Closes once its release lands');
     expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(1);
     await expect.element(element).toMatchScreenshot('acceptance');
+  });
+
+  // qits-1873: without the closings, a ticket's line stays the generic hint.
+  it('keeps the ticket’s hint when the wrapper closings fail', async () => {
+    const { element, work, answered, projectId } = await shown();
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
+    await answered();
+    TestBed.tick();
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${projectId}/wrapper-closings`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await answered();
+    await expect.element(element).toMatchTextContent('Verified ticket');
+    await expect.element(element).toMatchTextContent('Closes once its release lands');
   });
 
   it('says so when nothing waits to be accepted', async () => {

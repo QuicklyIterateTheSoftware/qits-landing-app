@@ -8,7 +8,9 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
+import { WrapperClosingsStore } from '$core/work/wrapper-closings.store';
 import { WORK_TABS } from '$core/work/work-tabs';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 
@@ -22,7 +24,9 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
  * The pages share the open project's work (`SelectedWork`, one request per project), so moving
  * between them fetches nothing. The layout keeps that work current while any of them is open.
  * It also loads the platform's open workspaces once (`WorkspacesStore`), for the cards' Workspace
- * links, and keeps them current the same way.
+ * links, and keeps them current the same way. The VERIFIED tickets' lines read the project's
+ * wrapper closings (`app-wrapper-closing`, qits-1873); the layout keeps those current too, once read
+ * (`WrapperClosingsStore.follow`).
  */
 @Component({
   selector: 'app-work-layout',
@@ -69,6 +73,8 @@ export class WorkLayout {
   constructor() {
     const destroy = inject(DestroyRef);
     this.work.followTransitions(destroy);
+    const selected = inject(SelectedProject);
+    inject(WrapperClosingsStore).follow(destroy, () => selected.project()?.id);
     // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       const workspaces = inject(WorkspacesStore);

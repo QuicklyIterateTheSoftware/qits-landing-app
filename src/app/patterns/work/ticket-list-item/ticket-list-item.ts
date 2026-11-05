@@ -10,6 +10,7 @@ import { unmetOf } from '$core/milestones/milestone-criteria';
 import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
 import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
+import { WrapperClosingLine } from '$patterns/work/wrapper-closing/wrapper-closing';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
@@ -25,7 +26,10 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  * A VERIFIED ticket carries no finish button: qits-projects-service refuses any caller's move of
  * a TICKET to DONE (qits-150) — the platform sets it itself once the workspace's wrapper release
  * request is finalized. Instead, not context and not a campaign (finishing is not that page's
- * job), it shows a quiet hint (`closesAutomatically`). An epic still finishes by hand
+ * job), it shows a quiet hint (`closesAutomatically`): how its wrapper closing stands
+ * (`app-wrapper-closing`, qits-1873: "Closes with <request>, pending", "Closes now: …", "Waits for
+ * its wrapper release request", or a warning when it cannot close by itself), "Closes once its
+ * release lands" until the project's closings are read. An epic still finishes by hand
  * (`epic-list-item`). In the Backlog and on
  * the board (qits-1861) an open ticket (not context, not DONE or DROPPED) carries the drag handle
  * ("Move <id>", `ui-drag-handle`) on the card's bottom-right corner: the card is an item
@@ -36,7 +40,17 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-ticket-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardCard, DragHandle, Leave, MilestoneNeeds, ReorderItem, Tag, WorkRef, WorkspaceLink],
+  imports: [
+    BoardCard,
+    DragHandle,
+    Leave,
+    MilestoneNeeds,
+    ReorderItem,
+    Tag,
+    WorkRef,
+    WorkspaceLink,
+    WrapperClosingLine,
+  ],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -60,9 +74,10 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
           }
           <app-milestone-needs [milestones]="n.entry.milestones" />
           @if (closesAutomatically()) {
-            <span class="text-[0.6875rem] text-charcoal-brown-500"
-              >Closes once its release lands</span
-            >
+            <app-wrapper-closing
+              class="text-[0.6875rem]"
+              [qualifiedId]="n.entry.qualifiedId ?? ''"
+            />
           }
         </div>
       }
@@ -91,7 +106,7 @@ export class TicketListItem {
   /**
    * The quiet hint shown in place of a finish button: a VERIFIED ticket (not context, not a
    * campaign) closes on its own once its workspace's wrapper release request is finalized, not on
-   * a press here.
+   * a press here. The hint is its wrapper closing's line (`app-wrapper-closing`, qits-1873).
    */
   protected readonly closesAutomatically = computed(() => {
     const n = this.node();

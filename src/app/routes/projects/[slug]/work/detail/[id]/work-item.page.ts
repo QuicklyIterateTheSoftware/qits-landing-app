@@ -25,6 +25,7 @@ import {
 } from '$core/work/work-actions';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { WorkStore, type WorkStatus } from '$core/work/work.store';
+import { WrapperClosingsStore } from '$core/work/wrapper-closings.store';
 import type { Action, ActionGroup } from '$ui/components/action-button/action';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -43,6 +44,7 @@ import { WorkInspiration } from '$patterns/ideas/work-inspiration/work-inspirati
 import { MILESTONE_EVENTS } from '$core/milestones/milestone-events';
 import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
 import { WorkMilestones } from '$patterns/milestones/work-milestones/work-milestones';
+import { WrapperClosingLine } from '$patterns/work/wrapper-closing/wrapper-closing';
 
 /** Each group's caption, shown below its buttons. */
 const GROUP_TITLES: Readonly<Record<WorkActionGroupId, string>> = {
@@ -66,7 +68,9 @@ const notBuiltYet = (): void => undefined;
  * comes from what `SelectedWork` loads; the rest from `WorkDetailStore`, by the URL's qualified id.
  * Beside its id, archetype and status, a "needs: <milestone>" mark for each milestone it needs that
  * is not met yet (`app-milestone-needs`, epic qits-615), apart from the Blocked fact and an agent's
- * wait; below the body, its milestones, attached and detached there (`app-work-milestones`), after
+ * wait; a VERIFIED ticket's line on how it will close, after them (`app-wrapper-closing`,
+ * qits-1873: the line its card shows in the lists, from the project's wrapper closings); below the
+ * body, its milestones, attached and detached there (`app-work-milestones`), after
  * which its own data and the project's work are read again.
  * Below the body, the item's inspiration (`app-work-inspiration`, epic qits-888, every archetype as
  * of qits-1792): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`),
@@ -92,6 +96,8 @@ const notBuiltYet = (): void => undefined;
  * move changes only their rows in the work, which the first refetch reads. qits-projects sends no
  * event for a comment's edit, a dossier page or figure, an edit of the item's fields (description, criteria,
  * assignee…), a block or unblock, or a campaign's members: those show on the next visit.
+ * The wrapper closings a VERIFIED ticket's line reads follow their events through
+ * `WrapperClosingsStore.follow` (qits-1873; see there).
  * `AgentPlaced`, `AgentRequeued`, `AgentObsolete`, `AgentRemoved` naming this item's `workId` →
  * the item's workspaces (`WorkspacesStore.refreshHistory`, quietly; `AgentsStore.follow`); any of
  * them → the open workspaces (`WorkspacesStore.follow`). An agent's creation is not announced: a
@@ -116,6 +122,7 @@ const notBuiltYet = (): void => undefined;
     WorkMilestones,
     MilestoneNeeds,
     WorkWorkspaces,
+    WrapperClosingLine,
   ],
   host: { class: 'block' },
   template: `
@@ -137,6 +144,9 @@ const notBuiltYet = (): void => undefined;
           >
             <span>{{ facts() }}</span>
             <app-milestone-needs [milestones]="milestones()" />
+            @if (closesAutomatically()) {
+              <app-wrapper-closing [qualifiedId]="id()" />
+            }
           </p>
           <p
             class="m-0 text-sm text-charcoal-brown-600"
@@ -252,6 +262,15 @@ export class WorkItemPage {
     () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
   );
 
+  /**
+   * Whether the item is a VERIFIED ticket, which closes on its own (qits-150): its facts then say
+   * how its wrapper closing stands (qits-1873).
+   */
+  protected readonly closesAutomatically = computed(() => {
+    const entry = this.entry();
+    return entry?.archetype === 'TICKET' && entry.status === 'VERIFIED';
+  });
+
   /** The open project's slug, for the inspiration's link to its idea. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
@@ -307,6 +326,7 @@ export class WorkItemPage {
   constructor() {
     const destroy = inject(DestroyRef);
     this.work.followTransitions(destroy);
+    inject(WrapperClosingsStore).follow(destroy, () => this.selected.project()?.id);
     // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       void this.archetypes.load();
