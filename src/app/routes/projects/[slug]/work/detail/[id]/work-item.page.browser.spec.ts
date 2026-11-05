@@ -11,7 +11,10 @@ import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { WorkItemPage } from './work-item.page';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { openRecordedWork } from '../../../../../../../testing/browser/recorded-work';
+import {
+  openRecordedWork,
+  WRAPPER_CLOSINGS,
+} from '../../../../../../../testing/browser/recorded-work';
 import type { CampaignReads } from '../../../../../../../testing/campaign-reads';
 import { shootMembers } from '../../../../../../../testing/browser/shoot-members';
 
@@ -24,7 +27,10 @@ import { shootMembers } from '../../../../../../../testing/browser/shoot-members
  * - the actions bar for several statuses: the work of "a project with work in every status" and
  *   "an epic with features and tasks", whose states record no item reads (they answer 404, and only
  *   the actions are shot), and "an implemented ticket", in full. A press answers with the move or
- *   dispatch a move state recorded ("a refined epic", "a dropped ticket", …).
+ *   dispatch a move state recorded ("a refined epic", "a dropped ticket", …);
+ * - a VERIFIED ticket's wrapper closing (qits-1873): the IN_FLIGHT ticket of "a project with
+ *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings (the
+ *   state records no thread or dossier: those answer 404).
  *
  * The workspaces come from qits-workspaces' golden masters (`answerWorkspaces`), whose ids are
  * those of the "… in detail" states: the bug ticket's history, and "a work item with no
@@ -55,7 +61,7 @@ const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing e
  * (the VERIFIED epic's is the PDF feature's, the campaign's the bug ticket's): no item there has a
  * workspace (`answerWorkspaces`).
  */
-const UNBOUND: ReadonlySet<string> = new Set([PAST_THE_BOARD]);
+const UNBOUND: ReadonlySet<string> = new Set([PAST_THE_BOARD, WRAPPER_CLOSINGS]);
 
 /**
  * Where a state's campaign reads are answered from (`openRecordedWork`): the members from
@@ -105,9 +111,11 @@ describe('WorkItemPage (screenshots)', () => {
 
   /**
    * Answers the item's own reads (`WorkDetailStore`): from `state`'s recordings when `recorded`,
-   * else with 404 (an error answer is a status only): the body then shows its children only.
+   * else with 404 (an error answer is a status only): the body then shows its children only. With
+   * `'item'`, the item from `state`'s `getWork` and its thread and dossier 404 (a state recording
+   * the item alone).
    */
-  async function answerDetail(state: string, ref: string, recorded: boolean) {
+  async function answerDetail(state: string, ref: string, recorded: boolean | 'item') {
     // A campaign's own read has the URL of the work list's read of its description, which
     // `openRecordedWork` may have answered already, with the same recording.
     const items = http.match(`/projects/api/work/${ref}`);
@@ -120,6 +128,14 @@ describe('WorkItemPage (screenshots)', () => {
     }
     const entity = await goldenMaster(state, 'getWork');
     items[0]?.flush(entity);
+    if (recorded === 'item') {
+      thread.flush(null, { status: 404, statusText: 'Not Found' });
+      await settle();
+      http
+        .match(`/projects/api/work/${ref}/dossier`)
+        .forEach((read) => read.flush(null, { status: 404, statusText: 'Not Found' }));
+      return;
+    }
     thread.flush(await goldenMaster(state, 'listWorkComments'));
     await settle();
     if (entity.archetype === 'EPIC') {
@@ -174,7 +190,7 @@ describe('WorkItemPage (screenshots)', () => {
   async function render(
     state: string,
     title: string,
-    detail = false,
+    detail: boolean | 'item' = false,
     campaigns: CampaignReads = campaignReads(state),
   ) {
     const work = await goldenMaster(state, 'listProjectWork');
@@ -469,6 +485,24 @@ describe('WorkItemPage (screenshots)', () => {
       expect(element.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(0);
       await shootParts(element, 'detail-campaign-done-verified-implementing');
     });
+  });
+
+  // qits-1873: a VERIFIED ticket's facts say how its wrapper closing stands, the request linked.
+  it('a verified ticket riding a pending wrapper request', async () => {
+    const element = await render(WRAPPER_CLOSINGS, 'Riding a pending wrapper request', 'item');
+    const line = element.getByText('Closes with', { exact: false });
+    await expect
+      .element(line)
+      .toHaveTextContent('Closes with contract-00000001-contract-00000001-rr-1, pending');
+    await expect
+      .element(line.getByRole('link', { name: 'contract-00000001-contract-00000001-rr-1' }))
+      .toHaveAttribute(
+        'href',
+        '/projects/contract-00000001/release-requests/contract-00000001-contract-00000001-rr-1',
+      );
+    await expect
+      .element(page.elementLocator(line.element().closest('p') as HTMLElement))
+      .toMatchScreenshot('detail-ticket-wrapper-closing');
   });
 
   describe('workspaces', () => {

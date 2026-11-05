@@ -234,26 +234,22 @@ describe('WorkItemPage', () => {
   // qits-1873: a VERIFIED ticket's facts say how its wrapper closing stands, the line its card shows
   // in the lists; "Closes once its release lands" until the project's closings name it.
   it('says how a verified ticket’s wrapper closing stands', async () => {
-    const { element, entity, harness } = await shown('Verified ticket');
+    // The state's IN_FLIGHT ticket, its work and closings as recorded (its thread and dossier
+    // unrecorded: `shown` answers its own reads 404).
+    const state = 'a project with VERIFIED tickets in every wrapper verdict';
+    const { element, harness } = await shown('Riding a pending wrapper request', state);
     const facts = () => element.querySelector('app-wrapper-closing span')?.textContent;
     expect(facts()).toBe('Closes once its release lands');
-    const closings = goldenMaster(
-      'a project with VERIFIED tickets in every wrapper verdict',
-      'listWrapperClosings',
-    );
-    // Derived from the recording: its IN_FLIGHT row put under this ticket's qualified id, as the two
-    // states' tickets are numbered apart (no recorded work holds the closings' tickets).
-    const inFlight = closings.closings.find((c: { verdict: string }) => c.verdict === 'IN_FLIGHT');
     const project = goldenMaster('a project exists', 'listProjects').entries[0].project;
     http
       .expectOne(`/projects/api/projects/${project.id}/wrapper-closings`)
-      .flush({ closings: [{ ...inFlight, ticket: entity.qualifiedId }] });
+      .flush(goldenMaster(state, 'listWrapperClosings'));
     await settle();
     await harness.fixture.whenStable();
     harness.fixture.detectChanges();
-    expect(facts()).toBe(`Closes with ${inFlight.requestQualifiedId}, pending`);
+    expect(facts()).toBe('Closes with contract-00000001-contract-00000001-rr-1, pending');
     expect(element.querySelector('app-wrapper-closing a')?.getAttribute('href')).toBe(
-      `/projects/${project.slug}/release-requests/${inFlight.requestQualifiedId}`,
+      `/projects/${project.slug}/release-requests/contract-00000001-contract-00000001-rr-1`,
     );
   });
 

@@ -81,13 +81,16 @@ export async function openRecordedWork(
   return { element: harness.routeNativeElement as HTMLElement, harness };
 }
 
-/** The recorded wrapper closings: one VERIFIED ticket per verdict (qits-1873). */
+/**
+ * The recorded wrapper closings: one VERIFIED ticket per verdict (qits-1873). The state also records
+ * those tickets' work (`listProjectWork`) and the IN_FLIGHT one's `getWork`.
+ */
 export const WRAPPER_CLOSINGS = 'a project with VERIFIED tickets in every wrapper verdict';
 
 /**
  * Answers the wrapper closings a VERIFIED ticket's line asks for (`app-wrapper-closing`,
- * qits-1873), when one asked, from {@link WRAPPER_CLOSINGS}. Its tickets are numbered apart from
- * every recorded work's (no state records both), so a line of the recorded work keeps "Closes once
+ * qits-1873), when one asked, from {@link WRAPPER_CLOSINGS}. In any other state's work the
+ * VERIFIED tickets are not the closings' (their numbers differ), so their lines keep "Closes once
  * its release lands". Whether one asked.
  */
 export async function answerWrapperClosings(
