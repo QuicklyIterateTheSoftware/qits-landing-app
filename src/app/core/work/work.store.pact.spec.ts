@@ -336,6 +336,18 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
+  // The Acceptance page's wrapper closings (qits-1873): the five VERIFIED tickets the state's
+  // `listWrapperClosings` names, one per verdict, and a REFINED one.
+  it('show-project-work-board: a project with VERIFIED tickets in every wrapper verdict', () => {
+    const state = 'a project with VERIFIED tickets in every wrapper verdict';
+    return given('show-project-work-board', state).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const projectId = projectOf(state);
+      await store.load(projectId);
+      expect(store.byProject()[projectId]?.status).toBe('loaded');
+    });
+  });
+
   it('show-project-work: a project with no work counts zero', () =>
     given('show-project-work', 'a project with no work').executeTest(async (server) => {
       const store = storeAt(server.url);

@@ -79,6 +79,11 @@ const OTHERS = [
   'an implemented ticket',
 ];
 const UNBLOCKABLE = ['a feature in detail', 'a task in detail'];
+/**
+ * States recording the item alone, no thread or dossier: the IN_FLIGHT ticket of the wrapper
+ * closings (qits-1873), whose page says how its closing stands.
+ */
+const ITEM_ONLY = ['a project with VERIFIED tickets in every wrapper verdict'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-detail-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -155,7 +160,7 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
     }
   });
 
-  it.each([EPIC, ...TICKETS, ...OTHERS, ...UNBLOCKABLE])(
+  it.each([EPIC, ...TICKETS, ...OTHERS, ...UNBLOCKABLE, ...ITEM_ONLY])(
     'show-work-item: the item of %s',
     (state) =>
       given(

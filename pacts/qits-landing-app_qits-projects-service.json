@@ -19501,6 +19501,275 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a project with VERIFIED tickets in every wrapper verdict",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-2"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/work",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entities": [
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "milestones": [],
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "VERIFIED",
+                "title": "Nothing asked for yet"
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "milestones": [],
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "VERIFIED",
+                "title": "Nothing asked for yet"
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "milestones": [],
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "VERIFIED",
+                "title": "Nothing asked for yet"
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "milestones": [],
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "VERIFIED",
+                "title": "Nothing asked for yet"
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "milestones": [],
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "VERIFIED",
+                "title": "Nothing asked for yet"
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "milestones": [],
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "contract-00000001-1",
+                "status": "VERIFIED",
+                "title": "Nothing asked for yet"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entities": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 6,
+                  "min": 6
+                }
+              ]
+            },
+            "$.entities[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entities[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work-board",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-work-board: listProjectWork",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a project with work in every status",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001"
@@ -38780,6 +39049,135 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a project with VERIFIED tickets in every wrapper verdict",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-2"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-2"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetype": "TICKET",
+            "assignee": null,
+            "blocked": false,
+            "dependsOn": null,
+            "description": null,
+            "id": "00000000-0000-4000-8000-000000000002",
+            "impetus": "Seeded work.",
+            "implementedAt": null,
+            "implementingAt": null,
+            "milestones": [],
+            "repositoryId": null,
+            "ticketType": "BUG"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.blocked": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.impetus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ticketType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item: getWork",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a task in detail",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
@@ -41809,7 +42207,8 @@
         {
           "name": "a project with VERIFIED tickets in every wrapper verdict",
           "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "qualifiedId": "contract-00000001-2"
           }
         }
       ],
