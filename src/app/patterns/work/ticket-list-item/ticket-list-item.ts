@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { finishControl } from '$core/work/finish-control';
 import { movable } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
 import { DragHandle } from '$ui/components/drag-handle/drag-handle';
-import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { Leave } from '$ui/components/leave/leave';
 import { ReorderItem } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
@@ -24,11 +22,13 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  * a campaign and on the board its own status (any phase; the board's columns are not drawn). A
  * top-level member that is not a ticket (a feature or task) is drawn the same way.
  *
- * A VERIFIED ticket (in Acceptance) carries the finish button ("Mark <id> done") on the card's
- * bottom-right corner: it hides the ticket at once and moves it to DONE a few seconds later, unless
- * the toast's Undo takes it back (`finishControl`); not in a campaign, where finishing is not
- * the page's job. In the Backlog and on the board (qits-1861) an open ticket (not context, not
- * DONE or DROPPED) carries the drag handle ("Move <id>", `ui-drag-handle`) on that corner instead: the card is an item
+ * A VERIFIED ticket carries no finish button: qits-projects-service refuses any caller's move of
+ * a TICKET to DONE (qits-150) — the platform sets it itself once the workspace's wrapper release
+ * request is finalized. Instead, not context and not a campaign (finishing is not that page's
+ * job), it shows a quiet hint (`closesAutomatically`). An epic still finishes by hand
+ * (`epic-list-item`). In the Backlog and on
+ * the board (qits-1861) an open ticket (not context, not DONE or DROPPED) carries the drag handle
+ * ("Move <id>", `ui-drag-handle`) on the card's bottom-right corner: the card is an item
  * (`uiReorderItem`) of the list it is drawn in, which must be a `[uiReorderList]` (disabled where
  * the order is not the page's job, qits-753). When `leaving` is set, the card shrinks away
  * (`uiLeave`), then emits `left`. `display: contents`, so the card is itself the list's item.
@@ -36,17 +36,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 @Component({
   selector: 'app-ticket-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    BoardCard,
-    DragHandle,
-    FinishButton,
-    Leave,
-    MilestoneNeeds,
-    ReorderItem,
-    Tag,
-    WorkRef,
-    WorkspaceLink,
-  ],
+  imports: [BoardCard, DragHandle, Leave, MilestoneNeeds, ReorderItem, Tag, WorkRef, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let n = node();
@@ -60,7 +50,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
-      @if (n.campaigns.length || status() || needs()) {
+      @if (n.campaigns.length || status() || needs() || closesAutomatically()) {
         <div class="mt-1 flex flex-wrap gap-1">
           @for (campaign of n.campaigns; track campaign.id) {
             <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
@@ -69,6 +59,11 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
             <ui-tag [label]="status" />
           }
           <app-milestone-needs [milestones]="n.entry.milestones" />
+          @if (closesAutomatically()) {
+            <span class="text-[0.6875rem] text-charcoal-brown-500"
+              >Closes once its release lands</span
+            >
+          }
         </div>
       }
       <app-workspace-link
@@ -76,13 +71,6 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         variant="corner"
         [workId]="n.entry.id"
         [qualifiedId]="n.entry.qualifiedId"
-      />
-      <ui-finish-button
-        card-action
-        [shown]="finishing.shown() && view() !== 'campaign'"
-        [state]="finishing.state()"
-        [label]="'Mark ' + n.entry.qualifiedId + ' done'"
-        (finish)="finishing.finish()"
       />
       <ui-drag-handle card-action [shown]="draggable()" [label]="'Move ' + n.entry.qualifiedId" />
     </ui-board-card>
@@ -97,10 +85,23 @@ export class TicketListItem {
   readonly leaving = input(false);
   readonly left = output<void>();
 
-  protected readonly finishing = finishControl(this.node);
-
   /** Whether it needs a milestone that is not met yet: its marks then show in the tag row. */
   protected readonly needs = computed(() => unmetOf(this.node().entry.milestones).length > 0);
+
+  /**
+   * The quiet hint shown in place of a finish button: a VERIFIED ticket (not context, not a
+   * campaign) closes on its own once its workspace's wrapper release request is finalized, not on
+   * a press here.
+   */
+  protected readonly closesAutomatically = computed(() => {
+    const n = this.node();
+    return (
+      this.view() !== 'campaign' &&
+      !n.context &&
+      n.entry.archetype === 'TICKET' &&
+      n.entry.status === 'VERIFIED'
+    );
+  });
 
   /**
    * Whether the drag handle shows: in the Backlog and on the board, on an open ticket of its own

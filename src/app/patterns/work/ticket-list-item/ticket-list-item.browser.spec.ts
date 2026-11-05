@@ -18,7 +18,7 @@ import { TicketListItem } from './ticket-list-item';
 
 /**
  * Screenshots of one ticket in a list, per case: in the Backlog (REPORTED), Acceptance (VERIFIED,
- * with its finish button) or the Archive (DONE and DROPPED), 40rem wide. The ticket is the node the app builds from qits-projects' golden
+ * with its quiet "closes on its own" hint, qits-150) or the Archive (DONE and DROPPED), 40rem wide. The ticket is the node the app builds from qits-projects' golden
  * masters (`recorded-work.ts`); each case names its view, its state and the ticket's qualified id.
  */
 @Component({
@@ -94,7 +94,9 @@ describe('TicketListItem (screenshots)', () => {
     await expect.element(await shown(view, state, qualifiedId, title)).toMatchScreenshot(name);
   });
 
-  it('draws the finish button on the bottom-right corner of a VERIFIED ticket', async () => {
+  // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so a ticket
+  // never carries a finish button, VERIFIED or not; the platform closes it on its own.
+  it('draws no finish button on a VERIFIED ticket, only the quiet hint', async () => {
     const locator = await shown(
       'acceptance',
       EVERY_STATUS,
@@ -102,23 +104,15 @@ describe('TicketListItem (screenshots)', () => {
       'Verified ticket',
     );
     const card = locator.element().querySelector('ui-board-card') as HTMLElement;
-    const finish = card.querySelector('button[aria-label="Mark contract-00000001-14 done"]');
-    expect(finish?.classList.contains('hidden')).toBe(false);
-    const box = card.getBoundingClientRect();
-    const button = (finish as HTMLElement).getBoundingClientRect();
-    // Centred on the corner (of the padding box: the border is 1px), nothing over it.
-    const x = button.left + button.width / 2;
-    const y = button.top + button.height / 2;
-    expect(Math.abs(x - box.right)).toBeLessThanOrEqual(1.5);
-    expect(Math.abs(y - box.bottom)).toBeLessThanOrEqual(1.5);
-    expect(finish?.contains(document.elementFromPoint(x + 8, y + 8))).toBe(true);
+    expect(card.querySelector('button[aria-label="Mark contract-00000001-14 done"]')).toBeNull();
+    await expect.element(locator).toMatchTextContent('Closes once its release lands');
   });
 
-  it('draws no finish button on a ticket that is not VERIFIED', async () => {
+  it('draws no finish button and no hint on a ticket that is not VERIFIED', async () => {
     const locator = await shown('archive', EVERY_STATUS, 'contract-00000001-16', 'Done ticket');
-    const finish = locator
-      .element()
-      .querySelector('button[aria-label="Mark contract-00000001-16 done"]');
-    expect(finish?.classList.contains('hidden')).toBe(true);
+    expect(
+      locator.element().querySelector('button[aria-label="Mark contract-00000001-16 done"]'),
+    ).toBeNull();
+    expect(locator.element().textContent).not.toContain('Closes once its release lands');
   });
 });

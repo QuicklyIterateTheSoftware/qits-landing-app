@@ -61,7 +61,8 @@ describe('WorkAcceptancePage (screenshots)', () => {
     return { element: page.elementLocator(element), work, answered };
   }
 
-  it('shows the verified work, each item with its finish button', async () => {
+  // qits-150: the epic carries its finish button; the ticket shows the quiet hint instead.
+  it('shows the verified work, the epic with its finish button, the ticket with its hint', async () => {
     const { element, work, answered } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
@@ -72,7 +73,8 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Verified ticket');
     await expect.element(element).not.toMatchTextContent('Verifying ticket');
     await expect.element(element).not.toMatchTextContent('Done ticket');
-    expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(2);
+    await expect.element(element).toMatchTextContent('Closes once its release lands');
+    expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(1);
     await expect.element(element).toMatchScreenshot('acceptance');
   });
 

@@ -35,14 +35,11 @@ class InAcceptance {
 }
 
 describe('TicketListItem', () => {
-  const finishLater = vi.fn();
-
   beforeEach(() => {
-    finishLater.mockReset();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: WorkStore, useValue: { finishing: signal({}), finishLater } },
+        { provide: WorkStore, useValue: { finishing: signal({}) } },
         {
           provide: SelectedProject,
           useValue: { project: signal({ id: 'p-1' }), slug: signal('qits') },
@@ -59,9 +56,14 @@ describe('TicketListItem', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  const button = (element: HTMLElement) =>
-    element.querySelector('button[aria-label="Mark qits-1 done"]') as HTMLButtonElement;
+  const hint = (element: HTMLElement) =>
+    [...element.querySelectorAll('span')].some(
+      (s) => s.textContent?.trim() === 'Closes once its release lands',
+    );
 
+  // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so a ticket
+  // never carries a finish button; the platform closes it on its own. Acceptance shows a quiet
+  // hint instead, not context and not a campaign (finishing, there, is not the page's job).
   it.each([
     ['TICKET', 'VERIFIED', false, true],
     ['TICKET', 'VERIFYING', false, false],
@@ -69,22 +71,18 @@ describe('TicketListItem', () => {
     ['TICKET', 'VERIFIED', true, false],
     ['TASK', 'VERIFIED', false, false],
   ] as const)(
-    'shows the finish button on a %s in %s (context: %s): %s',
-    (archetype, status, context, shown) => {
+    'shows no finish button on a %s in %s (context: %s), and the hint: %s',
+    (archetype, status, context, shownHint) => {
       const element = render(node({ archetype, status }, context));
-      // Always rendered, switched by class.
-      expect(button(element).classList.contains('hidden')).toBe(!shown);
+      expect(element.querySelector('button[aria-label="Mark qits-1 done"]')).toBeNull();
+      expect(hint(element)).toBe(shownHint);
     },
   );
 
-  it('asks for a finish with Undo in the open project on a click', () => {
-    const element = render(node({ status: 'VERIFIED' }));
-    button(element).click();
-    expect(finishLater).toHaveBeenCalledWith('p-1', expect.objectContaining({ id: 'e-1' }));
-  });
-  it('in a campaign, shows its own status and no finish button', () => {
+  it('in a campaign, shows its own status, no finish button and no hint', () => {
     const element = render(node({ status: 'VERIFIED' }), 'campaign');
-    expect(button(element).classList.contains('hidden')).toBe(true);
+    expect(element.querySelector('button[aria-label="Mark qits-1 done"]')).toBeNull();
+    expect(hint(element)).toBe(false);
     expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([
       'verified',
     ]);
@@ -99,7 +97,8 @@ describe('TicketListItem', () => {
     'on the board, a ticket in %s (context: %s) shows its status and drag handle: %s',
     (status, context, shown) => {
       const element = render(node({ status }, context), 'board');
-      expect(button(element).classList.contains('hidden')).toBe(true);
+      expect(element.querySelector('button[aria-label="Mark qits-1 done"]')).toBeNull();
+      expect(hint(element)).toBe(false);
       expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual(
         shown ? [status.toLowerCase()] : [],
       );

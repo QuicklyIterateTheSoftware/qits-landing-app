@@ -20,7 +20,8 @@ import type { WorkListView } from './work-list-view';
 
 /**
  * A list of work, drawn like the board: the Backlog (`WorkGraph.tree('backlog')`), the Acceptance
- * list (`tree('acceptance')`, VERIFIED work with its finish button), the Archive
+ * list (`tree('acceptance')`, VERIFIED work; an epic there carries its finish button, a ticket
+ * closes on its own and shows a quiet hint instead, qits-150), the Archive
  * (`tree('archive')`), or the board's own tree stacked (`tree('board')`, view `board`: In Progress
  * below `md`, where the board's columns do not fit, qits-1861; each item with its own status). Each top-level epic is an `app-epic-list-item` (a lane, with its features
  * and tasks), anything else an `app-ticket-list-item`, stacked. An empty tree says "Nothing here".

@@ -93,13 +93,13 @@ export const SET_WORK_STATUS = ['status'] as const;
 export const DISPATCH_WORK = ['dispatch.phase'] as const;
 
 /**
- * Whether an entry can be finished (moved to DONE) from the Acceptance list: a VERIFIED epic or
- * ticket.
+ * Whether an entry can be finished (moved to DONE) from the Acceptance list: a VERIFIED epic.
+ * A ticket's own DONE move is the platform's: it sets a ticket DONE itself once the workspace's
+ * wrapper release request is finalized, and qits-projects-service now refuses any caller's move
+ * of a TICKET to DONE (qits-150). The epic's manual finish stays.
  */
 export function finishable(entry: WorkEntry): boolean {
-  return (
-    entry.status === 'VERIFIED' && (entry.archetype === 'EPIC' || entry.archetype === 'TICKET')
-  );
+  return entry.status === 'VERIFIED' && entry.archetype === 'EPIC';
 }
 
 /** The move answer, cut to what the store reads. */

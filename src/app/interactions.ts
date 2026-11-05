@@ -31,10 +31,12 @@ export const INTERACTIONS = {
    * campaign's members.
    */
   'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
-  /** `epic-list-item.ts`: the finish button on a VERIFIED epic in Acceptance moves it to DONE. */
+  /**
+   * `epic-list-item.ts`: the finish button on a VERIFIED epic in Acceptance moves it to DONE. A
+   * ticket has no such button: qits-projects-service refuses any caller's move of a TICKET to
+   * DONE (qits-150), and the platform sets it itself.
+   */
   'finish-epic': 'The finish button marks a verified epic done',
-  /** `ticket-list-item.ts`: the finish button on a VERIFIED ticket in Acceptance moves it to DONE. */
-  'finish-ticket': 'The finish button marks a verified ticket done',
   /**
    * `work-item.page.ts`: the work item page reads the archetype registry, which says the moves and
    * the dispatch phases its actions offer.

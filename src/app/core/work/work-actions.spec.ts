@@ -100,8 +100,24 @@ describe('workActions', () => {
       ['DONE', {}],
       ['DROPPED', { status: ['Reopen'] }],
     ])('at %s', (status, expected) => {
-      expect(shown(archetype, status)).toEqual(expected);
+      // A ticket's VERIFIED -> DONE move is held back: qits-projects-service refuses every
+      // caller's move of a TICKET to DONE (qits-150), although the registry still lists it (the
+      // platform uses it itself). An epic's "Mark done" stays.
+      const want =
+        archetype === 'TICKET' && status === 'VERIFIED'
+          ? { ...expected, status: expected.status?.filter((label) => label !== 'Mark done') }
+          : expected;
+      expect(shown(archetype, status)).toEqual(want);
     });
+  });
+
+  // qits-150: the registry still lists a ticket's VERIFIED -> DONE move (the platform uses it
+  // itself, closing a ticket once its workspace's wrapper release request is finalized), but every
+  // other caller gets a 409, so the page never offers it. An epic's stays, both here and as its
+  // Acceptance finish button.
+  it('never offers a ticket its VERIFIED -> DONE move, but keeps an epic’s', () => {
+    expect(shown('TICKET', 'VERIFIED').status).toEqual(['Back to verifying', 'Drop']);
+    expect(shown('EPIC', 'VERIFIED').status).toEqual(['Mark done', 'Back to verifying', 'Drop']);
   });
 
   it('gives a feature or a task its moves and the plan, but nothing to dispatch', () => {

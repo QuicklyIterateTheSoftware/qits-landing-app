@@ -7,7 +7,10 @@ import { WorkList } from '$patterns/work/work-list/work-list';
 
 /**
  * The work waiting to be accepted, at `/projects/<slug>/work/acceptance`: VERIFIED epics and
- * tickets, each with its finish button (the finish waits for its Undo in a toast).
+ * tickets. An epic carries its finish button (the finish waits for its Undo in a toast); a ticket
+ * carries no such button — qits-projects-service refuses any caller's move of a TICKET to DONE
+ * (qits-150), and the platform sets it itself once the workspace's wrapper release request is
+ * finalized — and shows a quiet hint instead.
  */
 @Component({
   selector: 'app-work-acceptance-page',

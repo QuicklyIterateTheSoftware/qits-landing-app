@@ -24,6 +24,9 @@ import type { ArchetypeEntry, DispatchPhase, LegalMove } from './archetypes.cons
  *   Block (a placeholder) wherever the Agent group has something to run. A CLOSE move ("Close as
  *   done", qits-1757) shows only while every direct child is closed (`allClosed`): the service
  *   refuses it otherwise (its CHILDREN_CLOSED gate), so the page holds it back until it can pass.
+ *   A ticket's VERIFIED -> DONE move is held back unconditionally: the registry still lists it
+ *   (the platform uses it itself, closing a ticket once its wrapper release finalizes), but every
+ *   other caller gets a 409 (qits-150), so the page never offers it for a TICKET.
  * - `plan` (Edit, Reshape, Refinement room): placeholders. Edit and Reshape at REPORTED and
  *   REFINED, never for a campaign, although since qits-650 the service lets a campaign's plan
  *   change at any status that is neither DONE nor DROPPED; TODO: the registry does not say yet
@@ -76,7 +79,12 @@ export function workActions(
   const s = status ?? '';
   const phases = registry?.phases?.[s];
   const closable = allClosed(children);
-  const moves = (registry?.transitions?.[s] ?? []).filter((m) => m.kind !== 'CLOSE' || closable);
+  // The registry still lists a ticket's VERIFIED -> DONE move: the platform uses it itself, once
+  // the workspace's wrapper release request is finalized. Every other caller gets a 409 (qits-150),
+  // so the page never offers it.
+  const moves = (registry?.transitions?.[s] ?? [])
+    .filter((m) => m.kind !== 'CLOSE' || closable)
+    .filter((m) => !(archetype === 'TICKET' && m.to === 'DONE'));
   const campaign = archetype === 'CAMPAIGN';
 
   const agent: WorkAction[] = [];

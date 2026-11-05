@@ -16,7 +16,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * title linking to it, its kind, its campaigns as tags, a "needs: <milestone>" mark for each
  * milestone it needs that is not met yet (`app-milestone-needs`, epic qits-615), and a Workspace bubble in its bottom-right
  * corner while it has an ACTIVE workspace (`app-workspace-link`). A VERIFIED ticket is not on the board:
- * it waits in the Acceptance list (`ticket-list-item`), with its finish button.
+ * it waits in the Acceptance list (`ticket-list-item`), closing on its own once its workspace's
+ * wrapper release request is finalized (qits-150).
  *
  * The card is an item (`uiReorderItem`) of the board's reorder list (`app-kanban-board`,
  * qits-753), and an open ticket (not context) carries the drag handle ("Move <id>",

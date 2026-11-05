@@ -87,22 +87,26 @@ describe('WorkList (screenshots)', () => {
     await expect.element(list).toMatchScreenshot('backlog');
   });
 
-  it('Acceptance: verified work, each item with its finish button', async () => {
+  // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so only the
+  // epic carries a finish button in Acceptance; the ticket shows the quiet hint instead.
+  it('Acceptance: verified work, the epic with its finish button, the ticket with its hint', async () => {
     const { element, locator: list } = await shown('acceptance', EVERY_STATUS);
     await expect.element(list).toMatchTextContent('Verified epic');
     await expect.element(list).toMatchTextContent('Verified ticket');
     await expect.element(list).not.toMatchTextContent('Verifying ticket');
     await expect.element(list).not.toMatchTextContent('Done ticket');
     const host = element.getBoundingClientRect();
-    for (const id of ['contract-00000001-13', 'contract-00000001-14']) {
-      const button = element.querySelector(`button[aria-label="Mark ${id} done"]`) as HTMLElement;
-      const box = button.getBoundingClientRect();
-      expect(box.width).toBeGreaterThan(0);
-      expect(box.right).toBeLessThanOrEqual(host.right);
-      // Its outer part too: nothing over it, and no clipping box around it.
-      const hit = document.elementFromPoint(box.right - 3, box.top + box.height / 2);
-      expect(button.contains(hit), `${id}: ${hit?.outerHTML.slice(0, 200)}`).toBe(true);
-    }
+    const button = element.querySelector(
+      'button[aria-label="Mark contract-00000001-13 done"]',
+    ) as HTMLElement;
+    const box = button.getBoundingClientRect();
+    expect(box.width).toBeGreaterThan(0);
+    expect(box.right).toBeLessThanOrEqual(host.right);
+    // Its outer part too: nothing over it, and no clipping box around it.
+    const hit = document.elementFromPoint(box.right - 3, box.top + box.height / 2);
+    expect(button.contains(hit), hit?.outerHTML.slice(0, 200)).toBe(true);
+    expect(element.querySelector('button[aria-label="Mark contract-00000001-14 done"]')).toBeNull();
+    await expect.element(list).toMatchTextContent('Closes once its release lands');
     await expect.element(list).toMatchScreenshot('acceptance');
   });
 
@@ -223,17 +227,18 @@ describe('WorkList (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('finish-sent');
   });
 
-  it('Undo brings the ticket back and sends nothing', async () => {
+  // Only an epic finishes by hand now (qits-150), so Undo is exercised on the epic.
+  it('Undo brings the epic back and sends nothing', async () => {
     const { element, locator, harness } = await shown('acceptance', EVERY_STATUS);
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    await finish(element, harness, 'contract-00000001-14');
+    await finish(element, harness, 'contract-00000001-13');
     await userEvent.click(locator.getByRole('button', { name: 'Undo' }));
     harness.fixture.detectChanges();
     await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
     harness.fixture.detectChanges();
     await commands.parkPointer();
     http.expectNone(() => true);
-    await expect.element(locator).toMatchTextContent('Verified ticket');
+    await expect.element(locator).toMatchTextContent('Verified epic');
     await expect.element(locator).not.toMatchTextContent('finished');
     expect(order(element)).toEqual(['contract-00000001-13', 'contract-00000001-14']);
     await expect.element(locator).toMatchScreenshot('finish-undone');

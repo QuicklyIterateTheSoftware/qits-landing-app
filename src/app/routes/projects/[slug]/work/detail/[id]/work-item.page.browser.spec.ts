@@ -522,11 +522,13 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-reported-ticket');
     });
 
-    it('a verified ticket: its moves only', async () => {
+    // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so the
+    // registry's "Mark done" move is held back for a ticket; only the platform uses it.
+    it('a verified ticket: its moves only, with no Mark done', async () => {
       const element = await render(EVERY_STATUS, 'Verified ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
-        .toMatchTextContent('Status Mark done Back to verifying Drop');
+        .toMatchTextContent('Status Back to verifying Drop');
       expect(element.getByRole('group').elements()).toHaveLength(1);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-verified-ticket');
     });

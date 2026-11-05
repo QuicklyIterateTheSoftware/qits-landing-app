@@ -390,21 +390,26 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
-  it.each([
-    ['finish-epic', 'a verified epic', 'EPIC'],
-    ['finish-ticket', 'a verified ticket', 'TICKET'],
-  ] as const)('%s: the finish button moves %s to DONE', (slug, state, archetype) =>
-    givenMove(slug, state).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { id, qualifiedId, projectId } = movedIn(state, 'setWorkStatus');
-      const entry = { id, qualifiedId, archetype, status: 'VERIFIED' } as WorkEntry;
-      await store.finish(projectId, entry);
-      // No finish state left means the answer carried a status.
-      expect(store.finishing()[id]).toBeUndefined();
-    }),
+  // A ticket has no finish button: qits-projects-service refuses any caller's move of a TICKET to
+  // DONE (qits-150), and the platform sets it itself once the workspace's wrapper release request
+  // is finalized. Only the epic still finishes by hand.
+  it.each([['finish-epic', 'a verified epic', 'EPIC']] as const)(
+    '%s: the finish button moves %s to DONE',
+    (slug, state, archetype) =>
+      givenMove(slug, state).executeTest(async (server) => {
+        const store = storeAt(server.url);
+        const { id, qualifiedId, projectId } = movedIn(state, 'setWorkStatus');
+        const entry = { id, qualifiedId, archetype, status: 'VERIFIED' } as WorkEntry;
+        await store.finish(projectId, entry);
+        // No finish state left means the answer carried a status.
+        expect(store.finishing()[id]).toBeUndefined();
+      }),
   );
 
-  // One recorded move per status: each state's entity moved once, by the registry's moves.
+  // One recorded move per status: each state's entity moved once, by the registry's moves. A
+  // verified ticket is left out: its only recorded move targets DONE, and qits-projects-service
+  // refuses every caller's move of a TICKET to DONE (qits-150) — `workActions` never offers it, so
+  // there is no Status action left to exercise here.
   it.each([
     'a reported ticket',
     'a refined ticket',
@@ -412,7 +417,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     'an implementing ticket',
     'an implemented ticket',
     'a verifying ticket',
-    'a verified ticket',
     'a dropped ticket',
     'a reported epic',
     'a refined epic',
