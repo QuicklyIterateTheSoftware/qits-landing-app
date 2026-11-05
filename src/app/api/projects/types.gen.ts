@@ -460,18 +460,18 @@ export type CommitLogDto = {
 
 export type CommitSubjectCounts = {
     total?: number;
-    complying?: number;
+    merge?: number;
+    bump?: number;
+    release?: number;
+    platform?: number;
+    subject?: number;
     nonComplying?: number;
-    exempt?: number;
-    exemptMerge?: number;
-    exemptMachine?: number;
 };
 
 export type CommitSubjectsDto = {
     repositoryId?: string;
     branch?: string;
     limit?: number;
-    guardEnabled?: boolean;
     counts?: CommitSubjectCounts;
     nonComplying?: Array<NonComplyingCommit>;
     qualifiedIds?: Array<string>;
@@ -2806,6 +2806,58 @@ export type WorkspaceReferenceDto = {
     status?: string;
 };
 
+/**
+ * One VERIFIED ticket's wrapper branch, its ledger row and request, and the verdict the platform's close rules hold of it now.
+ */
+export type WrapperClosing = {
+    /**
+     * The ticket's qualified id
+     */
+    ticket?: string;
+    /**
+     * Its wrapper branch, ticket/<qualified id>
+     */
+    branch?: string;
+    /**
+     * NO_REQUEST (no wrapper, no ledger row, or a PUSHED row naming no request), IN_FLIGHT (the row names a request whose delivery has not ended), CLOSING (LIVE, or withdrawn as the empty wrapper: the platform moves the ticket to DONE) or UNPROVEN (the row ended without the ledger proving an ending: only the git host can still close it)
+     */
+    verdict?: 'NO_REQUEST' | 'IN_FLIGHT' | 'CLOSING' | 'UNPROVEN';
+    /**
+     * The wrapper ledger row's step; null when there is no row
+     */
+    step?: string | null;
+    /**
+     * The request the row names; null when none
+     */
+    requestId?: string | null;
+    /**
+     * That request's qualified id
+     */
+    requestQualifiedId?: string | null;
+    /**
+     * That request's state
+     */
+    requestState?: string | null;
+    /**
+     * That request's approval state as the release-request read derives it: NOT_REQUIRED, WAITING, APPROVED or DECLINED; null when no request
+     */
+    approval?: string | null;
+    /**
+     * The row's version (RELEASED, LIVE)
+     */
+    version?: string | null;
+};
+
+/**
+ * Every VERIFIED ticket of a project, with where its wrapper closing stands.
+ */
+export type WrapperClosings = {
+    /**
+     * One per VERIFIED ticket, ordered by ticket number
+     */
+    closings?: Array<WrapperClosing>;
+};
+
 export type WrapperView = {
     repositoryId?: string;
     branch?: string;
@@ -4726,6 +4778,35 @@ export type ListProjectWorkWorkspacesResponses = {
 };
 
 export type ListProjectWorkWorkspacesResponse = ListProjectWorkWorkspacesResponses[keyof ListProjectWorkWorkspacesResponses];
+
+export type ListWrapperClosingsData = {
+    body?: never;
+    path: {
+        project: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{project}/wrapper-closings';
+};
+
+export type ListWrapperClosingsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListWrapperClosingsResponses = {
+    /**
+     * OK
+     */
+    200: WrapperClosings;
+};
+
+export type ListWrapperClosingsResponse = ListWrapperClosingsResponses[keyof ListWrapperClosingsResponses];
 
 export type GetProjectsApiRefinementsByIdData = {
     body?: never;
@@ -6806,7 +6887,7 @@ export type TransitionWorkErrors = {
      */
     403: unknown;
     /**
-     * A status this door may not state, or a changed acceptance-criteria list from READY_FOR_DEV on
+     * A status this door may not state — a ticket's DONE among them, which the platform sets when the wrapper release request carrying its branch is finalized — or a changed acceptance-criteria list from READY_FOR_DEV on
      */
     409: unknown;
 };
@@ -8256,7 +8337,7 @@ export type SetWorkStatusErrors = {
      */
     404: unknown;
     /**
-     * A move the lifecycle does not allow, a target naming no status, an agent superseding an epic, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, or PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person
+     * A move the lifecycle does not allow, a target naming no status, an agent superseding an epic, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person, or QUALITY_CHECKS for a ticket leaving IMPLEMENTED — or a ticket's DONE, which no caller of any role may ask for: the platform sets it when the wrapper release request carrying the ticket's branch is finalized
      */
     409: unknown;
 };
