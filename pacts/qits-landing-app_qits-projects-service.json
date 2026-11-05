@@ -41794,6 +41794,183 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "listWrapperClosings"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-wrapper-closings",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-wrapper-closings: listWrapperClosings",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with VERIFIED tickets in every wrapper verdict",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/wrapper-closings",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/wrapper-closings"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "closings": [
+              {
+                "approval": null,
+                "requestQualifiedId": null,
+                "requestState": null,
+                "step": null,
+                "ticket": "contract-00000001-1",
+                "verdict": "NO_REQUEST"
+              },
+              {
+                "approval": "NOT_REQUIRED",
+                "requestQualifiedId": "contract-00000001-contract-00000001-rr-1",
+                "requestState": "PENDING",
+                "step": "JOINED",
+                "ticket": "contract-00000001-2",
+                "verdict": "IN_FLIGHT"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.closings": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.ticket": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.verdict": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.approval": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.requestQualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.requestState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.step": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.ticket": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.verdict": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "backupSyncProject"
           },
           "qits-trigger": {

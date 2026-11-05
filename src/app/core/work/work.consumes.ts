@@ -3,6 +3,7 @@ import type {
   GetWorkResponses,
   ListProjectWorkResponses,
   ListWorkMembersResponses,
+  ListWrapperClosingsResponses,
   SetWorkStatusResponses,
 } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
@@ -38,6 +39,29 @@ export const LIST_PROJECT_WORK = [
 /** One work entity, cut to what the store reads. */
 export type WorkEntry = NonNullable<
   Consumed<ListProjectWorkResponses[200], typeof LIST_PROJECT_WORK>['entities']
+>[number];
+
+/**
+ * `WrapperClosingsStore.load(projectId)`: where each VERIFIED ticket's wrapper closing stands
+ * (`listWrapperClosings`, qits-1873), one row per ticket, matched to it by its qualified id
+ * (`ticket`). A VERIFIED ticket's line says it (`app-wrapper-closing`): the verdict of the
+ * platform's close rules, the ledger step (`LIVE` tells a finalized request from the empty
+ * wrapper's withdrawal), and the request the row names, by its qualified id (the link to its page),
+ * its state and its approval (`WAITING` says "waiting on approval"). Every member is null when the
+ * row has none.
+ */
+export const LIST_WRAPPER_CLOSINGS = [
+  'closings[].ticket',
+  'closings[].verdict',
+  'closings[].step',
+  'closings[].requestQualifiedId',
+  'closings[].requestState',
+  'closings[].approval',
+] as const;
+
+/** One VERIFIED ticket's wrapper closing, cut to what the store reads. */
+export type WrapperClosing = NonNullable<
+  Consumed<ListWrapperClosingsResponses[200], typeof LIST_WRAPPER_CLOSINGS>['closings']
 >[number];
 
 /**
