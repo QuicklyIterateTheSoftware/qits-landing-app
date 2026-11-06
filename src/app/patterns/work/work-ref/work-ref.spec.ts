@@ -1,6 +1,6 @@
 import { Component, input, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import type { WorkEntry } from '$core/work/work.consumes';
@@ -72,5 +72,28 @@ describe('WorkRef', () => {
   it('shows the bare id for an item the work does not hold', () => {
     const { link } = render('qits-999');
     expect(link.textContent?.trim()).toBe('qits-999');
+  });
+
+  it('on a finger, opens the preview on a tap instead of following the tag, and links the item in it', () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentRef.setInput('qualifiedId', 'qits-622');
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+    const tag = element.querySelector('a')!;
+    const wrapper = element.querySelector<HTMLElement>('[data-popover-panel]')!;
+
+    tag.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'touch' }));
+    const tap = new MouseEvent('click', { bubbles: true, cancelable: true });
+    tag.dispatchEvent(tap);
+    fixture.detectChanges();
+    expect(tap.defaultPrevented).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(wrapper.classList).toContain('block');
+
+    const inside = wrapper.querySelector('a')!;
+    expect(inside.textContent?.trim()).toBe('qits-622');
+    expect(inside.getAttribute('href')).toBe('/projects/qits/work/detail/qits-622');
   });
 });

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { WORK_DETAIL } from '$core/work/work-tabs';
@@ -17,19 +18,23 @@ import { TagLink } from '$ui/components/tag-link/tag-link';
  * the preview costs no request. The popover is always rendered and switched by CSS, so the
  * server and the browser render the same markup.
  *
+ * On a finger or a pen (`tapToOpen`, as `@qits/ui-components`' `<qits-work-ref>` in a commit
+ * subject): a tap opens the preview without following the tag's link; a second tap, or a press
+ * outside, closes it. The id in the preview is the link to the item's page.
+ *
  * `display: contents`, so the tag is itself the item of the row it is put in (`[lane-tags]`, say).
  */
 @Component({
   selector: 'app-work-ref',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Popover, Tag, TagLink],
+  imports: [Popover, RouterLink, Tag, TagLink],
   host: { class: 'contents' },
   template: `
-    <ui-popover #popover>
+    <ui-popover #popover tapToOpen>
       <ui-tag-link [label]="label()" [link]="link()" [describedBy]="popover.panelId()" />
       <div popover-content class="flex w-72 flex-col gap-1">
         <div class="flex items-center gap-2 text-xs text-charcoal-brown-500">
-          <span class="font-mono">{{ qualifiedId() }}</span>
+          <a class="font-mono hover:underline" [routerLink]="link()">{{ qualifiedId() }}</a>
           <span [class.hidden]="!archetype()">{{ archetype() }}</span>
           <ui-tag [label]="status()" [class.hidden]="!status()" />
         </div>
