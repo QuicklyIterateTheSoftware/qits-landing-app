@@ -605,18 +605,19 @@ describe('WorkItemPage (screenshots)', () => {
     });
   });
 
-  // qits-1913: a long inline-code path in the description or a comment used to scroll the whole
-  // page sideways on a phone; `ui-markdown` now keeps it inside its column. No recorded answer
-  // carries a code path that long, so the real page renders with the real golden master first
-  // (as every other case here), and the description's and a comment's rendered markdown are then
-  // swapped directly in the DOM for one that holds it (as qits-1864 does for a long item word).
-  it('keeps a long inline-code path in the description and a comment on screen at 390px (qits-1913)', async () => {
+  // qits-1913: a long inline-code path in the description or a comment, and a workspace row's
+  // dates, used to scroll the whole page sideways on a phone; `ui-markdown` and
+  // `app-work-workspaces` now keep them inside the column. No recorded answer carries a code path
+  // that long, so the real page renders with the real golden master first (as every other case
+  // here), and the description's and a comment's rendered markdown are then swapped directly in
+  // the DOM for one that holds it (as qits-1864 does for a long item word). The bug ticket is
+  // used on purpose: it is the one item whose workspaces bind to "a project with workspaces bound
+  // to work items" (`answerWorkspaces`), so its real rows (with their "Opened …· Closed …" dates)
+  // are on screen too, and the assertion below proves every part of a real ticket page fits.
+  it('keeps a long inline-code path, and a workspace row’s dates, on screen at 390px (qits-1913)', async () => {
     await page.viewport(390, 844);
-    // Not the bug ticket: its workspaces bind to "a project with workspaces bound to work items"
-    // (`answerWorkspaces`), whose rows carry their own, unrelated overflow (pre-existing, out of
-    // this ticket's scope); every other item's workspaces answer "no workspaces yet".
-    const state = 'an improvement ticket in detail';
-    const title = 'Remember the last export format';
+    const state = 'a bug ticket in detail';
+    const title = 'Invoice totals are off by one cent';
 
     // `render()` fixes the host at 760px for the part screenshots; this case needs the real
     // phone-width layout, so it repeats `render()`'s steps without that override.
