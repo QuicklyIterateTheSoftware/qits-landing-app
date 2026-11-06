@@ -103,6 +103,16 @@ no tab, route, store or pact interaction reads them, and a CAMPAIGN row a read s
 the state that records one ("a ticket that needs another", from `@qits/projects-golden-masters`
 2026.1106.140436 on; its interactions skip themselves on an older pin) and matches it at any length.
 
+Work references in work text (qits-1898), with the same briefs and popover: `ui-markdown` takes the
+project's slug as `workProject` and puts `@qits/ui-components`' `[qitsWorkRefs]` on its rendered
+HTML, so every `<slug>-<n>` in the text (a code span's too, not a link's) becomes a reference after
+the render; without `workProject` the HTML is exactly as rendered (dossier pages, ideas). The
+detail bodies (`app-{epic,feature,task,ticket}-detail`, `SelectedProject.slug()`) pass it to the
+description and to `app-work-comments` (`project`), and the Schedule tab to each acceptance
+criterion. Plain-text work text renders through `<qits-commit-message>`: a ticket's impetus (a
+`WorkField` with `workProject`; a field without one, an id or a name, stays text) and an open
+issue's description on the Desk (`app-open-issues`, `slug`).
+
 Work references in commit subjects (qits-1897): a release request's Commits tab (`ui-commit-graph`,
 given the project's `slug` as `project`) and a pin's commits on the Changes tab
 (`app-release-changes`, `slug`) draw each subject with `@qits/ui-components`' `<qits-commit-message>`,
@@ -115,16 +125,6 @@ the ids comma-separated in one `id`, `LIST_PROJECT_WORK_BRIEFS`), provided with 
 stays in the DOM for `aria-describedby`, so a row's `textContent` holds its text: read the message
 element. `app-work-ref` behaves the same on a finger (`ui-popover`'s `tapToOpen`: the tap opens the
 preview instead of following the tag, the id in the preview is the link).
-
-Work references in work text (qits-1898), with the same briefs and popover: `ui-markdown` takes the
-project's slug as `workProject` and puts `@qits/ui-components`' `[qitsWorkRefs]` on its rendered
-HTML, so every `<slug>-<n>` in the text (a code span's too, not a link's) becomes a reference after
-the render; without `workProject` the HTML is exactly as rendered (dossier pages, ideas). The
-detail bodies (`app-{epic,feature,task,ticket}-detail`, `SelectedProject.slug()`) pass it to the
-description and to `app-work-comments` (`project`), and the Schedule tab to each acceptance
-criterion. Plain-text work text renders through `<qits-commit-message>`: a ticket's impetus (a
-`WorkField` with `workProject`; a field without one, an id or a name, stays text) and an open
-issue's description on the Desk (`app-open-issues`, `slug`).
 
 `@qits/ui-components`' FESM carries a lazy `import('mermaid')` for its unused `qits-mermaid-diagram`
 component; `angular.json`'s build `options.externalDependencies` keeps `mermaid` out of every
