@@ -171,6 +171,8 @@ export type AuditOperation = 'CREATE' | 'UPDATE' | 'DELETE';
 
 export type BackupOutcome = 'SUCCEEDED' | 'AUTH_REQUIRED' | 'UNREACHABLE' | 'FAILED';
 
+export type BackupResetKind = 'FAST_FORWARD' | 'UNRELATED_RESET';
+
 /**
  * Where one branch stands in each repository of its project.
  */
@@ -879,6 +881,8 @@ export type EntitySummary = {
     tags?: Array<WorkTag>;
     milestones?: Array<MilestoneRef>;
     unmetMilestones?: number;
+    needs?: Array<NeedRef>;
+    unmetNeeds?: number;
 };
 
 export type EntityTransition = {
@@ -1486,6 +1490,16 @@ export type MoveReleaseRequestSourceResponse = {
     to?: ReleaseRequestDto;
 };
 
+export type NeedRef = {
+    id?: string;
+    qualifiedId?: string;
+    title?: string;
+    archetype?: Archetype;
+    status?: string;
+    currentStatus?: string;
+    met?: boolean;
+};
+
 export type NewAttachment = {
     mimeType?: string;
     label: string;
@@ -1794,6 +1808,30 @@ export type RepositoryArchiveDto = {
     releaseRequestId?: string;
     qualifiedId?: string;
     detail?: string;
+};
+
+export type RepositoryBackupResetDto = {
+    repositoryId?: string;
+    kind?: BackupResetKind;
+    twinShaBefore?: string;
+    pushedSha?: string;
+    decidedBy?: string;
+    decidedAt?: Instant;
+    reason?: string;
+};
+
+/**
+ * Why the backup twin's main may be replaced.
+ */
+export type RepositoryBackupResetRequest = {
+    reason?: string;
+};
+
+/**
+ * A repository's backup twin resets, newest first.
+ */
+export type RepositoryBackupResets = {
+    resets?: Array<RepositoryBackupResetDto>;
 };
 
 export type RepositoryCoordinatesDto = {
@@ -2182,6 +2220,8 @@ export type TransitionedEntity = {
     relatedTo?: string;
     milestones?: Array<MilestoneRef>;
     unmetMilestones?: number;
+    needs?: Array<NeedRef>;
+    unmetNeeds?: number;
 };
 
 export type Uuid = string;
@@ -2262,6 +2302,43 @@ export type WorkBlockRequest = {
 };
 
 /**
+ * One work item, in brief.
+ */
+export type WorkBrief = {
+    /**
+     * The entity's UUID.
+     */
+    id: string;
+    /**
+     * <project-slug>-<number>, e.g. qits-12.
+     */
+    qualifiedId: string;
+    /**
+     * The item's archetype.
+     */
+    archetype: Archetype;
+    /**
+     * The status word as stored.
+     */
+    status: string;
+    /**
+     * The label.
+     */
+    title: string;
+    /**
+     * When the item was last written.
+     */
+    updatedAt: Instant;
+};
+
+/**
+ * The work items a caller named, each in brief, in the order the ids were first named. An id that names nothing in the project — unknown, another project's, or malformed — is left out.
+ */
+export type WorkBriefs = {
+    briefs?: Array<WorkBrief>;
+};
+
+/**
  * A new child: the child archetype's create schema (FEATURE under an epic, TASK under a feature) without archetype, parent and project, which the path decides.
  */
 export type WorkChildCreate = {
@@ -2278,9 +2355,15 @@ export type WorkChildCreate = {
      */
     repositoryId?: string;
     /**
-     * A sibling dependency, by qualified id or UUID.
+     * Retired (qits-1903): any value is a 400 — name what this waits for in needs.
+     *
+     * @deprecated
      */
     dependsOn?: string;
+    /**
+     * What the child waits for (qits-1903): each entry a work item of the same project and the status it must reach.
+     */
+    needs?: Array<WorkNeedWrite>;
 };
 
 /**
@@ -2403,7 +2486,9 @@ export type WorkCreate = {
      */
     repositoryId?: string;
     /**
-     * A feature's or task's sibling dependency, by qualified id or UUID.
+     * Retired (qits-1903): any value is a 400 — name what this waits for in needs.
+     *
+     * @deprecated
      */
     dependsOn?: string;
     /**
@@ -2415,13 +2500,17 @@ export type WorkCreate = {
      */
     inspiredBy?: string;
     /**
-     * The work's tags, on every archetype: RESERVED_FOR_HUMAN marks work an agent cannot complete — a person does it, and no agent is dispatched onto it.
+     * The work's tags, on every archetype: RESERVED_FOR_HUMAN marks work an agent cannot complete — a person does it, and no agent is dispatched onto it. CONDITION marks a condition other work waits for, not work of its own; no agent is dispatched onto it.
      */
     tags?: Array<WorkTag>;
     /**
      * An issue's one related work item of the same project, by qualified id or UUID.
      */
     relatedTo?: string;
+    /**
+     * What an epic, a ticket, a feature or a task waits for (qits-1903): each entry a work item of the same project and the status it must reach. Refused on an issue and a campaign.
+     */
+    needs?: Array<WorkNeedWrite>;
 };
 
 /**
@@ -2663,6 +2752,20 @@ export type WorkMilestoneList = {
     milestones?: Array<MilestoneRef>;
 };
 
+/**
+ * This work waits until item reaches status: met once the item is at or past it on the walk; a DROPPED need is met by DROPPED alone.
+ */
+export type WorkNeedWrite = {
+    /**
+     * The needed work item of the same project — an epic, a ticket, a feature or a task — by qualified id or UUID; never the item itself.
+     */
+    item: string;
+    /**
+     * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED.
+     */
+    status: string;
+};
+
 export type WorkOutcome = 'DUPLICATE' | 'RESOLVED_ELSEWHERE' | 'SUPERSEDED' | 'OBSOLETE' | 'INVALID' | 'WONT_DO';
 
 /**
@@ -2694,9 +2797,11 @@ export type WorkPatch = {
      */
     repositoryId?: string;
     /**
-     * A feature's or task's sibling dependency, by qualified id or UUID; null clears it.
+     * Retired (qits-1903): any value is a 400 — name what this waits for in needs.
+     *
+     * @deprecated
      */
-    dependsOn?: string | null;
+    dependsOn?: string;
     /**
      * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or READY_FOR_DEV when it was never marked implementing).
      */
@@ -2718,9 +2823,13 @@ export type WorkPatch = {
      */
     priority?: number | null;
     /**
-     * The work's tags, on every archetype, the whole set: RESERVED_FOR_HUMAN marks work an agent cannot complete — a person does it and moves its status by hand, and no agent is dispatched onto it (say why in the description). Editable at every status, outside every scope freeze; an empty array or null clears them. An unknown tag is a 400 naming the legal ones. A transition never changes them.
+     * The work's tags, on every archetype, the whole set: RESERVED_FOR_HUMAN marks work an agent cannot complete — a person does it and moves its status by hand, and no agent is dispatched onto it (say why in the description). CONDITION marks a condition other work waits for, not work of its own (say what closes it in the description); no agent is dispatched onto it. Editable at every status, outside every scope freeze; an empty array or null clears them. An unknown tag is a 400 naming the legal ones. A transition never changes them.
      */
     tags?: Array<WorkTag> | null;
+    /**
+     * What an epic, a ticket, a feature or a task waits for (qits-1903), the whole list: each entry a work item of the same project and the status it must reach. Editable at every status, outside every scope freeze; an empty array or null clears them. A transition never changes them.
+     */
+    needs?: Array<WorkNeedWrite> | null;
 };
 
 /**
@@ -2783,12 +2892,12 @@ export type WorkStatusMove = {
      */
     supersededBy?: string | null;
     /**
-     * An issue's move only, written on its thread: required and one line with OBSOLETE, optional with RESOLVED (the answer). Refused on every other archetype.
+     * An issue's move only, written on its thread: required and one line with OBSOLETE, and with RESOLVED from the desk; optional with RESOLVED from a person (the answer). Refused on every other archetype.
      */
     reason?: string | null;
 };
 
-export type WorkTag = 'RESERVED_FOR_HUMAN';
+export type WorkTag = 'RESERVED_FOR_HUMAN' | 'CONDITION';
 
 /**
  * The workspaces a dispatch stood on a work entity's branch.
@@ -4193,7 +4302,7 @@ export type GetProjectsApiProjectsByProjectIdEventsResponses = {
     /**
      * OK
      */
-    200: Array<string>;
+    200: string;
 };
 
 export type GetProjectsApiProjectsByProjectIdEventsResponse = GetProjectsApiProjectsByProjectIdEventsResponses[keyof GetProjectsApiProjectsByProjectIdEventsResponses];
@@ -4746,6 +4855,48 @@ export type ListProjectWorkResponses = {
 
 export type ListProjectWorkResponse = ListProjectWorkResponses[keyof ListProjectWorkResponses];
 
+export type ListProjectWorkBriefsData = {
+    body?: never;
+    path: {
+        project: string;
+    };
+    query?: {
+        /**
+         * A qualified id (qits-12), repeated for each item; a value may also hold several comma-separated. At most 200 distinct ids.
+         */
+        id?: Array<string>;
+    };
+    url: '/projects/api/projects/{project}/work/briefs';
+};
+
+export type ListProjectWorkBriefsErrors = {
+    /**
+     * More than 200 distinct ids
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: unknown;
+};
+
+export type ListProjectWorkBriefsResponses = {
+    /**
+     * The named work items, in brief
+     */
+    200: WorkBriefs;
+};
+
+export type ListProjectWorkBriefsResponse = ListProjectWorkBriefsResponses[keyof ListProjectWorkBriefsResponses];
+
 export type ListProjectWorkWorkspacesData = {
     body?: never;
     path: {
@@ -5122,7 +5273,7 @@ export type GetProjectsApiRefinementsByIdEventsResponses = {
     /**
      * OK
      */
-    200: Array<string>;
+    200: string;
 };
 
 export type GetProjectsApiRefinementsByIdEventsResponse = GetProjectsApiRefinementsByIdEventsResponses[keyof GetProjectsApiRefinementsByIdEventsResponses];
@@ -5606,6 +5757,84 @@ export type ArchiveRepositoryResponses = {
 };
 
 export type ArchiveRepositoryResponse = ArchiveRepositoryResponses[keyof ArchiveRepositoryResponses];
+
+export type BackupResetRepositoryData = {
+    body: RepositoryBackupResetRequest;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/backup-reset';
+};
+
+export type BackupResetRepositoryErrors = {
+    /**
+     * A missing or blank reason
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Neither a verified person nor this project's delivery desk
+     */
+    403: unknown;
+    /**
+     * No such repository
+     */
+    404: unknown;
+    /**
+     * No backup twin; the git host holds no main; the twin is ahead or diverged (nothing pushed); or the twin moved between the probe and the push
+     */
+    409: unknown;
+    /**
+     * The twin or the git host could not be read
+     */
+    500: unknown;
+};
+
+export type BackupResetRepositoryResponses = {
+    /**
+     * The twin's main is ours now
+     */
+    200: RepositoryBackupResetDto;
+};
+
+export type BackupResetRepositoryResponse = BackupResetRepositoryResponses[keyof BackupResetRepositoryResponses];
+
+export type ListRepositoryBackupResetsData = {
+    body?: never;
+    path: {
+        repoId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/backup-resets';
+};
+
+export type ListRepositoryBackupResetsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such repository
+     */
+    404: unknown;
+};
+
+export type ListRepositoryBackupResetsResponses = {
+    /**
+     * The resets
+     */
+    200: RepositoryBackupResets;
+};
+
+export type ListRepositoryBackupResetsResponse = ListRepositoryBackupResetsResponses[keyof ListRepositoryBackupResetsResponses];
 
 export type PostProjectsApiRepositoriesByRepoIdBackupSyncData = {
     body?: never;
@@ -6757,7 +6986,7 @@ export type GetProjectsApiTechnicalProcessesByIdEventsResponses = {
     /**
      * OK
      */
-    200: Array<TechnicalProcessFrame>;
+    200: TechnicalProcessFrame;
 };
 
 export type GetProjectsApiTechnicalProcessesByIdEventsResponse = GetProjectsApiTechnicalProcessesByIdEventsResponses[keyof GetProjectsApiTechnicalProcessesByIdEventsResponses];
