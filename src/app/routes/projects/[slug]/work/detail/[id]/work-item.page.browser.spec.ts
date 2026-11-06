@@ -475,11 +475,12 @@ describe('WorkItemPage (screenshots)', () => {
     it('done work: nothing', async () => {
       const element = await render(EVERY_STATUS, 'Done epic');
       await expect.element(element.getByRole('heading', { level: 1 })).toMatchTextContent('Done');
-      // No action: the thread's own buttons (Comment, Edit) are not actions.
+      // No action: the thread's own buttons (Comment, Edit) and the Needs panel's (Add a need:
+      // needs stay editable at every status) are not actions.
       const actions = element
         .getByRole('button')
         .elements()
-        .filter((button) => !button.closest('app-work-comments'));
+        .filter((button) => !button.closest('app-work-comments, app-work-needs-panel'));
       expect(actions).toHaveLength(0);
     });
 

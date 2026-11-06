@@ -70,7 +70,8 @@ const notBuiltYet = (): void => undefined;
  * line its card shows in the lists, from the project's wrapper closings); below the body, for every
  * archetype but an issue, what it needs, added and removed there (`app-work-needs-panel`, a
  * `patchWork` of the whole `needs` list), after which its own data and the project's work are read
- * again.
+ * again. The panel takes the needs of the item's own data once read, else the project's work's, so
+ * it shows even when one of the item's own reads fails (the body then shows "Failed to load").
  * Below the body, the item's inspiration (`app-work-inspiration`, epic qits-888, every archetype as
  * of qits-1792): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`),
  * after which the item's own data is read again.
@@ -175,15 +176,17 @@ const notBuiltYet = (): void => undefined;
             }
           </ui-spinner>
           @if (entry(); as entry) {
+            <!-- From the project's work until the item's own data is in, and if that fails (a
+                 dossier read refused, say): the needs do not depend on it. -->
+            @if (entry.archetype !== 'ISSUE') {
+              <app-work-needs-panel
+                class="mt-6"
+                [qualifiedId]="id()"
+                [needs]="needs()"
+                (changed)="needsChanged()"
+              />
+            }
             @if (detail()?.entity; as entity) {
-              @if (entry.archetype !== 'ISSUE') {
-                <app-work-needs-panel
-                  class="mt-6"
-                  [qualifiedId]="id()"
-                  [needs]="entity.needs ?? []"
-                  (changed)="needsChanged()"
-                />
-              }
               <app-work-inspiration
                 class="mt-6"
                 [slug]="slug()"
