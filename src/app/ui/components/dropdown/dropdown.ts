@@ -35,6 +35,11 @@ let nextDropdownId = 0;
  * menus at the right end) lines its right edge up with the button's and gives it a fixed width.
  * `start` lines its left edge up with the button's and lets it take the width of its content, but
  * never more than the window less a margin, so a panel opened near the left edge stays on screen.
+ *
+ * Below 768px either way the panel leaves the button: it is fixed to the window as a sheet under
+ * the top bar, the window's full width, from `--app-header-h` down (0 where that is unset), no
+ * taller than the rest of the window and scrolling within itself, square and without side borders.
+ * A 320px panel hung from a menu at a phone's right end would start off the screen's left edge.
  */
 @Component({
   selector: 'ui-dropdown',
@@ -61,7 +66,7 @@ let nextDropdownId = 0;
       #panel
       [id]="panelId()"
       tabindex="-1"
-      class="absolute top-full z-20 mt-1 rounded-xl border border-gray-200 bg-white shadow-lg outline-none"
+      class="absolute top-full z-20 mt-1 rounded-xl border border-gray-200 bg-white shadow-lg outline-none max-md:fixed max-md:inset-x-0 max-md:top-(--app-header-h,0px) max-md:mt-0 max-md:max-h-[calc(100dvh_-_var(--app-header-h,0px))] max-md:w-auto max-md:max-w-none max-md:overflow-y-auto max-md:rounded-none max-md:border-x-0"
       [class]="align() === 'start' ? 'left-0 w-max max-w-[calc(100vw-4rem)]' : 'right-0 w-80'"
       [class.hidden]="!open()"
       role="region"

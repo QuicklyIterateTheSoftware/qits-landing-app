@@ -7,16 +7,27 @@ import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../api/workspaces/client.gen';
+import { client as maintenanceClient } from '../../api/maintenance/client.gen';
+import { client as eventsClient } from '../../api/events/client.gen';
+import { client as systemClient } from '../../api/system/client.gen';
+import { client as ciClient } from '../../api/ci/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
+import { RECENT_EVENTS } from '$core/events/events.consumes';
+import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
+import { UPSTREAM_POOLS_URL } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Board } from '$ui/components/board/board';
 import { BoardCard } from '$ui/components/board/board-card';
 import { ShellLayout } from './shell.layout';
 import { goldenMaster } from '../../../testing/browser/golden-master';
+import { upstreamPoolsGoldenMaster } from '../../../testing/browser/upstream-pools';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
+
+/** No upstream pools below the bumps: the bumps menu's own spec draws them. */
+const NO_POOLS = upstreamPoolsGoldenMaster([]);
 
 /** A page with fixed text, so the screenshots show the layout and nothing that loads. */
 @Component({ selector: 'app-test-page', template: `<p>Page content</p>` })
@@ -52,6 +63,8 @@ class TallPage {
  * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu and
  * the sidebar's Release Requests entry) are the recorded "a project with no release requests", or
  * "a project with pending release requests" where a case says so. The event stream never connects.
+ * Each top-bar menu is also opened on a phone and on a wide screen, its reads answered with the
+ * golden masters its own browser spec uses, to show where its panel lies.
  */
 describe('ShellLayout (screenshots)', () => {
   let http: HttpTestingController;
@@ -72,6 +85,10 @@ describe('ShellLayout (screenshots)', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(workspacesClient),
+        provideHeyApiClient(maintenanceClient),
+        provideHeyApiClient(eventsClient),
+        provideHeyApiClient(systemClient),
+        provideHeyApiClient(ciClient),
         provideTestPlatformOrigins(),
         {
           provide: EVENT_SOURCE,
@@ -327,9 +344,11 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'false');
     expect(document.activeElement).toBe(ellipsis.element());
 
-    // A click outside closes it.
+    // A click outside closes it: on the page below the sheet, which covers the page's top.
     await open();
-    await userEvent.click(page.getByText('Page content'));
+    await userEvent.click(page.elementLocator(fixture.nativeElement.querySelector('main')!), {
+      position: { x: 20, y: 600 },
+    });
     fixture.detectChanges();
     await expect.element(panel).not.toBeVisible();
 
@@ -388,6 +407,149 @@ describe('ShellLayout (screenshots)', () => {
       expect(parent.scrollWidth).toBeLessThanOrEqual(parent.clientWidth);
     }
     expect(inWindow(current)).toBe(true);
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  });
+
+  /** A top-bar menu: its button, its panel's name, its screenshots' stem and its reads on opening. */
+  interface Menu {
+    readonly button: string | RegExp;
+    readonly panel: string;
+    readonly shot: string;
+    /** The recorded release requests the project opens with: what the release menu lists. */
+    readonly requests?: string;
+    /** Answers the reads its opening fires, as its own browser spec does. */
+    readonly answer: (projectId: string) => Promise<void>;
+  }
+
+  /** The "…" of a work item's trail, shown only below 768px; it reads nothing. */
+  const PATH: Menu = {
+    button: /^Show the full path/,
+    panel: 'Full path',
+    shot: 'path',
+    answer: async () => undefined,
+  };
+
+  /** The four menus at the right end: the recorded answers of their own browser specs. */
+  const MENUS: readonly Menu[] = [
+    {
+      button: 'Version bumps',
+      panel: 'Pending version bumps',
+      shot: 'bumps',
+      answer: async () => {
+        http
+          .expectOne(`/maintenance/api/bumps/pending?limit=${PENDING_BUMPS}`)
+          .flush(await goldenMaster('pending bumps', 'listPendingBumps', 'qits-maintenance'));
+        http.expectOne(UPSTREAM_POOLS_URL).flush(NO_POOLS);
+      },
+    },
+    {
+      button: 'Notifications',
+      panel: 'Recent domain events',
+      shot: 'notifications',
+      answer: async () => {
+        http
+          .expectOne(`/events/api/events?limit=${RECENT_EVENTS}`)
+          .flush(await goldenMaster('a few recent events', 'listEvents', 'qits-events'));
+      },
+    },
+    {
+      button: 'Agents',
+      panel: "The project's agents",
+      shot: 'agents',
+      // Each opening reads the agents again; the first read (`renderProject`) was refused.
+      answer: async (projectId) => {
+        http
+          .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
+          .flush(
+            await goldenMaster(
+              'a project with agents needing attention',
+              'listAgents',
+              'qits-workspaces',
+            ),
+          );
+      },
+    },
+    {
+      button: 'Release requests',
+      panel: 'Pending release requests',
+      shot: 'release',
+      requests: 'a project with pending release requests',
+      answer: async () => {
+        http
+          .expectOne('/system/api/targets')
+          .flush(
+            await goldenMaster('a connected target with leases', 'listTargets', 'qits-system'),
+          );
+        http
+          .expectOne('/ci/api/runs/active')
+          .flush(await goldenMaster('a commit with a run in flight', 'listActiveRuns', 'qits-ci'));
+      },
+    },
+  ];
+
+  /** A work item's page with `menu` opened from its button, and its reads answered. */
+  async function openMenu(menu: Menu) {
+    const rendered = await renderProject('/work/detail/qits-112', menu.requests);
+    const { fixture, project } = rendered;
+    const button = page.getByRole('button', { name: menu.button, exact: true });
+    await userEvent.click(button);
+    fixture.detectChanges();
+    await settle();
+    await menu.answer(project.id);
+    await settle();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const panel = page.getByRole('region', { name: menu.panel, exact: true });
+    await expect.element(panel).toBeVisible();
+    const header = (fixture.nativeElement as HTMLElement).querySelector('header')!;
+    return { ...rendered, button: button.element(), panel: panel.element(), header };
+  }
+
+  for (const menu of [PATH, ...MENUS]) {
+    it(`opens the ${menu.shot} menu as a sheet under the top bar on a phone`, async () => {
+      await page.viewport(390, 844);
+      const { layout, panel, header } = await openMenu(menu);
+      // Full width, right below the bar: `position: fixed` resolves against the window, since
+      // nothing above the panel (the sticky bar included) is transformed or filtered.
+      const box = panel.getBoundingClientRect();
+      expect(box.left).toBe(0);
+      expect(box.right).toBe(window.innerWidth);
+      expect(box.top).toBe(header.getBoundingClientRect().bottom);
+      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+      // No taller than the rest of the window, and scrolling within itself.
+      const style = getComputedStyle(panel);
+      expect(style.overflowY).toBe('auto');
+      expect(style.maxHeight).toBe(`${window.innerHeight - 56}px`);
+      await expect.element(layout).toMatchScreenshot(`menu-${menu.shot}-phone`);
+    });
+  }
+
+  for (const menu of MENUS) {
+    it(`hangs the ${menu.shot} menu from its button’s right edge on a wide screen`, async () => {
+      await page.viewport(1280, 800);
+      const { layout, button, panel } = await openMenu(menu);
+      const box = panel.getBoundingClientRect();
+      expect(box.left).toBeGreaterThanOrEqual(0);
+      expect(box.right).toBeLessThanOrEqual(window.innerWidth);
+      expect(box.width).toBe(320);
+      expect(box.right).toBe(button.getBoundingClientRect().right);
+      await expect.element(layout).toMatchScreenshot(`menu-${menu.shot}-desktop`);
+    });
+  }
+
+  it('shows no … on a wide screen', async () => {
+    await page.viewport(1280, 800);
+    await renderProject('/work/detail/qits-112');
+    await expect
+      .element(page.getByRole('button', { name: PATH.button, includeHidden: true }))
+      .not.toBeVisible();
+  });
+
+  it('scrolls a panel taller than a short phone’s window within itself', async () => {
+    await page.viewport(390, 300);
+    const { panel } = await openMenu(MENUS.find((menu) => menu.shot === 'agents')!);
+    expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight);
+    expect(panel.scrollHeight).toBeGreaterThan(panel.clientHeight);
     expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   });
 
