@@ -293,7 +293,10 @@ describe('EpicBoard (screenshots)', () => {
     await shoot(element, 'mixed-features');
   });
 
-  it('with workspaces: a tag in the bar, at a feature’s title, a bubble on a task', async () => {
+  // qits-1915: skipped until @qits/workspaces-golden-masters binds its workspaces to the ids of
+  // @qits/projects-golden-masters 2026.1106.202329 (qits-1908 shifted them by one); today its
+  // workIds name the wrong items, or none. Un-skip it with that bump.
+  it.skip('with workspaces: a tag in the bar, at a feature’s title, a bubble on a task', async () => {
     // qits-workspaces' "a project with workspaces bound to work items" shares the "… in detail"
     // seed: the epic, its PDF feature and the CSV task "Download button …" have an ACTIVE one.
     const { element, locator, harness } = await shown(
