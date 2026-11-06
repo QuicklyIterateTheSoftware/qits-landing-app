@@ -16,7 +16,6 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
-import type { CampaignReads } from '../../../../testing/campaign-reads';
 import { ReorderList } from '$ui/components/reorder/reorder';
 import { TicketCard } from './ticket-card';
 
@@ -50,7 +49,11 @@ class OneTicket {
 }
 
 const EVERY_STATUS = 'a project with work in every status';
-const CAMPAIGN = 'a bug ticket in detail';
+/**
+ * A READY_FOR_DEV ticket needing another ticket at VERIFIED, not met (epic qits-1899; recorded by
+ * qits-projects from 2026.1106.140436 on).
+ */
+const NEEDS = 'a ticket that needs another';
 
 /** One case: the screenshot's name, the state, the ticket's qualified id and its title. */
 type Case = readonly [name: string, state: string, qualifiedId: string, title: string];
@@ -73,13 +76,8 @@ describe('TicketCard (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  async function shown(
-    state: string,
-    qualifiedId: string,
-    title: string,
-    campaigns?: CampaignReads,
-  ) {
-    const { element } = await openRecordedWork(http, 'board', qualifiedId, state, campaigns);
+  async function shown(state: string, qualifiedId: string, title: string) {
+    const { element } = await openRecordedWork(http, 'board', qualifiedId, state);
     const locator = page.elementLocator(element);
     await expect.element(locator).toMatchTextContent(title);
     return { element, locator };
@@ -95,15 +93,12 @@ describe('TicketCard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot(name);
   });
 
-  // The card does not show the ticket type. Its campaign tag: the bug ticket of the "… in detail"
-  // seed, IMPLEMENTING and a member of its campaign.
-  it.each<Case>([['campaign', CAMPAIGN, 'contract-00000001-10', 'Invoice totals are off']])(
-    '%s',
-    async (name, state, qualifiedId, title) => {
-      const { locator } = await shown(state, qualifiedId, title);
-      await expect.element(locator).toMatchScreenshot(name);
-    },
-  );
+  // Its "needs" badge (epic qits-1899): one need not met.
+  it('needs', async () => {
+    const { locator } = await shown(NEEDS, 'contract-00000001-2', 'Render work ids in the list');
+    await expect.element(locator.getByText('needs 1')).toBeVisible();
+    await expect.element(locator).toMatchScreenshot('needs');
+  });
 
   // The open workspaces of qits-workspaces' "a project with workspaces bound to work items": the bug
   // ticket of the "… in detail" seed has an ACTIVE one. (Its improvement ticket, which has none, is
@@ -126,19 +121,20 @@ describe('TicketCard (screenshots)', () => {
     await expect.element(locator).toMatchScreenshot('workspace');
   });
 
-  it('previews its campaign on hover', async () => {
-    // The campaign's description is recorded by "a campaign in detail", over the same seed.
+  it('lists its unmet needs on hover', async () => {
     const { element, locator } = await shown(
-      CAMPAIGN,
-      'contract-00000001-10',
-      'Invoice totals are off',
-      { members: CAMPAIGN, described: ['a campaign in detail'] },
+      NEEDS,
+      'contract-00000001-2',
+      'Render work ids in the list',
     );
-    // The popover hangs below the card; the host grows so the screenshot holds it.
-    element.style.paddingBottom = '9rem';
-    const campaign = locator.getByRole('link', { name: /^Campaign: / });
-    await userEvent.hover(campaign);
-    await expect.element(locator.getByRole('tooltip')).toBeVisible();
-    await expect.element(locator).toMatchScreenshot('campaign-preview');
+    // The tooltip hangs below the card; the host grows so the screenshot holds it.
+    element.style.paddingBottom = '6rem';
+    await userEvent.hover(locator.getByText('needs 1'));
+    const tooltip = locator.getByRole('tooltip');
+    await expect.element(tooltip).toBeVisible();
+    await expect
+      .element(tooltip)
+      .toMatchTextContent('contract-00000001-1 at VERIFIED (now REFINED)');
+    await expect.element(locator).toMatchScreenshot('needs-tooltip');
   });
 });

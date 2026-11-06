@@ -14,16 +14,15 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
-import type { CampaignReads } from '../../../../testing/campaign-reads';
 import { EpicBoard } from './epic-board';
 
 /**
  * Screenshots of one epic with its own board, per case, 48rem wide. The epic is the node the app
  * builds from qits-projects' golden masters (`recorded-work.ts`): the whole epic
- * (`WorkGraph.nodeOf`), as the epic's page and a campaign draw it. Each case names its state and the
- * epic's qualified id in the recorded answer. Only READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED and
- * VERIFYING epics get a board; this covers each of them in every recorded state that has one. (A
- * REFINED epic waits on the Schedule tab, so the campaigns' REFINED epics have none.)
+ * (`WorkGraph.nodeOf`), as the epic's page draws it. Each case names its state and the epic's
+ * qualified id in the recorded answer. Only READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED and VERIFYING
+ * epics get a board; this covers each of them in every recorded state that has one. (A REFINED
+ * epic waits on the Schedule tab.)
  */
 @Component({
   imports: [EpicBoard],
@@ -56,8 +55,6 @@ const ALL_VERIFIED = 'an epic with a feature whose tasks are all verified';
 const VERIFIED_FEATURE = 'an epic with a verified feature whose tasks are all verified';
 /** Four features: VERIFIED, IMPLEMENTED (its task VERIFIED), REFINED, IMPLEMENTING (two tasks). */
 const MIXED = 'an implementing epic with features in mixed statuses';
-/** MIXED's epic as a campaign member, beside a DONE and a VERIFIED epic that have no board. */
-const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
 /** Two features, the PDF one implementing; workspaces bound to some of its items. */
 const IN_DETAIL = 'an epic in detail';
 
@@ -82,19 +79,8 @@ describe('EpicBoard (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  async function shown(
-    state: string,
-    qualifiedId: string,
-    title: string,
-    campaigns?: CampaignReads,
-  ) {
-    const { element, harness } = await openRecordedWork(
-      http,
-      'board',
-      qualifiedId,
-      state,
-      campaigns,
-    );
+  async function shown(state: string, qualifiedId: string, title: string) {
+    const { element, harness } = await openRecordedWork(http, 'board', qualifiedId, state);
     const locator = page.elementLocator(element);
     await expect.element(locator).toMatchTextContent(title);
     return { element, locator, harness };
@@ -307,31 +293,6 @@ describe('EpicBoard (screenshots)', () => {
     await shoot(element, 'mixed-features');
   });
 
-  it('in a campaign past the board: features in mixed statuses, its tag in the bar', async () => {
-    // The state records its campaign's own reads: its members and its description.
-    const { element, locator } = await shown(
-      PAST_THE_BOARD,
-      'contract-00000001-12',
-      'Epic with mixed features',
-      { members: PAST_THE_BOARD, described: [PAST_THE_BOARD] },
-    );
-    await expect.element(locator).toMatchTextContent('Campaign in flight');
-    expect(columnsOf(element)).toEqual({
-      'Verified task': 'Verified',
-      'Verified task of an implemented feature': 'Verified',
-      'Implementing task': 'Implementing',
-      'Verifying task': 'Verifying',
-    });
-    expect(headings(element)).toEqual([
-      'Ready for Dev 0',
-      'Implementing 1',
-      'Implemented 0',
-      'Verifying 1',
-      'Verified 2',
-    ]);
-    await shoot(element, 'campaign-mixed-features');
-  });
-
   it('with workspaces: a tag in the bar, at a feature’s title, a bubble on a task', async () => {
     // qits-workspaces' "a project with workspaces bound to work items" shares the "… in detail"
     // seed: the epic, its PDF feature and the CSV task "Download button …" have an ACTIVE one.
@@ -339,8 +300,6 @@ describe('EpicBoard (screenshots)', () => {
       IN_DETAIL,
       'contract-00000001-2',
       'Export invoices for the accountants',
-      // The campaign's description is recorded by "a campaign in detail", over the same seed.
-      { members: IN_DETAIL, described: ['a campaign in detail'] },
     );
     await openWorkspaces(http, harness);
     const shownLinks = [...element.querySelectorAll('app-workspace-link:not(.hidden) a')].map((a) =>

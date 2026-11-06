@@ -35,7 +35,7 @@ import { EpicListItem } from './epic-list-item';
 class OneEpic {
   readonly view = inject(ActivatedRoute).snapshot.paramMap.get('view') as Exclude<
     WorkListView,
-    'campaign'
+    'mixed'
   >;
   private readonly work = inject(SelectedWork);
   private readonly qualifiedId = routedQualifiedId();

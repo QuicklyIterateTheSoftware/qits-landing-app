@@ -35,7 +35,7 @@ import { TicketListItem } from './ticket-list-item';
 class OneTicket {
   readonly view = inject(ActivatedRoute).snapshot.paramMap.get('view') as Exclude<
     WorkListView,
-    'campaign'
+    'mixed'
   >;
   private readonly work = inject(SelectedWork);
   private readonly qualifiedId = routedQualifiedId();
@@ -43,7 +43,8 @@ class OneTicket {
 }
 
 const EVERY_STATUS = 'a project with work in every status';
-const CAMPAIGN = 'a campaign with work in every phase';
+/** A REFINED ticket that needs another, beside the ticket it needs (epic qits-1899). */
+const NEEDS = 'a ticket that needs another';
 
 /** One case: the screenshot's name, the view, the state, the ticket's qualified id and title. */
 type Case = readonly [
@@ -87,11 +88,17 @@ describe('TicketListItem (screenshots)', () => {
     await expect.element(await shown(view, state, qualifiedId, title)).toMatchScreenshot(name);
   });
 
-  it.each<Case>([
-    ['reported-campaign', 'backlog', CAMPAIGN, 'contract-00000001-4', 'Reported ticket'],
-    ['done-campaign', 'archive', CAMPAIGN, 'contract-00000001-5', 'Done ticket'],
-  ])('%s', async (name, view, state, qualifiedId, title) => {
-    await expect.element(await shown(view, state, qualifiedId, title)).toMatchScreenshot(name);
+  // Its "needs" badge (epic qits-1899): the READY_FOR_DEV ticket on the board stacked, its own
+  // status beside it.
+  it('needs', async () => {
+    const locator = await shown(
+      'board',
+      NEEDS,
+      'contract-00000001-2',
+      'Render work ids in the list',
+    );
+    await expect.element(locator.getByText('needs 1')).toBeVisible();
+    await expect.element(locator).toMatchScreenshot('needs');
   });
 
   // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so a ticket

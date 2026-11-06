@@ -16,7 +16,6 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
-import type { CampaignReads } from '../../../../testing/campaign-reads';
 import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicCard } from './epic-card';
 
@@ -56,12 +55,6 @@ const NESTED = 'an epic with features and tasks';
 const EVERY_TASK_STATUS = 'an epic with tasks in every status';
 /** Two features: one whose three tasks are all VERIFIED (no cards left), one with open tasks. */
 const ALL_VERIFIED = 'an epic with a feature whose tasks are all verified';
-/**
- * A campaign whose IMPLEMENTING epic is on the board. (Its REFINED members wait on the Schedule
- * tab; "an epic in two campaigns" holds a REFINED epic, so no recorded state has an epic in two
- * campaigns on the board.)
- */
-const CAMPAIGN = 'a campaign with a done, a verified and an implementing epic';
 
 /** One case: the screenshot's name, the state, the epic's qualified id and its title. */
 type Case = readonly [name: string, state: string, qualifiedId: string, title: string];
@@ -84,19 +77,8 @@ describe('EpicCard (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  async function shown(
-    state: string,
-    qualifiedId: string,
-    title: string,
-    campaigns?: CampaignReads,
-  ) {
-    const { element, harness } = await openRecordedWork(
-      http,
-      'board',
-      qualifiedId,
-      state,
-      campaigns,
-    );
+  async function shown(state: string, qualifiedId: string, title: string) {
+    const { element, harness } = await openRecordedWork(http, 'board', qualifiedId, state);
     const locator = page.elementLocator(element);
     await expect.element(locator).toMatchTextContent(title);
     return { element, locator, harness };
@@ -230,23 +212,6 @@ describe('EpicCard (screenshots)', () => {
     expect(id.top).toBeGreaterThan(row.top);
     expect(id.bottom).toBeLessThanOrEqual(tile.getBoundingClientRect().top);
     await expect.element(locator).toMatchScreenshot('feature-all-verified');
-  });
-
-  it('in a campaign', async () => {
-    // The state records its campaign's own reads: its members and its description.
-    const { element, locator } = await shown(
-      CAMPAIGN,
-      'contract-00000001-12',
-      'Epic with mixed features',
-      { members: CAMPAIGN, described: [CAMPAIGN] },
-    );
-    await expect.element(locator).toMatchTextContent('Campaign in flight');
-    // The lane grows to its whole id, up the left strip.
-    const lane = element.querySelector('ui-board-lane')!.getBoundingClientRect();
-    const id = element.querySelector('[lane-gutter]')!.getBoundingClientRect();
-    expect(id.top).toBeGreaterThan(lane.top);
-    expect(id.bottom).toBeLessThan(lane.bottom);
-    await expect.element(locator).toMatchScreenshot('campaign');
   });
 
   it('with workspaces: a tag in the lane, at a feature’s title, a bubble on a task', async () => {

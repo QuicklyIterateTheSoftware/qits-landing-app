@@ -40,7 +40,7 @@ import type { WorkListView } from './work-list-view';
 class WholeList {
   readonly view = inject(ActivatedRoute).snapshot.paramMap.get('view') as Exclude<
     WorkListView,
-    'campaign'
+    'mixed'
   >;
   private readonly work = inject(SelectedWork);
   readonly tree = computed(() => this.work.graph().tree(this.view));

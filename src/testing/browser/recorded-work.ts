@@ -3,7 +3,6 @@ import type { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { answerCampaignReads, campaignsIn, type CampaignReads } from '../campaign-reads';
 import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
@@ -17,7 +16,7 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
  * the open project's work through `SelectedWork`, as the work section's pages do, and draws the
  * one top-level node whose qualified id the URL names ({@link nodeOf}), or the whole tree. {@link openRecordedWork}
  * navigates there and answers every request with a recording: the project list from "a project
- * exists", the work (and each campaign's reads, `answerCampaignReads`) from the case's state, and
+ * exists", the work from the case's state, and
  * the wrapper closings a VERIFIED ticket's line asks for ({@link answerWrapperClosings}). {@link openWorkspaces} then
  * loads the open workspaces, for the cards' Workspace links.
  */
@@ -40,16 +39,13 @@ export function routedQualifiedId(): string | null {
 
 /**
  * Opens `/projects/<recorded slug>/<view>/<qualifiedId>` and answers the project list, then the
- * project's work from `state`, then each campaign's members and description as `campaigns` says
- * (by default: the members from `state`, and no description, `answerCampaignReads`). Returns the
- * host's element, its width fixed by the host.
+ * project's work from `state`. Returns the host's element, its width fixed by the host.
  */
 export async function openRecordedWork(
   http: HttpTestingController,
   view: string,
   qualifiedId: string,
   state: string,
-  campaigns: CampaignReads = { members: state },
 ): Promise<{ element: HTMLElement; harness: RouterTestingHarness }> {
   const list = await goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
@@ -67,12 +63,6 @@ export async function openRecordedWork(
   http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
   await settle();
   await settle();
-  // The store then reads each campaign in the tree.
-  const ids = campaignsIn(work);
-  if (ids.length) {
-    await answerCampaignReads(http, goldenMaster, ids, campaigns);
-    await settle();
-  }
   await harness.fixture.whenStable();
   harness.fixture.detectChanges();
   await answerWrapperClosings(http, project.id);

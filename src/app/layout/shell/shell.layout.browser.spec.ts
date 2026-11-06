@@ -63,7 +63,6 @@ describe('ShellLayout (screenshots)', () => {
           { path: '', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
           { path: 'projects/:slug/work/acceptance', component: TestPage },
-          { path: 'projects/:slug/work/campaigns', component: TestPage },
           { path: 'projects/:slug/work/refinement', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
@@ -178,7 +177,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'true');
-    for (const label of ['Campaigns', 'Refinement', 'In Progress', 'Archive']) {
+    for (const label of ['Refinement', 'In Progress', 'Archive']) {
       await expect.element(navigation.getByRole('link', { name: label })).toBeVisible();
     }
     await expect
@@ -190,28 +189,30 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('work-tab');
   });
 
-  it('lists Campaigns first below Work and marks it when open', async () => {
-    await renderProject('/work/campaigns');
+  it('lists Refinement first below Work, no Campaigns or Milestones, and marks it when open', async () => {
+    await renderProject('/work/refinement');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
       .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'true');
-    const campaigns = navigation.getByRole('link', { name: 'Campaigns' });
-    await expect.element(campaigns).toBeVisible();
-    await expect.element(campaigns).toHaveAttribute('aria-current', 'page');
-    // First of the work section's pages, right below Work.
+    const refinement = navigation.getByRole('link', { name: 'Refinement' });
+    await expect.element(refinement).toBeVisible();
+    await expect.element(refinement).toHaveAttribute('aria-current', 'page');
+    // First of the work section's pages, right below Work (epic qits-1899: no Campaigns).
     const labels = navigation
       .getByRole('link')
       .elements()
       .map((a) => a.textContent?.trim());
     expect(labels.slice(labels.indexOf('Work'), labels.indexOf('Work') + 3)).toEqual([
       'Work',
-      'Campaigns',
       'Refinement',
+      'Schedule',
     ]);
+    expect(labels).not.toContain('Campaigns');
+    expect(labels).not.toContain('Milestones');
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toMatchTextContent('Campaigns');
+      .toMatchTextContent('Refinement');
   });
 
   it('shows the newest release request below Release Requests, between Work and Repositories', async () => {

@@ -15,8 +15,6 @@ import {
   openRecordedWork,
   WRAPPER_CLOSINGS,
 } from '../../../../../../../testing/browser/recorded-work';
-import type { CampaignReads } from '../../../../../../../testing/campaign-reads';
-import { shootMembers } from '../../../../../../../testing/browser/shoot-members';
 
 /**
  * Screenshots of one work item's page and its actions, answered with qits-projects' golden masters
@@ -30,7 +28,9 @@ import { shootMembers } from '../../../../../../../testing/browser/shoot-members
  *   dispatch a move state recorded ("a refined epic", "a dropped ticket", …);
  * - a VERIFIED ticket's wrapper closing (qits-1873): the IN_FLIGHT ticket of "a project with
  *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings (the
- *   state records no thread or dossier: those answer 404).
+ *   state records no thread or dossier: those answer 404);
+ * - what an item needs (epic qits-1899): the READY_FOR_DEV ticket of "a ticket that needs another",
+ *   its "needs" badge and its Needs panel, from its work and its `getWork` (no thread or dossier).
  *
  * The workspaces come from qits-workspaces' golden masters (`answerWorkspaces`), whose ids are
  * those of the "… in detail" states: the bug ticket's history, and "a work item with no
@@ -46,32 +46,15 @@ const PROJECTS = 'https://projects.test';
 const EVERY_STATUS = 'a project with work in every status';
 const IMPLEMENTED = 'an implemented ticket';
 /**
- * The detail states share one seed and its frozen ids; those that record no campaign read answer
- * it from this one. It is also the one of them that records the campaign's `getWork` (its
- * description).
+ * A READY_FOR_DEV ticket needing another ticket at VERIFIED, not met (epic qits-1899; recorded by
+ * qits-projects from 2026.1106.140436 on).
  */
-const CAMPAIGN = 'a campaign in detail';
+const NEEDS = 'a ticket that needs another';
 /**
- * A campaign whose members are a DONE ticket, a DONE epic, a VERIFIED epic, an IMPLEMENTING epic
- * and a REFINED ticket, with the campaign's own reads.
+ * States over a seed of their own, whose frozen ids may also be ids qits-workspaces' bound state
+ * names: no item there has a workspace (`answerWorkspaces`).
  */
-const PAST_THE_BOARD = 'a campaign with a done, a verified and an implementing epic';
-/**
- * States over a seed of their own, whose frozen ids are also ids qits-workspaces' bound state names
- * (the VERIFIED epic's is the PDF feature's, the campaign's the bug ticket's): no item there has a
- * workspace (`answerWorkspaces`).
- */
-const UNBOUND: ReadonlySet<string> = new Set([PAST_THE_BOARD, WRAPPER_CLOSINGS]);
-
-/**
- * Where a state's campaign reads are answered from (`openRecordedWork`): the members from
- * `members` (by default the state's own), the description from the state of that seed that records
- * the campaign's `getWork`.
- */
-const campaignReads = (state: string, members = state): CampaignReads => ({
-  members,
-  described: [state === PAST_THE_BOARD ? PAST_THE_BOARD : CAMPAIGN],
-});
+const UNBOUND: ReadonlySet<string> = new Set([WRAPPER_CLOSINGS, NEEDS]);
 /** qits-workspaces' states. */
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
@@ -116,8 +99,6 @@ describe('WorkItemPage (screenshots)', () => {
    * the item alone).
    */
   async function answerDetail(state: string, ref: string, recorded: boolean | 'item') {
-    // A campaign's own read has the URL of the work list's read of its description, which
-    // `openRecordedWork` may have answered already, with the same recording.
     const items = http.match(`/projects/api/work/${ref}`);
     expect(items.length).toBeLessThanOrEqual(1);
     const thread = http.expectOne(`/projects/api/work/${ref}/comments`);
@@ -184,15 +165,10 @@ describe('WorkItemPage (screenshots)', () => {
 
   /**
    * The page of the entity titled `title` in `state`'s recorded work, every request answered from
-   * a recording (`openRecordedWork`: a campaign's reads too, as `campaigns` says), the item's own
-   * reads from `state` when `detail` (`answerDetail`).
+   * a recording (`openRecordedWork`), the item's own reads from `state` when `detail`
+   * (`answerDetail`).
    */
-  async function render(
-    state: string,
-    title: string,
-    detail: boolean | 'item' = false,
-    campaigns: CampaignReads = campaignReads(state),
-  ) {
+  async function render(state: string, title: string, detail: boolean | 'item' = false) {
     const work = await goldenMaster(state, 'listProjectWork');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const { element, harness } = await openRecordedWork(
@@ -200,7 +176,6 @@ describe('WorkItemPage (screenshots)', () => {
       'work/detail',
       entity.qualifiedId,
       state,
-      campaigns,
     );
     // The page's actions come from the archetype registry.
     http
@@ -218,12 +193,11 @@ describe('WorkItemPage (screenshots)', () => {
 
   /**
    * Screenshots of a page's body, one per part, each named `<name>-<part>`: its facts, its
-   * description, then each region it has (Features, Tasks, Members, Dossier, Comments). A whole
-   * page is taller than the viewport, and a taller viewport is scaled down to fit the test window,
-   * so each part is shot on its own; a part taller than the viewport is shot child by child
-   * (`<name>-<part>-<n>`). A campaign's Members are shot member by member (`shootMembers`:
-   * `<name>-members-<n>`), whatever their height: a list item's host has no box of its own. The
-   * actions bar is unpinned first: pinned, it would cover each part the page scrolls to.
+   * description, then each region it has (Features, Tasks, Dossier, Comments). A whole page is
+   * taller than the viewport, and a taller viewport is scaled down to fit the test window, so each
+   * part is shot on its own; a part taller than the viewport is shot child by child
+   * (`<name>-<part>-<n>`). The actions bar is unpinned first: pinned, it would cover each part the
+   * page scrolls to.
    */
   async function shootParts(element: Locator, name: string) {
     const root = element.element();
@@ -231,18 +205,12 @@ describe('WorkItemPage (screenshots)', () => {
     const parts: [string, Element | null][] = [
       ['facts', root.querySelector('app-work-fields:not(.hidden)')],
       ['description', root.querySelector('ui-markdown')],
-      ...['Features', 'Tasks', 'Members', 'Dossier', 'Comments'].map(
-        (region): [string, Element | null] => [
-          region.toLowerCase(),
-          root.querySelector(`section[aria-label=${region}]`),
-        ],
-      ),
+      ...['Features', 'Tasks', 'Dossier', 'Comments'].map((region): [string, Element | null] => [
+        region.toLowerCase(),
+        root.querySelector(`section[aria-label=${region}]`),
+      ]),
     ];
-    for (const [part, found] of parts) {
-      const list = part === 'members' ? found?.querySelector('app-work-list') : null;
-      if (list) await shootMembers(list, `${name}-members`);
-      else await shoot(found, `${name}-${part}`);
-    }
+    for (const [part, found] of parts) await shoot(found, `${name}-${part}`);
   }
 
   /** Shoots `part`, or each of its children when it is taller than the viewport. */
@@ -353,16 +321,10 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(features).toMatchScreenshot('detail-verified-epic-features');
     });
 
-    it('a feature: its dependency, description, tasks, comments', async () => {
-      const element = await render(
-        'a feature in detail',
-        'PDF export',
-        true,
-        campaignReads('a feature in detail', CAMPAIGN),
-      );
-      await expect
-        .element(element.getByRole('link', { name: 'contract-00000001-3 · CSV export' }))
-        .toBeVisible();
+    it('a feature: description, tasks, comments', async () => {
+      const element = await render('a feature in detail', 'PDF export', true);
+      // No "Depends on" any more (epic qits-1899): what it needs is the Needs panel.
+      await expect.element(element).not.toMatchTextContent('Depends on');
       await expect
         .element(element.getByRole('region', { name: 'Tasks' }))
         .toMatchTextContent('Render one invoice as PDF');
@@ -373,19 +335,10 @@ describe('WorkItemPage (screenshots)', () => {
       await shootParts(element, 'detail-feature');
     });
 
-    it('a task: repository, progress, dependency, description, comments', async () => {
-      const element = await render(
-        'a task in detail',
-        'Download button on the invoice list',
-        true,
-        campaignReads('a task in detail', CAMPAIGN),
-      );
+    it('a task: repository, progress, description, comments', async () => {
+      const element = await render('a task in detail', 'Download button on the invoice list', true);
       await expect.element(element).toMatchTextContent('Implemented1 Jan 2026, 00:00');
-      await expect
-        .element(
-          element.getByRole('link', { name: 'contract-00000001-4 · Stream invoices as CSV' }),
-        )
-        .toBeVisible();
+      await expect.element(element).not.toMatchTextContent('Depends on');
       await expect
         .element(element.getByRole('region', { name: 'Features' }))
         .not.toBeInTheDocument();
@@ -393,36 +346,23 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it.each([
-      [
-        'bug',
-        'a bug ticket in detail',
-        'Invoice totals are off by one cent',
-        [],
-        'Affected invoices',
-      ],
+      ['bug', 'a bug ticket in detail', 'Invoice totals are off by one cent', 'Affected invoices'],
       [
         'improvement',
         'an improvement ticket in detail',
         'Remember the last export format',
-        [],
         'No pages yet',
       ],
       [
         'maintenance',
         'a maintenance ticket in detail',
         'Release request for billing-service is stuck',
-        [CAMPAIGN],
         'What the platform saw',
       ],
     ])(
       'a %s ticket: its facts, description, dossier, comments',
-      async (type, state, title, campaigns, dossier) => {
-        const element = await render(
-          state,
-          title,
-          true,
-          campaignReads(state, campaigns.length ? campaigns[0] : state),
-        );
+      async (type, state, title, dossier) => {
+        const element = await render(state, title, true);
         await expect.element(element).toMatchTextContent(`Type${type}`);
         await expect
           .element(element.getByRole('region', { name: 'Dossier' }))
@@ -430,61 +370,6 @@ describe('WorkItemPage (screenshots)', () => {
         await shootParts(element, `detail-${type}-ticket`);
       },
     );
-
-    it('a campaign: description, members, comments, and its start', async () => {
-      const element = await render(CAMPAIGN, 'Invoicing for the Q4 close', true);
-      await expect.element(element.getByRole('heading', { name: 'Done when' })).toBeVisible();
-      await expect
-        .element(element.getByRole('region', { name: 'Members' }))
-        .toMatchTextContent('Tax rates per country');
-      await expect
-        .element(element.getByRole('group', { name: 'Agent' }))
-        .toMatchTextContent('Start campaign');
-      await shootParts(element, 'detail-campaign');
-    });
-
-    it('a campaign past the board: only its implementing epic has its own board', async () => {
-      const element = await render(PAST_THE_BOARD, 'Campaign in flight', true);
-      const members = element.getByRole('region', { name: 'Members' }).element();
-      const drawn = [
-        ...members.querySelectorAll('app-ticket-list-item, app-epic-list-item, app-epic-board'),
-      ].map((member) => [member.tagName.toLowerCase(), member.textContent ?? '']);
-      expect(drawn.map(([tag]) => tag)).toEqual([
-        'app-ticket-list-item',
-        'app-epic-list-item',
-        'app-epic-list-item',
-        'app-epic-board',
-        'app-ticket-list-item',
-      ]);
-      const titles = [
-        'Done ticket',
-        'Done epic',
-        'Verified epic',
-        'Epic with mixed features',
-        'Refined ticket',
-      ];
-      drawn.forEach(([, text], i) => expect(text).toContain(titles[i]));
-      expect(
-        members.querySelector('app-epic-board')!.querySelectorAll('ui-board-row'),
-      ).toHaveLength(4);
-      // No member has a workspace.
-      expect(members.querySelectorAll('app-workspace-link:not(.hidden) a')).toHaveLength(0);
-
-      // Each lane's id is whole inside its strip, however short the lane.
-      for (const id of members.querySelectorAll('app-epic-list-item a[lane-gutter]')) {
-        const strip = id.parentElement!.parentElement!.getBoundingClientRect();
-        const box = id.getBoundingClientRect();
-        expect(box.height).toBeGreaterThan(0);
-        expect(box.top).toBeGreaterThanOrEqual(strip.top);
-        expect(box.bottom).toBeLessThanOrEqual(strip.bottom);
-      }
-      // The campaign's own reads are recorded: the page loads whole.
-      await expect
-        .element(element)
-        .toMatchTextContent('Ships two tickets and three epics, one after the other.');
-      expect(element.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(0);
-      await shootParts(element, 'detail-campaign-done-verified-implementing');
-    });
   });
 
   // qits-1873: a VERIFIED ticket's facts say how its wrapper closing stands, the request linked.
@@ -503,6 +388,26 @@ describe('WorkItemPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(line.element().closest('p') as HTMLElement))
       .toMatchScreenshot('detail-ticket-wrapper-closing');
+  });
+
+  // Epic qits-1899: the item's "needs" badge beside its facts, and its Needs panel below the body:
+  // the needed ticket linked, at VERIFIED, now REFINED, not met.
+  it('a ticket that needs another: its badge and its Needs panel', async () => {
+    const element = await render(NEEDS, 'Render work ids in the list', 'item');
+    const badge = element.getByText('needs 1');
+    await expect.element(badge).toBeVisible();
+    await expect
+      .element(page.elementLocator(badge.element().closest('p') as HTMLElement))
+      .toMatchScreenshot('detail-needs-facts');
+    const panel = element.getByRole('region', { name: 'Needs' });
+    await expect
+      .element(panel.getByRole('link', { name: 'Ticket: contract-00000001-1' }))
+      .toHaveAttribute('href', '/projects/contract-00000001/work/detail/contract-00000001-1');
+    await expect.element(panel).toMatchTextContent('at verified');
+    await expect.element(panel).toMatchTextContent('(now refined)');
+    await expect.element(panel).toMatchTextContent('not met');
+    await commands.parkPointer();
+    await expect.element(panel).toMatchScreenshot('detail-needs-panel');
   });
 
   describe('workspaces', () => {
