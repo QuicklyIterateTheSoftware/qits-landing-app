@@ -7,15 +7,15 @@ import { DragHandle } from '$ui/components/drag-handle/drag-handle';
 import { ListRow } from '$ui/components/list/list-row';
 import { REORDER } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
-import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
-import { needsMilestone } from '$core/milestones/milestone-criteria';
-import { WorkRef } from '$patterns/work/work-ref/work-ref';
+import { hasUnmetNeeds } from '$core/work/work-needs';
+import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
  * A feature in a list, as an epic's lane (`app-epic-list-item`) and a work item's page draw it: a
  * row (`ui-list-row`) with its title along the bottom and its id up the right gutter, and each of
- * its tasks as the board's small card, with its campaigns. While the feature or a task has an
+ * its tasks as the board's small card, with its "needs" badge (`app-work-needs`, epic qits-1899).
+ * While the feature or a task has an
  * ACTIVE workspace, a Workspace link (`app-workspace-link`): at the right end of the title's line,
  * in the card's bottom-right corner. Every item links to its page,
  * `<base>/<qualified id>`. `display: contents`, so the row is itself the list's item.
@@ -42,10 +42,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
     ListRow,
     BoardCard,
     DragHandle,
-    MilestoneNeeds,
     REORDER,
     Tag,
-    WorkRef,
+    WorkNeedsBadge,
     WorkspaceLink,
   ],
   host: { class: 'contents' },
@@ -71,15 +70,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               [reorderItemLabel]="task.entry.qualifiedId ?? ''"
             >
               @let taskStatus = status(task);
-              @if (task.campaigns.length || taskStatus || needsMilestone(task.entry)) {
+              @if (taskStatus || hasUnmetNeeds(task.entry)) {
                 <div class="mt-1 flex flex-wrap gap-1">
-                  @for (campaign of task.campaigns; track campaign.id) {
-                    <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
-                  }
                   @if (taskStatus) {
                     <ui-tag [label]="taskStatus" />
                   }
-                  <app-milestone-needs [milestones]="task.entry.milestones" />
+                  <app-work-needs [needs]="task.entry.needs" [unmet]="task.entry.unmetNeeds" />
                 </div>
               }
               <app-workspace-link
@@ -118,8 +114,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   `,
 })
 export class FeatureListRow {
-  /** Whether a task needs a milestone that is not met yet: its marks then show (epic qits-615). */
-  protected readonly needsMilestone = needsMilestone;
+  /** Whether a task needs an item not at its status yet: its badge then shows (epic qits-1899). */
+  protected readonly hasUnmetNeeds = hasUnmetNeeds;
 
   /** The feature's node: its children are its tasks. */
   readonly node = input.required<WorkNode>();

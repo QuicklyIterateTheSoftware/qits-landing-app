@@ -6,16 +6,18 @@ import type { ReorderAnchor } from '$core/reorder/reorder-anchor';
 import {
   CREATE_WORK,
   PATCH_WORK_INSPIRATION,
+  PATCH_WORK_NEEDS,
   REPRIORITIZE_WORK,
   WORK_REFUSAL,
   type CreatedWork,
+  type PatchedNeeds,
   type PatchedWork,
   type WorkPriorities,
 } from './work-writes.consumes';
 import { WorkStore } from './work.store';
 
 /** The archetypes an idea can inspire: every archetype (qits-1792). */
-export const INSPIRABLE = ['EPIC', 'TICKET', 'CAMPAIGN', 'FEATURE', 'TASK'] as const;
+export const INSPIRABLE = ['EPIC', 'TICKET', 'FEATURE', 'TASK'] as const;
 
 export type InspirableArchetype = (typeof INSPIRABLE)[number];
 
@@ -25,7 +27,7 @@ export function inspirable(archetype: string | undefined): archetype is Inspirab
 }
 
 /** The archetypes the create form files as a new root of a project. */
-export const ROOT = ['EPIC', 'TICKET', 'CAMPAIGN'] as const;
+export const ROOT = ['EPIC', 'TICKET'] as const;
 
 export type RootArchetype = (typeof ROOT)[number];
 
@@ -57,6 +59,15 @@ export interface WorkDraft {
  */
 export type WorkAnchor = ReorderAnchor;
 
+/**
+ * One need as a write names it (epic qits-1899): the item waited for, by qualified id, and the
+ * status it must reach.
+ */
+export interface NeedDraft {
+  readonly item: string;
+  readonly status: string;
+}
+
 /** What a write answered: the value, or why not, for a person. */
 export type WorkWriteOutcome<T> =
   { readonly ok: true; readonly value: T } | { readonly ok: false; readonly refusal: string };
@@ -74,12 +85,15 @@ export function workWriteRefusal(error: unknown, httpStatus: number | undefined)
 /**
  * Work writes outside the board (epic qits-888), on qits-projects' `/work` doors:
  *
- * - `create(draft)` files a root epic, ticket or campaign of a project (`createWork`), with the
+ * - `create(draft)` files a root epic or ticket of a project (`createWork`), with the
  *   idea inspiring it (`inspiredBy`) when the form was opened from an idea. Blank optional fields
  *   are not sent. Answers the new item's qualified id.
  * - `setInspiredBy(qualifiedId, ideaId)` names an idea as the item's inspiration, or clears it with
  *   `null` (`patchWork`, a JSON merge patch of `inspiredBy` alone). Accepted on every archetype
  *   (qits-1792).
+ * - `setNeeds(qualifiedId, needs)` writes what the item waits for (epic qits-1899): `patchWork` with
+ *   `needs` alone, the whole list (`[]` clears it). The answer does not carry the needs, so the
+ *   page reads the item again afterwards.
  * - `reprioritize(projectId, qualifiedId, anchor)` puts an item directly above or below one of its
  *   open siblings (`reprioritizeWork`, qits-753): a drag in the Backlog or on the board. The
  *   renumbered siblings the service answers go into `WorkStore` at once
@@ -125,6 +139,23 @@ export const WorkWritesStore = signalStore(
       const { data, error, response } = await consume(
         patchWork({ path: { qualifiedId }, body: { inspiredBy: ideaId } }),
         PATCH_WORK_INSPIRATION,
+        WORK_REFUSAL,
+      );
+      if (error !== undefined || !data) {
+        return { ok: false, refusal: workWriteRefusal(error, response?.status) };
+      }
+      return { ok: true, value: data };
+    },
+    async setNeeds(
+      qualifiedId: string,
+      needs: readonly NeedDraft[],
+    ): Promise<WorkWriteOutcome<PatchedNeeds>> {
+      const body = { needs: needs.map(({ item, status }) => ({ item, status })) };
+      // Sent as plain `application/json`, as the recorded patches are: the door reads either
+      // spelling of a merge patch.
+      const { data, error, response } = await consume(
+        patchWork({ path: { qualifiedId }, body, headers: { 'Content-Type': 'application/json' } }),
+        PATCH_WORK_NEEDS,
         WORK_REFUSAL,
       );
       if (error !== undefined || !data) {

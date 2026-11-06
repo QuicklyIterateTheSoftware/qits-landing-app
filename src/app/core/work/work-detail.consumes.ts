@@ -14,12 +14,12 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * `getWork`, by qualified id: the item's own fields the detail views show. A ticket: its type,
- * impetus, assignee and whether it is blocked. A task: its repository, when it was started and
- * implemented, and what it depends on. A feature: what it depends on. Every archetype: its
- * description (Markdown). An epic, a ticket or a campaign: the idea inspiring it (`inspiredBy`,
- * epic qits-888; the answer omits it when none does, so no recording binds it yet). Every
- * archetype: the milestones it needs, in the order attached, each with since when it is met
- * (epic qits-615; the page's "needs" marks and its attach and detach).
+ * impetus, assignee and whether it is blocked. A task: its repository, and when it was started and
+ * implemented. Every archetype: its description (Markdown), and the idea inspiring it
+ * (`inspiredBy`, epic qits-888; the answer omits it when none does, so no recording binds it yet).
+ * Every archetype but an issue: what it needs (epic qits-1899), each need's item (its id, qualified
+ * id, title and archetype), the status it needs, where it stands now and whether it is met, and how
+ * many are not (`unmetNeeds`): the page's "needs" badge and its Needs panel.
  */
 export const GET_WORK = [
   'id',
@@ -32,11 +32,15 @@ export const GET_WORK = [
   'repositoryId',
   'implementingAt',
   'implementedAt',
-  'dependsOn',
   'inspiredBy',
-  'milestones[].id',
-  'milestones[].displayName',
-  'milestones[].satisfiedAt',
+  'needs[].id',
+  'needs[].qualifiedId',
+  'needs[].title',
+  'needs[].archetype',
+  'needs[].status',
+  'needs[].currentStatus',
+  'needs[].met',
+  'unmetNeeds',
 ] as const;
 
 /**

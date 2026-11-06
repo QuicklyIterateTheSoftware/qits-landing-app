@@ -6,24 +6,17 @@ import { Markdown } from '$ui/components/markdown/markdown';
 import { ReorderList } from '$ui/components/reorder/reorder';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import { WorkComments } from '$patterns/work/detail/work-comments/work-comments';
-import {
-  dependsOnField,
-  WorkFields,
-  type WorkField,
-} from '$patterns/work/detail/work-fields/work-fields';
 
 /**
- * A feature's page body: what it depends on (a link to that feature), its description
- * (Markdown), its tasks (the feature as its row, as the lists draw it) and its comments. A feature
- * has no dossier.
+ * A feature's page body: its description (Markdown), its tasks (the feature as its row, as the lists draw it) and its comments. A feature
+ * has no dossier. What it needs is the page's Needs panel (`app-work-needs-panel`, epic qits-1899).
  */
 @Component({
   selector: 'app-feature-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, FeatureListRow, ReorderList, WorkComments, WorkFields],
+  imports: [Markdown, FeatureListRow, ReorderList, WorkComments],
   host: { class: 'flex flex-col gap-8' },
   template: `
-    <app-work-fields [class.hidden]="!fields().length" [fields]="fields()" />
     <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
     <section class="flex flex-col gap-4" aria-label="Tasks">
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Tasks</h2>
@@ -48,8 +41,4 @@ export class FeatureDetail {
   private readonly work = inject(SelectedWork);
 
   protected readonly node = computed(() => this.work.graph().nodeOf(this.entry()));
-
-  protected readonly fields = computed((): readonly WorkField[] =>
-    dependsOnField(this.detail()?.entity?.dependsOn, this.work.entries(), this.base()),
-  );
 }

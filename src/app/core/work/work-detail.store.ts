@@ -77,7 +77,7 @@ interface WorkDetailState {
  * The data of one work item's page beyond what the project's work list holds, from qits-projects'
  * `/work` doors, all by qualified id: the item itself (`getWork`), its comments
  * (`listWorkComments`) and its dossier — an epic's or a ticket's pages (`listWorkDossier`), and an
- * epic's figures (`listWorkDossierAssets`). Features, tasks and campaigns have no dossier.
+ * epic's figures (`listWorkDossierAssets`). Features and tasks have no dossier.
  *
  * - `load(ref)` reads by the qualified id the page's URL names, once, and again after an error.
  *   The item and its comments come together; the dossier follows, by the same reference, as the
@@ -99,7 +99,7 @@ interface WorkDetailState {
  * that item's page data (`refresh`), wired by the work item page while it shows the item. Nothing
  * else of it has an event: qits-projects announces no comment added or edited (another tab's, or
  * an agent's), no dossier page or figure written, moved or deleted, and no edit of the item's
- * fields (description, acceptance criteria, impetus, assignee, depends-on, blocked), so those show
+ * fields (description, acceptance criteria, impetus, assignee, needs, blocked), so those show
  * on the next visit. The acceptance criteria (`loadCriteria`) change only by such an edit, and
  * are read once.
  */

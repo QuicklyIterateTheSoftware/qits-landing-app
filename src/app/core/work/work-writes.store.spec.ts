@@ -33,22 +33,22 @@ describe('WorkWritesStore', () => {
 
   afterEach(() => http.verify());
 
-  it('knows which archetypes an idea can inspire (qits-1792: every archetype)', () => {
+  it('knows which archetypes an idea can inspire (qits-1792: every archetype; no campaign, qits-1899)', () => {
     expect(['EPIC', 'TICKET', 'CAMPAIGN', 'FEATURE', 'TASK', undefined].map(inspirable)).toEqual([
       true,
       true,
-      true,
+      false,
       true,
       true,
       false,
     ]);
   });
 
-  it('knows which archetypes the create form files as a root (a feature or a task needs a parent)', () => {
+  it('knows which archetypes the create form files as a root (a feature or a task needs a parent; no campaign, qits-1899)', () => {
     expect(['EPIC', 'TICKET', 'CAMPAIGN', 'FEATURE', 'TASK', undefined].map(isRoot)).toEqual([
       true,
       true,
-      true,
+      false,
       false,
       false,
       false,
@@ -121,6 +121,24 @@ describe('WorkWritesStore', () => {
     expect(second.request.body).toEqual({ inspiredBy: null });
     second.flush(null, { status: 404, statusText: 'Not Found' });
     expect(await cleared).toEqual({ ok: false, refusal: 'The service refused it (HTTP 404).' });
+  });
+
+  it('writes the needs whole, as a merge patch of needs alone, and hands back a refusal', async () => {
+    const set = store.setNeeds('qits-2', [{ item: 'qits-1', status: 'VERIFIED' }]);
+    await settle();
+    const first = http.expectOne('/projects/api/work/qits-2');
+    expect(first.request.method).toBe('PATCH');
+    expect(first.request.body).toEqual({ needs: [{ item: 'qits-1', status: 'VERIFIED' }] });
+    // No recording patches needs: the answer is "a reported ticket"'s recorded patch.
+    first.flush(goldenMaster('a reported ticket', 'patchWork'));
+    expect((await set).ok).toBe(true);
+
+    const cleared = store.setNeeds('qits-2', []);
+    await settle();
+    const second = http.expectOne('/projects/api/work/qits-2');
+    expect(second.request.body).toEqual({ needs: [] });
+    second.flush({ message: 'needs closes a cycle' }, { status: 400, statusText: 'Bad Request' });
+    expect(await cleared).toEqual({ ok: false, refusal: 'needs closes a cycle' });
   });
 
   describe('reprioritize (qits-753)', () => {

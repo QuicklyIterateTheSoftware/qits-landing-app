@@ -11,7 +11,6 @@ import { client as workspacesClient } from '../../../../api/workspaces/client.ge
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { WORK_REFRESH_DEBOUNCE_MS } from '$core/work/selected-work';
 import { goldenMaster, workspacesGoldenMaster } from '../../../../../testing/golden-masters';
-import { answerCampaignReads, campaignsIn } from '../../../../../testing/campaign-reads';
 import { WorkLayout } from './work.layout';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -50,17 +49,12 @@ describe('WorkLayout', () => {
           {
             path: 'projects/:slug/work',
             component: WorkLayout,
-            children: [
-              'campaigns',
-              'refinement',
-              'schedule',
-              'in-progress',
-              'acceptance',
-              'archive',
-            ].map((path) => ({
-              path,
-              component: TestPage,
-            })),
+            children: ['refinement', 'schedule', 'in-progress', 'acceptance', 'archive'].map(
+              (path) => ({
+                path,
+                component: TestPage,
+              }),
+            ),
           },
         ]),
         provideHttpClient(),
@@ -109,90 +103,34 @@ describe('WorkLayout', () => {
     return { harness, links, counts, answered };
   }
 
-  it('links Campaigns, then the five phases in workflow order, then Milestones, and marks the current one', async () => {
+  it('links the five phases in workflow order, no Campaigns or Milestones, and marks the current one', async () => {
     const { links, answered } = await shown('acceptance');
     await answered('a project with no work');
     expect(links().map((a) => [a.firstChild?.textContent?.trim(), a.getAttribute('href')])).toEqual(
       [
-        ['Campaigns', `/projects/${project.slug}/work/campaigns`],
         ['Refinement', `/projects/${project.slug}/work/refinement`],
         ['Schedule', `/projects/${project.slug}/work/schedule`],
         ['In Progress', `/projects/${project.slug}/work/in-progress`],
         ['Acceptance', `/projects/${project.slug}/work/acceptance`],
         ['Archive', `/projects/${project.slug}/work/archive`],
-        ['Milestones', `/projects/${project.slug}/work/milestones`],
       ],
     );
     expect(links().map((a) => a.getAttribute('aria-current'))).toEqual([
       null,
       null,
       null,
-      null,
       'page',
-      null,
       null,
     ]);
   });
 
   it('counts the epics and tickets on each page once the work is loaded', async () => {
     const { counts, answered } = await shown('in-progress');
-    expect(counts()).toEqual([
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-    ]);
+    expect(counts()).toEqual([undefined, undefined, undefined, undefined, undefined]);
     await answered('a project with work in every status');
     // Schedule: the REFINED and the READY_FOR_DEV epic and ticket. In Progress: an epic and a
     // ticket per board status (READY_FOR_DEV first), and the started epic; not its feature.
-    expect(counts()).toEqual([0, 2, 4, 9, 2, 4, undefined]);
-  });
-
-  it('counts the campaigns, which no phase counts', async () => {
-    const { counts, answered, harness } = await shown('campaigns');
-    await answered('an epic in two campaigns');
-    // Each campaign's members from the state recording it (the second is a state of its own).
-    await answerCampaignReads(
-      http,
-      goldenMaster,
-      campaignsIn(goldenMaster('an epic in two campaigns', 'listProjectWork')),
-      {
-        members: {
-          'contract-00000001-1': 'an epic in two campaigns',
-          'contract-00000001-2': 'the second campaign of an epic in two campaigns',
-        },
-        described: ['an epic in two campaigns', 'the second campaign of an epic in two campaigns'],
-      },
-    );
-    await settle();
-    await harness.fixture.whenStable();
-    // Two campaigns; their one member, a REFINED epic, waits on the Schedule tab.
-    expect(counts()).toEqual([2, 0, 1, 0, 0, 0, undefined]);
-  });
-
-  it('counts a dropped campaign in the Archive, not in Campaigns', async () => {
-    const { counts, harness } = await shown('archive');
-    // "a campaign with work in every phase", with its campaign DROPPED: no recorded state holds a
-    // campaign in a final state yet.
-    const work = goldenMaster('a campaign with work in every phase', 'listProjectWork');
-    http.expectOne(entities).flush({
-      ...work,
-      entities: work.entities.map((e: { archetype: string }) =>
-        e.archetype === 'CAMPAIGN' ? { ...e, status: 'DROPPED' } : e,
-      ),
-    });
-    await settle();
-    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
-      members: 'a campaign with work in every phase',
-      described: ['a campaign with work in every phase'],
-    });
-    await settle();
-    await harness.fixture.whenStable();
-    // Schedule: the refined epic and tickets. Archive: the done ticket and the dropped campaign.
-    expect(counts()).toEqual([0, 1, 3, 0, 0, 2, undefined]);
+    expect(counts()).toEqual([2, 4, 9, 2, 4]);
   });
 
   it('asks for the work once while moving between the pages', async () => {
@@ -202,7 +140,7 @@ describe('WorkLayout', () => {
     await settle();
     http.expectNone(entities);
     http.expectNone(OPEN_WORKSPACES);
-    expect(links()[5].getAttribute('aria-current')).toBe('page');
+    expect(links()[4].getAttribute('aria-current')).toBe('page');
   });
 
   it('fetches nothing after a transition in another project', async () => {
@@ -215,7 +153,7 @@ describe('WorkLayout', () => {
     vi.useRealTimers();
     await settle();
     http.expectNone(entities);
-    expect(counts()).toEqual([0, 2, 4, 9, 2, 4, undefined]);
+    expect(counts()).toEqual([2, 4, 9, 2, 4]);
     // The open workspaces are `WorkspacesStore.follow`'s, narrowed (or not) on their own.
     for (const read of http.match(OPEN_WORKSPACES)) {
       read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
@@ -231,7 +169,7 @@ describe('WorkLayout', () => {
     vi.useRealTimers();
     await settle();
     await answered('a project with no work');
-    expect(counts()).toEqual([0, 0, 0, 0, 0, 0, undefined]);
+    expect(counts()).toEqual([0, 0, 0, 0, 0]);
     // The open workspaces follow qits-workspaces' agent events, not a work item's move (qits-1270).
     http.expectNone(OPEN_WORKSPACES);
   });

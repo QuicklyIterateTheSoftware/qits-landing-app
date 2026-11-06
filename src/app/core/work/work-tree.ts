@@ -5,8 +5,7 @@ import { BOARD_COLUMNS } from './work-statuses';
  * The nesting of a project's work (epic › feature › task; tickets stand alone), shared by the
  * board, the backlog, the acceptance list and the archive so that all four group the same way.
  *
- * - **Parent**: an entity's `parent` (epic › feature › task). Campaigns are not structure: they
- *   gather existing epics, tickets and tasks as members, and show as tags (`campaignsOf`).
+ * - **Parent**: an entity's `parent` (epic › feature › task).
  * - **Phase**: where an entity belongs. Its own status decides: REPORTED is the backlog, REFINED
  *   the schedule (refined, waiting for a person to schedule it), READY_FOR_DEV / IMPLEMENTING /
  *   IMPLEMENTED / VERIFYING the board, VERIFIED the acceptance list, DONE / DROPPED the archive.
@@ -23,16 +22,11 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   the entity's own status (or that ancestor's). A feature or task still REFINED below a started
  *   epic is in the schedule phase, so, like a REPORTED one, it is not on the board.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
- *   `context` (a quiet header for a parent that lives elsewhere). Campaigns themselves are not in
- *   any tree.
+ *   `context` (a quiet header for a parent that lives elsewhere).
  * - **Order**: one order everywhere, independent of status, column and update time
  *   (`byPriority`, qits-753): the roots (epics and tickets together) by their priority, highest
  *   first, those nobody ranked after every ranked one, ties by the number of their qualified id;
  *   inside each parent its children the same way. Removing an item leaves the rest in place.
- * - **Campaigns** (`campaigns`, `membersOf`): span the phases, so they have a list of their own
- *   while open (`openCampaigns`); once in a final state they go to the archive like any other work
- *   (`archivedCampaigns`, by the same `PHASE_BY_STATUS`). Each campaign's members come in campaign
- *   order, each with its whole subtree.
  */
 
 export type Phase = 'backlog' | 'schedule' | 'board' | 'acceptance' | 'archive';
@@ -73,8 +67,6 @@ export interface WorkNode {
   readonly context: boolean;
   /** Its own board column; undefined off the board or when it is context. */
   readonly column?: number;
-  /** The campaigns it is a member of, in the list's order. */
-  readonly campaigns: readonly WorkEntry[];
   /** Every task below it, in this tree or not (`taskDistribution`). */
   readonly tasks: TaskTally;
 }
@@ -91,25 +83,10 @@ export class WorkGraph {
   private readonly byId = new Map<string, WorkEntry>();
   private readonly parentOf = new Map<string, string>();
   private readonly childrenOf = new Map<string, string[]>();
-  private readonly campaignsByMember = new Map<string, WorkEntry[]>();
 
-  /**
-   * @param entries the project's entities, in qits-projects' tree order
-   * @param campaignMembers each campaign's member ids, in campaign order
-   */
-  constructor(
-    private readonly entries: readonly WorkEntry[],
-    private readonly campaignMembers: Readonly<Record<string, readonly string[]>> = {},
-  ) {
+  /** @param entries the project's entities, in qits-projects' tree order */
+  constructor(private readonly entries: readonly WorkEntry[]) {
     for (const entry of entries) if (entry.id) this.byId.set(entry.id, entry);
-    for (const entry of entries) {
-      if (entry.archetype !== 'CAMPAIGN' || !entry.id) continue;
-      for (const member of campaignMembers[entry.id] ?? []) {
-        const list = this.campaignsByMember.get(member) ?? [];
-        list.push(entry);
-        this.campaignsByMember.set(member, list);
-      }
-    }
     for (const entry of entries) {
       if (entry.id && entry.parent && this.byId.has(entry.parent)) {
         this.link(entry.parent, entry.id);
@@ -117,42 +94,9 @@ export class WorkGraph {
     }
   }
 
-  /** The campaigns `entry` is a member of. */
-  campaignsOf(entry: WorkEntry): readonly WorkEntry[] {
-    return (entry.id && this.campaignsByMember.get(entry.id)) || [];
-  }
-
-  /** The project's campaigns, by number (`byNumber`). */
-  campaigns(): readonly WorkEntry[] {
-    return this.entries.filter((entry) => entry.archetype === 'CAMPAIGN').sort(byNumber);
-  }
-
-  /** The campaigns not in the archive (their phase by `PHASE_BY_STATUS`), by number. */
-  openCampaigns(): readonly WorkEntry[] {
-    return this.campaigns().filter((campaign) => this.phaseOf(campaign) !== 'archive');
-  }
-
-  /** The campaigns in the archive (DONE, DROPPED), by number. */
-  archivedCampaigns(): readonly WorkEntry[] {
-    return this.campaigns().filter((campaign) => this.phaseOf(campaign) === 'archive');
-  }
-
-  /**
-   * A campaign's members, in campaign order, each with its whole subtree (an epic's features and
-   * tasks). A member that is not in the list (hidden while its finish waits) is left out. A
-   * member's `campaigns` leave out `campaign` itself: the page it is on already names it.
-   */
-  membersOf(campaign: WorkEntry): readonly WorkNode[] {
-    const ids = (campaign.id && this.campaignMembers[campaign.id]) || [];
-    return ids
-      .map((id) => this.byId.get(id))
-      .filter((entry): entry is WorkEntry => !!entry)
-      .map((entry) => this.subtree(entry, campaign));
-  }
-
   /**
    * `entry` with every descendant (an epic's features and tasks, a feature's tasks), none of them
-   * context, each with all its campaigns.
+   * context.
    */
   nodeOf(entry: WorkEntry): WorkNode {
     return this.subtree(entry);
@@ -199,7 +143,7 @@ export class WorkGraph {
     };
   }
 
-  /** How many epics and tickets are in `phase`. Features, tasks and campaigns are not counted. */
+  /** How many epics and tickets are in `phase`. Features and tasks are not counted. */
   count(phase: Phase): number {
     return this.entries.filter(
       (entry) =>
@@ -253,8 +197,10 @@ export class WorkGraph {
   private treeWhere(matches: (entry: WorkEntry) => boolean, board: boolean): readonly WorkNode[] {
     const included = new Set<string>();
     for (const entry of this.entries) {
-      // A campaign has its own lists, and an issue is not work: the Desk page shows it (qits-1819).
-      if (!entry.id || entry.archetype === 'CAMPAIGN' || entry.archetype === 'ISSUE') continue;
+      // An issue is not work: the Desk page shows it (qits-1819). Campaigns are retired (epic
+      // qits-1899): a CAMPAIGN row a read still carries, until qits-projects deletes them
+      // (qits-1908), is drawn nowhere.
+      if (!entry.id || entry.archetype === 'ISSUE' || entry.archetype === 'CAMPAIGN') continue;
       if (!matches(entry)) continue;
       for (let id: string | undefined = entry.id; id; id = this.parentOf.get(id)) {
         included.add(id);
@@ -278,21 +224,19 @@ export class WorkGraph {
       .sort(byPriority)
       .map((child) => this.node(child, matches, board, included));
     const context = !matches(entry);
-    const campaigns = this.campaignsOf(entry);
     const tasks = this.tasksBelow(entry);
-    if (!board) return { entry, children, context, campaigns, tasks };
+    if (!board) return { entry, children, context, tasks };
     const column = context ? undefined : this.columnOf(entry);
-    return { entry, children, context, column, campaigns, tasks };
+    return { entry, children, context, column, tasks };
   }
 
-  /** `entry` with every descendant, none of them context; `campaign`, if any, left out of their tags. */
-  private subtree(entry: WorkEntry, campaign?: WorkEntry): WorkNode {
+  /** `entry` with every descendant, none of them context. */
+  private subtree(entry: WorkEntry): WorkNode {
     const children = (this.childrenOf.get(entry.id!) ?? [])
       .map((id) => this.byId.get(id)!)
       .sort(byPriority)
-      .map((child) => this.subtree(child, campaign));
-    const campaigns = this.campaignsOf(entry).filter((c) => c.id !== campaign?.id);
-    return { entry, children, context: false, campaigns, tasks: this.tasksBelow(entry) };
+      .map((child) => this.subtree(child));
+    return { entry, children, context: false, tasks: this.tasksBelow(entry) };
   }
 
   private parentEntry(entry: WorkEntry): WorkEntry | undefined {

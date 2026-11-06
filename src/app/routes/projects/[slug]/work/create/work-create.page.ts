@@ -25,7 +25,7 @@ import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
 /**
- * A new epic, ticket or campaign of the open project (epic qits-888), at
+ * A new epic or ticket of the open project (epic qits-888), at
  * `/projects/<slug>/work/create`: its archetype, title and description, and for a ticket its kind
  * (bug or improvement) and impetus (why it came about, which the service requires of a ticket).
  *

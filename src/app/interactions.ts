@@ -27,8 +27,8 @@ export const INTERACTIONS = {
   'show-project-work': 'A project card shows how much work the project has',
   /**
    * The work section's pages (`routes/projects/[slug]/work/`) via `SelectedWork`: they lay the
-   * project's work out on the board, the backlog, Acceptance and the archive, nested, with each
-   * campaign's members.
+   * project's work out on the board, the backlog, Acceptance and the archive, nested, each item
+   * with the needs it has not met yet (epic qits-1899).
    */
   'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
   /**
@@ -324,12 +324,12 @@ export const INTERACTIONS = {
   'reprioritize-idea': 'Dragging an idea among the project’s ideas ranks it',
   /**
    * The work create form (`routes/projects/[slug]/work/create/`) via `WorkWritesStore.create`: a
-   * root epic, ticket or campaign, inspired by an idea when opened from one (epic qits-888).
+   * root epic or ticket, inspired by an idea when opened from one (epic qits-888).
    */
-  'create-work-item': 'Create on the work form files an epic, a ticket or a campaign',
+  'create-work-item': 'Create on the work form files an epic or a ticket',
   /**
    * The work item page's inspiration (`work-inspiration.ts`) via `WorkWritesStore.setInspiredBy`:
-   * names an idea of the project as an epic's, ticket's or campaign's inspiration, or clears it.
+   * names an idea of the project as an item's inspiration, or clears it.
    */
   'set-work-inspiration': 'The work item page sets or clears the idea inspiring the item',
   /**
@@ -338,27 +338,11 @@ export const INTERACTIONS = {
    */
   'reprioritize-work-item': 'Dragging a work item among its siblings sets its priority',
   /**
-   * The Milestones page (`routes/projects/[slug]/work/milestones/`) via
-   * `MilestonesStore.loadList`: the project's milestones, met or not (epic qits-615). The work
-   * item page's and the campaign page's milestone pickers read the same list.
+   * Add or Remove on the work item page's Needs panel (`work-needs-panel.ts`) via
+   * `WorkWritesStore.setNeeds`: writes the whole list of what the item waits for (epic qits-1899).
    */
-  'list-milestones': 'The Milestones page lists the project’s milestones',
-  /** A milestone's page via `MilestonesStore.load`: its condition, dates and what needs it. */
-  'show-milestone': 'A milestone’s page shows its criteria, their dates and what needs it',
-  /** Create on the Milestones page's form via `MilestonesStore.create`: a name and a condition. */
-  'create-milestone': 'Create on the Milestones page makes a milestone with its criteria',
-  /** Rename on a milestone's page via `MilestonesStore.rename`. */
-  'rename-milestone': 'Rename on a milestone’s page renames it',
-  /** Save criteria on a milestone's page via `MilestonesStore.setGroups`: the whole condition. */
-  'edit-milestone-criteria': 'Save criteria on a milestone’s page restates its condition',
-  /** Approve on an APPROVAL criterion via `MilestonesStore.approve`: a person's yes. */
-  'approve-milestone-criterion': 'Approve on a milestone’s criterion records a person’s approval',
-  /** Attach on the work item page's milestones via `MilestonesStore.attach`. */
-  'attach-work-milestone': 'Attach on the work item page makes the item need a milestone',
-  /** Detach on the work item page's milestones via `MilestonesStore.detach`. */
-  'detach-work-milestone': 'Detach on the work item page makes the item no longer need a milestone',
-  /** Save on a campaign member's milestones via `MilestonesStore.setMemberMilestones`. */
-  'set-member-milestones': 'Save on a campaign member’s milestones sets what it needs',
+  'edit-work-needs':
+    'Add or Remove on the work item page’s Needs panel rewrites what the item needs',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

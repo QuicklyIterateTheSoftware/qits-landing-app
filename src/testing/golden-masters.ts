@@ -52,6 +52,27 @@ export const ciGoldenMasters = goldenMasters('@qits/ci-golden-masters', 'qits-ci
 /** qits-system's golden masters (epic qits-112), from its npm package. */
 export const systemGoldenMasters = goldenMasters('@qits/system-golden-masters', 'qits-system');
 
+/**
+ * Whether the installed `@qits/projects-golden-masters` records `operationId` in `state`. A spec of
+ * a case the provider records from a later release than the pinned one skips itself until
+ * qits-maintenance bumps the pin (`it.skipIf(!isRecorded(…))`), as the pact specs' interactions do.
+ */
+export function isRecorded(state: string, operationId: string): boolean {
+  try {
+    projectsGoldenMasters.operation(state, operationId);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The state that records needs (epic qits-1899): a READY_FOR_DEV ticket needing another ticket at
+ * VERIFIED (not met: it is REFINED), and a task needing a task of another feature at IMPLEMENTED
+ * (met). Recorded by qits-projects from 2026.1106.140436 on.
+ */
+export const NEEDS_STATE = 'a ticket that needs another';
+
 /** The body qits-projects recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const goldenMaster = <T = any>(state: string, operationId: string): T =>
   projectsGoldenMasters.body<T>(state, operationId);

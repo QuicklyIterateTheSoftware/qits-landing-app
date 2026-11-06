@@ -29,7 +29,6 @@ import { WrapperClosingsStore } from '$core/work/wrapper-closings.store';
 import type { Action, ActionGroup } from '$ui/components/action-button/action';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
-import { CampaignDetail } from '$patterns/work/detail/campaign-detail/campaign-detail';
 import { EpicDetail } from '$patterns/work/detail/epic-detail/epic-detail';
 import { FeatureDetail } from '$patterns/work/detail/feature-detail/feature-detail';
 import { TaskDetail } from '$patterns/work/detail/task-detail/task-detail';
@@ -41,9 +40,8 @@ import { ACTIVE_AGENT_EVENTS } from '$core/workspaces/workspace-events';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
 import { WorkInspiration } from '$patterns/ideas/work-inspiration/work-inspiration';
-import { MILESTONE_EVENTS } from '$core/milestones/milestone-events';
-import { MilestoneNeeds } from '$patterns/milestones/milestone-needs/milestone-needs';
-import { WorkMilestones } from '$patterns/milestones/work-milestones/work-milestones';
+import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
+import { WorkNeedsPanel } from '$patterns/work/work-needs/work-needs-panel';
 import { WrapperClosingLine } from '$patterns/work/wrapper-closing/wrapper-closing';
 
 /** Each group's caption, shown below its buttons. */
@@ -66,12 +64,13 @@ const notBuiltYet = (): void => undefined;
  * body of its own per archetype (`$patterns/work/detail/`): the description (Markdown), the
  * archetype's facts, its children as the lists draw them, its dossier and its comments. The item
  * comes from what `SelectedWork` loads; the rest from `WorkDetailStore`, by the URL's qualified id.
- * Beside its id, archetype and status, a "needs: <milestone>" mark for each milestone it needs that
- * is not met yet (`app-milestone-needs`, epic qits-615), apart from the Blocked fact and an agent's
- * wait; a VERIFIED ticket's line on how it will close, after them (`app-wrapper-closing`,
- * qits-1873: the line its card shows in the lists, from the project's wrapper closings); below the
- * body, its milestones, attached and detached there (`app-work-milestones`), after
- * which its own data and the project's work are read again.
+ * Beside its id, archetype and status, its "needs" badge while it needs an item not at its status
+ * yet (`app-work-needs`, epic qits-1899), apart from the Blocked fact and an agent's wait; a
+ * VERIFIED ticket's line on how it will close, after them (`app-wrapper-closing`, qits-1873: the
+ * line its card shows in the lists, from the project's wrapper closings); below the body, for every
+ * archetype but an issue, what it needs, added and removed there (`app-work-needs-panel`, a
+ * `patchWork` of the whole `needs` list), after which its own data and the project's work are read
+ * again.
  * Below the body, the item's inspiration (`app-work-inspiration`, epic qits-888, every archetype as
  * of qits-1792): "Inspired by <idea title>" linking the idea, set or cleared there (`patchWork`),
  * after which the item's own data is read again.
@@ -79,8 +78,8 @@ const notBuiltYet = (): void => undefined;
  * item's id); the page also loads the open workspaces once, for its cards' Workspace links.
  *
  * Wired: every Status move (`WorkStore.transition`, the item's entry takes the answered status;
- * "Close as done", a CLOSE move, shows only while every direct child is DONE or DROPPED: a
- * campaign's members, an epic's features or a feature's tasks as `SelectedWork`'s graph holds them),
+ * "Close as done", a CLOSE move, shows only while every direct child is DONE or DROPPED: an epic's
+ * features or a feature's tasks as `SelectedWork`'s graph holds them),
  * Dispatch (`WorkStore.dispatch`, the whole flow) and the next phase's button (that phase alone).
  * Drop opens its own form instead of moving at once (`app-work-drop`, qits-248): it asks for the
  * outcome and, where the outcome needs one, a reference, then sends `WorkStore.drop`. Every other
@@ -90,12 +89,13 @@ const notBuiltYet = (): void => undefined;
  * (`SelectedWork.followTransitions`: the item's status, its children, its actions); naming this
  * item among its `entities[].entityId` → the item's own data (`WorkDetailStore.refresh`: its
  * started/implemented times move with its status). `EntityCommented` naming this item as its
- * `entityId` → the same read, which brings the new comment (qits-1660). `MilestoneMet` or
- * `MilestoneUnmet` naming one of the item's milestones (`milestoneId`) → the same read (its
- * marks and dates); the project's work follows them in `SelectedWork`. A child's or the parent's
- * move changes only their rows in the work, which the first refetch reads. qits-projects sends no
- * event for a comment's edit, a dossier page or figure, an edit of the item's fields (description, criteria,
- * assignee…), a block or unblock, or a campaign's members: those show on the next visit.
+ * `entityId` → the same read, which brings the new comment (qits-1660). A needed item's move is an
+ * `EntityTransitioned` naming that item, not this one: the project's work follows it (the badge),
+ * and the item's own data (the panel's met marks) is read again on the next visit or edit. A
+ * child's or the parent's move changes only their rows in the work, which the first refetch reads.
+ * qits-projects sends no event for a comment's edit, a dossier page or figure, an edit of the item's
+ * fields (description, criteria, assignee, needs…), or a block or unblock: those show on the next
+ * visit.
  * The wrapper closings a VERIFIED ticket's line reads follow their events through
  * `WrapperClosingsStore.follow` (qits-1873; see there).
  * `AgentPlaced`, `AgentRequeued`, `AgentObsolete`, `AgentRemoved` naming this item's `workId` →
@@ -112,15 +112,14 @@ const notBuiltYet = (): void => undefined;
   imports: [
     PageLayoutComponent,
     Spinner,
-    CampaignDetail,
     EpicDetail,
     FeatureDetail,
     TaskDetail,
     TicketDetail,
     WorkDrop,
     WorkInspiration,
-    WorkMilestones,
-    MilestoneNeeds,
+    WorkNeedsBadge,
+    WorkNeedsPanel,
     WorkWorkspaces,
     WrapperClosingLine,
   ],
@@ -143,7 +142,7 @@ const notBuiltYet = (): void => undefined;
             [class]="entry() ? 'flex' : 'hidden'"
           >
             <span>{{ facts() }}</span>
-            <app-milestone-needs [milestones]="milestones()" />
+            <app-work-needs [needs]="needs()" [unmet]="unmetNeeds()" />
             @if (closesAutomatically()) {
               <app-wrapper-closing [qualifiedId]="id()" />
             }
@@ -172,22 +171,19 @@ const notBuiltYet = (): void => undefined;
                 @case ('ISSUE') {
                   <app-ticket-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
                 }
-                @case ('CAMPAIGN') {
-                  <app-campaign-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
-                }
               }
             }
           </ui-spinner>
           @if (entry(); as entry) {
             @if (detail()?.entity; as entity) {
-              <app-work-milestones
-                class="mt-6"
-                [slug]="slug()"
-                [projectId]="projectId()"
-                [qualifiedId]="id()"
-                [milestones]="entity.milestones ?? []"
-                (changed)="milestonesChanged()"
-              />
+              @if (entry.archetype !== 'ISSUE') {
+                <app-work-needs-panel
+                  class="mt-6"
+                  [qualifiedId]="id()"
+                  [needs]="entity.needs ?? []"
+                  (changed)="needsChanged()"
+                />
+              }
               <app-work-inspiration
                 class="mt-6"
                 [slug]="slug()"
@@ -275,18 +271,23 @@ export class WorkItemPage {
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /**
-   * The milestones the item needs: its own data's once read (it follows an attach at once), else
-   * the project's work's.
+   * What the item needs: its own data's once read (it follows the panel's edits at once), else the
+   * project's work's.
    */
-  protected readonly milestones = computed(
-    () => this.detail()?.entity?.milestones ?? this.entry()?.milestones ?? [],
+  protected readonly needs = computed(
+    () => this.detail()?.entity?.needs ?? this.entry()?.needs ?? [],
+  );
+
+  /** How many of them are not met, from the same read as {@link needs}. */
+  protected readonly unmetNeeds = computed(() =>
+    this.detail()?.entity ? this.detail()?.entity?.unmetNeeds : this.entry()?.unmetNeeds,
   );
 
   /**
-   * An attach or a detach went through: the item's own data and the project's work hold its
-   * milestones, so both are read again (no event follows either).
+   * The Needs panel's write went through: the item's own data and the project's work hold its
+   * needs, so both are read again (no event follows the edit, and the answer omits the needs).
    */
-  protected milestonesChanged(): void {
+  protected needsChanged(): void {
     const ref = this.id();
     if (ref) void this.details.refresh(ref);
     const projectId = this.projectId();
@@ -312,11 +313,9 @@ export class WorkItemPage {
     const registry = this.archetypes.of(entry.archetype);
     const graph = this.work.graph();
     const status = graph.statusOf(entry);
-    // A CLOSE move's gate reads the direct children (qits-1757): a campaign's members, else the
-    // item's children in the work tree (an epic's features, a feature's tasks), by their own status.
-    const children = (
-      entry.archetype === 'CAMPAIGN' ? graph.membersOf(entry) : graph.nodeOf(entry).children
-    ).map((child) => child.entry.status);
+    // A CLOSE move's gate reads the direct children (qits-1757): the item's children in the work
+    // tree (an epic's features, a feature's tasks), by their own status.
+    const children = graph.nodeOf(entry).children.map((child) => child.entry.status);
     return workActions(registry, entry.archetype, status, children).map((group) => ({
       title: GROUP_TITLES[group.id],
       actions: group.actions.map((action) => this.action(action, entry)),
@@ -342,21 +341,6 @@ export class WorkItemPage {
           when: (event, ids) => {
             const id = this.entryId();
             return !!id && (ids.workIds.includes(id) || payloadField(event, 'entityId') === id);
-          },
-          refresh: () => {
-            const ref = this.id();
-            if (ref) void this.details.refresh(ref);
-          },
-        },
-        destroy,
-      );
-      // A milestone the item needs came to hold or stopped holding: its marks and dates move.
-      refreshOn(
-        {
-          names: MILESTONE_EVENTS,
-          when: (event) => {
-            const milestoneId = payloadField(event, 'milestoneId');
-            return !!milestoneId && this.milestones().some((m) => m.id === milestoneId);
           },
           refresh: () => {
             const ref = this.id();
@@ -402,12 +386,6 @@ export class WorkItemPage {
         return () => void this.store.dispatch(entry, 'FLOW');
       case 'nextPhase':
         return () => void this.store.dispatch(entry, 'PHASE');
-      case 'startCampaign':
-        // TODO: `POST /work/{qualifiedId}/dispatch` starts a campaign, after asking twice ("Confirm
-        // start campaign?"): that start authorises every ungated dispatch in the campaign. Needs a
-        // recorded provider state and a pact interaction first. Interim: the registry serves no
-        // campaign phases, so when it shows is `workActions`' own rule.
-        return notBuiltYet;
       case 'block':
         // TODO: the old UI opens a form for the reason (required), then sends
         // `POST /work/{qualifiedId}/blocked` with `{blocked: true, reason}`; Unblock when blocked.

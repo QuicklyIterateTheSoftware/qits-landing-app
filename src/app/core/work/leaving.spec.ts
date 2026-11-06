@@ -6,7 +6,6 @@ const node = (id: string): WorkNode => ({
   entry: { id, qualifiedId: id, title: id, archetype: 'EPIC' },
   children: [],
   context: false,
-  campaigns: [],
   tasks: { verified: 0, total: 0 },
 });
 

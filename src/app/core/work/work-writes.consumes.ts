@@ -7,7 +7,7 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * What `WorkWritesStore` reads from qits-projects' answers to the work create form and the work
- * item page's inspiration (epic qits-888), and to a drag in the Backlog or on the board (qits-753). The store passes each list to `consume(...)`, so it
+ * item page's inspiration (epic qits-888) and needs (epic qits-1899), and to a drag in the Backlog or on the board (qits-753). The store passes each list to `consume(...)`, so it
  * cannot read any other field, and its pact spec passes the same lists as `consumes`.
  */
 
@@ -25,6 +25,15 @@ export const PATCH_WORK_INSPIRATION = ['qualifiedId', 'inspiredBy'] as const;
 
 /** A patched item, cut to what the store reads. */
 export type PatchedWork = Consumed<PatchWorkResponses[200], typeof PATCH_WORK_INSPIRATION>;
+
+/**
+ * `patchWork` with `needs` alone (epic qits-1899): the item's qualified id. The answer omits the
+ * needs, so the Needs panel reads the item again (`WorkDetailStore.refresh`) to show them.
+ */
+export const PATCH_WORK_NEEDS = ['qualifiedId'] as const;
+
+/** An item whose needs were written, cut to what the store reads. */
+export type PatchedNeeds = Consumed<PatchWorkResponses[200], typeof PATCH_WORK_NEEDS>;
 
 /**
  * `reprioritizeWork`: the siblings the drop renumbered (the moved item and every one above it), each

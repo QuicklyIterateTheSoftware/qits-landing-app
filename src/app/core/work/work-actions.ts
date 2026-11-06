@@ -12,14 +12,7 @@ import type { ArchetypeEntry, DispatchPhase, LegalMove } from './archetypes.cons
  * - `agent`: a dispatch press, from `phases[status]`: "Dispatch" runs the whole `flow` (its
  *   popover lists the phases), the next phase's button (`next`, labelled by its word, e.g.
  *   "Implement") runs that one phase. Each is left out when the registry has none (`next` null,
- *   `flow` empty; a feature, a task and a campaign have no phases).
- *
- *   INTERIM for a campaign: its press is its start, and the registry serves no campaign phases.
- *   Since qits-650 a campaign's status is derived from its members (the lowest member status
- *   wins), its only manual moves are DROP and REOPEN, and the service starts it at any status
- *   that is neither DONE nor DROPPED. "Start campaign" shows on that same rule: whenever the
- *   campaign's status is set and is neither DONE nor DROPPED (the `CLOSED` set below, the same
- *   one a CLOSE move gates on).
+ *   `flow` empty; a feature and a task have no phases).
  * - `status`: every move the registry serves out of the status, in its order (`transitions`), then
  *   Block (a placeholder) wherever the Agent group has something to run. A CLOSE move ("Close as
  *   done", qits-1757) shows only while every direct child is closed (`allClosed`): the service
@@ -28,16 +21,14 @@ import type { ArchetypeEntry, DispatchPhase, LegalMove } from './archetypes.cons
  *   (the platform uses it itself, closing a ticket once its wrapper release finalizes), but every
  *   other caller gets a 409 (qits-150), so the page never offers it for a TICKET.
  * - `plan` (Edit, Reshape, Refinement room): placeholders. Edit and Reshape at REPORTED and
- *   REFINED, never for a campaign, although since qits-650 the service lets a campaign's plan
- *   change at any status that is neither DONE nor DROPPED; TODO: the registry does not say yet
- *   when the plan can change. Refinement room where the next phase is refine.
+ *   REFINED; TODO: the registry does not say yet when the plan can change. Refinement room where
+ *   the next phase is refine.
  */
 
 /** One action a work item's page can offer. */
 export type WorkAction =
   | { readonly kind: 'dispatch'; readonly flow: readonly DispatchPhase[] }
   | { readonly kind: 'nextPhase'; readonly phase: DispatchPhase }
-  | { readonly kind: 'startCampaign' }
   | { readonly kind: 'move'; readonly move: LegalMove }
   | { readonly kind: 'block' | 'edit' | 'reshape' | 'refine' };
 
@@ -57,8 +48,8 @@ const PLANNING: ReadonlySet<string> = new Set(['REPORTED', 'REFINED']);
 const CLOSED: ReadonlySet<string> = new Set(['DONE', 'DROPPED']);
 
 /**
- * Whether a CLOSE move may show: the item has at least one direct child (a campaign's members, an
- * epic's features, a feature's tasks) and every one of them is DONE or DROPPED. `children` are
+ * Whether a CLOSE move may show: the item has at least one direct child (an epic's features, a
+ * feature's tasks) and every one of them is DONE or DROPPED. `children` are
  * their own statuses; undefined (not known) counts as none.
  */
 export function allClosed(children: readonly (string | null | undefined)[] | undefined): boolean {
@@ -85,21 +76,17 @@ export function workActions(
   const moves = (registry?.transitions?.[s] ?? [])
     .filter((m) => m.kind !== 'CLOSE' || closable)
     .filter((m) => !(archetype === 'TICKET' && m.to === 'DONE'));
-  const campaign = archetype === 'CAMPAIGN';
 
   const agent: WorkAction[] = [];
   const flow = phases?.flow ?? [];
   if (flow.length) agent.push({ kind: 'dispatch', flow });
   if (phases?.next) agent.push({ kind: 'nextPhase', phase: phases.next });
-  if (campaign && s && !CLOSED.has(s)) {
-    agent.push({ kind: 'startCampaign' });
-  }
 
   const moving: WorkAction[] = moves.map((move) => ({ kind: 'move', move }));
   if (agent.length) moving.push({ kind: 'block' });
 
   const plan: WorkAction[] = [];
-  if (!campaign && PLANNING.has(s)) plan.push({ kind: 'edit' }, { kind: 'reshape' });
+  if (PLANNING.has(s)) plan.push({ kind: 'edit' }, { kind: 'reshape' });
   if (phases?.next?.phase === 'refine') plan.push({ kind: 'refine' });
 
   const groups: WorkActionGroup[] = [
@@ -137,8 +124,6 @@ export function lookOf(action: WorkAction): WorkActionLook {
       };
     case 'nextPhase':
       return { label: capital(action.phase.phase ?? 'Next phase'), variant: 'muted' };
-    case 'startCampaign':
-      return { label: 'Start campaign', variant: 'success' };
     case 'move':
       return moveLook(action.move);
     case 'block':

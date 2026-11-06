@@ -7,16 +7,14 @@ import { Tag } from '$ui/components/tag/tag';
 import { TagLink } from '$ui/components/tag-link/tag-link';
 
 /**
- * A reference to a work item by its qualified id: a tag "<Archetype>: <id>" (e.g. "Campaign:
+ * A reference to a work item by its qualified id: a tag "<Archetype>: <id>" (e.g. "Ticket:
  * qits-622"; just the id while the item is not known) that links to the item's page,
  * `/projects/<slug>/work/detail/<id>`. An id rather than a title, because titles are often too
  * long for a tag.
  *
  * While the pointer or the focus is on it, a popover previews the item: its id, archetype and
- * status, its title, and its description in a box about five lines high that scrolls. The item
- * comes from `SelectedWork`, which the work pages load already, so the preview costs no request.
- * Only a campaign's description is loaded there (`campaignDescriptions`); for any other item the
- * preview shows the header alone. The popover is always rendered and switched by CSS, so the
+ * status, and its title. The item comes from `SelectedWork`, which the work pages load already, so
+ * the preview costs no request. The popover is always rendered and switched by CSS, so the
  * server and the browser render the same markup.
  *
  * `display: contents`, so the tag is itself the item of the row it is put in (`[lane-tags]`, say).
@@ -36,12 +34,6 @@ import { TagLink } from '$ui/components/tag-link/tag-link';
           <ui-tag [label]="status()" [class.hidden]="!status()" />
         </div>
         <p class="m-0 font-semibold" [class.hidden]="!entry()?.title">{{ entry()?.title }}</p>
-        <p
-          class="m-0 max-h-[5em] overflow-y-auto text-xs whitespace-pre-line text-charcoal-brown-700"
-          [class.hidden]="!description()"
-        >
-          {{ description() }}
-        </p>
       </div>
     </ui-popover>
   `,
@@ -57,7 +49,7 @@ export class WorkRef {
     this.work.entries().find((e) => e.qualifiedId === this.qualifiedId()),
   );
 
-  /** The archetype as a word: `CAMPAIGN` is "Campaign". */
+  /** The archetype as a word: `TICKET` is "Ticket". */
   protected readonly archetype = computed(() => {
     const archetype = this.entry()?.archetype ?? '';
     return archetype.charAt(0) + archetype.slice(1).toLowerCase();
@@ -72,9 +64,4 @@ export class WorkRef {
   );
 
   protected readonly status = computed(() => this.entry()?.status?.toLowerCase() ?? '');
-
-  protected readonly description = computed(() => {
-    const id = this.entry()?.id;
-    return id ? (this.work.campaignDescriptions()[id] ?? '') : '';
-  });
 }

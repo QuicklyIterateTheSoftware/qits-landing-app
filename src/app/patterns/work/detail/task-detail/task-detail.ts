@@ -7,21 +7,16 @@ import {
   input,
   LOCALE_ID,
 } from '@angular/core';
-import { SelectedWork } from '$core/work/selected-work';
 import type { WorkDetail } from '$core/work/work-detail.store';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
 import { WorkComments } from '$patterns/work/detail/work-comments/work-comments';
-import {
-  dependsOnField,
-  WorkFields,
-  type WorkField,
-} from '$patterns/work/detail/work-fields/work-fields';
+import { WorkFields, type WorkField } from '$patterns/work/detail/work-fields/work-fields';
 
 /**
  * A task's page body: its facts (the repository it changes, by id; when it was started and when
- * implemented; what it depends on, a link to that task), its description (Markdown) and its
- * comments. A task has no children and no dossier.
+ * implemented), its description (Markdown) and its comments. A task has no children and no
+ * dossier. What it needs is the page's Needs panel (`app-work-needs-panel`, epic qits-1899).
  */
 @Component({
   selector: 'app-task-detail',
@@ -40,7 +35,6 @@ export class TaskDetail {
   /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
 
-  private readonly work = inject(SelectedWork);
   private readonly locale = inject(LOCALE_ID);
 
   protected readonly fields = computed((): readonly WorkField[] => {
@@ -51,7 +45,6 @@ export class TaskDetail {
       { label: 'Repository', value: entity?.repositoryId ?? 'None', code: !!entity?.repositoryId },
       { label: 'Started', value: when(entity?.implementingAt) },
       { label: 'Implemented', value: when(entity?.implementedAt) },
-      ...dependsOnField(entity?.dependsOn, this.work.entries(), this.base()),
     ];
   });
 }

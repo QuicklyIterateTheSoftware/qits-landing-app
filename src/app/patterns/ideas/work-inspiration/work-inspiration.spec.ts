@@ -129,7 +129,7 @@ describe('WorkInspiration', () => {
 
   it('clears it, and shows a refusal in the service’s words', async () => {
     const id = params['ideaId'];
-    const { fixture, element, button } = await render('CAMPAIGN', id);
+    const { fixture, element, button } = await render('TICKET', id);
     http.expectOne(`/projects/api/ideas/${id}`).flush(goldenMaster(IDEAS, 'getIdea'));
     await answered(fixture);
     button('Clear')!.click();

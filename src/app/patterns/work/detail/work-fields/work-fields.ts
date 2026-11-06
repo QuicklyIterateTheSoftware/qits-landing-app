@@ -46,24 +46,3 @@ export interface WorkField {
 export class WorkFields {
   readonly fields = input.required<readonly WorkField[]>();
 }
-
-/**
- * The "Depends on" field for the item with id `dependsOn`: its qualified id and title, linking to
- * its page below `base`; just the id when the project's work does not hold it; none without one.
- */
-export function dependsOnField(
-  dependsOn: string | null | undefined,
-  entries: readonly { id?: string; qualifiedId?: string; title?: string }[],
-  base: string,
-): WorkField[] {
-  if (!dependsOn) return [];
-  const other = entries.find((e) => e.id === dependsOn);
-  if (!other?.qualifiedId) return [{ label: 'Depends on', value: dependsOn, code: true }];
-  return [
-    {
-      label: 'Depends on',
-      value: `${other.qualifiedId} · ${other.title ?? ''}`,
-      link: `${base}/${other.qualifiedId}`,
-    },
-  ];
-}

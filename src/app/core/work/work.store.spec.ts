@@ -50,69 +50,6 @@ describe('WorkStore', () => {
     http.expectNone(`/projects/api/projects/${ID}/work`);
   });
 
-  it('reads each campaign’s members and description, by its qualified id', async () => {
-    const store = TestBed.inject(WorkStore);
-    const state = 'a campaign with a done, a verified and an implementing epic';
-    const campaign = goldenMaster(state, 'getWork');
-    const members = goldenMaster(state, 'listWorkMembers');
-    const done = store.load(ID);
-    await settle();
-    http
-      .expectOne(`/projects/api/projects/${ID}/work`)
-      .flush(goldenMaster(state, 'listProjectWork'));
-    await settle();
-    http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`).flush(members);
-    http.expectOne(`/projects/api/work/${campaign.qualifiedId}`).flush(campaign);
-    await done;
-    const work = store.byProject()[ID];
-    expect(work?.status).toBe('loaded');
-    expect(work?.campaigns[campaign.id]).toEqual(
-      members.members.map((m: { entity: { id: string } }) => m.entity.id),
-    );
-    expect(work?.campaignDescriptions).toEqual({ [campaign.id]: campaign.description });
-  });
-
-  it('leaves out a campaign’s description it could not read, and keeps its members', async () => {
-    const store = TestBed.inject(WorkStore);
-    const state = 'a campaign with work in every phase';
-    const members = goldenMaster(state, 'listWorkMembers');
-    const done = store.load(ID);
-    await settle();
-    const list = goldenMaster(state, 'listProjectWork');
-    http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
-    await settle();
-    const campaign = list.entities.find((e: WorkEntry) => e.archetype === 'CAMPAIGN');
-    http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`).flush(members);
-    http
-      .expectOne(`/projects/api/work/${campaign.qualifiedId}`)
-      .flush(null, { status: 500, statusText: 'Server Error' });
-    await done;
-    const work = store.byProject()[ID];
-    expect(work?.status).toBe('loaded');
-    expect(work?.campaigns[campaign.id]).toHaveLength(members.members.length);
-    expect(work?.campaignDescriptions).toEqual({});
-  });
-
-  it('fails the work when a campaign’s members cannot be read', async () => {
-    const store = TestBed.inject(WorkStore);
-    const state = 'a campaign with work in every phase';
-    const done = store.load(ID);
-    await settle();
-    const list = goldenMaster(state, 'listProjectWork');
-    http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
-    await settle();
-    const campaign = list.entities.find((e: WorkEntry) => e.archetype === 'CAMPAIGN');
-    http
-      .expectOne(`/projects/api/work/${campaign.qualifiedId}/members`)
-      .flush(null, { status: 500, statusText: 'Server Error' });
-    http.expectOne(`/projects/api/work/${campaign.qualifiedId}`).flush(null, {
-      status: 500,
-      statusText: 'Server Error',
-    });
-    await done;
-    expect(store.byProject()[ID]?.status).toBe('error');
-  });
-
   it('counts zero for a project with no work', async () => {
     const store = TestBed.inject(WorkStore);
     const done = store.load(ID);
@@ -125,9 +62,6 @@ describe('WorkStore', () => {
       status: 'loaded',
       count: 0,
       entries: [],
-      campaigns: {},
-      campaignDescriptions: {},
-      memberships: {},
     });
   });
 
@@ -303,55 +237,6 @@ describe('WorkStore', () => {
       });
       await later;
       expect(statusOf(store, 'e-1')).toBe('DONE');
-    });
-
-    it('applies a finish settled during a refresh’s campaign reads, not the stale snapshot', async () => {
-      const store = TestBed.inject(WorkStore);
-      const state = 'a campaign with a done, a verified and an implementing epic';
-      const list = goldenMaster(state, 'listProjectWork');
-      const members = goldenMaster(state, 'listWorkMembers');
-      const campaign = goldenMaster(state, 'getWork');
-      const verifiedEpic = list.entities.find(
-        (e: WorkEntry) => e.archetype === 'EPIC' && e.status === 'VERIFIED',
-      ) as WorkEntry;
-
-      // Load once, so there is work to refresh.
-      const loadedFirst = store.load(ID);
-      await drain();
-      http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
-      await drain();
-      http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`).flush(members);
-      http.expectOne(`/projects/api/work/${campaign.qualifiedId}`).flush(campaign);
-      await loadedFirst;
-      expect(statusOf(store, verifiedEpic.id as string)).toBe('VERIFIED');
-
-      // Refresh starts, and the work list answers with the epic still VERIFIED.
-      const refreshed = store.refresh(ID);
-      await drain();
-      http.expectOne(`/projects/api/projects/${ID}/work`).flush(list);
-      await drain();
-      const membersReq = http.expectOne(`/projects/api/work/${campaign.qualifiedId}/members`);
-      const describedReq = http.expectOne(`/projects/api/work/${campaign.qualifiedId}`);
-
-      // While the campaign's member and description reads are still on their way, the epic's own
-      // finish completes.
-      store.finishLater(ID, verifiedEpic);
-      await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
-      await drain();
-      http
-        .expectOne(`/projects/api/work/${verifiedEpic.qualifiedId}/status`)
-        .flush({ status: 'DONE' });
-      await drain();
-      expect(store.pendingFinishes()).toEqual({});
-      expect(statusOf(store, verifiedEpic.id as string)).toBe('DONE');
-
-      // The campaign reads answer, still carrying the list's snapshot (VERIFIED).
-      membersReq.flush(members);
-      describedReq.flush(campaign);
-      await refreshed;
-
-      // The refresh must not undo the finish with the stale status it fetched before it settled.
-      expect(statusOf(store, verifiedEpic.id as string)).toBe('DONE');
     });
 
     it('closes finishes made within a second on time: their events fetch the work one at a time (qits-1684)', async () => {

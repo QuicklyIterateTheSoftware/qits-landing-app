@@ -1,8 +1,6 @@
 import type {
   DispatchWorkResponses,
-  GetWorkResponses,
   ListProjectWorkResponses,
-  ListWorkMembersResponses,
   ListWrapperClosingsResponses,
   SetWorkStatusResponses,
 } from '../../api/projects';
@@ -19,9 +17,9 @@ import type { Consumed } from '@qits/angular';
  * request shared by the card and the work section. The card counts entries by status ({@link countsAsWork}); the work
  * section shows each entity as a small card (qualified id, title, archetype), placed by its own status,
  * nested under its `parent` and ranked among its siblings by its `priority` (qits-753; null when
- * nobody ranked it). Each card marks the milestones the entity needs that are not met yet
- * ("needs: <name>", epic qits-615): `milestones`, each with its name and since when it is met
- * (`satisfiedAt`, null while unmet).
+ * nobody ranked it). Each card says how many of the items the entity needs are not at their
+ * status yet (`app-work-needs`, epic qits-1899): `unmetNeeds`, and each need's item (`qualifiedId`),
+ * the status it needs and whether it is `met`, for the badge's tooltip.
  */
 export const LIST_PROJECT_WORK = [
   'entities[].id',
@@ -31,9 +29,11 @@ export const LIST_PROJECT_WORK = [
   'entities[].status',
   'entities[].parent',
   'entities[].priority',
-  'entities[].milestones[].id',
-  'entities[].milestones[].displayName',
-  'entities[].milestones[].satisfiedAt',
+  'entities[].needs[].qualifiedId',
+  'entities[].needs[].status',
+  'entities[].needs[].currentStatus',
+  'entities[].needs[].met',
+  'entities[].unmetNeeds',
 ] as const;
 
 /** One work entity, cut to what the store reads. */
@@ -73,33 +73,6 @@ export type WrapperClosing = NonNullable<
 export function countsAsWork(entry: WorkEntry): boolean {
   return entry.status === 'REFINED' && entry.archetype !== 'FEATURE' && entry.archetype !== 'TASK';
 }
-
-/**
- * `WorkStore.load(projectId)`, for each campaign in the tree: its members, in campaign order
- * (`listWorkMembers`, by the campaign's qualified id). Campaign membership is not on the entity; the
- * campaign's members answer holds it. Each membership's id and the milestones it needs (epic
- * qits-615: a member is dispatched once all are met), which the campaign page shows and sets.
- */
-export const LIST_WORK_MEMBERS = [
-  'members[].entity.id',
-  'members[].membershipId',
-  'members[].milestones[].id',
-  'members[].milestones[].displayName',
-  'members[].milestones[].satisfiedAt',
-] as const;
-
-/** A campaign's members, cut to what the store reads. */
-export type CampaignMembers = Consumed<ListWorkMembersResponses[200], typeof LIST_WORK_MEMBERS>;
-
-/**
- * `WorkStore.load(projectId)`, for each campaign in the tree: its description (`getWork`, by the
- * campaign's qualified id), which the Campaigns page shows at its start. The project's work list
- * does not carry descriptions.
- */
-export const GET_CAMPAIGN_DESCRIPTION = ['description'] as const;
-
-/** A campaign's description, cut to what the store reads. */
-export type CampaignDescription = Consumed<GetWorkResponses[200], typeof GET_CAMPAIGN_DESCRIPTION>;
 
 /**
  * `WorkStore.transition(projectId, entry, target)` and `finish(projectId, entry)`: the entity's

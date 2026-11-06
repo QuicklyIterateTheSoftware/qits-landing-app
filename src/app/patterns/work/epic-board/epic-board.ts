@@ -15,15 +15,14 @@ import { BoardCard } from '$ui/components/board/board-card';
 import { BoardRow } from '$ui/components/board/board-row';
 import { Leave } from '$ui/components/leave/leave';
 import { Tag } from '$ui/components/tag/tag';
-import { WorkRef } from '$patterns/work/work-ref/work-ref';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
- * One epic with its own board, as a campaign and the epic's page draw an epic on the board
+ * One epic with its own board, as the epic's page draws it on the board
  * (READY_FOR_DEV to VERIFYING):
  *
  * - with `header`, a bar on top that runs on down the left side as one ┌, as an epic's lane does on
- *   the In Progress board: the bar holds its status, its campaigns as tags and a Workspace tag
+ *   the In Progress board: the bar holds its status and a Workspace tag
  *   while it has an ACTIVE workspace (`app-workspace-link`) at its left, and its title (linking
  *   to it) at its right; the left
  *   strip holds its id, written up from the bottom. The strip is in the grid, so a long id makes
@@ -33,7 +32,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * - each feature is a row (`ui-board-row`), as on the In Progress board but with its bar and
  *   strip solid (`solid`), not translucent: its title along the bottom, its id up the right gutter, a Workspace tag at the title line's end;
  * - each task is a card (`ui-board-card`) in its column (`epicBoardRows`: a DONE task muted in
- *   Verified, REPORTED and DROPPED ones left out), with its campaigns and its Workspace bubble.
+ *   Verified, REPORTED and DROPPED ones left out), with its Workspace bubble.
  *
  * With no feature, the board says "No features". When `leaving` is set, the whole shrinks away
  * (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`.
@@ -41,7 +40,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 @Component({
   selector: 'app-epic-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Board, BoardRow, BoardCard, Leave, Tag, WorkRef, WorkspaceLink],
+  imports: [RouterLink, Board, BoardRow, BoardCard, Leave, Tag, WorkspaceLink],
   host: { class: 'block' },
   template: `
     @let n = node();
@@ -74,9 +73,6 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
             n.entry.title
           }}</a>
           <ui-tag [label]="status()" [class.hidden]="!status()" />
-          @for (campaign of n.campaigns; track campaign.id) {
-            <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
-          }
           <app-workspace-link [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
         </header>
       }
@@ -102,13 +98,6 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
                 [border]="borders[card.column]"
                 [link]="base() + '/' + card.node.entry.qualifiedId"
               >
-                @if (card.node.campaigns.length) {
-                  <div class="mt-1 flex flex-wrap gap-1">
-                    @for (campaign of card.node.campaigns; track campaign.id) {
-                      <app-work-ref [qualifiedId]="campaign.qualifiedId ?? ''" />
-                    }
-                  </div>
-                }
                 <app-workspace-link
                   card-corner
                   variant="corner"

@@ -18,7 +18,6 @@ import {
   workspacesGoldenMaster,
   workspacesGoldenMasters,
 } from '../../../../../../../testing/golden-masters';
-import { answerCampaignReads, campaignsIn } from '../../../../../../../testing/campaign-reads';
 import { WorkItemPage } from './work-item.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -27,9 +26,8 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const WORK = 'a project with work in every status';
 const EPIC = 'an epic with features and tasks';
 const REGISTRY = '/projects/api/work/archetypes';
-const DETAIL = 'a campaign in detail';
-/** The links in the region of an item's children: features, tasks or members. */
-const CHILDREN = ['Features', 'Tasks', 'Members'].map((n) => `section[aria-label=${n}] a`).join();
+/** The links in the region of an item's children: features or tasks. */
+const CHILDREN = ['Features', 'Tasks'].map((n) => `section[aria-label=${n}] a`).join();
 /** qits-workspaces' states; their ids are those of qits-projects' "… in detail" states. */
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
@@ -38,8 +36,8 @@ const OPEN_WORKSPACES = '/workspaces/api/work/workspaces';
 /**
  * The work item page's actions and what they send, and the children it shows, on qits-projects'
  * golden masters: the project list and "a project with work in every status" (one epic and one
- * ticket per status), "an epic with features and tasks" and "a campaign in detail" (with the
- * campaign's own reads), and the archetype registry. Which actions show for which status is `work-actions.spec.ts`; this
+ * ticket per status), "an epic with features and tasks" and the "… in detail" states, and the
+ * archetype registry. Which actions show for which status is `work-actions.spec.ts`; this
  * checks the page wires them. The workspaces come from qits-workspaces' golden masters
  * (`answerWorkspaces`).
  */
@@ -96,8 +94,6 @@ describe('WorkItemPage', () => {
    * its description, dossier and comments but with its children.
    */
   async function answerDetail(state: string, ref: string, recorded: boolean) {
-    // A campaign's own read has the URL of the work list's read of its description, which `shown`
-    // may have answered already, with the same recording.
     const items = http.match(`/projects/api/work/${ref}`);
     expect(items.length).toBeLessThanOrEqual(1);
     const thread = http.expectOne(`/projects/api/work/${ref}/comments`);
@@ -158,14 +154,12 @@ describe('WorkItemPage', () => {
 
   /**
    * The page of the entity titled `title` in `state`'s recorded work, with everything answered:
-   * a campaign's members too, from `campaignState`, and its description from "a campaign in
-   * detail" (the detail states' seed), and the item's own reads (`answerDetail`).
+   * the work, the registry and the item's own reads (`answerDetail`).
    */
   async function shown(
     title: string,
     state = WORK,
     detail = false,
-    campaignState = state,
     failHistory = false,
     derive: Derive = {},
   ) {
@@ -188,10 +182,6 @@ describe('WorkItemPage', () => {
     http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
     await settle();
     await settle();
-    await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
-      members: campaignState,
-      described: [DETAIL],
-    });
     const registry = goldenMaster('the archetype registry', 'listWorkArchetypes');
     http.expectOne(REGISTRY).flush(derive.registry ? derive.registry(registry) : registry);
     await answerDetail(state, entity.qualifiedId, detail);
@@ -200,14 +190,11 @@ describe('WorkItemPage', () => {
     await harness.fixture.whenStable();
     const element = harness.routeNativeElement as HTMLElement;
     /**
-     * Each link in the children's region but the Workspace links and the "needs" marks: its text
-     * and where it leads.
+     * Each link in the children's region but the Workspace links: its text and where it leads.
      */
     const children = () =>
       [...element.querySelectorAll(CHILDREN)]
         .filter((a) => !a.getAttribute('href')?.endsWith('/agent'))
-        // A member's "needs" marks (epic qits-615) link milestones, not children.
-        .filter((a) => !a.hasAttribute('data-milestone-needs'))
         .map((a) => [a.textContent?.trim(), a.getAttribute('href')?.split('/').pop()]);
     const groups = () =>
       [...element.querySelectorAll('[role=group]')].map((g) => ({
@@ -263,42 +250,16 @@ describe('WorkItemPage', () => {
     ]);
   });
 
-  it('shows a campaign with its description, its start and its members in campaign order', async () => {
-    const { element, groups, children, workspaceLinks } = await shown(
-      'Invoicing for the Q4 close',
-      DETAIL,
+  // Epic qits-1899: what an item needs, on every archetype but an issue (the panel's own spec
+  // covers its rows and writes).
+  it('shows the Needs panel below an item’s body', async () => {
+    const { element } = await shown(
+      'Invoice totals are off by one cent',
+      'a bug ticket in detail',
       true,
     );
-    expect(element.textContent).toContain('Everything accounting needs');
-    // REFINED: the start, the served moves; no plan for a campaign.
-    expect(groups()).toEqual([
-      { title: 'Agent', actions: ['Start campaign'] },
-      { title: 'Status', actions: ['Drop', 'Block'] },
-    ]);
-    const titles = children()
-      .map(([text]) => text)
-      .filter((text) => !text?.startsWith('contract-'));
-    // Each member with its subtree: the export epic's features and their tasks.
-    expect(titles).toEqual([
-      'Tax rates per country',
-      'Export invoices for the accountants',
-      'Stream invoices as CSV',
-      'Download button on the invoice list',
-      'CSV export',
-      'Render one invoice as PDF',
-      'Preview the PDF before download',
-      'PDF export',
-      'Invoice totals are off by one cent',
-      'Credit notes show the wrong sign',
-      'Remember the last export format',
-    ]);
-    expect(children()).toContainEqual(['Remember the last export format', 'contract-00000001-11']);
-    // The members with an ACTIVE workspace: the export epic, a CSV task, the PDF feature, the bug.
-    expect(workspaceLinks()).toEqual(
-      ['2', '5', '6', '10'].map(
-        (n) => `/projects/contract-00000001/work/detail/contract-00000001-${n}/agent`,
-      ),
-    );
+    const panel = element.querySelector('section[aria-label=Needs]');
+    expect(panel?.querySelector('h2')?.textContent?.trim()).toBe('Needs');
   });
 
   it('lists an item’s workspaces in every state, newest first, each linking to its page', async () => {
@@ -319,7 +280,7 @@ describe('WorkItemPage', () => {
   });
 
   it('marks the Workspaces region as failed when the history cannot be read', async () => {
-    const { element, history } = await shown('Reported ticket', WORK, false, WORK, true);
+    const { element, history } = await shown('Reported ticket', WORK, false, true);
     expect(history()).toEqual([]);
     expect(noneShown(element)).toBe(false);
     const icon = element.querySelector(
@@ -412,7 +373,6 @@ describe('WorkItemPage', () => {
         'Shipped feature',
         EPIC,
         false,
-        EPIC,
         false,
         { work: tasksClosed, registry: withClose('FEATURE', 'IMPLEMENTED') },
       );
@@ -442,14 +402,14 @@ describe('WorkItemPage', () => {
 
     it('holds it back while a child is open', async () => {
       // The shipped feature's tasks as recorded: IMPLEMENTED and READY_FOR_DEV.
-      const { groups } = await shown('Shipped feature', EPIC, false, EPIC, false, {
+      const { groups } = await shown('Shipped feature', EPIC, false, false, {
         registry: withClose('FEATURE', 'IMPLEMENTED'),
       });
       expect(groups().flatMap((g) => g.actions)).not.toContain('Close as done');
     });
 
     it('holds it back on an epic with one feature still open', async () => {
-      const { groups } = await shown('Nested epic', EPIC, false, EPIC, false, {
+      const { groups } = await shown('Nested epic', EPIC, false, false, {
         work: tasksClosed,
         registry: withClose('EPIC', 'READY_FOR_DEV'),
       });
@@ -546,16 +506,12 @@ describe('WorkItemPage', () => {
       await settle();
     }
 
-    /** Answers the work list's re-read, its campaigns, and any open-workspaces re-read. */
+    /** Answers the work list's re-read, and any open-workspaces re-read. */
     async function answerWork() {
       const work = goldenMaster(WORK, 'listProjectWork');
       http.expectOne(`/projects/api/projects/${project().id}/work`).flush(work);
       await settle();
       await settle();
-      await answerCampaignReads(http, goldenMaster, campaignsIn(work), {
-        members: WORK,
-        described: [DETAIL],
-      });
       for (const read of http.match(OPEN_WORKSPACES)) {
         read.flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
       }

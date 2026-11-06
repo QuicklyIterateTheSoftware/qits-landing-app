@@ -81,29 +81,27 @@ live (`idea-rules.ts`: paragraphs x/3, characters x/600) and shows a 400's `mess
 read again after `IDEA_EVENTS` (`IdeaCreated`, `IdeaUpdated`, `IdeaArchived`, `IdeaUnarchived`)
 whose `projectId` is the open project (`IdeasStore.follow`). An idea's Create epic / Create ticket
 open `work/create` (`WorkCreatePage`, `WorkWritesStore.create`) filled from the query and sending
-`inspiredBy`; the work item page shows and sets an epic's, ticket's or campaign's inspiration
+`inspiredBy`; the work item page shows and sets an item's inspiration
 (`patterns/ideas/work-inspiration/`, `WorkWritesStore.setInspiredBy`, a `patchWork` of
 `inspiredBy` alone, which no recording holds yet, so it has no pact interaction).
 
-Milestones (epic qits-615): what work needs before it may start, a named condition (OR'd groups of
-AND'd criteria: `ENTITY_STATUS`, `DEPLOYMENT_ACTIVE`, `SCM_RELEASE`, `APPROVAL`) shared by any number
-of work items and campaign memberships, through `MilestonesStore` (`core/milestones/`). The work
-section's last tab, `work/milestones` (`WorkMilestonesPage`), lists them (met since, made, how many
-items and memberships need it; filtered met/not met in the page) and makes one (name and condition,
-`patterns/milestones/milestone-editor/`); `work/milestones/<id>` (`MilestonePage`, under the tabs)
-shows the dates of the milestone, each group and each criterion, the evidence or approval, what
-needs it, and Rename, Edit criteria (`setMilestoneGroups`, the whole condition; a criterion kept as
-it was keeps its id and latch) and Approve on an APPROVAL criterion not given yet (a person's: the
-app runs on a person's session, and anyone else's 403 shows in the service's words). Work lists,
-the board and the item page mark each unmet milestone an item needs "⚑ needs: <name>"
-(`patterns/milestones/milestone-needs/`, ocean blue, dashed), apart from the Blocked fact and an
-agent's wait; the words "waiting"/"waiting on" are never used for a milestone. The item page attaches
-and detaches them (`patterns/milestones/work-milestones/`), a campaign's page sets each
-membership's (`patterns/milestones/member-milestones/`, from `WorkStore`'s members read). Staleness:
-`MilestoneMet`/`MilestoneUnmet` by `projectId` → the project's work (`SelectedWork.followTransitions`),
-the Milestones pages (`MilestonesStore.follow`), and the item page's own data when the event names
-one of its milestones; attach, detach, rename and create send no event, so the pages read again
-after their own writes.
+Needs (epic qits-1899): the one ordering mechanism, "item B needs item A at a status". An epic, a
+ticket, a feature or a task carries `needs[]` (each need's item, the status it needs, where that
+item stands now and whether it is `met`) and `unmetNeeds` on every work read; a need is met once
+the needed item is at or past the status along the walk (DROPPED meets only a DROPPED need), and
+qits-projects computes it on every read. Work lists, the board and the item page draw a "needs <n>"
+badge while `n` needs are not met (`patterns/work/work-needs/work-needs-badge.ts`, `app-work-needs`,
+ocean blue, dashed), its tooltip listing them (`qits-1897 at VERIFIED (now REFINED)`), apart from
+the Blocked fact and an agent's wait; the word "waiting" is never used for a need. The item page's
+Needs panel (`work-needs-panel.ts`, every archetype but ISSUE) lists them and adds or removes one;
+each write is a `patchWork` of the whole `needs` list (`WorkWritesStore.setNeeds`, `[]` clears it),
+after which the page reads the item and the project's work again (no event follows the edit, and
+the answer omits the needs). A needed item's move is an `EntityTransitioned`, so the badges follow
+it with the project's work. Campaigns, their members and milestones, and `dependsOn` are retired:
+no tab, route, store or pact interaction reads them, and a CAMPAIGN row a read still carries
+(until qits-1908 deletes them) is drawn nowhere (`WorkGraph`). The pact binds `needs[]` only in
+the state that records one ("a ticket that needs another", from `@qits/projects-golden-masters`
+2026.1106.140436 on; its interactions skip themselves on an older pin) and matches it at any length.
 
 Prioritising work (qits-753): the trees order siblings by `priority` (highest first, unranked
 after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`). In the Backlog
@@ -114,7 +112,7 @@ same corner); a drop is sent as `reprioritizeWork` with the sibling now directly
 in `core/work/work-reorder.ts`, `WorkWritesStore.reprioritize`), and the answered priorities go
 into `WorkStore` at once (`applyPriorities`); a refusal reads the work again. Every work card, lane
 and row the work patterns draw is a `uiReorderItem`, which needs a `[uiReorderList]` around it:
-where the order is not the page's job (Acceptance, the Archive, a campaign, a work item's page) the
+where the order is not the page's job (Acceptance, the Archive, the In Progress page's agents' lists, a work item's page) the
 list is there and `reorderDisabled`, and a spec host drawing one item alone gives itself
 `hostDirectives: [ReorderList]`.
 

@@ -5,7 +5,7 @@ import { LIST_WORK_ARCHETYPES, type ArchetypeEntry } from './archetypes.consumes
 
 interface ArchetypesState {
   readonly status: 'idle' | 'loading' | 'loaded' | 'error';
-  /** Each archetype's entry, by archetype (EPIC, TICKET, FEATURE, TASK, CAMPAIGN). */
+  /** Each archetype's entry, by archetype (EPIC, TICKET, FEATURE, TASK, ISSUE). */
   readonly byArchetype: Readonly<Record<string, ArchetypeEntry>>;
 }
 

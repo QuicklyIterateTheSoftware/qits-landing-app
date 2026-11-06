@@ -132,27 +132,6 @@ describe('workActions', () => {
     }
   });
 
-  it('gives a campaign its moves and the interim start, and no plan', () => {
-    expect(shown('CAMPAIGN', 'REFINED')).toEqual({
-      agent: ['Start campaign'],
-      status: ['Drop', 'Block'],
-    });
-    expect(shown('CAMPAIGN', 'VERIFIED')).toEqual({
-      agent: ['Start campaign'],
-      status: ['Drop', 'Block'],
-    });
-  });
-
-  // Since qits-650 "Start campaign" follows `status` alone, not a FORWARD move short of DONE:
-  // it shows at any status that is neither DONE nor DROPPED, REPORTED and IMPLEMENTED included,
-  // and disappears exactly at DONE and DROPPED.
-  it('offers the campaign start while its status is neither DONE nor DROPPED', () => {
-    expect(shown('CAMPAIGN', 'REPORTED').agent).toEqual(['Start campaign']);
-    expect(shown('CAMPAIGN', 'IMPLEMENTED').agent).toEqual(['Start campaign']);
-    expect(shown('CAMPAIGN', 'DONE')).toEqual({});
-    expect(shown('CAMPAIGN', 'DROPPED')).toEqual({ status: ['Reopen'] });
-  });
-
   describe('Close as done (qits-1757)', () => {
     const feature = withClose('FEATURE', 'IMPLEMENTED');
     const featureMoves = (children?: readonly (string | null | undefined)[]) =>
@@ -177,21 +156,6 @@ describe('workActions', () => {
     it('hides when there are no children, or they are not known', () => {
       expect(featureMoves([])).not.toContain('Close as done');
       expect(featureMoves(undefined)).not.toContain('Close as done');
-    });
-
-    it('leaves a campaign’s start alone: CLOSE is not a forward move', () => {
-      const campaign = withClose('CAMPAIGN', 'REFINED');
-      expect(shown('CAMPAIGN', 'REFINED', campaign, ['DONE', 'DROPPED'])).toEqual({
-        agent: ['Start campaign'],
-        status: ['Close as done', 'Drop', 'Block'],
-      });
-      expect(shown('CAMPAIGN', 'REFINED', campaign, ['DONE', 'REFINED'])).toEqual({
-        agent: ['Start campaign'],
-        status: ['Drop', 'Block'],
-      });
-      // One start, whatever the CLOSE move beside it.
-      const reported = withClose('CAMPAIGN', 'REPORTED');
-      expect(shown('CAMPAIGN', 'REPORTED', reported, ['DONE']).agent).toEqual(['Start campaign']);
     });
 
     it('counts DONE and DROPPED as closed, and nothing else', () => {

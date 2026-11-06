@@ -26,8 +26,8 @@ import { ReorderItem, ReorderList } from '$ui/components/reorder/reorder';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
- * The open project's ideas (epic qits-888), at `/projects/<slug>/ideas`: short, titled notes an
- * epic, a ticket or a campaign can name as its inspiration. Each row links the idea's page
+ * The open project's ideas (epic qits-888), at `/projects/<slug>/ideas`: short, titled notes any
+ * work item can name as its inspiration. Each row links the idea's page
  * (`ideas/detail/<id>`) and shows its derived status (PLANNED, QUEUED, DONE) and, with "Show
  * archived" on, whether it is archived. The status filter narrows the answer in the page; "Show
  * archived" reads the list with the archived ones (`IdeasStore.loadList(projectId, true)`). New

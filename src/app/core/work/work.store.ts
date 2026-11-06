@@ -9,19 +9,11 @@ import {
   withState,
 } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import {
-  dispatchWork,
-  getWork,
-  listProjectWork,
-  listWorkMembers,
-  setWorkStatus,
-} from '../../api/projects';
+import { dispatchWork, listProjectWork, setWorkStatus } from '../../api/projects';
 import {
   countsAsWork,
   DISPATCH_WORK,
-  GET_CAMPAIGN_DESCRIPTION,
   LIST_PROJECT_WORK,
-  LIST_WORK_MEMBERS,
   SET_WORK_STATUS,
   type WorkEntry,
 } from './work.consumes';
@@ -80,26 +72,6 @@ export interface ProjectWork {
   readonly status: Status;
   readonly count: number;
   readonly entries: readonly WorkEntry[];
-  /** Each campaign's member ids, in campaign order (campaign membership is not on the entity). */
-  readonly campaigns: Readonly<Record<string, readonly string[]>>;
-  /** Each campaign's description, by campaign id; a campaign without one has no key. */
-  readonly campaignDescriptions: Readonly<Record<string, string>>;
-  /**
-   * Each campaign's memberships, by campaign id, in campaign order: the member's entity id, the
-   * membership's id and the milestones it needs (epic qits-615).
-   */
-  readonly memberships: Readonly<Record<string, readonly CampaignMembership[]>>;
-}
-
-/** One campaign membership: which entity, its id, and the milestones it needs. */
-export interface CampaignMembership {
-  readonly entityId: string;
-  readonly membershipId?: string;
-  readonly milestones: readonly {
-    readonly id?: string;
-    readonly displayName?: string;
-    readonly satisfiedAt?: string | null;
-  }[];
 }
 
 /**
@@ -111,14 +83,7 @@ export function workRef(entry: Pick<WorkEntry, 'id' | 'qualifiedId'>): string | 
 }
 
 /** A project's work while it has none to show: loading, or failed. */
-const NO_WORK: ProjectWork = {
-  status: 'loading',
-  count: 0,
-  entries: [],
-  campaigns: {},
-  campaignDescriptions: {},
-  memberships: {},
-};
+const NO_WORK: ProjectWork = { status: 'loading', count: 0, entries: [] };
 
 interface WorkState {
   /** Each project's work, by project id. A project not asked for yet has no key. */
@@ -149,10 +114,6 @@ interface WorkState {
  * - `load(projectId)` fetches once, and again after an error. Nothing calls it on its own: the
  *   project card does in the browser, and `SelectedWork` for the open project.
  * - Which entities count as work is `countsAsWork` in `work.consumes.ts`.
- * - Each campaign in the tree is then asked for its members (`listWorkMembers`) and its description
- *   (`getWork`), two requests per campaign: membership lives on the campaign, not on the entity. A
- *   failed members read fails the project's work, as a partial tree would group wrongly; a failed
- *   description read only leaves that campaign's description out.
  * - `refresh(projectId)` fetches again and keeps showing the old work until the answer is in.
  * - `finish(projectId, entry)` moves a VERIFIED epic or ticket to DONE (`setWorkStatus`) and
  *   writes the answered status into the entry: it leaves the Acceptance list for the archive. DONE
@@ -240,8 +201,8 @@ export const WorkStore = signalStore(
 
     /**
      * Stores a fetch's `work` with the settled statuses laid over it. Laid over here, as it is
-     * stored, and not as the list answers: a finish that settles while the fetch still awaits its
-     * campaign reads would otherwise be overwritten by the old status (qits-1223).
+     * stored, and not as the list answers: a finish that settles while the fetch is still on its
+     * way would otherwise be overwritten by the old status (qits-1223).
      */
     function commit(projectId: string, work: ProjectWork, startedAt: number): void {
       if (work.status !== 'loaded') {
@@ -383,64 +344,12 @@ export const WorkStore = signalStore(
         listProjectWork({ path: { project: projectId } }),
         LIST_PROJECT_WORK,
       );
-      // As answered: `commit` lays the settled statuses over them once the campaign reads are in.
+      // As answered: `commit` lays the settled statuses over them.
       const entries = data?.entities ?? [];
-      const campaignList = entries.flatMap((e) => {
-        const qualifiedId = workRef(e);
-        return e.archetype === 'CAMPAIGN' && e.id && qualifiedId ? [{ id: e.id, qualifiedId }] : [];
-      });
-      const [members, described] = await Promise.all([
-        Promise.all(
-          campaignList.map(({ qualifiedId }) =>
-            consume(listWorkMembers({ path: { qualifiedId } }), LIST_WORK_MEMBERS),
-          ),
-        ),
-        Promise.all(
-          campaignList.map(({ qualifiedId }) =>
-            consume(getWork({ path: { qualifiedId } }), GET_CAMPAIGN_DESCRIPTION),
-          ),
-        ),
-      ]);
-      const failed =
-        error !== undefined || !data || members.some((a) => a.error !== undefined || !a.data);
-      const campaigns = Object.fromEntries(
-        members.map((a, i) => [
-          campaignList[i].id,
-          (a.data?.members ?? []).flatMap((m) => (m.entity?.id ? [m.entity.id] : [])),
-        ]),
-      );
-      const memberships = Object.fromEntries(
-        members.map((a, i) => [
-          campaignList[i].id,
-          (a.data?.members ?? []).flatMap((m): CampaignMembership[] =>
-            m.entity?.id
-              ? [
-                  {
-                    entityId: m.entity.id,
-                    membershipId: m.membershipId,
-                    milestones: m.milestones ?? [],
-                  },
-                ]
-              : [],
-          ),
-        ]),
-      );
-      const campaignDescriptions = Object.fromEntries(
-        described.flatMap((a, i) => {
-          const description = a.error === undefined ? a.data?.description : undefined;
-          return description ? [[campaignList[i].id, description]] : [];
-        }),
-      );
-      const work: ProjectWork = failed
-        ? { ...NO_WORK, status: 'error' }
-        : {
-            status: 'loaded',
-            count: entries.filter(countsAsWork).length,
-            entries,
-            campaigns,
-            campaignDescriptions,
-            memberships,
-          };
+      const work: ProjectWork =
+        error !== undefined || !data
+          ? { ...NO_WORK, status: 'error' }
+          : { status: 'loaded', count: entries.filter(countsAsWork).length, entries };
       return { work, startedAt };
     }
 
@@ -452,9 +361,9 @@ export const WorkStore = signalStore(
      * Fetches again; the old work stays until the answer is in, and stays if it fails.
      *
      * One refresh per project at a time (qits-1684). A call while one is open queues one more
-     * fetch after it, and every later call shares that queued one. Each refresh is a list read
-     * plus two reads per campaign; overlapping refreshes (one per finish's event) piled up so
-     * many reads that the finishes' own moves, and their toasts, waited for minutes.
+     * fetch after it, and every later call shares that queued one. Overlapping refreshes (one per
+     * finish's event) piled up so many reads that the finishes' own moves, and their toasts,
+     * waited for minutes.
      */
     function refresh(projectId: string): Promise<void> {
       const waiting = queued.get(projectId);

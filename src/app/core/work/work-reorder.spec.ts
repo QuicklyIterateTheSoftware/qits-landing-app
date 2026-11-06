@@ -32,7 +32,6 @@ describe('movable', () => {
       entry: { id: 'x', qualifiedId: 'qits-1', status },
       children: [],
       context,
-      campaigns: [],
       tasks: { verified: 0, total: 0 },
     }) as unknown as WorkNode;
 

@@ -6,11 +6,11 @@ import { SelectedWork } from '$core/work/selected-work';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { WorkRef } from './work-ref';
 
-const CAMPAIGN: WorkEntry = {
-  id: 'c-1',
+const EPIC: WorkEntry = {
+  id: 'e-1',
   qualifiedId: 'qits-622',
-  title: 'A campaign with a long title',
-  archetype: 'CAMPAIGN',
+  title: 'An epic with a long title',
+  archetype: 'EPIC',
   status: 'REFINED',
 };
 const TICKET: WorkEntry = {
@@ -33,13 +33,7 @@ describe('WorkRef', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        {
-          provide: SelectedWork,
-          useValue: {
-            entries: signal([CAMPAIGN, TICKET]),
-            campaignDescriptions: signal({ 'c-1': 'Why the campaign exists.' }),
-          },
-        },
+        { provide: SelectedWork, useValue: { entries: signal([EPIC, TICKET]) } },
         { provide: SelectedProject, useValue: { slug: signal('qits') } },
       ],
     });
@@ -55,27 +49,24 @@ describe('WorkRef', () => {
     return { link, panel };
   }
 
-  it('names a campaign by its archetype and id, and links to its page', () => {
+  it('names an item by its archetype and id, and links to its page', () => {
     const { link, panel } = render('qits-622');
-    expect(link.textContent?.trim()).toBe('Campaign: qits-622');
+    expect(link.textContent?.trim()).toBe('Epic: qits-622');
     expect(link.getAttribute('href')).toBe('/projects/qits/work/detail/qits-622');
     expect(link.getAttribute('aria-describedby')).toBe(panel.id);
   });
 
-  it('previews the header and the campaign’s description', () => {
+  it('previews the id, the archetype, the status and the title', () => {
     const { panel } = render('qits-622');
     expect(panel.textContent).toContain('qits-622');
-    expect(panel.textContent).toContain('Campaign');
+    expect(panel.textContent).toContain('Epic');
     expect(panel.textContent).toContain('refined');
-    expect(panel.textContent).toContain('A campaign with a long title');
-    expect(panel.textContent).toContain('Why the campaign exists.');
+    expect(panel.textContent).toContain('An epic with a long title');
   });
 
-  it('previews the header alone for an item without a loaded description', () => {
-    const { link, panel } = render('qits-111');
+  it('names a ticket the same way', () => {
+    const { link } = render('qits-111');
     expect(link.textContent?.trim()).toBe('Ticket: qits-111');
-    const boxes = panel.querySelectorAll('p');
-    expect(boxes[boxes.length - 1].classList).toContain('hidden');
   });
 
   it('shows the bare id for an item the work does not hold', () => {

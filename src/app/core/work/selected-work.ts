@@ -9,7 +9,6 @@ import {
   untracked,
 } from '@angular/core';
 import { injectRefreshOn, REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
-import { MILESTONE_EVENTS } from '$core/milestones/milestone-events';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { WorkGraph, withoutHidden } from './work-tree';
 import { WorkStore } from './work.store';
@@ -46,16 +45,7 @@ export class SelectedWork {
   );
 
   /** The open project's work as a tree: phases, columns and spans (`work-tree.ts`). */
-  readonly graph = computed(() => new WorkGraph(this.entries(), this.work()?.campaigns ?? {}));
-
-  /** Each campaign's description, by campaign id; a campaign without one has no key. */
-  readonly campaignDescriptions = computed(() => this.work()?.campaignDescriptions ?? {});
-
-  /**
-   * Each campaign's memberships, by campaign id, in campaign order: the membership's id and the
-   * milestones it needs (epic qits-615).
-   */
-  readonly memberships = computed(() => this.work()?.memberships ?? {});
+  readonly graph = computed(() => new WorkGraph(this.entries()));
 
   /** Loading until the project is known and its work answered; an error if either failed. */
   readonly state = computed((): LoadState => {
@@ -89,20 +79,17 @@ export class SelectedWork {
    * with their animation.
    *
    * Staleness (qits-1270): `EntityTransitioned` whose `entities[].projectId` names the open
-   * project → the open project's work (`WorkStore.refresh`: the list, its campaigns' members and
-   * descriptions). `MilestoneMet` or `MilestoneUnmet` whose `projectId` is the open project → the
-   * same read (epic qits-615): the "needs" marks of the work and of the campaigns' members follow
-   * the milestone. qits-projects sends no event for a work item created, edited, deleted, reshaped
-   * or blocked, nor for a campaign's members changing, nor for a milestone attached, detached or
-   * renamed: those reach the lists on the next load.
+   * project → the open project's work (`WorkStore.refresh`). Its needs (epic qits-1899) are met
+   * or not by the needed item's status, which moves by the same event, so the "needs" badges follow
+   * it. qits-projects sends no event for a work item created, edited (its needs included), deleted,
+   * reshaped or blocked: those reach the lists on the next load.
    */
   followTransitions(destroy: DestroyRef): void {
     this.refreshOn(
       {
-        names: [...WORK_EVENTS, ...MILESTONE_EVENTS],
+        names: WORK_EVENTS,
         debounceMs: WORK_REFRESH_DEBOUNCE_MS,
-        // `projectIds` holds `entities[].projectId` (EntityTransitioned) and `projectId` (the
-        // milestone events) alike.
+        // `projectIds` holds `entities[].projectId`.
         when: (_, ids) => {
           const id = this.selected.project()?.id;
           return !!id && ids.projectIds.includes(id);

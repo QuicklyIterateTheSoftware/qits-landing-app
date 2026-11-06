@@ -7,8 +7,6 @@ import { routes } from './app.routes';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkAcceptancePage } from './routes/projects/[slug]/work/acceptance/work-acceptance.page';
 import { WorkArchivePage } from './routes/projects/[slug]/work/archive/work-archive.page';
-import { WorkMilestonesPage } from './routes/projects/[slug]/work/milestones/work-milestones.page';
-import { MilestonePage } from './routes/projects/[slug]/work/milestones/[milestoneId]/milestone.page';
 import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-item.page';
 import { WorkInProgressPage } from './routes/projects/[slug]/work/in-progress/work-in-progress.page';
 import { WorkRefinementPage } from './routes/projects/[slug]/work/refinement/work-refinement.page';
@@ -66,11 +64,18 @@ describe('work routes', () => {
     ['in-progress', WorkInProgressPage],
     ['acceptance', WorkAcceptancePage],
     ['archive', WorkArchivePage],
-    ['milestones', WorkMilestonesPage],
-    [`milestones/00000000-0000-4000-8000-000000000002`, MilestonePage],
   ])('opens work/%s in the work layout', async (tab, page) => {
     expect(await opened(`/projects/qits/work/${tab}`)).toEqual([WorkLayout, page]);
   });
+
+  // Campaigns and milestones are retired (epic qits-1899): their old tabs are no route of the work
+  // section, so they fall through to the catch-all, which is what any unknown address renders.
+  it.each(['campaigns', 'milestones', 'milestones/00000000-0000-4000-8000-000000000002'])(
+    'falls work/%s through to the catch-all',
+    async (tab) => {
+      expect(await opened(`/projects/qits/work/${tab}`)).toEqual([ProjectPickerPage]);
+    },
+  );
 
   it('opens an item’s page at work/detail/<qualified id>, without the tabs', async () => {
     expect(await opened('/projects/qits/work/detail/qits-112')).toEqual([WorkItemPage]);

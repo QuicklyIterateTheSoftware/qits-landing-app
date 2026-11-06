@@ -14,7 +14,6 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   entry: { id: 'e-1', qualifiedId: 'qits-1', title: 'An item', archetype: 'EPIC', ...entry },
   children: [],
   context,
-  campaigns: [],
   tasks: { verified: 0, total: 0 },
 });
 
@@ -97,8 +96,8 @@ describe('EpicListItem', () => {
       'true',
     );
   });
-  it('in a campaign, shows its own status and no finish button', () => {
-    const element = render(node({ status: 'VERIFIED' }), 'campaign');
+  it('in a mixed list, shows its own status and no finish button', () => {
+    const element = render(node({ status: 'VERIFIED' }), 'mixed');
     expect(button(element).classList.contains('hidden')).toBe(true);
     expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([
       'verified',
@@ -146,14 +145,14 @@ describe('EpicListItem', () => {
     );
   });
 
-  it('in a campaign, sums up a DONE epic’s verified tasks, and starts collapsed', () => {
+  it('in a mixed list, sums up a DONE epic’s verified tasks, and starts collapsed', () => {
     const task = (id: string) => node({ id, qualifiedId: id, archetype: 'TASK' });
     const epic = {
       ...node({ status: 'DONE' }),
       children: [task('qits-3')],
       tasks: { verified: 1, total: 1 },
     };
-    const element = render(epic, 'campaign');
+    const element = render(epic, 'mixed');
     expect(element.querySelector('[lane-summary]')?.textContent).toBe('1 / 1 ✅');
     expect(element.querySelector('ui-expand-button button')?.getAttribute('aria-expanded')).toBe(
       'false',

@@ -11,7 +11,7 @@ import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
  * costs no request.
  *
  * `variant` is `ui-tag-link`'s: `tag` among an item's tags (an epic's lane, a feature row's
- * `[row-footer-end]`, a campaign's status), `corner` as a card's `[card-corner]` bubble. Hidden by
+ * `[row-footer-end]`), `corner` as a card's `[card-corner]` bubble. Hidden by
  * class, never by `@if`, so a server render (which loads nothing, so shows none) hydrates as is.
  */
 @Component({

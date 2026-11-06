@@ -36,15 +36,14 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * bearer sign-in, `app.config.ts`), back to the page they asked for.
  *
  * The work section: `projects/<slug>/work` is `WorkLayout`, a row of tabs over its pages
- * (`campaigns`, `refinement`, `schedule`, `in-progress`, `acceptance`, `archive`, `milestones`;
- * one milestone at `milestones/<milestone id>`, epic qits-615, under the tabs). An item's page is at
+ * (`refinement`, `schedule`, `in-progress`, `acceptance`, `archive`). An item's page is at
  * `work/detail/<qualified id>`, so an id can never be taken for a tab; it sits outside the layout,
  * with no tabs. `/work` opens `in-progress` by a `redirectTo`, not a page as at the root: the
  * redirect happens before the URL is written, so `/work` never enters the history and Back has
  * nothing to bounce on, and the server answers `/work` with a 302 instead of rendering an empty
  * page.
  *
- * A new epic, ticket or campaign is filed at `work/create` (`WorkCreatePage`, epic qits-888), its
+ * A new epic or ticket is filed at `work/create` (`WorkCreatePage`, epic qits-888), its
  * query filling the form (an idea's Create epic / Create ticket names the idea as `inspiredBy`).
  *
  * A project's ideas (epic qits-888) are at `projects/<slug>/ideas` (`ProjectIdeasPage`), a new one
@@ -155,13 +154,6 @@ export const routes: Routes = [
           // A redirect, not a page like the root's `RootPage`: see "The work section" above.
           { path: '', pathMatch: 'full', redirectTo: 'in-progress' },
           {
-            path: 'campaigns',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/work/campaigns/work-campaigns.page').then(
-                (m) => m.WorkCampaignsPage,
-              ),
-          },
-          {
             path: 'refinement',
             loadComponent: () =>
               import('./routes/projects/[slug]/work/refinement/work-refinement.page').then(
@@ -194,20 +186,6 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/work/archive/work-archive.page').then(
                 (m) => m.WorkArchivePage,
-              ),
-          },
-          {
-            path: 'milestones',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/work/milestones/work-milestones.page').then(
-                (m) => m.WorkMilestonesPage,
-              ),
-          },
-          {
-            path: 'milestones/:milestoneId',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/work/milestones/[milestoneId]/milestone.page').then(
-                (m) => m.MilestonePage,
               ),
           },
         ],

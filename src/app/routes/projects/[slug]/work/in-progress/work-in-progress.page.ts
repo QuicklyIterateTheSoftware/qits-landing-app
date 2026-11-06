@@ -38,7 +38,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">
               Agents on earlier work
             </h2>
-            <app-work-list [tree]="before()" [base]="detailPath()" view="campaign" />
+            <app-work-list [tree]="before()" [base]="detailPath()" view="mixed" />
           </section>
           <div class="hidden md:block">
             <app-kanban-board [tree]="board()" [base]="detailPath()" />
@@ -54,7 +54,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">
               Agents on later work
             </h2>
-            <app-work-list [tree]="after()" [base]="detailPath()" view="campaign" />
+            <app-work-list [tree]="after()" [base]="detailPath()" view="mixed" />
           </section>
         </ui-spinner>
       </app-page-layout>

@@ -14,7 +14,6 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   entry: { id: 'e-1', qualifiedId: 'qits-1', title: 'An item', archetype: 'TICKET', ...entry },
   children: [],
   context,
-  campaigns: [],
   tasks: { verified: 0, total: 0 },
 });
 
@@ -63,7 +62,7 @@ describe('TicketListItem', () => {
 
   // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so a ticket
   // never carries a finish button; the platform closes it on its own. Acceptance shows a quiet
-  // hint instead, not context and not a campaign (finishing, there, is not the page's job).
+  // hint instead, not context and not in a mixed list (finishing, there, is not the page's job).
   it.each([
     ['TICKET', 'VERIFIED', false, true],
     ['TICKET', 'VERIFYING', false, false],
@@ -79,8 +78,8 @@ describe('TicketListItem', () => {
     },
   );
 
-  it('in a campaign, shows its own status, no finish button and no hint', () => {
-    const element = render(node({ status: 'VERIFIED' }), 'campaign');
+  it('in a mixed list, shows its own status, no finish button and no hint', () => {
+    const element = render(node({ status: 'VERIFIED' }), 'mixed');
     expect(element.querySelector('button[aria-label="Mark qits-1 done"]')).toBeNull();
     expect(hint(element)).toBe(false);
     expect([...element.querySelectorAll('ui-tag')].map((t) => t.textContent?.trim())).toEqual([
