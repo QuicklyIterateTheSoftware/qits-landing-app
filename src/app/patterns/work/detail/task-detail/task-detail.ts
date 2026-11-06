@@ -7,6 +7,7 @@ import {
   input,
   LOCALE_ID,
 } from '@angular/core';
+import { SelectedProject } from '$core/projects/selected-project';
 import type { WorkDetail } from '$core/work/work-detail.store';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
@@ -25,8 +26,12 @@ import { WorkFields, type WorkField } from '$patterns/work/detail/work-fields/wo
   host: { class: 'flex flex-col gap-8' },
   template: `
     <app-work-fields [fields]="fields()" />
-    <ui-markdown class="max-w-[48rem]" [text]="detail()?.entity?.description ?? ''" />
-    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" />
+    <ui-markdown
+      class="max-w-[48rem]"
+      [text]="detail()?.entity?.description ?? ''"
+      [workProject]="slug()"
+    />
+    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" [project]="slug()" />
   `,
 })
 export class TaskDetail {
@@ -34,6 +39,9 @@ export class TaskDetail {
   readonly detail = input<WorkDetail>();
   /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
   readonly base = input.required<string>();
+
+  /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
+  protected readonly slug = inject(SelectedProject).slug;
 
   private readonly locale = inject(LOCALE_ID);
 

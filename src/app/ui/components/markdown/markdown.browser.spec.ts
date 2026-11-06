@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { page } from 'vitest/browser';
+import { provideRouter } from '@angular/router';
+import { provideQitsWorkBriefs, type QitsWorkBrief } from '@qits/ui-components';
+import { commands, page, userEvent } from 'vitest/browser';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { Markdown } from './markdown';
 
 /** Every part the app's Markdown uses, inline (a dumb component: synthetic input). */
@@ -94,5 +97,131 @@ describe('Markdown (screenshots)', () => {
     );
 
     await expect.element(element).toMatchScreenshot('narrow');
+  });
+});
+
+/** The briefs door's recording: a ticket and an epic of the project `contract-00000001`. */
+const BRIEFS = 'a project with work to brief';
+/** An hour and a half after the recorded `updatedAt`, so the brief reads "1h ago" on every run. */
+const NOW = new Date('2026-01-01T01:30:00Z');
+
+/**
+ * A work item's text naming the recorded ticket, as a ticket's description or a comment renders it
+ * (`workProject`, qits-1898): once in prose, once in a code span, once as a link's text.
+ */
+@Component({
+  imports: [Markdown],
+  host: { class: 'block h-72 w-[40rem] p-4' },
+  template: `
+    <ui-markdown [text]="text" [workProject]="project" />
+    <p id="outside" class="m-0 mt-24 text-sm">Somewhere else on the page</p>
+  `,
+})
+class WorkText {
+  project = '';
+  text = '';
+}
+
+describe('Markdown with work references (browser)', () => {
+  let ticket: QitsWorkBrief;
+  let epic: QitsWorkBrief;
+
+  beforeEach(async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: NOW });
+    const recorded = await goldenMaster(BRIEFS, 'listProjectWorkBriefs');
+    const briefs: readonly QitsWorkBrief[] = recorded.briefs;
+    [ticket, epic] = briefs;
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        // The briefs as qits-projects recorded them, without the HTTP read `workBriefSource` makes.
+        provideQitsWorkBriefs(async (_project, ids) =>
+          briefs.filter((brief) => ids.includes(brief.qualifiedId)),
+        ),
+      ],
+    });
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+
+  afterEach(async () => {
+    await commands.touch('cancel', 0, 0);
+    await commands.parkPointer();
+    vi.useRealTimers();
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+
+  async function render(text: string) {
+    const fixture = TestBed.createComponent(WorkText);
+    fixture.componentInstance.project = ticket.qualifiedId.replace(/-\d+$/, '');
+    fixture.componentInstance.text = text;
+    fixture.detectChanges();
+    const view = page.elementLocator(fixture.nativeElement);
+    // The id as drawn in the text, the reference's trigger: the panel's own link comes after it.
+    const refOf = (qualifiedId: string) => view.getByText(qualifiedId, { exact: true }).first();
+    // The brief's title is in the panel only; the panel is in the accessibility tree only open.
+    const panel = view.getByText(ticket.title);
+    const tap = async (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      const at = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      await commands.touch('down', at.x, at.y);
+      await commands.touch('up', at.x, at.y);
+    };
+    return { fixture, view, refOf, panel, tap };
+  }
+
+  /** A ticket's description: the ticket in prose, below a heading. */
+  const description = () =>
+    `## Why\nThe release request lists ${ticket.qualifiedId} without its status, so a reader ` +
+    `opens it to know whether it is done.`;
+
+  it("opens a description's brief on hover: the id, its status, when it changed, its title", async () => {
+    const { view, refOf, panel } = await render(description());
+    const ref = refOf(ticket.qualifiedId);
+    await expect.element(ref).toHaveClass('qits-work-ref');
+    await expect.element(panel).not.toBeVisible();
+    await userEvent.hover(ref);
+    await expect.element(panel).toBeVisible();
+    const tooltip = view.getByRole('tooltip');
+    await expect.element(tooltip.getByRole('link', { name: ticket.qualifiedId })).toBeVisible();
+    const status = ticket.status.toLowerCase().replace(/_/g, ' ');
+    await expect
+      .element(tooltip)
+      .toHaveTextContent(`${ticket.qualifiedId}${status}1h ago${ticket.title}`);
+    await expect.element(view).toMatchScreenshot('work-text-ref-open');
+  });
+
+  it("on a finger, a tap opens a comment's brief without following anything", async () => {
+    const { refOf, panel, tap } = await render(
+      `Same cause as ${ticket.qualifiedId}. Reproduced twice.`,
+    );
+    const ref = refOf(ticket.qualifiedId);
+    await expect.element(ref).toHaveClass('qits-work-ref');
+    const before = location.href;
+    await tap(ref.element());
+    await expect.element(panel).toBeVisible();
+    expect(location.href).toBe(before);
+
+    // A second tap closes it, and follows nothing either; a tap outside closes it too.
+    await tap(ref.element());
+    await expect.element(panel).not.toBeVisible();
+    await tap(ref.element());
+    await expect.element(panel).toBeVisible();
+    await tap(document.querySelector('#outside')!);
+    await expect.element(panel).not.toBeVisible();
+    expect(location.href).toBe(before);
+  });
+
+  it('draws an id in a code span as a reference, and leaves a link that link', async () => {
+    const { view, refOf } = await render(
+      `Folded with \`${epic.qualifiedId}\`; see [${ticket.qualifiedId}](https://example.test/t).`,
+    );
+    const ref = refOf(epic.qualifiedId);
+    await expect.element(ref).toHaveClass('qits-work-ref');
+    expect(ref.element().closest('code')).not.toBeNull();
+    await userEvent.hover(ref);
+    await expect.element(view.getByText(epic.title)).toBeVisible();
+    const link = view.getByRole('link', { name: ticket.qualifiedId, exact: true }).first();
+    await expect.element(link).toHaveAttribute('href', 'https://example.test/t');
+    expect(link.element().querySelector('qits-work-ref')).toBeNull();
   });
 });

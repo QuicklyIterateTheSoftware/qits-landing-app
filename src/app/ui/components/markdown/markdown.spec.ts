@@ -1,25 +1,28 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { QITS_SIGN_IN, QitsBearerFetch } from '@qits/angular';
+import { provideQitsWorkBriefs, type QitsWorkBrief } from '@qits/ui-components';
 import { Markdown } from './markdown';
 
 @Component({
   imports: [Markdown],
-  template: `<ui-markdown [text]="text()" [resolveUrl]="resolve" />`,
+  template: `<ui-markdown [text]="text()" [resolveUrl]="resolve" [workProject]="project()" />`,
 })
 class Host {
   readonly text = signal('');
+  readonly project = signal<string | undefined>(undefined);
   readonly resolve = (url: string) => (url.startsWith('/') ? `https://example.test${url}` : url);
 }
 
 /** Renders `text` and waits for the parser. */
-async function rendered(text: string) {
-  return (await renderedFixture(text)).nativeElement as HTMLElement;
+async function rendered(text: string, project?: string) {
+  return (await renderedFixture(text, project)).nativeElement as HTMLElement;
 }
 
-async function renderedFixture(text: string) {
+async function renderedFixture(text: string, project?: string) {
   const fixture = TestBed.createComponent(Host);
   fixture.componentInstance.text.set(text);
+  fixture.componentInstance.project.set(project);
   fixture.detectChanges();
   await fixture.whenStable();
   // The parser loads on first use; let the import settle.
@@ -61,6 +64,57 @@ describe('Markdown', () => {
   it('renders nothing for empty text', async () => {
     const element = await rendered('');
     expect(element.textContent?.trim()).toBe('');
+  });
+
+  describe('with work ids (qits-1898)', () => {
+    const TEXT = 'Follows qits-12, see `qits-14` and [qits-15](https://example.test/x).';
+    const source = vi.fn(
+      async (_project: string, ids: readonly string[]): Promise<QitsWorkBrief[]> =>
+        ids.map((id) => ({
+          id,
+          qualifiedId: id,
+          archetype: '',
+          status: 'REFINED',
+          title: `The title of ${id}`,
+          updatedAt: '2026-01-01T00:00:00Z',
+        })),
+    );
+
+    beforeEach(() => {
+      source.mockClear();
+      TestBed.configureTestingModule({ providers: [provideQitsWorkBriefs(source)] });
+    });
+
+    const container = (element: HTMLElement) => element.querySelectorAll('div')[0];
+
+    it('without workProject, leaves the HTML exactly as rendered and asks for no brief', async () => {
+      const element = await rendered(TEXT);
+      expect(container(element).innerHTML).toBe(
+        '<p>Follows qits-12, see <code>qits-14</code> and ' +
+          '<a href="https://example.test/x">qits-15</a>.</p>\n',
+      );
+      expect(element.querySelector('qits-work-ref')).toBeNull();
+      expect(source).not.toHaveBeenCalled();
+    });
+
+    it("with workProject, draws the project's ids as references, in code too, not in a link", async () => {
+      const element = await rendered(TEXT, 'qits');
+      const refs = [...element.querySelectorAll('qits-work-ref')];
+      expect(refs.map((ref) => ref.querySelector('.qits-work-ref')?.textContent?.trim())).toEqual([
+        'qits-12',
+        'qits-14',
+      ]);
+      expect(refs[1].parentElement?.tagName).toBe('CODE');
+      expect(element.querySelector('a[href="https://example.test/x"]')?.textContent).toBe(
+        'qits-15',
+      );
+      expect(source.mock.calls).toEqual([['qits', ['qits-12', 'qits-14']]]);
+    });
+
+    it("leaves another project's ids as text", async () => {
+      const element = await rendered(TEXT, 'billing');
+      expect(element.querySelector('qits-work-ref')).toBeNull();
+    });
   });
 
   describe('with the bearer sign-in', () => {

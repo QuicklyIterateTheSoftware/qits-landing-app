@@ -170,7 +170,7 @@ const REFINED = 'REFINED';
               @if (row.criteria.items.length) {
                 <ul class="m-0 list-disc pl-5 text-charcoal-brown-800">
                   @for (criterion of row.criteria.items; track $index) {
-                    <li><ui-markdown [text]="criterion" /></li>
+                    <li><ui-markdown [text]="criterion" [workProject]="slug()" /></li>
                   }
                 </ul>
               } @else {
@@ -218,6 +218,9 @@ export class WorkSchedulePage {
       .filter((row) => this.picked().has(row.id) && !row.moving)
       .map((row) => row.entry),
   );
+
+  /** The project's slug: the work ids a criterion names link with their briefs (qits-1898). */
+  protected readonly slug = this.selected.slug;
 
   protected readonly detailPath = computed(
     () => `/projects/${this.selected.slug() ?? ''}/work/detail`,

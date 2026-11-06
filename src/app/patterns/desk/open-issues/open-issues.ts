@@ -12,6 +12,7 @@ import {
   untracked,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { QitsCommitMessage } from '@qits/ui-components';
 import { type WorkEntry } from '$core/work/work.consumes';
 import { SelectedWork } from '$core/work/selected-work';
 import { WorkDetailStore } from '$core/work/work-detail.store';
@@ -31,12 +32,13 @@ export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] 
  * Resolve writes the answer on the thread first, when there is one, and then moves the issue. The
  * desk hears of both. A move reaches the list by `EntityTransitioned`. No event marks a new issue
  * (`SelectedWork.followTransitions`), so the list is read again when the page opens. The list row has
- * no description: each issue's own read has it.
+ * no description: each issue's own read has it. The work ids of the project in a description are
+ * drawn as work references with their briefs (`<qits-commit-message>`, qits-1898).
  */
 @Component({
   selector: 'app-open-issues',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [QitsCommitMessage, RouterLink],
   host: { class: 'block' },
   template: `
     <section class="mb-6" aria-label="Open issues">
@@ -61,7 +63,9 @@ export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] 
               >
               <span class="text-sm font-semibold text-gray-800">{{ issue.title }}</span>
             </div>
-            <p class="mt-1 mb-2 text-sm text-gray-700">{{ descriptionOf(issue) }}</p>
+            <p class="mt-1 mb-2 text-sm text-gray-700">
+              <qits-commit-message [message]="descriptionOf(issue)" [project]="slug()" />
+            </p>
             <textarea
               class="block w-full rounded-md border border-charcoal-brown-300 px-2 py-1.5 text-sm"
               rows="2"

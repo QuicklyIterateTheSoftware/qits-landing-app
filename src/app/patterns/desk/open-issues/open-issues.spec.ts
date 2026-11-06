@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideQitsWorkBriefs } from '@qits/ui-components';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { OpenIssues, openIssues } from './open-issues';
@@ -30,10 +31,18 @@ describe('openIssues', () => {
 });
 
 describe('OpenIssues', () => {
-  async function render() {
+  /** The briefs the descriptions' work ids ask for, by project. */
+  let asked: [string, readonly string[]][];
+
+  async function render(description = 'A person must lift the lease.') {
+    asked = [];
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        provideQitsWorkBriefs(async (project, ids) => {
+          asked.push([project, ids]);
+          return [];
+        }),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -51,13 +60,24 @@ describe('OpenIssues', () => {
     await settle();
     http.expectOne('/projects/api/work/qits-7').flush({
       ...issue,
-      description: 'A person must lift the lease.',
+      description,
     });
     http.expectOne('/projects/api/work/qits-7/comments').flush({ entries: [] });
     await settle();
     fixture.detectChanges();
     return { fixture, http, element: fixture.nativeElement as HTMLElement };
   }
+
+  it("draws the project's work ids in the description as references (qits-1898)", async () => {
+    const { element } = await render('Retry once qits-5 is released.');
+    await settle();
+    const ref = element.querySelector('li p qits-work-ref');
+    expect(ref?.textContent?.trim()).toBe('qits-5');
+    expect(element.querySelector('li p')?.textContent?.trim()).toBe(
+      'Retry once qits-5 is released.',
+    );
+    expect(asked).toEqual([['qits', ['qits-5']]]);
+  });
 
   const button = (element: HTMLElement, text: string) =>
     Array.from(element.querySelectorAll('button')).find((b) => b.textContent?.includes(text))!;
