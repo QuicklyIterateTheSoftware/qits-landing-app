@@ -155,6 +155,13 @@ export const INTERACTIONS = {
   'show-release-request-changes':
     'The Changes tab of a release request shows what its fold changed',
   /**
+   * `<qits-commit-message>` (`@qits/ui-components`) via `workBriefSource`: a commit subject on a
+   * release request's Commits or Changes tab reads the briefs of the work items it names, and each
+   * id shows its status and title in a popover (qits-1897).
+   */
+  'show-commit-work-briefs':
+    'A commit subject shows the status and title of each work item it names',
+  /**
    * `release-changes.ts` and `commit-changes.ts` via `RawImagesStore` (qits-734): a changed image,
    * chosen on the Changes tab or in an opened commit, shows as the image before and after.
    */

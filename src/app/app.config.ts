@@ -25,6 +25,7 @@ import { routes } from './app.routes';
 import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
 import { provideAppUpdates } from '$core/updates/app-updates';
 import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
+import { provideWorkReferences } from '$core/work/work-briefs.store';
 import { environment } from '../environments/environment';
 
 /**
@@ -85,5 +86,8 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(ciClient),
     provideHeyApiClient(systemClient),
     provideBackendOrigins(),
+    // Work ids in commit subjects (`<qits-commit-message>`, qits-1897): their briefs through the
+    // projects client above (`provideQitsWorkBriefs`), their links to this app's work item page.
+    provideWorkReferences(),
   ],
 };

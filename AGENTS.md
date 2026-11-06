@@ -103,6 +103,19 @@ no tab, route, store or pact interaction reads them, and a CAMPAIGN row a read s
 the state that records one ("a ticket that needs another", from `@qits/projects-golden-masters`
 2026.1106.140436 on; its interactions skip themselves on an older pin) and matches it at any length.
 
+Work references in commit subjects (qits-1897): a release request's Commits tab (`ui-commit-graph`,
+given the project's `slug` as `project`) and a pin's commits on the Changes tab
+(`app-release-changes`, `slug`) draw each subject with `@qits/ui-components`' `<qits-commit-message>`,
+so every `<slug>-<n>` in it is a work reference with the item's brief in a popover (hover or focus;
+on a finger or a pen a tap, which neither presses the row nor follows a link around it). The briefs
+come through this app's own projects client, not the library's default read (which needs a
+`/main-navigation`): `workBriefSource` (`core/work/work-briefs.store.ts`, `listProjectWorkBriefs`,
+the ids comma-separated in one `id`, `LIST_PROJECT_WORK_BRIEFS`), provided with `QITS_WORK_LINK` (a
+`routerLink` to `work/detail/<id>`) by `provideWorkReferences()` in `app.config.ts`. A brief's panel
+stays in the DOM for `aria-describedby`, so a row's `textContent` holds its text: read the message
+element. `app-work-ref` behaves the same on a finger (`ui-popover`'s `tapToOpen`: the tap opens the
+preview instead of following the tag, the id in the preview is the link).
+
 Prioritising work (qits-753): the trees order siblings by `priority` (highest first, unranked
 after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`). In the Backlog
 (the roots, an epic's features, a feature's tasks) and on the board (the top-level epics and
