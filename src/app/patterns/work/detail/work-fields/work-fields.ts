@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { QitsCommitMessage } from '@qits/ui-components';
 
 /** One fact about a work item: a label and its value, or a link to another item. */
 export interface WorkField {
@@ -11,13 +12,19 @@ export interface WorkField {
   readonly alert?: boolean;
   /** The value is an id: shown in monospace. */
   readonly code?: boolean;
+  /**
+   * The value is prose (a ticket's impetus): the work ids of this project (its slug) in it are
+   * drawn as work references with their briefs (`<qits-commit-message>`, qits-1898). Unset for a
+   * value that is not prose (an id, a status, a name), which stays plain text.
+   */
+  readonly workProject?: string;
 }
 
 /** A work item's facts as a two-column list: labels on the left, values on the right. */
 @Component({
   selector: 'app-work-fields',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [QitsCommitMessage, RouterLink],
   host: { class: 'block' },
   template: `
     <dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm">
@@ -37,7 +44,13 @@ export interface WorkField {
             [routerLink]="field.link ?? null"
             >{{ field.value }}</a
           >
-          <span [class.hidden]="!!field.link">{{ field.value }}</span>
+          @if (field.workProject && !field.link) {
+            <span
+              ><qits-commit-message [message]="field.value" [project]="field.workProject"
+            /></span>
+          } @else {
+            <span [class.hidden]="!!field.link">{{ field.value }}</span>
+          }
         </dd>
       }
     </dl>

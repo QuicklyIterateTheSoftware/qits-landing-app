@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
+import { provideQitsWorkBriefs } from '@qits/ui-components';
 import { of } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
@@ -29,13 +30,21 @@ describe('WorkComments', () => {
       editable: true,
     }));
 
+  /** The briefs the comments' work ids ask for, by project. */
+  let asked: [string, readonly string[]][];
+
   beforeEach(() => {
+    asked = [];
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideTestPlatformOrigins(),
+        provideQitsWorkBriefs(async (project, ids) => {
+          asked.push([project, ids]);
+          return [];
+        }),
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -43,10 +52,14 @@ describe('WorkComments', () => {
 
   afterEach(() => http.verify());
 
+  /** The slug the recorded thread's ticket is in: its qualified id less its number. */
+  const slug = ref.replace(/-\d+$/, '');
+
   function render(comments: readonly CommentEntry[] = thread()) {
     const fixture = TestBed.createComponent(WorkComments);
     fixture.componentRef.setInput('comments', comments);
     fixture.componentRef.setInput('entry', { qualifiedId: ref, archetype: 'TICKET' });
+    fixture.componentRef.setInput('project', slug);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     const box = element.querySelector<HTMLTextAreaElement>('textarea[aria-label="Add a comment"]')!;
@@ -66,6 +79,21 @@ describe('WorkComments', () => {
     const { element, box } = render();
     expect(element.querySelectorAll('li').length).toBe(thread().length);
     expect(box.placeholder).toBe('Say something about this ticket.');
+  });
+
+  it("draws the project's work ids in a comment as references (qits-1898)", async () => {
+    const first = thread()[0];
+    const { fixture, element } = render([
+      { ...first, body: `Same cause as ${ref}, see \`${slug}-2\`.` },
+    ]);
+    // The Markdown parser loads on first use; let the import settle.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    await fixture.whenStable();
+    fixture.detectChanges();
+    await settle();
+    const refs = [...element.querySelectorAll('li qits-work-ref')];
+    expect(refs.map((r) => r.textContent?.trim())).toEqual([ref, `${slug}-2`]);
+    expect(asked).toEqual([[slug, [ref, `${slug}-2`]]]);
   });
 
   it("names a person's comment by its author", () => {
