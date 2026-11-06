@@ -16,6 +16,7 @@ import {
   openWorkspaces,
   routedQualifiedId,
 } from '../../../../testing/browser/recorded-work';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { ReorderList } from '$ui/components/reorder/reorder';
 import { TicketCard } from './ticket-card';
 
@@ -104,7 +105,11 @@ describe('TicketCard (screenshots)', () => {
   // ticket of the "… in detail" seed has an ACTIVE one. (Its improvement ticket, which has none, is
   // REFINED and so not on the board; the cards above, drawn without workspaces, show no link.)
   it('workspace', async () => {
-    const qualifiedId = 'contract-00000001-10';
+    // The ticket's number comes from the recording, which renumbers it.
+    const work = await goldenMaster('a bug ticket in detail', 'listProjectWork');
+    const qualifiedId = work.entities.find(
+      (e: { title: string }) => e.title === 'Invoice totals are off by one cent',
+    ).qualifiedId;
     const { element, harness } = await openRecordedWork(
       http,
       'board',

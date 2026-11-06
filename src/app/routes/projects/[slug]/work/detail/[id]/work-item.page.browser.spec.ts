@@ -418,6 +418,11 @@ describe('WorkItemPage (screenshots)', () => {
     const workspacesOf = (element: Locator) => element.getByRole('region', { name: 'Workspaces' });
 
     it('a ticket’s workspaces in every state, newest first', async () => {
+      // The ticket's own number comes from the recording, which renumbers it.
+      const work = await goldenMaster('a bug ticket in detail', 'listProjectWork');
+      const qualifiedId = work.entities.find(
+        (e: { title: string }) => e.title === 'Invoice totals are off by one cent',
+      ).qualifiedId;
       const element = await render(
         'a bug ticket in detail',
         'Invoice totals are off by one cent',
@@ -431,10 +436,7 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(rows.nth(2)).toMatchTextContent(/^abandoned.*Closed/);
       await expect
         .element(rows.nth(0).getByRole('link'))
-        .toHaveAttribute(
-          'href',
-          '/projects/contract-00000001/work/detail/contract-00000001-10/agent',
-        );
+        .toHaveAttribute('href', `/projects/contract-00000001/work/detail/${qualifiedId}/agent`);
       await expect.element(region).toMatchScreenshot('workspaces-history');
     });
 
