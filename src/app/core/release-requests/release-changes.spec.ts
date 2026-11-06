@@ -1,4 +1,4 @@
-import { changesLede, gitlinkOf, hoistedFile } from './release-changes';
+import { changeRows, changesLede, gitlinkOf, hoistedFile } from './release-changes';
 
 // Pure rules, so hand-built answers (ported from qits-projects-frontend's changes spec).
 
@@ -35,5 +35,59 @@ describe('release changes', () => {
     });
     expect(hoistedFile('components/a/a/src/y.ts', expansions)).toBeNull();
     expect(hoistedFile('README.md', expansions)).toBeNull();
+  });
+
+  it('nests an expanded pin’s files directly after its row, relative to the submodule', () => {
+    const files = [
+      { path: 'a.txt', changeType: 'MODIFIED' },
+      {
+        path: 'components/x/x-service',
+        changeType: 'MODIFIED',
+        submodule: { name: 'x-service' },
+      },
+      { path: 'b.txt', changeType: 'ADDED' },
+      {
+        path: 'components/y/y-service',
+        changeType: 'MODIFIED',
+        submodule: { name: 'y-service' },
+      },
+      { path: 'c.txt', changeType: 'ADDED' },
+    ];
+    // Only x-service's pin was asked for; y-service's has not come back (or was never asked for).
+    const expansions = new Map([
+      [
+        'components/x/x-service',
+        {
+          files: [
+            { path: 'README.md', changeType: 'MODIFIED' },
+            { path: 'src/new.ts', oldPath: 'src/old.ts', changeType: 'RENAMED' },
+          ],
+        },
+      ],
+    ]);
+
+    expect(changeRows(files, expansions)).toEqual([
+      files[0],
+      files[1],
+      {
+        path: 'components/x/x-service/README.md',
+        oldPath: undefined,
+        label: 'README.md',
+        oldLabel: undefined,
+        changeType: 'MODIFIED',
+        depth: 1,
+      },
+      {
+        path: 'components/x/x-service/src/new.ts',
+        oldPath: 'components/x/x-service/src/old.ts',
+        label: 'src/new.ts',
+        oldLabel: 'src/old.ts',
+        changeType: 'RENAMED',
+        depth: 1,
+      },
+      files[2],
+      files[3],
+      files[4],
+    ]);
   });
 });

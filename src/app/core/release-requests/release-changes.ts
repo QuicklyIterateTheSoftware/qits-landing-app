@@ -1,9 +1,24 @@
-import type { ReleaseChanges, SubmoduleChanges } from './changes.consumes';
+import type { ChangedFile, ReleaseChanges, SubmoduleChanges } from './changes.consumes';
 
 /**
  * Pure rules of a release request's Changes tab (ported from qits-projects-frontend's
  * `release-request-changes`).
  */
+
+/**
+ * One row the Changes list shows: a fold file, or (nested under its pin) a file inside an expanded
+ * submodule pin. Structurally compatible with `ui-change-list`'s `ChangeEntry`, which `core/` does
+ * not import — see `patterns/release-requests/release-changes/release-changes.ts`, the one place
+ * that hands this to the UI component.
+ */
+export interface ChangeRow {
+  readonly path?: string;
+  readonly oldPath?: string;
+  readonly changeType?: string;
+  readonly label?: string;
+  readonly oldLabel?: string;
+  readonly depth?: number;
+}
 
 /** The line above the file list: how many files changed, since which release, how many pins. */
 export function changesLede(set: ReleaseChanges | undefined): string {
@@ -47,4 +62,35 @@ export function hoistedFile(
     if ((moved.files ?? []).some((entry) => entry.path === file)) return { gitlink, file };
   }
   return null;
+}
+
+/**
+ * Every fold file, in the fold's own order; right after a pin's row that has been expanded
+ * (`expansions`, keyed by the pin's path), that expansion's files, indented one level and shown
+ * relative to the submodule (a rename as `old → new`, both relative). Each nested row's own `path`
+ * stays the full `<gitlink>/<file>`, so selecting it reads and links the same way as the fold's own
+ * files. A pin without an expansion, or any other file, keeps its row as is.
+ */
+export function changeRows(
+  files: readonly ChangedFile[],
+  expansions: ReadonlyMap<string, SubmoduleChanges>,
+): ChangeRow[] {
+  const rows: ChangeRow[] = [];
+  for (const file of files) {
+    rows.push(file);
+    const moved = file.submodule ? expansions.get(file.path ?? '') : undefined;
+    if (!moved) continue;
+    const gitlink = file.path ?? '';
+    for (const inner of moved.files ?? []) {
+      rows.push({
+        path: `${gitlink}/${inner.path}`,
+        oldPath: inner.oldPath ? `${gitlink}/${inner.oldPath}` : undefined,
+        label: inner.path,
+        oldLabel: inner.oldPath ?? undefined,
+        changeType: inner.changeType,
+        depth: 1,
+      });
+    }
+  }
+  return rows;
 }

@@ -23,7 +23,12 @@ import {
   formatRelativeTime,
   shortShaOrNone,
 } from '$core/release-requests/release-request-model';
-import { changesLede, gitlinkOf, hoistedFile } from '$core/release-requests/release-changes';
+import {
+  changeRows,
+  changesLede,
+  gitlinkOf,
+  hoistedFile,
+} from '$core/release-requests/release-changes';
 import { imageReads, isImagePath, type ImageChange } from '$core/githost/raw-image';
 import { RawImagesStore } from '$core/githost/raw-images.store';
 import { ChangeList, type ChangeEntry } from '$ui/components/change-list/change-list';
@@ -38,9 +43,11 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * is a link of its own and survives a tab switch.
  *
  * A submodule pin is not a file: choosing one shows the two pins and the sibling's commits between
- * them, and its changed files join the list under the pin's path; choosing one of those shows its
- * diff inside the sibling. A file no longer in the fold (the fold moved) says so. Every read is
- * per fold (`ChangesStore`), so a poll that changed nothing costs nothing.
+ * them, and once its files are read they are nested directly under the pin's row, indented and
+ * shown relative to the submodule, while each nested row still selects and links by the full
+ * `<gitlink>/<file>` path; choosing one of those shows its diff inside the sibling. A file no
+ * longer in the fold (the fold moved) says so. Every read is per fold (`ChangesStore`), so a poll
+ * that changed nothing costs nothing.
  *
  * An image (`isImagePath`, qits-734) shows as images instead of its diff, which would only say the
  * binary differs: the fold's own image read in the request's repository at the base release
@@ -213,19 +220,9 @@ export class ReleaseChangesView {
   protected readonly pinOld = computed(() => this.expansion()?.value?.oldSha ?? this.pin()?.oldSha);
   protected readonly pinNew = computed(() => this.expansion()?.value?.newSha ?? this.pin()?.newSha);
 
-  protected readonly entries = computed<readonly ChangeEntry[]>(() => {
-    const rows: ChangeEntry[] = [...this.files()];
-    for (const [gitlink, moved] of this.expansions()) {
-      for (const file of moved.files ?? []) {
-        rows.push({
-          path: `${gitlink}/${file.path}`,
-          oldPath: file.oldPath ? `${gitlink}/${file.oldPath}` : undefined,
-          changeType: file.changeType,
-        });
-      }
-    }
-    return rows;
-  });
+  protected readonly entries = computed<readonly ChangeEntry[]>(() =>
+    changeRows(this.files(), this.expansions()),
+  );
 
   /** A file inside an expanded pin, as (pin, file); null for the fold's own files. */
   private readonly hoisted = computed(() => hoistedFile(this.path(), this.expansions()));

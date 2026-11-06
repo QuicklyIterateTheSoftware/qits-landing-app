@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { client as githostClient } from '../../../api/githost/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
@@ -134,6 +134,51 @@ describe('ReleaseChangesView', () => {
     expect(panes[0].querySelector('img')).not.toBeNull();
     expect(panes[1].textContent).toContain('The image is not in the repository at this revision.');
     expect(panes[1].querySelector('img')).toBeNull();
+  });
+
+  it('nests an expanded pin’s files directly after its row, relative to the submodule', async () => {
+    const gitlink = 'components/contract/contract-service';
+    const { element, step } = await render(gitlink);
+    const changes = goldenMaster(STATE, 'listReleaseRequestChanges');
+    changes.files = [
+      ...changes.files,
+      { path: 'zz-notes.md', changeType: 'ADDED', submodule: null },
+    ];
+    http.expectOne(CHANGES).flush(changes);
+    await step();
+    await step();
+    const moved = goldenMaster(STATE, 'getReleaseRequestSubmoduleChanges');
+    http.expectOne(`${CHANGES}/submodule?path=${encodeURIComponent(gitlink)}`).flush(moved);
+    await step();
+
+    const rows = [...element.querySelectorAll('ui-change-list li')];
+    const texts = rows.map((li) =>
+      li.querySelector('button')?.textContent?.replace(/\s+/g, ' ').trim(),
+    );
+    expect(texts).toEqual([
+      'M README.md',
+      'M components/contract/contract-service',
+      'M README.md',
+      'A src/export.txt',
+      'M src/invoice.txt',
+      'A zz-notes.md',
+    ]);
+    expect(rows.map((li) => li.getAttribute('data-depth'))).toEqual([
+      null,
+      null,
+      '1',
+      '1',
+      '1',
+      null,
+    ]);
+
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate');
+    (rows[2].querySelector('button') as HTMLButtonElement).click();
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { path: `${gitlink}/README.md` } }),
+    );
   });
 
   it('keeps the text diff for a file that is no image', async () => {
