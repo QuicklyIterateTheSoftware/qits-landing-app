@@ -5,12 +5,16 @@ import { PactV4 } from '@pact-foundation/pact';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { addGoldenInteraction } from '@qits/angular/testing';
+import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
-import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import {
+  isRecorded,
+  NEEDS_STATE,
+  projectsGoldenMasters as masters,
+} from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { CREATE_WORK, REPRIORITIZE_WORK } from './work-writes.consumes';
+import { CREATE_WORK, PATCH_WORK_NEEDS, REPRIORITIZE_WORK } from './work-writes.consumes';
 import { WorkWritesStore } from './work-writes.store';
 
 /**
@@ -21,6 +25,15 @@ import { WorkWritesStore } from './work-writes.store';
  * one with a priority" (qits-753: the third ticket dropped directly below the first), driven
  * through the store's `reprioritize`.
  *
+ * `patchWork` of `needs` (epic qits-1899, `edit-work-needs`), from `NEEDS_STATE`: the Needs
+ * panel's write. No golden master records a patch of `needs`, so it is composed from a recorded
+ * patch (`needsPatch`), as the drop's move is in `work.store.pact.spec.ts`: the same door, method,
+ * path and status as "a reported ticket"'s patch, in `NEEDS_STATE` with its params, sending the
+ * state's own need again (`neededQualifiedId` at VERIFIED, which the seed holds, so the provider
+ * writes what it has), and binding the answer's `qualifiedId` alone (`PATCH_WORK_NEEDS`). The
+ * state is recorded by qits-projects from 2026.1106.140436 on: until the pin reaches it, the test
+ * skips itself and the committed pact holds no such interaction.
+ *
  * Not bound yet: a create naming an idea (`inspiredBy`) and `patchWork` setting or clearing it.
  * qits-projects records neither, so the work item page's inspiration and the form's `inspiredBy`
  * are covered by the plain specs only; an interaction follows the recording.
@@ -28,10 +41,40 @@ import { WorkWritesStore } from './work-writes.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS: readonly OwnedOperation[] = ['createWork', 'reprioritizeWork'];
+const OPERATIONS: readonly OwnedOperation[] = [
+  'createWork',
+  'reprioritizeWork',
+  { operationId: 'patchWork', interactions: ['edit-work-needs'] },
+];
 
 const NO_WORK = 'a project with no work';
 const RANKED = 'three reported tickets, one with a priority';
+/** The recorded patch the needs write is composed from. */
+const RECORDED_PATCH = 'a reported ticket';
+
+/** The needs write `NEEDS_STATE` is given: its own need, sent again. */
+const needsWrite = () => {
+  const params = masters.operation(NEEDS_STATE, 'getWork').params;
+  return {
+    params,
+    body: { needs: [{ item: params['neededQualifiedId'], status: 'VERIFIED' }] },
+  };
+};
+
+/** `masters` with `NEEDS_STATE`'s `patchWork`: "a reported ticket"'s, sending `needsWrite`. */
+const needsPatch: GoldenMasters = {
+  operation: (state, operationId) => {
+    if (state !== NEEDS_STATE || operationId !== 'patchWork') {
+      return masters.operation(state, operationId);
+    }
+    const { params, body } = needsWrite();
+    return { ...masters.operation(RECORDED_PATCH, 'patchWork'), state, params, body };
+  },
+  body: (state, operationId) =>
+    state === NEEDS_STATE && operationId === 'patchWork'
+      ? masters.body(RECORDED_PATCH, 'patchWork')
+      : masters.body(state, operationId),
+};
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-writes-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -83,6 +126,22 @@ describe('qits-landing-app → qits-projects-service pact: work writes', () => {
       });
       expect(outcome.ok && outcome.value.qualifiedId).toBeTruthy();
     }));
+
+  it.skipIf(!isRecorded(NEEDS_STATE, 'getWork'))(
+    'edit-work-needs: the Needs panel writes the whole list',
+    () =>
+      addGoldenInteraction(pact, needsPatch, {
+        provider: PROVIDER,
+        state: NEEDS_STATE,
+        operationId: 'patchWork',
+        trigger: { kind: 'ui', app: CONSUMER, interaction: 'edit-work-needs' },
+        consumes: PATCH_WORK_NEEDS,
+      }).executeTest(async (server) => {
+        const { params, body } = needsWrite();
+        const outcome = await storeAt(server.url).setNeeds(params['qualifiedId'], body.needs);
+        expect(outcome.ok && outcome.value.qualifiedId).toBeTruthy();
+      }),
+  );
 
   it('reprioritize-work-item: a ticket dropped directly below a sibling', () =>
     addGoldenInteraction(pact, masters, {

@@ -19,7 +19,9 @@ import { ArchetypesStore } from './archetypes.store';
  * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
  *
  * The test drives `load()`, as the work item page does, against a pact mock server answering with
- * qits-projects' golden master, binding only the fields in `archetypes.consumes.ts`.
+ * qits-projects' golden master, binding only the fields in `archetypes.consumes.ts`. The committed
+ * pact names no CAMPAIGN entry (`withoutRetired`): campaigns are retired (epic qits-1899), and
+ * qits-1908 deletes the archetype from the registry.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -35,7 +37,7 @@ interface Matcher {
   readonly match: string;
   min?: number;
   max?: number;
-  readonly variants?: readonly { readonly index: number; readonly rules: Rules }[];
+  variants?: { index: number; readonly rules: Rules }[];
 }
 /** One body path's rule, e.g. `$.phases.REPORTED.flow`. */
 interface Rule {
@@ -54,6 +56,9 @@ interface GeneratedPact {
     };
   }[];
 }
+
+/** The archetypes this app no longer reads, which the committed pact leaves out (epic qits-1899). */
+const RETIRED: ReadonlySet<string> = new Set(['CAMPAIGN']);
 
 const FLOW_FIELDS: readonly (keyof DispatchPhase)[] = ['endsIn', 'enters', 'from', 'phase'];
 
@@ -102,8 +107,39 @@ function openEndedFlow(generated: string): void {
     interaction.response.body.content.archetypes.forEach((archetype, i) => {
       openEndedArchetype(archetype, variants[i].rules);
       openEndedTransitions(variants[i].rules);
-      if (archetype.archetype === 'CAMPAIGN') openEndedCampaign(archetype, variants[i].rules);
     });
+  }
+  writeFileSync(generated, JSON.stringify(written, null, 2));
+}
+
+/**
+ * Leaves the {@link RETIRED} archetypes out of what the committed pact asks a provider for: their
+ * entry and its `arrayContains` variant (one per archetype, by position), so a registry without
+ * CAMPAIGN (qits-1908) still satisfies it. The store only looks up the archetypes it is asked for
+ * (`of`), so a registry with more entries satisfies it too, as `arrayContains` lets it.
+ */
+function withoutRetired(generated: string): void {
+  const written = JSON.parse(readFileSync(generated, 'utf8')) as GeneratedPact;
+  for (const interaction of written.interactions) {
+    if (interaction.comments?.references?.['qits-call']?.operationId !== 'listWorkArchetypes') {
+      continue;
+    }
+    const archetypes = interaction.response.body.content.archetypes;
+    const contains = interaction.response.matchingRules.body['$.archetypes'].matchers.find(
+      (m) => m.match === 'arrayContains',
+    );
+    if (!contains?.variants || contains.variants.length !== archetypes.length) {
+      throw new Error(
+        'listWorkArchetypes no longer has one variant per archetype: update withoutRetired',
+      );
+    }
+    const kept = archetypes.flatMap((archetype, i) =>
+      RETIRED.has(archetype.archetype ?? '')
+        ? []
+        : [{ archetype, rules: contains.variants![i].rules }],
+    );
+    archetypes.splice(0, archetypes.length, ...kept.map((k) => k.archetype));
+    contains.variants = kept.map((k, index) => ({ index, rules: k.rules }));
   }
   writeFileSync(generated, JSON.stringify(written, null, 2));
 }
@@ -111,13 +147,12 @@ function openEndedFlow(generated: string): void {
 /**
  * `addGoldenInteraction` also pins every `transitions.<STATUS>` array whose moves share one shape
  * today (no move there carries `gates`) to the length qits-projects happened to record: `type`,
- * min = max = that length. qits-projects is about to add a CLOSE move to several statuses of
- * CAMPAIGN, EPIC and FEATURE (qits-1757), and the store never relies on an exact move count (only
+ * min = max = that length. qits-projects is about to add a CLOSE move to several statuses of EPIC
+ * and FEATURE (qits-1757), and the store never relies on an exact move count (only
  * on the moves it finds), so this drops the max and keeps the recorded count as a floor. A status
  * whose moves already differ in shape (REFINED everywhere; REPORTED for EPIC and TICKET, where one
  * move alone carries `gates`) is matched with `arrayContains` already, which pins no length, so it
- * is left as `addGoldenInteraction` built it. CAMPAIGN's transitions are reshaped further, see
- * `openEndedCampaign`.
+ * is left as `addGoldenInteraction` built it.
  */
 function openEndedTransitions(rules: Rules): void {
   for (const [path, rule] of Object.entries(rules)) {
@@ -125,38 +160,6 @@ function openEndedTransitions(rules: Rules): void {
     const matcher = rule.matchers.find((m) => m.match === 'type');
     if (!matcher || matcher.min == null || matcher.max == null) continue;
     delete matcher.max;
-  }
-}
-
-/**
- * qits-650 derives a campaign's status from its members and leaves it two manual moves: DROP from
- * every status that is neither DONE nor DROPPED, REOPEN from DROPPED, and nothing from DONE. The
- * FORWARD, BACK and CLOSE moves (and their `gates`) recorded today go, so every recorded
- * `transitions.<STATUS>` of CAMPAIGN is reshaped to `type`, min 0, no max, each move's `to` and
- * `kind` matched by type, and none required to carry `gates`. The store only offers the moves it
- * finds, so no count or kind is relied on.
- *
- * A provider verifies every element past the recorded length against element 0 alone, and
- * `arrayContains` would still demand a move with `gates`, so each status's recorded moves are
- * collapsed to one gate-less representative (`to`, `kind`): a move whose `gates` the provider adds
- * (today's) is an unexpected key, which a response may carry, while one without (after qits-650)
- * matches it outright. A status recorded empty (DONE) is left with no rule at all, so it is still
- * matched as exactly `[]`, which it is before and after qits-650.
- */
-function openEndedCampaign(archetype: DeclaredArchetype, rules: Rules): void {
-  for (const [status, moves] of Object.entries(archetype.transitions ?? {})) {
-    if (moves.length === 0) continue;
-    const path = `$.transitions.${status}`;
-    for (const key of Object.keys(rules)) {
-      if (key === path || key.startsWith(`${path}[`) || key.startsWith(`${path}.`)) {
-        delete rules[key];
-      }
-    }
-    const representative = moves.find((move) => !move.gates) ?? moves[0];
-    moves.splice(0, moves.length, { to: representative.to, kind: representative.kind });
-    rules[path] = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
-    rules[`${path}[*].to`] = { combine: 'AND', matchers: [{ match: 'type' }] };
-    rules[`${path}[*].kind`] = { combine: 'AND', matchers: [{ match: 'type' }] };
   }
 }
 
@@ -197,6 +200,7 @@ describe('qits-landing-app → qits-projects-service pact: archetypes', () => {
     try {
       const generated = join(dir, `${CONSUMER}-${PROVIDER}.json`);
       openEndedFlow(generated);
+      withoutRetired(generated);
       assertPactPart(generated, COMMITTED, OPERATIONS, 'QITS_GOLDEN_UPDATE');
     } finally {
       rmSync(dir, { recursive: true, force: true });

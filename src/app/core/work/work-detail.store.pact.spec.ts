@@ -1,7 +1,7 @@
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { PactV4 } from '@pact-foundation/pact';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { consume } from '@qits/angular';
@@ -14,7 +14,12 @@ import {
 } from '../../api/projects';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
-import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
+import {
+  heldBy,
+  isRecorded,
+  NEEDS_STATE,
+  projectsGoldenMasters as masters,
+} from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
   GET_WORK,
@@ -31,8 +36,7 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /**
  * `WorkDetailStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
- * qits-965): the `getWork` (of the work item page and the Schedule tab; the campaign description's
- * is `WorkStore`'s), `listWorkComments`, `listWorkDossier` and `listWorkDossierAssets`
+ * qits-965): the `getWork` (of the work item page and the Schedule tab), `listWorkComments`, `listWorkDossier` and `listWorkDossierAssets`
  * interactions, all by qualified id, in the same file as the other stores'
  * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
  *
@@ -44,6 +48,10 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  * list names that the state's recording holds (`heldBy`), so a field a recording does not have yet
  * (`authorAgentOf`, `editable`: qits-1452, not yet in the installed golden-masters devDependency)
  * is simply left unbound there, rather than failing the test.
+ *
+ * What the item needs (epic qits-1899, `needs[]`) is bound in `NEEDS_STATE` only, and open-ended
+ * there (`openEndedNeeds`): every other state records it empty, which would pin it empty. No
+ * interaction reads a campaign, a milestone or `dependsOn` any more (qits-1908 deletes them).
  *
  * The Schedule tab's criteria read (`loadCriteria`) is the same `getWork`, binding only the
  * acceptance criteria, of an epic and of a REFINED ticket.
@@ -73,11 +81,7 @@ const TICKETS = [
   'an improvement ticket in detail',
   'a maintenance ticket in detail',
 ];
-const OTHERS = [
-  'a campaign in detail',
-  'a campaign with a done, a verified and an implementing epic',
-  'an implemented ticket',
-];
+const OTHERS = ['an implemented ticket'];
 const UNBLOCKABLE = ['a feature in detail', 'a task in detail'];
 /**
  * States recording the item alone, no thread or dossier: the IN_FLIGHT ticket of the wrapper
@@ -98,8 +102,44 @@ const given = (state: string, operationId: string, consumes: readonly string[]) 
     state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-work-item' },
-    consumes: heldBy(masters, state, operationId, consumes),
+    consumes: heldBy(
+      masters,
+      state,
+      operationId,
+      state === NEEDS_STATE ? consumes : consumes.filter((path) => !path.startsWith('needs[]')),
+    ),
   });
+
+interface WrittenPact {
+  readonly interactions: readonly {
+    readonly comments?: {
+      readonly references?: { readonly ['qits-call']?: { readonly operationId?: string } };
+    };
+    readonly response: {
+      readonly body?: { readonly content?: { readonly needs?: unknown } };
+      readonly matchingRules?: {
+        readonly body?: Record<string, { combine: string; matchers: object[] }>;
+      };
+    };
+  }[];
+}
+
+/**
+ * `addGoldenInteraction` pins `needs` to the length qits-projects recorded. An item's needs grow
+ * and shrink with the seed (epic qits-1899), so every `getWork` answer that binds them matches
+ * them by type, any length (`min` 0, no `max`). Runs on the pact this spec just generated, before
+ * `assertPactPart`, so the mock server still answered with the whole recording.
+ */
+function openEndedNeeds(generated: string): void {
+  const written = JSON.parse(readFileSync(generated, 'utf8')) as WrittenPact;
+  for (const interaction of written.interactions) {
+    if (interaction.comments?.references?.['qits-call']?.operationId !== 'getWork') continue;
+    const rules = interaction.response.matchingRules?.body;
+    if (!rules || !Array.isArray(interaction.response.body?.content?.needs)) continue;
+    rules['$.needs'] = { combine: 'AND', matchers: [{ match: 'type', min: 0 }] };
+  }
+  writeFileSync(generated, JSON.stringify(written, null, 2));
+}
 
 /** The Schedule tab's read of an item's acceptance criteria (`WorkDetailStore.loadCriteria`). */
 const givenCriteria = (state: string) =>
@@ -149,6 +189,7 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
+      openEndedNeeds(join(dir, `${CONSUMER}-${PROVIDER}.json`));
       assertPactPart(
         join(dir, `${CONSUMER}-${PROVIDER}.json`),
         COMMITTED,
@@ -176,22 +217,22 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
       }),
   );
 
-  // The item's milestones (epic qits-615). The campaign member's state names its ticket
-  // `ticketQualifiedId`.
-  for (const [state, ref] of [
-    ['a ticket waiting on an unmet milestone', 'qualifiedId'],
-    ['a ticket waiting on a met milestone', 'qualifiedId'],
-    ['a campaign member waiting on a milestone', 'ticketQualifiedId'],
-  ] as const) {
-    it(`show-work-item: the milestones of ${state}`, () =>
-      given(state, 'getWork', GET_WORK).executeTest(async (server) => {
-        const qualifiedId = param(state, 'getWork', ref);
+  // What the item needs (epic qits-1899): a READY_FOR_DEV ticket needing another ticket at
+  // VERIFIED, not met. Recorded by qits-projects from 2026.1106.140436 on: until the pin reaches
+  // it, the test skips itself and the committed pact holds no such interaction.
+  it.skipIf(!isRecorded(NEEDS_STATE, 'getWork'))(
+    'show-work-item: the needs of a ticket that needs another',
+    () =>
+      given(NEEDS_STATE, 'getWork', GET_WORK).executeTest(async (server) => {
+        const qualifiedId = refOf(NEEDS_STATE, 'getWork');
         const { data } = await at(server.url, () =>
           consume(getWork({ path: { qualifiedId } }), GET_WORK),
         );
-        expect(data?.milestones?.[0]?.displayName).toBeTruthy();
-      }));
-  }
+        expect(data?.unmetNeeds).toBe(1);
+        expect(data?.needs?.[0]).toMatchObject({ status: 'VERIFIED', met: false });
+        expect(data?.needs?.[0]?.currentStatus).toBeTruthy();
+      }),
+  );
 
   it.each([EPIC, 'an improvement ticket in detail'])(
     'show-schedule-criteria: the acceptance criteria of %s',

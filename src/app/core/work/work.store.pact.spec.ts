@@ -2,50 +2,160 @@ import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { PactV4 } from '@pact-foundation/pact';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { consume } from '@qits/angular';
 import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing';
-import { getWork, listProjectWork, listWorkMembers } from '../../api/projects';
+import { listProjectWork } from '../../api/projects';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
-import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
-  DISPATCH_WORK,
-  GET_CAMPAIGN_DESCRIPTION,
-  LIST_PROJECT_WORK,
-  LIST_WORK_MEMBERS,
-  SET_WORK_STATUS,
-  type WorkEntry,
-} from './work.consumes';
+  heldBy,
+  isRecorded,
+  NEEDS_STATE,
+  projectsGoldenMasters as masters,
+} from '../../../testing/golden-masters';
+import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
+import { DISPATCH_WORK, LIST_PROJECT_WORK, SET_WORK_STATUS, type WorkEntry } from './work.consumes';
 import { WorkStore, type DispatchMode, type WorkStatus } from './work.store';
 
 /**
  * `WorkStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
- * qits-965): the `listProjectWork`, `listWorkMembers`, `setWorkStatus` and `dispatchWork`
- * interactions, and the `getWork` of a campaign's description (`show-project-work-board`; the work
- * item page's `getWork` is `WorkDetailStore`'s), in the same file as `ProjectsStore`'s
- * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`). Every
- * entity is addressed by its qualified id.
+ * qits-965): the `listProjectWork`, `setWorkStatus` and `dispatchWork` interactions, in the same
+ * file as `ProjectsStore`'s (`pacts/qits-landing-app_qits-projects-service.json`, see
+ * `src/testing/pact-part.ts`). Every entity is addressed by its qualified id.
  *
  * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against
  * a pact mock server answering with qits-projects' golden master, binding only the fields in
- * `work.consumes.ts` that the state's recording holds (`heldBy`): the milestones an entity or a
- * membership needs (epic qits-615).
+ * `work.consumes.ts` that the state's recording holds (`heldBy`).
+ *
+ * Epic qits-1899 retires campaigns, milestones and dependsOn: no interaction reads a campaign's
+ * members or description, a milestone, or a campaign state, and the "… in detail" states' work is
+ * open-ended (`openEndedWork`), because qits-1908 removes the CAMPAIGN row and the dependsOn edges
+ * from their shared seed. What an item needs (`needs[]`) is bound in `NEEDS_STATE` only, and open
+ * there too: every other state records it empty, which would pin it empty.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS: readonly OwnedOperation[] = [
-  'listProjectWork',
-  'listWorkMembers',
-  'setWorkStatus',
-  'dispatchWork',
-  { operationId: 'getWork', interactions: ['show-project-work-board'] },
+const OPERATIONS: readonly OwnedOperation[] = ['listProjectWork', 'setWorkStatus', 'dispatchWork'];
+
+/** {@link LIST_PROJECT_WORK} without the need rows: what a state that records no need binds. */
+const WITHOUT_NEED_ROWS = LIST_PROJECT_WORK.filter((path) => !path.includes('.needs[]'));
+
+/** The work item page's states, one per archetype and ticket type, over one shared seed. */
+const DETAIL_STATES = [
+  'an epic in detail',
+  'a feature in detail',
+  'a task in detail',
+  'a bug ticket in detail',
+  'an improvement ticket in detail',
+  'a maintenance ticket in detail',
 ];
+
+/** One pact matcher spec, e.g. `{ match: 'type', min: 0 }`. */
+interface Matcher {
+  readonly match: string;
+  min?: number;
+  max?: number;
+  variants?: { index: number; readonly rules: Rules }[];
+}
+type Rules = Record<string, { readonly combine: string; matchers: Matcher[] }>;
+type Entity = Record<string, unknown>;
+interface WrittenPact {
+  readonly interactions: readonly {
+    readonly providerStates?: readonly { readonly name: string }[];
+    readonly comments?: {
+      readonly references?: { readonly ['qits-call']?: { readonly operationId?: string } };
+    };
+    readonly response: {
+      readonly body?: { readonly content?: { entities?: Entity[] } };
+      readonly matchingRules?: { readonly body?: Rules };
+    };
+  }[];
+}
+
+/** Matches an array by type, any length: `min` 0, no `max`. */
+const ANY_LENGTH = (): Rules[string] => ({ combine: 'AND', matchers: [{ match: 'type', min: 0 }] });
+
+/** A value's shape as `addGoldenInteraction` groups elements: its keys and their types. */
+function shape(value: unknown): string {
+  if (value === null) return 'null';
+  if (Array.isArray(value)) return `[${value.map(shape).join(',')}]`;
+  if (typeof value === 'object') {
+    const entries = Object.entries(value as Entity).sort(([a], [b]) => (a < b ? -1 : 1));
+    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${shape(v)}`).join(',')}}`;
+  }
+  return typeof value;
+}
+
+/** `entity` cut to the keys of `like`. */
+const cut = (entity: Entity, like: Entity): Entity =>
+  Object.fromEntries(Object.keys(like).map((key) => [key, entity[key]]));
+
+/**
+ * Loosens what the committed pact asks of `listProjectWork` (epic qits-1899), between the mock
+ * server answering (with the real recording) and `assertPactPart`:
+ *
+ * - **No CAMPAIGN example.** Wherever an `entities` example element is a CAMPAIGN (the "… in
+ *   detail" seed's first root), it is replaced by an entity of the same recording with the same
+ *   shape, so the provider can delete the CAMPAIGN rows (qits-1908); an element no other entity
+ *   shares a shape with is dropped, with its `arrayContains` variant.
+ * - **The "… in detail" states' `entities`, any length**: an `arrayContains` pins no length
+ *   already; a `type` match drops its `min` and `max` (min 0), as qits-1908 shortens that seed.
+ * - **`needs`, any length**, on every entity that carries it (`NEEDS_STATE` only: no other state
+ *   binds it): an item's needs grow and shrink with the seed.
+ */
+function openEndedWork(generated: string): void {
+  const written = JSON.parse(readFileSync(generated, 'utf8')) as WrittenPact;
+  for (const interaction of written.interactions) {
+    if (interaction.comments?.references?.['qits-call']?.operationId !== 'listProjectWork') {
+      continue;
+    }
+    const state = interaction.providerStates?.[0]?.name ?? '';
+    const content = interaction.response.body?.content;
+    const rules = interaction.response.matchingRules?.body;
+    const examples = content?.entities;
+    if (!examples || !rules) continue;
+    const rule = rules['$.entities'];
+    const contains = rule?.matchers.find((m) => m.match === 'arrayContains');
+    const recorded = masters
+      .body<{ entities: Entity[] }>(state, 'listProjectWork')
+      .entities.filter((e) => e['archetype'] !== 'CAMPAIGN');
+    for (let i = examples.length - 1; i >= 0; i--) {
+      const example = examples[i];
+      if (example['archetype'] !== 'CAMPAIGN') continue;
+      const twin = recorded.map((e) => cut(e, example)).find((e) => shape(e) === shape(example));
+      if (twin) {
+        examples[i] = twin;
+      } else if (contains?.variants) {
+        examples.splice(i, 1);
+        contains.variants = contains.variants
+          .filter((v) => v.index !== i)
+          .map((v) => ({ ...v, index: v.index > i ? v.index - 1 : v.index }));
+      } else {
+        throw new Error(`${state}: a CAMPAIGN example no other entity stands in for`);
+      }
+    }
+    if (DETAIL_STATES.includes(state)) {
+      const typed = rule?.matchers.find((m) => m.match === 'type');
+      if (typed) {
+        typed.min = 0;
+        delete typed.max;
+      }
+    }
+    if (contains?.variants) {
+      for (const variant of contains.variants) {
+        if (Array.isArray(examples[variant.index]?.['needs']))
+          variant.rules['$.needs'] = ANY_LENGTH();
+      }
+    } else if (examples.some((e) => Array.isArray(e['needs']))) {
+      rules['$.entities[*].needs'] = ANY_LENGTH();
+    }
+  }
+  writeFileSync(generated, JSON.stringify(written, null, 2));
+}
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -56,27 +166,12 @@ const given = (slug: InteractionSlug, state: string) =>
     state,
     operationId: 'listProjectWork',
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: heldBy(masters, state, 'listProjectWork', LIST_PROJECT_WORK),
-  });
-
-/** The members read `load` makes for each campaign in the tree. */
-const givenCampaign = (slug: InteractionSlug, state: string) =>
-  addGoldenInteraction(pact, masters, {
-    provider: PROVIDER,
-    state,
-    operationId: 'listWorkMembers',
-    trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: heldBy(masters, state, 'listWorkMembers', LIST_WORK_MEMBERS),
-  });
-
-/** The description read `load` makes for each campaign in the tree. */
-const givenDescription = (state: string) =>
-  addGoldenInteraction(pact, masters, {
-    provider: PROVIDER,
-    state,
-    operationId: 'getWork',
-    trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-project-work-board' },
-    consumes: GET_CAMPAIGN_DESCRIPTION,
+    consumes: heldBy(
+      masters,
+      state,
+      'listProjectWork',
+      state === NEEDS_STATE ? LIST_PROJECT_WORK : WITHOUT_NEED_ROWS,
+    ),
   });
 
 /** A move through the status door: `finish`'s move to DONE, or a Status action's. */
@@ -151,17 +246,7 @@ function storeAt(url: string) {
 const projectOf = (state: string) =>
   masters.operation(state, 'listProjectWork').params['projectId'];
 
-/** `state`'s recorded members read of `param`'s campaign, made on its own. */
-async function membersOf(url: string, state: string, param = 'campaignQualifiedId') {
-  storeAt(url);
-  const op = masters.operation(state, 'listWorkMembers');
-  const { data } = await TestBed.runInInjectionContext(() =>
-    listWorkMembers({ path: { qualifiedId: op.params[param] } }),
-  );
-  return data?.members ?? [];
-}
-
-/** `state`'s project work read on its own (`load` would go on to read each campaign). */
+/** `state`'s project work read on its own, as `load` makes it. */
 async function workOf(url: string, state: string) {
   storeAt(url);
   const project = projectOf(state);
@@ -175,6 +260,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
+      openEndedWork(join(dir, `${CONSUMER}-${PROVIDER}.json`));
       assertPactPart(
         join(dir, `${CONSUMER}-${PROVIDER}.json`),
         COMMITTED,
@@ -216,41 +302,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       },
     ));
 
-  it('show-project-work-board: a campaign’s members, in order', () =>
-    givenCampaign('show-project-work-board', 'a campaign with ordered developments').executeTest(
-      async (server) => {
-        // The same call `load` makes per campaign, made on its own: the mock answers one request.
-        const members = await membersOf(server.url, 'a campaign with ordered developments');
-        expect(members.length).toBeGreaterThan(0);
-      },
-    ));
-
-  // The "needs" marks (epic qits-615): a ticket needing an unmet milestone, and one whose milestone
-  // is met.
-  for (const state of [
-    'a ticket waiting on an unmet milestone',
-    'a ticket waiting on a met milestone',
-  ]) {
-    it(`show-project-work-board: the milestones of ${state}`, () =>
-      given('show-project-work-board', state).executeTest(async (server) => {
-        const entries = await workOf(server.url, state);
-        expect(entries[0]?.milestones?.[0]?.displayName).toBeTruthy();
-      }));
-  }
-
-  it('show-project-work-board: the milestones a campaign membership needs', () =>
-    givenCampaign(
-      'show-project-work-board',
-      'a campaign member waiting on a milestone',
-    ).executeTest(async (server) => {
-      const members = await membersOf(
-        server.url,
-        'a campaign member waiting on a milestone',
-        'qualifiedId',
-      );
-      expect(members[0]?.milestones?.[0]?.displayName).toBeTruthy();
-    }));
-
   // The card screenshots' states (`epic-card`, `ticket-card`, the list items, `epic-board`).
   it.each([
     'a ticket of every type',
@@ -266,63 +317,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       const projectId = projectOf(state);
       await store.load(projectId);
       expect(store.byProject()[projectId]?.status).toBe('loaded');
-    }),
-  );
-
-  it.each([
-    'a campaign with work in every phase',
-    'a campaign with a done, a verified and an implementing epic',
-  ])('show-project-work-board: %s', (state) =>
-    given('show-project-work-board', state).executeTest(async (server) => {
-      // The entities read on its own: `load` would go on to read the campaign, which this
-      // interaction does not answer (the next one does).
-      expect((await workOf(server.url, state)).length).toBeGreaterThan(0);
-    }),
-  );
-
-  it.each([
-    'a campaign with work in every phase',
-    'a campaign with a done, a verified and an implementing epic',
-  ])('show-project-work-board: the members of %s', (state) =>
-    givenCampaign('show-project-work-board', state).executeTest(async (server) => {
-      expect((await membersOf(server.url, state)).length).toBeGreaterThan(0);
-    }),
-  );
-
-  // A campaign's description: each state's recorded `getWork` of its campaign, by the param that
-  // names it.
-  it.each([
-    ['a campaign in detail', 'qualifiedId'],
-    ['a campaign with a done, a verified and an implementing epic', 'qualifiedId'],
-    ['a campaign with work in every phase', 'campaignQualifiedId'],
-    ['a campaign with ordered developments', 'campaignQualifiedId'],
-    ['an epic in two campaigns', 'firstCampaignQualifiedId'],
-    ['the second campaign of an epic in two campaigns', 'secondCampaignQualifiedId'],
-  ])('show-project-work-board: the description of %s', (state, param) =>
-    givenDescription(state).executeTest(async (server) => {
-      storeAt(server.url);
-      const op = masters.operation(state, 'getWork');
-      const { data } = await TestBed.runInInjectionContext(() =>
-        consume(getWork({ path: { qualifiedId: op.params[param] } }), GET_CAMPAIGN_DESCRIPTION),
-      );
-      expect(data?.description).toBeTruthy();
-    }),
-  );
-
-  // The epic card with two campaign tags. A state records one answer per operation, so the second
-  // campaign is a state of its own over the same seed.
-  it('show-project-work-board: an epic in two campaigns', () =>
-    given('show-project-work-board', 'an epic in two campaigns').executeTest(async (server) => {
-      // The entities read on its own: `load` would go on to read both campaigns.
-      expect((await workOf(server.url, 'an epic in two campaigns')).length).toBeGreaterThan(0);
-    }));
-
-  it.each([
-    ['an epic in two campaigns', 'firstCampaignQualifiedId'],
-    ['the second campaign of an epic in two campaigns', 'secondCampaignQualifiedId'],
-  ])('show-project-work-board: the members of %s', (state, param) =>
-    givenCampaign('show-project-work-board', state).executeTest(async (server) => {
-      expect(await membersOf(server.url, state, param)).toHaveLength(1);
     }),
   );
 
@@ -357,9 +351,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
         status: 'loaded',
         count: 0,
         entries: [],
-        campaigns: {},
-        campaignDescriptions: {},
-        memberships: {},
       });
     }));
 
@@ -373,33 +364,26 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }),
   );
 
-  // The detail states: the work item page's screenshots, one per archetype and ticket type. Each
-  // read on its own: `load` would go on to read the campaign in the tree.
-  it.each([
-    'an epic in detail',
-    'a feature in detail',
-    'a task in detail',
-    'a bug ticket in detail',
-    'an improvement ticket in detail',
-    'a maintenance ticket in detail',
-    'a campaign in detail',
-  ])('show-project-work-board: the work of %s', (state) =>
+  // The detail states: the work item page's screenshots, one per archetype and ticket type. Their
+  // work is open-ended in the committed pact (`openEndedWork`).
+  it.each(DETAIL_STATES)('show-project-work-board: the work of %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
       expect((await workOf(server.url, state)).length).toBeGreaterThan(0);
     }),
   );
 
-  // Their campaign's read, where the state recorded it. The other detail states share the seed and
-  // its frozen ids, so their page answers the campaign from "a campaign in detail".
-  it.each([
-    'an epic in detail',
-    'a bug ticket in detail',
-    'an improvement ticket in detail',
-    'a campaign in detail',
-  ])('show-project-work-board: the campaign of %s', (state) =>
-    givenCampaign('show-project-work-board', state).executeTest(async (server) => {
-      expect((await membersOf(server.url, state)).length).toBeGreaterThan(0);
-    }),
+  // What an item needs (epic qits-1899): a ticket needing another ticket, not met, beside the work
+  // it needs. Recorded by qits-projects from 2026.1106.140436 on: until the pin reaches it, the test
+  // skips itself and the committed pact holds no such interaction.
+  it.skipIf(!isRecorded(NEEDS_STATE, 'listProjectWork'))(
+    'show-project-work-board: the needs of a ticket that needs another',
+    () =>
+      given('show-project-work-board', NEEDS_STATE).executeTest(async (server) => {
+        const entries = await workOf(server.url, NEEDS_STATE);
+        const waiting = entries.find((e) => (e.unmetNeeds ?? 0) > 0);
+        expect(waiting?.needs?.[0]?.qualifiedId).toBeTruthy();
+        expect(waiting?.needs?.[0]?.met).toBe(false);
+      }),
   );
 
   // A ticket has no finish button: qits-projects-service refuses any caller's move of a TICKET to
