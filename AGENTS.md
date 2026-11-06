@@ -116,6 +116,16 @@ stays in the DOM for `aria-describedby`, so a row's `textContent` holds its text
 element. `app-work-ref` behaves the same on a finger (`ui-popover`'s `tapToOpen`: the tap opens the
 preview instead of following the tag, the id in the preview is the link).
 
+Work references in work text (qits-1898), with the same briefs and popover: `ui-markdown` takes the
+project's slug as `workProject` and puts `@qits/ui-components`' `[qitsWorkRefs]` on its rendered
+HTML, so every `<slug>-<n>` in the text (a code span's too, not a link's) becomes a reference after
+the render; without `workProject` the HTML is exactly as rendered (dossier pages, ideas). The
+detail bodies (`app-{epic,feature,task,ticket}-detail`, `SelectedProject.slug()`) pass it to the
+description and to `app-work-comments` (`project`), and the Schedule tab to each acceptance
+criterion. Plain-text work text renders through `<qits-commit-message>`: a ticket's impetus (a
+`WorkField` with `workProject`; a field without one, an id or a name, stays text) and an open
+issue's description on the Desk (`app-open-issues`, `slug`).
+
 `@qits/ui-components`' FESM carries a lazy `import('mermaid')` for its unused `qits-mermaid-diagram`
 component; `angular.json`'s build `options.externalDependencies` keeps `mermaid` out of every
 bundle (browser, server, and the `test`/`test-browser` targets, which default to the `build`

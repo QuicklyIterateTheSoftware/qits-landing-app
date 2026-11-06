@@ -28,7 +28,8 @@ type CommentWrite = 'add' | 'save';
 
 /**
  * A work item's comments, oldest first: each with its author, its time (UTC) and its body as
- * Markdown. "No comments yet" for none. A region named "Comments".
+ * Markdown, the work ids of `project` in it drawn as work references with their briefs (qits-1898).
+ * "No comments yet" for none. A region named "Comments".
  *
  * Each comment's row has the id `comment-<comment id>` (`commentAnchor`), so a link can open the
  * page at it (qits-1660; the Desk page links each `@desk` comment so). When the URL's fragment
@@ -91,7 +92,7 @@ type CommentWrite = 'add' | 'save';
                 <ui-action-button [action]="saveAction()" />
               </div>
             } @else {
-              <ui-markdown [text]="comment.body ?? ''" />
+              <ui-markdown [text]="comment.body ?? ''" [workProject]="project()" />
             }
           </li>
         }
@@ -125,6 +126,8 @@ export class WorkComments {
   readonly comments = input.required<readonly CommentEntry[]>();
   /** The item the thread belongs to: its qualified id addresses the writes. */
   readonly entry = input.required<Pick<WorkEntry, 'qualifiedId' | 'archetype'>>();
+  /** The project's slug: the work ids a comment names link with their briefs (qits-1898). */
+  readonly project = input<string | undefined>(undefined);
 
   protected readonly composed = signal('');
   /** The comment whose body is open for editing, and its text as typed. */
