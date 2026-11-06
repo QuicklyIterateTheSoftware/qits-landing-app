@@ -116,6 +116,11 @@ stays in the DOM for `aria-describedby`, so a row's `textContent` holds its text
 element. `app-work-ref` behaves the same on a finger (`ui-popover`'s `tapToOpen`: the tap opens the
 preview instead of following the tag, the id in the preview is the link).
 
+`@qits/ui-components`' FESM carries a lazy `import('mermaid')` for its unused `qits-mermaid-diagram`
+component; `angular.json`'s build `options.externalDependencies` keeps `mermaid` out of every
+bundle (browser, server, and the `test`/`test-browser` targets, which default to the `build`
+target's options). Remove that entry only once this app actually renders `qits-mermaid-diagram`.
+
 Prioritising work (qits-753): the trees order siblings by `priority` (highest first, unranked
 after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`). In the Backlog
 (the roots, an epic's features, a feature's tasks) and on the board (the top-level epics and
