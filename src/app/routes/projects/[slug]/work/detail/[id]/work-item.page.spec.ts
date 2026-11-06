@@ -268,7 +268,11 @@ describe('WorkItemPage', () => {
       'a bug ticket in detail',
       true,
     );
-    const link = '/projects/contract-00000001/work/detail/contract-00000001-10/agent';
+    // The ticket's own agent page: its number comes from the recording, which renumbers it.
+    const ticket = goldenMaster('a bug ticket in detail', 'listProjectWork').entities.find(
+      (e: { title: string }) => e.title === 'Invoice totals are off by one cent',
+    );
+    const link = `/projects/contract-00000001/work/detail/${ticket.qualifiedId}/agent`;
     const branch = 'ticket/invoice-totals-are-off-by-one-cent';
     const opened = 'Opened 1 Jan 2026, 00:00';
     expect(history()).toEqual([

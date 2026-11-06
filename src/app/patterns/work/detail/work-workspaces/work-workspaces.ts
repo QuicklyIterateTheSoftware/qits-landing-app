@@ -26,7 +26,7 @@ import { Tag } from '$ui/components/tag/tag';
           @for (workspace of workspaces(); track workspace.id) {
             <li>
               <a
-                class="flex items-center gap-3 rounded-md border border-charcoal-brown-200 px-4 py-2 text-sm text-charcoal-brown-900 no-underline transition-shadow duration-150 hover:shadow-md"
+                class="flex items-center gap-3 gap-y-1 rounded-md border border-charcoal-brown-200 px-4 py-2 text-sm text-charcoal-brown-900 no-underline transition-shadow duration-150 hover:shadow-md max-sm:flex-wrap"
                 [routerLink]="link()"
               >
                 <!-- A fixed width, so the branches line up. -->
@@ -36,7 +36,9 @@ import { Tag } from '$ui/components/tag/tag';
                 <span class="min-w-0 flex-1 font-mono text-xs wrap-anywhere">{{
                   workspace.branch
                 }}</span>
-                <span class="shrink-0 text-xs whitespace-nowrap text-charcoal-brown-600">
+                <span
+                  class="shrink-0 text-xs whitespace-nowrap text-charcoal-brown-600 max-sm:basis-full max-sm:whitespace-normal"
+                >
                   Opened {{ workspace.createdAt | date: 'd MMM y, HH:mm' : 'UTC' }}
                   @if (workspace.resolvedAt; as closed) {
                     · Closed {{ closed | date: 'd MMM y, HH:mm' : 'UTC' }}
