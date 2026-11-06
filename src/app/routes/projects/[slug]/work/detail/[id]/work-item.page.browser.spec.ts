@@ -90,7 +90,10 @@ describe('WorkItemPage (screenshots)', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(async () => {
+    http.verify();
+    await page.viewport(800, 600);
+  });
 
   /**
    * Answers the item's own reads (`WorkDetailStore`): from `state`'s recordings when `recorded`,
@@ -600,5 +603,51 @@ describe('WorkItemPage (screenshots)', () => {
         .toMatchTextContent('Mark refined Drop Block');
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-reopened-ticket');
     });
+  });
+
+  // qits-1913: a long inline-code path in the description or a comment used to scroll the whole
+  // page sideways on a phone; `ui-markdown` now keeps it inside its column. No recorded answer
+  // carries a code path that long, so the real page renders with the real golden master first
+  // (as every other case here), and the description's and a comment's rendered markdown are then
+  // swapped directly in the DOM for one that holds it (as qits-1864 does for a long item word).
+  it('keeps a long inline-code path in the description and a comment on screen at 390px (qits-1913)', async () => {
+    await page.viewport(390, 844);
+    // Not the bug ticket: its workspaces bind to "a project with workspaces bound to work items"
+    // (`answerWorkspaces`), whose rows carry their own, unrelated overflow (pre-existing, out of
+    // this ticket's scope); every other item's workspaces answer "no workspaces yet".
+    const state = 'an improvement ticket in detail';
+    const title = 'Remember the last export format';
+
+    // `render()` fixes the host at 760px for the part screenshots; this case needs the real
+    // phone-width layout, so it repeats `render()`'s steps without that override.
+    const work = await goldenMaster(state, 'listProjectWork');
+    const entity = work.entities.find((e: { title: string }) => e.title === title);
+    const { element: root, harness } = await openRecordedWork(
+      http,
+      'work/detail',
+      entity.qualifiedId,
+      state,
+    );
+    http
+      .expectOne('/projects/api/work/archetypes')
+      .flush(await goldenMaster('the archetype registry', 'listWorkArchetypes'));
+    await answerDetail(state, entity.qualifiedId, true);
+    await answerWorkspaces(state);
+    await settle();
+    await settle();
+    await harness.fixture.whenStable();
+    harness.fixture.detectChanges();
+
+    const path =
+      'src/app/layout/shell/__screenshots__/shell.layout.browser.spec.ts/menu-agents-phone-chromium-linux.png';
+
+    const description = root.querySelector('ui-markdown > div') as HTMLElement;
+    description.innerHTML = `<p>See <code>${path}</code> for the baseline.</p>`;
+    const comment = root.querySelector(
+      'section[aria-label=Comments] ui-markdown > div',
+    ) as HTMLElement;
+    comment.innerHTML = `<p>Also see <code>${path}</code>.</p>`;
+
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   });
 });

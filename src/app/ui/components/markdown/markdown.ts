@@ -49,6 +49,8 @@ const loaded = signal<Render | undefined>(undefined);
  *   browser render match.
  * - `resolveUrl` rewrites an image's address before it renders (an epic's dossier names its
  *   figures by an address relative to its service).
+ * - Nothing a body holds may make it wider than its column: inline code wraps anywhere, and a
+ *   code block or a table scrolls inside its own box instead of pushing the page sideways.
  * - An image on a platform host (`isPlatformUrl`: a dossier figure, whose route is role-guarded) is
  *   fetched with the bearer (`QitsBearerFetch`, epic qits-543), since an `<img>` cannot send a
  *   header, and shown from an object URL; it has no `src` until its bytes are in. Each object URL
@@ -63,13 +65,13 @@ const loaded = signal<Render | undefined>(undefined);
   host: { class: 'block min-w-0' },
   template: `
     <p
-      class="m-0 text-sm whitespace-pre-line text-charcoal-brown-800"
+      class="m-0 text-sm whitespace-pre-line wrap-anywhere text-charcoal-brown-800"
       [class.hidden]="!!html() || !text()"
     >
       {{ text() }}
     </p>
     <div
-      class="text-sm leading-relaxed text-charcoal-brown-800 [&_a]:text-ocean-deep-700 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-charcoal-brown-200 [&_blockquote]:pl-3 [&_code]:rounded [&_code]:bg-charcoal-brown-50 [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.8125rem] [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-4 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_img]:my-2 [&_img]:max-w-full [&_img]:rounded [&_img]:border [&_img]:border-charcoal-brown-200 [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-charcoal-brown-50 [&_pre]:p-3 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_table]:my-2 [&_table]:border-collapse [&_td]:border [&_td]:border-charcoal-brown-200 [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-charcoal-brown-200 [&_th]:bg-charcoal-brown-50 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&>:first-child]:mt-0 [&>:last-child]:mb-0"
+      class="text-sm leading-relaxed text-charcoal-brown-800 [&_a]:text-ocean-deep-700 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-charcoal-brown-200 [&_blockquote]:pl-3 [&_code]:rounded [&_code]:bg-charcoal-brown-50 [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.8125rem] [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-4 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_img]:my-2 [&_img]:max-w-full [&_img]:rounded [&_img]:border [&_img]:border-charcoal-brown-200 [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-charcoal-brown-50 [&_pre]:p-3 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_table]:my-2 [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_td]:border [&_td]:border-charcoal-brown-200 [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-charcoal-brown-200 [&_th]:bg-charcoal-brown-50 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_:not(pre)>code]:wrap-anywhere [&>:first-child]:mt-0 [&>:last-child]:mb-0"
       [class.hidden]="!html()"
       [innerHTML]="html()"
     ></div>
