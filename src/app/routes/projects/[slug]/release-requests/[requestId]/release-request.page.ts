@@ -316,6 +316,7 @@ const UNATTENDED_TITLE =
                     [lanes]="graph().lanes"
                     [laneWidth]="laneWidth"
                     [header]="laneHeader"
+                    [project]="slug()"
                     (toggle)="toggle($event)"
                     (more)="earlierFolds.set(!earlierFolds())"
                   />
@@ -350,7 +351,7 @@ const UNATTENDED_TITLE =
                 [state]="runs()?.status ?? 'loading'"
               />
             } @else if (tab() === 'changes') {
-              <app-release-changes class="mt-4" [request]="request" />
+              <app-release-changes class="mt-4" [request]="request" [slug]="slug()" />
             } @else {
               <!-- On the estate the open question is the approval, so the lifecycle comes first. -->
               @if (wrapper()) {

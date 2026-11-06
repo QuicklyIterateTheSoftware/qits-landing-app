@@ -8,6 +8,7 @@ import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { goldenMaster } from '../../../../testing/golden-masters';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
+import { provideWorkReferences } from '$core/work/work-briefs.store';
 import { ReleaseChangesView } from './release-changes';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -50,7 +51,7 @@ describe('ReleaseChangesView', () => {
     URL.revokeObjectURL = original.revoke;
   });
 
-  async function render(path: string) {
+  async function render(path: string, slug = '') {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -59,11 +60,13 @@ describe('ReleaseChangesView', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(githostClient),
+        provideWorkReferences(),
       ],
     });
     http = TestBed.inject(HttpTestingController);
     const fixture = TestBed.createComponent(ReleaseChangesView);
     fixture.componentRef.setInput('request', request);
+    fixture.componentRef.setInput('slug', slug);
     fixture.detectChanges();
     await settle();
     const step = async () => {
@@ -193,5 +196,45 @@ describe('ReleaseChangesView', () => {
     expect(rawReads()).toEqual([]);
     expect(element.querySelector('ui-image-diff')).toBeNull();
     expect(element.querySelector('ui-diff-viewer li')).not.toBeNull();
+  });
+
+  it('draws the work ids a pin’s commit messages name as references with their brief', async () => {
+    const BRIEFS = 'a project with work to brief';
+    const briefs = goldenMaster(BRIEFS, 'listProjectWorkBriefs');
+    const ticket = briefs.briefs[0];
+    const slug = ticket.qualifiedId.replace(/-\d+$/, '');
+    const gitlink = 'components/contract/contract-service';
+    const { element, step } = await render(gitlink, slug);
+    http.expectOne(CHANGES).flush(goldenMaster(STATE, 'listReleaseRequestChanges'));
+    await step();
+    await step();
+    // The recorded pin move, its newest commit's message naming the briefs recording's ticket
+    // (the recorded messages name no work item).
+    const moved = goldenMaster(STATE, 'getReleaseRequestSubmoduleChanges');
+    moved.commits[0].message = `feat(${ticket.qualifiedId}): ${moved.commits[0].message}`;
+    http.expectOne(`${CHANGES}/submodule?path=${encodeURIComponent(gitlink)}`).flush(moved);
+    await step();
+
+    // The briefs of one render go out together, a microtask after it, through the generated client.
+    await step();
+    const read = http.expectOne((req) => req.urlWithParams.includes('/work/briefs'));
+    expect(read.request.urlWithParams).toBe(
+      `/projects/api/projects/${slug}/work/briefs?id=${ticket.qualifiedId}`,
+    );
+    read.flush(briefs);
+    await step();
+
+    const message = element.querySelector('qits-commit-message')!;
+    const ref = message.querySelector('qits-work-ref .qits-work-ref')!;
+    expect(ref.textContent).toBe(ticket.qualifiedId);
+    const panel = message.querySelector('[role="tooltip"]')!;
+    expect(panel.textContent).toContain(ticket.title);
+    expect(panel.querySelector('a')?.getAttribute('href')).toBe(
+      `/projects/${slug}/work/detail/${ticket.qualifiedId}`,
+    );
+    // The panel is in the DOM (for aria-describedby); without it, the text is the message.
+    const shown = message.cloneNode(true) as Element;
+    shown.querySelectorAll('.qits-work-ref-panel').forEach((open) => open.remove());
+    expect(shown.textContent).toBe(moved.commits[0].message);
   });
 });

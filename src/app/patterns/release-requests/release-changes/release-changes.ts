@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { QitsCommitMessage } from '@qits/ui-components';
 import { map } from 'rxjs';
 import type {
   ChangedFile,
@@ -53,11 +54,14 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * binary differs: the fold's own image read in the request's repository at the base release
  * (`base`) and at the fold (`mergedSha`), one inside a pin in the sibling (`repositoryId`) at the
  * two pins, through `RawImagesStore`. Its text diff is not asked for.
+ *
+ * A pin's commit messages name work items (`feat(qits-1897): …`): each id of the project `slug`
+ * names is a work reference with the item's brief (`<qits-commit-message>`, qits-1897).
  */
 @Component({
   selector: 'app-release-changes',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ChangeList, DiffViewer, ImageDiff, Spinner],
+  imports: [ChangeList, DiffViewer, ImageDiff, QitsCommitMessage, Spinner],
   host: { class: 'block' },
   template: `
     <ui-spinner [state]="changes()?.status ?? 'loading'" class="min-h-24">
@@ -116,7 +120,9 @@ import { Spinner } from '$ui/components/spinner/spinner';
                       <span class="font-mono text-charcoal-brown-600" [title]="commit.hash ?? ''">{{
                         commit.shortHash
                       }}</span>
-                      <span class="min-w-48 flex-1 break-words">{{ commit.message }}</span>
+                      <span class="min-w-48 flex-1 break-words"
+                        ><qits-commit-message [message]="commit.message ?? ''" [project]="slug()"
+                      /></span>
                       <span class="text-xs text-charcoal-brown-500">{{ commit.author }}</span>
                       <span
                         class="text-xs text-charcoal-brown-500"
@@ -156,6 +162,9 @@ export class ReleaseChangesView {
   private readonly route = inject(ActivatedRoute);
 
   readonly request = input.required<ReleaseRequest>();
+
+  /** The project's slug: the work ids the pin's commit messages name are its (qits-1897). */
+  readonly slug = input<string>('');
 
   protected readonly short = shortShaOrNone;
   protected readonly instant = formatInstant;

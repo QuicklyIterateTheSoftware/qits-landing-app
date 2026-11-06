@@ -7,6 +7,7 @@ import {
   output,
   type TemplateRef,
 } from '@angular/core';
+import { QitsCommitMessage } from '@qits/ui-components';
 import type { CommitGraph, GraphRow } from '$core/release-requests/commit-graph';
 
 /** What a row says beside its dot. */
@@ -62,11 +63,16 @@ interface Drawn {
  * Given `lanes`, a legend above names each lane in its colour; given `header` too, each lane has a
  * column header instead (`laneWidth` wide), with the lane's line drawn under it. A row with `more` has a button
  * under it (emits `more`), for rows the caller keeps folded away.
+ *
+ * Given `project` (a slug), each subject's work ids of that project (`qits-1897`) are work
+ * references (`<qits-commit-message>` from `@qits/ui-components`): a brief of the item in a popover
+ * on hover, or on a tap, which then does not press the row. The popover is fixed and in the top
+ * layer, so the truncated subject does not clip it. Without one, the subject is plain text.
  */
 @Component({
   selector: 'ui-commit-graph',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, QitsCommitMessage],
   host: { class: 'block' },
   template: `
     @if (header(); as head) {
@@ -142,8 +148,8 @@ interface Drawn {
             <span
               class="min-w-40 flex-1 truncate text-charcoal-brown-950"
               [title]="drawn.entry.subject"
-              >{{ drawn.entry.subject }}</span
-            >
+              ><qits-commit-message [message]="drawn.entry.subject" [project]="project()"
+            /></span>
             <span
               class="max-w-32 truncate text-xs text-charcoal-brown-500"
               [title]="drawn.entry.author"
@@ -226,6 +232,8 @@ export class CommitGraphView {
   readonly header = input<TemplateRef<unknown>>();
   /** A row's `more` button was pressed. */
   readonly more = output<string>();
+  /** The slug of the project whose work ids the subjects name; none draws them as plain text. */
+  readonly project = input<string | undefined>(undefined);
 
   protected colourOf(lane: number): string {
     return COLOURS[lane % COLOURS.length];

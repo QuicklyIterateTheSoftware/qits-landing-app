@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { page } from 'vitest/browser';
+import { provideRouter } from '@angular/router';
+import { provideQitsWorkBriefs, type QitsWorkBrief } from '@qits/ui-components';
+import { commands, page, userEvent } from 'vitest/browser';
+import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { branchGraph, type BranchCommit } from '$core/release-requests/branch-graph';
 import { layoutGraph } from '$core/release-requests/commit-graph';
 import { CommitGraphView, type GraphEntry } from './commit-graph';
@@ -205,5 +208,125 @@ describe('CommitGraphView on a chain of folds (screenshots)', () => {
     await expect.element(view).toMatchTextContent('22 earlier folds');
     await expect.element(view).toMatchScreenshot('folds');
     await page.viewport(800, 600);
+  });
+});
+
+/** The briefs door's recording: a ticket and an epic of the project `contract-00000001`. */
+const BRIEFS = 'a project with work to brief';
+/** An hour and a half after the recorded `updatedAt`, so the brief reads "1h ago" on every run. */
+const NOW = new Date('2026-01-01T01:30:00Z');
+
+/** A row whose subject names the recorded ticket, inside a link, as a commit row in a list is. */
+@Component({
+  imports: [CommitGraphView],
+  host: { class: 'block h-64 w-[40rem] p-4' },
+  template: `
+    <a id="around" href="#followed" class="block">
+      <ui-commit-graph
+        [graph]="graph"
+        [entries]="entries"
+        [project]="project"
+        (toggle)="toggled.push($event)"
+      />
+    </a>
+    <p id="outside" class="m-0 mt-24 text-sm">Somewhere else on the page</p>
+  `,
+})
+class Referenced {
+  project = '';
+  readonly graph = layoutGraph([
+    { hash: 'b', parents: ['a'] },
+    { hash: 'a', parents: [] },
+  ]);
+  entries: GraphEntry[] = [];
+  readonly toggled: string[] = [];
+}
+
+describe('CommitGraphView with work references (browser)', () => {
+  let ticket: QitsWorkBrief;
+
+  beforeEach(async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: NOW });
+    const recorded = await goldenMaster(BRIEFS, 'listProjectWorkBriefs');
+    const briefs: readonly QitsWorkBrief[] = recorded.briefs;
+    ticket = briefs[0];
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        // The briefs as qits-projects recorded them, without the HTTP read `workBriefSource` makes.
+        provideQitsWorkBriefs(async (_project, ids) =>
+          briefs.filter((brief) => ids.includes(brief.qualifiedId)),
+        ),
+      ],
+    });
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+
+  afterEach(async () => {
+    await commands.touch('cancel', 0, 0);
+    await commands.parkPointer();
+    vi.useRealTimers();
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+
+  async function render() {
+    const fixture = TestBed.createComponent(Referenced);
+    fixture.componentInstance.project = ticket.qualifiedId.replace(/-\d+$/, '');
+    fixture.componentInstance.entries = [
+      entry('b', `feat(${ticket.qualifiedId}): show the status beside the link`),
+      entry('a', 'chore: start'),
+    ];
+    fixture.detectChanges();
+    const view = page.elementLocator(fixture.nativeElement);
+    const ref = view.getByText(ticket.qualifiedId, { exact: true }).first();
+    await expect.element(ref).toHaveClass('qits-work-ref');
+    // The brief's title is in the panel only; the panel is in the accessibility tree only open.
+    const panel = view.getByText(ticket.title);
+    const centre = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    };
+    const tap = async (element: Element) => {
+      const at = centre(element);
+      await commands.touch('down', at.x, at.y);
+      await commands.touch('up', at.x, at.y);
+    };
+    return { fixture, view, ref, panel, tap };
+  }
+
+  it('opens the brief on hover: the id, its status, when it changed, its title', async () => {
+    const { view, ref, panel } = await render();
+    await expect.element(panel).not.toBeVisible();
+    await userEvent.hover(ref);
+    await expect.element(panel).toBeVisible();
+    const tooltip = view.getByRole('tooltip');
+    await expect.element(tooltip.getByRole('link', { name: ticket.qualifiedId })).toBeVisible();
+    const status = ticket.status.toLowerCase().replace(/_/g, ' ');
+    await expect
+      .element(tooltip)
+      .toHaveTextContent(`${ticket.qualifiedId}${status}1h ago${ticket.title}`);
+    await expect.element(ref).toHaveAccessibleDescription(new RegExp(ticket.title));
+    await expect.element(view).toMatchScreenshot('work-ref-open');
+  });
+
+  it('on a finger, a tap opens the brief without following the row or the link around it', async () => {
+    const { fixture, ref, panel, tap } = await render();
+    await tap(ref.element());
+    await expect.element(panel).toBeVisible();
+    expect(location.hash).toBe('');
+    expect(fixture.componentInstance.toggled).toEqual([]);
+
+    // A second tap on the id closes it, and follows nothing either.
+    await tap(ref.element());
+    await expect.element(panel).not.toBeVisible();
+    expect(location.hash).toBe('');
+    expect(fixture.componentInstance.toggled).toEqual([]);
+
+    // A tap anywhere outside closes it too.
+    await tap(ref.element());
+    await expect.element(panel).toBeVisible();
+    await tap(document.querySelector('#outside')!);
+    await expect.element(panel).not.toBeVisible();
+    expect(location.hash).toBe('');
   });
 });
