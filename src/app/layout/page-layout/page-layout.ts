@@ -39,7 +39,8 @@ interface ShownGroup {
  * - Header: `title` as an `<h1>`, or projected `[slot=header]` / `[uiPageHeader]` content, which wins.
  * - Actions: `actions` (single actions and groups), or projected `[slot=actions]` /
  *   `[uiPageActions]` content, which wins. A group is joined buttons in a `role="group"` named by
- *   its title, which is also its visible caption, centred below the buttons.
+ *   its title, which is also its visible caption, centred below the buttons. A group wider than the
+ *   bar wraps its buttons inside the bar instead of spilling past its edge.
  * - Content: everything else.
  *
  * The page scrolls as a whole (the document scrolls, not the shell), and the actions stay pinned
@@ -65,13 +66,13 @@ interface ShownGroup {
   template: `
     <div
       #actionsBar
-      class="sticky top-[var(--app-header-h,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
+      class="sticky top-[var(--app-header-h,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
       data-page-actions
     >
       <ng-content select="[slot=actions], [uiPageActions]">
         @for (group of groups(); track $index) {
           <div
-            class="flex flex-col-reverse items-center gap-0.5"
+            class="flex min-w-0 max-w-full flex-col-reverse items-center gap-0.5"
             [attr.role]="group.group ? 'group' : null"
             [attr.aria-label]="group.group ? (group.title ?? null) : null"
           >
@@ -81,7 +82,7 @@ interface ShownGroup {
               aria-hidden="true"
               >{{ group.title }}</span
             >
-            <div class="flex">
+            <div class="flex flex-wrap justify-end gap-y-1">
               @for (shown of group.actions; track $index) {
                 <ui-action-button [action]="shown.action" [join]="shown.join" />
               }

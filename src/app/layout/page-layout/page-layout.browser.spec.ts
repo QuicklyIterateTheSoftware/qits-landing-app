@@ -116,6 +116,32 @@ class Wrapping {
   readonly actions = ACTIONS;
 }
 
+/** qits-1913: one group whose four buttons are wider than a phone-sized bar. */
+const WIDE_GROUP_ACTIONS: readonly (Action | ActionGroup)[] = [
+  {
+    title: 'Status',
+    actions: [
+      { label: 'Mark verified', variant: 'success', callback: noop },
+      { label: 'Back to implemented', variant: 'muted', callback: noop },
+      { label: 'Drop', variant: 'danger', callback: noop },
+      { label: 'Block', variant: 'danger', callback: noop },
+    ],
+  },
+];
+
+@Component({
+  imports: [PageLayoutComponent],
+  host: { class: 'block w-full p-4' },
+  template: `
+    <app-page-layout title="qits-1913" [actions]="actions">
+      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+    </app-page-layout>
+  `,
+})
+class WideGroup {
+  readonly actions = WIDE_GROUP_ACTIONS;
+}
+
 function shown<T>(type: new () => T) {
   const fixture = TestBed.createComponent(type);
   fixture.detectChanges();
@@ -203,5 +229,32 @@ describe('PageLayoutComponent (screenshots)', () => {
     const actions = element.querySelector('[data-page-actions]')!.getBoundingClientRect();
     expect(title.top).toBeGreaterThanOrEqual(actions.bottom - 1);
     await expect.element(page.elementLocator(element)).toMatchScreenshot('narrow');
+  });
+
+  it('keeps a group wider than the bar on one row at desktop width', () => {
+    const { element } = shown(WideGroup);
+    const buttons = [...element.querySelectorAll('ui-action-button button')].map((b) =>
+      b.getBoundingClientRect(),
+    );
+    expect(buttons).toHaveLength(4);
+    const tops = buttons.map((b) => Math.round(b.top));
+    expect(new Set(tops).size).toBe(1);
+  });
+
+  it('wraps a group wider than the bar inside the bar on a phone-sized viewport', async () => {
+    await page.viewport(390, 844);
+    try {
+      const { element } = shown(WideGroup);
+      const buttons = [...element.querySelectorAll('ui-action-button')];
+      expect(buttons).toHaveLength(4);
+      for (const button of buttons) {
+        const rect = button.getBoundingClientRect();
+        expect(rect.left).toBeGreaterThanOrEqual(0);
+        expect(rect.right).toBeLessThanOrEqual(window.innerWidth);
+      }
+      await expect.element(page.elementLocator(element)).toMatchScreenshot('phone-wide-group');
+    } finally {
+      await page.viewport(800, 600);
+    }
   });
 });
