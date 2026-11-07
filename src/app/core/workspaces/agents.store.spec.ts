@@ -68,9 +68,9 @@ describe('AgentsStore', () => {
     expect(project.status).toBe('loaded');
     expect(project.slots.map((s) => s.workspaceId)).toEqual(['ws-contract']);
     expect(project.agents.map((a) => a.entityId)).toEqual([
-      'contract-00000001-11',
       'contract-00000001-10',
-      'contract-00000001-2',
+      'contract-00000001-9',
+      'contract-00000001-1',
     ]);
   });
 
@@ -167,7 +167,7 @@ describe('AgentsStore', () => {
       .flush(workspacesGoldenMaster(SLOT, 'getAgentActiveProcess'));
     await done;
     expect(store.agentOf(agentId)?.status).toBe('loaded');
-    expect(store.agentOf(agentId)?.agent?.entityId).toBe('contract-00000001-10');
+    expect(store.agentOf(agentId)?.agent?.entityId).toBe('contract-00000001-9');
     expect(store.agentOf(agentId)?.processId).toBeNull();
     expect(store.slotOf(1)).toBeUndefined();
   });
@@ -349,7 +349,7 @@ describe('AgentsStore', () => {
     const agents = store.projectAgentsOf(projectId)!.agents;
     expect(agents).toHaveLength(5);
 
-    const waitingOnRequest = agents.find((a) => a.entityId === 'contract-00000001-10')!;
+    const waitingOnRequest = agents.find((a) => a.entityId === 'contract-00000001-9')!;
     expect(waitingOnRequest.waits?.[0]).toMatchObject({
       subjectKind: 'RELEASE_REQUEST',
       subjectQualifiedId: 'contract-qits-rr-368',
@@ -357,20 +357,20 @@ describe('AgentsStore', () => {
     });
     expect(waitingOnRequest.attention).toMatchObject({ code: 'WAIT_SUBJECT_PASSED' });
 
-    const blocked = agents.find((a) => a.entityId === 'contract-00000001-2')!;
+    const blocked = agents.find((a) => a.entityId === 'contract-00000001-1')!;
     expect(blocked.attention).toMatchObject({ code: 'BLOCKED_NO_DESK' });
     expect(blocked.blockedAt).toBeTruthy();
 
-    const idle = agents.find((a) => a.entityId === 'contract-00000001-6')!;
+    const idle = agents.find((a) => a.entityId === 'contract-00000001-5')!;
     expect(idle.attention).toMatchObject({ code: 'IDLE_NO_WAIT' });
     expect(idle.waits).toEqual([]);
 
-    const overdue = agents.find((a) => a.entityId === 'contract-00000001-5')!;
+    const overdue = agents.find((a) => a.entityId === 'contract-00000001-4')!;
     expect(overdue.waits?.[0]).toMatchObject({ subjectKind: 'CI_RUN', subjectState: 'RUNNING' });
     expect(overdue.waits?.[0]?.targetStates).toContain('SUCCESS');
     expect(overdue.attention).toMatchObject({ code: 'WAIT_OVERDUE' });
 
-    const twoWaits = agents.find((a) => a.entityId === 'contract-00000001-11')!;
+    const twoWaits = agents.find((a) => a.entityId === 'contract-00000001-10')!;
     expect(twoWaits.waits?.map((w) => w.subjectKind)).toEqual(['WORK_ITEM', 'COMMENTS']);
     expect(twoWaits.waits?.[0]?.targetStates).toEqual(['VERIFIED']);
     expect(twoWaits.attention).toBeNull();

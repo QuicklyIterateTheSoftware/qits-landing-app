@@ -160,7 +160,7 @@ describe('AgentTerminalPage (screenshots)', () => {
     sockets[0].open();
     sockets[0].deliver(
       '\x1b[1;32magent@workspace\x1b[0m:\x1b[1;34m~/wrapper\x1b[0m$ git status\r\n' +
-        'On branch ticket/contract-00000001-10\r\n' +
+        'On branch ticket/contract-00000001-9\r\n' +
         'nothing to commit, working tree clean\r\n' +
         '\x1b[1;32magent@workspace\x1b[0m:\x1b[1;34m~/wrapper\x1b[0m$ ',
     );

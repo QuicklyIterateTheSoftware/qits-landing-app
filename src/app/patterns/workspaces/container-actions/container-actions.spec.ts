@@ -100,7 +100,7 @@ describe('ContainerActions', () => {
     fixture.detectChanges();
     http.expectNone(`${SLOT}/stop-container`);
     expect(text()).toContain(
-      'Stopping the container affects its 2 agents: contract-00000001-2, contract-00000001-10.',
+      'Stopping the container affects its 2 agents: contract-00000001-1, contract-00000001-9.',
     );
     button('Confirm stop?').click();
     await settle();
@@ -109,7 +109,7 @@ describe('ContainerActions', () => {
       .expectOne(`${SLOT}/stop-container`)
       .flush(workspacesGoldenMaster(RUNNING, 'stopWorkspaceContainer'));
     await answered(fixture);
-    expect(text()).toContain('Affected agent: contract-00000001-10.');
+    expect(text()).toContain('Affected agent: contract-00000001-9.');
     expect(text()).not.toContain('Stopping the container affects');
     expect(fixture.componentInstance.changed).toBe(1);
   });
@@ -132,7 +132,7 @@ describe('ContainerActions', () => {
 
   it('names an agent it does not list by its id', () => {
     expect(agentName(undefined, '0123abcd-0000-4000-8000-000000000000')).toBe('agent 0123abcd');
-    expect(agentName(HOSTED[0], HOSTED[0].agentId ?? '')).toBe('contract-00000001-2');
+    expect(agentName(HOSTED[0], HOSTED[0].agentId ?? '')).toBe('contract-00000001-1');
   });
 
   it('shows a refused start in the service’s words, and still reads the slot again', async () => {
