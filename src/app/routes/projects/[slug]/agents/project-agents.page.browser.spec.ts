@@ -110,13 +110,13 @@ describe('ProjectAgentsPage (screenshots)', () => {
     await answerSlots(harness, project.id);
     const agents = await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces');
     const agentId = agents.agents.find(
-      (a: { entityId?: string }) => a.entityId === 'contract-00000001-10',
+      (a: { entityId?: string }) => a.entityId === 'contract-00000001-9',
     ).agentId;
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('heading', { name: 'Active agents' })).toBeVisible();
     await expect.element(view.getByRole('heading', { name: 'Workspaces' })).toBeVisible();
     await expect
-      .element(view.getByRole('link', { name: 'contract-00000001-10' }))
+      .element(view.getByRole('link', { name: 'contract-00000001-9' }))
       .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
     await expect
       .element(view)

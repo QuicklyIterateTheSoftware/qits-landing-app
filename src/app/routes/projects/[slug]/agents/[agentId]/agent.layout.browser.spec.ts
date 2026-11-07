@@ -27,7 +27,7 @@ import { goldenMaster } from '../../../../../../testing/browser/golden-master';
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
  */
 
-const ITEM = 'contract-00000001-10';
+const ITEM = 'contract-00000001-9';
 const AGENT = 'an agent with a saved prompt draft';
 const STARTING = 'an agent whose workspace is starting';
 const LEFTOVER = 'an agent with leftover work';

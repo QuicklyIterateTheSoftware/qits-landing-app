@@ -139,10 +139,10 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect.element(view.getByRole('region', { name: 'Starting' })).not.toBeInTheDocument();
     const hosted = await goldenMaster(SLOT, 'listWorkspaceAgents', 'qits-workspaces');
     const agentId = hosted.agents.find(
-      (a: { entityId?: string }) => a.entityId === 'contract-00000001-2',
+      (a: { entityId?: string }) => a.entityId === 'contract-00000001-1',
     ).agentId;
     await expect
-      .element(view.getByRole('link', { name: 'contract-00000001-2' }))
+      .element(view.getByRole('link', { name: 'contract-00000001-1' }))
       .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
     await expect.element(view).toMatchTextContent('yielded — idle, terminal stays live');
     await expect
@@ -165,7 +165,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent(
-        'Stopping the container affects its 2 agents: contract-00000001-2, contract-00000001-10.',
+        'Stopping the container affects its 2 agents: contract-00000001-1, contract-00000001-9.',
       );
     await expect.element(view).toMatchScreenshot('confirm-stop');
   });

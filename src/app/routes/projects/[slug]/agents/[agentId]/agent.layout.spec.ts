@@ -84,7 +84,7 @@ describe('AgentLayout', () => {
     agents: [
       {
         agentId: AGENT_ID,
-        entityId: 'contract-00000001-10',
+        entityId: 'contract-00000001-9',
         state: 'ACTIVE',
         waits: [
           {
@@ -115,9 +115,9 @@ describe('AgentLayout', () => {
     const element = harness.routeNativeElement as HTMLElement;
     const link = (name: string) =>
       [...element.querySelectorAll('a')].find((a) => a.textContent?.trim() === name);
-    expect(element.querySelector('h1')?.textContent).toContain('Agent contract-00000001-10');
-    expect(link('contract-00000001-10')?.getAttribute('href')).toBe(
-      `/projects/${SLUG}/work/detail/contract-00000001-10`,
+    expect(element.querySelector('h1')?.textContent).toContain('Agent contract-00000001-9');
+    expect(link('contract-00000001-9')?.getAttribute('href')).toBe(
+      `/projects/${SLUG}/work/detail/contract-00000001-9`,
     );
     expect(element.textContent).toContain('Invoice totals are off by one cent');
     expect(element.querySelector('[data-wait]')?.textContent).toContain('contract-00000001-12');

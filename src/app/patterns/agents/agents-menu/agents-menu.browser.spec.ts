@@ -118,7 +118,7 @@ describe('AgentsMenu (screenshots)', () => {
     const panel = page.getByRole('region', { name: "The project's agents" });
     expect(panel.getByRole('listitem').elements()).toHaveLength(5);
     await expect
-      .element(panel.getByRole('link', { name: /contract-00000001-10/ }))
+      .element(panel.getByRole('link', { name: /contract-00000001-9/ }))
       .toHaveAttribute('href', `/projects/${slug}/agents/00000000-0000-4000-8000-0000000000a6`);
     await expect.element(panel).toMatchTextContent('Blocked 50 min by contract-person');
     await expect

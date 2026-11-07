@@ -24,14 +24,14 @@
           "name": "a project with agents needing attention",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -60,7 +60,7 @@
         "path": "/workspaces/api/agents",
         "query": {
           "projectId": [
-            "00000000-0000-4000-8000-00000000000f"
+            "00000000-0000-4000-8000-00000000000e"
           ],
           "state": [
             "ACTIVE"
@@ -84,7 +84,7 @@
                 "blockedAt": null,
                 "deskAskedAt": null,
                 "entityBlocked": false,
-                "entityId": "contract-00000001-10",
+                "entityId": "contract-00000001-9",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Invoice totals are off by one cent",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
@@ -131,7 +131,7 @@
                 "blockedAt": "2026-01-01T00:00:00Z",
                 "deskAskedAt": "2026-01-01T00:00:00Z",
                 "entityBlocked": true,
-                "entityId": "contract-00000001-2",
+                "entityId": "contract-00000001-1",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Export invoices for the accountants",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
@@ -142,7 +142,7 @@
                 "waitingOnSince": null,
                 "waitingSince": null,
                 "waits": [],
-                "workId": "00000000-0000-4000-8000-000000000006",
+                "workId": "00000000-0000-4000-8000-000000000005",
                 "workspaceRowId": 1
               },
               {
@@ -158,7 +158,7 @@
                 "blockedAt": null,
                 "deskAskedAt": null,
                 "entityBlocked": false,
-                "entityId": "contract-00000001-6",
+                "entityId": "contract-00000001-5",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "PDF export",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
@@ -169,7 +169,7 @@
                 "waitingOnSince": null,
                 "waitingSince": "2026-01-01T00:00:00Z",
                 "waits": [],
-                "workId": "00000000-0000-4000-8000-000000000007",
+                "workId": "00000000-0000-4000-8000-000000000006",
                 "workspaceRowId": 1
               },
               {
@@ -185,7 +185,7 @@
                 "blockedAt": null,
                 "deskAskedAt": null,
                 "entityBlocked": false,
-                "entityId": "contract-00000001-5",
+                "entityId": "contract-00000001-4",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Download button on the invoice list",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
@@ -216,7 +216,7 @@
                     ]
                   }
                 ],
-                "workId": "00000000-0000-4000-8000-000000000011",
+                "workId": "00000000-0000-4000-8000-000000000010",
                 "workspaceRowId": 1
               },
               {
@@ -227,26 +227,26 @@
                 "blockedAt": null,
                 "deskAskedAt": null,
                 "entityBlocked": false,
-                "entityId": "contract-00000001-11",
+                "entityId": "contract-00000001-10",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Remember the last export format",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
                 "repositoryId": "00000000-0000-4000-8000-000000000018",
                 "runState": "RUNNING",
                 "state": "ACTIVE",
-                "waitingOn": "work contract-00000001-5 VERIFIED; a comment on contract-00000001-5",
+                "waitingOn": "work contract-00000001-4 VERIFIED; a comment on contract-00000001-4",
                 "waitingOnSince": "2026-01-01T00:00:00Z",
                 "waitingSince": null,
                 "waits": [
                   {
                     "createdAt": "2026-01-01T00:00:00Z",
                     "id": "00000000-0000-4000-8000-0000000000b4",
-                    "label": "work contract-00000001-5 VERIFIED",
+                    "label": "work contract-00000001-4 VERIFIED",
                     "subjectExpectedBy": null,
-                    "subjectId": "00000000-0000-4000-8000-000000000011",
+                    "subjectId": "00000000-0000-4000-8000-000000000010",
                     "subjectKind": "WORK_ITEM",
-                    "subjectQualifiedId": "contract-00000001-5",
-                    "subjectRef": "00000000-0000-4000-8000-000000000011",
+                    "subjectQualifiedId": "contract-00000001-4",
+                    "subjectRef": "00000000-0000-4000-8000-000000000010",
                     "subjectState": "IMPLEMENTING",
                     "subjectStateAt": "2026-01-01T00:00:00Z",
                     "targetStates": [
@@ -256,18 +256,18 @@
                   {
                     "createdAt": "2026-01-01T00:00:00Z",
                     "id": "00000000-0000-4000-8000-0000000000b5",
-                    "label": "a comment on contract-00000001-5",
+                    "label": "a comment on contract-00000001-4",
                     "subjectExpectedBy": null,
                     "subjectId": null,
                     "subjectKind": "COMMENTS",
                     "subjectQualifiedId": null,
-                    "subjectRef": "00000000-0000-4000-8000-000000000011",
+                    "subjectRef": "00000000-0000-4000-8000-000000000010",
                     "subjectState": null,
                     "subjectStateAt": null,
                     "targetStates": []
                   }
                 ],
-                "workId": "00000000-0000-4000-8000-00000000000b",
+                "workId": "00000000-0000-4000-8000-00000000000a",
                 "workspaceRowId": 1
               }
             ]
@@ -1444,7 +1444,7 @@
           "name": "an agent waiting for a workspace slot",
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a5",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b"
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a"
           }
         }
       ],
@@ -1689,7 +1689,7 @@
         "body": {
           "content": {
             "code": "AGENT_HAS_LEFTOVER_WORK",
-            "message": "The agent's worktrees hold work that never reached the git host: uncommitted changes in qits-ci-service; 1 unpushed commit(s) in wrapper on ticket/contract-00000001-10. Discard with force to throw it away."
+            "message": "The agent's worktrees hold work that never reached the git host: uncommitted changes in qits-ci-service; 1 unpushed commit(s) in wrapper on ticket/contract-00000001-9. Discard with force to throw it away."
           },
           "contentType": "application/json",
           "encoded": false
@@ -1929,7 +1929,7 @@
       "response": {
         "body": {
           "content": {
-            "message": "Cannot recreate workspace 'ws-contract': its daemon cannot be asked whether the worktrees of agent 00000000-0000-4000-8000-0000000000a1 (work item contract-00000001-10) (the daemon is not connected) hold unpushed work. Wait for the daemon to connect, or discard the agent, first."
+            "message": "Cannot recreate workspace 'ws-contract': its daemon cannot be asked whether the worktrees of agent 00000000-0000-4000-8000-0000000000a1 (work item contract-00000001-9) (the daemon is not connected) hold unpushed work. Wait for the daemon to connect, or discard the agent, first."
           },
           "contentType": "application/json",
           "encoded": false
@@ -2635,7 +2635,7 @@
             "admin": false,
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "entityBlocked": false,
-            "entityId": "contract-00000001-10",
+            "entityId": "contract-00000001-9",
             "entityStatus": "IMPLEMENTING",
             "entityTitle": "Invoice totals are off by one cent",
             "harness": "CLAUDE",
@@ -2646,7 +2646,7 @@
             "waitingOnSince": null,
             "workId": "00000000-0000-4000-8000-000000000001",
             "workspaceRowId": 1,
-            "wrapperBranch": "ticket/contract-00000001-10"
+            "wrapperBranch": "ticket/contract-00000001-9"
           },
           "contentType": "application/json",
           "encoded": false
@@ -2853,15 +2853,15 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
-            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taskId": "00000000-0000-4000-8000-000000000010",
             "workspaceId": "1"
           }
         }
@@ -2937,14 +2937,14 @@
           "name": "a project with workspaces bound to work items",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -2958,7 +2958,7 @@
             "entries": [
               {
                 "workspace": {
-                  "workId": "00000000-0000-4000-8000-000000000006"
+                  "workId": "00000000-0000-4000-8000-000000000005"
                 }
               }
             ]
@@ -3035,14 +3035,14 @@
           "name": "no work item has an open workspace",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -3102,15 +3102,15 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -3126,7 +3126,7 @@
                 "activity": null,
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a5",
-                "entityId": "contract-00000001-11",
+                "entityId": "contract-00000001-10",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Remember the last export format",
                 "repositoryId": "00000000-0000-4000-8000-000000000013",
@@ -3140,7 +3140,7 @@
                 "activity": null,
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a1",
-                "entityId": "contract-00000001-10",
+                "entityId": "contract-00000001-9",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Invoice totals are off by one cent",
                 "repositoryId": "00000000-0000-4000-8000-000000000013",
@@ -3154,7 +3154,7 @@
                 "activity": null,
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a4",
-                "entityId": "contract-00000001-2",
+                "entityId": "contract-00000001-1",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Export invoices for the accountants",
                 "repositoryId": "00000000-0000-4000-8000-000000000013",
@@ -3471,15 +3471,15 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -3632,7 +3632,7 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
+            "bugTicketQualifiedId": "contract-00000001-9",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
             "workspaceId": "1"
@@ -3753,14 +3753,14 @@
           "name": "a project with workspaces bound to work items",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -3951,14 +3951,14 @@
           "name": "a work item with no workspaces",
           "params": {
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
-            "taskId": "00000000-0000-4000-8000-000000000011"
+            "taskId": "00000000-0000-4000-8000-000000000010"
           }
         }
       ],
@@ -3980,7 +3980,7 @@
           }
         },
         "method": "GET",
-        "path": "/workspaces/api/work/00000000-0000-4000-8000-00000000000b/workspaces"
+        "path": "/workspaces/api/work/00000000-0000-4000-8000-00000000000a/workspaces"
       },
       "response": {
         "body": {
@@ -4034,15 +4034,15 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
-            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taskId": "00000000-0000-4000-8000-000000000010",
             "workspaceId": "1"
           }
         }
@@ -4172,7 +4172,7 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
+            "bugTicketQualifiedId": "contract-00000001-9",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
             "workspaceId": "1"
@@ -4304,15 +4304,15 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
-            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taskId": "00000000-0000-4000-8000-000000000010",
             "workspaceId": "1"
           }
         }
@@ -4389,7 +4389,7 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
+            "bugTicketQualifiedId": "contract-00000001-9",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
             "workspaceId": "1"
@@ -4479,15 +4479,15 @@
           "params": {
             "agentId": "00000000-0000-4000-8000-0000000000a1",
             "bugTicketId": "00000000-0000-4000-8000-000000000001",
-            "bugTicketQualifiedId": "contract-00000001-10",
-            "epicId": "00000000-0000-4000-8000-000000000006",
-            "featureId": "00000000-0000-4000-8000-000000000007",
-            "improvementTicketId": "00000000-0000-4000-8000-00000000000b",
-            "improvementTicketQualifiedId": "contract-00000001-11",
-            "projectId": "00000000-0000-4000-8000-00000000000f",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
             "repositoryId": "00000000-0000-4000-8000-000000000013",
             "targetId": "00000000-0000-4000-8000-000000000020",
-            "taskId": "00000000-0000-4000-8000-000000000011",
+            "taskId": "00000000-0000-4000-8000-000000000010",
             "workspaceId": "1"
           }
         }
@@ -4520,7 +4520,7 @@
                 "activity": null,
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a4",
-                "entityId": "contract-00000001-2",
+                "entityId": "contract-00000001-1",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Export invoices for the accountants",
                 "harness": "CLAUDE",
@@ -4528,13 +4528,13 @@
                 "state": "ACTIVE",
                 "waitingOn": null,
                 "waitingOnSince": null,
-                "wrapperBranch": "epic/contract-00000001-2"
+                "wrapperBranch": "epic/contract-00000001-1"
               },
               {
                 "activity": null,
                 "admin": false,
                 "agentId": "00000000-0000-4000-8000-0000000000a1",
-                "entityId": "contract-00000001-10",
+                "entityId": "contract-00000001-9",
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Invoice totals are off by one cent",
                 "harness": "CLAUDE",
@@ -4542,7 +4542,7 @@
                 "state": "ACTIVE",
                 "waitingOn": "release-request 00000000-0000-4000-8000-0000000000c1",
                 "waitingOnSince": "2026-01-01T00:00:00Z",
-                "wrapperBranch": "ticket/contract-00000001-10"
+                "wrapperBranch": "ticket/contract-00000001-9"
               }
             ]
           },
