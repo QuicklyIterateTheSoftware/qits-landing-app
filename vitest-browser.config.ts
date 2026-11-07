@@ -1,9 +1,10 @@
+import { fileURLToPath } from 'node:url';
 import { playwright } from '@vitest/browser-playwright';
 import type { Plugin } from 'vite';
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
 import { screenshotReferences } from '@qits/angular/screenshots';
-import { pactedGoldenMasters } from '@qits/angular/testing';
+import { goldenMasterRoutes, pactedGoldenMasters } from '@qits/angular/testing';
 import {
   ciGoldenMasters,
   eventsGoldenMasters,
@@ -54,6 +55,26 @@ const goldenMaster: BrowserCommand<
   [state: string, operationId: string, provider?: keyof typeof READERS]
 > = (_context, state, operationId, provider = 'qits-projects') =>
   READERS[provider].body(state, operationId);
+
+/**
+ * `goldenMasterRoutes`: keeps the route ledger, `src/testing/browser/routes.json` (ticket qits-1946).
+ * After each spec file, `setup.ts` sends what the golden-master guard noted, which recorded answer
+ * the spec showed on which route, and this rewrites that spec's section. The pact specs read the
+ * ledger (`src/testing/golden-masters.ts`), so every interaction names the routes it happens on
+ * (`qits-trigger.route`). The root is this file's directory, so the sections are keyed by the spec's
+ * path in this repository (`src/app/routes/…`) whatever directory the run starts in.
+ *
+ * Only a page spec's routes are kept: it mounts the page at the route its directory names, which
+ * the lint rule holds to the app's. A layout or pattern spec mounts a stand-in route of its own
+ * (`projects/:slug/:view/:qualifiedId`) that no user ever opens, so its section stays empty.
+ */
+const ledger = goldenMasterRoutes(
+  'src/testing/browser/routes.json',
+  fileURLToPath(new URL('.', import.meta.url)),
+);
+const PAGE_SPEC = /\.page\.browser\.spec\.ts$/;
+const routes: typeof ledger = (context, records) =>
+  ledger(context, PAGE_SPEC.test(context.testPath ?? '') ? records : []);
 
 /**
  * `parkPointer`: moves the mouse to the page's top-left corner. The pointer otherwise stays where
@@ -227,7 +248,14 @@ export default defineConfig({
     // Vitest 5 moved the default to .vitest/attachments; keep the ignored path the docs name.
     attachmentsDir: '.vitest-attachments',
     browser: {
-      commands: { goldenMaster, parkPointer, mouse, touch, stubFigure },
+      commands: {
+        goldenMaster,
+        goldenMasterRoutes: routes,
+        parkPointer,
+        mouse,
+        touch,
+        stubFigure,
+      },
       // Vitest 5 made text locators exact by default. The specs locate by substring, as in vitest 4.
       locators: { exact: false },
       // No screenshot of every failed test: __screenshots__/ holds only the committed references. A

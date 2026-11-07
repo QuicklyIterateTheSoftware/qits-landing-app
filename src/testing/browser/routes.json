@@ -1,0 +1,844 @@
+{
+  "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent that has taken turns",
+      "operationId": "getCommandLog",
+      "route": "projects/:slug/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getAgentActiveProcess",
+      "route": "projects/:slug/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent whose workspace is starting",
+      "operationId": "listAgents",
+      "route": "projects/:slug/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgent",
+      "route": "projects/:slug/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgentPromptDraft",
+      "route": "projects/:slug/agents/:agentId/chat"
+    }
+  ],
+  "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree has an ignored directory",
+      "operationId": "listFiles",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree holds files",
+      "operationId": "detect",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree holds files",
+      "operationId": "listFiles",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree holds files",
+      "operationId": "readFile",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getAgentActiveProcess",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent whose workspace is starting",
+      "operationId": "listAgents",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgent",
+      "route": "projects/:slug/agents/:agentId/files"
+    }
+  ],
+  "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getAgentActiveProcess",
+      "route": "projects/:slug/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent whose workspace is starting",
+      "operationId": "listAgents",
+      "route": "projects/:slug/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgent",
+      "route": "projects/:slug/agents/:agentId/terminal"
+    }
+  ],
+  "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/agents"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with repositories in components",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/agents"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with agents needing attention",
+      "operationId": "listAgents",
+      "route": "projects/:slug/agents"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with workspace slots hosting agents",
+      "operationId": "listAgents",
+      "route": "projects/:slug/agents"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with workspace slots hosting agents",
+      "operationId": "listWorkspaces",
+      "route": "projects/:slug/agents"
+    }
+  ],
+  "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/desk"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/desk"
+    }
+  ],
+  "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/ideas/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "listIdeas",
+      "route": "projects/:slug/ideas/create"
+    }
+  ],
+  "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "getIdea",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "listIdeas",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit"
+    }
+  ],
+  "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/ideas/detail/:ideaId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "getIdea",
+      "route": "projects/:slug/ideas/detail/:ideaId"
+    }
+  ],
+  "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/ideas"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "listIdeas",
+      "route": "projects/:slug/ideas"
+    }
+  ],
+  "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug"
+    }
+  ],
+  "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a repository with the runs of a release request",
+      "operationId": "listRuns",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a conflicted release request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a conflicted release request",
+      "operationId": "listReleaseRequestCommits",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with release requests in every state",
+      "operationId": "getProjectReleaseRequest",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refolded release request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refolded release request",
+      "operationId": "listCommitBuilds",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refolded release request",
+      "operationId": "listReleaseRequestCommits",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a release request awaiting approval",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a release request awaiting approval",
+      "operationId": "getReleaseRequestApprovalEligibility",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a release request awaiting approval",
+      "operationId": "listCommitBuilds",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a release request awaiting approval",
+      "operationId": "listReleaseRequestCommits",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a released release request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a released release request",
+      "operationId": "getReleaseRequestArtifacts",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a released release request",
+      "operationId": "listCommitBuilds",
+      "route": "projects/:slug/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a released release request",
+      "operationId": "listReleaseRequestCommits",
+      "route": "projects/:slug/release-requests/:requestId"
+    }
+  ],
+  "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with pending release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with release requests in every state",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/release-requests"
+    }
+  ],
+  "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with repositories in components",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/repositories"
+    }
+  ],
+  "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/setup"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/acceptance"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with VERIFIED tickets in every wrapper verdict",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/acceptance"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with VERIFIED tickets in every wrapper verdict",
+      "operationId": "listWrapperClosings",
+      "route": "projects/:slug/work/acceptance"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/acceptance"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with work in every status",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/acceptance"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/archive"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/archive"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with work in every status",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/archive"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "getIdea",
+      "route": "projects/:slug/work/create"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a bug ticket in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a bug ticket in detail",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a bug ticket in detail",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a bug ticket in detail",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a dropped ticket",
+      "operationId": "setWorkStatus",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a feature in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a feature in detail",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a feature in detail",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a maintenance ticket in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a maintenance ticket in detail",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a maintenance ticket in detail",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a maintenance ticket in detail",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with VERIFIED tickets in every wrapper verdict",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with VERIFIED tickets in every wrapper verdict",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with VERIFIED tickets in every wrapper verdict",
+      "operationId": "listWrapperClosings",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with work in every status",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ready for dev epic",
+      "operationId": "setWorkStatus",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refined epic",
+      "operationId": "setWorkStatus",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a task in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a task in detail",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a task in detail",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified epic with every task implemented",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic in detail",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic in detail",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic in detail",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic in detail",
+      "operationId": "listWorkDossierAssets",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic with features and tasks",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an implemented ticket",
+      "operationId": "dispatchWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an implemented ticket",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an implemented ticket",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an implemented ticket",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an implemented ticket",
+      "operationId": "setWorkStatus",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an improvement ticket in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an improvement ticket in detail",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an improvement ticket in detail",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an improvement ticket in detail",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "the archetype registry",
+      "operationId": "listWorkArchetypes",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with workspaces bound to work items",
+      "operationId": "listOpenWorkspaces",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with workspaces bound to work items",
+      "operationId": "listWorkItemWorkspaces",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a work item with no workspaces",
+      "operationId": "listWorkItemWorkspaces",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "no work item has an open workspace",
+      "operationId": "listOpenWorkspaces",
+      "route": "projects/:slug/work/detail/:id"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/in-progress"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with work in every status",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/in-progress"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic with features and tasks",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/in-progress"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with agents bound to work items",
+      "operationId": "listAgents",
+      "route": "projects/:slug/work/in-progress"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/refinement"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/refinement"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with work in every status",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/refinement"
+    }
+  ],
+  "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/work/schedule"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/schedule"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with work in every status",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/schedule"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/schedule"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an improvement ticket in detail",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/schedule"
+    }
+  ],
+  "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with a harness nobody signed in",
+      "operationId": "availableAgents",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with a signed-in harness",
+      "operationId": "availableAgents",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with plugins installed",
+      "operationId": "listPlugins",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getWorkspace",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getWorkspaceActiveProcess",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "listWorkspaceAgents",
+      "route": "projects/:slug/workspaces/:slotId"
+    }
+  ]
+}

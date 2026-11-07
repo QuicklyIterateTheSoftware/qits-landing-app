@@ -474,6 +474,22 @@ The QA step runs `npm test`, so a stale committed pact fails the release request
 The lockfile holds the pact native core for glibc (workstations) and musl (the `node:24-alpine` CI
 image). Keep both when you update `@pact-foundation/pact`.
 
+### Which routes an interaction happens on (qits-1946)
+
+Every interaction names the routes its call happens on, as `comments.references.qits-trigger.route`
+(the matched route patterns, `projects/:slug/repositories`, sorted and joined with `, `). They come
+from the route ledger `src/testing/browser/routes.json`, which the browser run writes: the
+golden-master guard notes which recorded answer each page spec (`*.page.browser.spec.ts`; a layout
+or pattern spec's stand-in route is not kept) showed on which route, and `setup.ts` sends that to
+the `goldenMasterRoutes` command after each spec file, which rewrites the spec's section.
+`src/testing/golden-masters.ts` hands the ledger to `addGoldenInteraction` (`useRouteLookup`). `npm
+run test:browser` rewrites the ledger, and so does the screenshot-baselines automation, which
+commits it beside the references. A changed page spec or route changes the ledger, and a changed
+ledger changes the pacts: regenerate them in the branch (`QITS_GOLDEN_UPDATE=true npm test`),
+because golden-recordings re-runs only when a golden-master pin moves. A run filtered to some tests
+(`-t`, `.only`) replaces a spec's section with what those tests showed, so run whole spec files
+before keeping a ledger change.
+
 ### Publishing: only when the pact changed
 
 Every pact sits flat in `pacts/`, named `<consumer>_<provider>.json` by repository name.

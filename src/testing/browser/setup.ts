@@ -8,9 +8,11 @@
  * - Backend data in every screenshot but a dumb component's (`src/app/ui/`) comes from golden
  *   masters only: a 2xx `flush` must carry a recording (`golden-master.ts`), or the test fails
  *   (`guardGoldenMasters`).
+ * - After each spec file, the routes the guard saw its recorded answers shown on go to the route
+ *   ledger, `src/testing/browser/routes.json`, which the pact specs read (`qits-trigger.route`).
  */
-import { guardGoldenMasters } from '@qits/angular/testing/browser';
-import { afterEach, beforeAll, beforeEach, expect } from 'vitest';
+import { guardGoldenMasters, takeRouteRecords } from '@qits/angular/testing/browser';
+import { afterAll, afterEach, beforeAll, beforeEach, expect } from 'vitest';
 import { commands } from 'vitest/browser';
 
 // Every browser spec but the dumb components' (src/app/ui/, which take synthetic inputs). The
@@ -85,4 +87,10 @@ beforeEach(async () => {
 // leaked style turns into screenshots of a different size. Clear it after every test.
 afterEach(() => {
   document.body.removeAttribute('style');
+});
+
+// The routes this spec file showed its recorded answers on (the guard notes them), to the route
+// ledger: the Node side rewrites this file's section of `src/testing/browser/routes.json`.
+afterAll(async () => {
+  await commands.goldenMasterRoutes(takeRouteRecords());
 });

@@ -919,7 +919,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request-runs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },

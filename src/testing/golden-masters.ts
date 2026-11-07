@@ -1,4 +1,16 @@
-import { goldenMasters, type GoldenMasters } from '@qits/angular/testing';
+import {
+  goldenMasters,
+  routeLedger,
+  useRouteLookup,
+  type GoldenMasters,
+} from '@qits/angular/testing';
+
+/**
+ * Every golden interaction names the routes its call happens on (`qits-trigger.route`, ticket
+ * qits-1946), from the route ledger the browser specs write (`npm run test:browser`). Every pact
+ * spec imports this module, so the lookup is set before any interaction is added.
+ */
+useRouteLookup(routeLedger('src/testing/browser/routes.json'));
 
 /**
  * `masters` with a query the index writes into `path` (`…/changes/diff?path=README.md`) moved to

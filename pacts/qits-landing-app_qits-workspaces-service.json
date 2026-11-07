@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "agents-menu",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents"
           }
         }
       },
@@ -2350,7 +2351,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-agent-chat",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents/:agentId/chat"
           }
         }
       },
@@ -2499,7 +2501,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-agent-work",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/work/in-progress"
           }
         }
       },
@@ -2592,7 +2595,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-agent",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
           }
         }
       },
@@ -2841,7 +2845,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-agent",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
           }
         }
       },
@@ -2926,7 +2931,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-open-workspaces",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/work/detail/:id"
           }
         }
       },
@@ -3024,7 +3030,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-open-workspaces",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/work/detail/:id"
           }
         }
       },
@@ -3090,7 +3097,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-workspaces",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents"
           }
         }
       },
@@ -3459,7 +3467,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-workspaces",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents"
           }
         }
       },
@@ -3620,7 +3629,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-work-item-agent",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
           }
         }
       },
@@ -3742,7 +3752,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-work-item-workspaces",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/work/detail/:id"
           }
         }
       },
@@ -3940,7 +3951,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-work-item-workspaces",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/work/detail/:id"
           }
         }
       },
@@ -4022,7 +4034,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-workspace-slot",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -4292,7 +4305,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-workspace-slot",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -4467,7 +4481,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-workspace-slot",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/workspaces/:slotId"
           }
         }
       },

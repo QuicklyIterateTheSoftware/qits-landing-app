@@ -1,4 +1,5 @@
 // The Node-side commands `vitest-browser.config.ts` gives the browser screenshot tests.
+import type { RouteRecord } from '@qits/angular/testing/browser';
 import 'vitest/browser';
 
 declare module 'vitest/browser' {
@@ -20,6 +21,11 @@ declare module 'vitest/browser' {
         | 'qits-workspace-daemon'
         | 'qits-system',
     ) => Promise<T>;
+    /**
+     * Rewrites the running spec's section of the route ledger, `src/testing/browser/routes.json`,
+     * with the routes its recorded answers were shown on (`takeRouteRecords()`, in `setup.ts`).
+     */
+    goldenMasterRoutes: (records: RouteRecord[]) => Promise<void>;
     /** Moves the mouse to the page's top-left corner, so no element is hovered. */
     parkPointer: () => Promise<void>;
     /**
