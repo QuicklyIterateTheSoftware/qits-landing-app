@@ -2351,8 +2351,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-agent-chat",
-            "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/chat"
+            "kind": "ui"
           }
         }
       },
