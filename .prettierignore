@@ -24,3 +24,8 @@ src/app/api
 # The committed pacts. pact-js writes them and owns their layout; without this, every regenerated
 # pact would fail `npm run lint` until someone ran prettier over it.
 pacts
+
+# The screenshot freezes (qits-1947): the browser run writes them byte for byte (one line of HTML
+# per freeze, `{` in text that prettier's HTML parser reads as Angular syntax), and QA compares
+# them to what the run writes. Reformatting would make every freeze stale.
+src/testing/browser/freezes
