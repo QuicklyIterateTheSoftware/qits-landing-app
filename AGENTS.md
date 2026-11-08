@@ -490,6 +490,13 @@ because golden-recordings re-runs only when a golden-master pin moves. A run fil
 (`-t`, `.only`) replaces a spec's section with what those tests showed, so run whole spec files
 before keeping a ledger change.
 
+A page that answers no backend request (`events`, `observability` today) has no section. Never edit
+the ledger by hand: QA re-runs the browser suite and fails a ledger that differs from what it writes
+as stale `screenshot-baselines`, and the pact specs fail a pact whose routes differ from the ledger.
+Either is fixed by running the generator, not by editing its output: `qits release-request
+regenerate --kind screenshot-baselines` for the ledger, `QITS_GOLDEN_UPDATE=true npm test` for the
+pacts.
+
 ### Publishing: only when the pact changed
 
 Every pact sits flat in `pacts/`, named `<consumer>_<provider>.json` by repository name.

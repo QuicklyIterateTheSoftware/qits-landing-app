@@ -29,12 +29,6 @@
       "state": "an agent with a saved prompt draft",
       "operationId": "getAgent",
       "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent with a saved prompt draft",
-      "operationId": "getAgentPromptDraft",
-      "route": "projects/:slug/agents/:agentId/chat"
     }
   ],
   "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts": [
