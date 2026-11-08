@@ -497,6 +497,16 @@ Either is fixed by running the generator, not by editing its output: `qits relea
 regenerate --kind screenshot-baselines` for the ledger, `QITS_GOLDEN_UPDATE=true npm test` for the
 pacts.
 
+The screenshot freezes `src/testing/browser/freezes/` are written by the same browser run (ticket
+qits-1947): `freezeScreenshots({ routes })` in `setup.ts` and
+`screenshotReferences({ freezes: true })` in `vitest-browser.config.ts` keep every passing
+screenshot as an HTML file (the element, its CSS, the route and the recorded answers its test
+showed) under the spec's path, and `manifest.json` names the route tree, every freeze and the
+freezes of each route (page specs only, as in the ledger). `npm run test:browser` rewrites them, and the screenshot-baselines automation
+commits them beside the references. A changed page, component or style changes its freezes: QA
+fails a freeze that differs from what the run writes as stale `screenshot-baselines`. Never edit a
+freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
+
 ### Publishing: only when the pact changed
 
 Every pact sits flat in `pacts/`, named `<consumer>_<provider>.json` by repository name.

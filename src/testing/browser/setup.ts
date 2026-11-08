@@ -10,16 +10,27 @@
  *   (`guardGoldenMasters`).
  * - After each spec file, the routes the guard saw its recorded answers shown on go to the route
  *   ledger, `src/testing/browser/routes.json`, which the pact specs read (`qits-trigger.route`).
+ * - Every passing screenshot is also frozen as HTML (`freezeScreenshots`, ticket qits-1947): the
+ *   element with its CSS, the route it was on and the recorded answers its test showed, written to
+ *   `src/testing/browser/freezes/` with the app's route tree in its `manifest.json`.
  */
-import { guardGoldenMasters, takeRouteRecords } from '@qits/angular/testing/browser';
+import {
+  freezeScreenshots,
+  guardGoldenMasters,
+  takeRouteRecords,
+} from '@qits/angular/testing/browser';
 import { afterAll, afterEach, beforeAll, beforeEach, expect } from 'vitest';
 import { commands } from 'vitest/browser';
+import { routes } from '../../app/app.routes';
 
 // Every browser spec but the dumb components' (src/app/ui/, which take synthetic inputs). The
 // library's default checks page and layout specs only.
 guardGoldenMasters({
   when: () => !/[\\/]src[\\/]app[\\/]ui[\\/]/.test(expect.getState().testPath ?? ''),
 });
+
+// Every passing screenshot, frozen as HTML beside the app's route tree (no lazy route is loaded).
+freezeScreenshots({ routes });
 
 const FONTS = '/src/testing/browser/fonts';
 

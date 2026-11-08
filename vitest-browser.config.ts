@@ -243,7 +243,9 @@ const chromiumFlags: Plugin = {
 export default defineConfig({
   // screenshotReferences: records the reference screenshots each spec asks for, so
   // `qits-angular screenshots --check` (after the run, in `test:browser`) finds the ones no test uses.
-  plugins: [chromiumFlags, screenshotReferences()],
+  // `freezes`: writes every passing screenshot as HTML to src/testing/browser/freezes/ (qits-1947),
+  // naming the route only for the page specs (`*.page.browser.spec.ts`), as the route ledger does.
+  plugins: [chromiumFlags, screenshotReferences({ freezes: true })],
   test: {
     // Vitest 5 moved the default to .vitest/attachments; keep the ignored path the docs name.
     attachmentsDir: '.vitest-attachments',
