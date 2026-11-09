@@ -80,9 +80,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .text-charcoal-brown-800 { color: var(--color-charcoal-brown-800); }
 .text-cinnabar-600 { color: var(--color-cinnabar-600); }
 .text-cinnabar-800 { color: var(--color-cinnabar-800); }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
 @media (hover: hover) {
 .hover\:bg-charcoal-brown-100:hover { background-color: var(--color-charcoal-brown-100); }
 .hover\:text-charcoal-brown-950:hover { color: var(--color-charcoal-brown-950); }
@@ -91,7 +88,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .focus-visible\:outline-2:focus-visible { outline-style: var(--tw-outline-style); outline-width: 2px; }
 .focus-visible\:outline-offset-2:focus-visible { outline-offset: 2px; }
 .focus-visible\:outline-ocean-deep-600:focus-visible { outline-color: var(--color-ocean-deep-600); }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
 .disabled\:opacity-60:disabled { opacity: 0.6; }
 }

@@ -736,6 +736,41 @@
       ]
     },
     {
+      "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/collapsed.html",
+      "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
+      "test": "ProjectCard (screenshots) > starts collapsed, with a button to show the languages",
+      "name": "collapsed",
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with refined work",
+          "operationId": "listProjectWork"
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/loading.html",
+      "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
+      "test": "ProjectCard (screenshots) > shows that it is loading",
+      "name": "loading",
+      "route": null,
+      "records": []
+    },
+    {
+      "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/unavailable.html",
+      "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
+      "test": "ProjectCard (screenshots) > marks the work, components and lines as failed to load",
+      "name": "unavailable",
+      "route": null,
+      "records": []
+    },
+    {
       "file": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts/closed.html",
       "spec": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts",
       "test": "ReleaseMenu (screenshots) > is a closed lightning button with the pending count",
@@ -2625,6 +2660,44 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspace slots hosting agents",
           "operationId": "listWorkspaces"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/error.html",
+      "spec": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts",
+      "test": "ProjectDeskPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "route": "projects/:slug/desk",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/loading.html",
+      "spec": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts",
+      "test": "ProjectDeskPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "route": "projects/:slug/desk",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
         }
       ]
     },
@@ -5794,6 +5867,22 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/error.html",
+      "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
+      "test": "ProjectPickerPage (screenshots) > marks the list as failed to load when the projects could not be loaded",
+      "name": "error",
+      "route": null,
+      "records": []
+    },
+    {
+      "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/loading.html",
+      "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
+      "test": "ProjectPickerPage (screenshots) > shows that the projects are loading",
+      "name": "loading",
+      "route": null,
+      "records": []
+    },
+    {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/details-closed.html",
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > with details > draws closed",
@@ -6264,6 +6353,10 @@
     "projects/:slug/agents/:agentId/terminal": [
       "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts/attached.html",
       "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts/lost.html"
+    ],
+    "projects/:slug/desk": [
+      "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/error.html",
+      "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/loading.html"
     ],
     "projects/:slug/events": [
       "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank.html"

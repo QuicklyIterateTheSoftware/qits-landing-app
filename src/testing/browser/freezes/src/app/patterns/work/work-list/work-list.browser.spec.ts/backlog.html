@@ -201,9 +201,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .\[--lane-chin\:--spacing\(4\)\] { --lane-chin: calc(var(--spacing) * 4); }
 .\[overflow-clip-margin\:0\.5rem\] { overflow-clip-margin: 0.5rem; }
 .\[writing-mode\:vertical-rl\] { writing-mode: vertical-rl; }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
 .after\:absolute::after { content: var(--tw-content); position: absolute; }
 .after\:inset-0::after { content: var(--tw-content); inset: 0px; }
 .focus-within\:z-20:focus-within { z-index: 20; }
@@ -221,7 +218,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
       var(--tw-shadow); }
 .focus-visible\:ring-gray-400:focus-visible { --tw-ring-color: var(--color-gray-400); }
 .focus-visible\:outline-none:focus-visible { --tw-outline-style: none; outline-style: none; }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .disabled\:cursor-wait:disabled { cursor: wait; }
 .has-\[a\:hover\]\:shadow-md:has(:is(a:hover)) { --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1)); box-shadow: var(--tw-inset-shadow),
       var(--tw-inset-ring-shadow),
@@ -232,7 +228,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .\[\&_a\]\:no-underline a { text-decoration-line: none; }
 .\[\&_ui-board-card\]\:self-stretch ui-board-card { align-self: stretch; }
 .\[\&\:has\(\>ui-drag-handle\>button\.flex\)\]\:\[--card-corner-inset\:1\.25rem\]:has(> ui-drag-handle > button.flex) { --card-corner-inset: 1.25rem; }
-.\[\&\:has\(\>ui-finish-button\>button\.flex\)\]\:\[--card-corner-inset\:1\.25rem\]:has(> ui-finish-button > button.flex) { --card-corner-inset: 1.25rem; }
 .\[\&\>\*\]\:min-w-0 > * { min-width: 0px; }
 .\[\&\>a\]\:text-inherit > a { color: inherit; }
 .\[\&\>a\]\:no-underline > a { text-decoration-line: none; }

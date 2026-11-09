@@ -72,10 +72,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .wrap-anywhere { overflow-wrap: anywhere; }
 .whitespace-pre-line { white-space: pre-line; }
 .text-charcoal-brown-800 { color: var(--color-charcoal-brown-800); }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .\[\&_p\]\:my-2 p { margin-block: calc(var(--spacing) * 2); }
 .\[\&\>\:first-child\]\:mt-0 > :first-child { margin-top: 0px; }
 .\[\&\>\:last-child\]\:mb-0 > :last-child { margin-bottom: 0px; }

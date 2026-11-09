@@ -126,9 +126,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .text-ocean-deep-700 { color: var(--color-ocean-deep-700); }
 .text-red-600 { color: var(--color-red-600); }
 .no-underline { text-decoration-line: none; }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
 .empty\:hidden:empty { display: none; }
 @media (hover: hover) {
 .hover\:bg-charcoal-brown-100:hover { background-color: var(--color-charcoal-brown-100); }
@@ -139,7 +136,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .focus-visible\:outline-2:focus-visible { outline-style: var(--tw-outline-style); outline-width: 2px; }
 .focus-visible\:outline-offset-2:focus-visible { outline-offset: 2px; }
 .focus-visible\:outline-ocean-deep-600:focus-visible { outline-color: var(--color-ocean-deep-600); }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
 .disabled\:opacity-60:disabled { opacity: 0.6; }
 }

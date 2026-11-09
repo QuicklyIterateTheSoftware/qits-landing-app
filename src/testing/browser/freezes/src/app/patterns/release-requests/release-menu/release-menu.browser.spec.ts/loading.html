@@ -122,14 +122,10 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
       var(--tw-ring-shadow),
       var(--tw-shadow); }
 .outline-none { --tw-outline-style: none; outline-style: none; }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
 @media (hover: hover) {
 .hover\:bg-gray-100:hover { background-color: var(--color-gray-100); }
 .hover\:text-gray-900:hover { color: var(--color-gray-900); }
 }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .aria-expanded\:bg-gray-100[aria-expanded="true"] { background-color: var(--color-gray-100); }
 .aria-expanded\:text-gray-900[aria-expanded="true"] { color: var(--color-gray-900); }
 @media (width < 48rem) {

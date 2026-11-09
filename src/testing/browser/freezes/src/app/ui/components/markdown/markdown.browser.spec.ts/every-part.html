@@ -64,10 +64,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .wrap-anywhere { overflow-wrap: anywhere; }
 .whitespace-pre-line { white-space: pre-line; }
 .text-charcoal-brown-800 { color: var(--color-charcoal-brown-800); }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .\[\&_\:not\(pre\)\>code\]\:wrap-anywhere :not(pre) > code { overflow-wrap: anywhere; }
 .\[\&_a\]\:text-ocean-deep-700 a { color: var(--color-ocean-deep-700); }
 .\[\&_a\]\:underline a { text-decoration-line: underline; }

@@ -217,9 +217,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .ring-white { --tw-ring-color: var(--color-white); }
 .ring-offset-1 { --tw-ring-offset-width: 1px; --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); }
 .grayscale { --tw-grayscale: grayscale(100%); filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,); }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
 .empty\:hidden:empty { display: none; }
 @media (hover: hover) {
 .hover\:border-mint-leaf-800:hover { border-color: var(--color-mint-leaf-800); }
@@ -232,7 +229,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .focus-visible\:outline-2:focus-visible { outline-style: var(--tw-outline-style); outline-width: 2px; }
 .focus-visible\:outline-offset-2:focus-visible { outline-offset: 2px; }
 .focus-visible\:outline-ocean-deep-600:focus-visible { outline-color: var(--color-ocean-deep-600); }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
 .disabled\:opacity-60:disabled { opacity: 0.6; }
 }

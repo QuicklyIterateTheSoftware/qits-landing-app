@@ -115,9 +115,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
       var(--tw-ring-offset-shadow),
       var(--tw-ring-shadow),
       var(--tw-shadow); }
-:is(.\*\:col-span-full > *) { grid-column: 1 / -1; }
-:is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-:is(.\*\:justify-self-center > *) { justify-self: center; }
 .group-focus-within\/popover\:block:is(:where(.group\/popover):focus-within *) { display: block; }
 @media (hover: hover) {
 .group-hover\/popover\:block:is(:where(.group\/popover):hover *) { display: block; }
@@ -133,7 +130,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .focus-visible\:outline-2:focus-visible { outline-style: var(--tw-outline-style); outline-width: 2px; }
 .focus-visible\:outline-offset-2:focus-visible { outline-offset: 2px; }
 .focus-visible\:outline-ocean-deep-600:focus-visible { outline-color: var(--color-ocean-deep-600); }
-:is(.\*\:focus-visible\:-outline-offset-2 > *):focus-visible { outline-offset: calc(-2px); }
 .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
 .disabled\:opacity-60:disabled { opacity: 0.6; }
 }
