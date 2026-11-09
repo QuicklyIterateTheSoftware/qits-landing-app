@@ -182,7 +182,9 @@ export type AgentDetail = Consumed<GetAgentResponses[200], typeof GET_AGENT>;
  * `AgentsStore.loadProjectAgents(projectId)`, the project's agents with what each waits on and what
  * it needs a person for (epic qits-1681): `listAgents?projectId=&state=ACTIVE`, every ACTIVE agent
  * whose repository is one of the project's. Each with its item (and the item's status and block),
- * its slot, how it runs, its activity, its open waits with their subjects, and its attention.
+ * its slot, how it runs, its activity, its open waits with their subjects, and its attention; and
+ * its start-up phase (qits-2007: `phase` QUEUED, PROVISIONING, STARTING or READY, null once yielded
+ * or stopped, and `phaseSince`, when it entered it), which the agents menu's chip reads.
  *
  * A list of its own, beside `LIST_PROJECT_AGENTS`, until the pinned `@qits/workspaces-golden-masters`
  * holds state `a project with agents needing attention`: the pact binds every field listed here, and
@@ -222,6 +224,8 @@ export const PROJECT_AGENTS = [
   'agents[].attention.waitId',
   'agents[].blockedAt',
   'agents[].deskAskedAt',
+  'agents[].phase',
+  'agents[].phaseSince',
 ] as const;
 
 /** One of the project's ACTIVE agents, with its waits and attention, cut to what the store reads. */

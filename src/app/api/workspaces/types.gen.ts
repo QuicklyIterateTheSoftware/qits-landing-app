@@ -45,11 +45,15 @@ export type AgentDto = {
     attention?: Attention;
     blockedAt?: Instant;
     deskAskedAt?: Instant;
+    phase?: AgentPhase;
+    phaseSince?: Instant;
 };
 
 export type AgentHarness = 'CLAUDE' | 'KIMI';
 
 export type AgentLaunch = 'SCHEDULED' | 'SKIPPED_RUNNING' | 'QUEUED';
+
+export type AgentPhase = 'QUEUED' | 'PROVISIONING' | 'STARTING' | 'READY';
 
 export type AgentRunState = 'QUEUED' | 'RUNNING' | 'YIELDED' | 'STOPPED';
 

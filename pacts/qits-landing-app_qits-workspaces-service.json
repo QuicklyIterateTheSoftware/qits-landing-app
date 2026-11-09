@@ -89,6 +89,8 @@
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Invoice totals are off by one cent",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "QUEUED",
+                "phaseSince": null,
                 "repositoryId": "00000000-0000-4000-8000-000000000018",
                 "runState": "RUNNING",
                 "state": "ACTIVE",
@@ -136,6 +138,8 @@
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Export invoices for the accountants",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "QUEUED",
+                "phaseSince": null,
                 "repositoryId": "00000000-0000-4000-8000-000000000018",
                 "runState": "RUNNING",
                 "state": "ACTIVE",
@@ -163,6 +167,8 @@
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "PDF export",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "QUEUED",
+                "phaseSince": null,
                 "repositoryId": "00000000-0000-4000-8000-000000000018",
                 "runState": "RUNNING",
                 "state": "ACTIVE",
@@ -190,6 +196,8 @@
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Download button on the invoice list",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "QUEUED",
+                "phaseSince": null,
                 "repositoryId": "00000000-0000-4000-8000-000000000018",
                 "runState": "RUNNING",
                 "state": "ACTIVE",
@@ -232,6 +240,8 @@
                 "entityStatus": "IMPLEMENTING",
                 "entityTitle": "Remember the last export format",
                 "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "QUEUED",
+                "phaseSince": null,
                 "repositoryId": "00000000-0000-4000-8000-000000000018",
                 "runState": "RUNNING",
                 "state": "ACTIVE",
@@ -381,6 +391,14 @@
                             {
                               "match": "regex",
                               "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -666,6 +684,14 @@
                             }
                           ]
                         },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.repositoryId": {
                           "combine": "AND",
                           "matchers": [
@@ -793,6 +819,14 @@
                             {
                               "match": "regex",
                               "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -941,6 +975,14 @@
                             {
                               "match": "regex",
                               "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },
@@ -1184,6 +1226,14 @@
                             }
                           ]
                         },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.repositoryId": {
                           "combine": "AND",
                           "matchers": [
@@ -1381,6 +1431,545 @@
                                   }
                                 }
                               ]
+                            }
+                          ]
+                        },
+                        "$.workId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.workspaceRowId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "listAgents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "agents-menu",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "agents-menu: listAgents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with agents starting up",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
+            "repositoryId": "00000000-0000-4000-8000-00000000001a",
+            "taskId": "00000000-0000-4000-8000-000000000010"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "projectId": {
+              "expression": "${projectId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "projectId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/api/agents",
+        "query": {
+          "projectId": [
+            "00000000-0000-4000-8000-00000000000e"
+          ],
+          "state": [
+            "ACTIVE"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "agents": [
+              {
+                "activity": null,
+                "admin": false,
+                "agentId": "00000000-0000-4000-8000-0000000000ab",
+                "blockedAt": null,
+                "deskAskedAt": null,
+                "entityBlocked": false,
+                "entityId": "contract-00000001-10",
+                "entityStatus": "IMPLEMENTING",
+                "entityTitle": "Remember the last export format",
+                "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "QUEUED",
+                "phaseSince": "2026-01-01T00:00:00Z",
+                "repositoryId": "00000000-0000-4000-8000-00000000001a",
+                "runState": "QUEUED",
+                "state": "ACTIVE",
+                "waitingOn": null,
+                "waitingOnSince": null,
+                "waitingSince": null,
+                "workId": "00000000-0000-4000-8000-00000000000a",
+                "workspaceRowId": null
+              },
+              {
+                "activity": null,
+                "admin": false,
+                "agentId": "00000000-0000-4000-8000-0000000000ac",
+                "blockedAt": null,
+                "deskAskedAt": null,
+                "entityBlocked": false,
+                "entityId": "contract-00000001-1",
+                "entityStatus": "IMPLEMENTING",
+                "entityTitle": "Export invoices for the accountants",
+                "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "PROVISIONING",
+                "phaseSince": "2026-01-01T00:00:00Z",
+                "repositoryId": "00000000-0000-4000-8000-00000000001a",
+                "runState": "RUNNING",
+                "state": "ACTIVE",
+                "waitingOn": null,
+                "waitingOnSince": null,
+                "waitingSince": null,
+                "workId": "00000000-0000-4000-8000-000000000005",
+                "workspaceRowId": 1
+              },
+              {
+                "activity": "IDLE",
+                "admin": false,
+                "agentId": "00000000-0000-4000-8000-0000000000ae",
+                "blockedAt": null,
+                "deskAskedAt": null,
+                "entityBlocked": false,
+                "entityId": "contract-00000001-5",
+                "entityStatus": "IMPLEMENTING",
+                "entityTitle": "PDF export",
+                "lastActivityAt": "2026-01-01T00:00:00Z",
+                "phase": "READY",
+                "phaseSince": "2026-01-01T00:00:00Z",
+                "repositoryId": "00000000-0000-4000-8000-00000000001a",
+                "runState": "RUNNING",
+                "state": "ACTIVE",
+                "waitingOn": null,
+                "waitingOnSince": null,
+                "waitingSince": null,
+                "workId": "00000000-0000-4000-8000-000000000006",
+                "workspaceRowId": 2
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.agents": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.admin": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.agentId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.entityBlocked": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityTitle": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastActivityAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phaseSince": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repositoryId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.runState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.workId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.admin": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.agentId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.entityBlocked": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityTitle": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastActivityAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phaseSince": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repositoryId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.runState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.workId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.workspaceRowId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.activity": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.admin": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.agentId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.entityBlocked": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.entityTitle": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastActivityAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.phaseSince": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repositoryId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.runState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
                             }
                           ]
                         },

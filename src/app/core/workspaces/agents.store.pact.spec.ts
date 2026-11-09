@@ -51,7 +51,10 @@ import {
  *   by its id, and one the service does not know;
  * - "a project with agents needing attention": the project's ACTIVE agents with their open waits
  *   and attention (`listAgents?projectId=&state=ACTIVE`), read by the agents menu, the Agents page
- *   and the agent page alike.
+ *   and the agent page alike;
+ * - "a project with agents starting up" (qits-2007): the same read while the agents come up, one
+ *   per start-up `phase` (QUEUED with no slot, PROVISIONING, STARTING) and two READY (IDLE, BUSY),
+ *   each with its `phaseSince`, which the agents menu's chip reads.
  *
  * The slot's row id is a param (`workspaceId`, frozen to its place in the state's write order); the
  * provider names its real value, so the path and the query take it as a provider-state expression.
@@ -66,6 +69,16 @@ const STARTING = 'an agent whose workspace is starting';
 const AGENT = 'an agent with a saved prompt draft';
 const NO_AGENT = 'no agent with that id';
 const NEEDING_ATTENTION = 'a project with agents needing attention';
+const STARTING_UP = 'a project with agents starting up';
+
+/**
+ * `PROJECT_AGENTS` as "a project with agents starting up" can bind it: no agent there waits on
+ * anything or needs a person, so its body holds no wait's or attention's fields
+ * (`NEEDING_ATTENTION` binds those).
+ */
+const STARTING_UP_AGENTS = PROJECT_AGENTS.filter(
+  (path) => !path.startsWith('agents[].waits[].') && !path.startsWith('agents[].attention.'),
+);
 
 const OPERATIONS: readonly OwnedOperation[] = [
   'listWorkspaces',
@@ -266,6 +279,23 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
         expect(overdue?.waits?.[0]?.targetStates).toContain('SUCCESS');
         const noAttention = agents.find((a) => !a.attention);
         expect(noAttention?.waits?.length).toBeGreaterThan(0);
+      },
+    ));
+
+  it('agents-menu: the project’s ACTIVE agents starting up, each with its phase', () =>
+    given(STARTING_UP, 'listAgents', 'agents-menu', STARTING_UP_AGENTS).executeTest(
+      async (server) => {
+        const projectId = param(STARTING_UP, 'listAgents', 'projectId');
+        const { data } = await at(server.url, () =>
+          consume(listAgents({ query: { projectId, state: 'ACTIVE' } }), PROJECT_AGENTS),
+        );
+        const agents = data?.agents ?? [];
+        // The agents differ in which fields are null, so the pact holds one of each shape (the
+        // queued one with no slot, the coming-up ones with no activity, the READY ones with one).
+        expect(agents.length).toBeGreaterThan(0);
+        expect(agents.every((a) => !!a.phase && !!a.phaseSince)).toBe(true);
+        expect(agents.some((a) => a.phase === 'QUEUED' && a.workspaceRowId == null)).toBe(true);
+        expect(agents.some((a) => a.phase === 'READY' && !!a.activity)).toBe(true);
       },
     ));
 });
