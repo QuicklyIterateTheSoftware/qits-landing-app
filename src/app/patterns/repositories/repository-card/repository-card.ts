@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { RepositoryEntry } from '$core/repositories/repositories.consumes';
 import { CardBody, CardExpandable, CardHeader } from '$ui/components/card/base-card';
 import { CardSilent } from '$ui/components/card/card-silent';
@@ -19,11 +20,14 @@ interface Backup {
  * - A twin never backed up reads "Never".
  * - Otherwise the last outcome: Succeeded (mint-leaf), Failed / Unreachable / Auth needed
  *   (cinnabar).
+ *
+ * A repository whose declared archetype is FRONTEND or APP (never judged by its name) links its UI
+ * builder at the bottom of the body (qits-1951), relative to the Repositories page it sits on.
  */
 @Component({
   selector: 'app-repository-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardSilent, CardHeader, CardBody, CardExpandable, Stat],
+  imports: [CardSilent, CardHeader, CardBody, CardExpandable, Stat, RouterLink],
   host: { class: 'block' },
   template: `
     <ui-card-silent>
@@ -52,6 +56,15 @@ interface Backup {
             {{ archetype() }}
           </ui-stat>
         </div>
+        @if (frontend()) {
+          <div class="flex justify-end border-t-[0.5px] border-black/20 px-2 py-1">
+            <a
+              class="ui-builder text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
+              [routerLink]="[name(), 'ui-builder']"
+              >UI builder →</a
+            >
+          </div>
+        }
       </card-body>
       <card-expandable>
         <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pt-2 text-[0.8125rem]">
@@ -81,6 +94,12 @@ export class RepositoryCard {
   protected readonly archetype = computed(() => {
     const archetype = this.entry().repository?.archetype;
     return archetype ? archetype.charAt(0) + archetype.slice(1).toLowerCase() : '–';
+  });
+
+  /** Whether the repository declares itself a frontend, whose routes the UI builder shows. */
+  protected readonly frontend = computed(() => {
+    const archetype = this.entry().repository?.archetype;
+    return archetype === 'FRONTEND' || archetype === 'APP';
   });
 
   protected readonly backup = computed((): Backup => {

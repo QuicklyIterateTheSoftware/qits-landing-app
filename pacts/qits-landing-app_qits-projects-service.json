@@ -13483,6 +13483,7 @@
                   "archetype": "DAEMON",
                   "backupUrl": "https://forge.example.test/contract/billing-daemon.git",
                   "cloneUrl": "https://githost.example.test/git/contract-00000001/billing-daemon",
+                  "component": "billing",
                   "id": "00000000-0000-4000-8000-000000000002",
                   "lastBackup": {
                     "outcome": "AUTH_REQUIRED"
@@ -13496,10 +13497,23 @@
                   "archetype": "LIBRARY",
                   "backupUrl": null,
                   "cloneUrl": "https://githost.example.test/git/contract-00000001/billing-javalib",
+                  "component": "billing",
                   "id": "00000000-0000-4000-8000-000000000003",
                   "lastBackup": null,
                   "mainBranch": "main",
                   "name": "billing-javalib"
+                }
+              },
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "backupUrl": null,
+                  "cloneUrl": "https://githost.example.test/git/contract-00000001/contract-00000001-contract-00000001",
+                  "component": null,
+                  "id": "00000000-0000-4000-8000-000000000004",
+                  "lastBackup": null,
+                  "mainBranch": "main",
+                  "name": "contract-00000001-contract-00000001"
                 }
               }
             ],
@@ -13568,6 +13582,14 @@
                             }
                           ]
                         },
+                        "$.repository.component": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.repository.id": {
                           "combine": "AND",
                           "matchers": [
@@ -13605,6 +13627,60 @@
                     },
                     {
                       "index": 1,
+                      "rules": {
+                        "$.repository.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.cloneUrl": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.component": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.repository.mainBranch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repository.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
                       "rules": {
                         "$.repository.archetype": {
                           "combine": "AND",

@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
@@ -96,6 +97,7 @@ describe('ProjectRepositoriesPage', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -146,6 +148,22 @@ describe('ProjectRepositoriesPage', () => {
       text: () => element.textContent?.replace(/\s+/g, ' ') ?? '',
     };
   }
+
+  it('links the UI builder on the cards of frontends only, by declared archetype', async () => {
+    const answer = recorded();
+    const { element } = await render(answer);
+    const linked = [...element.querySelectorAll('app-repository-card')]
+      .filter((card) => card.querySelector('a.ui-builder'))
+      .map((card) => card.querySelector('card-header')?.textContent?.trim());
+    const frontends = answer.entries
+      .filter((e) => e.repository?.archetype === 'FRONTEND' || e.repository?.archetype === 'APP')
+      .map((e) => e.repository?.name);
+    expect(frontends.length).toBeGreaterThan(0);
+    expect(linked).toEqual(frontends);
+    const link = element.querySelector<HTMLAnchorElement>('a.ui-builder');
+    expect(link?.getAttribute('href')).toBe(`/${frontends[0]}/ui-builder`);
+    expect(link?.textContent?.trim()).toBe('UI builder →');
+  });
 
   it('alerts with the sign-in when a repository’s backup is AUTH_REQUIRED', async () => {
     const { alert, button } = await render(recorded());

@@ -14,12 +14,15 @@ import type { Consumed } from '@qits/angular';
  * - the card counts the entries and sums their lines of code by repository id (`LocStore`);
  * - the page shows each repository as a card (name, archetype, backup state; clone URL, backup URL
  *   and main branch in its expandable section), placed in a tree by the wrapper's paths
- *   (`components/<component>/<name>`), the wrapper itself at the top.
+ *   (`components/<component>/<name>`), the wrapper itself at the top;
+ * - the UI builder (qits-1951) reads each repository's `component`: a frontend other than the
+ *   project's landing app shows only the calls to providers of its own component.
  */
 export const LIST_PROJECT_REPOSITORIES = [
   'entries[].repository.id',
   'entries[].repository.name',
   'entries[].repository.archetype',
+  'entries[].repository.component',
   'entries[].repository.mainBranch',
   'entries[].repository.backupUrl',
   'entries[].repository.cloneUrl',
