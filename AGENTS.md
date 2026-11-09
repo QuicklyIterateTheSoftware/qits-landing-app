@@ -398,6 +398,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon   | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 | qits-system-service     | `core/system/targets.store*.ts`                                                              | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
+| qits-artifacts-service  | `core/ui-builder/routes-bundle.store*.ts`                                                    | `pacts/qits-landing-app_qits-artifacts-service.json`  | `@qits/artifacts-golden-masters`        |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -506,6 +507,16 @@ freezes of each route (page specs only, as in the ledger). `npm run test:browser
 commits them beside the references. A changed page, component or style changes its freezes: QA
 fails a freeze that differs from what the run writes as stale `screenshot-baselines`. Never edit a
 freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
+
+The UI builder (qits-1951, `projects/<slug>/repositories/<repo>/ui-builder`, linked from the cards
+of FRONTEND and APP repositories) reads a frontend's published freezes back through
+`RoutesBundleStore` (`core/ui-builder/`): the `@routes/` site whose newest version's
+`git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
+`assets/*` on demand. The generated client encodes `/` and `@` in a path parameter, which the docs
+store refuses, so `app.config.ts` puts `literalDocsPaths` on the artifacts client (specs that call
+it do the same). A freeze is drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with
+`allow-scripts`, its asset references inlined as `data:` URLs. The pact binds `getDocsFile` by media
+type only; a path from a provider state matches any path, so its spec makes one docs read per test.
 
 Every release publishes the freezes as the docs site `@routes/qits-landing` (ticket qits-1948,
 `contracts.routes` in `.config/qits/release.yml`), only when they changed: the release step hashes

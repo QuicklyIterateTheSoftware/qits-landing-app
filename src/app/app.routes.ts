@@ -265,6 +265,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'projects/:slug/repositories/:repo/ui-builder',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page').then(
+            (m) => m.UiBuilderPage,
+          ),
+      },
+      {
         path: 'projects/:slug/observability',
         loadComponent: () =>
           import('./routes/projects/[slug]/observability/project-observability.page').then(
