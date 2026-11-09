@@ -2401,6 +2401,11 @@
           "operationId": "listProjects"
         },
         {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
           "provider": "qits-workspaces-service",
           "state": "an agent whose workspace is starting",
           "operationId": "getWorkspaceActiveProcess"
@@ -2428,6 +2433,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2442,6 +2452,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspaces-service",
@@ -2471,6 +2486,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspace-daemon",
@@ -2510,6 +2530,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspace-daemon",
@@ -2556,6 +2581,11 @@
           "operationId": "listProjects"
         },
         {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
           "provider": "qits-workspace-daemon",
           "state": "a workspace daemon with an agent whose worktree holds files",
           "operationId": "detect"
@@ -2600,6 +2630,11 @@
           "operationId": "listProjects"
         },
         {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
           "provider": "qits-workspaces-service",
           "state": "a workspace slot hosting agents",
           "operationId": "getAgentActiveProcess"
@@ -2629,6 +2664,11 @@
           "operationId": "listProjects"
         },
         {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
           "provider": "qits-workspaces-service",
           "state": "a workspace slot hosting agents",
           "operationId": "getAgentActiveProcess"
@@ -2656,6 +2696,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2670,6 +2715,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2684,6 +2734,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -2721,6 +2776,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with no work",
           "operationId": "listProjectWork"
         }
@@ -2740,6 +2800,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with no work",
           "operationId": "listProjectWork"
         }
@@ -2751,7 +2816,18 @@
       "test": "ProjectEventsPage (screenshots) > shows the blank page",
       "name": "blank",
       "route": "projects/:slug/events",
-      "records": []
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/form.html",
@@ -2769,6 +2845,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2788,6 +2869,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2812,6 +2898,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2831,6 +2922,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "getIdea"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2850,6 +2946,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "getIdea"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2864,6 +2965,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2883,6 +2989,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2897,6 +3008,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2906,7 +3022,18 @@
       "test": "ProjectObservabilityPage (screenshots) > shows the blank page",
       "name": "blank",
       "route": "projects/:slug/observability",
-      "records": []
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/project.page.browser.spec.ts/error.html",
@@ -2927,6 +3054,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2978,6 +3110,11 @@
           "provider": "qits-projects-service",
           "state": "a project with 3 repositories",
           "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -2997,6 +3134,11 @@
           "provider": "qits-projects-service",
           "state": "a project with 3 repositories",
           "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3016,6 +3158,11 @@
           "provider": "qits-projects-service",
           "state": "a project with 3 repositories",
           "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3035,6 +3182,11 @@
           "provider": "qits-projects-service",
           "state": "a project with 3 repositories",
           "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3054,6 +3206,11 @@
           "provider": "qits-projects-service",
           "state": "a project with 3 repositories",
           "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3096,6 +3253,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a refolded release request",
           "operationId": "getReleaseRequest"
         },
@@ -3127,6 +3289,11 @@
           "provider": "qits-projects-service",
           "state": "a project with 3 repositories",
           "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3260,6 +3427,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
@@ -3309,6 +3481,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
@@ -3325,6 +3502,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3362,6 +3544,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
@@ -3396,6 +3583,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
@@ -3420,6 +3612,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
@@ -3436,6 +3633,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3450,6 +3652,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3464,6 +3671,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3483,6 +3695,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3510,6 +3727,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3554,8 +3776,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3573,8 +3805,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with no work",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3589,6 +3831,16 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3613,6 +3865,16 @@
           "provider": "qits-projects-service",
           "state": "a project with VERIFIED tickets in every wrapper verdict",
           "operationId": "listWrapperClosings"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3637,6 +3899,16 @@
           "provider": "qits-projects-service",
           "state": "a project with VERIFIED tickets in every wrapper verdict",
           "operationId": "listWrapperClosings"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3661,6 +3933,16 @@
           "provider": "qits-projects-service",
           "state": "a project with VERIFIED tickets in every wrapper verdict",
           "operationId": "listWrapperClosings"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3678,8 +3960,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3697,8 +3989,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with no work",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3713,6 +4015,16 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3727,6 +4039,16 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -3746,6 +4068,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "getIdea"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3765,6 +4092,11 @@
           "provider": "qits-projects-service",
           "state": "a project with ideas",
           "operationId": "getIdea"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -3779,6 +4111,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3813,6 +4150,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3857,6 +4199,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -3914,6 +4261,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -3953,6 +4305,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -3984,6 +4341,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4026,6 +4388,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -4060,6 +4427,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -4091,6 +4463,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4133,6 +4510,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -4164,6 +4546,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4241,6 +4628,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -4287,6 +4679,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4339,6 +4736,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -4388,6 +4790,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -4414,6 +4821,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4471,6 +4883,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an epic in detail",
           "operationId": "getWork"
         },
@@ -4522,6 +4939,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4579,6 +5001,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an epic in detail",
           "operationId": "getWork"
         },
@@ -4630,6 +5057,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4687,6 +5119,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an epic in detail",
           "operationId": "getWork"
         },
@@ -4741,6 +5178,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an epic in detail",
           "operationId": "getWork"
         },
@@ -4792,6 +5234,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4864,6 +5311,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -4905,6 +5357,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -4952,6 +5409,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -4978,6 +5440,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5030,6 +5497,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an improvement ticket in detail",
           "operationId": "getWork"
         },
@@ -5079,6 +5551,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an improvement ticket in detail",
           "operationId": "getWork"
         },
@@ -5125,6 +5602,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5197,6 +5679,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -5243,6 +5730,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5295,6 +5787,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -5321,6 +5818,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5363,6 +5865,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -5399,6 +5906,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5446,6 +5958,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a task in detail",
           "operationId": "getWork"
         },
@@ -5487,6 +6004,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5549,6 +6071,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -5575,6 +6102,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5632,6 +6164,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -5658,6 +6195,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-projects-service",
@@ -5710,6 +6252,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -5717,6 +6264,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with agents bound to work items",
           "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5733,9 +6285,19 @@
           "operationId": "listProjects"
         },
         {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
           "provider": "qits-workspaces-service",
           "state": "a project with agents bound to work items",
           "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5753,6 +6315,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
         },
@@ -5760,6 +6327,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with agents bound to work items",
           "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5777,8 +6349,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5796,8 +6378,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with no work",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5812,6 +6404,16 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5829,8 +6431,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with no work",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5848,6 +6460,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -5860,6 +6477,11 @@
           "provider": "qits-projects-service",
           "state": "an improvement ticket in detail",
           "operationId": "getWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5874,6 +6496,16 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5891,6 +6523,11 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
@@ -5903,6 +6540,11 @@
           "provider": "qits-projects-service",
           "state": "an improvement ticket in detail",
           "operationId": "getWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
         }
       ]
     },
@@ -5917,6 +6559,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspaces-service",
@@ -5939,8 +6586,18 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -5960,6 +6617,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspace-daemon",
@@ -5999,6 +6661,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         }
       ]
     },
@@ -6013,6 +6680,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspace-daemon",
@@ -6054,6 +6726,11 @@
           "operationId": "listProjects"
         },
         {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
           "provider": "qits-workspace-daemon",
           "state": "a workspace daemon with a harness nobody signed in",
           "operationId": "availableAgents"
@@ -6091,6 +6768,11 @@
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
         },
         {
           "provider": "qits-workspace-daemon",

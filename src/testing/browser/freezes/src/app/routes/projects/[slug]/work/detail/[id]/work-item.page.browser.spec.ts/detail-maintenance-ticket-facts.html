@@ -49,6 +49,8 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 }
 @layer utilities {
 .relative { position: relative; }
+.col-start-1 { grid-column-start: 1; }
+.row-start-2 { grid-row-start: 2; }
 .clear-both { clear: both; }
 .m-0 { margin: 0px; }
 .mx-auto { margin-inline: auto; }
@@ -60,9 +62,12 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .hidden { display: none; }
 .min-h-24 { min-height: calc(var(--spacing) * 24); }
 .min-h-48 { min-height: calc(var(--spacing) * 48); }
+.min-h-screen { min-height: 100vh; }
 .max-w-\[72rem\] { max-width: 72rem; }
 .min-w-0 { min-width: 0px; }
 .grid-cols-\[max-content_1fr\] { grid-template-columns: max-content 1fr; }
+.grid-cols-\[minmax\(0\,1fr\)\] { grid-template-columns: minmax(0px, 1fr); }
+.grid-rows-\[var\(--app-header-h\)_1fr\] { grid-template-rows: var(--app-header-h) 1fr; }
 .flex-col { flex-direction: column; }
 .gap-8 { gap: calc(var(--spacing) * 8); }
 .gap-x-6 { column-gap: calc(var(--spacing) * 6); }
@@ -76,6 +81,11 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .text-charcoal-brown-900 { color: var(--color-charcoal-brown-900); }
 .text-ocean-deep-700 { color: var(--color-ocean-deep-700); }
 .underline { text-decoration-line: underline; }
+.\[--app-header-h\:3\.5rem\] { --app-header-h: 3.5rem; }
+@media (width >= 48rem) {
+.md\:col-start-2 { grid-column-start: 2; }
+.md\:grid-cols-\[15rem_minmax\(0\,1fr\)\] { grid-template-columns: 15rem minmax(0px, 1fr); }
+}
 }
 html { color-scheme: light; }
 body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0px; }
@@ -134,4 +144,4 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
 [_nghost-c0] { display: inline; }
-</style></head><body><div id="f0"><app-work-item-page class="block" style="width: 760px;"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 101px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-ticket-detail class="flex flex-col gap-8"><app-work-fields class="block"><dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm"><dt class="text-charcoal-brown-600">Type</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">maintenance</a><span>maintenance</span></dd><dt class="text-charcoal-brown-600">Impetus</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">The release request for billing-service has waited on its gates for 6 hours.</a><span><qits-commit-message _nghost-c0="">The release request for billing-service has waited on its gates for 6 hours.</qits-commit-message></span></dd><dt class="text-charcoal-brown-600">Assignee</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">Nobody</a><span>Nobody</span></dd><dt class="text-charcoal-brown-600">Blocked</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">No</a><span>No</span></dd></dl></app-work-fields></app-ticket-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></div></body></html>
+</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-ticket-detail class="flex flex-col gap-8"><app-work-fields class="block"><dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm"><dt class="text-charcoal-brown-600">Type</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">maintenance</a><span>maintenance</span></dd><dt class="text-charcoal-brown-600">Impetus</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">The release request for billing-service has waited on its gates for 6 hours.</a><span><qits-commit-message _nghost-c0="">The release request for billing-service has waited on its gates for 6 hours.</qits-commit-message></span></dd><dt class="text-charcoal-brown-600">Assignee</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">Nobody</a><span>Nobody</span></dd><dt class="text-charcoal-brown-600">Blocked</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">No</a><span>No</span></dd></dl></app-work-fields></app-ticket-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>

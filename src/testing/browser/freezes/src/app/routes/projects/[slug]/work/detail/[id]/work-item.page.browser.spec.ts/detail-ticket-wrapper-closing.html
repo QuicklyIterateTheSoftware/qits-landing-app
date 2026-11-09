@@ -49,6 +49,8 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 }
 @layer utilities {
 .relative { position: relative; }
+.col-start-1 { grid-column-start: 1; }
+.row-start-2 { grid-row-start: 2; }
 .clear-both { clear: both; }
 .m-0 { margin: 0px; }
 .mx-auto { margin-inline: auto; }
@@ -56,8 +58,13 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .contents { display: contents; }
 .flex { display: flex; }
 .flow-root { display: flow-root; }
+.grid { display: grid; }
 .min-h-48 { min-height: calc(var(--spacing) * 48); }
+.min-h-screen { min-height: 100vh; }
 .max-w-\[72rem\] { max-width: 72rem; }
+.min-w-0 { min-width: 0px; }
+.grid-cols-\[minmax\(0\,1fr\)\] { grid-template-columns: minmax(0px, 1fr); }
+.grid-rows-\[var\(--app-header-h\)_1fr\] { grid-template-rows: var(--app-header-h) 1fr; }
 .flex-wrap { flex-wrap: wrap; }
 .items-center { align-items: center; }
 .gap-2 { gap: calc(var(--spacing) * 2); }
@@ -70,6 +77,11 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .text-charcoal-brown-600 { color: var(--color-charcoal-brown-600); }
 .text-ocean-deep-700 { color: var(--color-ocean-deep-700); }
 .underline { text-decoration-line: underline; }
+.\[--app-header-h\:3\.5rem\] { --app-header-h: 3.5rem; }
+@media (width >= 48rem) {
+.md\:col-start-2 { grid-column-start: 2; }
+.md\:grid-cols-\[15rem_minmax\(0\,1fr\)\] { grid-template-columns: 15rem minmax(0px, 1fr); }
+}
 }
 html { color-scheme: light; }
 body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0px; }
@@ -127,4 +139,4 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
-</style></head><body><div id="f0"><app-work-item-page class="block" style="width: 760px;"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><p class="m-0 flex-wrap items-center gap-2 text-sm text-charcoal-brown-600 flex"><span>contract-00000001-2 · ticket · verified</span><app-work-needs class="contents"></app-work-needs><app-wrapper-closing class="contents"><span class="text-charcoal-brown-500">Closes with <a class="text-ocean-deep-700 underline" href="/projects/contract-00000001/release-requests/contract-00000001-contract-00000001-rr-1">contract-00000001-contract-00000001-rr-1</a>, pending</span></app-wrapper-closing></p></ui-spinner></div></app-page-layout></div></app-work-item-page></div></body></html>
+</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><p class="m-0 flex-wrap items-center gap-2 text-sm text-charcoal-brown-600 flex"><span>contract-00000001-2 · ticket · verified</span><app-work-needs class="contents"></app-work-needs><app-wrapper-closing class="contents"><span class="text-charcoal-brown-500">Closes with <a class="text-ocean-deep-700 underline" href="/projects/contract-00000001/release-requests/contract-00000001-contract-00000001-rr-1">contract-00000001-contract-00000001-rr-1</a>, pending</span></app-wrapper-closing></p></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>

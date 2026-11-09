@@ -53,6 +53,8 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 }
 @layer utilities {
 .relative { position: relative; }
+.col-start-1 { grid-column-start: 1; }
+.row-start-2 { grid-row-start: 2; }
 .clear-both { clear: both; }
 .m-0 { margin: 0px; }
 .mx-auto { margin-inline: auto; }
@@ -60,12 +62,16 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .block { display: block; }
 .flex { display: flex; }
 .flow-root { display: flow-root; }
+.grid { display: grid; }
 .hidden { display: none; }
 .min-h-24 { min-height: calc(var(--spacing) * 24); }
 .min-h-48 { min-height: calc(var(--spacing) * 48); }
+.min-h-screen { min-height: 100vh; }
 .max-w-\[72rem\] { max-width: 72rem; }
 .min-w-0 { min-width: 0px; }
 .cursor-pointer { cursor: pointer; }
+.grid-cols-\[minmax\(0\,1fr\)\] { grid-template-columns: minmax(0px, 1fr); }
+.grid-rows-\[var\(--app-header-h\)_1fr\] { grid-template-rows: var(--app-header-h) 1fr; }
 .flex-col { flex-direction: column; }
 .gap-3 { gap: calc(var(--spacing) * 3); }
 .gap-8 { gap: calc(var(--spacing) * 8); }
@@ -90,6 +96,11 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .text-charcoal-brown-800 { color: var(--color-charcoal-brown-800); }
 .text-charcoal-brown-900 { color: var(--color-charcoal-brown-900); }
 .select-none { user-select: none; }
+.\[--app-header-h\:3\.5rem\] { --app-header-h: 3.5rem; }
+@media (width >= 48rem) {
+.md\:col-start-2 { grid-column-start: 2; }
+.md\:grid-cols-\[15rem_minmax\(0\,1fr\)\] { grid-template-columns: 15rem minmax(0px, 1fr); }
+}
 .\[\&_li\]\:my-0\.5 li { margin-block: calc(var(--spacing) * 0.5); }
 .\[\&_ol\]\:my-2 ol { margin-block: calc(var(--spacing) * 2); }
 .\[\&_ol\]\:list-decimal ol { list-style-type: decimal; }
@@ -168,7 +179,7 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
-</style></head><body><div id="f0"><app-work-item-page class="block" style="width: 760px;"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-ticket-detail class="flex flex-col gap-8"><app-work-dossier class="block"><section aria-label="Dossier" class="flex flex-col gap-3"><h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Dossier</h2><details open="" class="group rounded-md border border-charcoal-brown-200"><summary class="cursor-pointer px-4 py-2 text-sm font-semibold text-charcoal-brown-900 select-none"> Reproduction </summary><div class="border-t border-charcoal-brown-200 px-4 py-3"><ui-markdown class="block min-w-0"><p class="m-0 text-sm whitespace-pre-line wrap-anywhere text-charcoal-brown-800 hidden"> 1. Create an invoice with three lines of 0.335 EUR each.
+</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-ticket-detail class="flex flex-col gap-8"><app-work-dossier class="block"><section aria-label="Dossier" class="flex flex-col gap-3"><h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Dossier</h2><details open="" class="group rounded-md border border-charcoal-brown-200"><summary class="cursor-pointer px-4 py-2 text-sm font-semibold text-charcoal-brown-900 select-none"> Reproduction </summary><div class="border-t border-charcoal-brown-200 px-4 py-3"><ui-markdown class="block min-w-0"><p class="m-0 text-sm whitespace-pre-line wrap-anywhere text-charcoal-brown-800 hidden"> 1. Create an invoice with three lines of 0.335 EUR each.
 2. Read its total: **1.02 EUR**. The lines add up to 1.005, which rounds once to 1.01.
  </p><div class="text-sm leading-relaxed text-charcoal-brown-800 [&amp;_a]:text-ocean-deep-700 [&amp;_a]:underline [&amp;_blockquote]:border-l-4 [&amp;_blockquote]:border-charcoal-brown-200 [&amp;_blockquote]:pl-3 [&amp;_code]:rounded [&amp;_code]:bg-charcoal-brown-50 [&amp;_code]:px-1 [&amp;_code]:font-mono [&amp;_code]:text-[0.8125rem] [&amp;_h1]:mt-4 [&amp;_h1]:mb-2 [&amp;_h1]:text-lg [&amp;_h1]:font-semibold [&amp;_h2]:mt-4 [&amp;_h2]:mb-2 [&amp;_h2]:text-base [&amp;_h2]:font-semibold [&amp;_h3]:mt-3 [&amp;_h3]:mb-1 [&amp;_h3]:text-sm [&amp;_h3]:font-semibold [&amp;_img]:my-2 [&amp;_img]:max-w-full [&amp;_img]:rounded [&amp;_img]:border [&amp;_img]:border-charcoal-brown-200 [&amp;_li]:my-0.5 [&amp;_ol]:my-2 [&amp;_ol]:list-decimal [&amp;_ol]:pl-5 [&amp;_p]:my-2 [&amp;_pre]:my-2 [&amp;_pre]:overflow-x-auto [&amp;_pre]:rounded [&amp;_pre]:bg-charcoal-brown-50 [&amp;_pre]:p-3 [&amp;_pre_code]:bg-transparent [&amp;_pre_code]:p-0 [&amp;_table]:my-2 [&amp;_table]:block [&amp;_table]:max-w-full [&amp;_table]:overflow-x-auto [&amp;_table]:border-collapse [&amp;_td]:border [&amp;_td]:border-charcoal-brown-200 [&amp;_td]:px-2 [&amp;_td]:py-1 [&amp;_th]:border [&amp;_th]:border-charcoal-brown-200 [&amp;_th]:bg-charcoal-brown-50 [&amp;_th]:px-2 [&amp;_th]:py-1 [&amp;_th]:text-left [&amp;_ul]:my-2 [&amp;_ul]:list-disc [&amp;_ul]:pl-5 [&amp;_:not(pre)&gt;code]:wrap-anywhere [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0"><ol>
 <li>Create an invoice with three lines of 0.335 EUR each.</li>
@@ -203,4 +214,4 @@ html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39)
 <td>7.10</td>
 </tr>
 </tbody></table>
-</div></ui-markdown></div></details><p class="m-0 text-sm text-charcoal-brown-500 hidden"> No pages yet </p></section></app-work-dossier></app-ticket-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></div></body></html>
+</div></ui-markdown></div></details><p class="m-0 text-sm text-charcoal-brown-500 hidden"> No pages yet </p></section></app-work-dossier></app-ticket-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>
