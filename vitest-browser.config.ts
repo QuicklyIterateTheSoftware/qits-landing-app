@@ -66,9 +66,8 @@ const goldenMaster: BrowserCommand<
  * the spec showed on which route. The command only stages it: at the end of the run, the ledger's
  * reporter (added by `ledger.plugin`, below) rewrites the section of each spec file that ran
  * completely, so a failed, skipped or filtered file keeps its section (ticket qits-1966). The pact
- * specs read the
- * ledger (`src/testing/golden-masters.ts`), so every interaction names the routes it happens on
- * (`qits-trigger.route`). The root is this file's directory, so the sections are keyed by the spec's
+ * specs read the ledger (`src/testing/golden-masters.ts`), so every interaction names the routes it
+ * happens on (`qits-trigger.route`). The root is this file's directory, so the sections are keyed by the spec's
  * path in this repository (`src/app/routes/…`) whatever directory the run starts in.
  *
  * Only a page spec's routes are kept: it mounts the page at the route its directory names, which
