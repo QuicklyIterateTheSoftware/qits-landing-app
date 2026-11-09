@@ -22,9 +22,17 @@ import { UiBuilderPage } from './ui-builder.page';
  *
  * A freeze's HTML is recorded without a body, so no recording can answer it: the frame's place
  * shows the state being read, and its request is left unanswered.
+ *
+ * The entity maps (qits-1950) are read once the bundle is in. Answered with the bundle's own
+ * catalog they find no `@contracts/` site, so the route's calls touch no mapped entity and
+ * qits-projects-service is named without a map. The `entities` and `entity-view` cases answer them
+ * with "a published contracts bundle with an entity map" (`@contracts/qits-projects`, naming
+ * qits-projects-service: Project and Repository, which the bundle's calls reach, WorkEntity, which
+ * none does, and one technical entity), recorded by qits-artifacts from qits-1950's release on.
  */
 
 const BUNDLE = 'a published routes bundle';
+const CONTRACTS = 'a published contracts bundle with an entity map';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -92,10 +100,17 @@ describe('UiBuilderPage (screenshots)', () => {
     fixture.detectChanges();
   }
 
-  /** Answers the catalog, the site's versions and its manifest from the recorded bundle. */
+  /**
+   * Answers the catalog, the site's versions and its manifest from the recorded bundle, then the
+   * entity maps' catalog: with the bundle's (no contracts site), or with `entities`.
+   */
   async function answerBundle(
     fixture: { whenStable(): Promise<unknown>; detectChanges(): void },
     sites: { flush(body: unknown): void },
+    entities: () => Promise<void> = async () =>
+      http
+        .expectOne('/artifacts/docs/docs')
+        .flush(await goldenMaster(BUNDLE, 'listDocsSites', 'qits-artifacts')),
   ) {
     sites.flush(await goldenMaster(BUNDLE, 'listDocsSites', 'qits-artifacts'));
     await settle();
@@ -107,6 +122,23 @@ describe('UiBuilderPage (screenshots)', () => {
       .expectOne((req) => req.url.endsWith('/manifest.json'))
       .flush(await goldenMaster(BUNDLE, 'getDocsFile', 'qits-artifacts'));
     await answered(fixture);
+    await entities();
+    await answered(fixture);
+  }
+
+  /** Answers the entity maps' catalog, the contracts site's versions and its `entities.json`. */
+  async function answerEntityMap() {
+    http
+      .expectOne('/artifacts/docs/docs')
+      .flush(await goldenMaster(CONTRACTS, 'listDocsSites', 'qits-artifacts'));
+    await settle();
+    http
+      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@contracts/qits-projects'))
+      .flush(await goldenMaster(CONTRACTS, 'listDocsVersions', 'qits-artifacts'));
+    for (let i = 0; i < 3; i++) await settle();
+    http
+      .expectOne((req) => req.url.endsWith('/entities.json'))
+      .flush(await goldenMaster(CONTRACTS, 'getDocsFile', 'qits-artifacts'));
   }
 
   it('shows the route tree with the first route with states selected', async () => {
@@ -119,6 +151,34 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect.element(view.getByRole('tab', { name: 'error' })).toBeVisible();
     await expect.element(view).toMatchTextContent('listProjectRepositories');
     await expect.element(view).toMatchScreenshot('loaded');
+  });
+
+  it('lists the domain entities the route touches, with their verbs', async () => {
+    const { fixture, element, sites } = await render('qits-landing-app');
+    await answerBundle(fixture, sites, answerEntityMap);
+    const view = page.elementLocator(element);
+    await expect
+      .element(view.getByRole('heading', { name: '/projects/:slug/repositories' }))
+      .toBeVisible();
+    await expect.element(view.getByText('Repository', { exact: true })).toBeVisible();
+    await expect.element(view).toMatchScreenshot('entities');
+  });
+
+  it('marks the entities no route shows, and lists a picked entity’s routes', async () => {
+    const { fixture, element, sites } = await render('qits-landing-app');
+    await answerBundle(fixture, sites, answerEntityMap);
+    const view = page.elementLocator(element);
+    await view.getByRole('tab', { name: 'Entities' }).click();
+    await answered(fixture);
+    await expect.element(view).toMatchTextContent('1 of 3 domain entities have no route');
+    await expect.element(view).toMatchTextContent('No route shows this');
+    await view.getByRole('button', { name: 'Project 1' }).click();
+    await commands.parkPointer();
+    await answered(fixture);
+    await expect
+      .element(view.getByRole('button', { name: '/projects/:slug/repositories' }))
+      .toBeVisible();
+    await expect.element(view).toMatchScreenshot('entity-view');
   });
 
   it('says a route without states has nothing frozen', async () => {
