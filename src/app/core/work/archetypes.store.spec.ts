@@ -43,12 +43,15 @@ describe('ArchetypesStore', () => {
     expect(store.of('TICKET')?.transitions?.['REFINED']).toEqual([
       { to: 'READY_FOR_DEV', kind: 'FORWARD', gates: ['ACCEPTANCE_CRITERIA', 'PERSON_APPROVAL'] },
       { to: 'REPORTED', kind: 'BACK' },
+      // A ticket tagged condition closes straight to DONE (qits-1972).
+      { to: 'DONE', kind: 'CLOSE', gates: ['CONDITION_MET'] },
       { to: 'DROPPED', kind: 'DROP' },
     ]);
     expect(store.of('TICKET')?.transitions?.['READY_FOR_DEV']).toEqual([
       { to: 'IMPLEMENTING', kind: 'FORWARD' },
       { to: 'IMPLEMENTED', kind: 'SKIP' },
       { to: 'REFINED', kind: 'BACK' },
+      { to: 'DONE', kind: 'CLOSE', gates: ['CONDITION_MET'] },
       { to: 'DROPPED', kind: 'DROP' },
     ]);
     // Implement runs from READY_FOR_DEV; REFINED waits for a person to schedule it (qits-887).
