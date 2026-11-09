@@ -13,7 +13,9 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import {
   artifactsGoldenMasters as artifacts,
+  ENTITY_MAP_STATE as CONTRACTS,
   goldenMaster,
+  isArtifactsRecorded,
 } from '../../../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { UiBuilderPage } from './ui-builder.page';
@@ -35,6 +37,13 @@ const LOADED_FREEZE = artifacts.operation('a published routes bundle freeze', 'g
 /** `projects/:slug/repositories`'s freezes by name: `error`, then `loaded`. */
 const ERROR_FREEZE = LOADED_FREEZE.replace(/loaded\.html$/, 'error.html');
 
+/**
+ * qits-artifacts records the entity map's state from qits-1950's release on: `@contracts/qits-projects`
+ * naming `qits-projects-service`, with Project, Repository and WorkEntity (domain) and one technical
+ * entity. The cases that need it skip until the pin moves past it.
+ */
+const RECORDED = isArtifactsRecorded(CONTRACTS, 'getDocsFile');
+
 // As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
 if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
   artifactsClient.interceptors.request.use(literalDocsPaths);
@@ -53,6 +62,22 @@ function versionsNaming(repo: string) {
       metadata: { ...v.metadata, 'git.repository.name': repo },
     })),
   };
+}
+
+/** An element's text: its child elements' texts (or its own, without any) joined by spaces. */
+function words(element: Element): string {
+  const parts = element.children.length ? [...element.children] : [element];
+  return parts
+    .map((part) => (part.textContent ?? '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .join(' ');
+}
+
+/** Clicks the left panel's tab named `name`. */
+function clickTab(element: HTMLElement, name: string): void {
+  [...element.querySelectorAll<HTMLButtonElement>('[aria-label="Panels"] [role="tab"]')]
+    .find((tab) => tab.textContent?.trim() === name)!
+    .click();
 }
 
 describe('UiBuilderPage', () => {
@@ -90,6 +115,7 @@ describe('UiBuilderPage', () => {
   async function render(
     repo: string,
     versions: object = artifacts.body(BUNDLE, 'listDocsVersions'),
+    answerEntities: () => Promise<void> = answerNoContracts,
   ) {
     const fixture = TestBed.createComponent(UiBuilderPage);
     fixture.detectChanges();
@@ -103,6 +129,10 @@ describe('UiBuilderPage', () => {
     await settle();
     http.expectOne(fileUrl('manifest.json')).flush(artifacts.body(BUNDLE, 'getDocsFile'));
     await settle();
+    fixture.detectChanges();
+    await settle();
+    await answerEntities();
+    for (let i = 0; i < 5; i++) await settle();
     await fixture.whenStable();
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
@@ -115,6 +145,27 @@ describe('UiBuilderPage', () => {
       });
     return { fixture, element, texts };
   }
+
+  /** Answers the entity maps' catalog with the bundle's: `@routes/qits-landing`, no contracts site. */
+  async function answerNoContracts() {
+    http.expectOne(SITES_URL).flush(artifacts.body(BUNDLE, 'listDocsSites'));
+  }
+
+  /** Answers the catalog, the contracts site's versions, and its `entities.json` with `map`. */
+  function answerContracts(map: (read: { flush(body: unknown, opts?: object): void }) => void) {
+    return async () => {
+      const { site, version } = artifacts.operation(CONTRACTS, 'getDocsFile').params;
+      http.expectOne(SITES_URL).flush(artifacts.body(CONTRACTS, 'listDocsSites'));
+      await settle();
+      http.expectOne(`${SITES_URL}/${site}`).flush(artifacts.body(CONTRACTS, 'listDocsVersions'));
+      for (let i = 0; i < 3; i++) await settle();
+      map(http.expectOne(`${SITES_URL}/${site}/-/${version}/entities.json`));
+    };
+  }
+
+  const recordedMap = answerContracts((read) =>
+    read.flush(artifacts.body(CONTRACTS, 'getDocsFile')),
+  );
 
   /** Answers the selected freeze (empty: the recording has no body) and the bundle's assets. */
   async function answerFreeze(
@@ -149,7 +200,8 @@ describe('UiBuilderPage', () => {
     );
     expect(disabled).toEqual([true, false, true, false, true, true]);
     expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
-    expect(texts('[role="tab"]')).toEqual(['error', 'loaded']);
+    expect(texts('[aria-label="States"] [role="tab"]')).toEqual(['error', 'loaded']);
+    expect(texts('[aria-label="Panels"] [role="tab"]')).toEqual(['Routes', 'Entities']);
     expect(element.querySelector('.frame-placeholder')?.textContent).toContain('Reading');
     expect(texts('li.call')).toEqual([
       'listProjectRepositories qits-projects-service · “a project with repositories”',
@@ -166,13 +218,15 @@ describe('UiBuilderPage', () => {
     setUp('qits-landing-app');
     const { fixture, element, texts } = await render('qits-landing-app');
     await answerFreeze(ERROR_FREEZE, fixture);
-    element.querySelectorAll<HTMLButtonElement>('[role="tab"]')[1].click();
+    element.querySelectorAll<HTMLButtonElement>('[aria-label="States"] [role="tab"]')[1].click();
     fixture.detectChanges();
     await settle();
     http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
     await settle();
     fixture.detectChanges();
-    expect(element.querySelector('[aria-selected="true"]')?.textContent?.trim()).toBe('loaded');
+    expect(
+      element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim(),
+    ).toBe('loaded');
 
     const projects = [...element.querySelectorAll<HTMLButtonElement>('nav button.route')].find(
       (b) => b.textContent?.replace(/\s+/g, '') === 'projects0',
@@ -183,7 +237,12 @@ describe('UiBuilderPage', () => {
     expect(element.querySelector('.no-states')?.textContent).toContain(
       'No screenshot test for this route, so nothing is frozen.',
     );
-    expect(texts('aside li')).toEqual(['Its spec answers no request.']);
+    expect(texts('aside li.call')).toEqual([]);
+    expect(texts('aside li')).toEqual([
+      'Its spec answers no request.',
+      'This route touches no mapped entity.',
+    ]);
+    expect(element.querySelector('.unmatched')).toBeNull();
   });
 
   it('covers every service for the project’s landing app', async () => {
@@ -210,6 +269,120 @@ describe('UiBuilderPage', () => {
     expect(element.querySelector('.hidden-calls')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
       'Hid 2 calls to providers outside contract.',
     );
+    // The hidden calls are neither matched nor counted, and their provider is not named.
+    expect(element.querySelector('.unmatched')).toBeNull();
+    clickTab(element, 'Entities');
+    fixture.detectChanges();
+    expect(element.querySelector('.entity-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      '0 of 0 domain entities have no route',
+    );
+    expect(element.querySelectorAll('h3.group')).toHaveLength(0);
+  });
+
+  it('names a provider the routes call that publishes no entity map', async () => {
+    setUp('qits-landing-app');
+    const { fixture, element, texts } = await render('qits-landing-app');
+    await answerFreeze(ERROR_FREEZE, fixture);
+    expect(texts('li.route-entity')).toEqual([]);
+    expect(element.querySelector('.no-entities')?.textContent?.trim()).toBe(
+      'This route touches no mapped entity.',
+    );
+    expect(element.querySelector('.unmatched')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      '2 calls touch no mapped entity.',
+    );
+    clickTab(element, 'Entities');
+    fixture.detectChanges();
+    expect(texts('h3.group')).toEqual(['qits-projects-service']);
+    expect(element.querySelector('.no-map')?.textContent?.trim()).toBe('No entity map published');
+    // The middle and the calls stay: the tab changes the left panel only.
+    expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
+  });
+
+  it('keeps the page up when the entity maps cannot be read', async () => {
+    setUp('qits-landing-app');
+    const { fixture, element, texts } = await render('qits-landing-app', undefined, async () => {
+      http.expectOne(SITES_URL).flush(null, { status: 500, statusText: 'Server Error' });
+    });
+    await answerFreeze(ERROR_FREEZE, fixture);
+    expect(texts('li.call')).toHaveLength(2);
+    expect(element.querySelector('aside .entities-error')?.textContent?.trim()).toBe(
+      'Could not read the entity maps.',
+    );
+  });
+
+  describe.skipIf(!RECORDED)('with a published entity map', () => {
+    it('lists the route’s domain entities with their verbs', async () => {
+      setUp('qits-landing-app');
+      const { fixture, element, texts } = await render('qits-landing-app', undefined, recordedMap);
+      await answerFreeze(ERROR_FREEZE, fixture);
+      expect([...element.querySelectorAll('li.route-entity')].map(words)).toEqual([
+        'Project qits-projects list',
+        'Repository qits-projects list',
+      ]);
+      expect(element.querySelector('.unmatched')).toBeNull();
+      expect(texts('li.call')).toHaveLength(2);
+    });
+
+    it('lists the entities by application, untouched first, and an entity’s routes', async () => {
+      setUp('qits-landing-app');
+      const { fixture, element } = await render('qits-landing-app', undefined, recordedMap);
+      await answerFreeze(ERROR_FREEZE, fixture);
+      clickTab(element, 'Entities');
+      fixture.detectChanges();
+      const text = (selector: string) => [...element.querySelectorAll(selector)].map(words);
+      expect(text('.entity-summary')).toEqual(['1 of 3 domain entities have no route']);
+      expect(text('.left-out')).toEqual(['1 technical or projection entity left out.']);
+      expect(text('h3.group')).toEqual(['qits-projects']);
+      expect(text('button.entity')).toEqual([
+        'WorkEntity No route shows this',
+        'Project 1',
+        'Repository 1',
+      ]);
+
+      element.querySelectorAll<HTMLButtonElement>('button.entity')[1].click();
+      fixture.detectChanges();
+      expect(text('.entity-heading')).toEqual(['Project · qits-projects']);
+      expect(text('li.entity-route')).toEqual(['/projects/:slug/repositories list']);
+
+      element.querySelectorAll<HTMLButtonElement>('button.entity')[0].click();
+      fixture.detectChanges();
+      expect(text('aside li')).toEqual(['No route shows this.']);
+
+      element.querySelectorAll<HTMLButtonElement>('button.entity')[1].click();
+      fixture.detectChanges();
+      element.querySelector<HTMLButtonElement>('li.entity-route button')!.click();
+      fixture.detectChanges();
+      expect(
+        element.querySelector('[aria-label="Panels"] [aria-selected="true"]')?.textContent?.trim(),
+      ).toBe('Routes');
+      expect(element.querySelector('nav [aria-current="page"]')?.textContent).toContain(
+        'repositories',
+      );
+      expect(element.querySelectorAll('li.route-entity')).toHaveLength(2);
+    });
+
+    it('names a contracts site without entities.json, and a map that cannot be read', async () => {
+      for (const [status, expected] of [
+        [404, 'No entity map published'],
+        [500, 'Could not read its entity map'],
+      ] as const) {
+        TestBed.resetTestingModule();
+        setUp('qits-landing-app');
+        const { fixture, element, texts } = await render(
+          'qits-landing-app',
+          undefined,
+          answerContracts((read) => read.flush(null, { status, statusText: 'x' })),
+        );
+        await answerFreeze(ERROR_FREEZE, fixture);
+        expect(texts('li.call')).toHaveLength(2);
+        expect(element.querySelector('.unmatched')?.textContent).toContain('2 calls touch');
+        clickTab(element, 'Entities');
+        fixture.detectChanges();
+        expect(texts('h3.group')).toEqual(['qits-projects-service']);
+        expect(element.querySelector('.no-map, .map-error')?.textContent?.trim()).toBe(expected);
+        http.verify();
+      }
+    });
   });
 
   it('says so when no frozen routes are published for the repository', async () => {

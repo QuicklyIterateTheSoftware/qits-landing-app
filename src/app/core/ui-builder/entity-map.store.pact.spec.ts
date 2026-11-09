@@ -30,6 +30,10 @@ import { contractsSitesOf, entityMapOf } from './entity-map.store';
  * the contracts site's versions (its newest naming `qits-projects-service`) and its
  * `entities.json`. A path from a provider state matches any path, so each test adds at most one
  * interaction with a path parameter and makes the one step of `EntityMapStore` it answers.
+ * `listDocsSites` is bound by its recorded first element (the list is "at least the recorded
+ * count" of that shape), so the mock server answers that site alone: the provider lists sites by
+ * name, and `@contracts/qits-projects` sorts before `@routes/qits-landing`, so it is the contracts
+ * site the store goes on to read.
  * `getDocsFile` answers a file: its interaction binds the status and the media type
  * (`NonJsonResponse`), its example body the recorded map.
  *
