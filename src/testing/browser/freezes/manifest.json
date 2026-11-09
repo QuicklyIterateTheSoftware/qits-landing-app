@@ -141,6 +141,10 @@
           "fullPath": "projects/:slug/repositories"
         },
         {
+          "path": "projects/:slug/repositories/:repo/ui-builder",
+          "fullPath": "projects/:slug/repositories/:repo/ui-builder"
+        },
+        {
           "path": "projects/:slug/observability",
           "fullPath": "projects/:slug/observability"
         },
@@ -3169,6 +3173,117 @@
           "provider": "qits-projects-service",
           "state": "a project with pending release requests",
           "operationId": "listProjectReleaseRequests"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/error.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > marks the page as failed when the docs store cannot be read",
+      "name": "error",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/loaded.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > shows the route tree with the first route with states selected",
+      "name": "loaded",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/no-states.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says a route without states has nothing frozen",
+      "name": "no-states",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says so when no frozen routes are published for the repository",
+      "name": "none",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published docs site",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
         }
       ]
     },
@@ -6400,6 +6515,12 @@
       "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/loading.html",
       "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/opened.html",
       "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/tree.html"
+    ],
+    "projects/:slug/repositories/:repo/ui-builder": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/error.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/loaded.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/no-states.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none.html"
     ],
     "projects/:slug/setup": [
       "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts/error.html",

@@ -359,6 +359,44 @@
       "route": "projects/:slug/release-requests"
     }
   ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published docs site",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with repositories in components",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    }
+  ],
   "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
