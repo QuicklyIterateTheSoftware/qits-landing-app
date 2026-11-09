@@ -1,38 +1,21 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import { ReleaseRequestsPage } from './release-requests.page';
-import { goldenMaster } from '../../../../../testing/browser/golden-master';
+import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of the Release Requests page, answered with qits-projects' recordings: "a project
- * with pending release requests" (one request in each of PENDING, RELEASED, READY, REJECTED,
- * CONFLICTED and FINALIZED) and "a project with no release requests". The open project is the
- * recorded one ("a project exists"), found by the URL's slug in the recorded project list.
+ * Screenshots of the Release Requests page inside the shell (`openRoute`), answered with
+ * qits-projects' recordings: "a project with pending release requests" (one request in each of
+ * PENDING, RELEASED, READY, REJECTED, CONFLICTED and FINALIZED) and "a project with no release
+ * requests". The page's read is the shell's too (its lightning menu and its sidebar line), so
+ * `openRoute` answers it in the state a spec names. The open project is the recorded one ("a
+ * project exists"), found by the URL's slug in the recorded project list.
  */
-
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('ReleaseRequestsPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        provideRouter([
-          { path: 'projects/:slug/release-requests', component: ReleaseRequestsPage },
-        ]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-      ],
-    });
+    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -42,72 +25,47 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  async function render() {
-    // Tall enough for every row: a screenshot shows only what is in the viewport.
-    await page.viewport(900, 1000);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/release-requests`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    harness.fixture.detectChanges();
-    await settle();
-    TestBed.tick();
-    await settle();
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
-    return {
-      fixture: harness.fixture,
-      element,
-      request: http.expectOne(`/projects/api/projects/${project.id}/release-requests`),
-    };
-  }
-
-  async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
-    await settle();
-    await fixture.whenStable();
-    fixture.detectChanges();
+  /** The page of the recorded project, its release requests answered as `releaseRequests` names. */
+  async function render(releaseRequests: string) {
+    // As wide as the page was, plus the sidebar; tall enough for every row, as the shell shows
+    // only what is in the viewport.
+    await page.viewport(1140, 1000);
+    return openRoute((project) => `/projects/${project.slug}/release-requests`, {
+      releaseRequests,
+    });
   }
 
   it('lists every request with its state, gates and facts', async () => {
-    const { fixture, element, request } = await render();
-    request.flush(
-      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
-    );
-    await answered(fixture);
-    const view = page.elementLocator(element);
+    const opened = await render('a project with pending release requests');
+    const view = page.elementLocator(opened.page);
     expect(view.getByRole('listitem').elements()).toHaveLength(6);
     // The finalized request, last: the rows no longer show a summary (qits-1673).
     await expect.element(view).toMatchTextContent('contract-service-rr-1');
     await expect.element(view).toMatchTextContent('The sources cannot be folded.');
-    await expect.element(view).toMatchScreenshot('requests');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('requests');
   });
 
   it('says so when the project has none', async () => {
-    const { fixture, element, request } = await render();
-    request.flush(
-      await goldenMaster('a project with no release requests', 'listProjectReleaseRequests'),
-    );
-    await answered(fixture);
-    const view = page.elementLocator(element);
+    const opened = await render('a project with no release requests');
+    const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('Nothing is open in this project');
-    await expect.element(view).toMatchScreenshot('empty');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('empty');
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {
-    const { fixture, element, request } = await render();
-    const view = page.elementLocator(element);
+    const opened = await render('unanswered');
+    const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('loading');
-    request.flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(fixture);
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    for (const read of http.match(`/projects/api/projects/${opened.project.id}/release-requests`)) {
+      read.flush(null, { status: 500, statusText: 'Server Error' });
+    }
+    await opened.settled();
     await expect
       .element(view.getByRole('alert'))
       .toMatchTextContent('This project’s release requests could not be read.');
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('error');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
   });
 
   // At 390px an item's text, read as one unbroken word (a long test name, which qits-projects can
@@ -115,31 +73,13 @@ describe('ReleaseRequestsPage (screenshots)', () => {
   // is a flex item whose min-width is auto (min-content), and `break-words` does not lower it.
   // `wrap-anywhere` on the <a> does. No recorded answer carries a word that long, so the one
   // recorded item's text is swapped for it directly, after the real page renders with the real
-  // golden master and the real CSS classes.
+  // golden master and the real CSS classes. At this width the shell folds its sidebar away.
   it('keeps a long unbroken item word on screen at 390px (qits-1864)', async () => {
     await page.viewport(390, 844);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/release-requests`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    harness.fixture.detectChanges();
-    await settle();
-    TestBed.tick();
-    await settle();
-    http
-      .expectOne(`/projects/api/projects/${project.id}/release-requests`)
-      .flush(
-        await goldenMaster(
-          'a project with release requests in every state',
-          'listProjectReleaseRequests',
-        ),
-      );
-    await answered(harness.fixture);
-    const element = harness.routeNativeElement as HTMLElement;
-    const item = element.querySelector('[data-item]')!;
+    const opened = await openRoute((project) => `/projects/${project.slug}/release-requests`, {
+      releaseRequests: 'a project with release requests in every state',
+    });
+    const item = opened.page.querySelector('[data-item]')!;
     const link = item.querySelector('a:not([data-work-item])') as HTMLAnchorElement;
     link.textContent =
       'qits-projects-service: AgentTunnelProxyTest.aNonceIsSingleUseAndExpiresAfterTheFirstDial';

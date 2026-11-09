@@ -1,27 +1,20 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { AgentLayout } from '../agent.layout';
-import { AgentTerminalPage } from './agent-terminal.page';
+import { openRoute, provideAppRoute } from '../../../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of an agent's Terminal tab, at `agents/<agent id>/…`. The project is
- * qits-projects' "a project exists"; the agent is qits-workspaces' `getAgent` of "an agent with a
- * saved prompt draft" (the bug ticket's agent `…a1`, slot 1), the project's agents "an agent whose
- * workspace is starting"'s and its start "a workspace slot hosting agents"' (the agent RUNNING in
- * slot 1, no start), so the tab attaches to the
- * agent's terminal on the agent proxy and asks the slot's daemon nothing (epic qits-1667); the
- * harness sign-in and the plugins are the workspace page's screenshots.
+ * Screenshots of an agent's Terminal tab, at `agents/<agent id>/terminal`, inside the shell and the
+ * agent's layout (`openRoute`). The project is qits-projects' "a project exists"; the agent is
+ * qits-workspaces' `getAgent` of "an agent with a saved prompt draft" (the bug ticket's agent
+ * `…a1`, slot 1), the project's ACTIVE agents (the layout's read, and the shell's agents menu's)
+ * "an agent whose workspace is starting"'s and its start "a workspace slot hosting agents"' (the
+ * agent RUNNING in slot 1, no start), so the tab attaches to the agent's terminal on the agent
+ * proxy and asks the slot's daemon nothing (epic qits-1667); the harness sign-in and the plugins
+ * are the workspace page's screenshots.
  *
  * The socket is a fake (`WEB_SOCKET`): it opens when told and delivers a few lines of shell output,
  * raw terminal text that no golden master records. The event streams never connect.
@@ -64,9 +57,6 @@ class FakeSocket implements WebSocketLike {
 const statusLine = (element: HTMLElement) =>
   page.elementLocator(element.querySelector('app-agent-terminal-page [role="status"]')!);
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('AgentTerminalPage (screenshots)', () => {
   let http: HttpTestingController;
   let sockets: FakeSocket[];
@@ -76,25 +66,8 @@ describe('AgentTerminalPage (screenshots)', () => {
     sockets = [];
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([
-          {
-            path: 'projects/:slug/agents/:agentId',
-            component: AgentLayout,
-            children: [
-              { path: '', children: [] },
-              { path: 'terminal', component: AgentTerminalPage },
-            ],
-          },
-        ]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(workspacesClient),
+        provideAppRoute(),
         provideTestPlatformOrigins({ workspaces: 'https://workspaces.test' }),
-        {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
-        },
         {
           provide: WEB_SOCKET,
           useValue: (url: string) => {
@@ -114,46 +87,30 @@ describe('AgentTerminalPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  async function answered(harness: RouterTestingHarness) {
-    await settle();
-    TestBed.tick();
-    await settle();
-    harness.fixture.detectChanges();
-  }
-
-  /** Opens the Terminal tab and answers the project, the agent and the project's agents. */
+  /** Opens the Terminal tab and answers the agent, the project's agents and the agent's start. */
   async function render() {
-    await page.viewport(900, 900);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
+    // As wide as the page was, plus the sidebar. The screen sizes itself down to the fold, so the
+    // frame runs past the viewport by the shell's foot, whatever the height.
+    await page.viewport(1140, 900);
     const agent = await goldenMaster(DRAFTED, 'getAgent', 'qits-workspaces');
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/agents/${agent.agentId}/terminal`,
+    // The project's ACTIVE agents as the agent layout's spec answers them: the bug ticket's agent,
+    // with no waits ("an agent whose workspace is starting", which the pact binds).
+    const opened = await openRoute(
+      (project) => `/projects/${project.slug}/agents/${agent.agentId}/terminal`,
+      { agents: STARTING },
     );
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    await answered(harness);
     http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
-    http
-      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      // The project's ACTIVE agents as the agent layout's spec answers them: the bug ticket's agent,
-      // with no waits ("an agent whose workspace is starting", which the pact binds).
-      .flush(await goldenMaster(STARTING, 'listAgents', 'qits-workspaces'));
-    await answered(harness);
+    await opened.settled();
     // The agent's start, asked of the agent (`getAgentActiveProcess`): none is running.
     http
       .expectOne(`/workspaces/api/agents/${agent.agentId}/active-process`)
       .flush(await goldenMaster(SLOT, 'getAgentActiveProcess', 'qits-workspaces'));
-    await answered(harness);
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
-    return { harness, element, agentId: agent.agentId as string };
+    await opened.settled();
+    return { opened, element: opened.page, agentId: agent.agentId as string };
   }
 
   it('shows the agent’s terminal, attached, with its output', async () => {
-    const { harness, element, agentId } = await render();
+    const { opened, element, agentId } = await render();
     expect(sockets.map((s) => s.url)).toEqual([
       `wss://workspaces.test/workspaces/agent/${agentId}/terminal`,
     ]);
@@ -164,30 +121,30 @@ describe('AgentTerminalPage (screenshots)', () => {
         'nothing to commit, working tree clean\r\n' +
         '\x1b[1;32magent@workspace\x1b[0m:\x1b[1;34m~/wrapper\x1b[0m$ ',
     );
-    await answered(harness);
-    const view = page.elementLocator(element);
+    await opened.settled();
+    const layout = page.elementLocator(opened.frame.querySelector('app-agent-layout')!);
     await expect
-      .element(view.getByRole('link', { name: 'Terminal' }))
+      .element(layout.getByRole('link', { name: 'Terminal' }))
       .toHaveAttribute('aria-current', 'page');
     await expect.element(statusLine(element)).toMatchTextContent('Attached.');
     await expect
       .poll(() => element.querySelector('.xterm-rows')?.textContent ?? '')
       .toContain('working tree clean');
     expect(sockets[0].sent.some((frame) => JSON.parse(frame).type === 'resize')).toBe(true);
-    await expect.element(view).toMatchScreenshot('attached');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('attached');
   });
 
   it('shows a socket that cannot attach as closed, with a way to try again', async () => {
-    const { harness, element } = await render();
+    const { opened, element } = await render();
     // Every attempt closes before it opens; the waits are the socket's own.
     for (let attempt = 0; attempt < 6; attempt++) {
       await expect.poll(() => sockets.length, { timeout: 15_000 }).toBe(attempt + 1);
       sockets[attempt].serverClose(1006);
     }
-    await answered(harness);
+    await opened.settled();
     const view = page.elementLocator(element);
     await expect.element(statusLine(element)).toMatchTextContent('Closed: could not attach.');
     await expect.element(view.getByRole('button', { name: 'Try to attach again' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('lost');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('lost');
   }, 30_000);
 });

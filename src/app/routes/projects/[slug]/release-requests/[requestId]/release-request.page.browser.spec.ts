@@ -1,20 +1,15 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
-import { client as ciClient } from '../../../../../api/ci/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
-import { ReleaseRequestPage } from './release-request.page';
+import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
+import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of one release request's page. The open project is the recorded one ("a project
- * exists"); the page reads the one request through it (getProjectReleaseRequest), by the
- * reference its URL names, and every read after it by the repository that answer names.
+ * Screenshots of one release request's page inside the shell (`openRoute`). The open project is the
+ * recorded one ("a project exists"); the page reads the one request through it
+ * (getProjectReleaseRequest), by the reference its URL names, and every read after it by the
+ * repository that answer names.
  *
  * The specs about the read itself (loading, failure, Retry) answer it with qits-projects' own
  * recording of it ({@link EVERY_STATE}). qits-projects records that read in that one state only,
@@ -40,30 +35,15 @@ const CI_RUNS = 'a repository with the runs of a release request';
 /** The page's clock: two hours after the recordings' instants, so "2 hours ago" stays put. */
 const NOW = new Date('2026-01-01T02:00:00Z');
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('ReleaseRequestPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([
-          {
-            path: 'projects/:slug/release-requests/:requestId',
-            component: ReleaseRequestPage,
-          },
-        ]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(ciClient),
-        // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
-        {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
-        },
+        provideAppRoute(),
+        // Where the head's active-run chips link to: a chip with no qits-ci page is no link.
+        provideTestPlatformOrigins({}, { ci: 'https://ci.test' }),
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -90,14 +70,14 @@ describe('ReleaseRequestPage (screenshots)', () => {
    * released, what it published. qits-ci's runs answer with its recording when `ciRuns` is set,
    * else with an error, as its reports always do.
    */
-  async function shown(state: string, tab?: string, width = 900, ciRuns = false) {
+  async function shown(state: string, tab?: string, width = 1140, ciRuns = false) {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
     // The project's answer, from the state's own recording of the request (see above).
     const recorded = await goldenMaster(state, 'getReleaseRequest');
     const { id, repoId } = recorded.request;
-    const { fixture, element, read } = await render(id, width, tab);
+    const { opened, read } = await render(id, width, tab);
     read.flush(recorded);
-    await answered(fixture);
+    await opened.settled();
     const base = `/projects/api/repositories/${repoId}/release-requests/${id}`;
     // A request whose fold carries approval requirements has the page read what the viewer may
     // approve (epic qits-1038); the state records that read beside the request.
@@ -119,84 +99,72 @@ describe('ReleaseRequestPage (screenshots)', () => {
         .expectOne(`${base}/artifacts`)
         .flush(await goldenMaster(state, 'getReleaseRequestArtifacts'));
     }
-    await answered(fixture);
+    await opened.settled();
     // The runs, then the reports of the runs the request names, each asked once the one before
     // has answered.
     if (ciRuns) {
       http
         .expectOne((r) => /^\/ci\/api\/runs(\?|$)/.test(r.url))
         .flush(await goldenMaster(CI_RUNS, 'listRuns', 'qits-ci'));
-      await answered(fixture);
+      await opened.settled();
     }
     for (let round = 0; round < 3; round++) {
       failCi();
-      await answered(fixture);
+      await opened.settled();
     }
     // Tall enough for the whole page, so the screenshot holds all of it.
     await page.viewport(width, 2400);
-    return { fixture, element, view: page.elementLocator(element) };
-  }
-
-  async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
-    await settle();
-    await fixture.whenStable();
-    fixture.detectChanges();
-    await settle();
+    return { opened, element: opened.page, view: page.elementLocator(opened.page) };
   }
 
   /**
-   * The page for `ref` (a uuid or a logical id), with the project's repositories answered; `read`
-   * is its read of the request, still open.
+   * The page for `ref` (a uuid or a logical id) inside the shell, `width` wide (the page's 900px
+   * plus the sidebar), with the project's repositories answered; `read` is its read of the
+   * request, still open.
    */
-  async function render(ref: string, width = 900, tab?: string) {
+  async function render(ref: string, width = 1140, tab?: string) {
     await page.viewport(width, 700);
-    const projects = await goldenMaster('a project exists', 'listProjects');
-    const project = projects.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(
-      `/projects/${project.slug}/release-requests/${encodeURIComponent(ref)}` +
+    const opened = await openRoute(
+      (project) =>
+        `/projects/${project.slug}/release-requests/${encodeURIComponent(ref)}` +
         (tab ? `?tab=${tab}` : ''),
     );
-    await settle();
-    http.expectOne('/projects/api/projects').flush(projects);
-    await navigated;
-    await answered(harness.fixture);
     http
-      .expectOne(`/projects/api/projects/${project.id}/repositories`)
+      .expectOne(`/projects/api/projects/${opened.project.id}/repositories`)
       .flush(await goldenMaster('a project with 3 repositories', 'listProjectRepositories'));
-    await answered(harness.fixture);
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = `${width}px`;
-    const read = http.expectOne(`/projects/api/projects/${project.id}/release-requests/${ref}`);
-    return { fixture: harness.fixture, element, read };
+    await opened.settled();
+    const read = http.expectOne(
+      `/projects/api/projects/${opened.project.id}/release-requests/${ref}`,
+    );
+    return { opened, element: opened.page, read };
   }
 
   it('marks the request as loading, then says it could not be read, with Retry', async () => {
     const recorded = await goldenMaster(EVERY_STATE, 'getProjectReleaseRequest');
-    const { fixture, element, read } = await render(recorded.request.qualifiedId);
+    const { opened, element, read } = await render(recorded.request.qualifiedId);
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('loading');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
     read.flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(fixture);
+    await opened.settled();
     await expect
       .element(view.getByRole('alert'))
       .toMatchTextContent('This release request could not be read.');
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('error');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
   });
 
   it('reads the request again on Retry', async () => {
     const recorded = await goldenMaster(EVERY_STATE, 'getProjectReleaseRequest');
     const ref = recorded.request.qualifiedId;
-    const { fixture, element, read } = await render(ref);
+    const { opened, element, read } = await render(ref);
     read.flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(fixture);
+    await opened.settled();
     const view = page.elementLocator(element);
     await view.getByRole('button', { name: 'Retry' }).click();
-    await answered(fixture);
+    await opened.settled();
     http.expectOne((r) => r.url.endsWith(`/release-requests/${ref}`)).flush(recorded);
-    await answered(fixture);
+    await opened.settled();
     await expect
       .element(view.getByRole('heading', { level: 1 }))
       .toMatchTextContent('bump/contract-service');
@@ -206,19 +174,19 @@ describe('ReleaseRequestPage (screenshots)', () => {
       for (const call of http.match(() => true)) {
         call.flush(null, { status: 500, statusText: 'Server Error' });
       }
-      await answered(fixture);
+      await opened.settled();
     }
   });
 
   it('says so when the project has no such request', async () => {
-    const { fixture, element, read } = await render('no-such-request');
+    const { opened, element, read } = await render('no-such-request');
     read.flush(null, { status: 404, statusText: 'Not Found' });
-    await answered(fixture);
+    await opened.settled();
     const view = page.elementLocator(element);
     await expect
       .element(view)
       .toMatchTextContent('This project has no release request no-such-request.');
-    await expect.element(view).toMatchScreenshot('not-found');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('not-found');
   });
 
   it('draws a refolded request’s fold as a branch graph under its sources', async () => {
@@ -231,7 +199,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   });
 
   it('shows a pending request: head, facts and its lifecycle', async () => {
-    const { view } = await shown('a release request awaiting approval');
+    const { opened, view } = await shown('a release request awaiting approval');
     // The head names what the request carries (qits-1673): its items where the recording has
     // them, else its sources; `bump/contract-service` is among both. Who asked is its
     // participants, which a recording before qits-projects 2026.1028.230057 does not hold.
@@ -239,7 +207,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
       .element(view.getByRole('heading', { level: 1 }))
       .toMatchTextContent('bump/contract-service');
     await expect.element(view).toMatchTextContent(/asked by /);
-    await expect.element(view).toMatchScreenshot('pending');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('pending');
   });
 
   it('offers Approve and Decline while a person must approve', async () => {
@@ -257,7 +225,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
   });
 
   it('reads and counts the runs once the CI runs tab opens', async () => {
-    const { view } = await shown('a release request awaiting approval', 'runs', 900, true);
+    const { view } = await shown('a release request awaiting approval', 'runs', 1140, true);
     const tabs = view.getByRole('navigation', { name: 'Release request views' });
     // The request names its QA run, its CI verdicts and its two automations' runs; qits-ci's list
     // tells what its QA run is (the recorded release run, still running).
@@ -271,16 +239,16 @@ describe('ReleaseRequestPage (screenshots)', () => {
   });
 
   it('shows a released request with its version and what it published', async () => {
-    const { view } = await shown('a released release request');
+    const { opened, view } = await shown('a released release request');
     await expect.element(view).toMatchTextContent('2026.101.100500');
     await expect.element(view.getByRole('heading', { name: 'What it published' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('released');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('released');
   });
 
   it('shows the paths a conflicted request could not fold', async () => {
     const recorded = await goldenMaster('a conflicted release request', 'getReleaseRequest');
-    const { view } = await shown('a conflicted release request');
+    const { opened, view } = await shown('a conflicted release request');
     await expect.element(view).toMatchTextContent(recorded.request.conflict.conflicts[0].path);
-    await expect.element(view).toMatchScreenshot('conflicted');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('conflicted');
   });
 });

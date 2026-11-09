@@ -1,22 +1,20 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
-import { ProjectAgentsPage } from './project-agents.page';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
+import {
+  openRoute,
+  provideAppRoute,
+  type FrameReads,
+} from '../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of a project's Agents page. Its ACTIVE agents (the "Active agents" heading) are
- * qits-workspaces' "a project with agents needing attention": the bug ticket's agent waits on a
- * release request that is already FINALIZED, the epic's agent is blocked with no `@desk` answer,
- * the PDF ticket's agent is idle. The project is qits-projects' recorded one ("a project exists",
- * slug `contract-00000001`), which the state's entity ids name (the two providers' frozen ids are
+ * Screenshots of a project's Agents page inside the shell (`openRoute`). Its ACTIVE agents (the
+ * "Active agents" heading, the same read as the shell's agents menu) are qits-workspaces' "a
+ * project with agents needing attention": the bug ticket's agent waits on a release request that
+ * is already FINALIZED, the epic's agent is blocked with no `@desk` answer, the PDF ticket's agent
+ * is idle. The project is qits-projects' recorded one ("a project exists", slug
+ * `contract-00000001`), which the state's entity ids name (the two providers' frozen ids are
  * unrelated). The "Workspaces" heading stays on the older recording, "a project with workspace
  * slots hosting agents" (its wrapper the one "a project with repositories in components" names):
  * one slot on runner `localhost`, hosting the bug ticket's and the epic's agents, the improvement
@@ -31,27 +29,12 @@ const WORKSPACES = 'a project with workspace slots hosting agents';
 const REPOSITORIES = 'a project with repositories in components';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('ProjectAgentsPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
-    TestBed.configureTestingModule({
-      providers: [
-        provideRouter([{ path: 'projects/:slug/agents', component: ProjectAgentsPage }]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(workspacesClient),
-        {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
-        },
-      ],
-    });
+    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -61,39 +44,20 @@ describe('ProjectAgentsPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  async function render() {
-    await page.viewport(900, 900);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/agents`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    TestBed.tick();
-    await settle();
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
-    return { harness, element, project };
+  /** The page of the recorded project, its ACTIVE agents answered as `agents` names. */
+  async function render(agents: FrameReads['agents'], height = 900) {
+    // As wide as the page was, plus the sidebar; tall enough for every row, as the shell shows
+    // only what is in the viewport.
+    await page.viewport(1140, height);
+    return openRoute((project) => `/projects/${project.slug}/agents`, { agents });
   }
 
-  async function answered(harness: RouterTestingHarness) {
-    await settle();
-    TestBed.tick();
-    await settle();
-    harness.fixture.detectChanges();
-  }
-
-  /** Answers the project's agents, the wrapper, then its slots and their agents. */
-  async function answerSlots(harness: RouterTestingHarness, projectId: string) {
-    // The project's agents are asked for once the selected project settles, not at render.
-    await answered(harness);
-    http
-      .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
-      .flush(await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces'));
+  /** Answers the wrapper, then its slots and their agents. */
+  async function answerSlots(opened: Awaited<ReturnType<typeof render>>) {
+    const projectId = opened.project.id;
     const repositories = await goldenMaster(REPOSITORIES, 'listProjectRepositories');
     http.expectOne(`/projects/api/projects/${projectId}/repositories`).flush(repositories);
-    await answered(harness);
+    await opened.settled();
     const wrapper = repositories.wrapper.repositoryId as string;
     http
       .expectOne(`/workspaces/api/workspaces?repositoryId=${wrapper}`)
@@ -101,18 +65,19 @@ describe('ProjectAgentsPage (screenshots)', () => {
     http
       .expectOne('/workspaces/api/agents')
       .flush(await goldenMaster(WORKSPACES, 'listAgents', 'qits-workspaces'));
-    await answered(harness);
+    await opened.settled();
     return wrapper;
   }
 
   it('lists the project’s agents, with what each waits on and needs a person, and its slots', async () => {
-    const { harness, element, project } = await render();
-    await answerSlots(harness, project.id);
+    const opened = await render(NEEDING_ATTENTION, 1200);
+    const { project } = opened;
+    await answerSlots(opened);
     const agents = await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces');
     const agentId = agents.agents.find(
       (a: { entityId?: string }) => a.entityId === 'contract-00000001-9',
     ).agentId;
-    const view = page.elementLocator(element);
+    const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('heading', { name: 'Active agents' })).toBeVisible();
     await expect.element(view.getByRole('heading', { name: 'Workspaces' })).toBeVisible();
     await expect
@@ -129,22 +94,24 @@ describe('ProjectAgentsPage (screenshots)', () => {
       .element(view.getByRole('link', { name: /ws-contract/ }))
       .toHaveAttribute('href', `/projects/${project.slug}/workspaces/1`);
     await expect.element(view).toMatchTextContent('placed on a runner');
-    await expect.element(view).toMatchScreenshot('slots-and-agents');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('slots-and-agents');
   });
 
   it('marks the page as loading, then as failed to load', async () => {
-    const { harness, element, project } = await render();
-    const view = page.elementLocator(element);
+    const opened = await render('unanswered');
+    const { project } = opened;
+    const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' }).first()).toBeVisible();
-    await expect.element(view).toMatchScreenshot('loading');
-    http
-      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      .flush(null, { status: 500, statusText: 'Server Error' });
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    // The page's read and the shell's agents menu's: both fail.
+    for (const read of http.match(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)) {
+      read.flush(null, { status: 500, statusText: 'Server Error' });
+    }
     http
       .expectOne(`/projects/api/projects/${project.id}/repositories`)
       .flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(harness);
+    await opened.settled();
     await expect.element(view.getByRole('img', { name: 'Failed to load' }).first()).toBeVisible();
-    await expect.element(view).toMatchScreenshot('error');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
   });
 });
