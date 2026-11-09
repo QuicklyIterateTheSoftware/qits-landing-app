@@ -40,10 +40,10 @@ describe('ArchetypesStore', () => {
   it('keeps each archetype’s moves in the served order, and its phases', async () => {
     const store = await loaded();
     expect(store.status()).toBe('loaded');
-    // A ticket tagged condition closes straight to DONE (qits-1972).
     expect(store.of('TICKET')?.transitions?.['REFINED']).toEqual([
       { to: 'READY_FOR_DEV', kind: 'FORWARD', gates: ['ACCEPTANCE_CRITERIA', 'PERSON_APPROVAL'] },
       { to: 'REPORTED', kind: 'BACK' },
+      // A ticket tagged condition closes straight to DONE (qits-1972).
       { to: 'DONE', kind: 'CLOSE', gates: ['CONDITION_MET'] },
       { to: 'DROPPED', kind: 'DROP' },
     ]);
