@@ -31,6 +31,15 @@
 # `pacts/*_<provider>.json` into that provider's maven jar (at `pacts/<file>` on the classpath),
 # named eu.wohlben.qits:qits-landing-app-pacts-<provider>, and publishes it only when those files
 # changed. So a change to one pact does not republish, and bump, the other provider's jar.
+#
+# THE ROUTES (qits-1948): `routes:` names the freezes the screenshot specs write (qits-1947) — every
+# shot's frozen HTML, its assets and `manifest.json` — and the release publishes that tree as the
+# docs site `@routes/qits-landing`, beside `@contracts/qits-landing`. It is under `contracts:`
+# because the site is named by the same application and because the freezes record which provider
+# states each route was shown in. It is not an `artifacts:` entry: the release step publishes it with
+# `--if-changed`, so a release whose freezes are unchanged publishes no version, and an announcement
+# row could not say "nothing this time". QA never publishes it: the freezes are committed and
+# checked as screenshot-baselines, so the tree at the tag is the verified one.
 archetype: app
 
 artifacts:
@@ -38,6 +47,7 @@ artifacts:
 
 contracts:
   application: qits-landing
+  routes: { from: src/testing/browser/freezes }
   pacts:
     qits-projects-service: { packages: [maven] }
     qits-githost-service: { packages: [maven] }
