@@ -3177,6 +3177,104 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the domain entities the route touches, with their verbs",
+      "name": "entities",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entity-view.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > marks the entities no route shows, and lists a picked entity’s routes",
+      "name": "entity-view",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/error.html",
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > marks the page as failed when the docs store cannot be read",
@@ -6517,6 +6615,8 @@
       "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/tree.html"
     ],
     "projects/:slug/repositories/:repo/ui-builder": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entity-view.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/error.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/loaded.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/no-states.html",

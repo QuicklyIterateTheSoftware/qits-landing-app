@@ -362,6 +362,24 @@
   "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
       "state": "a published docs site",
       "operationId": "listDocsSites",
       "route": "projects/:slug/repositories/:repo/ui-builder"
