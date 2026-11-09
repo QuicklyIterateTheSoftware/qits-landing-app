@@ -85,6 +85,27 @@ export function isRecorded(state: string, operationId: string): boolean {
 }
 
 /**
+ * Whether the installed `@qits/artifacts-golden-masters` records `operationId` in `state`, as
+ * {@link isRecorded} does for qits-projects: a case recorded from a later release than the pinned
+ * one skips itself until qits-maintenance bumps the pin.
+ */
+export function isArtifactsRecorded(state: string, operationId: string): boolean {
+  try {
+    artifactsGoldenMasters.operation(state, operationId);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The state that records an entity map (qits-1950): `@contracts/qits-projects`, whose newest
+ * version names `qits-projects-service`, with an `entities.json` beside the routes bundle, from
+ * `@qits/artifacts-golden-masters` after qits-1950's qits-artifacts release.
+ */
+export const ENTITY_MAP_STATE = 'a published contracts bundle with an entity map';
+
+/**
  * The state that records needs (epic qits-1899): a READY_FOR_DEV ticket needing another ticket at
  * VERIFIED (not met: it is REFINED), and a task needing a task of another feature at IMPLEMENTED
  * (met). Recorded by qits-projects from 2026.1106.140436 on.
