@@ -10,6 +10,8 @@
  *   (`guardGoldenMasters`).
  * - After each spec file, the routes the guard saw its recorded answers shown on go to the route
  *   ledger, `src/testing/browser/routes.json`, which the pact specs read (`qits-trigger.route`).
+ *   The Node side rewrites a spec's section at the end of the run, and only when every test in the
+ *   file ran and passed (ticket qits-1966).
  * - Every passing screenshot is also frozen as HTML (`freezeScreenshots`, ticket qits-1947): the
  *   element with its CSS, the route it was on and the recorded answers its test showed, written to
  *   `src/testing/browser/freezes/` with the app's route tree in its `manifest.json`.
@@ -101,7 +103,8 @@ afterEach(() => {
 });
 
 // The routes this spec file showed its recorded answers on (the guard notes them), to the route
-// ledger: the Node side rewrites this file's section of `src/testing/browser/routes.json`.
+// ledger: the Node side stages them, and rewrites this file's section of
+// `src/testing/browser/routes.json` at the end of the run if the file ran completely.
 afterAll(async () => {
   await commands.goldenMasterRoutes(takeRouteRecords());
 });

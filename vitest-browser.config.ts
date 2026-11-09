@@ -4,7 +4,11 @@ import type { Plugin } from 'vite';
 import type { BrowserCommand } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
 import { screenshotReferences } from '@qits/angular/screenshots';
-import { goldenMasterRoutes, pactedGoldenMasters } from '@qits/angular/testing';
+import {
+  goldenMasterRoutes,
+  pactedGoldenMasters,
+  type RouteLedgerCommand,
+} from '@qits/angular/testing';
 import {
   ciGoldenMasters,
   eventsGoldenMasters,
@@ -59,7 +63,10 @@ const goldenMaster: BrowserCommand<
 /**
  * `goldenMasterRoutes`: keeps the route ledger, `src/testing/browser/routes.json` (ticket qits-1946).
  * After each spec file, `setup.ts` sends what the golden-master guard noted, which recorded answer
- * the spec showed on which route, and this rewrites that spec's section. The pact specs read the
+ * the spec showed on which route. The command only stages it: at the end of the run, the ledger's
+ * reporter (added by `ledger.plugin`, below) rewrites the section of each spec file that ran
+ * completely, so a failed, skipped or filtered file keeps its section (ticket qits-1966). The pact
+ * specs read the
  * ledger (`src/testing/golden-masters.ts`), so every interaction names the routes it happens on
  * (`qits-trigger.route`). The root is this file's directory, so the sections are keyed by the spec's
  * path in this repository (`src/app/routes/…`) whatever directory the run starts in.
@@ -73,7 +80,7 @@ const ledger = goldenMasterRoutes(
   fileURLToPath(new URL('.', import.meta.url)),
 );
 const PAGE_SPEC = /\.page\.browser\.spec\.ts$/;
-const routes: typeof ledger = (context, records) =>
+const routes: RouteLedgerCommand = (context, records) =>
   ledger(context, PAGE_SPEC.test(context.testPath ?? '') ? records : []);
 
 /**
@@ -245,7 +252,8 @@ export default defineConfig({
   // `qits-angular screenshots --check` (after the run, in `test:browser`) finds the ones no test uses.
   // `freezes`: writes every passing screenshot as HTML to src/testing/browser/freezes/ (qits-1947),
   // naming the route only for the page specs (`*.page.browser.spec.ts`), as the route ledger does.
-  plugins: [chromiumFlags, screenshotReferences({ freezes: true })],
+  // ledger.plugin: writes the route ledger at the end of the run (see `goldenMasterRoutes` above).
+  plugins: [chromiumFlags, screenshotReferences({ freezes: true }), ledger.plugin],
   test: {
     // Vitest 5 moved the default to .vitest/attachments; keep the ignored path the docs name.
     attachmentsDir: '.vitest-attachments',
