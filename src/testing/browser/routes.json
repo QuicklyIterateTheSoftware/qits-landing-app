@@ -1080,5 +1080,43 @@
       "operationId": "listWorkspaceAgents",
       "route": "projects/:slug/workspaces/:slotId"
     }
+  ],
+  "src/app/routes/projects/project-picker.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with one repository",
+      "operationId": "listProjectRepositories",
+      "route": "projects"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "no projects exist",
+      "operationId": "listProjects",
+      "route": "projects"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectWork",
+      "route": "projects"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjects",
+      "route": "projects"
+    }
   ]
 }

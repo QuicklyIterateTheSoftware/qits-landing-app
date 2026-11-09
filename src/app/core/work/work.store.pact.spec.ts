@@ -342,6 +342,14 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     });
   });
 
+  it('show-project-work: the work of the first of two projects', () =>
+    given('show-project-work', 'two projects exist').executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const projectId = projectOf('two projects exist');
+      await store.load(projectId);
+      expect(store.byProject()[projectId]?.status).toBe('loaded');
+    }));
+
   it('show-project-work: a project with no work counts zero', () =>
     given('show-project-work', 'a project with no work').executeTest(async (server) => {
       const store = storeAt(server.url);

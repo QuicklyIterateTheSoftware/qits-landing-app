@@ -108,6 +108,22 @@ describe('qits-landing-app → qits-projects-service pact: repositories', () => 
       expect(loaded?.entries.length).toBe(recorded.entries.length);
     }));
 
+  it.each(['two projects exist', 'a project with one repository'])(
+    'show-project-repositories: the store loads the repositories for a card in %s',
+    (state) =>
+      given('show-project-repositories', state, PROJECT_CARD_REPOSITORIES).executeTest(
+        async (server) => {
+          const store = storeAt(server.url);
+          const projectId = projectOf(state);
+          await store.load(projectId);
+          const loaded = store.byProject()[projectId];
+          expect(loaded?.status).toBe('loaded');
+          const recorded = masters.body(state, 'listProjectRepositories');
+          expect(loaded?.entries.length).toBe(recorded.entries.length);
+        },
+      ),
+  );
+
   it('show-project-repositories-tree: the store loads the repositories and the wrapper view', () =>
     given(
       'show-project-repositories-tree',

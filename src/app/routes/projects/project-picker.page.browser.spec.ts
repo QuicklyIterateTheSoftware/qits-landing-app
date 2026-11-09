@@ -35,55 +35,44 @@ describe('ProjectPickerPage (screenshots)', () => {
     await opened.settled();
   });
 
-  // Skipped: no recorded state holds this list, and the guard refuses a hand-made one. qits-projects'
-  // states "two projects exist" and "no projects exist" (release request e9451cf1) replace it.
-  it.skip('shows one card per project', async () => {
+  it('shows one card per project', async () => {
     const { opened, list } = await render();
-    // qits-projects' recorded list, plus a second project derived from its one project (another
-    // id, name and slug), so the grid shows two cards. No recording holds two projects.
-    const recorded = await goldenMaster('a project exists', 'listProjects');
-    const project = recorded.entries[0].project;
-    const other = {
-      ...project,
-      id: '00000000-0000-4000-8000-0000000000ff',
-      name: 'Other',
-      slug: 'other',
-    };
-    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
-    list.flush({ ...recorded, entries: [...recorded.entries, { project: other }] });
+    const recorded = await goldenMaster('two projects exist', 'listProjects');
+    list.flush(recorded);
     await opened.settled();
-    const repositories = await goldenMaster(
-      'a project with 3 repositories',
-      'listProjectRepositories',
+    const [first, second] = recorded.entries.map(
+      (entry: { project: { id: string } }) => entry.project.id,
     );
-    http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
+    // "two projects exist" records the first project's repositories and work; the second's come
+    // from the states that record a project with one repository and a project with no work.
     http
-      .expectOne(`/projects/api/projects/${other.id}/repositories`)
-      // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
-      .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
+      .expectOne(`/projects/api/projects/${first}/repositories`)
+      .flush(await goldenMaster('two projects exist', 'listProjectRepositories'));
     http
-      .expectOne(`/projects/api/projects/${project.id}/work`)
-      .flush(await goldenMaster('a project with refined work', 'listProjectWork'));
+      .expectOne(`/projects/api/projects/${second}/repositories`)
+      .flush(await goldenMaster('a project with one repository', 'listProjectRepositories'));
     http
-      .expectOne(`/projects/api/projects/${other.id}/work`)
+      .expectOne(`/projects/api/projects/${first}/work`)
+      .flush(await goldenMaster('two projects exist', 'listProjectWork'));
+    http
+      .expectOne(`/projects/api/projects/${second}/work`)
       .flush(await goldenMaster('a project with no work', 'listProjectWork'));
     // The cards stay collapsed, so no lines are requested.
     http.expectNone('/githost/api/loc');
     await opened.settled();
-    const picker = page.elementLocator(opened.page);
-    await expect.element(picker).toMatchTextContent('Work 3');
-    await expect.element(picker).toMatchTextContent('Components 1');
+    const cards = page.elementLocator(opened.page).getByRole('listitem');
+    await expect.element(cards.nth(0)).toMatchTextContent('qits');
+    await expect.element(cards.nth(0)).toMatchTextContent('Work 2');
+    await expect.element(cards.nth(0)).toMatchTextContent('Components 3');
+    await expect.element(cards.nth(1)).toMatchTextContent('telemetry');
+    await expect.element(cards.nth(1)).toMatchTextContent('Work 0');
+    await expect.element(cards.nth(1)).toMatchTextContent('Components 2');
     await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
   });
 
-  // Skipped: no recorded state holds this list, and the guard refuses a hand-made one. qits-projects'
-  // states "two projects exist" and "no projects exist" (release request e9451cf1) replace it.
-  it.skip('says so when there are no projects', async () => {
+  it('says so when there are no projects', async () => {
     const { opened, list } = await render();
-    // qits-projects' recorded list with its one entry removed. No recording is empty.
-    const recorded = await goldenMaster('a project exists', 'listProjects');
-    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
-    list.flush({ ...recorded, entries: [] });
+    list.flush(await goldenMaster('no projects exist', 'listProjects'));
     await opened.settled();
     const picker = page.elementLocator(opened.page);
     await expect.element(picker).toMatchTextContent('There are no projects yet.');
