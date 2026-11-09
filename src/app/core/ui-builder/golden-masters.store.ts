@@ -88,7 +88,21 @@ export async function goldenCall(
   };
 }
 
-/** The recorded response of one operation in one state, as published; null when unreadable. */
+/**
+ * A recorded file's path as the index gives it, when it is plain relative segments: letters,
+ * digits, `.`, `_` and `-`, no `.` or `..` segment, no leading `/`, no backslash or `%`. The docs
+ * path keeps `/` literal on the wire, so a `..` in an index would otherwise reach another path of
+ * the store with the person's bearer.
+ */
+export function safeRecordedFile(file: string): boolean {
+  return /^[A-Za-z0-9._-]+(\/[A-Za-z0-9._-]+)*$/.test(file) && !/(^|\/)\.\.?(\/|$)/.test(file);
+}
+
+/**
+ * The recorded response of one operation in one state, as published; null when unreadable, or
+ * when the index names a file outside its own tree (`safeRecordedFile`), which is then not read.
+ */
 export function goldenResponse(site: ContractsSite, operation: GoldenOperation): Promise<unknown> {
+  if (!safeRecordedFile(operation.file)) return Promise.resolve(null);
   return cached(site, `golden-masters/${operation.file}`);
 }
