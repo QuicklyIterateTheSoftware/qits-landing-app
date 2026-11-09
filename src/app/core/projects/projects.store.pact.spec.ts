@@ -236,6 +236,28 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       },
     ));
 
+  it('list-projects: the store loads a list of two projects', () =>
+    given('list-projects', 'two projects exist', 'listProjects', LIST_PROJECTS).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        await store.load();
+        // The pact binds the entries by type, so the mock answers with the first recorded one.
+        const recorded = masters.body('two projects exist', 'listProjects').entries[0].project;
+        expect(store.status()).toBe('loaded');
+        expect(store.ids()).toContain(recorded.id);
+      },
+    ));
+
+  it('list-projects: the store loads an empty list', () =>
+    given('list-projects', 'no projects exist', 'listProjects', LIST_PROJECTS).executeTest(
+      async (server) => {
+        const store = storeAt(server.url);
+        await store.load();
+        expect(store.status()).toBe('loaded');
+        expect(store.ids()).toEqual([]);
+      },
+    ));
+
   it('open-project: the store fetches a project it does not hold', () =>
     given('open-project', 'a project exists', 'getProject', GET_PROJECT).executeTest(
       async (server) => {

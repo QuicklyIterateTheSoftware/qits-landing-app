@@ -6080,19 +6080,67 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/empty.html",
+      "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
+      "test": "ProjectPickerPage (screenshots) > says so when there are no projects",
+      "name": "empty",
+      "route": "projects",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "no projects exist",
+          "operationId": "listProjects"
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/error.html",
       "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
       "test": "ProjectPickerPage (screenshots) > marks the list as failed to load when the projects could not be loaded",
       "name": "error",
-      "route": null,
+      "route": "projects",
       "records": []
+    },
+    {
+      "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/loaded.html",
+      "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
+      "test": "ProjectPickerPage (screenshots) > shows one card per project",
+      "name": "loaded",
+      "route": "projects",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with one repository",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjects"
+        }
+      ]
     },
     {
       "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/loading.html",
       "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
       "test": "ProjectPickerPage (screenshots) > shows that the projects are loading",
       "name": "loading",
-      "route": null,
+      "route": "projects",
       "records": []
     },
     {
@@ -6545,6 +6593,12 @@
     }
   ],
   "byRoute": {
+    "projects": [
+      "src/app/routes/projects/project-picker.page.browser.spec.ts/empty.html",
+      "src/app/routes/projects/project-picker.page.browser.spec.ts/error.html",
+      "src/app/routes/projects/project-picker.page.browser.spec.ts/loaded.html",
+      "src/app/routes/projects/project-picker.page.browser.spec.ts/loading.html"
+    ],
     "projects/:slug": [
       "src/app/routes/projects/[slug]/project.page.browser.spec.ts/error.html",
       "src/app/routes/projects/[slug]/project.page.browser.spec.ts/loaded.html",
