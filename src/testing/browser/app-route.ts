@@ -12,8 +12,9 @@
  * `openRoute(url, reads)` navigates there and answers the frame's own reads from golden masters
  * (`FrameReads`), and nothing else: a page spec answers only its page's reads. Where a page reads
  * the same thing as the frame (the project list, the project's release requests, its ACTIVE agents,
- * the open workspaces), the browser makes one request, which the helper answers in the state the
- * spec names, or leaves to the spec (`'unanswered'`). The shell is shown in one settled state: the
+ * the open workspaces), the helper answers every request for that URL (the page's and the frame's
+ * may be two) in the state the spec names, or leaves them all to the spec (`'unanswered'`, which
+ * then answers each, `http.match`). The shell is shown in one settled state: the
  * viewport the spec sets, its menus closed. Its own states are `shell.layout.browser.spec.ts`'s.
  */
 import { EnvironmentProviders, Provider, reflectComponentType, Type } from '@angular/core';

@@ -575,9 +575,10 @@ step image that has Chromium, so a changed pixel fails the release request.
   which navigates to the page's URL and answers the frame's reads from golden masters by URL: the
   project list (`'a project exists'`), the open project's release requests (`'a project with no
 release requests'`), its ACTIVE agents (refused with 403: the agents menu shows its icon alone)
-  and the open workspaces (`WorkLayout`). A page that reads one of them too gets the same one
-  request: `reads` names the state to answer it in, or `'unanswered'` leaves it to the spec, which
-  calls `settled()` after answering it so the reads that follow it are answered too. The spec
+  and the open workspaces (`WorkLayout`). A page that reads one of them too gets the same
+  answer as the frame (the page's request and the frame's may be two; the helper answers every one
+  for that URL): `reads` names the state, or `'unanswered'` leaves them all to the spec, which
+  answers each (`http.match`) and calls `settled()` after so the reads that follow it are answered too. The spec
   answers only its page's own reads. It screenshots `frame` (the shell's host) and scopes its
   assertions to `page` (the routed page). The shell is shown in one settled state, menus closed;
   its own states (wide, narrow, the burger, each menu) are `shell.layout.browser.spec.ts`'s, the
