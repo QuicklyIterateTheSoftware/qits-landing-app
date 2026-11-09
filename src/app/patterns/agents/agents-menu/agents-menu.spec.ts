@@ -214,6 +214,88 @@ describe('AgentsMenu', () => {
     });
   });
 
+  it('shows where an agent coming up stands, and for how long (qits-2007)', () => {
+    const since = '2026-01-01T00:00:00Z';
+    const now = Date.parse('2026-01-01T00:07:42Z');
+    const waits = [{ id: 'w' }];
+    expect(activityChip({ phase: 'QUEUED', phaseSince: since }, now)).toEqual({
+      label: 'Queued: waiting for a slot · 7 min',
+      tone: 'waiting',
+    });
+    expect(activityChip({ phase: 'PROVISIONING', phaseSince: since }, now)).toEqual({
+      label: 'Starting: provisioning workspace · 7 min',
+      tone: 'waiting',
+    });
+    expect(activityChip({ phase: 'STARTING', phaseSince: since }, now)).toEqual({
+      label: 'Starting: launching session · 7 min',
+      tone: 'waiting',
+    });
+    // Before BUSY, waits and a finished item; after an ended session.
+    expect(
+      activityChip(
+        { phase: 'STARTING', phaseSince: since, activity: 'BUSY', entityStatus: 'DONE', waits },
+        now,
+      ).label,
+    ).toBe('Starting: launching session · 7 min');
+    expect(activityChip({ phase: 'QUEUED', phaseSince: since, activity: 'ENDED' }, now)).toEqual({
+      label: 'Ended',
+      tone: 'neutral',
+    });
+    // Under a minute, and with no instant (or an unparseable one): no count.
+    expect(activityChip({ phase: 'QUEUED', phaseSince: '2026-01-01T00:07:10Z' }, now).label).toBe(
+      'Queued: waiting for a slot · <1 min',
+    );
+    expect(activityChip({ phase: 'QUEUED', phaseSince: null }, now).label).toBe(
+      'Queued: waiting for a slot',
+    );
+    expect(activityChip({ phase: 'PROVISIONING', phaseSince: 'soon' }, now).label).toBe(
+      'Starting: provisioning workspace',
+    );
+  });
+
+  it('keeps a READY agent’s chip, with Idle only once it is idle (qits-2007)', () => {
+    const since = '2026-01-01T00:00:00Z';
+    const now = Date.parse('2026-01-01T00:07:00Z');
+    const ready = { phase: 'READY', phaseSince: since };
+    expect(activityChip({ ...ready, activity: 'BUSY' }, now)).toEqual({
+      label: 'Working',
+      tone: 'ok',
+    });
+    expect(activityChip({ ...ready, activity: 'IDLE', waits: [{ id: 'w' }] }, now).label).toBe(
+      'Waiting',
+    );
+    expect(activityChip({ ...ready, activity: 'IDLE', entityStatus: 'DONE' }, now).label).toBe(
+      'Done',
+    );
+    expect(activityChip({ ...ready, activity: 'IDLE' }, now)).toEqual({
+      label: 'Idle',
+      tone: 'neutral',
+    });
+    expect(
+      activityChip({ ...ready, activity: 'IDLE', waitingSince: '2026-01-01T00:05:00' }, now).label,
+    ).toBe('Idle since 00:05');
+    // WAITING (the harness blocked on its user) reads as idle, as it did before phases.
+    expect(activityChip({ ...ready, activity: 'WAITING' }, now).label).toBe('Idle');
+    // No activity yet: the session is still launching; READY's instant is not the launch's.
+    expect(activityChip({ ...ready, activity: null }, now)).toEqual({
+      label: 'Starting: launching session',
+      tone: 'waiting',
+    });
+    expect(activityChip({ ...ready, activity: null, entityStatus: 'VERIFIED' }, now).label).toBe(
+      'Done, awaiting acceptance',
+    );
+  });
+
+  it('keeps the old chip for an agent with no phase: yielded, stopped, an older service', () => {
+    expect(activityChip({ activity: null })).toEqual({ label: 'Idle', tone: 'neutral' });
+    expect(activityChip({ phase: null, activity: undefined, waitingSince: null })).toEqual({
+      label: 'Idle',
+      tone: 'neutral',
+    });
+    expect(activityChip({ phase: null, activity: 'BUSY' }).label).toBe('Working');
+    expect(activityChip({ phase: null, waits: [{ id: 'w' }] }).label).toBe('Waiting');
+  });
+
   it('gives each wait a line: a request with its state and lifecycle, a run, an item, comments, a label', async () => {
     const store = TestBed.inject(ProjectsStore);
     const loaded = store.loadReleaseRequests(recorded.id);

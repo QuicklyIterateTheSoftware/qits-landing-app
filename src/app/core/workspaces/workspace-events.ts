@@ -81,7 +81,8 @@ export const ACTIVE_AGENT_EVENTS = [
 /**
  * The events that can change a project's agents as `AgentsStore.loadProjectAgents` reads them
  * (epic qits-1681): their waits (opened, the subject moved, closed), their activity, their
- * attention, a nudge, and which agents are ACTIVE at all (`ACTIVE_AGENT_EVENTS`). The five status
+ * attention, a nudge, their start-up phase (qits-2007: the slot's container started, the agent's
+ * session launched), and which agents are ACTIVE at all (`ACTIVE_AGENT_EVENTS`). The five status
  * events name the `projectId`; the nudge and the lifecycle events name only the agent, its item, its
  * slot and its repository.
  */
@@ -92,6 +93,8 @@ export const AGENT_STATUS_EVENTS = [
   'AgentActivityChanged',
   'AgentAttentionChanged',
   'AgentNudged',
+  'AgentStarted',
+  'WorkspaceStarted',
   ...ACTIVE_AGENT_EVENTS,
 ] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
 

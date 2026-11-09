@@ -41,18 +41,58 @@ export function clockTime(iso: string | null | undefined): string {
   return `${pad(at.getHours())}:${pad(at.getMinutes())}`;
 }
 
-/** The activity chip: what the agent is doing, in a word or three, and its tone. */
-export function activityChip(agent: {
-  readonly activity?: string | null;
-  readonly entityStatus?: string | null;
-  readonly waitingSince?: string | null;
-  readonly waits?: readonly unknown[] | null;
-}): { readonly label: string; readonly tone: ChipTone } {
+/**
+ * Whole minutes from `since` to `now`, ` · N min` (` · <1 min` under one); empty for no instant or
+ * an unparseable one.
+ */
+function elapsed(since: string | null | undefined, now: number): string {
+  const at = since ? Date.parse(since) : NaN;
+  if (Number.isNaN(at)) return '';
+  const minutes = Math.floor((now - at) / 60_000);
+  return minutes < 1 ? ' · <1 min' : ` · ${minutes} min`;
+}
+
+/**
+ * The activity chip: what the agent is doing, in a word or three, and its tone.
+ *
+ * An ended session first. Then, while the agent comes up (qits-2007, `phase`), where its start
+ * stands and for how long (`phaseSince`, whole minutes to `now`): queued for a slot, its workspace
+ * provisioning, its session launching. Then a READY agent's (or one with no phase: yielded, stopped,
+ * or an older qits-workspaces): working, waiting on its waits, its item done. Last: idle, since
+ * when it went idle. A READY agent shows Idle only on an IDLE activity (or WAITING, the harness
+ * blocked on its user, which reads as idle here as it always did); with none yet it is still
+ * launching its session. An agent with no phase keeps the old fallback, Idle on any activity.
+ */
+export function activityChip(
+  agent: {
+    readonly activity?: string | null;
+    readonly entityStatus?: string | null;
+    readonly waitingSince?: string | null;
+    readonly waits?: readonly unknown[] | null;
+    readonly phase?: string | null;
+    readonly phaseSince?: string | null;
+  },
+  now = Date.now(),
+): { readonly label: string; readonly tone: ChipTone } {
   if (agent.activity === 'ENDED') return { label: 'Ended', tone: 'neutral' };
+  const phaseFor = elapsed(agent.phaseSince, now);
+  if (agent.phase === 'QUEUED') {
+    return { label: `Queued: waiting for a slot${phaseFor}`, tone: 'waiting' };
+  }
+  if (agent.phase === 'PROVISIONING') {
+    return { label: `Starting: provisioning workspace${phaseFor}`, tone: 'waiting' };
+  }
+  if (agent.phase === 'STARTING') {
+    return { label: `Starting: launching session${phaseFor}`, tone: 'waiting' };
+  }
   if (agent.activity === 'BUSY') return { label: 'Working', tone: 'ok' };
   if (agent.waits?.length) return { label: 'Waiting', tone: 'waiting' };
   const done = itemDoneLabel(agent.entityStatus);
   if (done) return { label: done.charAt(0).toUpperCase() + done.slice(1), tone: 'ok' };
+  // READY with no activity yet: the session is still coming up. `phaseSince` is when it turned
+  // READY, not when the launch began, so no minutes.
+  if (agent.phase && !agent.activity)
+    return { label: 'Starting: launching session', tone: 'waiting' };
   const since = clockTime(agent.waitingSince);
   return { label: since ? `Idle since ${since}` : 'Idle', tone: 'neutral' };
 }
@@ -105,8 +145,9 @@ interface AgentMenuRow {
  * The top bar's agents menu (epic qits-1681), beside the lightning menu: the open project's ACTIVE
  * agents (`AgentsStore.loadProjectAgents`), each with its item linked to the agent's page
  * (`agents/<agent id>`), an
- * activity chip (Working, Waiting, Done, awaiting acceptance / Done (qits-1776), Idle since HH:mm,
- * Ended), a line per open wait
+ * activity chip (Queued / Starting while it comes up, with the minutes in that phase (qits-2007),
+ * Working, Waiting, Done, awaiting acceptance / Done (qits-1776), Idle since HH:mm, Ended), a line
+ * per open wait
  * (`waitSubject`: a request with its state and lifecycle line, a run, an item, comments, or the
  * wait's label), "Blocked since HH:mm" when its item is blocked (the work list carries no block
  * reason), and, when it needs a person (`needsAttention`), the attention's reason in cinnabar with
@@ -117,10 +158,13 @@ interface AgentMenuRow {
  * counts the agents needing a person, in red; with none, the active agents, in amber; it is hidden
  * at none. The footer links "All agents" to the project's Agents page.
  *
- * The agents are read as soon as a project opens, and again on each opening. A wait's request comes
+ * The agents are read as soon as a project opens, and again on each opening. A start-up chip's
+ * minutes are counted when the agents are read (no timer: the lint rule keeps refresh timers in
+ * `core/events/`), so they move on the next read, an opening or a status event. A wait's request comes
  * from `ProjectsStore`'s release requests, which the lightning menu reads; an item's status from
  * the open project's work in `WorkStore`, when something has read it (else the wait's last known
- * state). Staleness (qits-1270): `AGENT_STATUS_EVENTS` about the open project → its agents
+ * state). Staleness (qits-1270): `AGENT_STATUS_EVENTS` about the open project (its start-up's
+ * `AgentStarted` and `WorkspaceStarted` among them, qits-2007) → its agents
  * (`AgentsStore.followProject`, debounced 1 s); a request's gates follow `RELEASE_REQUEST_EVENTS`
  * through the lightning menu's `ProjectsStore` reads, an item's status `WORK_EVENTS` wherever the
  * work is followed. Every link closes the panel.

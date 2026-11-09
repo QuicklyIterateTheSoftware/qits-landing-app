@@ -52,7 +52,7 @@ describe('workspace lifecycle events', () => {
     );
   });
 
-  it('names an agent’s status events, and the ACTIVE agents’ moves, as its status', () => {
+  it('names an agent’s status events, its start-up, and the ACTIVE agents’ moves, as its status', () => {
     const status = [
       'AgentWaitOpened',
       'AgentWaitChanged',
@@ -60,6 +60,9 @@ describe('workspace lifecycle events', () => {
       'AgentActivityChanged',
       'AgentAttentionChanged',
       'AgentNudged',
+      // qits-2007: the start-up phase moves on the slot's container starting and the session launching.
+      'AgentStarted',
+      'WorkspaceStarted',
     ];
     expect([...AGENT_STATUS_EVENTS]).toEqual([...status, ...ACTIVE_AGENT_EVENTS]);
     expect(status.every((name) => (WORKSPACE_EVENTS as readonly string[]).includes(name))).toBe(
