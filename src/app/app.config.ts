@@ -12,6 +12,7 @@ import {
   provideQitsIntegration,
   qitsBearerInterceptor,
 } from '@qits/angular';
+import { client as artifactsClient } from './api/artifacts/client.gen';
 import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
@@ -25,13 +26,15 @@ import { routes } from './app.routes';
 import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
 import { provideAppUpdates } from '$core/updates/app-updates';
 import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
+import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { provideWorkReferences } from '$core/work/work-briefs.store';
 import { environment } from '../environments/environment';
 
 /**
  * Each generated client and the backend it calls. The workspace daemon is reached through
  * qits-workspaces' container proxy, so it calls qits-workspaces' origin; its store gives each call
- * the container's base (`/workspaces/container/<slot row id>`).
+ * the container's base (`/workspaces/container/<slot row id>`). qits-artifacts answers on the
+ * `registry` host (`HOST_LABELS`).
  */
 const CLIENTS = [
   [projectsClient, 'projects'],
@@ -42,6 +45,7 @@ const CLIENTS = [
   [workspaceDaemonClient, 'workspaces'],
   [ciClient, 'ci'],
   [systemClient, 'system'],
+  [artifactsClient, 'artifacts'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -53,6 +57,11 @@ function provideBackendOrigins() {
   return provideEnvironmentInitializer(() => {
     const origins = inject(PlatformOrigins);
     for (const [client, app] of CLIENTS) client.setConfig({ baseUrl: origins.api(app) });
+    // The docs store reads `site` and `path` with `/` and `@` literal, which the generated client
+    // encodes (qits-1951, `docs-paths.ts`).
+    if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
+      artifactsClient.interceptors.request.use(literalDocsPaths);
+    }
   });
 }
 
@@ -85,6 +94,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(workspaceDaemonClient),
     provideHeyApiClient(ciClient),
     provideHeyApiClient(systemClient),
+    provideHeyApiClient(artifactsClient),
     provideBackendOrigins(),
     // Work ids in commit subjects (`<qits-commit-message>`, qits-1897): their briefs through the
     // projects client above (`provideQitsWorkBriefs`), their links to this app's work item page.

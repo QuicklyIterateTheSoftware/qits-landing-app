@@ -11,6 +11,7 @@ const REPOSITORY = {
   'qits-ci': 'qits-ci-service',
   'qits-workspace-daemon': 'qits-workspace-daemon',
   'qits-system': 'qits-system-service',
+  'qits-artifacts': 'qits-artifacts-service',
 } as const;
 
 /** A provider whose golden masters the browser specs read. */

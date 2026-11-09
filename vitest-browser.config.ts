@@ -10,6 +10,7 @@ import {
   type RouteLedgerCommand,
 } from '@qits/angular/testing';
 import {
+  artifactsGoldenMasters,
   ciGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
@@ -46,6 +47,7 @@ const READERS = {
     pactWith('qits-workspace-daemon'),
   ),
   'qits-system': pactedGoldenMasters(systemGoldenMasters, pactWith('qits-system-service')),
+  'qits-artifacts': pactedGoldenMasters(artifactsGoldenMasters, pactWith('qits-artifacts-service')),
 };
 
 /**

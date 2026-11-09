@@ -57,3 +57,4 @@ contracts:
     qits-ci-service: { packages: [maven] }
     qits-workspace-daemon: { packages: [maven] }
     qits-system-service: { packages: [maven] }
+    qits-artifacts-service: { packages: [maven] }

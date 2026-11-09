@@ -64,6 +64,12 @@ export const ciGoldenMasters = goldenMasters('@qits/ci-golden-masters', 'qits-ci
 /** qits-system's golden masters (epic qits-112), from its npm package. */
 export const systemGoldenMasters = goldenMasters('@qits/system-golden-masters', 'qits-system');
 
+/** qits-artifacts' golden masters (qits-1951: the docs store), from its npm package. */
+export const artifactsGoldenMasters = goldenMasters(
+  '@qits/artifacts-golden-masters',
+  'qits-artifacts',
+);
+
 /**
  * Whether the installed `@qits/projects-golden-masters` records `operationId` in `state`. A spec of
  * a case the provider records from a later release than the pinned one skips itself until

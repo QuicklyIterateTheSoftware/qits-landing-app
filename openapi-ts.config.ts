@@ -24,6 +24,8 @@ const services = [
   // qits-workspaces' container proxy, so a call sets its `baseUrl` to the container's prefix.
   'qits-workspaces/qits-workspace-daemon',
   'qits-system/qits-system-service',
+  // The docs store (qits-1951): the UI builder reads a frontend's frozen routes, `@routes/<app>`.
+  'qits-artifacts/qits-artifacts-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

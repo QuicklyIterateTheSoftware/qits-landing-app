@@ -352,6 +352,17 @@ export const INTERACTIONS = {
    */
   'edit-work-needs':
     'Add or Remove on the work item page’s Needs panel rewrites what the item needs',
+  /**
+   * `ui-builder.page.ts` via `RoutesBundleStore.load` (qits-1951): the UI builder finds the
+   * frontend's `@routes/` docs site by its newest version's `git.repository.name` and reads its
+   * `manifest.json`, the route tree with each route's frozen states.
+   */
+  'show-ui-builder-routes': 'The UI builder shows a frontend’s routes and how many states each has',
+  /**
+   * `ui-builder.page.ts` via `RoutesBundleStore.freeze` (qits-1951): selecting a state tab reads
+   * that freeze's HTML, and the bundle's assets (its fonts) once, to draw the frozen page.
+   */
+  'show-ui-builder-state': 'Selecting a state in the UI builder shows its frozen page',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
