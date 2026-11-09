@@ -16,7 +16,7 @@
  * spec names, or leaves to the spec (`'unanswered'`). The shell is shown in one settled state: the
  * viewport the spec sets, its menus closed. Its own states are `shell.layout.browser.spec.ts`'s.
  */
-import { EnvironmentProviders, Provider } from '@angular/core';
+import { EnvironmentProviders, Provider, reflectComponentType, Type } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import {
   HttpTestingController,
@@ -24,7 +24,7 @@ import {
   TestRequest,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { QitsSession } from '@qits/angular';
 import { routes } from '../../app/app.routes';
@@ -202,10 +202,28 @@ export async function openRoute(
       return shell;
     },
     get page() {
-      return harness.routeNativeElement as HTMLElement;
+      return innermostRouted(root);
     },
     settled,
   };
+}
+
+/**
+ * The element of the innermost routed component below `root`: the deepest activated route that
+ * renders a component (a componentless child, `{ path: '', children: [] }`, renders none), found by
+ * its selector.
+ */
+function innermostRouted(root: HTMLElement): HTMLElement {
+  let route: ActivatedRoute | null = TestBed.inject(Router).routerState.root;
+  let component: Type<unknown> | null = null;
+  while (route) {
+    if (route.component) component = route.component;
+    route = route.firstChild;
+  }
+  const selector = component && reflectComponentType(component)?.selector;
+  const routed = selector ? root.querySelector<HTMLElement>(selector) : null;
+  if (!routed) throw new Error('openRoute: no routed component rendered');
+  return routed;
 }
 
 /** Answers every open frame read its `reads` do not leave to the spec; true if it answered one. */
