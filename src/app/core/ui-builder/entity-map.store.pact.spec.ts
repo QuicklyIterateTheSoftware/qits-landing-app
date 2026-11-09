@@ -31,7 +31,7 @@ import { contractsSitesOf, entityMapOf } from './entity-map.store';
  * `entities.json`. A path from a provider state matches any path, so each test adds at most one
  * interaction with a path parameter and makes the one step of `EntityMapStore` it answers.
  * `listDocsSites` is bound by its recorded first element (the list is "at least the recorded
- * count" of that shape), so the mock server answers that site alone: the provider lists sites by
+ * count" of that shape), so the mock server repeats that site: the provider lists sites by
  * name, and `@contracts/qits-projects` sorts before `@routes/qits-landing`, so it is the contracts
  * site the store goes on to read.
  * `getDocsFile` answers a file: its interaction binds the status and the media type
@@ -109,16 +109,19 @@ describe.skipIf(!RECORDED)('qits-landing-app → qits-artifacts-service pact: en
     given('listDocsSites', LIST_DOCS_SITES);
     return given('listDocsVersions', LIST_DOCS_VERSIONS).executeTest(async (server) => {
       const found = await at(server.url, () => contractsSitesOf());
-      expect(found).toEqual({
-        sites: [
-          {
+      // The catalog is bound by its recorded first element at the recorded length, so the mock
+      // server repeats `@contracts/qits-projects`: each entry is that site, read from its versions.
+      expect(found?.unreadable).toEqual([]);
+      expect(found?.sites.length).toBeGreaterThan(0);
+      expect(new Set(found?.sites.map((site) => JSON.stringify(site)))).toEqual(
+        new Set([
+          JSON.stringify({
             site: params('listDocsVersions')['site'],
             version: params('getDocsFile')['version'],
             repository: 'qits-projects-service',
-          },
-        ],
-        unreadable: [],
-      });
+          }),
+        ]),
+      );
     });
   });
 
