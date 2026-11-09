@@ -507,6 +507,11 @@ commits them beside the references. A changed page, component or style changes i
 fails a freeze that differs from what the run writes as stale `screenshot-baselines`. Never edit a
 freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
 
+Every release publishes the freezes as the docs site `@routes/qits-landing` (ticket qits-1948,
+`contracts.routes` in `.config/qits/release.yml`), only when they changed: the release step hashes
+the directory and prints `unchanged since <version>` when the newest version holds the same
+content. QA never publishes them. The docs frontend lists the site under Routes.
+
 ### Publishing: only when the pact changed
 
 Every pact sits flat in `pacts/`, named `<consumer>_<provider>.json` by repository name.
