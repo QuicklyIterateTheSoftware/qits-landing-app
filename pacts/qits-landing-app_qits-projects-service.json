@@ -4230,6 +4230,172 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "listProjects"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "list-projects",
+            "kind": "ui",
+            "route": "projects"
+          }
+        }
+      },
+      "description": "list-projects: listProjects",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no projects exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/projects/api/projects"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjects"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "list-projects",
+            "kind": "ui",
+            "route": "projects"
+          }
+        }
+      },
+      "description": "list-projects: listProjects",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "two projects exist",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "secondProjectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/projects/api/projects"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "project": {
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "name": "qits",
+                  "slug": "qits-00000001"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.project.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.project.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.project.slug": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "moveReleaseRequestSource"
           },
           "qits-trigger": {
@@ -13937,6 +14103,238 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "listProjectRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-repositories",
+            "kind": "ui",
+            "route": "projects"
+          }
+        }
+      },
+      "description": "show-project-repositories: listProjectRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with one repository",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.entries[*].repository.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-repositories",
+            "kind": "ui",
+            "route": "projects"
+          }
+        }
+      },
+      "description": "show-project-repositories: listProjectRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "two projects exist",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "secondProjectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000003"
+                }
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.entries[*].repository.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "listProjectWork"
           },
           "qits-trigger": {
@@ -18551,7 +18949,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-work",
             "kind": "ui",
-            "route": "projects/:slug/desk, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/refinement, projects/:slug/work/schedule"
+            "route": "projects, projects/:slug/desk, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/refinement, projects/:slug/work/schedule"
           }
         }
       },
@@ -18849,6 +19247,212 @@
                 {
                   "match": "number"
                 },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-work",
+            "kind": "ui",
+            "route": "projects"
+          }
+        }
+      },
+      "description": "show-project-work: listProjectWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "two projects exist",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "secondProjectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/work",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/work"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entities": [
+              {
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000003",
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "qits-00000001-1",
+                "status": "REFINED",
+                "title": "Unified SPA",
+                "unmetNeeds": 0
+              },
+              {
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000003",
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "qits-00000001-1",
+                "status": "REFINED",
+                "title": "Unified SPA",
+                "unmetNeeds": 0
+              },
+              {
+                "archetype": "EPIC",
+                "id": "00000000-0000-4000-8000-000000000003",
+                "parent": null,
+                "priority": null,
+                "qualifiedId": "qits-00000001-1",
+                "status": "REFINED",
+                "title": "Unified SPA",
+                "unmetNeeds": 0
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entities": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.entities[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entities[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].unmetNeeds": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "number"
                 },

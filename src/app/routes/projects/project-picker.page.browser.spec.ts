@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
 import { client as githostClient } from '../../api/githost/client.gen';
 import { client as projectsClient } from '../../api/projects/client.gen';
@@ -10,8 +11,9 @@ import { ProjectPickerPage } from './project-picker.page';
 import { goldenMaster } from '../../../testing/browser/golden-master';
 
 /**
- * Screenshots of the start page in a real browser. The answers are qits-projects' and
- * qits-githost's golden masters, read on the Node side through the `goldenMaster` command.
+ * Screenshots of the start page in a real browser, opened through the router at `/projects`. The
+ * answers are qits-projects' and qits-githost's golden masters, read on the Node side through the
+ * `goldenMaster` command.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -23,7 +25,7 @@ describe('ProjectPickerPage (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'projects', component: ProjectPickerPage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -35,91 +37,89 @@ describe('ProjectPickerPage (screenshots)', () => {
 
   afterEach(() => http.verify());
 
-  /** The page at the test viewport's width, with the project list requested, not answered. */
+  /** The page at `/projects`, with the project list requested, not answered. */
   async function render() {
-    const fixture = TestBed.createComponent(ProjectPickerPage);
-    fixture.detectChanges();
+    const harness = await RouterTestingHarness.create();
+    const navigated = harness.navigateByUrl('/projects');
     await settle();
-    return { fixture, list: http.expectOne('/projects/api/projects') };
+    const list = http.expectOne('/projects/api/projects');
+    // The page is routed before the list answers.
+    await navigated;
+    harness.fixture.detectChanges();
+    return { harness, list };
   }
 
-  async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
+  async function answered(harness: RouterTestingHarness) {
     await settle();
-    await fixture.whenStable();
-    fixture.detectChanges();
+    await harness.fixture.whenStable();
+    harness.fixture.detectChanges();
+  }
+
+  /** The routed page. */
+  function view(harness: RouterTestingHarness) {
+    return page.elementLocator(harness.routeNativeElement as HTMLElement);
   }
 
   it('shows that the projects are loading', async () => {
-    const { fixture, list } = await render();
-    const picker = page.elementLocator(fixture.nativeElement);
+    const { harness, list } = await render();
+    const picker = view(harness);
     await expect.element(picker.getByRole('img', { name: 'Loading' })).toBeVisible();
     await expect.element(picker).toMatchScreenshot('loading');
     list.flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(fixture);
+    await answered(harness);
   });
 
-  // Skipped: no recorded state holds this list, and the guard refuses a hand-made one. qits-projects'
-  // states "two projects exist" and "no projects exist" (release request e9451cf1) replace it.
-  it.skip('shows one card per project', async () => {
-    const { fixture, list } = await render();
-    // qits-projects' recorded list, plus a second project derived from its one project (another
-    // id, name and slug), so the grid shows two cards. No recording holds two projects.
-    const recorded = await goldenMaster('a project exists', 'listProjects');
-    const project = recorded.entries[0].project;
-    const other = {
-      ...project,
-      id: '00000000-0000-4000-8000-0000000000ff',
-      name: 'Other',
-      slug: 'other',
-    };
-    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
-    list.flush({ ...recorded, entries: [...recorded.entries, { project: other }] });
+  it('shows one card per project', async () => {
+    const { harness, list } = await render();
+    const recorded = await goldenMaster('two projects exist', 'listProjects');
+    list.flush(recorded);
     await settle();
     TestBed.tick();
     await settle();
-    const repositories = await goldenMaster(
-      'a project with 3 repositories',
-      'listProjectRepositories',
+    const [first, second] = recorded.entries.map(
+      (entry: { project: { id: string } }) => entry.project.id,
     );
-    http.expectOne(`/projects/api/projects/${project.id}/repositories`).flush(repositories);
+    // "two projects exist" records the first project's repositories and work; the second's come
+    // from the states that record a project with one repository and a project with no work.
     http
-      .expectOne(`/projects/api/projects/${other.id}/repositories`)
-      // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
-      .flush({ ...repositories, entries: repositories.entries.slice(0, 1) });
+      .expectOne(`/projects/api/projects/${first}/repositories`)
+      .flush(await goldenMaster('two projects exist', 'listProjectRepositories'));
     http
-      .expectOne(`/projects/api/projects/${project.id}/work`)
-      .flush(await goldenMaster('a project with refined work', 'listProjectWork'));
+      .expectOne(`/projects/api/projects/${second}/repositories`)
+      .flush(await goldenMaster('a project with one repository', 'listProjectRepositories'));
     http
-      .expectOne(`/projects/api/projects/${other.id}/work`)
+      .expectOne(`/projects/api/projects/${first}/work`)
+      .flush(await goldenMaster('two projects exist', 'listProjectWork'));
+    http
+      .expectOne(`/projects/api/projects/${second}/work`)
       .flush(await goldenMaster('a project with no work', 'listProjectWork'));
     // The cards stay collapsed, so no lines are requested.
     http.expectNone('/githost/api/loc');
-    await answered(fixture);
-    const picker = page.elementLocator(fixture.nativeElement);
-    await expect.element(picker).toMatchTextContent('Work 3');
-    await expect.element(picker).toMatchTextContent('Components 1');
-    await expect.element(picker).toMatchScreenshot('loaded');
+    await answered(harness);
+    const cards = view(harness).getByRole('listitem');
+    await expect.element(cards.nth(0)).toMatchTextContent('qits');
+    await expect.element(cards.nth(0)).toMatchTextContent('Work 2');
+    await expect.element(cards.nth(0)).toMatchTextContent('Components 3');
+    await expect.element(cards.nth(1)).toMatchTextContent('telemetry');
+    await expect.element(cards.nth(1)).toMatchTextContent('Work 0');
+    await expect.element(cards.nth(1)).toMatchTextContent('Components 2');
+    await expect.element(view(harness)).toMatchScreenshot('loaded');
   });
 
-  // Skipped: no recorded state holds this list, and the guard refuses a hand-made one. qits-projects'
-  // states "two projects exist" and "no projects exist" (release request e9451cf1) replace it.
-  it.skip('says so when there are no projects', async () => {
-    const { fixture, list } = await render();
-    // qits-projects' recorded list with its one entry removed. No recording is empty.
-    const recorded = await goldenMaster('a project exists', 'listProjects');
-    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects states (release request e9451cf1)
-    list.flush({ ...recorded, entries: [] });
-    await answered(fixture);
-    const picker = page.elementLocator(fixture.nativeElement);
+  it('says so when there are no projects', async () => {
+    const { harness, list } = await render();
+    list.flush(await goldenMaster('no projects exist', 'listProjects'));
+    await answered(harness);
+    const picker = view(harness);
     await expect.element(picker).toMatchTextContent('There are no projects yet.');
     await expect.element(picker).toMatchScreenshot('empty');
   });
 
   it('marks the list as failed to load when the projects could not be loaded', async () => {
-    const { fixture, list } = await render();
+    const { harness, list } = await render();
     list.flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(fixture);
-    const picker = page.elementLocator(fixture.nativeElement);
+    await answered(harness);
+    const picker = view(harness);
     await expect.element(picker.getByRole('img', { name: 'Failed to load' })).toBeVisible();
     await expect.element(picker).toMatchScreenshot('error');
   });
