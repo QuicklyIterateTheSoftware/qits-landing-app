@@ -230,13 +230,22 @@ describe('AgentsMenu', () => {
       label: 'Starting: launching session · 7 min',
       tone: 'waiting',
     });
-    // Before BUSY, waits and a finished item; after an ended session.
+    // BUSY, open waits and a finished item prove the harness is up: they outrank the phase.
+    expect(activityChip({ phase: 'QUEUED', phaseSince: since, activity: 'BUSY' }, now)).toEqual({
+      label: 'Working',
+      tone: 'ok',
+    });
+    expect(activityChip({ phase: 'STARTING', phaseSince: since, waits }, now)).toEqual({
+      label: 'Waiting',
+      tone: 'waiting',
+    });
     expect(
-      activityChip(
-        { phase: 'STARTING', phaseSince: since, activity: 'BUSY', entityStatus: 'DONE', waits },
-        now,
-      ).label,
-    ).toBe('Starting: launching session · 7 min');
+      activityChip({ phase: 'PROVISIONING', phaseSince: since, entityStatus: 'DONE' }, now).label,
+    ).toBe('Done');
+    // An idle activity does not: the phase still says where the start stands.
+    expect(activityChip({ phase: 'QUEUED', phaseSince: since, activity: 'IDLE' }, now).label).toBe(
+      'Queued: waiting for a slot · 7 min',
+    );
     expect(activityChip({ phase: 'QUEUED', phaseSince: since, activity: 'ENDED' }, now)).toEqual({
       label: 'Ended',
       tone: 'neutral',

@@ -55,13 +55,14 @@ function elapsed(since: string | null | undefined, now: number): string {
 /**
  * The activity chip: what the agent is doing, in a word or three, and its tone.
  *
- * An ended session first. Then, while the agent comes up (qits-2007, `phase`), where its start
- * stands and for how long (`phaseSince`, whole minutes to `now`): queued for a slot, its workspace
- * provisioning, its session launching. Then a READY agent's (or one with no phase: yielded, stopped,
- * or an older qits-workspaces): working, waiting on its waits, its item done. Last: idle, since
- * when it went idle. A READY agent shows Idle only on an IDLE activity (or WAITING, the harness
- * blocked on its user, which reads as idle here as it always did); with none yet it is still
- * launching its session. An agent with no phase keeps the old fallback, Idle on any activity.
+ * An ended session first. Then what proves the harness is up, whatever its phase reads: working,
+ * waiting on its waits, its item done. Only then, while the agent comes up (qits-2007, `phase`),
+ * where its start stands and for how long (`phaseSince`, whole minutes to `now`): queued for a
+ * slot, its workspace provisioning, its session launching (a READY agent with no activity yet is
+ * still launching too). Last: idle, since when it went idle. A READY agent shows Idle only on an
+ * IDLE activity (or WAITING, the harness blocked on its user, which reads as idle here as it always
+ * did). An agent with no phase (yielded, stopped, an older qits-workspaces) keeps the old fallback,
+ * Idle on any activity.
  */
 export function activityChip(
   agent: {
@@ -75,6 +76,10 @@ export function activityChip(
   now = Date.now(),
 ): { readonly label: string; readonly tone: ChipTone } {
   if (agent.activity === 'ENDED') return { label: 'Ended', tone: 'neutral' };
+  if (agent.activity === 'BUSY') return { label: 'Working', tone: 'ok' };
+  if (agent.waits?.length) return { label: 'Waiting', tone: 'waiting' };
+  const done = itemDoneLabel(agent.entityStatus);
+  if (done) return { label: done.charAt(0).toUpperCase() + done.slice(1), tone: 'ok' };
   const phaseFor = elapsed(agent.phaseSince, now);
   if (agent.phase === 'QUEUED') {
     return { label: `Queued: waiting for a slot${phaseFor}`, tone: 'waiting' };
@@ -85,14 +90,11 @@ export function activityChip(
   if (agent.phase === 'STARTING') {
     return { label: `Starting: launching session${phaseFor}`, tone: 'waiting' };
   }
-  if (agent.activity === 'BUSY') return { label: 'Working', tone: 'ok' };
-  if (agent.waits?.length) return { label: 'Waiting', tone: 'waiting' };
-  const done = itemDoneLabel(agent.entityStatus);
-  if (done) return { label: done.charAt(0).toUpperCase() + done.slice(1), tone: 'ok' };
   // READY with no activity yet: the session is still coming up. `phaseSince` is when it turned
   // READY, not when the launch began, so no minutes.
-  if (agent.phase && !agent.activity)
+  if (agent.phase && !agent.activity) {
     return { label: 'Starting: launching session', tone: 'waiting' };
+  }
   const since = clockTime(agent.waitingSince);
   return { label: since ? `Idle since ${since}` : 'Idle', tone: 'neutral' };
 }
