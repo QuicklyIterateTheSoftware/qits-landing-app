@@ -1,18 +1,21 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
   effect,
+  ElementRef,
   inject,
+  Injector,
   PLATFORM_ID,
   signal,
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
@@ -21,6 +24,7 @@ import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
   initialRoute,
+  matchRoute,
   routeCalls,
   routeFreezes,
   routeTree,
@@ -59,7 +63,11 @@ interface EntityGroup {
  *   first route with states; choosing another route goes back to its first state.
  * - States (middle): the route's freezes by name, as tabs that wrap. The selected one is read on
  *   demand and drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with `allow-scripts`
- *   (see `preview`). A click on a link inside it is cancelled: the frame never navigates.
+ *   (see `preview`). A link clicked inside it selects the route it leads to (qits-1949, see
+ *   `holdLinks`); the frame itself never navigates.
+ * - Selection: the URL's query, `route` (the route's full path) and `state` (the freeze's name),
+ *   so Back walks back through tree, tab and link clicks. A `route` that is not a route of the tree
+ *   opens the first route with states, a `state` the route lacks its first state.
  * - Calls (right): `routeCalls`, the union of the freezes' calls, filtered to the scope.
  * - Scope (owner rule in qits-1951): `<project slug>-landing-app` covers every service; any other
  *   frontend only its own component, by the `component` its repository declares (the project's
@@ -265,12 +273,17 @@ interface EntityGroup {
                                 : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
                             "
                             [attr.aria-selected]="i === stateIndex()"
-                            (click)="stateIndex.set(i)"
+                            (click)="pickState(freeze.name)"
                           >
                             {{ freeze.name }}
                           </button>
                         }
                       </div>
+                      @if (linkNotice(); as notice) {
+                        <p class="link-notice m-0 mb-2 truncate text-xs text-charcoal-brown-600">
+                          {{ notice }}
+                        </p>
+                      }
                       @if (preview(); as html) {
                         <!--
                           sandbox without allow-scripts, always: the frozen page is drawn on this
@@ -411,11 +424,23 @@ export class UiBuilderPage {
   private readonly store = inject(RoutesBundleStore);
   private readonly entityMaps = inject(EntityMapStore);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
 
   /** The repository the URL names. */
   protected readonly repo = toSignal(
-    inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('repo') ?? '')),
+    this.route.paramMap.pipe(map((params) => params.get('repo') ?? '')),
     { initialValue: '' },
+  );
+
+  /** The URL's `route` and `state`: what is selected, as asked (see `selectedPath`, `freeze`). */
+  private readonly query = toSignal(
+    this.route.queryParamMap.pipe(
+      map((params) => ({ route: params.get('route'), state: params.get('state') })),
+    ),
+    { initialValue: { route: null, state: null } },
   );
 
   protected readonly bundle = computed(() => this.store.bundles()[this.repo()]);
@@ -439,18 +464,14 @@ export class UiBuilderPage {
     return bundle ? routeTree(bundle.manifest) : [];
   });
 
-  /** The route picked in the tree; null: the first route with states. */
-  private readonly picked = signal<string | null>(null);
-
+  /** The URL's `route` when it is a route of the tree, else the first route with states. */
   protected readonly selectedPath = computed(() => {
-    const picked = this.picked();
+    const picked = this.query().route;
     const rows = this.rows();
     return rows.some((row) => row.kind === 'route' && row.fullPath === picked)
       ? picked
       : initialRoute(rows);
   });
-
-  protected readonly stateIndex = signal(0);
 
   protected readonly freezes = computed(() => {
     const bundle = this.loaded();
@@ -458,9 +479,18 @@ export class UiBuilderPage {
     return bundle && path !== null ? routeFreezes(bundle.manifest, path) : [];
   });
 
-  protected readonly freeze = computed(
-    () => this.freezes()[this.stateIndex()] ?? this.freezes()[0] ?? null,
+  /** The index of the URL's `state` among the route's freezes; 0 (the first) when it has none. */
+  protected readonly stateIndex = computed(() =>
+    Math.max(
+      0,
+      this.freezes().findIndex((freeze) => freeze.name === this.query().state),
+    ),
   );
+
+  protected readonly freeze = computed(() => this.freezes()[this.stateIndex()] ?? null);
+
+  /** Why the last link clicked in the frame selected nothing; null after any selection. */
+  protected readonly linkNotice = signal<string | null>(null);
 
   protected readonly freezeFailed = computed(() => {
     const bundle = this.loaded();
@@ -689,28 +719,75 @@ export class UiBuilderPage {
     this.repositories.follow(() => this.selected.project()?.id, destroy);
   }
 
-  protected select(fullPath: string): void {
-    this.picked.set(fullPath);
-    this.stateIndex.set(0);
+  /** Selects the route at `fullPath` on its first state, as a new entry in the history. */
+  protected select(fullPath: string): Promise<boolean> {
+    this.linkNotice.set(null);
+    return this.navigate({ route: fullPath, state: null });
   }
 
-  /** Opens `fullPath` in the Routes tab, from an entity's routes. */
-  protected openRoute(fullPath: string): void {
-    this.leftTab.set('routes');
-    this.select(fullPath);
+  /** Selects the route's state named `name`. */
+  protected pickState(name: string): void {
+    this.linkNotice.set(null);
+    void this.navigate({ state: name });
+  }
+
+  private navigate(queryParams: { route?: string; state: string | null }): Promise<boolean> {
+    return this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge',
+    });
   }
 
   /**
-   * Cancels every link click inside the frame once its document is in, so the frame never
-   * navigates (qits-1949 turns these into click-through between routes). The frame is
-   * same-origin (`allow-same-origin`), so this page can reach its document; the listener is this
-   * page's, the frame runs nothing of its own.
+   * Opens `fullPath` in the Routes tab, from an entity's routes: selected as a tree or frame click
+   * selects it (the URL's `route`), its row scrolled into view.
+   */
+  protected openRoute(fullPath: string): void {
+    this.leftTab.set('routes');
+    void this.select(fullPath).then(() => this.revealSelected());
+  }
+
+  /**
+   * Turns link clicks inside the frame into click-through between routes (qits-1949), once its
+   * document is in. Every click on a link is cancelled, so the frame never navigates; its written
+   * `href` (never `anchor.href`, resolved against this page) goes through `matchRoute`. A route of
+   * the app is selected as a tree click would, and its row scrolled into view; a link outside the
+   * app or to no route of it leaves the route as it is and says so under the tabs (`linkNotice`); a
+   * fragment does nothing. The frame is same-origin (`allow-same-origin`), so this page can reach
+   * its document; the listener is this page's, the frame runs nothing of its own.
    */
   protected holdLinks(event: Event): void {
     const frame = event.target as HTMLIFrameElement;
     frame.contentDocument?.addEventListener('click', (click) => {
-      const target = click.target as Element | null;
-      if (target?.closest?.('a[href], area[href]')) click.preventDefault();
+      const link = (click.target as Element | null)?.closest?.('a[href], area[href]');
+      if (!link) return;
+      click.preventDefault();
+      const href = link.getAttribute('href') ?? '';
+      const bundle = this.loaded();
+      const target = bundle ? matchRoute(bundle.manifest, href) : ({ kind: 'fragment' } as const);
+      switch (target.kind) {
+        case 'route':
+          void this.select(target.fullPath).then(() => this.revealSelected());
+          break;
+        case 'outside':
+          this.linkNotice.set(`Leads outside the app: ${href}`);
+          break;
+        case 'unmatched':
+          this.linkNotice.set(`No route of this app matches ${target.path}`);
+          break;
+      }
     });
+  }
+
+  /** Scrolls the selected tree row into view once the selection is drawn. */
+  private revealSelected(): void {
+    afterNextRender(
+      () =>
+        this.host.nativeElement
+          .querySelector('nav button.route[aria-current="page"]')
+          ?.scrollIntoView?.({ block: 'nearest' }),
+      { injector: this.injector },
+    );
   }
 }
