@@ -11,7 +11,7 @@ import { literalDocsPaths } from './docs-paths';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
-import { assertPactPart } from '../../../testing/pact-part';
+import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
   GET_DOCS_FILE,
   GET_DOCS_VERSION,
@@ -29,7 +29,8 @@ import {
 
 /**
  * qits-landing-app's pact with qits-artifacts-service (qits-1951):
- * `pacts/qits-landing-app_qits-artifacts-service.json`, written by this spec alone.
+ * `pacts/qits-landing-app_qits-artifacts-service.json`, written by this spec and, for the entity
+ * maps (qits-1950), `entity-map.store.pact.spec.ts`.
  *
  * The UI builder's reads, against a pact mock server answering with qits-artifacts' golden masters:
  *
@@ -53,7 +54,19 @@ import {
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS = ['listDocsSites', 'listDocsVersions', 'getDocsVersion', 'getDocsFile'];
+/**
+ * The docs-store operations' interactions for the routes and the states. `entity-map.store.pact.spec.ts`
+ * owns the same operations' interactions for `show-ui-builder-entities`.
+ */
+const OPERATIONS: readonly OwnedOperation[] = [
+  'listDocsSites',
+  'listDocsVersions',
+  'getDocsVersion',
+  'getDocsFile',
+].map((operationId) => ({
+  operationId,
+  interactions: ['show-ui-builder-routes', 'show-ui-builder-state'],
+}));
 
 const BUNDLE = 'a published routes bundle';
 const FREEZE = 'a published routes bundle freeze';

@@ -363,6 +363,12 @@ export const INTERACTIONS = {
    * that freeze's HTML, and the bundle's assets (its fonts) once, to draw the frozen page.
    */
   'show-ui-builder-state': 'Selecting a state in the UI builder shows its frozen page',
+  /**
+   * `ui-builder.page.ts` via `EntityMapStore` (qits-1950): the UI builder finds every in-scope
+   * service's `@contracts/` docs site by its newest version's `git.repository.name` and reads its
+   * `entities.json`, to show which domain entities each route touches and which routes show each.
+   */
+  'show-ui-builder-entities': 'The UI builder shows which domain entities each route touches',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
