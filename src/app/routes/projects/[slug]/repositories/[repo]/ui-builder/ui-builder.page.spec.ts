@@ -142,12 +142,15 @@ describe('UiBuilderPage', () => {
     await fixture.whenStable();
     fixture.detectChanges();
     const element = harness.routeNativeElement as HTMLElement;
-    // An element's text, its parts (spans, or the whole) joined by single spaces.
+    // An element's text, its non-empty parts (spans, or the whole) joined by single spaces.
     const texts = (selector: string) =>
       [...element.querySelectorAll(selector)].map((e) => {
         const parts = e.querySelectorAll('span');
         const words = parts.length ? [...parts].map((p) => p.textContent ?? '') : [e.textContent];
-        return words.map((w) => (w ?? '').replace(/\s+/g, ' ').trim()).join(' ');
+        return words
+          .map((w) => (w ?? '').replace(/\s+/g, ' ').trim())
+          .filter(Boolean)
+          .join(' ');
       });
     return { fixture, element, texts, page };
   }
@@ -219,7 +222,7 @@ describe('UiBuilderPage', () => {
 
   it('lays the routes out, opens the first route with states, and frames its first state', async () => {
     const { fixture, element, texts } = await render('qits-landing-app');
-    expect(texts('nav button.route')).toEqual([
+    expect(texts('nav .route-row')).toEqual([
       '/ → projects',
       'projects 0',
       ':slug',
@@ -247,6 +250,32 @@ describe('UiBuilderPage', () => {
     expect(element.querySelector('.link-notice')).toBeNull();
   });
 
+  it('folds a parent row’s children with the number at its end, and unfolds them again', async () => {
+    const { fixture, element, texts } = await render('qits-landing-app');
+    await answerFreeze(ERROR_FREEZE, fixture);
+    const fold = (text: string) =>
+      [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+        .find((row) => row.textContent?.replace(/\s+/g, '') === text)!
+        .querySelector<HTMLButtonElement>('button.fold')!;
+    expect(fold('projects0').getAttribute('aria-label')).toBe('Collapse /projects');
+
+    fold('projects0').click();
+    fixture.detectChanges();
+    expect(texts('nav .route-row')).toEqual(['/ → projects', 'projects 0', '**']);
+    expect(fold('projects0').getAttribute('aria-expanded')).toBe('false');
+    expect(fold('projects0').getAttribute('aria-label')).toBe('Expand /projects');
+    // A leaf has no fold button, only its count.
+    const leaf = [...element.querySelectorAll<HTMLElement>('nav .route-row')].at(-1)!;
+    expect(leaf.querySelector('button.fold')).toBeNull();
+
+    fold('projects0').click();
+    fixture.detectChanges();
+    expect(texts('nav .route-row')).toHaveLength(6);
+    // Folding selects nothing: the route and the URL stay as they were.
+    expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
+    expect(query()).toEqual({});
+  });
+
   it('reads the state a tab picks, and resets the tab when the route changes', async () => {
     const { fixture, element, texts } = await render('qits-landing-app');
     await answerFreeze(ERROR_FREEZE, fixture);
@@ -260,9 +289,9 @@ describe('UiBuilderPage', () => {
       element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim(),
     ).toBe('loaded');
 
-    const projects = [...element.querySelectorAll<HTMLButtonElement>('nav button.route')].find(
-      (b) => b.textContent?.replace(/\s+/g, '') === 'projects0',
-    )!;
+    const projects = [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+      .find((row) => row.textContent?.replace(/\s+/g, '') === 'projects0')!
+      .querySelector<HTMLButtonElement>('button.route')!;
     projects.click();
     await navigated(fixture);
     expect(query()).toEqual({ route: 'projects' });
@@ -462,9 +491,12 @@ describe('UiBuilderPage', () => {
     expect(click('span')).toBe(true);
     await navigated(fixture);
     expect(query()).toEqual({ route: 'projects' });
-    expect(element.querySelector('[aria-current="page"]')?.textContent?.replace(/\s+/g, '')).toBe(
-      'projects0',
-    );
+    expect(
+      element
+        .querySelector('[aria-current="page"]')
+        ?.closest('.route-row')
+        ?.textContent?.replace(/\s+/g, ''),
+    ).toBe('projects0');
     expect(element.querySelector('h2')?.textContent).toBe('/projects');
   });
 

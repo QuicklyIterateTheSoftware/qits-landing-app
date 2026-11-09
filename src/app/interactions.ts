@@ -369,6 +369,13 @@ export const INTERACTIONS = {
    * `entities.json`, to show which domain entities each route touches and which routes show each.
    */
   'show-ui-builder-entities': 'The UI builder shows which domain entities each route touches',
+  /**
+   * `call-details.ts` via `goldenCall` and `goldenResponse` (qits-1999): opening a call in the UI
+   * builder reads the provider's `golden-masters/index.json` and the call's recorded response from
+   * its `@contracts/` docs site.
+   */
+  'show-ui-builder-call-details':
+    'Opening a call in the UI builder shows its state and recorded response',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

@@ -185,7 +185,8 @@ describe('UiBuilderPage (screenshots)', () => {
     const { fixture, element, sites } = await render('qits-landing-app');
     await answerBundle(fixture, sites);
     const view = page.elementLocator(element);
-    await view.getByRole('button', { name: 'projects 0' }).click();
+    // The row's count is its fold button's; the route button is named by its segment alone.
+    await view.getByRole('button', { name: 'projects', exact: true }).click();
     // The pointer stays on the button after the click; its hover colour would vary the screenshot.
     await commands.parkPointer();
     await answered(fixture);

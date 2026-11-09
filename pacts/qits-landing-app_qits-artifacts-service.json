@@ -12,6 +12,92 @@
           },
           "qits-trigger": {
             "app": "qits-landing-app",
+            "interaction": "show-ui-builder-call-details",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
+          }
+        }
+      },
+      "description": "show-ui-builder-call-details: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with an entity map",
+          "params": {
+            "path": "entities.json",
+            "site": "@contracts/qits-projects",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJhcHBsaWNhdGlvbiI6InFpdHMtcHJvamVjdHMiLCJlbnRpdGllcyI6W3siZW50aXR5IjoiZXUud29obGJlbi5xaXRzLmVudGl0aWVzLmRvbWFpbi5Qcm9qZWN0IiwidGFibGUiOiJwcm9qZWN0IiwibWFya2luZyI6ImRvbWFpbiIsInJlYXNvbiI6bnVsbCwicHJvamVjdGlvbk9mIjpudWxsLCJrbm93bkdhcCI6bnVsbCwiZHRvcyI6W3sidHlwZSI6ImV1LndvaGxiZW4ucWl0cy5lbnRpdGllcy5kdG8uUHJvamVjdER0byIsImtpbmQiOiJtYXBwZXIiLCJ2aWEiOm51bGwsInNpdGUiOiJQcm9qZWN0TWFwcGVyLnRvRHRvKFByb2plY3QpIn1dLCJvcGVyYXRpb25zIjpbeyJvcGVyYXRpb25JZCI6Imxpc3RQcm9qZWN0cyIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvcHJvamVjdHMiLCJkdG8iOiJldS53b2hsYmVuLnFpdHMuZW50aXRpZXMuZHRvLlByb2plY3REdG8iLCJraW5kIjoicmV0dXJucyJ9LHsib3BlcmF0aW9uSWQiOiJnZXRQcm9qZWN0IiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9wcm9qZWN0cy97cHJvamVjdElkfSIsImR0byI6ImV1LndvaGxiZW4ucWl0cy5lbnRpdGllcy5kdG8uUHJvamVjdER0byIsImtpbmQiOiJyZXR1cm5zIn1dfSx7ImVudGl0eSI6ImV1LndvaGxiZW4ucWl0cy5lbnRpdGllcy5kb21haW4uUmVwb3NpdG9yeSIsInRhYmxlIjoicmVwb3NpdG9yeSIsIm1hcmtpbmciOiJkb21haW4iLCJyZWFzb24iOm51bGwsInByb2plY3Rpb25PZiI6bnVsbCwia25vd25HYXAiOm51bGwsImR0b3MiOlt7InR5cGUiOiJldS53b2hsYmVuLnFpdHMuZW50aXRpZXMuZHRvLlJlcG9zaXRvcnlEdG8iLCJraW5kIjoibWFwcGVyIiwidmlhIjpudWxsLCJzaXRlIjoiUmVwb3NpdG9yeU1hcHBlci50b0R0byhSZXBvc2l0b3J5KSJ9XSwib3BlcmF0aW9ucyI6W3sib3BlcmF0aW9uSWQiOiJsaXN0UHJvamVjdFJlcG9zaXRvcmllcyIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvcHJvamVjdHMve3Byb2plY3RJZH0vcmVwb3NpdG9yaWVzIiwiZHRvIjoiZXUud29obGJlbi5xaXRzLmVudGl0aWVzLmR0by5SZXBvc2l0b3J5RHRvIiwia2luZCI6InJldHVybnMifV19LHsiZW50aXR5IjoiZXUud29obGJlbi5xaXRzLmVudGl0aWVzLmVudGl0eS5Xb3JrRW50aXR5IiwidGFibGUiOiJ3b3JrX2VudGl0eSIsIm1hcmtpbmciOiJkb21haW4iLCJyZWFzb24iOm51bGwsInByb2plY3Rpb25PZiI6bnVsbCwia25vd25HYXAiOm51bGwsImR0b3MiOlt7InR5cGUiOiJldS53b2hsYmVuLnFpdHMuZW50aXRpZXMuZHRvLldvcmtEdG8iLCJraW5kIjoibWFwcGVyIiwidmlhIjpudWxsLCJzaXRlIjoiV29ya01hcHBlci50b0R0byhXb3JrRW50aXR5KSJ9XSwib3BlcmF0aW9ucyI6W3sib3BlcmF0aW9uSWQiOiJnZXRXb3JrIiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii93b3JrL3txdWFsaWZpZWRJZH0iLCJkdG8iOiJldS53b2hsYmVuLnFpdHMuZW50aXRpZXMuZHRvLldvcmtEdG8iLCJraW5kIjoicmV0dXJucyJ9LHsib3BlcmF0aW9uSWQiOiJkZWxldGVXb3JrIiwibWV0aG9kIjoiREVMRVRFIiwicGF0aCI6Ii93b3JrL3txdWFsaWZpZWRJZH0iLCJkdG8iOm51bGwsImtpbmQiOiJkZWxldGVzIn1dfSx7ImVudGl0eSI6ImV1LndvaGxiZW4ucWl0cy5lbnRpdGllcy5kb21haW4uTGVnYWN5UGxhY2VtZW50IiwidGFibGUiOiJsZWdhY3lfcGxhY2VtZW50IiwibWFya2luZyI6InRlY2huaWNhbCIsInJlYXNvbiI6ImJvb2trZWVwaW5nIG9mIGEgcmV0aXJlZCBsYXlvdXQiLCJwcm9qZWN0aW9uT2YiOm51bGwsImtub3duR2FwIjpudWxsLCJkdG9zIjpbXSwib3BlcmF0aW9ucyI6W119XX0=",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
             "interaction": "show-ui-builder-entities",
             "kind": "ui",
             "route": "projects/:slug/repositories/:repo/ui-builder"

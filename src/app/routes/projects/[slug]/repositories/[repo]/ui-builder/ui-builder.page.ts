@@ -21,6 +21,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
 import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
+import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
   initialRoute,
@@ -29,6 +30,7 @@ import {
   routeFreezes,
   routeTree,
   type FreezeRecord,
+  type TreeRow,
 } from '$core/ui-builder/routes-manifest';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip } from '$ui/components/chip/chip';
@@ -98,7 +100,7 @@ interface EntityGroup {
 @Component({
   selector: 'app-ui-builder-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, Spinner],
+  imports: [Chip, PageLayoutComponent, Spinner, CallDetails],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12">
@@ -140,34 +142,55 @@ interface EntityGroup {
                   </div>
                   @if (leftTab() === 'routes') {
                     <nav aria-label="Routes" class="text-[0.8125rem]">
-                      @for (row of rows(); track row.fullPath) {
-                        <button
-                          type="button"
-                          class="route flex w-full items-center gap-1.5 rounded py-0.5 pr-2 text-left font-mono"
-                          [style.padding-left.rem]="0.5 + row.depth * 0.875"
+                      @for (row of shownRows(); track row.fullPath) {
+                        <div
+                          class="route-row group flex w-full items-center rounded"
                           [class]="
-                            row.kind === 'route'
-                              ? row.fullPath === selectedPath()
-                                ? 'cursor-pointer bg-charcoal-brown-800 text-white'
-                                : 'cursor-pointer hover:bg-charcoal-brown-50'
-                              : 'cursor-default text-charcoal-brown-500'
+                            row.kind === 'route' && row.fullPath === selectedPath()
+                              ? 'bg-charcoal-brown-800 text-white'
+                              : row.kind === 'route'
+                                ? 'hover:bg-charcoal-brown-50'
+                                : 'text-charcoal-brown-500'
                           "
-                          [disabled]="row.kind !== 'route'"
-                          [attr.aria-current]="row.fullPath === selectedPath() ? 'page' : null"
-                          (click)="select(row.fullPath)"
                         >
-                          <span class="shrink-0">{{ row.segment }}</span>
-                          @if (row.kind === 'redirect') {
-                            <span class="min-w-0 truncate text-[0.6875rem]"
-                              >→ {{ row.redirectTo }}</span
+                          <button
+                            type="button"
+                            class="route flex min-w-0 flex-1 items-center gap-1.5 py-0.5 text-left font-mono"
+                            [style.padding-left.rem]="0.5 + row.depth * 0.875"
+                            [class]="row.kind === 'route' ? 'cursor-pointer' : 'cursor-default'"
+                            [disabled]="row.kind !== 'route'"
+                            [attr.aria-current]="row.fullPath === selectedPath() ? 'page' : null"
+                            (click)="select(row.fullPath)"
+                          >
+                            <span class="shrink-0">{{ row.segment }}</span>
+                            @if (row.kind === 'redirect') {
+                              <span class="min-w-0 truncate text-[0.6875rem]"
+                                >→ {{ row.redirectTo }}</span
+                              >
+                            }
+                          </button>
+                          @if (row.parent) {
+                            <!-- − on hover, + while folded: pseudo-content, so the row's text stays its count. -->
+                            <button
+                              type="button"
+                              class="fold relative min-w-6 shrink-0 cursor-pointer self-stretch pr-2 pl-1 text-right text-[0.6875rem] tabular-nums after:absolute after:inset-y-0 after:right-2 after:flex after:items-center after:font-semibold pointer-fine:group-hover:aria-expanded:after:content-['−'] pointer-fine:aria-[expanded=false]:after:content-['+']"
+                              [attr.aria-expanded]="!row.collapsed"
+                              [attr.aria-label]="
+                                (row.collapsed ? 'Expand /' : 'Collapse /') + row.fullPath
+                              "
+                              (click)="toggleFold(row.fullPath)"
                             >
-                          }
-                          @if (row.kind === 'route') {
-                            <span class="ml-auto text-[0.6875rem] tabular-nums opacity-70">{{
+                              <span
+                                class="opacity-70 pointer-fine:group-hover:invisible pointer-fine:[[aria-expanded=false]>&]:invisible"
+                                >{{ row.kind === 'route' ? row.states : '' }}</span
+                              >
+                            </button>
+                          } @else if (row.kind === 'route') {
+                            <span class="shrink-0 pr-2 text-[0.6875rem] tabular-nums opacity-70">{{
                               row.states
                             }}</span>
                           }
-                        </button>
+                        </div>
                       }
                     </nav>
                   } @else {
@@ -354,10 +377,12 @@ interface EntityGroup {
                     <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
                       @for (call of calls().shown; track $index) {
                         <li class="call">
-                          <span class="block font-mono text-xs">{{ call.operationId }}</span>
-                          <span class="block text-xs text-charcoal-brown-500"
-                            >{{ call.provider }} · “{{ call.state }}”</span
-                          >
+                          <app-call-details
+                            [call]="call"
+                            [site]="siteOf(call.provider)"
+                            [entities]="callEntities(call)"
+                            (entityPicked)="pickEntity($event)"
+                          />
                         </li>
                       } @empty {
                         @if (!calls().hidden) {
@@ -457,6 +482,37 @@ export class UiBuilderPage {
   private readonly loaded = computed(() => {
     const bundle = this.bundle();
     return bundle?.status === 'loaded' ? bundle : null;
+  });
+
+  /** The full paths whose children are folded away in the route tree (qits-1999). */
+  private readonly folded = signal<ReadonlySet<string>>(new Set());
+
+  protected toggleFold(fullPath: string): void {
+    this.folded.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(fullPath)) next.add(fullPath);
+      return next;
+    });
+  }
+
+  /**
+   * The route tree without the rows under a folded one (qits-1999). A row is a
+   * parent when the next row is deeper; the tree is depth first, so its children follow it.
+   */
+  protected readonly shownRows = computed(() => {
+    const rows = this.rows();
+    const folded = this.folded();
+    const shown: (TreeRow & { parent: boolean; collapsed: boolean })[] = [];
+    let hideDeeperThan: number | null = null;
+    rows.forEach((row, i) => {
+      if (hideDeeperThan !== null && row.depth > hideDeeperThan) return;
+      hideDeeperThan = null;
+      const parent = (rows[i + 1]?.depth ?? -1) > row.depth;
+      const collapsed = parent && folded.has(row.fullPath);
+      if (collapsed) hideDeeperThan = row.depth;
+      shown.push({ ...row, parent, collapsed });
+    });
+    return shown;
   });
 
   protected readonly rows = computed(() => {
@@ -681,6 +737,36 @@ export class UiBuilderPage {
 
   /** The entity picked in the Entities tab. */
   protected readonly pickedEntity = signal<string | null>(null);
+
+  /** Opens an entity a call touches in the Entities tab (qits-1999). */
+  protected pickEntity(key: string): void {
+    this.leftTab.set('entities');
+    this.pickedEntity.set(key);
+  }
+
+  /** The provider's contracts site at its newest version, if it publishes one (qits-1999). */
+  protected siteOf(provider: string): ContractsSite | null {
+    const catalog = this.entityMaps.catalog();
+    return catalog?.status === 'loaded'
+      ? (catalog.sites.find((site) => site.repository === provider) ?? null)
+      : null;
+  }
+
+  /** The domain entities one call touches, from the provider's entity map (qits-1999). */
+  protected callEntities(call: FreezeRecord): readonly CallEntity[] {
+    const site = this.siteOf(call.provider);
+    const read = site ? this.entityMaps.mapRead(site) : null;
+    if (read?.status !== 'loaded') return [];
+    return read.map.entities
+      .filter(
+        (e) =>
+          e.marking === 'domain' && e.operations.some((o) => o.operationId === call.operationId),
+      )
+      .map((e) => ({
+        key: `${call.provider}#${e.entity}`,
+        name: e.entity.split('.').at(-1) ?? e.entity,
+      }));
+  }
 
   /** The picked entity, while the Entities tab is open and the entity is still in the join. */
   protected readonly selectedEntity = computed(() => {
