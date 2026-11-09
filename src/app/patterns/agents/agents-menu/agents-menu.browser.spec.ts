@@ -22,9 +22,16 @@ import { goldenMaster } from '../../../../testing/browser/golden-master';
  * state's entity ids name (the two providers' frozen ids are unrelated). qits-ci's page origin
  * answers the run wait's link; no release request is loaded, so the request wait falls back to its
  * own state and no lifecycle line.
+ *
+ * And the golden master "a project with agents starting up" (qits-2007): one agent per start-up
+ * phase (queued with no slot, provisioning its workspace, launching its session) and two READY,
+ * one idle and one working. The clock is pinned four minutes after the state's `phaseSince`, so
+ * each start-up chip reads "4 min".
  */
 
 const NEEDING_ATTENTION = 'a project with agents needing attention';
+const STARTING_UP = 'a project with agents starting up';
+const NOW = new Date('2026-01-01T00:04:00Z');
 
 /** The routed page under the menu; it renders nothing. */
 @Component({ selector: 'app-test-page', template: `` })
@@ -127,5 +134,36 @@ describe('AgentsMenu (screenshots)', () => {
     await expect.element(panel.getByRole('link', { name: 'Open item' })).toBeVisible();
     await expect.element(panel.getByRole('link', { name: 'Prompt agent' }).first()).toBeVisible();
     await expect.element(frame).toMatchScreenshot('open');
+  });
+
+  describe('while the agents start up', () => {
+    beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: NOW }));
+    afterEach(() => vi.useRealTimers());
+
+    it('shows where each agent’s start stands, and for how long', async () => {
+      const { fixture, frame, agents } = await render();
+      agents.flush(await goldenMaster(STARTING_UP, 'listAgents', 'qits-workspaces'));
+      await answered(fixture);
+      await userEvent.click(page.getByRole('button', { name: 'Agents' }));
+      fixture.detectChanges();
+      await settle();
+      http
+        .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
+        .flush(await goldenMaster(STARTING_UP, 'listAgents', 'qits-workspaces'));
+      await answered(fixture);
+      const panel = page.getByRole('region', { name: "The project's agents" });
+      expect(panel.getByRole('listitem').elements()).toHaveLength(5);
+      const chips = Array.from(
+        (fixture.nativeElement as HTMLElement).querySelectorAll('[data-activity]'),
+      ).map((chip) => chip.textContent?.trim());
+      expect(chips).toEqual([
+        'Queued: waiting for a slot · 4 min',
+        'Starting: provisioning workspace · 4 min',
+        'Starting: launching session · 4 min',
+        'Idle',
+        'Working',
+      ]);
+      await expect.element(frame).toMatchScreenshot('starting-up');
+    });
   });
 });
