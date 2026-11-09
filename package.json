@@ -39,7 +39,7 @@
     "@opentelemetry/sdk-trace-node": "^2.11.0",
     "@opentelemetry/semantic-conventions": "^1.43.0",
     "@qits/angular": "2026.1109.10002",
-    "@qits/ui-components": "^2026.1108.141821",
+    "@qits/ui-components": "^2026.1109.100826",
     "@xterm/addon-fit": "0.11.0",
     "@xterm/xterm": "6.0.0",
     "express": "^5.1.0",
