@@ -1,21 +1,16 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
-import { WorkAcceptancePage } from './work-acceptance.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
+import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
 import {
   answerWrapperClosings,
   WRAPPER_CLOSINGS,
 } from '../../../../../../testing/browser/recorded-work';
 
 /**
- * Screenshots of a project's Acceptance page, answered with qits-projects' golden masters: the
- * project list as recorded, and "a project with work in every status" (one epic and one ticket per
+ * Screenshots of a project's Acceptance page inside the shell and the work tabs (`openRoute`),
+ * answered with qits-projects' golden masters: the project list as recorded, and "a project with work in every status" (one epic and one ticket per
  * status) or "a project with no work" for its work. The finish and its Undo are the list's spec
  * (`work-list.browser.spec.ts`). A VERIFIED ticket's line asks for the project's wrapper closings
  * (qits-1873), answered from "a project with VERIFIED tickets in every wrapper verdict"
@@ -30,48 +25,35 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 describe('WorkAcceptancePage (screenshots)', () => {
   let http: HttpTestingController;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        provideRouter([{ path: 'projects/:slug/work/acceptance', component: WorkAcceptancePage }]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-      ],
-    });
+  beforeEach(async () => {
+    // As wide as the page was plus the sidebar, and tall enough for its verified work.
+    await page.viewport(1040, 700);
+    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(async () => {
+    http.verify();
+    // Back to the configured viewport, so the next spec file renders as it always does.
+    await page.viewport(800, 600);
+  });
 
-  /** The page of the recorded project, with the list answered and its work requested. */
+  /** The page of the recorded project, with its work requested. */
   async function shown() {
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/acceptance`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    // SelectedWork's effect asks for the work once the project is known; let it run.
-    TestBed.tick();
-    await settle();
-    TestBed.tick();
-    await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '760px';
-    const answered = async () => {
-      await settle();
-      await harness.fixture.whenStable();
-      harness.fixture.detectChanges();
+    const opened = await openRoute((project) => `/projects/${project.slug}/work/acceptance`);
+    const work = http.expectOne(`/projects/api/projects/${opened.project.id}/work`);
+    return {
+      element: page.elementLocator(opened.page),
+      frame: page.elementLocator(opened.frame),
+      work,
+      answered: opened.settled,
+      projectId: opened.project.id,
     };
-    return { element: page.elementLocator(element), work, answered, projectId: project.id };
   }
 
   // qits-150: the epic carries its finish button; the ticket shows the quiet hint instead.
   it('shows the verified work, the epic with its finish button, the ticket with its hint', async () => {
-    const { element, work, answered, projectId } = await shown();
+    const { element, frame, work, answered, projectId } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
     // qits-1873: the ticket's line asks for the closings, which do not name it.
@@ -86,12 +68,14 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).not.toMatchTextContent('Done ticket');
     await expect.element(element).toMatchTextContent('Closes once its release lands');
     expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(1);
-    await expect.element(element).toMatchScreenshot('acceptance');
+    await expect.element(frame).toMatchScreenshot('acceptance');
   });
 
   // qits-1873: each VERIFIED ticket's card says how its wrapper closing stands, the request linked.
   it('says how each verified ticket’s wrapper closing stands', async () => {
-    const { element, work, answered, projectId } = await shown();
+    // Tall enough for all five cards: the shell shows only what is in the viewport.
+    await page.viewport(1040, 1100);
+    const { element, frame, work, answered, projectId } = await shown();
     work.flush(await goldenMaster(WRAPPER_CLOSINGS, 'listProjectWork'));
     await answered();
     expect(await answerWrapperClosings(http, projectId)).toBe(true);
@@ -134,9 +118,8 @@ describe('WorkAcceptancePage (screenshots)', () => {
     expect(lineOf('contract-00000001-5')?.classList.contains('text-sunflower-gold-800')).toBe(true);
     // The REFINED ticket is not in Acceptance.
     await expect.element(element).not.toMatchTextContent('Not verified yet');
-    await expect.element(element).toMatchScreenshot('wrapper-closings');
-    // The page is taller than the viewport, whose fold hides the last two cards: the empty
-    // wrapper's withdrawal and the UNPROVEN warning are shot card by card.
+    await expect.element(frame).toMatchScreenshot('wrapper-closings');
+    // The empty wrapper's withdrawal and the UNPROVEN warning are also shot card by card, close up.
     for (const [ticket, name] of [
       ['contract-00000001-4', 'wrapper-closings-withdrawn'],
       ['contract-00000001-5', 'wrapper-closings-unproven'],
@@ -149,7 +132,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
 
   // qits-1873: without the closings, a ticket's line stays the generic hint.
   it('keeps the ticket’s hint when the wrapper closings fail', async () => {
-    const { element, work, answered, projectId } = await shown();
+    const { element, frame, work, answered, projectId } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
     TestBed.tick();
@@ -163,18 +146,18 @@ describe('WorkAcceptancePage (screenshots)', () => {
   });
 
   it('says so when nothing waits to be accepted', async () => {
-    const { element, work, answered } = await shown();
+    const { element, frame, work, answered } = await shown();
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
     await expect.element(element).toMatchTextContent('Nothing here');
-    await expect.element(element).toMatchScreenshot('empty');
+    await expect.element(frame).toMatchScreenshot('empty');
   });
 
   it('shows that the work is loading', async () => {
-    const { element, work } = await shown();
+    const { element, frame, work, answered } = await shown();
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(element).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading');
     work.flush(null, { status: 500, statusText: 'Server Error' });
-    await settle();
+    await answered();
   });
 });

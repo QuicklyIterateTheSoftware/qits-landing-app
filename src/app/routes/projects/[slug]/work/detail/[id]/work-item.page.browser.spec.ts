@@ -1,24 +1,17 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { commands, page, userEvent, type Locator } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
-import { WorkItemPage } from './work-item.page';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
+import { openRoute, provideAppRoute } from '../../../../../../../testing/browser/app-route';
 import {
-  openRecordedWork,
+  answerWrapperClosings,
   WRAPPER_CLOSINGS,
 } from '../../../../../../../testing/browser/recorded-work';
 
 /**
- * Screenshots of one work item's page and its actions, answered with qits-projects' golden masters
- * and the archetype registry:
+ * Screenshots of one work item's page and its actions inside the shell (`openRoute`; the page sits
+ * outside the work tabs), answered with qits-projects' golden masters and the archetype registry:
  *
  * - each archetype (and each ticket type) from its own detail state ("an epic in detail", …): the
  *   page as a whole, with the item's own reads (description, facts, dossier, comments);
@@ -32,9 +25,10 @@ import {
  * - what an item needs (epic qits-1899): the READY_FOR_DEV ticket of "a ticket that needs another",
  *   its "needs" badge and its Needs panel, from its work and its `getWork` (no thread or dossier).
  *
- * The workspaces come from qits-workspaces' golden masters (`answerWorkspaces`), whose ids are
- * those of the "… in detail" states: the bug ticket's history, and "a work item with no
- * workspaces" for every other item.
+ * The workspaces come from qits-workspaces' golden masters, whose ids are those of the "… in
+ * detail" states: the open workspaces (a frame read `openRoute` answers) from "a project with
+ * workspaces bound to work items", and each item's own (`answerWorkspaces`): the bug ticket's
+ * history, and "a work item with no workspaces" for every other item.
  *
  * The page follows transitions through the event stream; the stream here never connects.
  */
@@ -71,20 +65,14 @@ async function figuresLoaded(element: Locator) {
 describe('WorkItemPage (screenshots)', () => {
   let http: HttpTestingController;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // As wide as the page was, plus the sidebar.
+    await page.viewport(1040, 600);
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/work/detail/:id', component: WorkItemPage }]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(workspacesClient),
+        provideAppRoute(),
         // Where the epic's dossier figures load from (stubbed: `stubFigure`).
         provideTestPlatformOrigins({ projects: PROJECTS }),
-        {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
-        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -139,22 +127,13 @@ describe('WorkItemPage (screenshots)', () => {
   }
 
   /**
-   * Answers the open workspaces from "a project with workspaces bound to work items", and the
-   * item's own workspaces: that state's list for the item it records (the bug ticket), and for any
-   * other item "a work item with no workspaces" (its answer names no id). In an `UNBOUND` state the
-   * open workspaces are "no work item has an open workspace" and every item's workspaces are "a work
-   * item with no workspaces".
+   * Answers the item's own workspaces: "a project with workspaces bound to work items"' list for
+   * the item it records (the bug ticket), and for any other item "a work item with no workspaces"
+   * (its answer names no id). In an `UNBOUND` state every item's workspaces are "a work item with no
+   * workspaces" (and the open workspaces, `render`'s, "no work item has an open workspace").
    */
   async function answerWorkspaces(state: string) {
     await settle();
-    const open = http.expectOne('/workspaces/api/work/workspaces');
-    open.flush(
-      await goldenMaster(
-        UNBOUND.has(state) ? 'no work item has an open workspace' : BOUND,
-        'listOpenWorkspaces',
-        'qits-workspaces',
-      ),
-    );
     const bug = (await goldenMaster('a bug ticket in detail', 'getWork')).id;
     for (const read of http.match((r) =>
       /^\/workspaces\/api\/work\/[^/]+\/workspaces$/.test(r.url),
@@ -167,31 +146,30 @@ describe('WorkItemPage (screenshots)', () => {
   }
 
   /**
-   * The page of the entity titled `title` in `state`'s recorded work, every request answered from
-   * a recording (`openRecordedWork`), the item's own reads from `state` when `detail`
-   * (`answerDetail`).
+   * The page of the entity titled `title` in `state`'s recorded work, inside the shell
+   * (`openRoute`), every request answered from a recording: the work from `state`, the wrapper
+   * closings a VERIFIED ticket's line asks for (`answerWrapperClosings`), the item's own reads from
+   * `state` when `detail` (`answerDetail`). Gives the page (`element`) and the frame around it.
    */
   async function render(state: string, title: string, detail: boolean | 'item' = false) {
     const work = await goldenMaster(state, 'listProjectWork');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
-    const { element, harness } = await openRecordedWork(
-      http,
-      'work/detail',
-      entity.qualifiedId,
-      state,
+    const opened = await openRoute(
+      (project) => `/projects/${project.slug}/work/detail/${entity.qualifiedId}`,
+      { workspaces: UNBOUND.has(state) ? 'no work item has an open workspace' : BOUND },
     );
+    http.expectOne(`/projects/api/projects/${opened.project.id}/work`).flush(work);
+    await opened.settled();
+    await answerWrapperClosings(http, opened.project.id);
     // The page's actions come from the archetype registry.
     http
       .expectOne('/projects/api/work/archetypes')
       .flush(await goldenMaster('the archetype registry', 'listWorkArchetypes'));
     await answerDetail(state, entity.qualifiedId, detail);
     await answerWorkspaces(state);
-    await settle();
-    await settle();
-    await harness.fixture.whenStable();
-    harness.fixture.detectChanges();
-    element.style.width = '760px';
-    return page.elementLocator(element);
+    await opened.settled();
+    const view = opened.frame.querySelector<HTMLElement>('app-work-item-page')!;
+    return { element: page.elementLocator(view), frame: page.elementLocator(opened.frame) };
   }
 
   /**
@@ -269,7 +247,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an epic: description, features, dossier with its figure, comments', async () => {
-      const element = await render(
+      const { element } = await render(
         'an epic in detail',
         'Export invoices for the accountants',
         true,
@@ -293,7 +271,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an epic on the board: its features are its own board, five columns', async () => {
-      const element = await render(
+      const { element } = await render(
         'an epic in detail',
         'Export invoices for the accountants',
         true,
@@ -316,7 +294,10 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an epic off the board: its features as rows, as before', async () => {
-      const element = await render('a verified epic with every task implemented', 'Verified epic');
+      const { element } = await render(
+        'a verified epic with every task implemented',
+        'Verified epic',
+      );
       const features = element.getByRole('region', { name: 'Features' });
       await expect.element(features.getByRole('link', { name: 'Shipped feature' })).toBeVisible();
       expect(features.element().querySelector('app-epic-board')).toBeNull();
@@ -325,7 +306,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a feature: description, tasks, comments', async () => {
-      const element = await render('a feature in detail', 'PDF export', true);
+      const { element } = await render('a feature in detail', 'PDF export', true);
       // No "Depends on" any more (epic qits-1899): what it needs is the Needs panel.
       await expect.element(element).not.toMatchTextContent('Depends on');
       await expect
@@ -339,7 +320,11 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a task: repository, progress, description, comments', async () => {
-      const element = await render('a task in detail', 'Download button on the invoice list', true);
+      const { element } = await render(
+        'a task in detail',
+        'Download button on the invoice list',
+        true,
+      );
       await expect.element(element).toMatchTextContent('Implemented1 Jan 2026, 00:00');
       await expect.element(element).not.toMatchTextContent('Depends on');
       await expect
@@ -365,7 +350,7 @@ describe('WorkItemPage (screenshots)', () => {
     ])(
       'a %s ticket: its facts, description, dossier, comments',
       async (type, state, title, dossier) => {
-        const element = await render(state, title, true);
+        const { element } = await render(state, title, true);
         await expect.element(element).toMatchTextContent(`Type${type}`);
         await expect
           .element(element.getByRole('region', { name: 'Dossier' }))
@@ -377,7 +362,7 @@ describe('WorkItemPage (screenshots)', () => {
 
   // qits-1873: a VERIFIED ticket's facts say how its wrapper closing stands, the request linked.
   it('a verified ticket riding a pending wrapper request', async () => {
-    const element = await render(WRAPPER_CLOSINGS, 'Riding a pending wrapper request', 'item');
+    const { element } = await render(WRAPPER_CLOSINGS, 'Riding a pending wrapper request', 'item');
     const line = element.getByText('Closes with', { exact: false });
     await expect
       .element(line)
@@ -396,7 +381,7 @@ describe('WorkItemPage (screenshots)', () => {
   // Epic qits-1899: the item's "needs" badge beside its facts, and its Needs panel below the body:
   // the needed ticket linked, at VERIFIED, now REFINED, not met.
   it('a ticket that needs another: its badge and its Needs panel', async () => {
-    const element = await render(NEEDS, 'Render work ids in the list', 'item');
+    const { element } = await render(NEEDS, 'Render work ids in the list', 'item');
     const badge = element.getByText('needs 1');
     await expect.element(badge).toBeVisible();
     await expect
@@ -423,7 +408,7 @@ describe('WorkItemPage (screenshots)', () => {
       const qualifiedId = work.entities.find(
         (e: { title: string }) => e.title === 'Invoice totals are off by one cent',
       ).qualifiedId;
-      const element = await render(
+      const { element } = await render(
         'a bug ticket in detail',
         'Invoice totals are off by one cent',
         true,
@@ -441,7 +426,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an item with no workspaces', async () => {
-      const element = await render(
+      const { element } = await render(
         'an improvement ticket in detail',
         'Remember the last export format',
         true,
@@ -455,7 +440,7 @@ describe('WorkItemPage (screenshots)', () => {
 
   describe('actions, as the registry serves them', () => {
     it('a reported ticket: every group', async () => {
-      const element = await render(EVERY_STATUS, 'Reported ticket');
+      const { element } = await render(EVERY_STATUS, 'Reported ticket');
       await agentButtons(element, ['Dispatch', 'Refine']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
@@ -469,7 +454,7 @@ describe('WorkItemPage (screenshots)', () => {
     // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so the
     // registry's "Mark done" move is held back for a ticket; only the platform uses it.
     it('a verified ticket: its moves only, with no Mark done', async () => {
-      const element = await render(EVERY_STATUS, 'Verified ticket');
+      const { element } = await render(EVERY_STATUS, 'Verified ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Back to verifying Drop');
@@ -478,7 +463,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('done work: nothing', async () => {
-      const element = await render(EVERY_STATUS, 'Done epic');
+      const { element } = await render(EVERY_STATUS, 'Done epic');
       await expect.element(element.getByRole('heading', { level: 1 })).toMatchTextContent('Done');
       // No action: the thread's own buttons (Comment, Edit) and the Needs panel's (Add a need:
       // needs stay editable at every status) are not actions.
@@ -490,7 +475,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a scheduled feature: its own moves, nothing to dispatch', async () => {
-      const element = await render('an epic with features and tasks', 'Open feature');
+      const { element } = await render('an epic with features and tasks', 'Open feature');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark implementing Skip to implemented Back to refined Drop');
@@ -499,7 +484,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an implemented ticket: the verify phase, its flow, and the move to VERIFYING', async () => {
-      const element = await render(
+      const { element } = await render(
         IMPLEMENTED,
         'Database runs out of connection slots during deploys',
         true,
@@ -529,8 +514,10 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an implementing epic: Dispatch lists the flow it runs', async () => {
+      // Tall enough for the whole page: the shell shows only what is in the viewport.
+      await page.viewport(1040, 2650);
       await commands.stubFigure(`${PROJECTS}/projects/api/work/*/dossier-assets/*/content`);
-      const element = await render(
+      const { element, frame } = await render(
         'an epic in detail',
         'Export invoices for the accountants',
         true,
@@ -539,11 +526,11 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('tooltip'))
         .toMatchTextContent('Runsimplement → IMPLEMENTEDverify → VERIFIED');
-      await expect.element(element).toMatchScreenshot('actions-implementing-epic-runs');
+      await expect.element(frame).toMatchScreenshot('actions-implementing-epic-runs');
     });
 
     it('a refined epic offers Dispatch (qits-1075)', async () => {
-      const element = await render(EVERY_STATUS, 'Refined epic');
+      const { element } = await render(EVERY_STATUS, 'Refined epic');
       // A person's Dispatch pre-approves the scheduling, running the whole flow in one press.
       await agentButtons(element, ['Dispatch']);
       await expect
@@ -566,7 +553,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a ready for dev epic: the implement phase, and the move to IMPLEMENTING', async () => {
-      const element = await render(EVERY_STATUS, 'Ready for dev epic');
+      const { element } = await render(EVERY_STATUS, 'Ready for dev epic');
       await agentButtons(element, ['Dispatch', 'Implement']);
       await expect.element(actionsOf(element)).toMatchScreenshot('actions-ready-for-dev-epic');
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
@@ -587,7 +574,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a dropped ticket: Reopen, back to REPORTED', async () => {
-      const element = await render(EVERY_STATUS, 'Dropped ticket');
+      const { element } = await render(EVERY_STATUS, 'Dropped ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Reopen');
@@ -621,25 +608,8 @@ describe('WorkItemPage (screenshots)', () => {
     const state = 'a bug ticket in detail';
     const title = 'Invoice totals are off by one cent';
 
-    // `render()` fixes the host at 760px for the part screenshots; this case needs the real
-    // phone-width layout, so it repeats `render()`'s steps without that override.
-    const work = await goldenMaster(state, 'listProjectWork');
-    const entity = work.entities.find((e: { title: string }) => e.title === title);
-    const { element: root, harness } = await openRecordedWork(
-      http,
-      'work/detail',
-      entity.qualifiedId,
-      state,
-    );
-    http
-      .expectOne('/projects/api/work/archetypes')
-      .flush(await goldenMaster('the archetype registry', 'listWorkArchetypes'));
-    await answerDetail(state, entity.qualifiedId, true);
-    await answerWorkspaces(state);
-    await settle();
-    await settle();
-    await harness.fixture.whenStable();
-    harness.fixture.detectChanges();
+    const { element } = await render(state, title, true);
+    const root = element.element();
 
     const path =
       'src/app/layout/shell/__screenshots__/shell.layout.browser.spec.ts/menu-agents-phone-chromium-linux.png';
