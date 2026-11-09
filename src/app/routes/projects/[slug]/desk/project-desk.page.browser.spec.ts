@@ -1,38 +1,24 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import { ProjectDeskPage } from './project-desk.page';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
+import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of the Desk page. The open project is the recorded one ("a project exists"), found
- * by the URL's slug in the recorded project list, the same as the other project pages' specs.
+ * Screenshots of the Desk page inside the shell (`openRoute`). The open project is the recorded
+ * one ("a project exists"), found by the URL's slug in the recorded project list, the same as the
+ * other project pages' specs.
  *
  * `listDeskTriggerMessages` itself is answered from qits-projects' golden master only where the
  * test below is skipped and says why: `@qits/projects-golden-masters` does not carry the provider
  * state yet (see `desk-triggers.store.pact.spec.ts`), and the guard refuses a hand-made 2xx body.
  */
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('ProjectDeskPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        provideRouter([{ path: 'projects/:slug/desk', component: ProjectDeskPage }]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-      ],
-    });
+    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -44,34 +30,15 @@ describe('ProjectDeskPage (screenshots)', () => {
 
   async function render() {
     // Tall enough for every row: a screenshot shows only what is in the viewport.
-    await page.viewport(900, 1000);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/desk`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    harness.fixture.detectChanges();
-    await settle();
-    TestBed.tick();
-    await settle();
+    await page.viewport(1140, 1000);
+    const opened = await openRoute((project) => `/projects/${project.slug}/desk`);
     http
-      .expectOne(`/projects/api/projects/${project.id}/work`)
+      .expectOne(`/projects/api/projects/${opened.project.id}/work`)
       .flush(await goldenMaster('a project with no work', 'listProjectWork'));
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
     return {
-      fixture: harness.fixture,
-      element,
-      request: http.expectOne(`/projects/api/projects/${project.id}/desk-triggers`),
+      opened,
+      request: http.expectOne(`/projects/api/projects/${opened.project.id}/desk-triggers`),
     };
-  }
-
-  async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
-    await settle();
-    await fixture.whenStable();
-    fixture.detectChanges();
   }
 
   // Skipped: qits-projects-service's provider state "a project whose desk received a trigger
@@ -82,7 +49,7 @@ describe('ProjectDeskPage (screenshots)', () => {
   // `await goldenMaster('a project whose desk received a trigger message', 'listDeskTriggerMessages')`
   // and unskip — see `desk-triggers.store.pact.spec.ts` for the same hold.
   it.skip('lists a message with its badge, times, and each line’s source, item and cause', async () => {
-    const { fixture, element, request } = await render();
+    const { opened, request } = await render();
     const body = {
       messages: [
         {
@@ -124,25 +91,25 @@ describe('ProjectDeskPage (screenshots)', () => {
     };
     // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects-service's release of "a project whose desk received a trigger message"
     request.flush(body);
-    await answered(fixture);
-    const view = page.elementLocator(element);
+    await opened.settled();
+    const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('delivered');
     await expect.element(view).toMatchTextContent('contract-00000001-1580');
     await expect.element(view).toMatchTextContent('contract-service-rr-7');
-    await expect.element(view).toMatchScreenshot('loaded');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {
-    const { fixture, element, request } = await render();
-    const view = page.elementLocator(element);
+    const { opened, request } = await render();
+    const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('loading');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
     request.flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(fixture);
+    await opened.settled();
     await expect
       .element(view.getByRole('alert'))
       .toMatchTextContent('This project’s desk trigger messages could not be read.');
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('error');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
   });
 });

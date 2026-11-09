@@ -1,42 +1,25 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
-import { WorkInProgressPage } from './work-in-progress.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
+import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of a project's In Progress page (the board), answered with qits-projects' golden
- * masters: the project list as recorded, and "a project with work in every status" (one epic and
- * one ticket per status, DROPPED included) or "an epic with features and tasks" for its work. The
- * active agents are qits-workspaces' "a project with agents bound to work items": its agent is on
- * an item these projects do not hold, so no agent section shows (`work-in-progress.page.spec.ts`
- * covers them).
+ * Screenshots of a project's In Progress page (the board) inside the shell and the work tabs
+ * (`openRoute`), answered with qits-projects' golden masters: the project list as recorded, and "a
+ * project with work in every status" (one epic and one ticket per status, DROPPED included) or "an
+ * epic with features and tasks" for its work. The active agents are qits-workspaces' "a project
+ * with agents bound to work items": its agent is on an item these projects do not hold, so no agent
+ * section shows (`work-in-progress.page.spec.ts` covers them).
  */
-
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 describe('WorkInProgressPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(async () => {
-    // Tall enough for the whole board: a screenshot shows only the viewport.
-    await page.viewport(800, 1600);
-    TestBed.configureTestingModule({
-      providers: [
-        provideRouter([{ path: 'projects/:slug/work/in-progress', component: WorkInProgressPage }]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(workspacesClient),
-      ],
-    });
+    // As wide as the page was, plus the sidebar.
+    await page.viewport(1040, 900);
+    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -46,22 +29,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  /**
-   * The page of the recorded project, with the list and its work answered, `width` wide (`''`: as
-   * wide as the viewport).
-   */
-  async function shown(
-    answerWork = true,
-    workState = 'a project with work in every status',
-    width = '760px',
-  ) {
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/work/in-progress`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
+  /** The page of the recorded project, with its active agents answered and its work requested. */
+  async function shown(answerWork = true, workState = 'a project with work in every status') {
+    const opened = await openRoute((project) => `/projects/${project.slug}/work/in-progress`);
     http
       .expectOne('/workspaces/api/agents?state=ACTIVE')
       .flush(
@@ -71,25 +41,19 @@ describe('WorkInProgressPage (screenshots)', () => {
           'qits-workspaces',
         ),
       );
-    // SelectedWork's effect asks for the work once the project is known; let it run.
-    TestBed.tick();
-    await settle();
-    TestBed.tick();
-    await settle();
-    const work = http.expectOne(`/projects/api/projects/${project.id}/work`);
+    const work = http.expectOne(`/projects/api/projects/${opened.project.id}/work`);
     if (answerWork) {
       work.flush(await goldenMaster(workState, 'listProjectWork'));
-      await settle();
-      await harness.fixture.whenStable();
-      harness.fixture.detectChanges();
     }
-    const element = harness.routeNativeElement as HTMLElement;
-    if (width) element.style.width = width;
-    return { element: page.elementLocator(element), work, project };
+    await opened.settled();
+    return { opened, work, element: page.elementLocator(opened.page) };
   }
 
   it('shows the work being worked on, and nothing before or after it', async () => {
-    const { element, project } = await shown();
+    // Tall enough for the whole board: the shell shows only what is in the viewport.
+    await page.viewport(1040, 2000);
+    const { opened, element } = await shown();
+    const { project } = opened;
     await expect
       .element(element.getByRole('heading', { level: 1 }))
       .toMatchTextContent('In Progress');
@@ -102,29 +66,30 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(element).not.toMatchTextContent('Refined ticket');
     await expect.element(element).not.toMatchTextContent('Verified ticket');
     await expect.element(element).not.toMatchTextContent('Done ticket');
-    // Every card leads to its item's page, below work/detail. The Workspace links are hidden: this
-    // page alone loads no open workspaces (the layout does).
+    // Every card leads to its item's page, below work/detail. The Workspace links are left out:
+    // they lead to the agents; so are the shell's and the tabs' links.
     const hrefs = [...element.element().querySelectorAll('a[href]')]
-      .filter((a) => !a.closest('app-workspace-link'))
+      .filter((a) => a.closest('app-work-in-progress-page') && !a.closest('app-workspace-link'))
       .map((a) => a.getAttribute('href'));
     expect(hrefs.length).toBeGreaterThan(0);
     for (const href of hrefs) expect(href).toMatch(`/projects/${project.slug}/work/detail/`);
-    await expect.element(element).toMatchScreenshot('board');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('board');
   });
 
   it('nests an epic’s features and tasks in its lane', async () => {
-    const { element } = await shown(true, 'an epic with features and tasks');
+    const { opened, element } = await shown(true, 'an epic with features and tasks');
     await expect.element(element).toMatchTextContent('Nested epic');
     await expect.element(element).toMatchTextContent('Shipped feature');
     await expect.element(element).toMatchTextContent('Open task');
-    await expect.element(element).toMatchScreenshot('nested');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('nested');
   });
 
   // At 390px the board's columns overflowed the page, its epics' handles off-screen (qits-1861):
-  // below md the board's tree is drawn stacked instead, within the phone's width.
+  // below md the board's tree is drawn stacked instead, within the phone's width (the shell's
+  // sidebar collapsed).
   it('stacks the board’s work within a phone’s width, every handle on screen', async () => {
     await page.viewport(390, 844);
-    const { element } = await shown(true, 'a project with work in every status', '');
+    const { element } = await shown();
     const root = element.element();
     const board = root.querySelector<HTMLElement>('app-kanban-board')!;
     expect(board.getBoundingClientRect().width).toBe(0);
@@ -150,10 +115,10 @@ describe('WorkInProgressPage (screenshots)', () => {
   });
 
   it('shows that the work is loading', async () => {
-    const { element, work } = await shown(false);
+    const { opened, work, element } = await shown(false);
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(element).toMatchScreenshot('loading');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
     work.flush(null, { status: 500, statusText: 'Server Error' });
-    await settle();
+    await opened.settled();
   });
 });

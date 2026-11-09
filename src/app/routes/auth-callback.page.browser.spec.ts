@@ -1,19 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import {
-  qitsAuthCallbackRoute,
-  QitsSignInError,
-  QitsTokens,
-  type QitsSignInFailure,
-} from '@qits/angular';
+import { QitsSignInError, QitsTokens, type QitsSignInFailure } from '@qits/angular';
 import { page } from 'vitest/browser';
+import { routes } from '../app.routes';
 
 /**
  * Screenshots of the sign-in callback page (`@qits/angular`'s `QitsAuthCallbackPage`, placed at
  * `auth/callback` by `qitsAuthCallbackRoute`): signing in while `complete()` is in flight, and
- * failed for each reason a `QitsSignInError` names. The page calls no backend itself, so there
- * is no golden master: `QitsTokens` answers `complete()` directly. The page reads the query from
+ * failed for each reason a `QitsSignInError` names. It is opened through the app's own routes
+ * (qits-1997), where `auth/callback` sits outside the shell, so no shell renders around it. The
+ * page calls no backend itself, so there is no golden master: `QitsTokens` answers `complete()`
+ * directly. The page reads the query from
  * the document's location, not from the router, so the test puts it in the address bar first.
  */
 
@@ -28,10 +26,7 @@ describe('QitsAuthCallbackPage (screenshots)', () => {
   beforeEach(() => {
     complete = vi.fn();
     TestBed.configureTestingModule({
-      providers: [
-        provideRouter([qitsAuthCallbackRoute]),
-        { provide: QitsTokens, useValue: { complete } },
-      ],
+      providers: [provideRouter(routes), { provide: QitsTokens, useValue: { complete } }],
     });
     history.replaceState({}, '', CALLBACK);
   });

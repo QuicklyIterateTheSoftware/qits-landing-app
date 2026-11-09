@@ -16,6 +16,14 @@ export default tseslint.config(
         'error',
         { allowTokens: ['EVENT_SOURCE', 'WEB_SOCKET'] },
       ],
+      // The screenshot specs' app route helper sets every client up, as `app.config.ts` does
+      // (qits-1997); it calls none of them.
+      'qits/client-only-in-stores': [
+        'error',
+        {
+          allow: ['src/app/app.config*.ts', 'src/main*.ts', 'src/testing/browser/app-route.ts'],
+        },
+      ],
     },
   },
   ...climbBans(),

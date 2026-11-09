@@ -1,25 +1,22 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
-import { client as workspaceDaemonClient } from '../../../../../api/workspace-daemon/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
-import { WorkspaceSlotPage } from './workspace-slot.page';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of one workspace slot's page, answered with qits-workspaces' "a workspace slot
- * hosting agents": the slot RUNNING on runner `localhost` (its daemon not reported), no start
- * running against it, and its two agents — the bug ticket's, holding it and waiting on a release
- * request, and the epic's, yielded. The project is qits-projects' recorded one ("a project
- * exists"); the slot is the state's first row (`workspaceId`, frozen to 1).
+ * Screenshots of one workspace slot's page inside the shell (`openRoute`), answered with
+ * qits-workspaces' "a workspace slot hosting agents": the slot RUNNING on runner `localhost` (its
+ * daemon not reported), no start running against it, and its two agents — the bug ticket's, holding
+ * it and waiting on a release request, and the epic's, yielded. The project is qits-projects'
+ * recorded one ("a project exists"); the slot is the state's first row (`workspaceId`, frozen to
+ * 1).
  *
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
  *
@@ -41,9 +38,6 @@ const SIGNED_OUT = 'a workspace daemon with a harness nobody signed in';
 const PLUGINS = 'a workspace daemon with plugins installed';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('WorkspaceSlotPage (screenshots)', () => {
   let http: HttpTestingController;
 
@@ -51,24 +45,13 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([
-          { path: 'projects/:slug/workspaces/:slotId', component: WorkspaceSlotPage },
-        ]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(workspacesClient),
-        provideHeyApiClient(workspaceDaemonClient),
+        provideAppRoute(),
         provideTestPlatformOrigins({ workspaces: 'https://workspaces.test' }),
         {
           provide: WEB_SOCKET,
           useValue: () => {
             throw new Error('no sign-in terminal is open');
           },
-        },
-        {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
       ],
     });
@@ -82,30 +65,15 @@ describe('WorkspaceSlotPage (screenshots)', () => {
   });
 
   async function render(slotId: string) {
-    await page.viewport(900, 900);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/workspaces/${slotId}`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    TestBed.tick();
-    await settle();
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
-    return { harness, element, project };
-  }
-
-  async function answered(harness: RouterTestingHarness) {
-    await settle();
-    TestBed.tick();
-    await settle();
-    harness.fixture.detectChanges();
+    // As wide as the page was, plus the sidebar; tall enough for the whole page, as the shell shows
+    // only what is in the viewport.
+    await page.viewport(1140, 1040);
+    const opened = await openRoute((project) => `/projects/${project.slug}/workspaces/${slotId}`);
+    return { opened, element: opened.page, project: opened.project };
   }
 
   /** Answers the slot's reads from "a workspace slot hosting agents", and its harness install. */
-  async function answerSlot(harness: RouterTestingHarness, id: string, report = SIGNED_IN) {
+  async function answerSlot(opened: OpenedRoute, id: string, report = SIGNED_IN) {
     http
       .expectOne(`/workspaces/api/workspaces/${id}`)
       .flush(await goldenMaster(SLOT, 'getWorkspace', 'qits-workspaces'));
@@ -115,7 +83,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     http
       .expectOne(`/workspaces/api/workspaces/${id}/agents`)
       .flush(await goldenMaster(SLOT, 'listWorkspaceAgents', 'qits-workspaces'));
-    await answered(harness);
+    await opened.settled();
     const base = `https://workspaces.test/workspaces/container/${id}`;
     http
       .expectOne(`${base}/agents/available`)
@@ -123,13 +91,13 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     http
       .expectOne(`${base}/agent-plugins`)
       .flush(await goldenMaster(PLUGINS, 'listPlugins', 'qits-workspace-daemon'));
-    await answered(harness);
+    await opened.settled();
   }
 
   it('shows the slot’s status strip and the agents it hosts', async () => {
     const id = '1';
-    const { harness, element, project } = await render(id);
-    await answerSlot(harness, id);
+    const { opened, element, project } = await render(id);
+    await answerSlot(opened, id);
     const view = page.elementLocator(element);
     await expect
       .element(view.getByRole('heading', { name: 'Workspace ws-contract' }))
@@ -148,32 +116,32 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(view.getByRole('group', { name: 'Container' }).getByRole('button', { name: 'Stop' }))
       .toBeVisible();
-    await expect.element(view).toMatchScreenshot('slot');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('slot');
   });
 
   it('names the agents a stop affects before it is confirmed', async () => {
     const id = '1';
-    const { harness, element } = await render(id);
-    await answerSlot(harness, id);
+    const { opened, element } = await render(id);
+    await answerSlot(opened, id);
     const view = page.elementLocator(element);
     await view
       .getByRole('group', { name: 'Container' })
       .getByRole('button', { name: 'Stop' })
       .click();
-    harness.fixture.detectChanges();
+    opened.harness.fixture.detectChanges();
     await expect.element(view.getByRole('button', { name: 'Confirm stop?' })).toBeVisible();
     await expect
       .element(view)
       .toMatchTextContent(
         'Stopping the container affects its 2 agents: contract-00000001-1, contract-00000001-9.',
       );
-    await expect.element(view).toMatchScreenshot('confirm-stop');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('confirm-stop');
   });
 
   it('says nobody signed the container’s harness in, and offers the sign-in terminal', async () => {
     const id = '1';
-    const { harness, element } = await render(id);
-    await answerSlot(harness, id, SIGNED_OUT);
+    const { opened, element } = await render(id);
+    await answerSlot(opened, id, SIGNED_OUT);
     const notice = page.elementLocator(element.querySelector('app-sign-in-notice')!);
     await expect.element(notice).toMatchTextContent('Nobody has signed Claude Code in');
     await expect
@@ -184,8 +152,8 @@ describe('WorkspaceSlotPage (screenshots)', () => {
 
   it('lists the plugins on the shared agent home', async () => {
     const id = '1';
-    const { harness, element } = await render(id);
-    await answerSlot(harness, id);
+    const { opened, element } = await render(id);
+    await answerSlot(opened, id);
     const plugins = page.elementLocator(element.querySelector('app-plugins-section')!);
     await expect.element(plugins).toMatchTextContent('installed, switched off');
     await expect.element(plugins.getByRole('button', { name: 'Install' }).first()).toBeVisible();
@@ -193,7 +161,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
   });
 
   it('says a slot that answers 404 is gone', async () => {
-    const { harness, element } = await render('2');
+    const { opened, element } = await render('2');
     http
       .expectOne('/workspaces/api/workspaces/2')
       .flush(null, { status: 404, statusText: 'Not Found' });
@@ -203,9 +171,9 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     http
       .expectOne('/workspaces/api/workspaces/2/agents')
       .flush(null, { status: 404, statusText: 'Not Found' });
-    await answered(harness);
+    await opened.settled();
     const view = page.elementLocator(element);
     await expect.element(view).toMatchTextContent('This workspace is gone');
-    await expect.element(view).toMatchScreenshot('gone');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('gone');
   });
 });

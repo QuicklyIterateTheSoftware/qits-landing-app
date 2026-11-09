@@ -72,9 +72,10 @@ const goldenMaster: BrowserCommand<
  * happens on (`qits-trigger.route`). The root is this file's directory, so the sections are keyed by the spec's
  * path in this repository (`src/app/routes/…`) whatever directory the run starts in.
  *
- * Only a page spec's routes are kept: it mounts the page at the route its directory names, which
- * the lint rule holds to the app's. A layout or pattern spec mounts a stand-in route of its own
- * (`projects/:slug/:view/:qualifiedId`) that no user ever opens, so its section stays empty.
+ * Only a page spec's routes are kept: it opens the app's own routes at its page's URL
+ * (`openRoute`, qits-1997). A layout spec's pages are page specs' already, and a pattern spec
+ * mounts a stand-in route of its own (`projects/:slug/:view/:qualifiedId`) that no user ever opens,
+ * so their sections stay empty.
  */
 const ledger = goldenMasterRoutes(
   'src/testing/browser/routes.json',

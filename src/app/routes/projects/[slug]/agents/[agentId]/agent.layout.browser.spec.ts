@@ -1,21 +1,21 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { page } from 'vitest/browser';
-import { client as projectsClient } from '../../../../../api/projects/client.gen';
-import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
-import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
-import { AgentLayout } from './agent.layout';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../testing/browser/app-route';
 
 /**
- * Screenshots of an agent's page. The project is qits-projects' recording ("a project exists");
+ * Screenshots of an agent's page inside the shell (`openRoute`), at the agent's bare URL (no tab
+ * open). The project is qits-projects' recording ("a project exists");
  * the agent is qits-workspaces' `getAgent` of "an agent with a saved prompt draft" (the bug
- * ticket's agent, slot 1), the project's ACTIVE agents the same agent as "an agent whose workspace
+ * ticket's agent, slot 1), the project's ACTIVE agents (the same read as the shell's agents menu)
+ * the same agent as "an agent whose workspace
  * is starting" lists it (no waits or attention: this agent is not among "a project with agents
  * needing attention"'s, which records a different fixture agent for the same ticket), and its slot
  * that state's: a container coming up while a start is live. The start's log stream opens but sends
@@ -33,9 +33,6 @@ const STARTING = 'an agent whose workspace is starting';
 const LEFTOVER = 'an agent with leftover work';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
-
 describe('AgentLayout (screenshots)', () => {
   let http: HttpTestingController;
   let streams: string[];
@@ -45,17 +42,7 @@ describe('AgentLayout (screenshots)', () => {
     streams = [];
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([
-          {
-            path: 'projects/:slug/agents/:agentId',
-            component: AgentLayout,
-            children: [{ path: '', children: [] }],
-          },
-        ]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideHeyApiClient(projectsClient),
-        provideHeyApiClient(workspacesClient),
+        provideAppRoute(),
         provideTestPlatformOrigins({ workspaces: 'https://workspaces.test' }),
         {
           provide: EVENT_SOURCE,
@@ -75,33 +62,22 @@ describe('AgentLayout (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  async function answered(harness: RouterTestingHarness) {
-    await settle();
-    TestBed.tick();
-    await settle();
-    harness.fixture.detectChanges();
+  /** Opens the agent's page and answers the agent, the project's agents as `agents` names. */
+  async function render(agents = STARTING) {
+    // As wide as the page was, plus the sidebar.
+    await page.viewport(1140, 900);
+    const agent = await goldenMaster(AGENT, 'getAgent', 'qits-workspaces');
+    const opened = await openRoute(
+      (project) => `/projects/${project.slug}/agents/${agent.agentId}`,
+      { agents },
+    );
+    return { opened, agent };
   }
 
-  /** Opens the agent's page and answers the project, the agent and the project's agents. */
-  async function render() {
-    await page.viewport(900, 900);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const agent = await goldenMaster(AGENT, 'getAgent', 'qits-workspaces');
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/agents/${agent.agentId}`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    await answered(harness);
-    http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
-    http
-      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      .flush(await goldenMaster(STARTING, 'listAgents', 'qits-workspaces'));
-    await answered(harness);
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
-    return { harness, element, project, agent };
+  /** Answers the agent's read with `body`. */
+  async function answerAgent(opened: OpenedRoute, agentId: string, body: object) {
+    http.expectOne(`/workspaces/api/agents/${agentId}`).flush(body);
+    await opened.settled();
   }
 
   /**
@@ -110,18 +86,20 @@ describe('AgentLayout (screenshots)', () => {
    * running; a live start is recorded for the slot's own lookup (the same `{ technicalProcessId }`,
    * which the slot page's pact binds), so this is that answer.
    */
-  async function answerStart(harness: RouterTestingHarness, agentId: string) {
+  async function answerStart(opened: OpenedRoute, agentId: string) {
     const process = await goldenMaster(STARTING, 'getWorkspaceActiveProcess', 'qits-workspaces');
     http.expectOne(`/workspaces/api/agents/${agentId}/active-process`).flush(process);
-    await answered(harness);
+    await opened.settled();
     return process;
   }
 
   it('shows the agent, its item, its workspace and its slot coming up', async () => {
-    const { harness, element, project, agent } = await render();
+    const { opened, agent } = await render();
+    const { project } = opened;
+    await answerAgent(opened, agent.agentId, agent);
     const slot = agent.workspaceRowId;
-    const process = await answerStart(harness, agent.agentId);
-    const view = page.elementLocator(element);
+    const process = await answerStart(opened, agent.agentId);
+    const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('heading', { name: `Agent ${ITEM}` })).toBeVisible();
     await expect
       .element(view.getByRole('link', { name: ITEM }))
@@ -134,50 +112,42 @@ describe('AgentLayout (screenshots)', () => {
     expect(streams).toEqual([
       `https://workspaces.test/workspaces/api/technical-processes/${process.technicalProcessId}/events`,
     ]);
-    await expect.element(view).toMatchScreenshot('starting');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('starting');
   });
 
   it('shows a refused discard in the service’s words, and offers force', async () => {
-    const { harness, element, agent } = await render();
-    await answerStart(harness, agent.agentId);
-    const view = page.elementLocator(element);
+    const { opened, agent } = await render();
+    await answerAgent(opened, agent.agentId, agent);
+    await answerStart(opened, agent.agentId);
+    const view = page.elementLocator(opened.page);
     await view.getByRole('button', { name: 'Discard', exact: true }).click();
-    harness.fixture.detectChanges();
+    opened.harness.fixture.detectChanges();
     await view.getByRole('button', { name: 'Confirm discard?' }).click();
-    await settle();
+    await opened.settled();
     const refusal = await goldenMaster(LEFTOVER, 'discardAgent', 'qits-workspaces');
     const request = http.expectOne(`/workspaces/api/agents/${agent.agentId}/discard`);
     expect(request.request.body).toEqual({ force: false });
     request.flush(refusal, { status: 409, statusText: 'Conflict' });
-    await answered(harness);
+    await opened.settled();
     await expect.element(view).toMatchTextContent(refusal.message);
     await expect.element(view.getByRole('button', { name: 'Discard anyway' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('discard-refused');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('discard-refused');
   });
 
   it('marks the agent as failed to load', async () => {
-    await page.viewport(900, 900);
-    const list = await goldenMaster('a project exists', 'listProjects');
-    const project = list.entries[0].project;
-    const agent = await goldenMaster(AGENT, 'getAgent', 'qits-workspaces');
-    const harness = await RouterTestingHarness.create();
-    const navigated = harness.navigateByUrl(`/projects/${project.slug}/agents/${agent.agentId}`);
-    await settle();
-    http.expectOne('/projects/api/projects').flush(list);
-    await navigated;
-    await answered(harness);
+    const { opened, agent } = await render('unanswered');
     // An error answer is a status only: the read fails, and the page says so.
     http
       .expectOne(`/workspaces/api/agents/${agent.agentId}`)
       .flush(null, { status: 500, statusText: 'Server Error' });
-    http
-      .expectOne(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)
-      .flush(null, { status: 500, statusText: 'Server Error' });
-    await answered(harness);
-    const element = harness.routeNativeElement as HTMLElement;
-    element.style.width = '900px';
-    const view = page.elementLocator(element);
+    // The layout's read of the project's agents and the shell's agents menu's: both fail.
+    const active = `/workspaces/api/agents?projectId=${opened.project.id}&state=ACTIVE`;
+    for (const read of http.match(active)) {
+      read.flush(null, { status: 500, statusText: 'Server Error' });
+    }
+    await opened.settled();
+    const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(view).toMatchScreenshot('error');
+    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
   });
 });
