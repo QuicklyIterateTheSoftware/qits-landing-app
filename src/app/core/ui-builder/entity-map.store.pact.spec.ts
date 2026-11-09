@@ -13,7 +13,6 @@ import type { InteractionSlug } from '../../interactions';
 import {
   artifactsGoldenMasters as masters,
   ENTITY_MAP_STATE as CONTRACTS,
-  isArtifactsRecorded,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { asEntityMap } from './entity-map';
@@ -36,9 +35,6 @@ import { contractsSitesOf, entityMapOf } from './entity-map.store';
  * site the store goes on to read.
  * `getDocsFile` answers a file: its interaction binds the status and the media type
  * (`NonJsonResponse`), its example body the recorded map.
- *
- * The state is recorded from qits-1950's qits-artifacts release on; until qits-maintenance bumps
- * `@qits/artifacts-golden-masters` past it, the whole spec skips itself.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
@@ -49,8 +45,6 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'listDocsVersions',
   'getDocsFile',
 ].map((operationId) => ({ operationId, interactions: [SLUG] }));
-
-const RECORDED = isArtifactsRecorded(CONTRACTS, 'getDocsFile');
 
 const given = (operationId: string, consumes: readonly string[], response?: NonJsonResponse) =>
   addGoldenInteraction(pact, masters, {
@@ -85,7 +79,7 @@ if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
 let dir = '';
 let pact: PactV4;
 
-describe.skipIf(!RECORDED)('qits-landing-app → qits-artifacts-service pact: entity maps', () => {
+describe('qits-landing-app → qits-artifacts-service pact: entity maps', () => {
   beforeAll(() => {
     dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-entities-pact-'));
     pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });

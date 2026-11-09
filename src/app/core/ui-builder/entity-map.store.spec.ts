@@ -11,7 +11,6 @@ import { literalDocsPaths } from './docs-paths';
 import {
   artifactsGoldenMasters as masters,
   ENTITY_MAP_STATE as CONTRACTS,
-  isArtifactsRecorded,
 } from '../../../testing/golden-masters';
 import { asEntityMap } from './entity-map';
 import { EntityMapStore } from './entity-map.store';
@@ -25,9 +24,6 @@ const SITES_URL = '/artifacts/docs/docs';
 
 /** The frontend whose page follows the store. */
 const REPO = 'qits-landing-app';
-
-/** Recorded from qits-1950's qits-artifacts release on; the cases that need it skip until then. */
-const RECORDED = isArtifactsRecorded(CONTRACTS, 'getDocsFile');
 
 /** The recorded contracts site's version and where its reads go (`/` and `@` literal). */
 function contracts() {
@@ -130,7 +126,7 @@ describe('EntityMapStore', () => {
     http.expectOne(SITES_URL);
   });
 
-  describe.skipIf(!RECORDED)('with a published entity map', () => {
+  describe('with a published entity map', () => {
     async function answerCatalog() {
       const { versionsUrl } = contracts();
       await settle();
@@ -244,15 +240,12 @@ describe('EntityMapStore', () => {
       expect(store.catalog()?.status).toBe('loaded');
     });
 
-    it.skipIf(!RECORDED)(
-      'reads the catalog again after a release of a service a site names',
-      async () => {
-        const { source } = await followed(CONTRACTS);
-        source.push('SCMRelease', { repositoryName: 'qits-projects-service', version: '2' });
-        await after();
-        await answerCatalog(CONTRACTS);
-      },
-    );
+    it('reads the catalog again after a release of a service a site names', async () => {
+      const { source } = await followed(CONTRACTS);
+      source.push('SCMRelease', { repositoryName: 'qits-projects-service', version: '2' });
+      await after();
+      await answerCatalog(CONTRACTS);
+    });
 
     it('ignores a release of another repository', async () => {
       const { source } = await followed();

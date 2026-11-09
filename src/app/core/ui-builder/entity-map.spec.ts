@@ -1,7 +1,6 @@
 import {
   artifactsGoldenMasters as masters,
   ENTITY_MAP_STATE,
-  isArtifactsRecorded,
 } from '../../../testing/golden-masters';
 import {
   asEntityMap,
@@ -101,7 +100,7 @@ describe('asEntityMap', () => {
     ).toBeNull();
   });
 
-  it.skipIf(!isArtifactsRecorded(CONTRACTS, 'getDocsFile'))('takes the recorded map', () => {
+  it('takes the recorded map', () => {
     expect(asEntityMap(masters.body(CONTRACTS, 'getDocsFile'))).not.toBeNull();
   });
 });

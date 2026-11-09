@@ -15,7 +15,6 @@ import {
   artifactsGoldenMasters as artifacts,
   ENTITY_MAP_STATE as CONTRACTS,
   goldenMaster,
-  isArtifactsRecorded,
 } from '../../../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { UiBuilderPage } from './ui-builder.page';
@@ -36,13 +35,6 @@ const LOADED_FREEZE = artifacts.operation('a published routes bundle freeze', 'g
 ];
 /** `projects/:slug/repositories`'s freezes by name: `error`, then `loaded`. */
 const ERROR_FREEZE = LOADED_FREEZE.replace(/loaded\.html$/, 'error.html');
-
-/**
- * qits-artifacts records the entity map's state from qits-1950's release on: `@contracts/qits-projects`
- * naming `qits-projects-service`, with Project, Repository and WorkEntity (domain) and one technical
- * entity. The cases that need it skip until the pin moves past it.
- */
-const RECORDED = isArtifactsRecorded(CONTRACTS, 'getDocsFile');
 
 // As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
 if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
@@ -294,7 +286,9 @@ describe('UiBuilderPage', () => {
       '?route=projects%2F%3Aslug%2Frepositories&state=loaded',
     );
     expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
-    expect(element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim()).toBe('loaded');
+    expect(
+      element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim(),
+    ).toBe('loaded');
     await answerFreeze(LOADED_FREEZE, fixture);
   });
 
@@ -306,7 +300,9 @@ describe('UiBuilderPage', () => {
       '?route=nowhere',
     );
     expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
-    expect(element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim()).toBe('error');
+    expect(
+      element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim(),
+    ).toBe('error');
     await answerFreeze(ERROR_FREEZE, fixture);
   });
 
@@ -371,7 +367,7 @@ describe('UiBuilderPage', () => {
     );
   });
 
-  describe.skipIf(!RECORDED)('with a published entity map', () => {
+  describe('with a published entity map', () => {
     it('lists the route’s domain entities with their verbs', async () => {
       const { fixture, element, texts } = await render('qits-landing-app', undefined, recordedMap);
       await answerFreeze(ERROR_FREEZE, fixture);
