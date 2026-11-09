@@ -2,8 +2,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { of } from 'rxjs';
+import { provideRouter, Router } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
 import { provideHeyApiClient as provideArtifactsClient } from '../../../../../../api/artifacts/client/client.gen';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
@@ -57,11 +57,15 @@ function versionsNaming(repo: string) {
 
 describe('UiBuilderPage', () => {
   let http: HttpTestingController;
+  const SLUG = 'contract-00000001';
 
-  function setUp(repo: string, slug = 'contract-00000001') {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
+        provideRouter([
+          { path: 'projects/:slug/repositories/:repo/ui-builder', component: UiBuilderPage },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -73,30 +77,37 @@ describe('UiBuilderPage', () => {
         },
         {
           provide: SelectedProject,
-          useValue: { project: signal({ id: ID }), slug: signal(slug), url: signal('') },
-        },
-        {
-          provide: ActivatedRoute,
-          useValue: { paramMap: of(convertToParamMap({ slug, repo })) },
+          useValue: { project: signal({ id: ID }), slug: signal(SLUG), url: signal('') },
         },
       ],
     });
     http = TestBed.inject(HttpTestingController);
-  }
+  });
 
   afterEach(() => http.verify());
+
+  /** The page for `repo` at the router, `query` appended to its address. */
+  async function open(repo: string, query = '') {
+    const harness = await RouterTestingHarness.create();
+    const page = await harness.navigateByUrl(
+      `/projects/${SLUG}/repositories/${repo}/ui-builder${query}`,
+      UiBuilderPage,
+    );
+    harness.detectChanges();
+    await settle();
+    http
+      .expectOne(`/projects/api/projects/${ID}/repositories`)
+      .flush(goldenMaster('a project with repositories in components', 'listProjectRepositories'));
+    return { harness, page, fixture: harness.fixture };
+  }
 
   /** The page for `repo`, with the bundle found for it and the project's repositories read. */
   async function render(
     repo: string,
     versions: object = artifacts.body(BUNDLE, 'listDocsVersions'),
+    query = '',
   ) {
-    const fixture = TestBed.createComponent(UiBuilderPage);
-    fixture.detectChanges();
-    await settle();
-    http
-      .expectOne(`/projects/api/projects/${ID}/repositories`)
-      .flush(goldenMaster('a project with repositories in components', 'listProjectRepositories'));
+    const { harness, page, fixture } = await open(repo, query);
     http.expectOne(SITES_URL).flush(artifacts.body(BUNDLE, 'listDocsSites'));
     await settle();
     http.expectOne(VERSIONS_URL).flush(versions);
@@ -105,7 +116,7 @@ describe('UiBuilderPage', () => {
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
-    const element = fixture.nativeElement as HTMLElement;
+    const element = harness.routeNativeElement as HTMLElement;
     // An element's text, its parts (spans, or the whole) joined by single spaces.
     const texts = (selector: string) =>
       [...element.querySelectorAll(selector)].map((e) => {
@@ -113,7 +124,7 @@ describe('UiBuilderPage', () => {
         const words = parts.length ? [...parts].map((p) => p.textContent ?? '') : [e.textContent];
         return words.map((w) => (w ?? '').replace(/\s+/g, ' ').trim()).join(' ');
       });
-    return { fixture, element, texts };
+    return { fixture, element, texts, page };
   }
 
   /** Answers the selected freeze (empty: the recording has no body) and the bundle's assets. */
@@ -133,8 +144,34 @@ describe('UiBuilderPage', () => {
     fixture.detectChanges();
   }
 
+  /** Lets a navigation the page started finish, and draws its outcome. */
+  async function navigated(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
+    for (let i = 0; i < 3; i++) await settle();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  /**
+   * Hands `page` a frame holding `html`; the result clicks what a selector finds and says whether
+   * the click was cancelled.
+   */
+  function frameWith(page: UiBuilderPage, html: string) {
+    const doc = document.implementation.createHTMLDocument('freeze');
+    doc.body.innerHTML = html;
+    const frame = { contentDocument: doc } as unknown as HTMLIFrameElement;
+    (page as unknown as { holdLinks(e: Event): void }).holdLinks({
+      target: frame,
+    } as unknown as Event);
+    return (selector: string) => {
+      const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+      doc.querySelector(selector)!.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+  }
+
+  const query = () => TestBed.inject(Router).parseUrl(TestBed.inject(Router).url).queryParams;
+
   it('lays the routes out, opens the first route with states, and frames its first state', async () => {
-    setUp('qits-landing-app');
     const { fixture, element, texts } = await render('qits-landing-app');
     expect(texts('nav button.route')).toEqual([
       '/ → projects',
@@ -160,15 +197,15 @@ describe('UiBuilderPage', () => {
     const frame = element.querySelector('iframe');
     expect(frame?.getAttribute('sandbox')).toBe('allow-same-origin');
     expect(element.innerHTML).not.toContain('allow-scripts');
+    expect(element.querySelector('.link-notice')).toBeNull();
   });
 
   it('reads the state a tab picks, and resets the tab when the route changes', async () => {
-    setUp('qits-landing-app');
     const { fixture, element, texts } = await render('qits-landing-app');
     await answerFreeze(ERROR_FREEZE, fixture);
     element.querySelectorAll<HTMLButtonElement>('[role="tab"]')[1].click();
-    fixture.detectChanges();
-    await settle();
+    await navigated(fixture);
+    expect(query()).toEqual({ state: 'loaded' });
     http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
     await settle();
     fixture.detectChanges();
@@ -178,7 +215,8 @@ describe('UiBuilderPage', () => {
       (b) => b.textContent?.replace(/\s+/g, '') === 'projects0',
     )!;
     projects.click();
-    fixture.detectChanges();
+    await navigated(fixture);
+    expect(query()).toEqual({ route: 'projects' });
     expect(element.querySelector('h2')?.textContent).toBe('/projects');
     expect(element.querySelector('.no-states')?.textContent).toContain(
       'No screenshot test for this route, so nothing is frozen.',
@@ -186,8 +224,25 @@ describe('UiBuilderPage', () => {
     expect(texts('aside li')).toEqual(['Its spec answers no request.']);
   });
 
+  it('opens the route and the state the URL names', async () => {
+    const { fixture, element } = await render(
+      'qits-landing-app',
+      undefined,
+      '?route=projects%2F%3Aslug%2Frepositories&state=loaded',
+    );
+    expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
+    expect(element.querySelector('[aria-selected="true"]')?.textContent?.trim()).toBe('loaded');
+    await answerFreeze(LOADED_FREEZE, fixture);
+  });
+
+  it('opens the first route with states for a route the tree does not have', async () => {
+    const { fixture, element } = await render('qits-landing-app', undefined, '?route=nowhere');
+    expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
+    expect(element.querySelector('[aria-selected="true"]')?.textContent?.trim()).toBe('error');
+    await answerFreeze(ERROR_FREEZE, fixture);
+  });
+
   it('covers every service for the project’s landing app', async () => {
-    setUp('contract-00000001-landing-app');
     const { fixture, element, texts } = await render(
       'contract-00000001-landing-app',
       versionsNaming('contract-00000001-landing-app'),
@@ -199,7 +254,6 @@ describe('UiBuilderPage', () => {
   });
 
   it('shows another frontend only its own component’s calls, and says how many it hid', async () => {
-    setUp('contract-frontend');
     const { fixture, element, texts } = await render(
       'contract-frontend',
       versionsNaming('contract-frontend'),
@@ -213,41 +267,62 @@ describe('UiBuilderPage', () => {
   });
 
   it('says so when no frozen routes are published for the repository', async () => {
-    setUp('contract-frontend');
-    const fixture = TestBed.createComponent(UiBuilderPage);
-    fixture.detectChanges();
-    await settle();
-    http
-      .expectOne(`/projects/api/projects/${ID}/repositories`)
-      .flush(goldenMaster('a project with repositories in components', 'listProjectRepositories'));
+    const { harness, fixture } = await open('contract-frontend');
     http.expectOne(SITES_URL).flush(artifacts.body('a published docs site', 'listDocsSites'));
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
-    const element = fixture.nativeElement as HTMLElement;
+    const element = harness.routeNativeElement as HTMLElement;
     expect(element.querySelector('.none')?.textContent?.trim()).toBe(
       'No frozen routes published for contract-frontend.',
     );
     expect(element.querySelector('nav')).toBeNull();
   });
 
-  it('cancels link clicks inside the frame', () => {
-    setUp('qits-landing-app');
-    const fixture = TestBed.createComponent(UiBuilderPage);
-    const doc = document.implementation.createHTMLDocument('freeze');
-    doc.body.innerHTML = '<a href="/projects/x"><span>x</span></a><p>text</p>';
-    const frame = { contentDocument: doc } as unknown as HTMLIFrameElement;
-    (fixture.componentInstance as unknown as { holdLinks(e: Event): void }).holdLinks({
-      target: frame,
-    } as unknown as Event);
-    const click = (target: Element) => {
-      const event = new MouseEvent('click', { bubbles: true, cancelable: true });
-      target.dispatchEvent(event);
-      return event.defaultPrevented;
-    };
-    expect(click(doc.querySelector('span')!)).toBe(true);
-    expect(click(doc.querySelector('p')!)).toBe(false);
-    fixture.destroy();
-    http.match(() => true);
+  it('cancels a link click inside the frame and selects the route it leads to', async () => {
+    const { fixture, element, page } = await render('qits-landing-app');
+    await answerFreeze(ERROR_FREEZE, fixture);
+    const click = frameWith(page, '<a href="/projects?x=1#top"><span>x</span></a><p>text</p>');
+    expect(click('p')).toBe(false);
+    expect(click('span')).toBe(true);
+    await navigated(fixture);
+    expect(query()).toEqual({ route: 'projects' });
+    expect(element.querySelector('[aria-current="page"]')?.textContent?.replace(/\s+/g, '')).toBe(
+      'projects0',
+    );
+    expect(element.querySelector('h2')?.textContent).toBe('/projects');
+  });
+
+  it('keeps the route on a link outside the app, and says where it leads', async () => {
+    const { fixture, element, page } = await render('qits-landing-app');
+    await answerFreeze(ERROR_FREEZE, fixture);
+    const click = frameWith(page, '<a href="https://ci.qits.wohlben.eu/x">ci</a>');
+    expect(click('a')).toBe(true);
+    await navigated(fixture);
+    expect(query()).toEqual({});
+    expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
+    expect(element.querySelector('.link-notice')?.textContent?.trim()).toBe(
+      'Leads outside the app: https://ci.qits.wohlben.eu/x',
+    );
+  });
+
+  it('keeps the route on a link no route matches, says so, and forgets it on the next pick', async () => {
+    const { fixture, element, page } = await render('qits-landing-app');
+    await answerFreeze(ERROR_FREEZE, fixture);
+    const click = frameWith(page, '<a href="/w?q#f">w</a><a href="#f4" class="fragment">f</a>');
+    expect(click('a')).toBe(true);
+    await navigated(fixture);
+    expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
+    expect(element.querySelector('.link-notice')?.textContent?.trim()).toBe(
+      'No route of this app matches /w',
+    );
+    expect(click('.fragment')).toBe(true);
+    await navigated(fixture);
+    expect(element.querySelector('.link-notice')).not.toBeNull();
+
+    element.querySelectorAll<HTMLButtonElement>('[role="tab"]')[1].click();
+    await navigated(fixture);
+    http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+    expect(element.querySelector('.link-notice')).toBeNull();
   });
 });

@@ -223,6 +223,116 @@ export function routeCalls(manifest: RoutesManifest, fullPath: string): readonly
   );
 }
 
+/**
+ * Where a link in a freeze leads (qits-1949): a route of the tree (`fullPath` as {@link routeTree}
+ * has it, a redirect already followed), outside the app (another origin or scheme), nowhere in the
+ * app (`path` matches no route, or only `**`), or the page it is on (a fragment or a query alone).
+ */
+export type LinkTarget =
+  | { readonly kind: 'route'; readonly fullPath: string }
+  | { readonly kind: 'outside' }
+  | { readonly kind: 'unmatched'; readonly path: string }
+  | { readonly kind: 'fragment' };
+
+/** How many redirects {@link matchRoute} follows before it gives up on a loop. */
+const MAX_REDIRECTS = 5;
+
+/** A route a path ends on, the values its `:params` took, and the full path of its parent. */
+interface Match {
+  readonly route: ManifestRoute;
+  readonly params: Readonly<Record<string, string>>;
+  readonly parent: string;
+}
+
+const segmentsOf = (fullPath: string) => fullPath.split('/').filter((segment) => segment !== '');
+
+/**
+ * Binds `pattern`'s segments to the start of `path`'s: a literal matches itself, `:name` any one
+ * segment, `**` the rest. The params and how many segments were consumed, or null.
+ */
+function bind(
+  pattern: readonly string[],
+  path: readonly string[],
+): { params: Record<string, string>; consumed: number } | null {
+  const params: Record<string, string> = {};
+  for (let i = 0; i < pattern.length; i++) {
+    const segment = pattern[i];
+    if (segment === '**') return { params, consumed: path.length };
+    if (i >= path.length) return null;
+    if (segment.startsWith(':')) params[segment.slice(1)] = path[i];
+    else if (segment !== path[i]) return null;
+  }
+  return { params, consumed: pattern.length };
+}
+
+/**
+ * The first route `path` ends on, in Angular's order: config order, depth first. A layout takes
+ * the path when its full path is a prefix and one of its children takes the whole of it; any other
+ * route must take the whole path.
+ */
+function firstMatch(
+  routes: readonly ManifestRoute[],
+  path: readonly string[],
+  parent: string,
+): Match | null {
+  for (const route of routes) {
+    const bound = bind(segmentsOf(route.fullPath), path);
+    if (!bound) continue;
+    if (route.children?.length) {
+      const inner = firstMatch(route.children, path, route.fullPath);
+      if (inner) return { ...inner, params: { ...bound.params, ...inner.params } };
+    } else if (bound.consumed === path.length) {
+      return { route, params: bound.params, parent };
+    }
+  }
+  return null;
+}
+
+/** `segment` decoded, or as it is when it is not valid percent-encoding. */
+function decoded(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
+/**
+ * Where the link `href` leads in the app `manifest` describes. `href` is the attribute as written
+ * (`getAttribute('href')`), never the resolved `anchor.href`: a `srcdoc` frame resolves against the
+ * builder's own URL. A scheme or `//` is `outside`; a fragment or a query alone (or nothing) stays
+ * on the page, `fragment`. Otherwise the query and fragment are dropped, the path split on `/` and
+ * each segment decoded, and the routes walked as Angular walks them (`firstMatch`); a path without
+ * a leading `/` is read from the root, as the app writes every link absolute.
+ *
+ * A redirect is followed: an absolute `redirectTo` (`/…`) from the root, any other from the full
+ * path of the redirecting route's parent (the `''` child of `projects/:slug/work` goes to
+ * `projects/:slug/work/in-progress`), its `:params` replaced by the values the link gave them, and
+ * the result matched again, up to {@link MAX_REDIRECTS} times. Matching `**`, nothing, or too many
+ * redirects is `unmatched`.
+ */
+export function matchRoute(manifest: RoutesManifest, href: string): LinkTarget {
+  const raw = href.trim();
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith('//')) return { kind: 'outside' };
+  const pathPart = raw.replace(/[?#].*$/s, '');
+  if (pathPart === '') return { kind: 'fragment' };
+  let path = segmentsOf(pathPart).map(decoded);
+  const shown = `/${path.join('/')}`;
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    const match = firstMatch(manifest.routes, path, '');
+    if (!match || segmentsOf(match.route.fullPath).includes('**')) {
+      return { kind: 'unmatched', path: shown };
+    }
+    const redirectTo = match.route.redirectTo;
+    if (redirectTo === undefined) return { kind: 'route', fullPath: match.route.fullPath };
+    const target = redirectTo.startsWith('/') ? redirectTo : `${match.parent}/${redirectTo}`;
+    path = segmentsOf(target).map((segment) =>
+      segment.startsWith(':') ? (match.params[segment.slice(1)] ?? segment) : segment,
+    );
+  }
+  return { kind: 'unmatched', path: shown };
+}
+
 /** A CSS `url(...)` with its quote and reference. */
 const CSS_URL = /url\(\s*(['"]?)([^'")]*)\1\s*\)/g;
 
