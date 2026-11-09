@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
@@ -98,7 +99,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
@@ -196,7 +198,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
@@ -294,7 +297,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
