@@ -398,7 +398,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon   | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
 | qits-system-service     | `core/system/targets.store*.ts`                                                              | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
-| qits-artifacts-service  | `core/ui-builder/routes-bundle.store*.ts`                                                    | `pacts/qits-landing-app_qits-artifacts-service.json`  | `@qits/artifacts-golden-masters`        |
+| qits-artifacts-service  | `core/ui-builder/{routes-bundle,entity-map}.store*.ts`                                       | `pacts/qits-landing-app_qits-artifacts-service.json`  | `@qits/artifacts-golden-masters`        |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -517,6 +517,14 @@ store refuses, so `app.config.ts` puts `literalDocsPaths` on the artifacts clien
 it do the same). A freeze is drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with
 `allow-scripts`, its asset references inlined as `data:` URLs. The pact binds `getDocsFile` by media
 type only; a path from a provider state matches any path, so its spec makes one docs read per test.
+
+The builder's entities (qits-1950) come from the services' entity maps through `EntityMapStore`
+(`core/ui-builder/entity-map.store.ts`): every `@contracts/` site whose newest version's
+`git.repository.name` is in the page's scope, its `entities.json` (a 404 is "No entity map
+published", not an error). `joinEntities` (`entity-map.ts`) matches the manifest's records on
+(provider, operationId) to the maps' operations and derives each verb from method and path; only
+`domain` entities are shown. Its pact spec owns the docs operations' interactions for
+`show-ui-builder-entities` only (`assertPactPart` by interaction), the routes spec the rest.
 
 Every release publishes the freezes as the docs site `@routes/qits-landing` (ticket qits-1948,
 `contracts.routes` in `.config/qits/release.yml`), only when they changed: the release step hashes
