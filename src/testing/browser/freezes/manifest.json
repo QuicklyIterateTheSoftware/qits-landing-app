@@ -2349,6 +2349,46 @@
       ]
     },
     {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/no-code.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: no-code",
+      "name": "no-code",
+      "route": "auth/callback",
+      "records": []
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/not-swapped.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: not-swapped",
+      "name": "not-swapped",
+      "route": "auth/callback",
+      "records": []
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/refused.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: refused",
+      "name": "refused",
+      "route": "auth/callback",
+      "records": []
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/signing-in.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > shows that the visitor is being signed in",
+      "name": "signing-in",
+      "route": "auth/callback",
+      "records": []
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: unknown-state",
+      "name": "unknown-state",
+      "route": "auth/callback",
+      "records": []
+    },
+    {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/discard-refused.html",
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > shows a refused discard in the service’s words, and offers force",
@@ -6593,6 +6633,13 @@
     }
   ],
   "byRoute": {
+    "auth/callback": [
+      "src/app/routes/auth-callback.page.browser.spec.ts/no-code.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/not-swapped.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/refused.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/signing-in.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state.html"
+    ],
     "projects": [
       "src/app/routes/projects/project-picker.page.browser.spec.ts/empty.html",
       "src/app/routes/projects/project-picker.page.browser.spec.ts/error.html",
