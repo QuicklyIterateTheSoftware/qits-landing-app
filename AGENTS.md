@@ -480,8 +480,8 @@ image). Keep both when you update `@pact-foundation/pact`.
 Every interaction names the routes its call happens on, as `comments.references.qits-trigger.route`
 (the matched route patterns, `projects/:slug/repositories`, sorted and joined with `, `). They come
 from the route ledger `src/testing/browser/routes.json`, which the browser run writes: the
-golden-master guard notes which recorded answer each page spec (`*.page.browser.spec.ts`; a layout
-or pattern spec's stand-in route is not kept) showed on which route, and `setup.ts` sends that to
+golden-master guard notes which recorded answer each page spec (`*.page.browser.spec.ts`, which opens the
+app's routes at the page's URL; a layout spec's or a pattern spec's routes are not kept) showed on which route, and `setup.ts` sends that to
 the `goldenMasterRoutes` command after each spec file, which rewrites the spec's section.
 `src/testing/golden-masters.ts` hands the ledger to `addGoldenInteraction` (`useRouteLookup`). `npm
 run test:browser` rewrites the ledger, and so does the screenshot-baselines automation, which
@@ -565,6 +565,25 @@ step image that has Chromium, so a changed pixel fails the release request.
   no recording holds gets a new provider state in the provider and a pact interaction here. The
   two providers' frozen ids are unrelated, so the card spec puts qits-githost's recorded entries
   under the project's recorded repository ids and says so.
+- **A page is shown as a person sees it**, inside the shell and every layout above it (qits-1997).
+  A page or layout spec (`*.page.browser.spec.ts`, `*.layout.browser.spec.ts`) opens its page
+  through the app's own route tree, never a route list of its own: `provideAppRoute()` from
+  `src/testing/browser/app-route.ts` in `TestBed.configureTestingModule` (the real `routes` of
+  `app.routes.ts`, `HttpTestingController`, every generated client, fixed platform origins, an
+  `EVENT_SOURCE` that never connects, and a `QitsSession` that is signed in, so
+  `qitsSignedInGuard` passes), the spec's own providers after it; then `openRoute(url, reads?)`,
+  which navigates to the page's URL and answers the frame's reads from golden masters by URL: the
+  project list (`'a project exists'`), the open project's release requests (`'a project with no
+release requests'`), its ACTIVE agents (refused with 403: the agents menu shows its icon alone)
+  and the open workspaces (`WorkLayout`). A page that reads one of them too gets the same one
+  request: `reads` names the state to answer it in, or `'unanswered'` leaves it to the spec, which
+  calls `settled()` after answering it so the reads that follow it are answered too. The spec
+  answers only its page's own reads. It screenshots `frame` (the shell's host) and scopes its
+  assertions to `page` (the routed page). The shell is shown in one settled state, menus closed;
+  its own states (wide, narrow, the burger, each menu) are `shell.layout.browser.spec.ts`'s, the
+  one page or layout spec that keeps stand-in routes (`TestPage`, `TallPage`). A change to the
+  shell or the navigation therefore changes every page's references and freezes: regenerate them
+  as for any changed screenshot.
 - **The same pixels on every machine**: the font is Inter from `src/testing/browser/fonts/`, never a
   system font; animations and transitions are off (`src/testing/browser/setup.ts`); the viewport is
   800x600 (`angular.json`, target `test-browser`).
