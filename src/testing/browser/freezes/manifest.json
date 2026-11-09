@@ -170,7 +170,8 @@
       "test": "PageLayoutComponent (screenshots) > draws a title, a single action and a group on one row",
       "name": "inputs",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/page-layout/page-layout.browser.spec.ts/narrow.html",
@@ -178,7 +179,8 @@
       "test": "PageLayoutComponent (screenshots) > puts the actions on the first line and the title below them when no room is left",
       "name": "narrow",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/page-layout/page-layout.browser.spec.ts/phone-wide-group.html",
@@ -186,7 +188,8 @@
       "test": "PageLayoutComponent (screenshots) > wraps a group wider than the bar inside the bar on a phone-sized viewport",
       "name": "phone-wide-group",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/page-layout/page-layout.browser.spec.ts/pinned-under-bar.html",
@@ -194,7 +197,8 @@
       "test": "PageLayoutComponent (screenshots) > pins the actions below the top bar, and tells their height to the content",
       "name": "pinned-under-bar",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/page-layout/page-layout.browser.spec.ts/pinned.html",
@@ -202,7 +206,8 @@
       "test": "PageLayoutComponent (screenshots) > keeps the actions pinned while the content scrolls under them",
       "name": "pinned",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/page-layout/page-layout.browser.spec.ts/slots.html",
@@ -210,7 +215,8 @@
       "test": "PageLayoutComponent (screenshots) > draws a projected header and projected actions",
       "name": "slots",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/page-layout/page-layout.browser.spec.ts/wrapping.html",
@@ -218,7 +224,8 @@
       "test": "PageLayoutComponent (screenshots) > wraps a long title beside the actions before it moves",
       "name": "wrapping",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-agents-desktop.html",
@@ -242,7 +249,8 @@
           "state": "a project with agents needing attention",
           "operationId": "listAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-agents-phone.html",
@@ -266,7 +274,8 @@
           "state": "a project with agents needing attention",
           "operationId": "listAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-bumps-desktop.html",
@@ -290,7 +299,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-bumps-phone.html",
@@ -314,7 +324,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-notifications-desktop.html",
@@ -338,7 +349,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-notifications-phone.html",
@@ -362,7 +374,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-path-phone.html",
@@ -381,7 +394,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-release-desktop.html",
@@ -410,7 +424,8 @@
           "state": "a connected target with leases",
           "operationId": "listTargets"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/menu-release-phone.html",
@@ -439,7 +454,8 @@
           "state": "a connected target with leases",
           "operationId": "listTargets"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/narrow-open.html",
@@ -453,7 +469,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/narrow.html",
@@ -467,7 +484,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/project.html",
@@ -486,7 +504,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/release-requests.html",
@@ -505,7 +524,8 @@
           "state": "a project with pending release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/wide.html",
@@ -519,7 +539,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/work-item-narrow-expanded.html",
@@ -538,7 +559,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/work-item-narrow.html",
@@ -557,7 +579,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/work-item-wide.html",
@@ -576,7 +599,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/work-tab.html",
@@ -595,7 +619,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts/closed.html",
@@ -614,7 +639,8 @@
           "state": "a project with agents needing attention",
           "operationId": "listAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts/open.html",
@@ -633,7 +659,28 @@
           "state": "a project with agents needing attention",
           "operationId": "listAgents"
         }
-      ]
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts/starting-up.html",
+      "spec": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts",
+      "test": "AgentsMenu (screenshots) > while the agents start up > shows where each agent’s start stands, and for how long",
+      "name": "starting-up",
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents starting up",
+          "operationId": "listAgents"
+        }
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts/closed.html",
@@ -641,7 +688,8 @@
       "test": "NotificationsMenu (screenshots) > is a speech bubble, closed",
       "name": "closed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts/empty.html",
@@ -655,7 +703,8 @@
           "state": "no events",
           "operationId": "listEvents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts/error.html",
@@ -663,7 +712,8 @@
       "test": "NotificationsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "error",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts/loading.html",
@@ -671,7 +721,8 @@
       "test": "NotificationsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "loading",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts/open.html",
@@ -685,7 +736,8 @@
           "state": "a few recent events",
           "operationId": "listEvents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/closed.html",
@@ -693,7 +745,8 @@
       "test": "BumpsMenu (screenshots) > is a lighthouse, closed",
       "name": "closed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/empty.html",
@@ -707,7 +760,8 @@
           "state": "no pending bumps",
           "operationId": "listPendingBumps"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/error.html",
@@ -715,7 +769,8 @@
       "test": "BumpsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "error",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/loading.html",
@@ -723,7 +778,8 @@
       "test": "BumpsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "loading",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/open.html",
@@ -737,7 +793,8 @@
           "state": "pending bumps",
           "operationId": "listPendingBumps"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/collapsed.html",
@@ -756,7 +813,8 @@
           "state": "a project with refined work",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/loading.html",
@@ -764,7 +822,8 @@
       "test": "ProjectCard (screenshots) > shows that it is loading",
       "name": "loading",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/unavailable.html",
@@ -772,7 +831,8 @@
       "test": "ProjectCard (screenshots) > marks the work, components and lines as failed to load",
       "name": "unavailable",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts/closed.html",
@@ -791,7 +851,8 @@
           "state": "a project with pending release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts/empty.html",
@@ -820,7 +881,8 @@
           "state": "a connected target with leases",
           "operationId": "listTargets"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts/error.html",
@@ -844,7 +906,8 @@
           "state": "a connected target with leases",
           "operationId": "listTargets"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts/loading.html",
@@ -868,7 +931,8 @@
           "state": "a connected target with leases",
           "operationId": "listTargets"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts/open.html",
@@ -897,7 +961,8 @@
           "state": "a connected target with leases",
           "operationId": "listTargets"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/every-task-status.html",
@@ -916,7 +981,8 @@
           "state": "an epic with tasks in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-bar.html",
@@ -935,7 +1001,8 @@
           "state": "an epic with a feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-columns.html",
@@ -954,7 +1021,8 @@
           "state": "an epic with a feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-row-1.html",
@@ -973,7 +1041,8 @@
           "state": "an epic with a feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-row-2.html",
@@ -992,7 +1061,8 @@
           "state": "an epic with a feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/implemented-no-features.html",
@@ -1011,7 +1081,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/implementing-no-features.html",
@@ -1030,7 +1101,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/implementing-started.html",
@@ -1049,7 +1121,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-bar.html",
@@ -1068,7 +1141,8 @@
           "state": "an implementing epic with features in mixed statuses",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-columns.html",
@@ -1087,7 +1161,8 @@
           "state": "an implementing epic with features in mixed statuses",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-1.html",
@@ -1106,7 +1181,8 @@
           "state": "an implementing epic with features in mixed statuses",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-2.html",
@@ -1125,7 +1201,8 @@
           "state": "an implementing epic with features in mixed statuses",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-3.html",
@@ -1144,7 +1221,8 @@
           "state": "an implementing epic with features in mixed statuses",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-4.html",
@@ -1163,7 +1241,8 @@
           "state": "an implementing epic with features in mixed statuses",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/ready-for-dev-no-features.html",
@@ -1182,7 +1261,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/scheduled-features.html",
@@ -1201,7 +1281,8 @@
           "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-bar.html",
@@ -1220,7 +1301,8 @@
           "state": "an epic with a verified feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-columns.html",
@@ -1239,7 +1321,8 @@
           "state": "an epic with a verified feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-row-1.html",
@@ -1258,7 +1341,8 @@
           "state": "an epic with a verified feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-row-2.html",
@@ -1277,7 +1361,8 @@
           "state": "an epic with a verified feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verifying-no-features.html",
@@ -1296,7 +1381,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-bar.html",
@@ -1320,7 +1406,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-columns.html",
@@ -1344,7 +1431,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-row-1.html",
@@ -1368,7 +1456,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-row-2.html",
@@ -1392,7 +1481,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/feature-all-verified.html",
@@ -1411,7 +1501,8 @@
           "state": "an epic with a feature whose tasks are all verified",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/feature-verified-tasks.html",
@@ -1430,7 +1521,8 @@
           "state": "an epic with tasks in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/features-mixed-collapsed.html",
@@ -1449,7 +1541,8 @@
           "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/features-mixed-expanded.html",
@@ -1468,7 +1561,8 @@
           "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implemented.html",
@@ -1487,7 +1581,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implementing-collapsed.html",
@@ -1506,7 +1601,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implementing-feature-task.html",
@@ -1525,7 +1621,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implementing.html",
@@ -1544,7 +1641,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/ready-for-dev.html",
@@ -1563,7 +1661,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/verifying-collapsed.html",
@@ -1582,7 +1681,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/verifying.html",
@@ -1601,7 +1701,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/workspaces.html",
@@ -1625,7 +1726,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/all-done-collapsed.html",
@@ -1644,7 +1746,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/all-done-expanded.html",
@@ -1663,7 +1766,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/backlog-task-handle.html",
@@ -1682,7 +1786,8 @@
           "state": "an epic with tasks in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/done.html",
@@ -1701,7 +1806,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/dropped.html",
@@ -1720,7 +1826,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/reported.html",
@@ -1739,7 +1846,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/verified-tasks-open-collapsed.html",
@@ -1758,7 +1866,8 @@
           "state": "a verified epic with every task implemented",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/verified-tasks-open-expanded.html",
@@ -1777,7 +1886,8 @@
           "state": "a verified epic with every task implemented",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/verified.html",
@@ -1796,7 +1906,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts/every-status.html",
@@ -1815,7 +1926,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts/nested.html",
@@ -1834,7 +1946,8 @@
           "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts/selection-highlight.html",
@@ -1853,7 +1966,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/implemented.html",
@@ -1872,7 +1986,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/implementing.html",
@@ -1891,7 +2006,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/needs-tooltip.html",
@@ -1910,7 +2026,8 @@
           "state": "a ticket that needs another",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/needs.html",
@@ -1929,7 +2046,8 @@
           "state": "a ticket that needs another",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/ready-for-dev.html",
@@ -1948,7 +2066,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/verifying.html",
@@ -1967,7 +2086,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/workspace.html",
@@ -1991,7 +2111,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/done.html",
@@ -2010,7 +2131,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/dropped.html",
@@ -2029,7 +2151,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/needs.html",
@@ -2048,7 +2171,8 @@
           "state": "a ticket that needs another",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/reported.html",
@@ -2067,7 +2191,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/verified.html",
@@ -2091,7 +2216,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/acceptance.html",
@@ -2115,7 +2241,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/archive.html",
@@ -2134,7 +2261,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/backlog.html",
@@ -2153,7 +2281,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/empty.html",
@@ -2172,7 +2301,8 @@
           "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-initial.html",
@@ -2196,7 +2326,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-pending.html",
@@ -2220,7 +2351,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-sent.html",
@@ -2249,7 +2381,8 @@
           "state": "a verified epic",
           "operationId": "setWorkStatus"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-undone.html",
@@ -2273,7 +2406,8 @@
           "state": "a project with work in every status",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-badge.browser.spec.ts/badge-tooltip.html",
@@ -2281,7 +2415,8 @@
       "test": "WorkNeedsBadge (screenshots) > its tooltip, on hover",
       "name": "badge-tooltip",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-badge.browser.spec.ts/badge.html",
@@ -2289,7 +2424,8 @@
       "test": "WorkNeedsBadge (screenshots) > one need not met",
       "name": "badge",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts/panel-adding.html",
@@ -2308,7 +2444,8 @@
           "state": "a ticket that needs another",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts/panel-empty.html",
@@ -2327,7 +2464,8 @@
           "state": "a ticket that needs another",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts/panel.html",
@@ -2346,7 +2484,8 @@
           "state": "a ticket that needs another",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/no-code.html",
@@ -2354,7 +2493,8 @@
       "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: no-code",
       "name": "no-code",
       "route": "auth/callback",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/not-swapped.html",
@@ -2362,7 +2502,8 @@
       "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: not-swapped",
       "name": "not-swapped",
       "route": "auth/callback",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/refused.html",
@@ -2370,7 +2511,8 @@
       "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: refused",
       "name": "refused",
       "route": "auth/callback",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/signing-in.html",
@@ -2378,7 +2520,8 @@
       "test": "QitsAuthCallbackPage (screenshots) > shows that the visitor is being signed in",
       "name": "signing-in",
       "route": "auth/callback",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state.html",
@@ -2386,7 +2529,8 @@
       "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: unknown-state",
       "name": "unknown-state",
       "route": "auth/callback",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/discard-refused.html",
@@ -2420,7 +2564,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgent"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/error.html",
@@ -2439,7 +2584,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/starting.html",
@@ -2473,7 +2619,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgent"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts/transcript.html",
@@ -2517,7 +2664,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgentPromptDraft"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts/ignored-and-search.html",
@@ -2566,7 +2714,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgent"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts/tree-and-file.html",
@@ -2615,7 +2764,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgent"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts/attached.html",
@@ -2649,7 +2799,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgent"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts/lost.html",
@@ -2683,7 +2834,8 @@
           "state": "an agent with a saved prompt draft",
           "operationId": "getAgent"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts/error.html",
@@ -2702,7 +2854,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts/loading.html",
@@ -2721,7 +2874,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts/slots-and-agents.html",
@@ -2760,7 +2914,8 @@
           "state": "a project with workspace slots hosting agents",
           "operationId": "listWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/error.html",
@@ -2784,7 +2939,8 @@
           "state": "a project with no work",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/loading.html",
@@ -2808,7 +2964,8 @@
           "state": "a project with no work",
           "operationId": "listProjectWork"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank.html",
@@ -2827,7 +2984,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/form.html",
@@ -2851,7 +3009,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/refused.html",
@@ -2875,7 +3034,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form.html",
@@ -2904,7 +3064,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving.html",
@@ -2928,7 +3089,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea.html",
@@ -2952,7 +3114,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/error.html",
@@ -2971,7 +3134,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/list.html",
@@ -2995,7 +3159,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/loading.html",
@@ -3014,7 +3179,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/observability/project-observability.page.browser.spec.ts/blank.html",
@@ -3033,7 +3199,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/project.page.browser.spec.ts/error.html",
@@ -3041,7 +3208,8 @@
       "test": "ProjectPage (screenshots) > marks the page as failed to load when the projects could not be loaded",
       "name": "error",
       "route": "projects/:slug",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/project.page.browser.spec.ts/loaded.html",
@@ -3060,7 +3228,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/project.page.browser.spec.ts/loading.html",
@@ -3068,7 +3237,8 @@
       "test": "ProjectPage (screenshots) > shows that the project is loading",
       "name": "loading",
       "route": "projects/:slug",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/project.page.browser.spec.ts/unknown.html",
@@ -3082,7 +3252,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/conflicted.html",
@@ -3116,7 +3287,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/error.html",
@@ -3140,7 +3312,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/loading.html",
@@ -3164,7 +3337,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/not-found.html",
@@ -3188,7 +3362,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/pending.html",
@@ -3232,7 +3407,8 @@
           "state": "a release request awaiting approval",
           "operationId": "listReleaseRequestCommits"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/refolded-graph.html",
@@ -3271,7 +3447,8 @@
           "state": "a refolded release request",
           "operationId": "listReleaseRequestCommits"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts/released.html",
@@ -3315,7 +3492,8 @@
           "state": "a released release request",
           "operationId": "listReleaseRequestCommits"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts/empty.html",
@@ -3334,7 +3512,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts/error.html",
@@ -3348,7 +3527,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts/loading.html",
@@ -3362,7 +3542,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts/requests.html",
@@ -3381,7 +3562,8 @@
           "state": "a project with pending release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities.html",
@@ -3435,7 +3617,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entity-view.html",
@@ -3489,7 +3672,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/error.html",
@@ -3513,7 +3697,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/loaded.html",
@@ -3552,7 +3737,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/no-states.html",
@@ -3591,7 +3777,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none.html",
@@ -3620,7 +3807,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/error.html",
@@ -3639,7 +3827,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/loading.html",
@@ -3658,7 +3847,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/opened.html",
@@ -3682,7 +3872,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/tree.html",
@@ -3706,7 +3897,8 @@
           "state": "a project with repositories in components",
           "operationId": "listProjectRepositories"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts/error.html",
@@ -3714,7 +3906,8 @@
       "test": "ProjectSetupPage (screenshots) > marks the page as failed to load when the projects could not be loaded",
       "name": "error",
       "route": "projects/:slug/setup",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts/loaded.html",
@@ -3733,7 +3926,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts/loading.html",
@@ -3741,7 +3935,8 @@
       "test": "ProjectSetupPage (screenshots) > shows that the project is loading",
       "name": "loading",
       "route": "projects/:slug/setup",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts/unknown.html",
@@ -3755,7 +3950,8 @@
           "state": "a project exists",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/acceptance.html",
@@ -3789,7 +3985,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/empty.html",
@@ -3818,7 +4015,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/loading.html",
@@ -3842,7 +4040,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-unproven.html",
@@ -3876,7 +4075,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-withdrawn.html",
@@ -3910,7 +4110,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings.html",
@@ -3944,7 +4145,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/archive.html",
@@ -3973,7 +4175,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/empty.html",
@@ -4002,7 +4205,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/error.html",
@@ -4026,7 +4230,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/loading.html",
@@ -4050,7 +4255,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic.html",
@@ -4074,7 +4280,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-ticket.html",
@@ -4098,7 +4305,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-dropped-ticket.html",
@@ -4137,7 +4345,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-implemented-ticket.html",
@@ -4186,7 +4395,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-implementing-epic-runs.html",
@@ -4245,7 +4455,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-implementing-epic.html",
@@ -4289,7 +4500,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-ready-for-dev-epic.html",
@@ -4328,7 +4540,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-refined-epic.html",
@@ -4367,7 +4580,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-reopened-ticket.html",
@@ -4411,7 +4625,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-reported-ticket.html",
@@ -4450,7 +4665,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-scheduled-feature.html",
@@ -4489,7 +4705,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-verified-ticket.html",
@@ -4533,7 +4750,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-verifying-ticket.html",
@@ -4592,7 +4810,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-bug-ticket-comments.html",
@@ -4646,7 +4865,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-bug-ticket-description.html",
@@ -4700,7 +4920,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-bug-ticket-dossier.html",
@@ -4754,7 +4975,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-bug-ticket-facts.html",
@@ -4808,7 +5030,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-comments.html",
@@ -4867,7 +5090,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-description.html",
@@ -4926,7 +5150,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-dossier-1.html",
@@ -4985,7 +5210,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-dossier-2.html",
@@ -5044,7 +5270,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-dossier-3.html",
@@ -5103,7 +5330,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-dossier-4.html",
@@ -5162,7 +5390,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-features-1.html",
@@ -5221,7 +5450,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-features-2.html",
@@ -5280,7 +5510,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-feature-comments.html",
@@ -5329,7 +5560,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-feature-description.html",
@@ -5378,7 +5610,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-feature-tasks.html",
@@ -5427,7 +5660,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-improvement-ticket-comments.html",
@@ -5481,7 +5715,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-improvement-ticket-description.html",
@@ -5535,7 +5770,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-improvement-ticket-dossier.html",
@@ -5589,7 +5825,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-improvement-ticket-facts.html",
@@ -5643,7 +5880,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-maintenance-ticket-comments.html",
@@ -5697,7 +5935,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-maintenance-ticket-dossier.html",
@@ -5751,7 +5990,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-maintenance-ticket-facts.html",
@@ -5805,7 +6045,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-needs-facts.html",
@@ -5849,7 +6090,8 @@
           "state": "no work item has an open workspace",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-needs-panel.html",
@@ -5893,7 +6135,8 @@
           "state": "no work item has an open workspace",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-comments.html",
@@ -5942,7 +6185,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-description.html",
@@ -5991,7 +6235,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-facts.html",
@@ -6040,7 +6285,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-wrapper-closing.html",
@@ -6089,7 +6335,8 @@
           "state": "no work item has an open workspace",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-verified-epic-features.html",
@@ -6128,7 +6375,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-history.html",
@@ -6182,7 +6430,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-none.html",
@@ -6236,7 +6485,8 @@
           "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/board.html",
@@ -6270,7 +6520,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/loading.html",
@@ -6299,7 +6550,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/nested.html",
@@ -6333,7 +6585,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/backlog.html",
@@ -6362,7 +6615,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/empty.html",
@@ -6391,7 +6645,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/loading.html",
@@ -6415,7 +6670,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/empty.html",
@@ -6444,7 +6700,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/lists.html",
@@ -6483,7 +6740,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/loading.html",
@@ -6507,7 +6765,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/refused.html",
@@ -6546,7 +6805,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/loading.html",
@@ -6570,7 +6830,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs.html",
@@ -6604,7 +6865,8 @@
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/confirm-stop.html",
@@ -6648,7 +6910,8 @@
           "state": "a workspace slot hosting agents",
           "operationId": "listWorkspaceAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/gone.html",
@@ -6667,7 +6930,8 @@
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/plugins.html",
@@ -6711,7 +6975,8 @@
           "state": "a workspace slot hosting agents",
           "operationId": "listWorkspaceAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/sign-in-notice.html",
@@ -6755,7 +7020,8 @@
           "state": "a workspace slot hosting agents",
           "operationId": "listWorkspaceAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot.html",
@@ -6799,7 +7065,8 @@
           "state": "a workspace slot hosting agents",
           "operationId": "listWorkspaceAgents"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/empty.html",
@@ -6813,7 +7080,8 @@
           "state": "no projects exist",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/error.html",
@@ -6821,7 +7089,8 @@
       "test": "ProjectPickerPage (screenshots) > marks the list as failed to load when the projects could not be loaded",
       "name": "error",
       "route": "projects",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/loaded.html",
@@ -6855,7 +7124,8 @@
           "state": "two projects exist",
           "operationId": "listProjects"
         }
-      ]
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/project-picker.page.browser.spec.ts/loading.html",
@@ -6863,7 +7133,8 @@
       "test": "ProjectPickerPage (screenshots) > shows that the projects are loading",
       "name": "loading",
       "route": "projects",
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/details-closed.html",
@@ -6871,7 +7142,8 @@
       "test": "ActionButton (screenshots) > with details > draws closed",
       "name": "details-closed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/details-focus.html",
@@ -6879,7 +7151,8 @@
       "test": "ActionButton (screenshots) > with details > opens on keyboard focus, above the joined neighbour",
       "name": "details-focus",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/details-hover.html",
@@ -6887,7 +7160,8 @@
       "test": "ActionButton (screenshots) > with details > opens on hover, below the button and lined up with its right edge",
       "name": "details-hover",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/focus.html",
@@ -6895,7 +7169,8 @@
       "test": "ActionButton (screenshots) > draws the keyboard focus ring above its joined neighbours",
       "name": "focus",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/hover-approve.html",
@@ -6903,7 +7178,8 @@
       "test": "ActionButton (screenshots) > draws a hovered button",
       "name": "hover-approve",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/hover-archive.html",
@@ -6911,7 +7187,8 @@
       "test": "ActionButton (screenshots) > draws a hovered button",
       "name": "hover-archive",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/hover-delete.html",
@@ -6919,7 +7196,8 @@
       "test": "ActionButton (screenshots) > draws a hovered button",
       "name": "hover-delete",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/variants.html",
@@ -6927,7 +7205,8 @@
       "test": "ActionButton (screenshots) > draws the variants, alone and joined",
       "name": "variants",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/automation-cog/automation-cog.browser.spec.ts/states.html",
@@ -6935,7 +7214,8 @@
       "test": "AutomationCog (screenshots) > draws passed, running with its count, failed (ringed) and pending",
       "name": "states",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/board.html",
@@ -6943,7 +7223,8 @@
       "test": "Board (screenshots) > draws an epic lane with feature rows, tags and cards",
       "name": "board",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/corner-and-finish.html",
@@ -6951,7 +7232,8 @@
       "test": "Board (screenshots) > draws a corner bubble beside the finish button, never under it",
       "name": "corner-and-finish",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/dragging.html",
@@ -6959,7 +7241,8 @@
       "test": "Board (screenshots) > draws the drag handle on a lane and on cards, the corner bubble beside it",
       "name": "dragging",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/finishing.html",
@@ -6967,7 +7250,8 @@
       "test": "Board (screenshots) > draws the finish button on verified items, idle, running and failed",
       "name": "finishing",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/lane-long-id.html",
@@ -6975,7 +7259,8 @@
       "test": "Board (screenshots) > draws a collapsed lane with its long id whole",
       "name": "lane-long-id",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/lanes-collapsing.html",
@@ -6983,7 +7268,8 @@
       "test": "Board (screenshots) > draws a collapsed and an expanded lane",
       "name": "lanes-collapsing",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/long-words.html",
@@ -6991,7 +7277,8 @@
       "test": "Board (screenshots) > breaks a word too long for its card, lane or feature title instead of overflowing",
       "name": "long-words",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/pinned-headings.html",
@@ -6999,7 +7286,8 @@
       "test": "Board (screenshots) > pins the headings below the bar and the actions while the board is in view",
       "name": "pinned-headings",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/row-empty.html",
@@ -7007,7 +7295,8 @@
       "test": "Board (screenshots) > draws a feature row, empty, its long id whole",
       "name": "row-empty",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/row-mixed.html",
@@ -7015,7 +7304,8 @@
       "test": "Board (screenshots) > draws a feature row, mixed, its long id whole",
       "name": "row-mixed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/row-verified.html",
@@ -7023,7 +7313,8 @@
       "test": "Board (screenshots) > draws a feature row, verified, its long id whole",
       "name": "row-verified",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/change-list/change-list.browser.spec.ts/pin-expanded.html",
@@ -7031,7 +7322,8 @@
       "test": "ChangeList (screenshots) > nests an expanded pin’s files one level under it, with one selected",
       "name": "pin-expanded",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/chip/chip.browser.spec.ts/tones.html",
@@ -7039,7 +7331,8 @@
       "test": "Chip (screenshots) > draws each tone",
       "name": "tones",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts/folds.html",
@@ -7047,7 +7340,8 @@
       "test": "CommitGraphView on a chain of folds (screenshots) > pulls every source lane into the newest fold, earlier folds counted",
       "name": "folds",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts/graph.html",
@@ -7055,7 +7349,8 @@
       "test": "CommitGraphView (screenshots) > draws one lane per line of history, merged at the fold",
       "name": "graph",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts/headed.html",
@@ -7063,7 +7358,8 @@
       "test": "CommitGraphView with lane headers (screenshots) > heads each lane, cut to the column, with an empty lane for a branch without commits",
       "name": "headed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts/opened.html",
@@ -7071,7 +7367,8 @@
       "test": "CommitGraphView (screenshots) > opens a row with the lanes running on beside it, and says which was pressed",
       "name": "opened",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts/work-ref-open.html",
@@ -7079,7 +7376,8 @@
       "test": "CommitGraphView with work references (browser) > opens the brief on hover: the id, its status, when it changed, its title",
       "name": "work-ref-open",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/coverage-summary/coverage-summary.browser.spec.ts/diff.html",
@@ -7087,7 +7385,8 @@
       "test": "CoverageSummary (screenshots) > shows the total against the baseline and the changed lines no test ran",
       "name": "diff",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/drag-handle/drag-handle.browser.spec.ts/drag-handle.html",
@@ -7095,7 +7394,8 @@
       "test": "DragHandle (screenshots) > draws the grip on its item’s bottom-right corner, centred on it",
       "name": "drag-handle",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/dropdown/dropdown.browser.spec.ts/closed.html",
@@ -7103,7 +7403,8 @@
       "test": "Dropdown (screenshots) > draws closed and open",
       "name": "closed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/dropdown/dropdown.browser.spec.ts/open.html",
@@ -7111,7 +7412,8 @@
       "test": "Dropdown (screenshots) > draws closed and open",
       "name": "open",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/gate-shield/gate-shield.browser.spec.ts/states.html",
@@ -7119,7 +7421,8 @@
       "test": "GateShield (screenshots) > draws passed, failed, waiting and pending, the two needing a person ringed",
       "name": "states",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/image-diff/image-diff.browser.spec.ts/variants.html",
@@ -7127,7 +7430,8 @@
       "test": "ImageDiff (screenshots) > draws added, modified, failed and loading sides",
       "name": "variants",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/list/list.browser.spec.ts/list.html",
@@ -7135,7 +7439,8 @@
       "test": "List (screenshots) > draws lanes, rows and cards like the board, without its columns",
       "name": "list",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/load-failure/load-failure.browser.spec.ts/messages.html",
@@ -7143,7 +7448,8 @@
       "test": "LoadFailure (screenshots) > draws the message and the Retry button",
       "name": "messages",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/markdown/markdown.browser.spec.ts/every-part.html",
@@ -7151,7 +7457,8 @@
       "test": "Markdown (screenshots) > draws every part",
       "name": "every-part",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/markdown/markdown.browser.spec.ts/narrow.html",
@@ -7159,7 +7466,8 @@
       "test": "Markdown (screenshots) > keeps every part inside a narrow column",
       "name": "narrow",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/markdown/markdown.browser.spec.ts/work-text-ref-open.html",
@@ -7167,7 +7475,8 @@
       "test": "Markdown with work references (browser) > opens a description's brief on hover: the id, its status, when it changed, its title",
       "name": "work-text-ref-open",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/popover/popover.browser.spec.ts/closed.html",
@@ -7175,7 +7484,8 @@
       "test": "Popover (screenshots) > draws closed",
       "name": "closed",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/popover/popover.browser.spec.ts/focus.html",
@@ -7183,7 +7493,8 @@
       "test": "Popover (screenshots) > opens on keyboard focus, and Escape closes it",
       "name": "focus",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/popover/popover.browser.spec.ts/hover-end.html",
@@ -7191,7 +7502,8 @@
       "test": "Popover (screenshots) > opens on hover, at either edge",
       "name": "hover-end",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/popover/popover.browser.spec.ts/hover-start.html",
@@ -7199,7 +7511,8 @@
       "test": "Popover (screenshots) > opens on hover, at either edge",
       "name": "hover-start",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/reorder/reorder.browser.spec.ts/reorder-drag.html",
@@ -7207,7 +7520,8 @@
       "test": "Reorder (browser) > drags row 2 between rows 6 and 7, and reports the move",
       "name": "reorder-drag",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/reorder/reorder.browser.spec.ts/reorder-keyboard.html",
@@ -7215,7 +7529,8 @@
       "test": "Reorder (browser) > picks up, moves and drops from the keyboard",
       "name": "reorder-keyboard",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/reorder/reorder.browser.spec.ts/reorder-outside.html",
@@ -7223,7 +7538,8 @@
       "test": "Reorder (browser) > dims the clone outside the list, and cancels a release there",
       "name": "reorder-outside",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/reorder/reorder.browser.spec.ts/reorder-touch-cancel.html",
@@ -7231,7 +7547,8 @@
       "test": "Reorder (browser) > arms the cancel when a finger drags left, and a release then puts the page back",
       "name": "reorder-touch-cancel",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/reorder/reorder.browser.spec.ts/reorder-touch-end.html",
@@ -7239,7 +7556,8 @@
       "test": "Reorder (browser) > shifts the rows down at the top of the page, so the first slot is reached",
       "name": "reorder-touch-end",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/reorder/reorder.browser.spec.ts/reorder-touch-marker.html",
@@ -7247,7 +7565,8 @@
       "test": "Reorder (browser) > draws the marker in the gap under the clone, and hides it over the own slot",
       "name": "reorder-touch-marker",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/segment-log/segment-log.browser.spec.ts/segments.html",
@@ -7255,7 +7574,8 @@
       "test": "SegmentLog (screenshots) > opens the running segment, folds the settled ones, and notes a failure",
       "name": "segments",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/segment-log/segment-log.browser.spec.ts/waiting.html",
@@ -7263,7 +7583,8 @@
       "test": "SegmentLog (screenshots) > waits for the first line",
       "name": "waiting",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/stat/stat.browser.spec.ts/variants.html",
@@ -7271,7 +7592,8 @@
       "test": "Stat (screenshots) > draws the variants",
       "name": "variants",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/tag-link/tag-link.browser.spec.ts/board.html",
@@ -7279,7 +7601,8 @@
       "test": "TagLink (screenshots) > on a board: lane tags, a row footer and card corners",
       "name": "board",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/tag-link/tag-link.browser.spec.ts/list.html",
@@ -7287,7 +7610,8 @@
       "test": "TagLink (screenshots) > in a list: lane tags, a row footer and a card corner",
       "name": "list",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/terminal-screen/terminal-screen.browser.spec.ts/session.html",
@@ -7295,7 +7619,8 @@
       "test": "TerminalScreen (screenshots) > draws the session in xterm.js, fitted to its box",
       "name": "session",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/test-results/test-results.browser.spec.ts/failing.html",
@@ -7303,7 +7628,8 @@
       "test": "TestResultsView (screenshots) > shows the totals, the failing test first with its place, then the suites",
       "name": "failing",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     },
     {
       "file": "src/app/ui/components/tree-folder/tree-folder.browser.spec.ts/nested.html",
@@ -7311,7 +7637,8 @@
       "test": "TreeFolder (screenshots) > draws nested directories",
       "name": "nested",
       "route": null,
-      "records": []
+      "records": [],
+      "triggers": []
     }
   ],
   "byRoute": {
@@ -7496,5 +7823,9 @@
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/sign-in-notice.html",
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot.html"
     ]
+  },
+  "outcomes": {
+    "declared": [],
+    "fired": []
   }
 }
