@@ -86,12 +86,15 @@ function tableGroup(svg: SVGSVGElement, table: string): SVGGElement | null {
   );
 }
 
-/** Scrolls `box` (only) so that `target` sits in the middle of it, as far as the box can scroll. */
+/**
+ * Scrolls `box` (only) so that `target` sits in the middle of it, as far as the box can scroll; a
+ * target larger than the box along an axis is aligned to its start instead, so its header shows.
+ */
 function centre(box: HTMLElement, target: Element): void {
   const outer = box.getBoundingClientRect();
   const inner = target.getBoundingClientRect();
   const left = inner.left - outer.left - box.clientLeft + box.scrollLeft;
   const top = inner.top - outer.top - box.clientTop + box.scrollTop;
-  box.scrollLeft = Math.max(0, left + inner.width / 2 - box.clientWidth / 2);
-  box.scrollTop = Math.max(0, top + inner.height / 2 - box.clientHeight / 2);
+  box.scrollLeft = Math.max(0, Math.min(left, left + inner.width / 2 - box.clientWidth / 2));
+  box.scrollTop = Math.max(0, Math.min(top, top + inner.height / 2 - box.clientHeight / 2));
 }
