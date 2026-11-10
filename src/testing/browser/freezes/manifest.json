@@ -2510,29 +2510,35 @@
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/no-code.html",
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
-      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: no-code",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: no-code",
       "name": "no-code",
       "route": "auth/callback",
       "records": [],
-      "triggers": []
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/not-swapped.html",
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
-      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: not-swapped",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: not-swapped",
       "name": "not-swapped",
       "route": "auth/callback",
       "records": [],
-      "triggers": []
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/refused.html",
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
-      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: refused",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: refused",
       "name": "refused",
       "route": "auth/callback",
       "records": [],
-      "triggers": []
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/signing-in.html",
@@ -2546,11 +2552,13 @@
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state.html",
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
-      "test": "QitsAuthCallbackPage (screenshots) > shows that the sign-in failed: unknown-state",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unknown-state",
       "name": "unknown-state",
       "route": "auth/callback",
       "records": [],
-      "triggers": []
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
     },
     {
       "file": "src/app/routes/network-access/network-access.page.browser.spec.ts/loaded.html",
@@ -8275,12 +8283,43 @@
   "outcomes": {
     "declared": [
       {
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": false,
+        "file": "@qits/angular/src/lib/sign-in/auth-callback.page.ts"
+      },
+      {
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "succeeded",
+        "kind": "returnTo",
+        "to": null,
+        "global": false,
+        "triggered": false,
+        "file": "@qits/angular/src/lib/sign-in/auth-callback.page.ts"
+      },
+      {
+        "route": "auth/callback",
+        "interaction": "sign-in-failed",
+        "outcome": "restarted",
+        "kind": "exit",
+        "to": "",
+        "global": false,
+        "triggered": true,
+        "file": "@qits/angular/src/lib/sign-in/auth-callback.page.ts"
+      },
+      {
         "route": "projects/:slug/work/create",
         "interaction": "cancel-work-create",
         "outcome": "toIdea",
         "kind": "exit",
         "to": "projects/:slug/ideas/detail/:ideaId",
         "global": false,
+        "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
       },
       {
@@ -8290,6 +8329,7 @@
         "kind": "exit",
         "to": "projects/:slug/work",
         "global": false,
+        "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
       },
       {
@@ -8299,6 +8339,7 @@
         "kind": "exit",
         "to": "projects/:slug/work/detail/:id",
         "global": false,
+        "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
       },
       {
@@ -8308,6 +8349,7 @@
         "kind": "stay",
         "to": null,
         "global": false,
+        "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
       },
       {
@@ -8317,10 +8359,93 @@
         "kind": "exit",
         "to": "projects/:slug/ideas/detail/:ideaId",
         "global": false,
+        "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      },
+      {
+        "route": null,
+        "interaction": "session-guard",
+        "outcome": "signedOut",
+        "kind": "external",
+        "to": "idp",
+        "global": true,
+        "triggered": false,
+        "file": "@qits/angular/src/lib/sign-in/qits-session.ts"
       }
     ],
     "fired": [
+      {
+        "spec": "src/app/app.routes.browser.spec.ts",
+        "test": "app routes: the session guard (qits-2044) > session-guard signedOut: a visitor holding no token leaves for the idp’s sign-in",
+        "route": null,
+        "interaction": "session-guard",
+        "outcome": "signedOut",
+        "kind": "external",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: no-code",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/routes/auth-callback.page.browser.spec.ts/no-code.html"
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: not-swapped",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/routes/auth-callback.page.browser.spec.ts/not-swapped.html"
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: refused",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/routes/auth-callback.page.browser.spec.ts/refused.html"
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unknown-state",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state.html"
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in-failed restarted: Start again goes to the root",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in-failed restarted: Start again goes to the root",
+        "route": "auth/callback",
+        "interaction": "sign-in-failed",
+        "outcome": "restarted",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage signing in (qits-2044) > sign-in succeeded: swaps the code and returns to the page the sign-in started from",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "succeeded",
+        "kind": "returnTo",
+        "freeze": null
+      },
       {
         "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
         "test": "WorkCreatePage (screenshots) > cancel-work-create toIdea: goes back to the idea it was opened from",
