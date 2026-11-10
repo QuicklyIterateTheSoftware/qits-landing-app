@@ -592,7 +592,10 @@ export function routeOutcomes(
 /** A route's mark in the tree (qits-2045): its page outcomes, and how many of them are gaps. */
 export interface OutcomeMark {
   readonly outcomes: number;
-  /** The outcomes no test reaches, or no freeze shows the trigger of. */
+  /**
+   * The outcomes no test reaches, or no freeze shows the trigger of; a `triggered: false` one
+   * (qits-2044) is never a trigger gap.
+   */
   readonly gaps: number;
 }
 
@@ -610,7 +613,9 @@ export function routeOutcomeMarks(manifest: RoutesManifest): ReadonlyMap<string,
     const joined = routeOutcomes(manifest, entry.route);
     marks.set(entry.route, {
       outcomes: joined.length,
-      gaps: joined.filter((o) => o.reachedBy.length === 0 || o.triggerFreezes.length === 0).length,
+      gaps: joined.filter(
+        (o) => o.reachedBy.length === 0 || (o.triggered && o.triggerFreezes.length === 0),
+      ).length,
     });
   }
   return marks;

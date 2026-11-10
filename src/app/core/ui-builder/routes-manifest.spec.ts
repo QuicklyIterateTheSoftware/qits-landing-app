@@ -714,6 +714,12 @@ describe('the library’s outcomes (qits-2044)', () => {
     expect(outcomes['work-tabs:switched'].library).toBe(false);
   });
 
+  it('counts no trigger gap for an untriggered outcome in the tree’s mark (qits-2045)', () => {
+    // succeeded and failed are reached and untriggered; restarted is shown but reached by no test.
+    expect(routeOutcomeMarks(LIBRARY).get(CALLBACK)).toEqual({ outcomes: 3, gaps: 1 });
+    expect(outcomeProgress(LIBRARY, routeTree(LIBRARY))).toEqual({ declaring: 1, pages: 2 });
+  });
+
   it('joins the fires of the new kinds as any other', () => {
     const outcomes = byMark();
     expect(outcomes['sign-in:succeeded'].reachedBy).toEqual([{ spec: SPEC, test: 'signs in' }]);
