@@ -173,6 +173,10 @@
           "fullPath": "projects/:slug/setup"
         },
         {
+          "path": "network-access",
+          "fullPath": "network-access"
+        },
+        {
           "path": "**",
           "fullPath": "**"
         }
@@ -2546,6 +2550,61 @@
       "name": "unknown-state",
       "route": "auth/callback",
       "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/network-access/network-access.page.browser.spec.ts/loaded.html",
+      "spec": "src/app/routes/network-access/network-access.page.browser.spec.ts",
+      "test": "NetworkAccessPage (screenshots) > lists the peers, the private edge and the connect line",
+      "name": "loaded",
+      "route": "network-access",
+      "records": [
+        {
+          "provider": "qits-network-access-service",
+          "state": "a device peer behind an announced private edge",
+          "operationId": "getPeers"
+        },
+        {
+          "provider": "qits-network-access-service",
+          "state": "a joined node",
+          "operationId": "getNodes"
+        },
+        {
+          "provider": "qits-network-access-service",
+          "state": "an announced private edge",
+          "operationId": "getPrivateEdge"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/network-access/network-access.page.browser.spec.ts/no-private-edge.html",
+      "spec": "src/app/routes/network-access/network-access.page.browser.spec.ts",
+      "test": "NetworkAccessPage (screenshots) > says no private edge has announced itself",
+      "name": "no-private-edge",
+      "route": "network-access",
+      "records": [
+        {
+          "provider": "qits-network-access-service",
+          "state": "a device peer behind an announced private edge",
+          "operationId": "getPeers"
+        },
+        {
+          "provider": "qits-network-access-service",
+          "state": "a joined node",
+          "operationId": "getNodes"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        }
+      ],
       "triggers": []
     },
     {
@@ -8007,6 +8066,10 @@
       "src/app/routes/auth-callback.page.browser.spec.ts/refused.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/signing-in.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state.html"
+    ],
+    "network-access": [
+      "src/app/routes/network-access/network-access.page.browser.spec.ts/loaded.html",
+      "src/app/routes/network-access/network-access.page.browser.spec.ts/no-private-edge.html"
     ],
     "projects": [
       "src/app/routes/projects/project-picker.page.browser.spec.ts/empty.html",
