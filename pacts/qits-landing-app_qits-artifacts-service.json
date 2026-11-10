@@ -414,6 +414,90 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-entity",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-entity: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with published changelogs",
+          "params": {
+            "repository": "contract-repository",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/@changelog/${repository}/-/${version}/CHANGELOG.md",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@changelog/contract-repository/-/2100.1.0/CHANGELOG.md"
+      },
+      "response": {
+        "body": {
+          "content": "IyBQZXJzaXN0ZW5jZSB1bml0IGBwcm9qZWN0c2AKCmBgYG1lcm1haWQKZXJEaWFncmFtCiAgcHJvamVjdCB7CiAgICB1dWlkIGlkIFBLICJub3QgbnVsbCIKICB9CmBgYAo=",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "text/markdown"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "text/markdown"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "text/markdown.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "listDocsSites"
           },
           "qits-trigger": {

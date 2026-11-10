@@ -12,7 +12,10 @@ import { openRoute, provideAppRoute } from '../../../../../../../../testing/brow
  * `entities.page.browser.spec.ts`): the domain Project, the technical LegacyPlacement, and a class
  * the map does not list. The recorded map holds no projection, so that case is the plain spec's
  * (`entity.page.spec.ts`). No recording holds a `golden-masters/index.json`, so its read (which
- * states record each operation) is refused, which the page names.
+ * states record each operation) is refused, which the page names. Nor does any hold a bundle's
+ * `database/index.json` (qits-2014), so it is answered 404, as a bundle published before the ER
+ * diagrams answers it, and the page says no diagram is published; a drawn diagram is the plain
+ * spec's (`entity.page.spec.ts`) until qits-artifacts records a bundle with one.
  */
 const CONTRACTS = 'a published contracts bundle with an entity map';
 
@@ -51,6 +54,9 @@ describe('EntityPage (screenshots)', () => {
     http
       .expectOne((req) => req.url.endsWith('/golden-masters/index.json'))
       .flush(null, { status: 404, statusText: 'Not Found' });
+    http
+      .expectOne((req) => req.url.endsWith('/database/index.json'))
+      .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
     return opened;
   }
@@ -61,6 +67,7 @@ describe('EntityPage (screenshots)', () => {
     await expect.element(view.getByRole('heading', { name: 'Project', exact: true })).toBeVisible();
     await expect.element(view).toMatchTextContent('eu.wohlben.qits.entities.dto.ProjectDto');
     await expect.element(view).toMatchTextContent('ProjectMapper.toDto(Project)');
+    await expect.element(view).toMatchTextContent('No ER diagram published for this entity.');
     await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('domain');
   });
 

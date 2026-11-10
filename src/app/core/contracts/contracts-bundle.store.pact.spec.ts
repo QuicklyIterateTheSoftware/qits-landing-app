@@ -17,6 +17,8 @@ import {
 } from '$core/ui-builder/entity-map.consumes';
 import { contractsSitesOf, entityMapOf } from '$core/ui-builder/entity-map.store';
 import { contractsFileOf } from '$core/ui-builder/golden-masters.store';
+import { databaseIndexOf, diagramFileOf } from './contracts-bundle.store';
+import { asDatabaseIndex } from './database-diagram';
 import type { InteractionSlug } from '../../interactions';
 import {
   artifactsGoldenMasters as masters,
@@ -40,6 +42,15 @@ import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part'
  * `getDocsFile` binds the status and media type only (`NonJsonResponse`), its example body the
  * state's recorded file. The reads go through the uncached `contractsFileOf`, so each test's read
  * reaches its mock server.
+ *
+ * The entity page also reads the ER diagram of the entity's unit (qits-2014): the bundle's
+ * `database/index.json` (`databaseIndexOf`) and the unit's `database/<file>.md`
+ * (`diagramFileOf`). No recording of qits-artifacts holds a bundle's database files yet, so each
+ * read binds what the docs store answers for a file of its media type: the index as the entity
+ * map's JSON file is bound (the recorded `entities.json` is its example body, which is not an
+ * index), and the Markdown file as `a repository with published changelogs` records one,
+ * `text/markdown` (recorded without a body, so the example is a diagram file of the generated
+ * shape). The provider replays each state's own path.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
@@ -61,10 +72,11 @@ const given = (
   operationId: string,
   consumes: readonly string[],
   response?: NonJsonResponse,
+  state = CONTRACTS,
 ) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
-    state: CONTRACTS,
+    state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
     consumes,
@@ -85,6 +97,22 @@ function at<T>(url: string, call: () => Promise<T>): Promise<T> {
 }
 
 const params = (operationId: string) => masters.operation(CONTRACTS, operationId).params;
+
+/** The state recording a Markdown file of the docs store (a changelog), for a diagram's read. */
+const MARKDOWN = 'a repository with published changelogs';
+
+/** A diagram file as `qits database diagram` writes it, the Markdown read's example body. */
+const DIAGRAM_FILE = [
+  '# Persistence unit `projects`',
+  '',
+  '```mermaid',
+  'erDiagram',
+  '  project {',
+  '    uuid id PK "not null"',
+  '  }',
+  '```',
+  '',
+].join('\n');
 
 /** The recorded contracts site, as `contractsSitesOf` finds it. */
 const site = () => ({
@@ -164,4 +192,25 @@ describe('qits-landing-app → qits-artifacts-service pact: contracts and entiti
         expect(map).toEqual(asEntityMap(masters.body(CONTRACTS, 'getDocsFile')));
       }));
   }
+
+  it('show-entity: reads the version’s database/index.json', () =>
+    given('show-entity', 'getDocsFile', GET_DOCS_FILE, recordedFile()).executeTest(
+      async (server) => {
+        const index = await at(server.url, () => databaseIndexOf(site()));
+        // The example body is the recorded `entities.json`: read, and checked as not an index.
+        expect(index).toEqual(asDatabaseIndex(masters.body(CONTRACTS, 'getDocsFile')));
+      },
+    ));
+
+  it('show-entity: reads a unit’s ER diagram as Markdown', () =>
+    given(
+      'show-entity',
+      'getDocsFile',
+      GET_DOCS_FILE,
+      { contentType: 'text/markdown', body: new TextEncoder().encode(DIAGRAM_FILE) },
+      MARKDOWN,
+    ).executeTest(async (server) => {
+      const markdown = await at(server.url, () => diagramFileOf(site(), 'projects.md'));
+      expect(markdown).toBe(DIAGRAM_FILE);
+    }));
 });

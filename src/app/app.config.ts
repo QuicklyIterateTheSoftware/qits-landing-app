@@ -12,6 +12,7 @@ import {
   provideQitsIntegration,
   qitsBearerInterceptor,
 } from '@qits/angular';
+import { provideQitsMermaid } from '@qits/ui-components/mermaid';
 import { client as artifactsClient } from './api/artifacts/client.gen';
 import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
@@ -99,5 +100,8 @@ export const appConfig: ApplicationConfig = {
     // Work ids in commit subjects (`<qits-commit-message>`, qits-1897): their briefs through the
     // projects client above (`provideQitsWorkBriefs`), their links to this app's work item page.
     provideWorkReferences(),
+    // `<qits-mermaid-diagram>` draws with mermaid, loaded lazily on the first diagram (the entity
+    // page's ER diagram, qits-2014); without this it shows the definition as text.
+    provideQitsMermaid(),
   ],
 };
