@@ -1,3 +1,5 @@
+import type { Outcome } from '@qits/angular';
+
 /** How an action looks: `success` confirms, `danger` destroys, `muted` is everything else. */
 export type ActionVariant = 'success' | 'danger' | 'muted';
 
@@ -16,6 +18,12 @@ export interface Action {
   readonly details?: ActionDetails;
   /** The button cannot be pressed (a change in flight, say). */
   readonly disabled?: boolean;
+  /**
+   * The declared outcomes a click can reach (epic qits-2000), which the button names in its
+   * `data-qits-outcome` mark (`outcomeMark`). Recording them is the callback's business (`go()`,
+   * `reach()`); the mark only names them. Left out, the button carries no mark.
+   */
+  readonly outcomes?: readonly Outcome[];
 }
 
 /** Actions shown as joined buttons. `title` names the group (its caption and `aria-label`). */

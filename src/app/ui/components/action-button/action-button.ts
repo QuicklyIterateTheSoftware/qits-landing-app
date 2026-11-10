@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { outcomeMark } from '@qits/angular';
 import { Popover } from '$ui/components/popover/popover';
 import { Action } from './action';
 
@@ -35,6 +36,9 @@ const JOINS = {
  * An action with `details` shows them in a `ui-popover` while the button is hovered or focused: the
  * title, then the items as an ordered list. The panel lines up with the button's right edge, as
  * actions mostly sit at the right of the page. The button names the panel in `aria-describedby`.
+ *
+ * An action with `outcomes` marks its button with them (`data-qits-outcome`, `outcomeMark`), so a
+ * screenshot shows which declared outcomes the button triggers (epic qits-2000).
  */
 @Component({
   selector: 'ui-action-button',
@@ -66,6 +70,7 @@ const JOINS = {
         [class]="classes()"
         [disabled]="action().disabled ?? false"
         [attr.data-variant]="action().variant"
+        [attr.data-qits-outcome]="mark()"
         [attr.aria-describedby]="describedBy"
         (click)="action().callback()"
       >
@@ -78,6 +83,12 @@ export class ActionButton {
   readonly action = input.required<Action>();
 
   readonly join = input<ActionJoin>('none');
+
+  /** The trigger mark of the action's outcomes, or `null` (no attribute) when it has none. */
+  protected readonly mark = computed(() => {
+    const outcomes = this.action().outcomes ?? [];
+    return outcomes.length ? outcomeMark(...outcomes) : null;
+  });
 
   protected readonly classes = computed(
     () => `${VARIANTS[this.action().variant]} ${JOINS[this.join()]}`,

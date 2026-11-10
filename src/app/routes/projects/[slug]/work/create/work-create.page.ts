@@ -7,11 +7,10 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ideaPath } from '$core/ideas/idea-path';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit, stay } from '@qits/angular';
 import { IdeasStore } from '$core/ideas/ideas.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { workItemPath } from '$core/workspaces/agent-attention';
 import { WorkStore } from '$core/work/work.store';
 import {
   isRoot,
@@ -33,16 +32,23 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * page opens it that way (Create epic, Create ticket), and the form then says which idea inspires
  * the item (its title from `IdeasStore.loadIdea`, linked) and sends it as `inspiredBy`.
  *
- * Create sends `WorkWritesStore.create`, reads the project's work again (`WorkStore.refresh`: the
- * service announces no creation) and goes to the new item's page; a refusal shows the service's
- * `message` with the typed form kept. Cancel goes back to the idea, or to the work.
+ * Where each interaction leads is declared (epic qits-2000), and the buttons and the link carry the
+ * marks of the outcomes they trigger:
+ *
+ * - `create-work-item`: Create sends `WorkWritesStore.create`, reads the project's work again
+ *   (`WorkStore.refresh`: the service announces no creation) and leaves for the new item's page
+ *   (`created`); a refusal stays (`refused`) and shows the service's `message` with the typed form
+ *   kept.
+ * - `cancel-work-create`: Cancel goes back to the idea it was opened from (`toIdea`), or to the
+ *   project's work (`toWork`). Its button names only the one its click fires.
+ * - `open-inspiring-idea`: the "Inspired by" link opens the idea (`open`).
  *
  * Staleness (qits-1270): reads the inspiring idea once; nothing to follow on a form.
  */
 @Component({
   selector: 'app-work-create-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, PageLayoutComponent, RouterLink],
+  imports: [ActionButton, PageLayoutComponent, QitsExit],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -56,7 +62,8 @@ import { ActionButton } from '$ui/components/action-button/action-button';
               Inspired by
               <a
                 class="font-semibold text-ocean-deep-700 no-underline hover:underline"
-                [routerLink]="ideaLink(ideaId)"
+                [qitsExit]="inspiring.open"
+                [exitParams]="{ slug: slug(), ideaId }"
                 >{{ ideaTitle() }}</a
               >
             </p>
@@ -138,7 +145,21 @@ export class WorkCreatePage {
   private readonly writes = inject(WorkWritesStore);
   private readonly work = inject(WorkStore);
   private readonly ideas = inject(IdeasStore);
-  private readonly router = inject(Router);
+
+  /** Create: the new item's page, or the form kept with the refusal. */
+  private readonly creation = outcomes('create-work-item', {
+    created: exit('projects/:slug/work/detail/:id'),
+    refused: stay(),
+  });
+  /** Cancel: back to the idea the form was opened from, or to the project's work. */
+  private readonly cancelling = outcomes('cancel-work-create', {
+    toIdea: exit('projects/:slug/ideas/detail/:ideaId'),
+    toWork: exit('projects/:slug/work'),
+  });
+  /** The "Inspired by" link: the idea's page. */
+  protected readonly inspiring = outcomes('open-inspiring-idea', {
+    open: exit('projects/:slug/ideas/detail/:ideaId'),
+  });
 
   protected readonly archetypes = ROOT;
   protected readonly ticketTypes = TICKET_TYPES;
@@ -160,6 +181,8 @@ export class WorkCreatePage {
   protected readonly busy = signal(false);
   protected readonly refusal = signal<string | null>(null);
 
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
   protected readonly heading = computed(() => `New ${this.archetype().toLowerCase()}`);
 
   protected readonly ideaTitle = computed(() => {
@@ -172,6 +195,7 @@ export class WorkCreatePage {
     variant: 'success',
     disabled: this.busy() || !this.title().trim() || !this.selected.project()?.id,
     callback: () => void this.create(),
+    outcomes: [this.creation.created, this.creation.refused],
   }));
 
   protected readonly cancelAction = computed((): Action => ({
@@ -179,6 +203,7 @@ export class WorkCreatePage {
     variant: 'muted',
     disabled: this.busy(),
     callback: () => this.cancel(),
+    outcomes: [this.inspiredBy() ? this.cancelling.toIdea : this.cancelling.toWork],
   }));
 
   constructor() {
@@ -194,14 +219,12 @@ export class WorkCreatePage {
     if (isRoot(value)) this.archetype.set(value);
   }
 
-  protected ideaLink(ideaId: string): string {
-    return ideaPath(this.selected.slug() ?? '', ideaId);
-  }
-
   private cancel(): void {
-    const slug = this.selected.slug() ?? '';
-    const idea = this.inspiredBy();
-    void this.router.navigateByUrl(idea ? ideaPath(slug, idea) : `/projects/${slug}/work`);
+    const slug = this.slug();
+    const ideaId = this.inspiredBy();
+    void (ideaId
+      ? this.cancelling.toIdea.go({ slug, ideaId })
+      : this.cancelling.toWork.go({ slug }));
   }
 
   protected async create(): Promise<void> {
@@ -220,13 +243,12 @@ export class WorkCreatePage {
     });
     if (!outcome.ok) {
       this.busy.set(false);
+      this.creation.refused.reach();
       this.refusal.set(outcome.refusal);
       return;
     }
     await this.work.refresh(project);
     this.busy.set(false);
-    void this.router.navigateByUrl(
-      workItemPath(this.selected.slug() ?? '', outcome.value.qualifiedId ?? ''),
-    );
+    void this.creation.created.go({ slug: this.slug(), id: outcome.value.qualifiedId ?? '' });
   }
 }

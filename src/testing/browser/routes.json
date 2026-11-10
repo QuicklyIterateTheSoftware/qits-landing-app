@@ -765,6 +765,18 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/work/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "createWork",
+      "route": "projects/:slug/work/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/create"
     }
   ],
   "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts": [

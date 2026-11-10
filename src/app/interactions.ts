@@ -1,5 +1,10 @@
 /**
- * The app's UI interactions: what a visitor does that makes this app call a backend.
+ * The app's UI interactions: what a visitor does that makes this app call a backend, or that only
+ * navigates (epic qits-2000).
+ *
+ * An interaction that only navigates names no pact: its slug is what the page's `outcomes()`
+ * declare and what the trigger marks (`data-qits-outcome`) name, never a
+ * `qits-trigger.interaction`.
  *
  * Each key is a stable slug, unique within the app. Pacts name the slug in
  * `comments.references.qits-trigger.interaction`, and diagrams name it too. Never reuse a slug for
@@ -337,6 +342,16 @@ export const INTERACTIONS = {
    */
   'create-work-item': 'Create on the work form files an epic or a ticket',
   /**
+   * `work-create.page.ts`: Cancel on the work create form goes back to the idea it was opened from,
+   * or to the project's work. Navigates only, and names no pact (epic qits-2000).
+   */
+  'cancel-work-create': 'Cancel on the work form goes back to the idea or to the work',
+  /**
+   * `work-create.page.ts`: the "Inspired by" link on the work create form opens the inspiring idea's
+   * page. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-inspiring-idea': 'The work form’s “Inspired by” link opens the inspiring idea',
+  /**
    * The work item page's inspiration (`work-inspiration.ts`) via `WorkWritesStore.setInspiredBy`:
    * names an idea of the project as an item's inspiration, or clears it.
    */
@@ -404,3 +419,14 @@ export const INTERACTIONS = {
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
 export type InteractionSlug = keyof typeof INTERACTIONS;
+
+/**
+ * The library's typing seam (`@qits/angular`'s `QitsApp`): `outcomes()` takes only a slug of
+ * {@link INTERACTIONS}, so an unknown one does not compile. `route-paths.ts`, which augments
+ * `routePath`, is generated, so this half lives here.
+ */
+declare module '@qits/angular' {
+  interface QitsApp {
+    interaction: InteractionSlug;
+  }
+}

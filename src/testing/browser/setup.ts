@@ -15,10 +15,15 @@
  * - Every passing screenshot is also frozen as HTML (`freezeScreenshots`, ticket qits-1947): the
  *   element with its CSS, the route it was on and the recorded answers its test showed, written to
  *   `src/testing/browser/freezes/` with the app's route tree in its `manifest.json`.
+ * - Every declared outcome a test reaches (`go()`, `reach()`, a `QitsExit` click) is recorded
+ *   (`recordOutcomes`, epic qits-2000) and sent to the Node side, which links it to the test's
+ *   screenshots in `manifest.json`; `qits-angular screenshots --check --enforce-outcomes` fails a
+ *   declared outcome no test reaches, or whose trigger no screenshot shows.
  */
 import {
   freezeScreenshots,
   guardGoldenMasters,
+  recordOutcomes,
   takeRouteRecords,
 } from '@qits/angular/testing/browser';
 import { afterAll, afterEach, beforeAll, beforeEach, expect } from 'vitest';
@@ -33,6 +38,9 @@ guardGoldenMasters({
 
 // Every passing screenshot, frozen as HTML beside the app's route tree (no lazy route is loaded).
 freezeScreenshots({ routes });
+
+// Every declared outcome each test reaches, for the manifest and the outcome check.
+recordOutcomes();
 
 const FONTS = '/src/testing/browser/fonts';
 

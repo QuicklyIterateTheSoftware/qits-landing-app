@@ -14,14 +14,21 @@ import {
   projectsGoldenMasters as masters,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { CREATE_WORK, PATCH_WORK_NEEDS, REPRIORITIZE_WORK } from './work-writes.consumes';
+import {
+  CREATE_WORK,
+  PATCH_WORK_NEEDS,
+  REPRIORITIZE_WORK,
+  WORK_REFUSAL,
+} from './work-writes.consumes';
 import { WorkWritesStore } from './work-writes.store';
 
 /**
  * `WorkWritesStore`'s part of qits-landing-app's pact with qits-projects-service (epic qits-888),
  * in `pacts/qits-landing-app_qits-projects-service.json` beside the other stores' parts:
  * `createWork` from "a project with no work" (a bug ticket with its impetus), driven through the
- * store's `create` with what the recording sent; `reprioritizeWork` from "three reported tickets,
+ * store's `create` with what the recording sent, and from "a project with ideas" refused (400: a
+ * ticket without its impetus), whose `message` the form shows (qits-2004, its `refused` outcome);
+ * `reprioritizeWork` from "three reported tickets,
  * one with a priority" (qits-753: the third ticket dropped directly below the first), driven
  * through the store's `reprioritize`.
  *
@@ -48,6 +55,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
 ];
 
 const NO_WORK = 'a project with no work';
+const IDEAS = 'a project with ideas';
 const RANKED = 'three reported tickets, one with a priority';
 /** The recorded patch the needs write is composed from. */
 const RECORDED_PATCH = 'a reported ticket';
@@ -125,6 +133,24 @@ describe('qits-landing-app → qits-projects-service pact: work writes', () => {
         impetus: sent['impetus'],
       });
       expect(outcome.ok && outcome.value.qualifiedId).toBeTruthy();
+    }));
+
+  it('create-work-item: a ticket without impetus is refused, in the service’s words', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: IDEAS,
+      operationId: 'createWork',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'create-work-item' },
+      consumes: WORK_REFUSAL,
+    }).executeTest(async (server) => {
+      const sent = masters.operation(IDEAS, 'createWork').body as Record<string, string>;
+      const outcome = await storeAt(server.url).create({
+        archetype: 'TICKET',
+        project: sent['project'],
+        title: sent['title'],
+        ticketType: sent['ticketType'],
+      });
+      expect(outcome).toEqual({ ok: false, refusal: 'impetus is required' });
     }));
 
   it.skipIf(!isRecorded(NEEDS_STATE, 'getWork'))(

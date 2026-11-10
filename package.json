@@ -10,7 +10,7 @@
     "lint": "prettier --check . && eslint .",
     "generate:api": "openapi-ts",
     "serve:ssr": "node dist/qits-landing-app/server/server.mjs",
-    "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser && qits-angular screenshots --check",
+    "test:browser": "node scripts/check-renderer.mjs && ng run qits-landing-app:test-browser && qits-angular screenshots --check --enforce-outcomes",
     "screenshots:prune": "qits-angular screenshots --prune"
   },
   "private": true,

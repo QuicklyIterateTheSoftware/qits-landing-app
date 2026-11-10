@@ -1631,6 +1631,93 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "archetype": "TICKET",
+            "project": "{projectId}",
+            "ticketType": "IMPROVEMENT",
+            "title": "Faster builds"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/projects/api/work"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "impetus is required"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 400
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "createWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "create-work-item",
+            "kind": "ui",
+            "route": "projects/:slug/work/create"
+          }
+        }
+      },
+      "description": "create-work-item: createWork",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a project with no work",
           "params": {
             "projectId": "00000000-0000-4000-8000-000000000001"
@@ -18949,7 +19036,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-work",
             "kind": "ui",
-            "route": "projects, projects/:slug/desk, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/refinement, projects/:slug/work/schedule"
+            "route": "projects, projects/:slug/desk, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/refinement, projects/:slug/work/schedule"
           }
         }
       },

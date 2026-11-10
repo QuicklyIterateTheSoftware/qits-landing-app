@@ -4597,7 +4597,12 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-work-create:toIdea",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "open-inspiring-idea:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-ticket.html",
@@ -4622,7 +4627,36 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-work-create:toIdea",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "open-inspiring-idea:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/refused.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > create-work-item refused: stays, with the service’s words",
+      "name": "refused",
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-dropped-ticket.html",
@@ -8103,7 +8137,8 @@
     ],
     "projects/:slug/work/create": [
       "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic.html",
-      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-ticket.html"
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-ticket.html",
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/refused.html"
     ],
     "projects/:slug/work/detail/:id": [
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-dropped-ticket.html",
@@ -8175,7 +8210,99 @@
     ]
   },
   "outcomes": {
-    "declared": [],
-    "fired": []
+    "declared": [
+      {
+        "route": "projects/:slug/work/create",
+        "interaction": "cancel-work-create",
+        "outcome": "toIdea",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/work/create",
+        "interaction": "cancel-work-create",
+        "outcome": "toWork",
+        "kind": "exit",
+        "to": "projects/:slug/work",
+        "global": false,
+        "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/work/create",
+        "interaction": "create-work-item",
+        "outcome": "created",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": false,
+        "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/work/create",
+        "interaction": "create-work-item",
+        "outcome": "refused",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/work/create",
+        "interaction": "open-inspiring-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      }
+    ],
+    "fired": [
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > cancel-work-create toIdea: goes back to the idea it was opened from",
+        "route": "projects/:slug/work/create",
+        "interaction": "cancel-work-create",
+        "outcome": "toIdea",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > cancel-work-create toWork: goes to the project’s work",
+        "route": "projects/:slug/work/create",
+        "interaction": "cancel-work-create",
+        "outcome": "toWork",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > create-work-item created: goes to the new ticket’s page",
+        "route": "projects/:slug/work/create",
+        "interaction": "create-work-item",
+        "outcome": "created",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > create-work-item refused: stays, with the service’s words",
+        "route": "projects/:slug/work/create",
+        "interaction": "create-work-item",
+        "outcome": "refused",
+        "kind": "stay",
+        "freeze": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/refused.html"
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > open-inspiring-idea open: the “Inspired by” link opens the idea",
+        "route": "projects/:slug/work/create",
+        "interaction": "open-inspiring-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      }
+    ]
   }
 }

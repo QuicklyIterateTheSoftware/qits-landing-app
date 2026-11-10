@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { exit, outcomes, stay } from '@qits/angular';
 import { Action } from './action';
 import { ActionButton, ActionJoin } from './action-button';
 
@@ -57,6 +58,25 @@ describe('ActionButton', () => {
     fixture.detectChanges();
     for (const c of present) expect(button.classList).toContain(c);
     for (const c of absent) expect(button.classList).not.toContain(c);
+  });
+
+  it('marks the button with the outcomes its click can reach, and carries no mark without', () => {
+    const { fixture, host, button } = render();
+    expect(button.hasAttribute('data-qits-outcome')).toBe(false);
+    const create = TestBed.runInInjectionContext(() =>
+      outcomes('create-work-item', {
+        created: exit('projects/:slug/work/detail/:id'),
+        refused: stay(),
+      }),
+    );
+    host.action.set({
+      label: 'Create',
+      variant: 'success',
+      callback: () => undefined,
+      outcomes: [create.created, create.refused],
+    });
+    fixture.detectChanges();
+    expect(button.dataset['qitsOutcome']).toBe('create-work-item:created create-work-item:refused');
   });
 
   it('has no popover and no description without details', () => {
