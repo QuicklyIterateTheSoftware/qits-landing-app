@@ -40,9 +40,14 @@ export interface Freeze {
 
 /**
  * What an outcome does (qits-2006): `exit` leaves for another route (`to`), `stay` keeps the page
- * and shows its result (a refusal, a saved form).
+ * and shows its result (a refusal, a saved form). From qits-2044 on also `returnTo`, which goes back
+ * to the page the interaction started from (a URL known only at run time, so no `to`), and
+ * `external`, which leaves the app for the site `to` names (`idp`). Neither has a route target.
  */
-export type OutcomeKind = 'exit' | 'stay';
+export type OutcomeKind = 'exit' | 'stay' | 'returnTo' | 'external';
+
+/** The package whose own declarations an app's manifest carries (qits-2044): `file` starts with it. */
+const LIBRARY_PREFIX = '@qits/angular/';
 
 /**
  * One outcome the app declares (qits-2006, from `@qits/angular`'s `screenshots/outcomes.mjs`). Its
@@ -54,10 +59,22 @@ export interface DeclaredOutcome {
   readonly interaction: string;
   readonly outcome: string;
   readonly kind: OutcomeKind;
-  /** The route pattern given to `exit(...)`, as written, no leading slash; null for a stay. */
+  /**
+   * The route pattern given to `exit(...)`, as written, no leading slash; the site an `external(...)`
+   * leaves for (`idp`); null for a stay or a return.
+   */
   readonly to: string | null;
   readonly global: boolean;
-  /** The source file that declares it. */
+  /**
+   * Whether an element on the page triggers it (qits-2044): `false` for one declared with
+   * `{ triggered: false }` (a guard, a callback's result), which no screenshot is asked to show.
+   * Absent in a bundle older than the option; read it as `true`.
+   */
+  readonly triggered?: boolean;
+  /**
+   * The source file that declares it: the app's own (`src/app/…`), or the library's, under
+   * `@qits/angular/` (qits-2044), which the app imports and does not hold.
+   */
   readonly file: string;
 }
 
@@ -130,7 +147,9 @@ const isStringOrNull = (value: unknown): value is string | null =>
 const isStrings = (value: unknown): value is readonly string[] =>
   Array.isArray(value) && value.every(isString);
 
-const isKind = (value: unknown): value is OutcomeKind => value === 'exit' || value === 'stay';
+const KINDS: readonly unknown[] = ['exit', 'stay', 'returnTo', 'external'] satisfies OutcomeKind[];
+
+const isKind = (value: unknown): value is OutcomeKind => KINDS.includes(value);
 
 const isDeclared = (value: unknown): value is DeclaredOutcome =>
   isObject(value) &&
@@ -140,6 +159,7 @@ const isDeclared = (value: unknown): value is DeclaredOutcome =>
   isKind(value['kind']) &&
   isStringOrNull(value['to']) &&
   typeof value['global'] === 'boolean' &&
+  (value['triggered'] === undefined || typeof value['triggered'] === 'boolean') &&
   isString(value['file']);
 
 const isFired = (value: unknown): value is FiredOutcome =>
@@ -476,8 +496,29 @@ export interface JoinedOutcome {
   readonly result: Freeze | null;
   /** The freezes in its scope whose `triggers` name it: the selected route's first, then by name. */
   readonly triggerFreezes: readonly Freeze[];
-  /** For an exit, where `to` leads (`matchRoute`, a redirect followed); null for a stay. */
+  /**
+   * For an exit, where `to` leads (`matchRoute`, a redirect followed); null for a stay, a return and
+   * an external, which lead to no route of the tree (their line is {@link outcomeLeads}).
+   */
   readonly target: LinkTarget | null;
+  /**
+   * Whether a screenshot is asked to show its trigger: false for a `triggered: false` declaration
+   * (qits-2044), which then has no "no screenshot shows its trigger" gap.
+   */
+  readonly triggered: boolean;
+  /** Whether `@qits/angular` declares it (qits-2044): its `file` is the library's, not the app's. */
+  readonly library: boolean;
+}
+
+/**
+ * Where an outcome that has no route target leads, as a line (qits-2044): a return "returns to the
+ * page it started from", an external "leaves the app for <to>". Null for an exit (its target says
+ * it) and a stay (it stays).
+ */
+export function outcomeLeads(declared: Pick<DeclaredOutcome, 'kind' | 'to'>): string | null {
+  if (declared.kind === 'returnTo') return 'returns to the page it started from';
+  if (declared.kind === 'external') return `leaves the app for ${declared.to ?? 'another site'}`;
+  return null;
 }
 
 /** `entry` joined with the manifest's fired records and freezes; `selected` sorts its freezes first. */
@@ -519,6 +560,8 @@ function joinOutcome(
         : entry.to === null
           ? { kind: 'unmatched', path: '/' }
           : matchRoute(manifest, `/${entry.to.replace(/^\/+/, '')}`),
+    triggered: entry.triggered !== false,
+    library: entry.file.startsWith(LIBRARY_PREFIX),
   };
 }
 

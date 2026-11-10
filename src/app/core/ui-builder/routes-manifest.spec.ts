@@ -5,6 +5,7 @@ import {
   inlineAssets,
   inOutcomeScope,
   matchRoute,
+  outcomeLeads,
   routeCalls,
   routeFreezes,
   routeOutcomes,
@@ -174,6 +175,7 @@ describe('asManifest', () => {
       { declared: 'x', fired: [] },
       { declared: [{ ...declared[0], kind: 'leave' }], fired: [] },
       { declared: [{ ...declared[0], global: 'no' }], fired: [] },
+      { declared: [{ ...declared[0], triggered: 'no' }], fired: [] },
       { declared, fired: [{ spec: 's', test: 't' }] },
     ]) {
       const manifest = asManifest({ ...OUTCOMES, outcomes });
@@ -555,5 +557,101 @@ describe('sharedOutcomes', () => {
   it('has none without a readable outcomes section', () => {
     expect(sharedOutcomes(RECORDED)).toEqual([]);
     expect(sharedOutcomes({ ...OUTCOMES, outcomes: 'invalid' })).toEqual([]);
+  });
+});
+
+/** What `@qits/angular` declares itself and merges into an app that imports it (qits-2044). */
+describe('the library’s outcomes (qits-2044)', () => {
+  const CALLBACK = 'auth/callback';
+  const LIBRARY_FILE = '@qits/angular/src/lib/sign-in/auth-callback.page.ts';
+  const declared = (
+    interaction: string,
+    outcome: string,
+    kind: DeclaredOutcome['kind'],
+    extra: Partial<DeclaredOutcome> = {},
+  ): DeclaredOutcome => ({
+    route: CALLBACK,
+    interaction,
+    outcome,
+    kind,
+    to: null,
+    global: false,
+    triggered: false,
+    file: LIBRARY_FILE,
+    ...extra,
+  });
+  const SUCCEEDED = declared('sign-in', 'succeeded', 'returnTo');
+  const FAILED = declared('sign-in', 'failed', 'stay');
+  const RESTARTED = declared('sign-in-failed', 'restarted', 'exit', { to: '', triggered: true });
+  const SIGNED_OUT = declared('session-guard', 'signedOut', 'external', {
+    route: null,
+    global: true,
+    to: 'idp',
+    file: '@qits/angular/src/lib/sign-in/qits-session.ts',
+  });
+  const FAILURE = shot(CALLBACK, 'refused', ['sign-in-failed:restarted']);
+  const LIBRARY: RoutesManifest = {
+    routes: [
+      { path: '', fullPath: '' },
+      { path: CALLBACK, fullPath: CALLBACK },
+    ],
+    freezes: [FAILURE],
+    byRoute: { [CALLBACK]: [FAILURE.file] },
+    outcomes: {
+      // The app's own declaration, from a bundle older than `triggered`: read as triggered.
+      declared: [SUCCEEDED, FAILED, RESTARTED, SIGNED_OUT, { ...SWITCHED, route: '' }],
+      fired: [
+        { ...fire('signs in', 'sign-in', 'succeeded', CALLBACK), kind: 'returnTo' },
+        { ...fire('refused', 'sign-in', 'failed', CALLBACK, FAILURE.file), kind: 'stay' },
+        { ...fire('signs out', 'session-guard', 'signedOut', null), kind: 'external' },
+      ],
+    },
+  };
+  const byMark = () =>
+    Object.fromEntries(
+      [
+        ...routeOutcomes(LIBRARY, CALLBACK),
+        ...sharedOutcomes(LIBRARY).flatMap((g) => g.outcomes),
+      ].map((o) => [o.mark, o]),
+    );
+
+  it('reads returnTo and external, triggered or not', () => {
+    expect(asManifest(LIBRARY)).toEqual(LIBRARY);
+  });
+
+  it('gives a return and an external no route target, and says where they lead', () => {
+    const outcomes = byMark();
+    expect(outcomes['sign-in:succeeded'].target).toBeNull();
+    expect(outcomes['session-guard:signedOut'].target).toBeNull();
+    expect(outcomes['sign-in-failed:restarted'].target).toEqual({ kind: 'route', fullPath: '' });
+    expect(outcomeLeads(SUCCEEDED)).toBe('returns to the page it started from');
+    expect(outcomeLeads(SIGNED_OUT)).toBe('leaves the app for idp');
+    expect(outcomeLeads(RESTARTED)).toBeNull();
+    expect(outcomeLeads(FAILED)).toBeNull();
+  });
+
+  it('reads `triggered`, true when absent', () => {
+    const outcomes = byMark();
+    expect(outcomes['sign-in:succeeded'].triggered).toBe(false);
+    expect(outcomes['session-guard:signedOut'].triggered).toBe(false);
+    expect(outcomes['sign-in-failed:restarted'].triggered).toBe(true);
+    expect(outcomes['work-tabs:switched'].triggered).toBe(true);
+  });
+
+  it('marks what the library declares, by its file', () => {
+    const outcomes = byMark();
+    expect(outcomes['sign-in:failed'].library).toBe(true);
+    expect(outcomes['session-guard:signedOut'].library).toBe(true);
+    expect(outcomes['work-tabs:switched'].library).toBe(false);
+  });
+
+  it('joins the fires of the new kinds as any other', () => {
+    const outcomes = byMark();
+    expect(outcomes['sign-in:succeeded'].reachedBy).toEqual([{ spec: SPEC, test: 'signs in' }]);
+    expect(outcomes['sign-in:failed'].result).toEqual(FAILURE);
+    expect(outcomes['session-guard:signedOut'].reachedBy).toEqual([
+      { spec: SPEC, test: 'signs out' },
+    ]);
+    expect(outcomes['sign-in-failed:restarted'].triggerFreezes).toEqual([FAILURE]);
   });
 });

@@ -794,6 +794,58 @@ describe('UiBuilderPage', () => {
       expect(element.querySelectorAll('aside li.outcome')).toHaveLength(4);
     });
 
+    it('says where a return and an external lead, asks no trigger of an untriggered one, and names the library (qits-2044)', async () => {
+      const library = '@qits/angular/src/lib/sign-in/auth-callback.page.ts';
+      const { fixture, element } = await renderOutcomes({
+        declared: [
+          {
+            route: REPOSITORIES,
+            interaction: 'sign-in',
+            outcome: 'succeeded',
+            kind: 'returnTo',
+            to: null,
+            global: false,
+            triggered: false,
+            file: library,
+          },
+          {
+            route: REPOSITORIES,
+            interaction: 'repositories',
+            outcome: 'left',
+            kind: 'external',
+            to: 'githost',
+            global: false,
+            file: 'src/app/routes/projects/[slug]/repositories/project-repositories.page.ts',
+          },
+          {
+            route: null,
+            interaction: 'session-guard',
+            outcome: 'signedOut',
+            kind: 'external',
+            to: 'idp',
+            global: true,
+            triggered: false,
+            file: '@qits/angular/src/lib/sign-in/qits-session.ts',
+          },
+        ] satisfies DeclaredOutcome[],
+        fired: [{ ...fired('signs in', 'sign-in', 'succeeded'), kind: 'returnTo' }],
+      });
+      expect([...element.querySelectorAll('aside li.outcome')].map(leaves)).toEqual([
+        'repositories · left external leaves the app for githost No test reaches this No screenshot shows its trigger',
+        'sign-in · succeeded returnTo returns to the page it started from Declared by @qits/angular signs in',
+      ]);
+      const succeeded = row(element, 'sign-in:succeeded');
+      expect(succeeded.querySelector('.outcome-target')).toBeNull();
+      expect(succeeded.querySelector('.outcome-library')?.getAttribute('title')).toBe(library);
+      expect(succeeded.querySelector('a')).toBeNull();
+      element.querySelector<HTMLButtonElement>('.shared-outcomes')!.click();
+      fixture.detectChanges();
+      const tab = element.querySelector<HTMLElement>('section[aria-label="Shared outcomes"]')!;
+      expect([...tab.querySelectorAll('li.outcome')].map(leaves)).toEqual([
+        'session-guard · signedOut external leaves the app for idp Declared by @qits/angular No test reaches this',
+      ]);
+    });
+
     it('highlights an outcome’s trigger in the frame, and clears it on a second click', async () => {
       const { fixture, element, page } = await renderOutcomes();
       const doc = loadFrame(page, TRIGGER);

@@ -28,6 +28,7 @@ import {
   initialRoute,
   inOutcomeScope,
   matchRoute,
+  outcomeLeads,
   routeCalls,
   routeFreezes,
   routeOutcomes,
@@ -119,8 +120,12 @@ interface EntityGroup {
  *   on), each with its kind, the tests that reach it, and a gap chip when no test reaches it or no
  *   screenshot shows its trigger. An exit's target is a button that selects that route as a frame
  *   link does, its folded ancestors unfolded; a target no route matches is named. A stay's "Show
- *   result" opens the freeze shot after it fired. A bundle without the section, with an unreadable
- *   one, or an app or route that declares none says so in one line instead of the list.
+ *   result" opens the freeze shot after it fired. A return and an external (qits-2044) have no
+ *   target: their line says where they lead (`outcomeLeads`). A `triggered: false` outcome (a guard,
+ *   a callback's result) has no "no screenshot shows its trigger" gap. An outcome `@qits/angular`
+ *   declares (its `file` under `@qits/angular/`) says so, its file in the tooltip, and links no
+ *   source. A bundle without the section, with an unreadable one, or an app or route that declares
+ *   none says so in one line instead of the list.
  * - The Outcomes tab (qits-2006, owner decision 3 of qits-2000): the shared outcomes, a layout's and
  *   app-wide (`sharedOutcomes`), listed once, by scope, with the same rows. The right panel never
  *   repeats them; it ends with a line counting those in the route's scope, which opens the tab.
@@ -633,6 +638,16 @@ interface EntityGroup {
               No route of this app matches /{{ outcome.declared.to ?? '' }}
             </p>
           }
+        } @else if (leads(outcome); as line) {
+          <p class="outcome-leads m-0 px-1 text-xs text-charcoal-brown-600">{{ line }}</p>
+        }
+        @if (outcome.library) {
+          <p
+            class="outcome-library m-0 px-1 text-xs text-charcoal-brown-600"
+            [title]="outcome.declared.file"
+          >
+            Declared by &#64;qits/angular
+          </p>
         }
         @if (outcome.result; as result) {
           <button
@@ -652,12 +667,12 @@ interface EntityGroup {
             {{ test.test }}
           </p>
         }
-        @if (!outcome.reachedBy.length || !outcome.triggerFreezes.length) {
+        @if (!outcome.reachedBy.length || (outcome.triggered && !outcome.triggerFreezes.length)) {
           <div class="flex flex-wrap gap-1 px-1">
             @if (!outcome.reachedBy.length) {
               <ui-chip class="gap no-test" tone="waiting" label="No test reaches this" />
             }
-            @if (!outcome.triggerFreezes.length) {
+            @if (outcome.triggered && !outcome.triggerFreezes.length) {
               <ui-chip
                 class="gap no-trigger"
                 tone="waiting"
@@ -1147,6 +1162,11 @@ export class UiBuilderPage {
   /** Opens the state a stay's result was shot in, from its "Show result" (qits-2006). */
   protected showResult(freeze: Freeze): void {
     this.showFreeze(freeze);
+  }
+
+  /** Where a return or an external leads, as a line (`outcomeLeads`, qits-2044); else null. */
+  protected leads(outcome: JoinedOutcome): string | null {
+    return outcomeLeads(outcome.declared);
   }
 
   /** A reaching test's tooltip: its spec's file name and its full name (qits-2006). */
