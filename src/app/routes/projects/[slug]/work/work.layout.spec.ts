@@ -9,6 +9,7 @@ import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { IN_PROGRESS_VIEW_KEY, InProgressViewStore } from '$core/work/in-progress-view';
 import { WORK_REFRESH_DEBOUNCE_MS } from '$core/work/selected-work';
 import { goldenMaster, workspacesGoldenMaster } from '../../../../../testing/golden-masters';
 import { WorkLayout } from './work.layout';
@@ -74,7 +75,10 @@ describe('WorkLayout', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    http.verify();
+    localStorage.clear();
+  });
 
   /** The section at `tab`, with the project list answered and the work requested. */
   async function shown(tab: string) {
@@ -131,6 +135,44 @@ describe('WorkLayout', () => {
     // Schedule: the REFINED and the READY_FOR_DEV epic and ticket. In Progress: an epic and a
     // ticket per board status (READY_FOR_DEV first), and the started epic; not its feature.
     expect(counts()).toEqual([2, 4, 9, 2, 4]);
+  });
+
+  // qits-2051: the In Progress page's view setting, beside (not inside) its tab's link.
+  it('shows the view settings’ gear on the In Progress tab only while it is open', async () => {
+    const { harness, answered } = await shown('in-progress');
+    await answered('a project with no work');
+    const element = harness.routeNativeElement as HTMLElement;
+    const gear = () =>
+      element.querySelector<HTMLButtonElement>(
+        'nav[aria-label=Work] button[aria-label="In Progress view settings"]',
+      );
+    /** Whether the gear shows: hidden by class (on its wrapper), so a server render hydrates. */
+    const shownGear = () =>
+      !gear()!.closest('ui-dropdown')!.parentElement!.classList.contains('hidden');
+    const tab = gear()!.closest('li')!;
+    expect(tab.querySelector('a')!.firstChild?.textContent?.trim()).toBe('In Progress');
+    expect(gear()!.closest('a')).toBeNull();
+    expect(shownGear()).toBe(true);
+    expect(element.querySelectorAll('nav[aria-label=Work] ui-dropdown')).toHaveLength(1);
+    // Choosing a view applies it at once and keeps it.
+    gear()!.click();
+    harness.fixture.detectChanges();
+    const radios = [...tab.querySelectorAll<HTMLInputElement>('input[type=radio]')];
+    expect(
+      radios.map((radio) => [radio.parentElement?.textContent?.trim(), radio.checked]),
+    ).toEqual([
+      ['Epic boards', true],
+      ['Inline', false],
+    ]);
+    radios[1].click();
+    harness.fixture.detectChanges();
+    expect(TestBed.inject(InProgressViewStore).view()).toBe('inline');
+    expect(localStorage.getItem(IN_PROGRESS_VIEW_KEY)).toBe('inline');
+    // Another tab open: no gear.
+    await harness.navigateByUrl(`/projects/${project.slug}/work/acceptance`);
+    await settle();
+    harness.fixture.detectChanges();
+    expect(shownGear()).toBe(false);
   });
 
   it('asks for the work once while moving between the pages', async () => {

@@ -1,6 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
+import { IN_PROGRESS_VIEW_KEY } from '$core/work/in-progress-view';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
 import {
@@ -17,7 +18,14 @@ import {
  * (`WRAPPER_CLOSINGS`, `answerWrapperClosings`). Drawn from that state's own work, each of its five
  * tickets says its verdict; the closings do not name the VERIFIED ticket of "a project with work in
  * every status", which keeps "Closes once its release lands".
+ *
+ * The page follows the In Progress tab's view (qits-2051): "an implementing epic with features in
+ * mixed statuses" shows its VERIFIED feature here only in the inline view, which a test picks by
+ * storing it in `localStorage` before the page opens; with the epic boards (the default) that
+ * feature is on its epic's board instead.
  */
+
+const MIXED = 'an implementing epic with features in mixed statuses';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -34,6 +42,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
 
   afterEach(async () => {
     http.verify();
+    localStorage.removeItem(IN_PROGRESS_VIEW_KEY);
     // Back to the configured viewport, so the next spec file renders as it always does.
     await page.viewport(800, 600);
   });
@@ -151,6 +160,35 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await answered();
     await expect.element(element).toMatchTextContent('Nothing here');
     await expect.element(frame).toMatchScreenshot('empty');
+  });
+
+  it('leaves out the verified feature of an epic still on its board, with epic boards', async () => {
+    const { element, frame, work, answered } = await shown();
+    work.flush(await goldenMaster(MIXED, 'listProjectWork'));
+    await answered();
+    await expect.element(element).toMatchTextContent('Nothing here');
+    await expect.element(element).not.toMatchTextContent('Verified feature');
+    await expect.element(element).not.toMatchTextContent('Epic with mixed features');
+    await expect.element(frame).toMatchScreenshot('epic-boards-mixed-data');
+  });
+
+  it('lists the verified feature under its epic, inline', async () => {
+    localStorage.setItem(IN_PROGRESS_VIEW_KEY, 'inline');
+    const { element, frame, work, answered } = await shown();
+    work.flush(await goldenMaster(MIXED, 'listProjectWork'));
+    await answered();
+    await expect.element(element).toMatchTextContent('Verified feature');
+    await expect.element(element).toMatchTextContent('Verified task');
+    await expect.element(element).toMatchTextContent('Epic with mixed features');
+    await expect.element(frame).toMatchScreenshot('inline-mixed-data');
+  });
+
+  it('says that the work could not be read', async () => {
+    const { element, frame, work, answered } = await shown();
+    work.flush(null, { status: 500, statusText: 'Server Error' });
+    await answered();
+    await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
+    await expect.element(frame).toMatchScreenshot('error');
   });
 
   it('shows that the work is loading', async () => {
