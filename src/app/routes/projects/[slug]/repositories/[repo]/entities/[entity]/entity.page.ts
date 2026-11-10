@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { QitsMermaidDiagram } from '@qits/ui-components';
 import { map } from 'rxjs';
 import { ContractsBundleStore } from '$core/contracts/contracts-bundle.store';
 import { contractStateLink, entitiesLink, entityLink } from '$core/contracts/contracts-links';
@@ -39,7 +40,10 @@ import { Chip } from '$ui/components/chip/chip';
  * when its application's bundle is known (`projectionLink`: the application's contracts site and
  * its map, matched by simple name); its known gap; the DTOs that carry it, most direct link first,
  * each kind explained; and the operations that hand it out, each linked to the states of the same
- * bundle that record that operationId (its `golden-masters/index.json`).
+ * bundle that record that operationId (its `golden-masters/index.json`); and the ER diagram of the
+ * persistence unit holding it (qits-2014: the bundle's `database/index.json` names the unit, its
+ * `database/<file>.md` holds the diagram, `ContractsBundleStore.readDiagram`). A bundle publishing
+ * no diagram, or none for this entity's unit, says so in a line; it is not an error.
  *
  * A class the map does not list says so, with a link back to the list.
  *
@@ -49,7 +53,7 @@ import { Chip } from '$ui/components/chip/chip';
 @Component({
   selector: 'app-entity-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, ContractsFrame, RouterLink],
+  imports: [Chip, ContractsFrame, QitsMermaidDiagram, RouterLink],
   host: { class: 'block' },
   template: `
     <app-contracts-frame
@@ -104,6 +108,28 @@ import { Chip } from '$ui/components/chip/chip';
                     <dd class="m-0"><ui-chip class="gap" tone="waiting" [label]="gap" /></dd>
                   }
                 </dl>
+              </section>
+
+              <section class="er-diagram">
+                <h2 class="m-0 mb-1 text-base font-semibold">ER diagram</h2>
+                @let diagram = diagramRead();
+                @if (diagram?.status === 'loaded') {
+                  <p class="unit m-0 mb-2 text-xs text-charcoal-brown-600">
+                    Persistence unit <span class="font-mono">{{ diagram.unit }}</span>
+                  </p>
+                  <qits-mermaid-diagram
+                    [definition]="diagram.definition"
+                    [label]="'ER diagram of the persistence unit ' + diagram.unit"
+                  />
+                } @else if (diagram?.status === 'none') {
+                  <p class="no-diagram m-0 text-charcoal-brown-600">
+                    No ER diagram published for this entity.
+                  </p>
+                } @else if (diagram?.status === 'error') {
+                  <p class="diagram-error m-0 text-cinnabar-700">Could not read the ER diagram.</p>
+                } @else {
+                  <p class="m-0 text-charcoal-brown-600">Reading the ER diagram…</p>
+                }
               </section>
 
               <section>
@@ -260,6 +286,12 @@ export class EntityPage {
     return site ? this.bundles.indexRead(site) : undefined;
   });
 
+  /** The ER diagram of the unit holding the page's entity, from the same bundle. */
+  protected readonly diagramRead = computed(() => {
+    const site = this.site();
+    return site ? this.bundles.diagramRead(site, this.routeParams().entity) : undefined;
+  });
+
   /** Why no operation names its states: the index is being read, or could not be. */
   protected readonly indexNote = computed(() =>
     this.indexRead()?.status === 'error'
@@ -277,6 +309,13 @@ export class EntityPage {
           this.entityMaps.readMap(site);
           this.bundles.readIndex(site);
         });
+      }
+    });
+    effect(() => {
+      const site = this.site();
+      const entity = this.routeParams().entity;
+      if (browser && site && entity) {
+        untracked(() => this.bundles.readDiagram(site, entity));
       }
     });
     effect(() => {

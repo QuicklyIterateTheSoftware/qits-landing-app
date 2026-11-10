@@ -3,10 +3,16 @@ import {
   asManifest,
   initialRoute,
   inlineAssets,
+  inOutcomeScope,
   matchRoute,
   routeCalls,
   routeFreezes,
+  routeOutcomes,
   routeTree,
+  sharedOutcomes,
+  type DeclaredOutcome,
+  type FiredOutcome,
+  type Freeze,
   type RoutesManifest,
 } from './routes-manifest';
 
@@ -15,9 +21,175 @@ const RECORDED = masters.body<RoutesManifest>('a published routes bundle', 'getD
 
 const REPOSITORIES = 'projects/:slug/repositories';
 
+const CREATE = 'projects/:slug/work/create';
+const DETAIL = 'projects/:slug/work/detail/:id';
+const WORK = 'projects/:slug/work';
+const SPEC = 'src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts';
+
+/** A freeze of the outcomes manifest, by its route and name. */
+const shot = (route: string | null, name: string, triggers?: string[]): Freeze => ({
+  file: `${route ?? 'none'}/${name}.html`,
+  name,
+  route,
+  records: [],
+  ...(triggers ? { triggers } : {}),
+});
+
+/** A page outcome of the work-create page. */
+const page = (
+  outcome: string,
+  kind: 'exit' | 'stay',
+  to: string | null = null,
+): DeclaredOutcome => ({
+  route: CREATE,
+  interaction: 'create-work-item',
+  outcome,
+  kind,
+  to,
+  global: false,
+  file: 'src/app/routes/projects/[slug]/work/create/work-create.page.ts',
+});
+
+/** A fire of `outcome` by the test `test`, on `route`, shot as `freeze`. */
+const fire = (
+  test: string,
+  interaction: string,
+  outcome: string,
+  route: string | null,
+  freeze: string | null = null,
+): FiredOutcome => ({
+  spec: SPEC,
+  test,
+  route,
+  interaction,
+  outcome,
+  kind: 'stay',
+  freeze,
+});
+
+const FORM = shot(CREATE, 'form', ['create-work-item:created', 'create-work-item:refused']);
+const REFUSED = shot(CREATE, 'refused', ['create-work-item:refused']);
+const ITEM = shot(DETAIL, 'loaded', ['shell:sign-out', 'work-tabs:switched']);
+const LIST = shot('projects', 'list', ['shell:sign-out']);
+const OLD = shot('projects', 'old');
+
+const SIGN_OUT: DeclaredOutcome = {
+  route: null,
+  interaction: 'shell',
+  outcome: 'sign-out',
+  kind: 'exit',
+  to: 'projects',
+  global: true,
+  file: 'src/app/layout/shell/shell.layout.ts',
+};
+
+const SWITCHED: DeclaredOutcome = {
+  route: WORK,
+  interaction: 'work-tabs',
+  outcome: 'switched',
+  kind: 'stay',
+  to: null,
+  global: true,
+  file: 'src/app/routes/projects/[slug]/work/work.layout.ts',
+};
+
+const OUTCOMES_SECTION = {
+  declared: [
+    page('refused', 'stay'),
+    page('created', 'exit', DETAIL),
+    page('lost', 'exit', 'nowhere'),
+    page('cancelled', 'exit', WORK),
+    page('empty', 'stay'),
+    SWITCHED,
+    SIGN_OUT,
+  ],
+  fired: [
+    fire('creates the item', 'create-work-item', 'created', CREATE),
+    fire('refuses an empty title', 'create-work-item', 'refused', CREATE),
+    fire('refuses a long title', 'create-work-item', 'refused', CREATE, REFUSED.file),
+    fire('refuses a long title', 'create-work-item', 'refused', CREATE, FORM.file),
+    // Out of the page's scope: another route fired the same name.
+    fire('refuses elsewhere', 'create-work-item', 'refused', 'projects', LIST.file),
+    fire('signs out', 'shell', 'sign-out', 'projects'),
+    fire('switches tabs', 'work-tabs', 'switched', `${WORK}/in-progress`),
+  ],
+};
+
+/** A manifest with outcomes (qits-2006): work-create's page outcomes, a layout's and the shell's. */
+const OUTCOMES: RoutesManifest = {
+  routes: [
+    {
+      path: '',
+      fullPath: '',
+      children: [
+        { path: 'projects', fullPath: 'projects' },
+        { path: CREATE, fullPath: CREATE },
+        { path: DETAIL, fullPath: DETAIL },
+        {
+          path: WORK,
+          fullPath: WORK,
+          children: [
+            { path: '', fullPath: WORK, redirectTo: 'in-progress' },
+            { path: 'in-progress', fullPath: `${WORK}/in-progress` },
+          ],
+        },
+      ],
+    },
+    { path: '**', fullPath: '**' },
+  ],
+  freezes: [FORM, REFUSED, ITEM, LIST, OLD],
+  byRoute: {
+    [CREATE]: [FORM.file, REFUSED.file],
+    [DETAIL]: [ITEM.file],
+    projects: [LIST.file, OLD.file],
+  },
+  outcomes: OUTCOMES_SECTION,
+};
+
 describe('asManifest', () => {
   it('takes a manifest with the manifest’s shape', () => {
     expect(asManifest(RECORDED)).toEqual(RECORDED);
+  });
+
+  it('reads a bundle older than outcomes without them (qits-2006)', () => {
+    const manifest = asManifest(RECORDED);
+    expect(manifest).not.toHaveProperty('outcomes');
+    expect(manifest?.freezes.every((freeze) => freeze.triggers === undefined)).toBe(true);
+  });
+
+  it('keeps the outcomes and each freeze’s triggers (qits-2006)', () => {
+    expect(asManifest(OUTCOMES)).toEqual(OUTCOMES);
+    expect(asManifest({ ...OUTCOMES, outcomes: { declared: [], fired: [] } })?.outcomes).toEqual({
+      declared: [],
+      fired: [],
+    });
+  });
+
+  it('reads a malformed outcomes section as invalid, and keeps the routes (qits-2006)', () => {
+    const declared = OUTCOMES_SECTION.declared;
+    for (const outcomes of [
+      'x',
+      [],
+      { declared },
+      { declared: 'x', fired: [] },
+      { declared: [{ ...declared[0], kind: 'leave' }], fired: [] },
+      { declared: [{ ...declared[0], global: 'no' }], fired: [] },
+      { declared, fired: [{ spec: 's', test: 't' }] },
+    ]) {
+      const manifest = asManifest({ ...OUTCOMES, outcomes });
+      expect(manifest?.outcomes).toBe('invalid');
+      expect(manifest?.routes).toEqual(OUTCOMES.routes);
+      expect(manifest?.freezes).toEqual(OUTCOMES.freezes);
+    }
+    const badTriggers = asManifest({
+      ...OUTCOMES,
+      freezes: [{ ...OUTCOMES.freezes[0], triggers: [1] }, ...OUTCOMES.freezes.slice(1)],
+    });
+    expect(badTriggers?.outcomes).toBe('invalid');
+    expect(badTriggers?.freezes[0]).not.toHaveProperty('triggers');
+    expect(badTriggers?.freezes.map((freeze) => freeze.file)).toEqual(
+      OUTCOMES.freezes.map((freeze) => freeze.file),
+    );
   });
 
   it('refuses anything else', () => {
@@ -274,5 +446,114 @@ describe('inlineAssets', () => {
       '<style>a{background:url("../assets/missing.png")}b{background:url(https://x.test/assets/a.woff2)}' +
       'c{background:url(/assets/inter-latin-400-normal.woff2)}</style><a href="/projects/x">x</a>';
     expect(inlineAssets(html, ASSETS)).toBe(html);
+  });
+});
+
+describe('inOutcomeScope', () => {
+  it('takes a page’s own route only, and null for the root page', () => {
+    expect(inOutcomeScope({ route: CREATE, global: false }, CREATE)).toBe(true);
+    expect(inOutcomeScope({ route: CREATE, global: false }, `${CREATE}/x`)).toBe(false);
+    expect(inOutcomeScope({ route: CREATE, global: false }, null)).toBe(false);
+    expect(inOutcomeScope({ route: '', global: false }, null)).toBe(true);
+    expect(inOutcomeScope({ route: '', global: false }, '')).toBe(true);
+    expect(inOutcomeScope({ route: '', global: false }, 'projects')).toBe(false);
+  });
+
+  it('takes a layout’s route and its subtree, and the root layout everything', () => {
+    expect(inOutcomeScope({ route: WORK, global: true }, WORK)).toBe(true);
+    expect(inOutcomeScope({ route: WORK, global: true }, `${WORK}/in-progress`)).toBe(true);
+    expect(inOutcomeScope({ route: WORK, global: true }, `${WORK}-archive`)).toBe(false);
+    expect(inOutcomeScope({ route: WORK, global: true }, null)).toBe(false);
+    expect(inOutcomeScope({ route: '', global: true }, 'projects')).toBe(true);
+    expect(inOutcomeScope({ route: '', global: true }, null)).toBe(true);
+  });
+
+  it('takes every route, and null, for an app-wide outcome', () => {
+    expect(inOutcomeScope({ route: null, global: true }, 'projects')).toBe(true);
+    expect(inOutcomeScope({ route: null, global: true }, null)).toBe(true);
+  });
+});
+
+describe('routeOutcomes', () => {
+  const byOutcome = () =>
+    Object.fromEntries(routeOutcomes(OUTCOMES, CREATE).map((o) => [o.declared.outcome, o]));
+
+  it('lists the route’s page outcomes by interaction then outcome, never a shared one', () => {
+    expect(routeOutcomes(OUTCOMES, CREATE).map((o) => o.mark)).toEqual([
+      'create-work-item:cancelled',
+      'create-work-item:created',
+      'create-work-item:empty',
+      'create-work-item:lost',
+      'create-work-item:refused',
+    ]);
+    expect(routeOutcomes(OUTCOMES, WORK)).toEqual([]);
+    expect(routeOutcomes(OUTCOMES, 'projects')).toEqual([]);
+  });
+
+  it('joins the tests that reach it in its scope, once each', () => {
+    const { created, refused, empty } = byOutcome();
+    expect(created.reachedBy).toEqual([{ spec: SPEC, test: 'creates the item' }]);
+    expect(refused.reachedBy).toEqual([
+      { spec: SPEC, test: 'refuses an empty title' },
+      { spec: SPEC, test: 'refuses a long title' },
+    ]);
+    expect(empty.reachedBy).toEqual([]);
+  });
+
+  it('resolves a stay’s result to the freeze shot after the first fire that has one', () => {
+    const { refused, empty, created } = byOutcome();
+    expect(refused.result).toEqual(REFUSED);
+    expect(empty.result).toBeNull();
+    // An exit has no result to show: it leaves the page.
+    expect(created.result).toBeNull();
+  });
+
+  it('lists the freezes that show its trigger, by name', () => {
+    const { refused, created, empty } = byOutcome();
+    expect(refused.triggerFreezes).toEqual([FORM, REFUSED]);
+    expect(created.triggerFreezes).toEqual([FORM]);
+    expect(empty.triggerFreezes).toEqual([]);
+  });
+
+  it('matches an exit’s target, through a redirect, and names one no route takes', () => {
+    const { created, cancelled, lost, refused } = byOutcome();
+    expect(created.target).toEqual({ kind: 'route', fullPath: DETAIL });
+    expect(cancelled.target).toEqual({ kind: 'route', fullPath: `${WORK}/in-progress` });
+    expect(lost.target).toEqual({ kind: 'unmatched', path: '/nowhere' });
+    expect(refused.target).toBeNull();
+  });
+
+  it('has none without a readable outcomes section', () => {
+    expect(routeOutcomes(RECORDED, REPOSITORIES)).toEqual([]);
+    expect(routeOutcomes({ ...OUTCOMES, outcomes: 'invalid' }, CREATE)).toEqual([]);
+  });
+});
+
+describe('sharedOutcomes', () => {
+  it('groups the layouts’ and app-wide outcomes by scope, app-wide first', () => {
+    const groups = sharedOutcomes(OUTCOMES);
+    expect(groups.map((group) => [group.route, group.outcomes.map((o) => o.mark)])).toEqual([
+      [null, ['shell:sign-out']],
+      [WORK, ['work-tabs:switched']],
+    ]);
+    const [signOut] = groups[0].outcomes;
+    expect(signOut.reachedBy).toEqual([{ spec: SPEC, test: 'signs out' }]);
+    expect(signOut.target).toEqual({ kind: 'route', fullPath: 'projects' });
+    // By name with no route selected: `list`, then `loaded`.
+    expect(signOut.triggerFreezes).toEqual([LIST, ITEM]);
+    const [switched] = groups[1].outcomes;
+    // Fired and shown below the layout's route (in-progress, the detail), so in its scope.
+    expect(switched.reachedBy).toEqual([{ spec: SPEC, test: 'switches tabs' }]);
+    expect(switched.triggerFreezes).toEqual([ITEM]);
+  });
+
+  it('sorts the selected route’s own freezes first', () => {
+    const [signOut] = sharedOutcomes(OUTCOMES, DETAIL)[0].outcomes;
+    expect(signOut.triggerFreezes).toEqual([ITEM, LIST]);
+  });
+
+  it('has none without a readable outcomes section', () => {
+    expect(sharedOutcomes(RECORDED)).toEqual([]);
+    expect(sharedOutcomes({ ...OUTCOMES, outcomes: 'invalid' })).toEqual([]);
   });
 });

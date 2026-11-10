@@ -393,9 +393,11 @@ export const INTERACTIONS = {
    */
   'show-repository-entities': 'The entities page lists a service’s persisted entities by marking',
   /**
-   * `entity.page.ts` via `EntityMapStore.readMap` and `ContractsBundleStore.readIndex` (qits-1994):
-   * reads the bundle's `entities.json` (and a projected application's), and its
-   * `golden-masters/index.json` for the states recording each operation.
+   * `entity.page.ts` via `EntityMapStore.readMap`, `ContractsBundleStore.readIndex` and
+   * `readDiagram` (qits-1994, qits-2014): reads the bundle's `entities.json` (and a projected
+   * application's), its `golden-masters/index.json` for the states recording each operation, and
+   * for the ER diagram its `database/index.json` and the `database/<file>.md` of the unit holding
+   * the entity.
    */
   'show-entity': 'An entity’s page shows its DTOs, operations and the states recording them',
 } as const;

@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -26,11 +26,17 @@ import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
   initialRoute,
+  inOutcomeScope,
   matchRoute,
   routeCalls,
   routeFreezes,
+  routeOutcomes,
   routeTree,
+  sharedOutcomes,
+  type Freeze,
   type FreezeRecord,
+  type JoinedOutcome,
+  type OutcomeTest,
   type TreeRow,
 } from '$core/ui-builder/routes-manifest';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -41,7 +47,22 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 type Scope = { readonly all: true } | { readonly all: false; readonly component: string };
 
 /** The left panel's tabs. */
-type LeftTab = 'routes' | 'entities';
+type LeftTab = 'routes' | 'entities' | 'outcomes';
+
+/**
+ * What the bundle says of outcomes (qits-2006): nothing (frozen before outcomes were recorded), an
+ * unreadable section, no declaration in the whole app, or declarations.
+ */
+type OutcomeStatus = 'unrecorded' | 'invalid' | 'undeclared' | 'declared';
+
+/** The attribute the highlighted trigger carries in the frame (qits-2006). */
+const HIGHLIGHT = 'data-qits-builder-highlight';
+
+/** The frame's highlight style, injected as `<style data-qits-builder>` (cinnabar-500; qits-2006). */
+const HIGHLIGHT_CSS = `[${HIGHLIGHT}] { outline: 3px solid oklch(57.66% 0.21 28.2) !important; outline-offset: 2px !important; }`;
+
+/** `value` escaped for a double-quoted CSS attribute value (qits-2006). */
+const quoted = (value: string) => value.replace(/["\\]/g, '\\$&').replace(/\n/g, '\\a ');
 
 /** One application's entities in the Entities tab, or why it has none to show. */
 interface EntityGroup {
@@ -93,6 +114,23 @@ interface EntityGroup {
  *   "↗" link to its entity page (`entityLink`) beside the action that picks it, and the selected
  *   entity's name heads its routes as that link; the calls' popovers link the same pages and the
  *   provider state's page.
+ * - Outcomes (qits-2006): below the calls and above the entities, the route's page outcomes
+ *   (`routeOutcomes` of the manifest's `outcomes`, which `@qits/angular` writes from 2026.1109.225625
+ *   on), each with its kind, the tests that reach it, and a gap chip when no test reaches it or no
+ *   screenshot shows its trigger. An exit's target is a button that selects that route as a frame
+ *   link does, its folded ancestors unfolded; a target no route matches is named. A stay's "Show
+ *   result" opens the freeze shot after it fired. A bundle without the section, with an unreadable
+ *   one, or an app or route that declares none says so in one line instead of the list.
+ * - The Outcomes tab (qits-2006, owner decision 3 of qits-2000): the shared outcomes, a layout's and
+ *   app-wide (`sharedOutcomes`), listed once, by scope, with the same rows. The right panel never
+ *   repeats them; it ends with a line counting those in the route's scope, which opens the tab.
+ * - Highlight (qits-2006): clicking an outcome (not its target or result) highlights its trigger in
+ *   the frame, the element whose `data-qits-outcome` names it, and clicking it again clears it, as
+ *   does choosing another route. The shown state is switched to the first freeze that shows the
+ *   trigger when it does not. The highlight is drawn from this page into the same-origin frame, a
+ *   `<style data-qits-builder>` in its head and an attribute on the element (see `drawHighlight`),
+ *   again after each load; nothing runs inside the frame. A freeze that lists the trigger without
+ *   the element is said so under the tabs.
  *
  * The data is read in the browser only (the server render holds no token).
  *
@@ -105,7 +143,7 @@ interface EntityGroup {
 @Component({
   selector: 'app-ui-builder-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, Spinner, CallDetails, RouterLink],
+  imports: [Chip, PageLayoutComponent, Spinner, CallDetails, RouterLink, NgTemplateOutlet],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12">
@@ -198,7 +236,7 @@ interface EntityGroup {
                         </div>
                       }
                     </nav>
-                  } @else {
+                  } @else if (leftTab() === 'entities') {
                     <section aria-label="Entities" class="text-[0.8125rem]">
                       @switch (entityState()) {
                         @case ('loading') {
@@ -295,6 +333,35 @@ interface EntityGroup {
                         }
                       }
                     </section>
+                  } @else {
+                    <section aria-label="Shared outcomes" class="text-[0.8125rem]">
+                      @if (outcomeStatus() === 'declared') {
+                        @for (group of sharedGroups(); track group.route) {
+                          <h3
+                            class="outcome-group m-0 mb-1 text-xs font-semibold text-charcoal-brown-700"
+                            [class.mt-3]="!$first"
+                          >
+                            {{
+                              group.route === null ? 'App-wide' : '/' + group.route + ' and below'
+                            }}
+                          </h3>
+                          <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+                            @for (outcome of group.outcomes; track outcome.key) {
+                              <ng-container
+                                [ngTemplateOutlet]="outcomeRow"
+                                [ngTemplateOutletContext]="{ $implicit: outcome }"
+                              />
+                            }
+                          </ul>
+                        } @empty {
+                          <p class="no-outcomes m-0 text-charcoal-brown-600">
+                            No layout or app-wide outcome.
+                          </p>
+                        }
+                      } @else {
+                        <ng-container [ngTemplateOutlet]="outcomesMissing" />
+                      }
+                    </section>
                   }
                 </div>
 
@@ -336,7 +403,7 @@ interface EntityGroup {
                           sandbox="allow-same-origin"
                           [srcdoc]="html"
                           [title]="'Frozen state ' + (freeze()?.name ?? '')"
-                          (load)="holdLinks($event)"
+                          (load)="frameLoaded($event)"
                         ></iframe>
                       } @else {
                         <div
@@ -428,6 +495,38 @@ interface EntityGroup {
                     <h3
                       class="m-0 mt-4 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase"
                     >
+                      Outcomes
+                    </h3>
+                    @if (outcomeStatus() === 'declared') {
+                      <ul class="route-outcomes m-0 flex list-none flex-col gap-1.5 p-0">
+                        @for (outcome of pageOutcomes(); track outcome.key) {
+                          <ng-container
+                            [ngTemplateOutlet]="outcomeRow"
+                            [ngTemplateOutletContext]="{ $implicit: outcome }"
+                          />
+                        } @empty {
+                          <li class="no-outcomes text-charcoal-brown-600">
+                            This route declares no outcomes.
+                          </li>
+                        }
+                      </ul>
+                      @if (sharedInScope(); as shared) {
+                        <button
+                          type="button"
+                          class="shared-outcomes mt-2 cursor-pointer rounded px-1 text-left text-xs text-charcoal-brown-600 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                          (click)="leftTab.set('outcomes')"
+                        >
+                          {{ shared }} shared {{ shared === 1 ? 'outcome' : 'outcomes' }} from
+                          layouts
+                        </button>
+                      }
+                    } @else {
+                      <ng-container [ngTemplateOutlet]="outcomesMissing" />
+                    }
+
+                    <h3
+                      class="m-0 mt-4 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase"
+                    >
                       Entities
                     </h3>
                     @if (routeEntities(); as found) {
@@ -478,6 +577,97 @@ interface EntityGroup {
         </ui-spinner>
       </app-page-layout>
     </div>
+
+    <!-- Why no outcome is listed, in place of a list (qits-2006). -->
+    <ng-template #outcomesMissing>
+      @switch (outcomeStatus()) {
+        @case ('unrecorded') {
+          <p class="no-outcomes m-0 text-charcoal-brown-600">
+            This bundle was frozen before outcomes were recorded.
+          </p>
+        }
+        @case ('invalid') {
+          <p class="no-outcomes outcomes-error m-0 text-cinnabar-700">
+            Could not read this bundle's outcomes.
+          </p>
+        }
+        @case ('undeclared') {
+          <p class="no-outcomes m-0 text-charcoal-brown-600">
+            {{ repo() }} declares no outcomes yet.
+          </p>
+        }
+      }
+    </ng-template>
+
+    <!-- One outcome, in the right panel and in the Outcomes tab alike (qits-2006). -->
+    <ng-template #outcomeRow let-outcome>
+      <li class="outcome flex flex-col gap-0.5">
+        <button
+          type="button"
+          class="outcome-pick flex w-full cursor-pointer flex-wrap items-center gap-1 rounded px-1 py-0.5 text-left"
+          [class]="
+            outcome.key === highlighted()
+              ? 'bg-charcoal-brown-800 text-white'
+              : 'hover:bg-charcoal-brown-50'
+          "
+          [attr.aria-pressed]="outcome.key === highlighted()"
+          [title]="'Highlight the trigger of ' + outcome.mark"
+          (click)="toggleOutcome(outcome)"
+        >
+          <span class="font-mono text-xs">{{ outcome.declared.interaction }}</span>
+          <span class="text-xs opacity-60">·</span>
+          <span class="font-mono text-xs">{{ outcome.declared.outcome }}</span>
+          <ui-chip class="kind ml-auto" [label]="outcome.declared.kind" />
+        </button>
+        @if (outcome.target; as target) {
+          @if (target.kind === 'route') {
+            <button
+              type="button"
+              class="outcome-target cursor-pointer self-start rounded px-1 text-left font-mono text-xs hover:bg-charcoal-brown-50"
+              (click)="openRoute(target.fullPath)"
+            >
+              → /{{ target.fullPath }}
+            </button>
+          } @else {
+            <p class="outcome-unmatched m-0 px-1 text-xs text-charcoal-brown-600">
+              No route of this app matches /{{ outcome.declared.to ?? '' }}
+            </p>
+          }
+        }
+        @if (outcome.result; as result) {
+          <button
+            type="button"
+            class="outcome-result cursor-pointer self-start rounded px-1 text-left text-xs text-charcoal-brown-700 underline hover:bg-charcoal-brown-50"
+            [title]="'Open the state ' + result.name"
+            (click)="showResult(result)"
+          >
+            Show result
+          </button>
+        }
+        @for (test of outcome.reachedBy; track $index) {
+          <p
+            class="reached-by m-0 truncate px-1 text-xs text-charcoal-brown-600"
+            [title]="testTitle(test)"
+          >
+            {{ test.test }}
+          </p>
+        }
+        @if (!outcome.reachedBy.length || !outcome.triggerFreezes.length) {
+          <div class="flex flex-wrap gap-1 px-1">
+            @if (!outcome.reachedBy.length) {
+              <ui-chip class="gap no-test" tone="waiting" label="No test reaches this" />
+            }
+            @if (!outcome.triggerFreezes.length) {
+              <ui-chip
+                class="gap no-trigger"
+                tone="waiting"
+                label="No screenshot shows its trigger"
+              />
+            }
+          </div>
+        }
+      </li>
+    </ng-template>
   `,
 })
 export class UiBuilderPage {
@@ -658,9 +848,53 @@ export class UiBuilderPage {
   protected readonly leftTabs: readonly { readonly id: LeftTab; readonly label: string }[] = [
     { id: 'routes', label: 'Routes' },
     { id: 'entities', label: 'Entities' },
+    { id: 'outcomes', label: 'Outcomes' },
   ];
 
   protected readonly leftTab = signal<LeftTab>('routes');
+
+  /** What the bundle says of outcomes (qits-2006), which decides the line shown instead of a list. */
+  protected readonly outcomeStatus = computed((): OutcomeStatus => {
+    const outcomes = this.loaded()?.manifest.outcomes;
+    if (outcomes === undefined) return 'unrecorded';
+    if (outcomes === 'invalid') return 'invalid';
+    return outcomes.declared.length ? 'declared' : 'undeclared';
+  });
+
+  /** The selected route's page outcomes, joined (`routeOutcomes`, qits-2006). */
+  protected readonly pageOutcomes = computed((): readonly JoinedOutcome[] => {
+    const bundle = this.loaded();
+    const path = this.selectedPath();
+    return bundle && path !== null ? routeOutcomes(bundle.manifest, path) : [];
+  });
+
+  /** The Outcomes tab's groups: the layouts' and app-wide outcomes (`sharedOutcomes`, qits-2006). */
+  protected readonly sharedGroups = computed(() => {
+    const bundle = this.loaded();
+    return bundle ? sharedOutcomes(bundle.manifest, this.selectedPath()) : [];
+  });
+
+  /** How many shared outcomes the selected route is in the scope of (qits-2006). */
+  protected readonly sharedInScope = computed(() => {
+    const path = this.selectedPath();
+    return this.sharedGroups()
+      .flatMap((group) => group.outcomes)
+      .filter((outcome) => inOutcomeScope(outcome.declared, path)).length;
+  });
+
+  /** The key of the highlighted outcome (qits-2006); null when none is. */
+  protected readonly highlighted = signal<string | null>(null);
+
+  /** The highlighted outcome, among the route's and the shared ones (qits-2006). */
+  private readonly highlightedOutcome = computed(() => {
+    const key = this.highlighted();
+    if (key === null) return null;
+    const all = [...this.pageOutcomes(), ...this.sharedGroups().flatMap((group) => group.outcomes)];
+    return all.find((outcome) => outcome.key === key) ?? null;
+  });
+
+  /** The frame as its last load left it, where the highlight is drawn (qits-2006). */
+  private frame: HTMLIFrameElement | null = null;
 
   /** Whether a provider (a repository name) is in scope; an unknown scope covers every one. */
   private readonly inScope = computed((): ((provider: string) => boolean) => {
@@ -848,9 +1082,14 @@ export class UiBuilderPage {
     this.repositories.follow(() => this.selected.project()?.id, destroy);
   }
 
-  /** Selects the route at `fullPath` on its first state, as a new entry in the history. */
+  /**
+   * Selects the route at `fullPath` on its first state, as a new entry in the history. It clears
+   * the highlighted outcome (qits-2006).
+   */
   protected select(fullPath: string): Promise<boolean> {
     this.linkNotice.set(null);
+    this.highlighted.set(null);
+    this.drawHighlight();
     return this.navigate({ route: fullPath, state: null });
   }
 
@@ -869,12 +1108,107 @@ export class UiBuilderPage {
   }
 
   /**
-   * Opens `fullPath` in the Routes tab, from an entity's routes: selected as a tree or frame click
-   * selects it (the URL's `route`), its row scrolled into view.
+   * Opens `fullPath` in the Routes tab, from an entity's routes or an exit's target (qits-2006):
+   * selected as a tree or frame click selects it (the URL's `route`), its folded ancestors unfolded
+   * and its row scrolled into view.
    */
   protected openRoute(fullPath: string): void {
     this.leftTab.set('routes');
+    this.unfold(fullPath);
     void this.select(fullPath).then(() => this.revealSelected());
+  }
+
+  /** Unfolds every folded row above `fullPath` in the route tree, so its row shows (qits-2006). */
+  private unfold(fullPath: string): void {
+    this.folded.update((set) => {
+      const above = [...set].filter((path) => path === '' || fullPath.startsWith(`${path}/`));
+      if (!above.length) return set;
+      const next = new Set(set);
+      for (const path of above) next.delete(path);
+      return next;
+    });
+  }
+
+  /**
+   * Shows `freeze` (qits-2006): its state on the selected route, or its route on that state, as a
+   * new entry in the history. The highlight stays: this is how it reaches the freeze showing it.
+   */
+  private showFreeze(freeze: Freeze): void {
+    this.linkNotice.set(null);
+    const route = freeze.route ?? '';
+    if (route === this.selectedPath()) {
+      void this.navigate({ state: freeze.name });
+      return;
+    }
+    this.unfold(route);
+    void this.navigate({ route, state: freeze.name }).then(() => this.revealSelected());
+  }
+
+  /** Opens the state a stay's result was shot in, from its "Show result" (qits-2006). */
+  protected showResult(freeze: Freeze): void {
+    this.showFreeze(freeze);
+  }
+
+  /** A reaching test's tooltip: its spec's file name and its full name (qits-2006). */
+  protected testTitle(test: OutcomeTest): string {
+    return `${test.spec.split('/').pop() ?? test.spec} › ${test.test}`;
+  }
+
+  /**
+   * Highlights `outcome`'s trigger in the frame, or clears the highlight when it is the highlighted
+   * one already (qits-2006). When the shown state is not one of the freezes that show its trigger,
+   * the first of them is shown first, and the frame's load draws the highlight; with none, nothing
+   * switches (the row's gap chip says why).
+   */
+  protected toggleOutcome(outcome: JoinedOutcome): void {
+    this.linkNotice.set(null);
+    this.highlighted.set(this.highlighted() === outcome.key ? null : outcome.key);
+    this.drawHighlight();
+    if (this.highlighted() === null) return;
+    const shown = this.freeze()?.file;
+    const triggers = outcome.triggerFreezes;
+    if (triggers.length && !triggers.some((freeze) => freeze.file === shown)) {
+      this.showFreeze(triggers[0]);
+    }
+  }
+
+  /**
+   * Once the frame's document is in: holds its links (`holdLinks`), and draws the highlighted
+   * outcome again (qits-2006), since every state switch loads a new `srcdoc`.
+   */
+  protected frameLoaded(event: Event): void {
+    this.holdLinks(event);
+    this.frame = event.target as HTMLIFrameElement;
+    this.drawHighlight();
+  }
+
+  /**
+   * Draws the highlighted outcome into the frame's document (qits-2006): every earlier mark
+   * cleared, then one `<style data-qits-builder>` in its head, and the attribute `HIGHLIGHT` on the
+   * first element whose `data-qits-outcome` holds the word `<interaction>:<outcome>`, scrolled to
+   * the centre. The frame is same-origin (`allow-same-origin`), as for `holdLinks`; this page
+   * writes into it, and nothing runs inside. A freeze that lists the trigger while its document has
+   * no such element says so under the tabs (`linkNotice`).
+   */
+  private drawHighlight(): void {
+    const doc = this.frame?.contentDocument;
+    if (!doc) return;
+    for (const marked of doc.querySelectorAll(`[${HIGHLIGHT}]`)) marked.removeAttribute(HIGHLIGHT);
+    const outcome = this.highlightedOutcome();
+    if (!outcome) return;
+    if (!doc.querySelector('style[data-qits-builder]')) {
+      const style = doc.createElement('style');
+      style.setAttribute('data-qits-builder', '');
+      style.textContent = HIGHLIGHT_CSS;
+      (doc.head ?? doc.documentElement).append(style);
+    }
+    const element = doc.querySelector(`[data-qits-outcome~="${quoted(outcome.mark)}"]`);
+    if (element) {
+      element.setAttribute(HIGHLIGHT, '');
+      element.scrollIntoView?.({ block: 'center' });
+    } else if ((this.freeze()?.triggers ?? []).includes(outcome.mark)) {
+      this.linkNotice.set(`This screenshot has no element for ${outcome.mark}.`);
+    }
   }
 
   /**
@@ -897,6 +1231,7 @@ export class UiBuilderPage {
       const target = bundle ? matchRoute(bundle.manifest, href) : ({ kind: 'fragment' } as const);
       switch (target.kind) {
         case 'route':
+          this.unfold(target.fullPath);
           void this.select(target.fullPath).then(() => this.revealSelected());
           break;
         case 'outside':

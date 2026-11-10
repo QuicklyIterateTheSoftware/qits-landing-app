@@ -537,6 +537,17 @@ response through the call popover's `getDocsFile` reads and cache. Links to them
 contracts pages are covered by plain specs answering with qits-projects' own published index
 (`projectsGoldenIndex()`); their browser specs show the bundle with its index refused.
 
+The entity page also draws the ER diagram of the persistence unit holding the entity (qits-2014):
+`ContractsBundleStore.readDiagram` reads the bundle's `database/index.json` (`databaseIndexOf`,
+checked by `asDatabaseIndex` in `core/contracts/database-diagram.ts`), finds the unit listing the
+entity, reads its `database/<file>.md` as text (`diagramFileOf`) and hands the fenced mermaid block
+to `<qits-mermaid-diagram>` (`provideQitsMermaid()` in `app.config.ts` loads mermaid lazily). A 404
+on either file, or no unit listing the entity, is the line "No ER diagram published for this
+entity.", not an error. No qits-artifacts recording holds a bundle's `database/` files yet: the pact
+binds the index as the JSON `entities.json` read and the diagram as the docs store's Markdown answer
+(`a repository with published changelogs`), the plain spec draws one from hand-written files, and the
+browser spec answers the index 404.
+
 Every release publishes the freezes as the docs site `@routes/qits-landing` (ticket qits-1948,
 `contracts.routes` in `.config/qits/release.yml`), only when they changed: the release step hashes
 the directory and prints `unchanged since <version>` when the newest version holds the same

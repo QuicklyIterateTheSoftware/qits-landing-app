@@ -11,6 +11,11 @@ import { provideHeyApiClient } from '../../../../../../api/projects/client/clien
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
+import type {
+  DeclaredOutcome,
+  FiredOutcome,
+  RoutesManifest,
+} from '$core/ui-builder/routes-manifest';
 import {
   artifactsGoldenMasters as artifacts,
   ENTITY_MAP_STATE as CONTRACTS,
@@ -35,6 +40,94 @@ const LOADED_FREEZE = artifacts.operation('a published routes bundle freeze', 'g
 ];
 /** `projects/:slug/repositories`'s freezes by name: `error`, then `loaded`. */
 const ERROR_FREEZE = LOADED_FREEZE.replace(/loaded\.html$/, 'error.html');
+
+const REPOSITORIES = 'projects/:slug/repositories';
+const SPEC =
+  'src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts';
+
+/** A page outcome of the repositories route (qits-2006). */
+const declared = (
+  outcome: string,
+  kind: 'exit' | 'stay',
+  to: string | null = null,
+): DeclaredOutcome => ({
+  route: REPOSITORIES,
+  interaction: 'repositories',
+  outcome,
+  kind,
+  to,
+  global: false,
+  file: 'src/app/routes/projects/[slug]/repositories/project-repositories.page.ts',
+});
+
+/** A fire of `interaction:outcome` by `test` on the repositories route, shot as `freeze`. */
+const fired = (
+  test: string,
+  interaction: string,
+  outcome: string,
+  freeze: string | null = null,
+): FiredOutcome => ({
+  spec: SPEC,
+  test,
+  route: REPOSITORIES,
+  interaction,
+  outcome,
+  kind: 'stay',
+  freeze,
+});
+
+/**
+ * The recorded manifest with outcomes (qits-2006): the repositories route exits to `projects`
+ * (its trigger in `error`) and to no route, is refused (fired, shot in `loaded`, its trigger in
+ * `loaded` only) and declares one outcome nothing reaches; the root layout and the app declare one
+ * each. `outcomes` replaces the section.
+ */
+function withOutcomes(outcomes: unknown = OUTCOMES): RoutesManifest {
+  const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+  const triggers: Record<string, string[]> = {
+    [ERROR_FREEZE]: ['repositories:opened', 'shell:signed-out'],
+    [LOADED_FREEZE]: ['repositories:refused', 'shell:signed-out'],
+  };
+  return {
+    ...recorded,
+    freezes: recorded.freezes.map((freeze) =>
+      triggers[freeze.file] ? { ...freeze, triggers: triggers[freeze.file] } : freeze,
+    ),
+    outcomes: outcomes as RoutesManifest['outcomes'],
+  };
+}
+
+const OUTCOMES = {
+  declared: [
+    declared('refused', 'stay'),
+    declared('opened', 'exit', 'projects'),
+    declared('lost', 'exit', 'nowhere'),
+    declared('unreached', 'stay'),
+    {
+      route: '',
+      interaction: 'shell',
+      outcome: 'signed-out',
+      kind: 'exit',
+      to: 'projects',
+      global: true,
+      file: 'src/app/layout/shell/shell.layout.ts',
+    },
+    {
+      route: null,
+      interaction: 'toasts',
+      outcome: 'dismissed',
+      kind: 'stay',
+      to: null,
+      global: true,
+      file: 'src/app/patterns/toasts/toasts.ts',
+    },
+  ] satisfies DeclaredOutcome[],
+  fired: [
+    fired('opens a project', 'repositories', 'opened'),
+    fired('lists the project’s repositories', 'repositories', 'refused', LOADED_FREEZE),
+    fired('signs out', 'shell', 'signed-out'),
+  ],
+};
 
 // As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
 if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
@@ -129,13 +222,14 @@ describe('UiBuilderPage', () => {
     versions: object = artifacts.body(BUNDLE, 'listDocsVersions'),
     answerEntities: () => Promise<void> = answerNoContracts,
     query = '',
+    manifest: object = artifacts.body(BUNDLE, 'getDocsFile'),
   ) {
     const { harness, page, fixture } = await open(repo, query);
     http.expectOne(SITES_URL).flush(artifacts.body(BUNDLE, 'listDocsSites'));
     await settle();
     http.expectOne(VERSIONS_URL).flush(versions);
     await settle();
-    http.expectOne(fileUrl('manifest.json')).flush(artifacts.body(BUNDLE, 'getDocsFile'));
+    http.expectOne(fileUrl('manifest.json')).flush(manifest);
     await settle();
     fixture.detectChanges();
     await settle();
@@ -238,7 +332,7 @@ describe('UiBuilderPage', () => {
     expect(disabled).toEqual([true, false, true, false, true, true]);
     expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
     expect(texts('[aria-label="States"] [role="tab"]')).toEqual(['error', 'loaded']);
-    expect(texts('[aria-label="Panels"] [role="tab"]')).toEqual(['Routes', 'Entities']);
+    expect(texts('[aria-label="Panels"] [role="tab"]')).toEqual(['Routes', 'Entities', 'Outcomes']);
     expect(element.querySelector('.frame-placeholder')?.textContent).toContain('Reading');
     expect(texts('li.call')).toEqual([
       'listProjectRepositories qits-projects-service · “a project with repositories”',
@@ -557,5 +651,231 @@ describe('UiBuilderPage', () => {
     await navigated(fixture);
     http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
     expect(element.querySelector('.link-notice')).toBeNull();
+  });
+
+  describe('outcomes (qits-2006)', () => {
+    /** The page for the landing app, its manifest carrying `outcomes`, its first state answered. */
+    async function renderOutcomes(outcomes: unknown = OUTCOMES) {
+      const rendered = await render(
+        'qits-landing-app',
+        undefined,
+        undefined,
+        '',
+        withOutcomes(outcomes),
+      );
+      await answerFreeze(ERROR_FREEZE, rendered.fixture);
+      return rendered;
+    }
+
+    /** Hands `page` a loaded frame holding `html`, as the iframe's `load` does; gives its document. */
+    function loadFrame(page: UiBuilderPage, html: string): Document {
+      const doc = document.implementation.createHTMLDocument('freeze');
+      doc.body.innerHTML = html;
+      (page as unknown as { frameLoaded(e: Event): void }).frameLoaded({
+        target: { contentDocument: doc },
+      } as unknown as Event);
+      return doc;
+    }
+
+    /** The outcome row whose pick reads `interaction · outcome`. */
+    function row(element: HTMLElement, mark: string): HTMLElement {
+      return [...element.querySelectorAll<HTMLElement>('aside li.outcome')].find((li) =>
+        li.querySelector('.outcome-pick')?.getAttribute('title')?.endsWith(` ${mark}`),
+      )!;
+    }
+
+    /** An element's text: its innermost elements' texts joined by spaces. */
+    function leaves(element: Element): string {
+      const parts = [...element.querySelectorAll('*')].filter((e) => !e.children.length);
+      return parts
+        .map((part) => (part.textContent ?? '').replace(/\s+/g, ' ').trim())
+        .filter(Boolean)
+        .join(' ');
+    }
+
+    const TRIGGER = '<p>x</p><button data-qits-outcome="a:b repositories:opened">open</button>';
+
+    it('lists the route’s outcomes below Calls and states, with their gaps', async () => {
+      const { element } = await renderOutcomes();
+      expect(
+        [...element.querySelectorAll('aside[aria-label="Calls"] h3')].map((h) =>
+          h.textContent?.trim(),
+        ),
+      ).toEqual(['Calls and states', 'Outcomes', 'Entities']);
+      expect([...element.querySelectorAll('aside li.outcome')].map(leaves)).toEqual([
+        'repositories · lost exit No route of this app matches /nowhere No test reaches this No screenshot shows its trigger',
+        'repositories · opened exit → /projects opens a project',
+        'repositories · refused stay Show result lists the project’s repositories',
+        'repositories · unreached stay No test reaches this No screenshot shows its trigger',
+      ]);
+      const unreached = row(element, 'repositories:unreached');
+      expect(unreached.querySelector('ui-chip.no-test')?.textContent).toBe('No test reaches this');
+      expect(unreached.querySelector('ui-chip.no-trigger')?.textContent).toBe(
+        'No screenshot shows its trigger',
+      );
+      expect(
+        row(element, 'repositories:opened').querySelector('.reached-by')?.getAttribute('title'),
+      ).toBe('project-repositories.page.browser.spec.ts › opens a project');
+      // The shared ones are counted, never repeated.
+      expect(
+        element.querySelector('.shared-outcomes')?.textContent?.replace(/\s+/g, ' ').trim(),
+      ).toBe('2 shared outcomes from layouts');
+    });
+
+    it('selects an exit’s target route, unfolding the tree to it', async () => {
+      const { fixture, element } = await renderOutcomes();
+      element.querySelector<HTMLButtonElement>('nav .route-row button.fold')!.click();
+      fixture.detectChanges();
+      expect(element.querySelectorAll('nav .route-row')).toHaveLength(1);
+
+      row(element, 'repositories:opened')
+        .querySelector<HTMLButtonElement>('.outcome-target')!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ route: 'projects' });
+      expect(element.querySelectorAll('nav .route-row')).toHaveLength(6);
+      expect(
+        element
+          .querySelector('nav [aria-current="page"]')
+          ?.closest('.route-row')
+          ?.textContent?.replace(/\s+/g, ''),
+      ).toBe('projects0');
+      expect(element.querySelector('aside .no-outcomes')?.textContent?.trim()).toBe(
+        'This route declares no outcomes.',
+      );
+    });
+
+    it('says why no outcome is listed, and still shows the routes', async () => {
+      for (const [manifest, expected] of [
+        [
+          artifacts.body(BUNDLE, 'getDocsFile'),
+          'This bundle was frozen before outcomes were recorded.',
+        ],
+        [withOutcomes({ declared: [], fired: [] }), 'qits-landing-app declares no outcomes yet.'],
+        [
+          withOutcomes({ declared: [OUTCOMES.declared[4]], fired: [] }),
+          'This route declares no outcomes.',
+        ],
+        [withOutcomes({ declared: 'x' }), "Could not read this bundle's outcomes."],
+      ] as const) {
+        TestBed.resetTestingModule();
+        configure();
+        const { fixture, element, texts } = await render(
+          'qits-landing-app',
+          undefined,
+          undefined,
+          '',
+          manifest,
+        );
+        await answerFreeze(ERROR_FREEZE, fixture);
+        expect(texts('nav .route-row')).toHaveLength(6);
+        expect(element.querySelector('aside .no-outcomes')?.textContent?.trim()).toBe(expected);
+        expect(element.querySelectorAll('aside li.outcome')).toHaveLength(0);
+        http.verify();
+      }
+    });
+
+    it('lists the shared outcomes once, by scope, in their own tab', async () => {
+      const { fixture, element } = await renderOutcomes();
+      element.querySelector<HTMLButtonElement>('.shared-outcomes')!.click();
+      fixture.detectChanges();
+      expect(
+        element.querySelector('[aria-label="Panels"] [aria-selected="true"]')?.textContent?.trim(),
+      ).toBe('Outcomes');
+      const tab = element.querySelector<HTMLElement>('section[aria-label="Shared outcomes"]')!;
+      expect(
+        [...tab.querySelectorAll('h3.outcome-group')].map((h) => h.textContent?.trim()),
+      ).toEqual(['App-wide', '/ and below']);
+      expect([...tab.querySelectorAll('li.outcome')].map(leaves)).toEqual([
+        'toasts · dismissed stay No test reaches this No screenshot shows its trigger',
+        'shell · signed-out exit → /projects signs out',
+      ]);
+      // The right panel lists the route's own outcomes only.
+      expect(element.querySelectorAll('aside li.outcome')).toHaveLength(4);
+    });
+
+    it('highlights an outcome’s trigger in the frame, and clears it on a second click', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      const doc = loadFrame(page, TRIGGER);
+      const pick = () =>
+        row(element, 'repositories:opened').querySelector<HTMLButtonElement>('.outcome-pick')!;
+      pick().click();
+      fixture.detectChanges();
+      expect(pick().getAttribute('aria-pressed')).toBe('true');
+      const trigger = doc.querySelector('button')!;
+      expect(trigger.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      expect(doc.head.querySelectorAll('style[data-qits-builder]')).toHaveLength(1);
+      expect(doc.head.querySelector('style[data-qits-builder]')?.textContent).toContain(
+        '[data-qits-builder-highlight]',
+      );
+      // The shown state shows the trigger: nothing switches.
+      expect(query()).toEqual({});
+
+      // A new load (a state switch reloads srcdoc) draws it again.
+      const reloaded = loadFrame(page, TRIGGER);
+      expect(reloaded.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(
+        true,
+      );
+
+      pick().click();
+      fixture.detectChanges();
+      expect(pick().getAttribute('aria-pressed')).toBe('false');
+      expect(reloaded.querySelector('[data-qits-builder-highlight]')).toBeNull();
+    });
+
+    it('clears the highlight when the tree picks another route', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      const doc = loadFrame(page, TRIGGER);
+      row(element, 'repositories:opened')
+        .querySelector<HTMLButtonElement>('.outcome-pick')!
+        .click();
+      fixture.detectChanges();
+      expect(doc.querySelector('[data-qits-builder-highlight]')).not.toBeNull();
+      [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+        .find((r) => r.textContent?.replace(/\s+/g, '') === 'projects0')!
+        .querySelector<HTMLButtonElement>('button.route')!
+        .click();
+      await navigated(fixture);
+      expect(doc.querySelector('[data-qits-builder-highlight]')).toBeNull();
+      expect(element.querySelector('aside [aria-pressed="true"]')).toBeNull();
+    });
+
+    it('switches to a state that shows the trigger, and highlights it there', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      loadFrame(page, TRIGGER);
+      row(element, 'repositories:refused')
+        .querySelector<HTMLButtonElement>('.outcome-pick')!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'loaded' });
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      const doc = loadFrame(page, '<form data-qits-outcome="repositories:refused">x</form>');
+      expect(doc.querySelector('form')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      expect(element.querySelector('.link-notice')).toBeNull();
+
+      // A freeze that lists the trigger without the element says so.
+      loadFrame(page, '<p>no mark</p>');
+      fixture.detectChanges();
+      expect(element.querySelector('.link-notice')?.textContent?.trim()).toBe(
+        'This screenshot has no element for repositories:refused.',
+      );
+    });
+
+    it('opens the state a stay’s result was shot in', async () => {
+      const { fixture, element } = await renderOutcomes();
+      row(element, 'repositories:refused')
+        .querySelector<HTMLButtonElement>('.outcome-result')!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'loaded' });
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      expect(
+        element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim(),
+      ).toBe('loaded');
+    });
   });
 });

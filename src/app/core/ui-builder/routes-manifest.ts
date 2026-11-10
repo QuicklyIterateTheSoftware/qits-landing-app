@@ -30,6 +30,54 @@ export interface Freeze {
   /** The route pattern it was shot on; null for a shot outside a page spec. */
   readonly route: string | null;
   readonly records: readonly FreezeRecord[];
+  /**
+   * The outcomes whose trigger the shot shows (`<interaction>:<outcome>`, qits-2006): the
+   * `data-qits-outcome` marks that were visible when it was shot, not every mark its HTML holds (a
+   * closed menu's are serialized too). Absent in a bundle older than outcomes; read it as `[]`.
+   */
+  readonly triggers?: readonly string[];
+}
+
+/**
+ * What an outcome does (qits-2006): `exit` leaves for another route (`to`), `stay` keeps the page
+ * and shows its result (a refusal, a saved form).
+ */
+export type OutcomeKind = 'exit' | 'stay';
+
+/**
+ * One outcome the app declares (qits-2006, from `@qits/angular`'s `screenshots/outcomes.mjs`). Its
+ * scope: `global: false` is a page, for exactly `route`; `global: true` with a `route` is a layout,
+ * for that route and its subtree; `route: null` (always global) is app-wide. The root is `''`.
+ */
+export interface DeclaredOutcome {
+  readonly route: string | null;
+  readonly interaction: string;
+  readonly outcome: string;
+  readonly kind: OutcomeKind;
+  /** The route pattern given to `exit(...)`, as written, no leading slash; null for a stay. */
+  readonly to: string | null;
+  readonly global: boolean;
+  /** The source file that declares it. */
+  readonly file: string;
+}
+
+/** One outcome a test fired (qits-2006): in which spec and test, on which route, and its shot. */
+export interface FiredOutcome {
+  readonly spec: string;
+  readonly test: string;
+  /** The route pattern at fire time; null for the root route or a spec outside the route specs. */
+  readonly route: string | null;
+  readonly interaction: string;
+  readonly outcome: string;
+  readonly kind: OutcomeKind;
+  /** The first freeze shot after the fire in the same test (a `freezes[].file`), or null. */
+  readonly freeze: string | null;
+}
+
+/** The manifest's `outcomes` (qits-2006): what the app declares and what its tests fired. */
+export interface ManifestOutcomes {
+  readonly declared: readonly DeclaredOutcome[];
+  readonly fired: readonly FiredOutcome[];
 }
 
 /** The bundle's `manifest.json`: the route tree, every freeze, and the freezes of each route. */
@@ -38,6 +86,12 @@ export interface RoutesManifest {
   readonly freezes: readonly Freeze[];
   /** Each route's full path, mapped to the files of its freezes. */
   readonly byRoute: Readonly<Record<string, readonly string[]>>;
+  /**
+   * The app's outcomes (qits-2006). Absent in a bundle frozen before outcomes were recorded;
+   * `invalid` when the section (or a freeze's `triggers`) does not have its shape, which leaves the
+   * routes readable.
+   */
+  readonly outcomes?: ManifestOutcomes | 'invalid';
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -70,22 +124,75 @@ const isFreeze = (value: unknown): value is Freeze =>
   Array.isArray(value['records']) &&
   value['records'].every(isRecord);
 
+const isStringOrNull = (value: unknown): value is string | null =>
+  value === null || isString(value);
+
+const isStrings = (value: unknown): value is readonly string[] =>
+  Array.isArray(value) && value.every(isString);
+
+const isKind = (value: unknown): value is OutcomeKind => value === 'exit' || value === 'stay';
+
+const isDeclared = (value: unknown): value is DeclaredOutcome =>
+  isObject(value) &&
+  isStringOrNull(value['route']) &&
+  isString(value['interaction']) &&
+  isString(value['outcome']) &&
+  isKind(value['kind']) &&
+  isStringOrNull(value['to']) &&
+  typeof value['global'] === 'boolean' &&
+  isString(value['file']);
+
+const isFired = (value: unknown): value is FiredOutcome =>
+  isObject(value) &&
+  isString(value['spec']) &&
+  isString(value['test']) &&
+  isStringOrNull(value['route']) &&
+  isString(value['interaction']) &&
+  isString(value['outcome']) &&
+  isKind(value['kind']) &&
+  isStringOrNull(value['freeze']);
+
+/** The `outcomes` section as read (qits-2006): absent, `invalid`, or with its shape. */
+function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined {
+  if (value === undefined) return undefined;
+  if (!isObject(value)) return 'invalid';
+  const { declared, fired } = value;
+  if (!Array.isArray(declared) || !declared.every(isDeclared)) return 'invalid';
+  if (!Array.isArray(fired) || !fired.every(isFired)) return 'invalid';
+  return { declared, fired };
+}
+
 /**
  * `value` as a manifest when it has the manifest's shape (the fields above; others are ignored),
  * else null. The bundle is read as JSON, not through a schema, so this is the only check it gets.
+ *
+ * The outcomes (qits-2006) never fail the manifest: a freeze without `triggers` is an older bundle's
+ * and valid, and a malformed `outcomes` section or `triggers` list reads as `outcomes: 'invalid'`
+ * (the malformed `triggers` dropped), so the routes still show.
  */
 export function asManifest(value: unknown): RoutesManifest | null {
   if (!isObject(value)) return null;
-  const { routes, freezes, byRoute } = value;
+  const { routes, freezes: listed, byRoute } = value;
   if (!Array.isArray(routes) || !routes.every(isRoute)) return null;
-  if (!Array.isArray(freezes) || !freezes.every(isFreeze)) return null;
+  if (!Array.isArray(listed) || !listed.every(isFreeze)) return null;
+  let freezes: readonly Freeze[] = listed;
   if (
     !isObject(byRoute) ||
     !Object.values(byRoute).every((files) => Array.isArray(files) && files.every(isString))
   ) {
     return null;
   }
-  return { routes, freezes, byRoute: byRoute as RoutesManifest['byRoute'] };
+  let outcomes = readOutcomes(value['outcomes']);
+  if (!freezes.every((freeze) => freeze.triggers === undefined || isStrings(freeze.triggers))) {
+    outcomes = 'invalid';
+    freezes = freezes.map(({ triggers: _dropped, ...freeze }) => freeze);
+  }
+  return {
+    routes,
+    freezes,
+    byRoute: byRoute as RoutesManifest['byRoute'],
+    ...(outcomes === undefined ? {} : { outcomes }),
+  };
 }
 
 /**
@@ -331,6 +438,147 @@ export function matchRoute(manifest: RoutesManifest, href: string): LinkTarget {
     );
   }
   return { kind: 'unmatched', path: shown };
+}
+
+/**
+ * Whether the route pattern `route` (a fired record's or a freeze's; null for the root or outside the
+ * route specs) is in the scope of the declared `entry` (qits-2006). Mirrors `inScope` in
+ * `@qits/angular`'s `screenshots/outcomes.mjs` exactly: app-wide takes every route; a page its own
+ * route, and the root page also null; a layout its route and the routes below it, and the root
+ * layout every route and null.
+ */
+export function inOutcomeScope(
+  entry: Pick<DeclaredOutcome, 'route' | 'global'>,
+  route: string | null,
+): boolean {
+  if (entry.route === null) return true;
+  if (!entry.global) return route === entry.route || (entry.route === '' && route === null);
+  if (route === null) return entry.route === '';
+  return entry.route === '' || route === entry.route || route.startsWith(`${entry.route}/`);
+}
+
+/** A test that fired an outcome (qits-2006). */
+export interface OutcomeTest {
+  readonly spec: string;
+  readonly test: string;
+}
+
+/** A declared outcome joined with what the tests and the freezes show of it (qits-2006). */
+export interface JoinedOutcome {
+  /** Unique among the manifest's declarations: its scope, kind and `interaction:outcome`. */
+  readonly key: string;
+  /** `<interaction>:<outcome>`, the word its trigger's `data-qits-outcome` mark holds. */
+  readonly mark: string;
+  readonly declared: DeclaredOutcome;
+  /** The tests that fired it in its scope, once each, in the manifest's order. */
+  readonly reachedBy: readonly OutcomeTest[];
+  /** For a stay, the freeze shot after the first fire that has one; else null. */
+  readonly result: Freeze | null;
+  /** The freezes in its scope whose `triggers` name it: the selected route's first, then by name. */
+  readonly triggerFreezes: readonly Freeze[];
+  /** For an exit, where `to` leads (`matchRoute`, a redirect followed); null for a stay. */
+  readonly target: LinkTarget | null;
+}
+
+/** `entry` joined with the manifest's fired records and freezes; `selected` sorts its freezes first. */
+function joinOutcome(
+  manifest: RoutesManifest,
+  outcomes: ManifestOutcomes,
+  entry: DeclaredOutcome,
+  selected: string | null,
+): JoinedOutcome {
+  const mark = `${entry.interaction}:${entry.outcome}`;
+  const fired = outcomes.fired.filter(
+    (record) =>
+      record.interaction === entry.interaction &&
+      record.outcome === entry.outcome &&
+      inOutcomeScope(entry, record.route),
+  );
+  const reachedBy = new Map<string, OutcomeTest>();
+  for (const { spec, test } of fired) reachedBy.set(JSON.stringify([spec, test]), { spec, test });
+  const byFile = new Map(manifest.freezes.map((freeze) => [freeze.file, freeze]));
+  const shot = entry.kind === 'stay' ? fired.find((record) => record.freeze !== null) : undefined;
+  const triggerFreezes = manifest.freezes
+    .filter(
+      (freeze) => inOutcomeScope(entry, freeze.route) && (freeze.triggers ?? []).includes(mark),
+    )
+    .sort(
+      (a, b) =>
+        Number(b.route === selected) - Number(a.route === selected) || a.name.localeCompare(b.name),
+    );
+  return {
+    key: JSON.stringify([entry.route, entry.global, entry.kind, mark]),
+    mark,
+    declared: entry,
+    reachedBy: [...reachedBy.values()],
+    result: (shot?.freeze && byFile.get(shot.freeze)) || null,
+    triggerFreezes,
+    target:
+      entry.kind !== 'exit'
+        ? null
+        : entry.to === null
+          ? { kind: 'unmatched', path: '/' }
+          : matchRoute(manifest, `/${entry.to.replace(/^\/+/, '')}`),
+  };
+}
+
+const byInteraction = (a: DeclaredOutcome, b: DeclaredOutcome) =>
+  a.interaction.localeCompare(b.interaction) || a.outcome.localeCompare(b.outcome);
+
+/** The manifest's outcomes when it has a readable section (qits-2006), else null. */
+const outcomesOf = (manifest: RoutesManifest): ManifestOutcomes | null =>
+  manifest.outcomes === undefined || manifest.outcomes === 'invalid' ? null : manifest.outcomes;
+
+/**
+ * The page outcomes (`global: false`) of the route at `fullPath`, sorted by interaction then
+ * outcome, each joined with the tests that reach it, its result, the freezes that show its trigger
+ * and its exit's target (qits-2006). None when the manifest has no readable outcomes.
+ */
+export function routeOutcomes(
+  manifest: RoutesManifest,
+  fullPath: string,
+): readonly JoinedOutcome[] {
+  const outcomes = outcomesOf(manifest);
+  if (!outcomes) return [];
+  return outcomes.declared
+    .filter((entry) => !entry.global && entry.route === fullPath)
+    .sort(byInteraction)
+    .map((entry) => joinOutcome(manifest, outcomes, entry, fullPath));
+}
+
+/** The shared outcomes of one scope (qits-2006): app-wide (`route: null`) or a layout's route. */
+export interface SharedOutcomeGroup {
+  readonly route: string | null;
+  readonly outcomes: readonly JoinedOutcome[];
+}
+
+/**
+ * The shared outcomes (`global: true`: a layout's and app-wide), joined as `routeOutcomes` joins a
+ * page's, grouped by scope: app-wide first, then each layout route by path, each sorted by
+ * interaction then outcome (qits-2006). `selected` (the selected route) sorts its own freezes first
+ * among each outcome's `triggerFreezes`. None when the manifest has no readable outcomes.
+ */
+export function sharedOutcomes(
+  manifest: RoutesManifest,
+  selected: string | null = null,
+): readonly SharedOutcomeGroup[] {
+  const outcomes = outcomesOf(manifest);
+  if (!outcomes) return [];
+  const groups = new Map<string | null, DeclaredOutcome[]>();
+  for (const entry of outcomes.declared) {
+    if (!entry.global) continue;
+    const group = groups.get(entry.route) ?? [];
+    group.push(entry);
+    groups.set(entry.route, group);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => (a === null ? -1 : b === null ? 1 : a.localeCompare(b)))
+    .map(([route, entries]) => ({
+      route,
+      outcomes: entries
+        .sort(byInteraction)
+        .map((entry) => joinOutcome(manifest, outcomes, entry, selected)),
+    }));
 }
 
 /** A CSS `url(...)` with its quote and reference. */
