@@ -600,7 +600,10 @@ step image that has Chromium, so a changed pixel fails the release request.
   answer that is not a recording; an error answer is only a status and may carry anything. No
   `useValue` for a store or a `$core` token (only `EVENT_SOURCE`, a transport seam), no
   `patchState`, no copies or spreads (lint `qits/browser-spec-data-from-golden-masters`). A case
-  no recording holds gets a new provider state in the provider and a pact interaction here. The
+  no recording holds gets a new provider state in the provider and a pact interaction here. One
+  reader is not gated by a pact (qits-2044): `qits-idp`, whose `issueToken` answer the sign-in
+  callback's spec gives `@qits/angular`'s `QitsTokens` through `QITS_SIGN_IN_FETCH`; the swap is the
+  library's, not a store's, and qits-idp records no code issued to this app's client. The
   two providers' frozen ids are unrelated, so the card spec puts qits-githost's recorded entries
   under the project's recorded repository ids and says so.
 - **A page is shown as a person sees it**, inside the shell and every layout above it (qits-1997).
