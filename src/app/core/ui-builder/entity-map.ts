@@ -8,25 +8,52 @@ import { routeFreezes, type RoutesManifest } from './routes-manifest';
  * {@link asEntityMap} checks its shape at run time.
  */
 
-/** One operation that answers a DTO carrying the entity. `path` has no app root. */
+/**
+ * One operation that answers a DTO carrying the entity. `path` has no app root. `dto` is the best
+ * DTO reaching the entity through it (null when none, as a `deletes` row has), `kind` how the
+ * operation hands that DTO out: `direct`, `returns`, `schema` or `body` (qits-1945).
+ */
 export interface EntityOperation {
   readonly operationId: string;
   readonly method: string;
   readonly path: string;
+  readonly dto: string | null;
+  readonly kind: string | null;
 }
 
 /**
- * One persisted entity. Only `domain` entities are shown; `technical` and `projection` ones are
- * counted and left out.
+ * One type an operation hands out that carries the entity, with its most direct link: `kind` is
+ * `direct`, `annotation`, `factory`, `mapper`, `assembler` or `via`; `via` names the carrier of a
+ * `via` link; `site` the code unit the link was seen in.
+ */
+export interface EntityDto {
+  readonly type: string;
+  readonly kind: string;
+  readonly via: string | null;
+  readonly site: string | null;
+}
+
+/**
+ * One persisted entity. The UI builder shows only `domain` entities; `technical` and `projection`
+ * ones are counted and left out there, and shown on the entities pages (qits-1994).
  */
 export interface MappedEntity {
   /** Its fully qualified class name. */
   readonly entity: string;
   readonly marking: string;
+  /** Its table; null when the map names none. */
+  readonly table: string | null;
+  /** Why a `technical` entity is one; null otherwise. */
+  readonly reason: string | null;
+  /** What a `projection` entity projects, `<application>:<Entity>`; null otherwise. */
+  readonly projectionOf: string | null;
+  /** The ticket that tracks an unexposed entity (`qits-1234`); null when none. */
+  readonly knownGap: string | null;
+  readonly dtos: readonly EntityDto[];
   readonly operations: readonly EntityOperation[];
 }
 
-/** A service's `entities.json`: the fields the builder reads (others are ignored). */
+/** A service's `entities.json`: the fields the app reads (others are ignored). */
 export interface EntityMap {
   readonly formatVersion: number;
   readonly application: string;
@@ -38,13 +65,19 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
 
 const isString = (value: unknown): value is string => typeof value === 'string';
 
-const isOperation = (value: unknown): value is EntityOperation =>
+/** `value` when it is a string, else null: an optional field of the map. */
+const stringOrNull = (value: unknown): string | null => (isString(value) ? value : null);
+
+const isOperation = (value: unknown): value is Record<string, unknown> =>
   isObject(value) &&
   isString(value['operationId']) &&
   isString(value['method']) &&
   isString(value['path']);
 
-const isEntity = (value: unknown): value is MappedEntity =>
+const isDto = (value: unknown): value is Record<string, unknown> =>
+  isObject(value) && isString(value['type']) && isString(value['kind']);
+
+const isEntity = (value: unknown): value is Record<string, unknown> & { operations: unknown[] } =>
   isObject(value) &&
   isString(value['entity']) &&
   isString(value['marking']) &&
@@ -52,8 +85,9 @@ const isEntity = (value: unknown): value is MappedEntity =>
   value['operations'].every(isOperation);
 
 /**
- * `value` as an entity map when it has the map's shape (format 1, the fields above), else null.
- * Only the fields the builder reads are kept.
+ * `value` as an entity map when it has the map's shape (format 1, `application`, and each entity's
+ * `entity`, `marking` and `operations`), else null. Only the fields above are kept; an optional one
+ * that is missing or of another type is null (or `[]` for `dtos`, which keeps its well-formed rows).
  */
 export function asEntityMap(value: unknown): EntityMap | null {
   if (!isObject(value)) return null;
@@ -63,13 +97,25 @@ export function asEntityMap(value: unknown): EntityMap | null {
   return {
     formatVersion,
     application,
-    entities: entities.map(({ entity, marking, operations }) => ({
-      entity,
-      marking,
-      operations: operations.map(({ operationId, method, path }) => ({
-        operationId,
-        method,
-        path,
+    entities: entities.map((entity) => ({
+      entity: entity['entity'] as string,
+      marking: entity['marking'] as string,
+      table: stringOrNull(entity['table']),
+      reason: stringOrNull(entity['reason']),
+      projectionOf: stringOrNull(entity['projectionOf']),
+      knownGap: stringOrNull(entity['knownGap']),
+      dtos: (Array.isArray(entity['dtos']) ? entity['dtos'] : []).filter(isDto).map((dto) => ({
+        type: dto['type'] as string,
+        kind: dto['kind'] as string,
+        via: stringOrNull(dto['via']),
+        site: stringOrNull(dto['site']),
+      })),
+      operations: (entity.operations as Record<string, unknown>[]).map((op) => ({
+        operationId: op['operationId'] as string,
+        method: op['method'] as string,
+        path: op['path'] as string,
+        dto: stringOrNull(op['dto']),
+        kind: stringOrNull(op['kind']),
       })),
     })),
   };

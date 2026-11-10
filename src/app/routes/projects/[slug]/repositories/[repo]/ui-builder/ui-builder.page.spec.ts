@@ -75,6 +75,8 @@ function clickTab(element: HTMLElement, name: string): void {
 describe('UiBuilderPage', () => {
   let http: HttpTestingController;
   const SLUG = 'contract-00000001';
+  /** The recorded map's Project, on its entity page in the project (qits-1994). */
+  const PROJECT_PAGE = `/projects/${SLUG}/repositories/qits-projects-service/entities/eu.wohlben.qits.entities.domain.Project`;
 
   /** The testing module, as every case starts with it. */
   function configure() {
@@ -401,8 +403,8 @@ describe('UiBuilderPage', () => {
       const { fixture, element, texts } = await render('qits-landing-app', undefined, recordedMap);
       await answerFreeze(ERROR_FREEZE, fixture);
       expect([...element.querySelectorAll('li.route-entity')].map(words)).toEqual([
-        'Project qits-projects list',
-        'Repository qits-projects list',
+        'Project ↗ qits-projects list',
+        'Repository ↗ qits-projects list',
       ]);
       expect(element.querySelector('.unmatched')).toBeNull();
       expect(texts('li.call')).toHaveLength(2);
@@ -426,6 +428,9 @@ describe('UiBuilderPage', () => {
       element.querySelectorAll<HTMLButtonElement>('button.entity')[1].click();
       fixture.detectChanges();
       expect(text('.entity-heading')).toEqual(['Project · qits-projects']);
+      expect(element.querySelector('.entity-heading a.entity-page')?.getAttribute('href')).toBe(
+        PROJECT_PAGE,
+      );
       expect(text('li.entity-route')).toEqual(['/projects/:slug/repositories list']);
 
       element.querySelectorAll<HTMLButtonElement>('button.entity')[0].click();
@@ -444,6 +449,27 @@ describe('UiBuilderPage', () => {
         'repositories',
       );
       expect(element.querySelectorAll('li.route-entity')).toHaveLength(2);
+    });
+
+    it('links each entity to its entity page beside the pick (qits-1994)', async () => {
+      const { fixture, element } = await render('qits-landing-app', undefined, recordedMap);
+      await answerFreeze(ERROR_FREEZE, fixture);
+      const routeLink = element.querySelector<HTMLAnchorElement>('li.route-entity a.entity-link');
+      expect(routeLink?.getAttribute('href')).toBe(PROJECT_PAGE);
+      expect(routeLink?.getAttribute('aria-label')).toBe('Open Project entity page');
+
+      clickTab(element, 'Entities');
+      fixture.detectChanges();
+      const links = [...element.querySelectorAll<HTMLAnchorElement>('a.entity-link')]
+        .filter((a) => !a.closest('li.route-entity'))
+        .map((a) => a.getAttribute('aria-label'));
+      expect(links).toEqual([
+        'Open WorkEntity entity page',
+        'Open Project entity page',
+        'Open Repository entity page',
+      ]);
+      // The pick is still the button beside it.
+      expect(element.querySelectorAll('button.entity')).toHaveLength(3);
     });
 
     it('names a contracts site without entities.json, and a map that cannot be read', async () => {

@@ -9,6 +9,7 @@ import {
   verbOf,
   type EntityMap,
   type EntitySource,
+  type MappedEntity,
 } from './entity-map';
 import type { RoutesManifest } from './routes-manifest';
 
@@ -22,6 +23,22 @@ const REPOSITORIES = 'projects/:slug/repositories';
 const PROJECTS = 'qits-projects-service';
 const CONTRACTS = ENTITY_MAP_STATE;
 
+/** An entity of `marking` with `operations` (no DTO or kind) and none of the optional fields. */
+const entity = (
+  fqn: string,
+  marking: string,
+  operations: readonly { operationId: string; method: string; path: string }[],
+): MappedEntity => ({
+  entity: fqn,
+  marking,
+  table: null,
+  reason: null,
+  projectionOf: null,
+  knownGap: null,
+  dtos: [],
+  operations: operations.map((op) => ({ ...op, dto: null, kind: null })),
+});
+
 /**
  * A map shaped like the one qits-artifacts records in `a published contracts bundle with an entity
  * map`: Project and Repository reached by the manifest's calls, WorkEntity reached by none, and a
@@ -31,55 +48,73 @@ const MAP: EntityMap = {
   formatVersion: 1,
   application: 'qits-projects',
   entities: [
-    {
-      entity: 'eu.wohlben.qits.projects.WorkEntity',
-      marking: 'domain',
-      operations: [
-        { operationId: 'getWork', method: 'GET', path: '/work/{qualifiedId}' },
-        { operationId: 'deleteWork', method: 'DELETE', path: '/work/{qualifiedId}' },
-      ],
-    },
-    {
-      entity: 'eu.wohlben.qits.projects.Project',
-      marking: 'domain',
-      operations: [
-        { operationId: 'listProjects', method: 'GET', path: '/projects' },
-        { operationId: 'getProject', method: 'GET', path: '/projects/{projectId}' },
-      ],
-    },
-    {
-      entity: 'eu.wohlben.qits.projects.Repository',
-      marking: 'domain',
-      operations: [
-        {
-          operationId: 'listProjectRepositories',
-          method: 'GET',
-          path: '/projects/{projectId}/repositories',
-        },
-      ],
-    },
-    {
-      entity: 'eu.wohlben.qits.projects.LegacyPlacement',
-      marking: 'technical',
-      operations: [{ operationId: 'listProjects', method: 'GET', path: '/projects' }],
-    },
+    entity('eu.wohlben.qits.projects.WorkEntity', 'domain', [
+      { operationId: 'getWork', method: 'GET', path: '/work/{qualifiedId}' },
+      { operationId: 'deleteWork', method: 'DELETE', path: '/work/{qualifiedId}' },
+    ]),
+    entity('eu.wohlben.qits.projects.Project', 'domain', [
+      { operationId: 'listProjects', method: 'GET', path: '/projects' },
+      { operationId: 'getProject', method: 'GET', path: '/projects/{projectId}' },
+    ]),
+    entity('eu.wohlben.qits.projects.Repository', 'domain', [
+      {
+        operationId: 'listProjectRepositories',
+        method: 'GET',
+        path: '/projects/{projectId}/repositories',
+      },
+    ]),
+    entity('eu.wohlben.qits.projects.LegacyPlacement', 'technical', [
+      { operationId: 'listProjects', method: 'GET', path: '/projects' },
+    ]),
   ],
 };
 
 const SOURCES: readonly EntitySource[] = [{ repository: PROJECTS, map: MAP }];
 
 describe('asEntityMap', () => {
-  it('takes a map with the map’s shape, keeping only what the builder reads', () => {
+  it('takes a map with the map’s shape, keeping the fields the app reads', () => {
     const published = {
       ...MAP,
       entities: MAP.entities.map((e) => ({
         ...e,
         table: 'x',
         reason: null,
-        projectionOf: null,
+        projectionOf: 'qits-other:Thing',
+        knownGap: 'qits-1',
+        extra: true,
+        dtos: [
+          { type: 'a.XDto', kind: 'via', via: 'a.Carrier', site: 'X.of(Carrier)' },
+          'not a dto',
+        ],
+        operations: e.operations.map((o) => ({ ...o, dto: 'a.XDto', kind: 'returns', extra: 1 })),
+      })),
+    };
+    expect(asEntityMap(published)).toEqual({
+      ...MAP,
+      entities: MAP.entities.map((e) => ({
+        ...e,
+        table: 'x',
+        projectionOf: 'qits-other:Thing',
+        knownGap: 'qits-1',
+        dtos: [{ type: 'a.XDto', kind: 'via', via: 'a.Carrier', site: 'X.of(Carrier)' }],
+        operations: e.operations.map((o) => ({ ...o, dto: 'a.XDto', kind: 'returns' })),
+      })),
+    });
+  });
+
+  it('reads a missing or mistyped optional field as null, or no DTOs', () => {
+    const published = {
+      ...MAP,
+      entities: MAP.entities.map(({ entity: fqn, marking, operations }) => ({
+        entity: fqn,
+        marking,
         knownGap: false,
-        dtos: ['X'],
-        operations: e.operations.map((o) => ({ ...o, dto: 'X', kind: 'read' })),
+        dtos: {},
+        operations: operations.map(({ operationId, method, path }) => ({
+          operationId,
+          method,
+          path,
+        })),
       })),
     };
     expect(asEntityMap(published)).toEqual(MAP);
@@ -169,10 +204,7 @@ describe('joinEntities', () => {
   it('leaves technical and projection entities out, and counts them', () => {
     const map: EntityMap = {
       ...MAP,
-      entities: [
-        ...MAP.entities,
-        { entity: 'a.ProjectRow', marking: 'projection', operations: [] },
-      ],
+      entities: [...MAP.entities, entity('a.ProjectRow', 'projection', [])],
     };
     const join = joinEntities(RECORDED, [{ repository: PROJECTS, map }]);
     expect(join.leftOut).toBe(2);
@@ -210,14 +242,10 @@ describe('joinEntities', () => {
     const map: EntityMap = {
       ...MAP,
       entities: [
-        {
-          entity: 'a.Project',
-          marking: 'domain',
-          operations: [
-            { operationId: 'listProjectRepositories', method: 'DELETE', path: '/x/{y}' },
-            { operationId: 'listProjects', method: 'GET', path: '/projects/{id}' },
-          ],
-        },
+        entity('a.Project', 'domain', [
+          { operationId: 'listProjectRepositories', method: 'DELETE', path: '/x/{y}' },
+          { operationId: 'listProjects', method: 'GET', path: '/projects/{id}' },
+        ]),
       ],
     };
     const join = joinEntities(RECORDED, [{ repository: PROJECTS, map }]);

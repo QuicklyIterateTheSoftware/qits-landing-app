@@ -8,6 +8,8 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { contractStateLink, entityLink } from '$core/contracts/contracts-links';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import type { ContractsSite } from '$core/ui-builder/entity-map.store';
 import {
@@ -20,8 +22,13 @@ import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
 
 /** A domain entity this call touches, for the popover's links into the Entities tab. */
 export interface CallEntity {
+  /** `<repository>#<entity>`, the Entities tab's key. */
   readonly key: string;
   readonly name: string;
+  /** The repository whose entity map lists it, for its entity page. */
+  readonly repository: string;
+  /** Its fully qualified class name, as `entities.json` writes it. */
+  readonly entity: string;
 }
 
 /** What the popover has read about the call. */
@@ -43,7 +50,9 @@ const PREVIEW_CHARS = 12_000;
  * One call of a route in the UI builder's calls panel (qits-1999). The row opens a popover with
  * what the platform recorded for the call: the operation (method, path, status), its provider
  * state (params, dependencies), the domain entities it touches, a link to the provider's contracts
- * in qits-docs, and the recorded response as JSON. qits-1994 adds the landing app's own state page.
+ * in qits-docs, and the recorded response as JSON. With the project's slug given (`project`), the
+ * state's name links the provider repository's state page and each entity has an "open" link to
+ * its entity page beside the button that picks it (qits-1994); without it they stay plain.
  *
  * It reads the provider's `golden-masters/index.json` and the recorded file from its `@contracts/`
  * site (`goldenCall`, `goldenResponse`) when it first opens, never before. Escape, a click outside
@@ -52,6 +61,7 @@ const PREVIEW_CHARS = 12_000;
 @Component({
   selector: 'app-call-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   host: {
     class: 'relative block',
     '(document:click)': 'closeIfOutside($event)',
@@ -122,7 +132,13 @@ const PREVIEW_CHARS = 12_000;
 
               <section>
                 <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">State</h4>
-                <p class="m-0">{{ l.state.name }}</p>
+                @if (stateLink(); as link) {
+                  <a class="state-link m-0 block font-semibold" [routerLink]="link">{{
+                    l.state.name
+                  }}</a>
+                } @else {
+                  <p class="m-0">{{ l.state.name }}</p>
+                }
                 @if (params().length) {
                   <dl class="m-0 mt-1 grid grid-cols-[auto_1fr] gap-x-2 font-mono">
                     @for (p of params(); track p.key) {
@@ -146,13 +162,24 @@ const PREVIEW_CHARS = 12_000;
             <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">Entities</h4>
             <div class="flex flex-wrap gap-1">
               @for (e of entities(); track e.key) {
-                <button
-                  type="button"
-                  class="cursor-pointer rounded bg-charcoal-brown-100 px-1.5 font-mono font-semibold hover:bg-charcoal-brown-200"
-                  (click)="pickEntity(e.key)"
-                >
-                  {{ e.name }}
-                </button>
+                <span class="inline-flex items-center gap-0.5">
+                  <button
+                    type="button"
+                    class="cursor-pointer rounded bg-charcoal-brown-100 px-1.5 font-mono font-semibold hover:bg-charcoal-brown-200"
+                    (click)="pickEntity(e.key)"
+                  >
+                    {{ e.name }}
+                  </button>
+                  @if (project(); as slug) {
+                    <a
+                      class="entity-link px-0.5 text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
+                      [routerLink]="entityLink(slug, e.repository, e.entity)"
+                      [attr.aria-label]="'Open ' + e.name + ' entity page'"
+                      [title]="'Open ' + e.name + ' entity page'"
+                      >↗</a
+                    >
+                  }
+                </span>
               }
             </div>
           </section>
@@ -161,7 +188,7 @@ const PREVIEW_CHARS = 12_000;
         @if (docsUrl(); as url) {
           <section>
             <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">Docs</h4>
-            <a class="font-semibold" [href]="url" target="_blank" rel="noopener"
+            <a class="docs font-semibold" [href]="url" target="_blank" rel="noopener"
               >Contracts of {{ c.provider }} in qits-docs ↗</a
             >
           </section>
@@ -212,6 +239,8 @@ export class CallDetails {
   /** The provider's contracts site at its newest version; null when it publishes none. */
   readonly site = input<ContractsSite | null>(null);
   readonly entities = input<readonly CallEntity[]>([]);
+  /** The open project's slug, for the links to the contracts and entity pages (qits-1994). */
+  readonly project = input<string | null>(null);
   readonly entityPicked = output<string>();
 
   private readonly host = inject(ElementRef<HTMLElement>);
@@ -224,6 +253,16 @@ export class CallDetails {
   protected readonly loaded = computed(() => {
     const d = this.details();
     return d.status === 'loaded' ? d : null;
+  });
+
+  protected readonly entityLink = entityLink;
+
+  /** The provider repository's page of the state read, when the project and the site are known. */
+  protected readonly stateLink = computed(() => {
+    const project = this.project();
+    const repository = this.site()?.repository;
+    const slug = this.loaded()?.state.slug;
+    return project && repository && slug ? contractStateLink(project, repository, slug) : null;
   });
 
   protected readonly params = computed(() =>

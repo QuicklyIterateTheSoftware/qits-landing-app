@@ -15,8 +15,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
+import { entityLink } from '$core/contracts/contracts-links';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
@@ -88,6 +89,10 @@ interface EntityGroup {
  *   The maps are read once the bundle is in and the scope is known (for a frontend other than the
  *   landing app, once the project's repositories answered); an unknown scope covers every service,
  *   as the calls panel does.
+ * - Entity pages (qits-1994): each entity of the Entities tab and of the route's entities has a small
+ *   "↗" link to its entity page (`entityLink`) beside the action that picks it, and the selected
+ *   entity's name heads its routes as that link; the calls' popovers link the same pages and the
+ *   provider state's page.
  *
  * The data is read in the browser only (the server render holds no token).
  *
@@ -100,7 +105,7 @@ interface EntityGroup {
 @Component({
   selector: 'app-ui-builder-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, Spinner, CallDetails],
+  imports: [Chip, PageLayoutComponent, Spinner, CallDetails, RouterLink],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12">
@@ -237,35 +242,48 @@ interface EntityGroup {
                               }
                               @default {
                                 @for (entity of group.entities; track entity.key) {
-                                  <button
-                                    type="button"
-                                    class="entity flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left"
-                                    [class]="
-                                      entity.key === selectedEntity()?.key
-                                        ? 'bg-charcoal-brown-800 text-white'
-                                        : 'hover:bg-charcoal-brown-50'
-                                    "
-                                    [attr.aria-current]="
-                                      entity.key === selectedEntity()?.key ? 'true' : null
-                                    "
-                                    (click)="pickedEntity.set(entity.key)"
-                                  >
-                                    <span class="min-w-0 truncate font-mono">{{
-                                      entity.name
-                                    }}</span>
-                                    @if (entity.routes.length) {
-                                      <span
-                                        class="ml-auto text-[0.6875rem] tabular-nums opacity-70"
-                                        >{{ entity.routes.length }}</span
+                                  <div class="flex items-center gap-0.5">
+                                    <button
+                                      type="button"
+                                      class="entity flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left"
+                                      [class]="
+                                        entity.key === selectedEntity()?.key
+                                          ? 'bg-charcoal-brown-800 text-white'
+                                          : 'hover:bg-charcoal-brown-50'
+                                      "
+                                      [attr.aria-current]="
+                                        entity.key === selectedEntity()?.key ? 'true' : null
+                                      "
+                                      (click)="pickedEntity.set(entity.key)"
+                                    >
+                                      <span class="min-w-0 truncate font-mono">{{
+                                        entity.name
+                                      }}</span>
+                                      @if (entity.routes.length) {
+                                        <span
+                                          class="ml-auto text-[0.6875rem] tabular-nums opacity-70"
+                                          >{{ entity.routes.length }}</span
+                                        >
+                                      } @else {
+                                        <ui-chip
+                                          class="untouched ml-auto"
+                                          tone="waiting"
+                                          label="No route shows this"
+                                        />
+                                      }
+                                    </button>
+                                    @if (slug(); as project) {
+                                      <a
+                                        class="entity-link shrink-0 px-1 text-xs text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
+                                        [routerLink]="
+                                          entityLink(project, entity.repository, entity.entity)
+                                        "
+                                        [attr.aria-label]="'Open ' + entity.name + ' entity page'"
+                                        [title]="'Open ' + entity.name + ' entity page'"
+                                        >↗</a
                                       >
-                                    } @else {
-                                      <ui-chip
-                                        class="untouched ml-auto"
-                                        tone="waiting"
-                                        label="No route shows this"
-                                      />
                                     }
-                                  </button>
+                                  </div>
                                 } @empty {
                                   <p class="m-0 text-xs text-charcoal-brown-600">
                                     No domain entity.
@@ -345,7 +363,16 @@ interface EntityGroup {
                       Routes showing
                     </h3>
                     <p class="entity-heading m-0 mb-1">
-                      <span class="font-mono">{{ entity.name }}</span>
+                      @if (slug(); as project) {
+                        <a
+                          class="entity-page font-mono"
+                          [routerLink]="entityLink(project, entity.repository, entity.entity)"
+                          [title]="'Open ' + entity.name + ' entity page'"
+                          >{{ entity.name }}</a
+                        >
+                      } @else {
+                        <span class="font-mono">{{ entity.name }}</span>
+                      }
                       <span class="text-xs text-charcoal-brown-500">
                         · {{ entity.application }}</span
                       >
@@ -381,6 +408,7 @@ interface EntityGroup {
                             [call]="call"
                             [site]="siteOf(call.provider)"
                             [entities]="callEntities(call)"
+                            [project]="slug() ?? null"
                             (entityPicked)="pickEntity($event)"
                           />
                         </li>
@@ -407,6 +435,15 @@ interface EntityGroup {
                         @for (entity of found.entities; track entity.key) {
                           <li class="route-entity flex flex-wrap items-center gap-1">
                             <span class="font-mono text-xs">{{ entity.name }}</span>
+                            @if (slug(); as project) {
+                              <a
+                                class="entity-link text-xs text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
+                                [routerLink]="entityLink(project, entity.repository, entity.entity)"
+                                [attr.aria-label]="'Open ' + entity.name + ' entity page'"
+                                [title]="'Open ' + entity.name + ' entity page'"
+                                >↗</a
+                              >
+                            }
                             <span class="text-xs text-charcoal-brown-500">{{
                               entity.application
                             }}</span>
@@ -453,6 +490,10 @@ export class UiBuilderPage {
   private readonly route = inject(ActivatedRoute);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
+
+  /** The open project's slug, for the links to the entity and contracts pages (qits-1994). */
+  protected readonly slug = this.selected.slug;
+  protected readonly entityLink = entityLink;
 
   /** The repository the URL names. */
   protected readonly repo = toSignal(
@@ -765,6 +806,8 @@ export class UiBuilderPage {
       .map((e) => ({
         key: `${call.provider}#${e.entity}`,
         name: e.entity.split('.').at(-1) ?? e.entity,
+        repository: call.provider,
+        entity: e.entity,
       }));
   }
 

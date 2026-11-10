@@ -1,12 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import type { ContractsSite } from '$core/ui-builder/entity-map.store';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { provideHeyApiClient } from '../../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../../api/artifacts/client.gen';
-import { CallDetails } from './call-details';
+import { CallDetails, type CallEntity } from './call-details';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -54,6 +55,7 @@ describe('CallDetails', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(artifactsClient),
@@ -68,11 +70,23 @@ describe('CallDetails', () => {
 
   afterEach(() => http.verify());
 
-  async function render(s: ContractsSite | null, entities = [{ key: 'k', name: 'CiRun' }]) {
+  const CI_RUN: CallEntity = {
+    key: 'qits-ci-service#eu.wohlben.qits.ci.CiRun',
+    name: 'CiRun',
+    repository: 'qits-ci-service',
+    entity: 'eu.wohlben.qits.ci.CiRun',
+  };
+
+  async function render(
+    s: ContractsSite | null,
+    entities: readonly CallEntity[] = [CI_RUN],
+    project: string | null = null,
+  ) {
     const fixture = TestBed.createComponent(CallDetails);
     fixture.componentRef.setInput('call', CALL);
     fixture.componentRef.setInput('site', s);
     fixture.componentRef.setInput('entities', entities);
+    fixture.componentRef.setInput('project', project);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     const open = async () => {
@@ -111,7 +125,7 @@ describe('CallDetails', () => {
     expect(element.querySelector('pre.json')?.textContent).toBe(
       JSON.stringify({ runs: [{ id: 'r-1' }] }, null, 2),
     );
-    expect(element.querySelector<HTMLAnchorElement>('.call-popover a')?.href).toBe(
+    expect(element.querySelector<HTMLAnchorElement>('.call-popover a.docs')?.href).toBe(
       `https://docs.example/read/${s.site}/-/${s.version}`,
     );
   });
@@ -132,8 +146,45 @@ describe('CallDetails', () => {
     )!;
     entity.click();
     fixture.detectChanges();
-    expect(picked).toEqual(['k']);
+    expect(picked).toEqual([CI_RUN.key]);
     expect(element.querySelector('.call-popover')).toBeNull();
+  });
+
+  it('links the state and each entity to their pages in the project (qits-1994)', async () => {
+    const s = site();
+    const { element, open, update } = await render(s, [CI_RUN], 'qits');
+    await open();
+    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    await update();
+    http.expectOne(`${base(s)}/a-commit-with-a-run-in-flight/listActiveRuns.json`).flush({});
+    await update();
+
+    const state = element.querySelector<HTMLAnchorElement>('.call-popover a.state-link');
+    expect(state?.textContent?.trim()).toBe(CALL.state);
+    expect(state?.getAttribute('href')).toBe(
+      '/projects/qits/repositories/qits-ci-service/contracts/a-commit-with-a-run-in-flight',
+    );
+    const entity = element.querySelector<HTMLAnchorElement>('.call-popover a.entity-link');
+    expect(entity?.getAttribute('href')).toBe(
+      '/projects/qits/repositories/qits-ci-service/entities/eu.wohlben.qits.ci.CiRun',
+    );
+    expect(entity?.getAttribute('aria-label')).toBe('Open CiRun entity page');
+    // The pick stays beside the link.
+    const buttons = [...element.querySelectorAll('.call-popover button')];
+    expect(buttons.some((b) => b.textContent?.trim() === 'CiRun')).toBe(true);
+  });
+
+  it('keeps the state and the entities plain without the project', async () => {
+    const s = site();
+    const { element, open, update } = await render(s);
+    await open();
+    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    await update();
+    http.expectOne(`${base(s)}/a-commit-with-a-run-in-flight/listActiveRuns.json`).flush({});
+    await update();
+    expect(element.querySelector('.call-popover a.state-link')).toBeNull();
+    expect(element.querySelector('.call-popover a.entity-link')).toBeNull();
+    expect(element.querySelector('.call-popover')?.textContent).toContain(CALL.state);
   });
 
   it('says so when the contracts list no such state', async () => {

@@ -1,0 +1,318 @@
+import { isPlatformBrowser } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  PLATFORM_ID,
+  untracked,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { map } from 'rxjs';
+import { ContractsBundleStore } from '$core/contracts/contracts-bundle.store';
+import { contractStateLink, entitiesLink, entityLink } from '$core/contracts/contracts-links';
+import {
+  bundleOf,
+  byKind,
+  DTO_KINDS,
+  kindNote,
+  OPERATION_KINDS,
+  projectionLink,
+  projectionTarget,
+  providerSite,
+  simpleName,
+  sortedDtos,
+  statesRecording,
+} from '$core/contracts/contracts-view';
+import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
+import type { GoldenState } from '$core/ui-builder/golden-masters.store';
+import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
+import { Chip } from '$ui/components/chip/chip';
+
+/**
+ * One entity of a repository's entity map (qits-1994), at
+ * `/projects/<slug>/repositories/<repo>/entities/<fully qualified class name>`: its class, table
+ * and marking; why a technical one is; what a projection projects, linked to that entity's page
+ * when its application's bundle is known (`projectionLink`: the application's contracts site and
+ * its map, matched by simple name); its known gap; the DTOs that carry it, most direct link first,
+ * each kind explained; and the operations that hand it out, each linked to the states of the same
+ * bundle that record that operationId (its `golden-masters/index.json`).
+ *
+ * A class the map does not list says so, with a link back to the list.
+ *
+ * Staleness (qits-1270): a release of the repository → the catalog (`EntityMapStore.follow`); the
+ * maps and the index are keyed by version and never go stale.
+ */
+@Component({
+  selector: 'app-entity-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [Chip, ContractsFrame, RouterLink],
+  host: { class: 'block' },
+  template: `
+    <app-contracts-frame
+      [heading]="entity() ? name(entity()!.entity) : 'Entity'"
+      active="entities"
+      [slug]="slug()"
+      [repo]="repo()"
+      [lookup]="lookup()"
+    >
+      @let read = mapRead();
+      @switch (read?.status) {
+        @case ('error') {
+          <p class="map-error m-0 text-sm text-cinnabar-700">
+            Could not read the entity map of {{ siteLabel() }}.
+          </p>
+        }
+        @case ('none') {
+          <p class="no-map m-0 text-sm text-charcoal-brown-600">
+            {{ siteLabel() }} publishes no entity map.
+          </p>
+        }
+        @case ('loaded') {
+          @if (entity(); as e) {
+            <div class="flex flex-col gap-6 text-sm">
+              <section class="flex flex-col gap-2">
+                <p class="m-0">
+                  <a class="back text-xs font-semibold" [routerLink]="listLink()">← All entities</a>
+                </p>
+                <dl class="facts m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                  <dt class="text-charcoal-brown-500">Class</dt>
+                  <dd class="fqn m-0 font-mono break-all">{{ e.entity }}</dd>
+                  <dt class="text-charcoal-brown-500">Table</dt>
+                  <dd class="m-0 font-mono">{{ e.table ?? '—' }}</dd>
+                  <dt class="text-charcoal-brown-500">Marking</dt>
+                  <dd class="marking m-0">{{ e.marking }}</dd>
+                  @if (e.marking === 'technical') {
+                    <dt class="text-charcoal-brown-500">Reason</dt>
+                    <dd class="reason m-0">{{ e.reason ?? '—' }}</dd>
+                  }
+                  @if (e.marking === 'projection') {
+                    <dt class="text-charcoal-brown-500">Projection of</dt>
+                    <dd class="projection m-0 font-mono">
+                      @if (projection(); as p) {
+                        <a [routerLink]="link(p.repository, p.entity)">{{ e.projectionOf }}</a>
+                      } @else {
+                        {{ e.projectionOf ?? '—' }}
+                      }
+                    </dd>
+                  }
+                  @if (e.knownGap; as gap) {
+                    <dt class="text-charcoal-brown-500">Known gap</dt>
+                    <dd class="m-0"><ui-chip class="gap" tone="waiting" [label]="gap" /></dd>
+                  }
+                </dl>
+              </section>
+
+              <section>
+                <h2 class="m-0 mb-1 text-base font-semibold">DTOs</h2>
+                @for (dto of dtos(); track dto.type) {
+                  <div class="dto border-b border-charcoal-brown-100 py-1.5">
+                    <p class="m-0 flex flex-wrap items-center gap-1.5">
+                      <span class="font-mono text-xs font-semibold break-all">{{ dto.type }}</span>
+                      <ui-chip class="kind" [label]="dto.kind" />
+                      @if (dto.via; as via) {
+                        <span class="via text-xs text-charcoal-brown-600"
+                          >via <span class="font-mono">{{ via }}</span></span
+                        >
+                      }
+                    </p>
+                    @if (dtoNote(dto.kind); as note) {
+                      <p class="note m-0 text-xs text-charcoal-brown-600">{{ note }}</p>
+                    }
+                    @if (dto.site; as site) {
+                      <p class="m-0 font-mono text-xs break-all text-charcoal-brown-500">
+                        {{ site }}
+                      </p>
+                    }
+                  </div>
+                } @empty {
+                  <p class="m-0 text-charcoal-brown-600">No operation hands out a DTO of it.</p>
+                }
+              </section>
+
+              <section>
+                <h2 class="m-0 mb-1 text-base font-semibold">Operations</h2>
+                @for (op of operations(); track op.operationId + op.method + op.path) {
+                  <div class="operation border-b border-charcoal-brown-100 py-1.5">
+                    <p class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs">
+                      <span class="font-semibold">{{ op.operationId }}</span>
+                      <span class="rounded bg-charcoal-brown-100 px-1 font-semibold">{{
+                        op.method
+                      }}</span>
+                      <span class="break-all">{{ op.path }}</span>
+                      @if (op.kind; as kind) {
+                        <ui-chip class="kind font-sans" [label]="kind" />
+                      }
+                    </p>
+                    @if (op.dto; as dto) {
+                      <p class="m-0 font-mono text-xs break-all text-charcoal-brown-600">
+                        {{ dto }}
+                      </p>
+                    }
+                    @if (operationNote(op.kind); as note) {
+                      <p class="note m-0 text-xs text-charcoal-brown-600">{{ note }}</p>
+                    }
+                    @let recorded = recordedBy(op.operationId);
+                    @if (recorded === null) {
+                      <p class="m-0 text-xs text-charcoal-brown-500">{{ indexNote() }}</p>
+                    } @else if (recorded.length) {
+                      <p class="states m-0 flex flex-wrap gap-x-2 text-xs">
+                        <span class="text-charcoal-brown-500">Recorded in</span>
+                        @for (s of recorded; track s.slug) {
+                          <a [routerLink]="stateLink(s.slug)">{{ s.name }}</a>
+                        }
+                      </p>
+                    } @else {
+                      <p class="m-0 text-xs text-charcoal-brown-500">No state records it.</p>
+                    }
+                  </div>
+                } @empty {
+                  <p class="m-0 text-charcoal-brown-600">No operation hands it out.</p>
+                }
+              </section>
+            </div>
+          } @else {
+            <p class="unknown m-0 text-sm text-charcoal-brown-600">
+              No such entity in {{ read?.status === 'loaded' ? read.map.application : '' }}
+              {{ site()?.version }}.
+              <a class="back font-semibold" [routerLink]="listLink()">All entities</a>
+            </p>
+          }
+        }
+        @default {
+          <p class="m-0 text-sm text-charcoal-brown-600">Reading the entity map…</p>
+        }
+      }
+    </app-contracts-frame>
+  `,
+})
+export class EntityPage {
+  private readonly entityMaps = inject(EntityMapStore);
+  private readonly bundles = inject(ContractsBundleStore);
+  private readonly route = inject(ActivatedRoute);
+
+  private readonly routeParams = toSignal(
+    this.route.paramMap.pipe(
+      map((params) => ({
+        slug: params.get('slug') ?? '',
+        repo: params.get('repo') ?? '',
+        entity: params.get('entity') ?? '',
+      })),
+    ),
+    { initialValue: { slug: '', repo: '', entity: '' } },
+  );
+  protected readonly slug = computed(() => this.routeParams().slug);
+  protected readonly repo = computed(() => this.routeParams().repo);
+
+  protected readonly lookup = computed(() => bundleOf(this.entityMaps.catalog(), this.repo()));
+
+  protected readonly site = computed(() => {
+    const lookup = this.lookup();
+    return lookup.status === 'loaded' ? lookup.site : null;
+  });
+
+  protected readonly siteLabel = computed(() => {
+    const site = this.site();
+    return site ? `${site.site} ${site.version}` : '';
+  });
+
+  protected readonly mapRead = computed(() => {
+    const site = this.site();
+    return site ? this.entityMaps.mapRead(site) : undefined;
+  });
+
+  protected readonly entity = computed(() => {
+    const read = this.mapRead();
+    const fqn = this.routeParams().entity;
+    return read?.status === 'loaded'
+      ? (read.map.entities.find((e) => e.entity === fqn) ?? null)
+      : null;
+  });
+
+  protected readonly dtos = computed(() => sortedDtos(this.entity()?.dtos ?? []));
+
+  protected readonly operations = computed(() =>
+    byKind(this.entity()?.operations ?? [], OPERATION_KINDS, (op) => op.operationId),
+  );
+
+  private readonly sites = computed((): readonly ContractsSite[] => {
+    const catalog = this.entityMaps.catalog();
+    return catalog?.status === 'loaded' ? catalog.sites : [];
+  });
+
+  /** The site of the application a projection projects, whose map `projectionLink` reads. */
+  private readonly projectionSite = computed(() => {
+    const target = projectionTarget(this.entity()?.projectionOf ?? null);
+    return target ? providerSite(this.sites(), target.application) : null;
+  });
+
+  protected readonly projection = computed(() =>
+    projectionLink(this.entity()?.projectionOf ?? null, this.sites(), (site) =>
+      this.entityMaps.mapRead(site),
+    ),
+  );
+
+  private readonly indexRead = computed(() => {
+    const site = this.site();
+    return site ? this.bundles.indexRead(site) : undefined;
+  });
+
+  /** Why no operation names its states: the index is being read, or could not be. */
+  protected readonly indexNote = computed(() =>
+    this.indexRead()?.status === 'error'
+      ? 'Could not read the golden masters, so which states record it is not known.'
+      : 'Reading the golden masters…',
+  );
+
+  constructor() {
+    const browser = isPlatformBrowser(inject(PLATFORM_ID));
+    if (browser) void this.entityMaps.load();
+    effect(() => {
+      const site = this.site();
+      if (browser && site) {
+        untracked(() => {
+          this.entityMaps.readMap(site);
+          this.bundles.readIndex(site);
+        });
+      }
+    });
+    effect(() => {
+      const site = this.projectionSite();
+      if (browser && site) untracked(() => this.entityMaps.readMap(site));
+    });
+    this.entityMaps.follow(() => this.repo() || undefined, inject(DestroyRef));
+  }
+
+  /** The states that record `operationId`; null until the index is read. */
+  protected recordedBy(operationId: string): readonly GoldenState[] | null {
+    const read = this.indexRead();
+    return read?.status === 'loaded' ? statesRecording(read.index, operationId) : null;
+  }
+
+  protected listLink(): readonly string[] {
+    return entitiesLink(this.slug(), this.repo());
+  }
+
+  protected link(repository: string, entity: string): readonly string[] {
+    return entityLink(this.slug(), repository, entity);
+  }
+
+  protected stateLink(state: string): readonly string[] {
+    return contractStateLink(this.slug(), this.repo(), state);
+  }
+
+  protected name(entity: string): string {
+    return simpleName(entity);
+  }
+
+  protected dtoNote(kind: string): string | null {
+    return kindNote(DTO_KINDS, kind);
+  }
+
+  protected operationNote(kind: string | null): string | null {
+    return kindNote(OPERATION_KINDS, kind);
+  }
+}

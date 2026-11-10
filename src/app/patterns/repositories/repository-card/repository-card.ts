@@ -23,6 +23,7 @@ interface Backup {
  *
  * A repository whose declared archetype is FRONTEND or APP (never judged by its name) links its UI
  * builder at the bottom of the body (qits-1951), relative to the Repositories page it sits on.
+ * A SERVICE links its contracts (provider states) and its entity map there instead (qits-1994).
  */
 @Component({
   selector: 'app-repository-card',
@@ -65,6 +66,20 @@ interface Backup {
             >
           </div>
         }
+        @if (service()) {
+          <div class="flex justify-end gap-3 border-t-[0.5px] border-black/20 px-2 py-1">
+            <a
+              class="contracts text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
+              [routerLink]="[name(), 'contracts']"
+              >Contracts →</a
+            >
+            <a
+              class="entities text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
+              [routerLink]="[name(), 'entities']"
+              >Entities →</a
+            >
+          </div>
+        }
       </card-body>
       <card-expandable>
         <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pt-2 text-[0.8125rem]">
@@ -101,6 +116,9 @@ export class RepositoryCard {
     const archetype = this.entry().repository?.archetype;
     return archetype === 'FRONTEND' || archetype === 'APP';
   });
+
+  /** Whether the repository declares itself a service, whose contracts and entities have pages. */
+  protected readonly service = computed(() => this.entry().repository?.archetype === 'SERVICE');
 
   protected readonly backup = computed((): Backup => {
     const repository = this.entry().repository;

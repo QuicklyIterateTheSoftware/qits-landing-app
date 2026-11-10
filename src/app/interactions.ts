@@ -376,6 +376,28 @@ export const INTERACTIONS = {
    */
   'show-ui-builder-call-details':
     'Opening a call in the UI builder shows its state and recorded response',
+  /**
+   * `contracts.page.ts` via `EntityMapStore.load` and `ContractsBundleStore.readIndex` (qits-1994):
+   * finds the repository's `@contracts/` docs site by its newest version's `git.repository.name`
+   * and reads its `golden-masters/index.json`, to list the provider states it records.
+   */
+  'show-repository-contracts': 'The contracts page lists the provider states a service records',
+  /**
+   * `contract-state.page.ts` via `ContractsBundleStore.readIndex` and `readRecording` (qits-1994):
+   * reads the bundle's `golden-masters/index.json` and each recorded response of the state.
+   */
+  'show-contract-state': 'A provider state’s page shows its operations and recorded responses',
+  /**
+   * `entities.page.ts` via `EntityMapStore.load` and `readMap` (qits-1994): finds the repository's
+   * `@contracts/` docs site and reads its `entities.json`, to list its entities by marking.
+   */
+  'show-repository-entities': 'The entities page lists a service’s persisted entities by marking',
+  /**
+   * `entity.page.ts` via `EntityMapStore.readMap` and `ContractsBundleStore.readIndex` (qits-1994):
+   * reads the bundle's `entities.json` (and a projected application's), and its
+   * `golden-masters/index.json` for the states recording each operation.
+   */
+  'show-entity': 'An entity’s page shows its DTOs, operations and the states recording them',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */
