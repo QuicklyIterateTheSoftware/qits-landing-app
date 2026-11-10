@@ -10,7 +10,13 @@ import {
   type GoldenOperation,
 } from '$core/ui-builder/golden-masters.store';
 import { getDocsFile } from '../../api/artifacts';
-import { asDatabaseIndex, mermaidOf, unitOf, type DatabaseIndex } from './database-diagram';
+import {
+  asDatabaseIndex,
+  mermaidOf,
+  tableOf,
+  unitOf,
+  type DatabaseIndex,
+} from './database-diagram';
 
 /** The docs repository of qits-artifacts' store, where `@contracts/<app>` sites are published. */
 const REPOSITORY = 'docs';
@@ -50,8 +56,16 @@ export type DiagramRead =
    * the entity: no diagram published, not an error.
    */
   | { readonly status: 'none' }
-  /** `definition` is the mermaid block's body, without the fence. */
-  | { readonly status: 'loaded'; readonly unit: string; readonly definition: string };
+  /**
+   * `definition` is the mermaid block's body, without the fence; `table` is the entity's own table
+   * as the index names it (null when it names none), which the diagram draws as one of its boxes.
+   */
+  | {
+      readonly status: 'loaded';
+      readonly unit: string;
+      readonly table: string | null;
+      readonly definition: string;
+    };
 
 interface ContractsBundleState {
   /** By `siteKey`. */
@@ -164,7 +178,7 @@ export const ContractsBundleStore = signalStore(
       const definition = mermaidOf(markdown);
       return definition === null
         ? { status: 'error' }
-        : { status: 'loaded', unit: unit.unit, definition };
+        : { status: 'loaded', unit: unit.unit, table: tableOf(unit, entity), definition };
     }
 
     async function readDiagram(site: ContractsSite, entity: string): Promise<void> {

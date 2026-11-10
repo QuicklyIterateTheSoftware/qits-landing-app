@@ -541,7 +541,10 @@ The entity page also draws the ER diagram of the persistence unit holding the en
 `ContractsBundleStore.readDiagram` reads the bundle's `database/index.json` (`databaseIndexOf`,
 checked by `asDatabaseIndex` in `core/contracts/database-diagram.ts`), finds the unit listing the
 entity, reads its `database/<file>.md` as text (`diagramFileOf`) and hands the fenced mermaid block
-to `<qits-mermaid-diagram>` (`provideQitsMermaid()` in `app.config.ts` loads mermaid lazily). A 404
+to `<qits-mermaid-diagram>` (`provideQitsMermaid()` in `app.config.ts` loads mermaid lazily),
+inside `ErDiagramBox` (`patterns/contracts/er-diagram-box/`): the library fits the svg to its width,
+so once drawn (and on each redraw) the box sets its size from its `viewBox` and scrolls itself, never
+the window, to the group mermaid names `…-entity-<table>-<n>` for the entity's table. A 404
 on either file, or no unit listing the entity, is the line "No ER diagram published for this
 entity.", not an error. No qits-artifacts recording holds a bundle's `database/` files yet: the pact
 binds the index as the JSON `entities.json` read and the diagram as the docs store's Markdown answer

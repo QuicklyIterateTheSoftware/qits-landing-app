@@ -1,4 +1,4 @@
-import { asDatabaseIndex, mermaidOf, unitOf } from './database-diagram';
+import { asDatabaseIndex, mermaidOf, tableOf, unitOf } from './database-diagram';
 
 /**
  * The ER diagrams' files (qits-2014), in the shape `qits database diagram` publishes them
@@ -49,6 +49,19 @@ describe('unitOf', () => {
 
   it('is null for an entity no unit lists', () => {
     expect(unitOf(index, 'eu.wohlben.qits.entities.domain.Nothing')).toBeNull();
+  });
+});
+
+describe('tableOf', () => {
+  const [epics, projects] = asDatabaseIndex(INDEX)!.units;
+
+  it('is the table the unit names for the entity', () => {
+    expect(tableOf(epics, 'eu.wohlben.qits.entities.entity.AuditEntry')).toBe('AuditEntry');
+  });
+
+  it('is null when the unit names no table for it, or does not list it', () => {
+    expect(tableOf(projects, 'eu.wohlben.qits.entities.domain.Project')).toBeNull();
+    expect(tableOf(epics, 'eu.wohlben.qits.entities.domain.Project')).toBeNull();
   });
 });
 

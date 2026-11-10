@@ -31,6 +31,7 @@ import {
 import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
 import type { GoldenState } from '$core/ui-builder/golden-masters.store';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
+import { ErDiagramBox } from '$patterns/contracts/er-diagram-box/er-diagram-box';
 import { Chip } from '$ui/components/chip/chip';
 
 /**
@@ -42,8 +43,9 @@ import { Chip } from '$ui/components/chip/chip';
  * each kind explained; and the operations that hand it out, each linked to the states of the same
  * bundle that record that operationId (its `golden-masters/index.json`); and the ER diagram of the
  * persistence unit holding it (qits-2014: the bundle's `database/index.json` names the unit, its
- * `database/<file>.md` holds the diagram, `ContractsBundleStore.readDiagram`). A bundle publishing
- * no diagram, or none for this entity's unit, says so in a line; it is not an error.
+ * `database/<file>.md` holds the diagram, `ContractsBundleStore.readDiagram`), drawn at its natural
+ * size in a scroll box scrolled to the entity's table (`ErDiagramBox`). A bundle publishing no
+ * diagram, or none for this entity's unit, says so in a line; it is not an error.
  *
  * A class the map does not list says so, with a link back to the list.
  *
@@ -53,7 +55,7 @@ import { Chip } from '$ui/components/chip/chip';
 @Component({
   selector: 'app-entity-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, ContractsFrame, QitsMermaidDiagram, RouterLink],
+  imports: [Chip, ContractsFrame, ErDiagramBox, QitsMermaidDiagram, RouterLink],
   host: { class: 'block' },
   template: `
     <app-contracts-frame
@@ -117,10 +119,16 @@ import { Chip } from '$ui/components/chip/chip';
                   <p class="unit m-0 mb-2 text-xs text-charcoal-brown-600">
                     Persistence unit <span class="font-mono">{{ diagram.unit }}</span>
                   </p>
-                  <qits-mermaid-diagram
-                    [definition]="diagram.definition"
-                    [label]="'ER diagram of the persistence unit ' + diagram.unit"
-                  />
+                  <div
+                    class="diagram-box max-h-[70vh] overflow-auto rounded border border-charcoal-brown-100"
+                    [appErDiagramBox]="diagram.table"
+                  >
+                    <qits-mermaid-diagram
+                      class="w-max min-w-full"
+                      [definition]="diagram.definition"
+                      [label]="'ER diagram of the persistence unit ' + diagram.unit"
+                    />
+                  </div>
                 } @else if (diagram?.status === 'none') {
                   <p class="no-diagram m-0 text-charcoal-brown-600">
                     No ER diagram published for this entity.

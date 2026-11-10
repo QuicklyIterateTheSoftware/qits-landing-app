@@ -70,6 +70,11 @@ export function unitOf(index: DatabaseIndex, entity: string): DatabaseUnit | nul
   return index.units.find((unit) => unit.entities.some((e) => e.entity === entity)) ?? null;
 }
 
+/** The table `unit` names for `entity` (a fully qualified class name); null when it names none. */
+export function tableOf(unit: DatabaseUnit, entity: string): string | null {
+  return unit.entities.find((e) => e.entity === entity)?.table ?? null;
+}
+
 /**
  * The body of the first fenced `mermaid` block in `markdown` (the definition, without the fence),
  * trimmed; null when it holds none.

@@ -72,10 +72,42 @@ const DIAGRAM_FILE = [
   '',
 ].join('\n');
 
+/**
+ * What mermaid draws for an `erDiagram`, cut down: a 1200×800 viewBox it fits to its width, and
+ * each table's group named `<id>-entity-<table>-<n>`; `project_member` is there to show the match
+ * is the whole table name.
+ */
+const drawn = (id: string) =>
+  `<svg class="drawn" width="100%" style="max-width: 1200px;" viewBox="0 0 1200 800">` +
+  `<g id="${id}-entity-project_member-1"></g><g id="${id}-entity-project-2"></g></svg>`;
+
 const mermaid = {
   initialize: vi.fn(),
-  render: vi.fn(async () => ({ svg: '<svg class="drawn"></svg>' })),
+  render: vi.fn(async (id: string) => ({ svg: drawn(id) })),
 } satisfies QitsMermaid;
+
+type Rect = Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+
+/**
+ * jsdom lays nothing out, so the box and the groups are given rectangles: the box 400×300 at
+ * (100, 50), every group 200×100 at (900, 500) as the box shows it unscrolled.
+ */
+function layOut(): void {
+  const box: Rect = { left: 100, top: 50, width: 400, height: 300 };
+  const group: Rect = { left: 900, top: 500, width: 200, height: 100 };
+  const of = (element: Element) =>
+    element.classList.contains('diagram-box') ? box : element.localName === 'g' ? group : null;
+  vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+    const rect = of(this) ?? { left: 0, top: 0, width: 0, height: 0 };
+    return { ...rect, x: rect.left, y: rect.top, right: 0, bottom: 0, toJSON: () => rect };
+  });
+  vi.spyOn(Element.prototype, 'clientWidth', 'get').mockImplementation(function (this: Element) {
+    return of(this)?.width ?? 0;
+  });
+  vi.spyOn(Element.prototype, 'clientHeight', 'get').mockImplementation(function (this: Element) {
+    return of(this)?.height ?? 0;
+  });
+}
 
 describe('EntityPage', () => {
   let http: HttpTestingController;
@@ -95,7 +127,10 @@ describe('EntityPage', () => {
     }
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    http.verify();
+  });
 
   const url = (entity: string) => `/projects/${SLUG}/repositories/${REPO}/entities/${entity}`;
 
@@ -188,6 +223,40 @@ describe('EntityPage', () => {
       section.querySelector('qits-mermaid-diagram [role="img"]')?.getAttribute('aria-label'),
     ).toBe('ER diagram of the persistence unit projects');
     expect(section.querySelector('.no-diagram')).toBeNull();
+  });
+
+  it('draws the ER diagram at its natural size, scrolled to the entity’s table', async () => {
+    layOut();
+    const { element, answer } = await openContractsPage(http, url(PROJECT));
+    await answer('entities.json', MAP);
+    await answer('golden-masters/index.json', INDEX);
+    await answer('database/index.json', DATABASE_INDEX);
+    await answer('database/projects.md', DIAGRAM_FILE);
+
+    const box = element.querySelector<HTMLElement>('.er-diagram .diagram-box')!;
+    const svg = box.querySelector<SVGSVGElement>('svg.drawn')!;
+    expect(svg.style.width).toBe('1200px');
+    expect(svg.style.height).toBe('800px');
+    expect(svg.style.maxWidth).toBe('none');
+    // `project`'s group, not `project_member`'s (whose rectangle is the same): its centre in the
+    // box's content, (900 - 100 + 100, 500 - 50 + 50), less half the 400×300 box.
+    expect(svg.querySelector('g[id$="-entity-project-2"]')).not.toBeNull();
+    expect(box.scrollLeft).toBe(900 - 100 + 100 - 200);
+    expect(box.scrollTop).toBe(500 - 50 + 50 - 150);
+  });
+
+  it('leaves the ER diagram at the top-left when it draws no box for the entity’s table', async () => {
+    layOut();
+    const { element, answer } = await openContractsPage(http, url(LEGACY), versionsAt('2100.1.3'));
+    await answer('entities.json', MAP, '2100.1.3');
+    await answer('golden-masters/index.json', INDEX, '2100.1.3');
+    await answer('database/index.json', DATABASE_INDEX, '2100.1.3');
+    await answer('database/projects.md', DIAGRAM_FILE, '2100.1.3');
+
+    const box = element.querySelector<HTMLElement>('.er-diagram .diagram-box')!;
+    expect(box.querySelector<SVGSVGElement>('svg.drawn')?.style.width).toBe('1200px');
+    expect(box.scrollLeft).toBe(0);
+    expect(box.scrollTop).toBe(0);
   });
 
   it('says no ER diagram is published when the bundle has no database index', async () => {
