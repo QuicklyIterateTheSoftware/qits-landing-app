@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { SelectedProject } from '$core/projects/selected-project';
+import { InProgressViewStore } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -11,6 +12,11 @@ import { WorkList } from '$patterns/work/work-list/work-list';
  * carries no such button — qits-projects-service refuses any caller's move of a TICKET to DONE
  * (qits-150), and the platform sets it itself once the workspace's wrapper release request is
  * finalized — and shows a quiet hint instead.
+ *
+ * It follows the In Progress tab's view (qits-2051, `InProgressViewStore`). With epic boards, a
+ * VERIFIED feature or task of a root epic still on the board (READY_FOR_DEV to VERIFYING) is not
+ * listed: that epic's own board shows it in its Verified column. Inline, the one board has no
+ * Verified column, so they are listed here, with their epic as context.
  */
 @Component({
   selector: 'app-work-acceptance-page',
@@ -30,8 +36,11 @@ import { WorkList } from '$patterns/work/work-list/work-list';
 export class WorkAcceptancePage {
   protected readonly work = inject(SelectedWork);
   private readonly selected = inject(SelectedProject);
+  private readonly views = inject(InProgressViewStore);
 
-  protected readonly acceptance = computed(() => this.work.graph().tree('acceptance'));
+  protected readonly acceptance = computed(() =>
+    this.work.graph().tree('acceptance', { withoutEpicBoards: this.views.view() === 'epics' }),
+  );
 
   protected readonly detailPath = computed(
     () => `/projects/${this.selected.slug() ?? ''}/work/detail`,

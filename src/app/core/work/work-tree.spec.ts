@@ -304,6 +304,63 @@ describe('WorkGraph', () => {
     expect(taskDistribution(backlog)).toEqual({ columns: [0, 0, 0, 0], verified: 0, total: 3 });
   });
 
+  // qits-2051: In Progress's epic boards view draws each root epic on the board with its own board;
+  // the board for the rest, and Acceptance, leave those epics' trees out.
+  describe('epic boards', () => {
+    const work = () => [
+      entry('ticket', 'TICKET', 'IMPLEMENTING'),
+      ...withStatus({ shipped: 'VERIFIED', t1: 'VERIFIED' }),
+      entry('closed', 'EPIC', 'VERIFIED'),
+      entry('late', 'FEATURE', 'IMPLEMENTING', 'closed'),
+      entry('late-task', 'TASK', 'VERIFIED', 'late'),
+    ];
+
+    it('gives each root epic on the board with its whole subtree, in the trees’ order', () => {
+      const entries = [
+        ...work(),
+        entry('ready', 'EPIC', 'READY_FOR_DEV'),
+        entry('verifying', 'EPIC', 'VERIFYING'),
+        entry('refined', 'EPIC', 'REFINED'),
+      ];
+      const graph = new WorkGraph(entries);
+      expect(graph.epicBoards().map(shape)).toEqual([
+        'epic(shipped(t1 t2) open(t3))',
+        'ready',
+        'verifying',
+      ]);
+    });
+
+    it('leaves those epics’ trees off the board for the rest, an epic off the board as context', () => {
+      const graph = new WorkGraph(work());
+      expect(graph.tree('board').map(shape)).toEqual([
+        'epic@1(~shipped(t2@1) open@0(t3@0))',
+        'ticket@1',
+        '~closed(late@1)',
+      ]);
+      expect(graph.tree('board', { withoutEpicBoards: true }).map(shape)).toEqual([
+        'ticket@1',
+        '~closed(late@1)',
+      ]);
+    });
+
+    it('leaves a board epic’s verified features and tasks out of Acceptance, not another epic’s', () => {
+      const graph = new WorkGraph(work());
+      expect(graph.tree('acceptance').map(shape)).toEqual([
+        '~epic(shipped(t1))',
+        'closed(~late(late-task))',
+      ]);
+      expect(graph.tree('acceptance', { withoutEpicBoards: true }).map(shape)).toEqual([
+        'closed(~late(late-task))',
+      ]);
+    });
+
+    it('counts as before: the count is of epics and tickets by their own status', () => {
+      const graph = new WorkGraph(work());
+      expect(graph.count('board')).toBe(2);
+      expect(graph.count('acceptance')).toBe(1);
+    });
+  });
+
   describe('order', () => {
     const numbered = (
       id: string,

@@ -1,3 +1,4 @@
+import { hasEpicBoard } from './epic-board';
 import type { WorkEntry } from './work.consumes';
 import { BOARD_COLUMNS } from './work-statuses';
 
@@ -23,6 +24,12 @@ import { BOARD_COLUMNS } from './work-statuses';
  *   epic is in the schedule phase, so, like a REPORTED one, it is not on the board.
  * - **Tree** for one phase: every entity in that phase, plus its ancestors, which appear as
  *   `context` (a quiet header for a parent that lives elsewhere).
+ * - **Epic boards** (qits-2051): In Progress's default view draws each root epic on the board
+ *   (READY_FOR_DEV to VERIFYING, `hasEpicBoard`) with its own epic board, its whole subtree
+ *   (`epicBoards`), Verified column included. `tree(phase, { withoutEpicBoards: true })` leaves
+ *   such an epic's tree out: the board for the rest, and Acceptance, which would list again what
+ *   that board's Verified column shows. An epic off the board keeps its pieces that are on it, as
+ *   context, so they never vanish from every tab.
  * - **Order**: one order everywhere, independent of status, column and update time
  *   (`byPriority`, qits-753): the roots (epics and tickets together) by their priority, highest
  *   first, those nobody ranked after every ranked one, ties by the number of their qualified id;
@@ -76,6 +83,15 @@ export interface TaskTally {
   /** Their own status is VERIFIED or DONE. */
   readonly verified: number;
   readonly total: number;
+}
+
+/** How {@link WorkGraph.tree} draws a phase. */
+export interface TreeOptions {
+  /**
+   * Leaves out every entity whose root epic is drawn with its own epic board (`hasEpicBoard`), the
+   * epic included (qits-2051).
+   */
+  readonly withoutEpicBoards?: boolean;
 }
 
 /** A project's work, indexed for the questions below. */
@@ -175,9 +191,33 @@ export class WorkGraph {
     return { verified, total };
   }
 
-  /** The tree of every entity in `phase`, with their ancestors as context, in tree order. */
-  tree(phase: Phase): readonly WorkNode[] {
-    return this.treeWhere((entry) => this.phaseOf(entry) === phase, phase === 'board');
+  /**
+   * The tree of every entity in `phase`, with their ancestors as context, in tree order. With
+   * `withoutEpicBoards`, without the trees {@link epicBoards} draws.
+   */
+  tree(phase: Phase, options: TreeOptions = {}): readonly WorkNode[] {
+    const apart = !!options.withoutEpicBoards;
+    return this.treeWhere(
+      (entry) => this.phaseOf(entry) === phase && !(apart && this.onEpicBoard(entry)),
+      phase === 'board',
+    );
+  }
+
+  /**
+   * Every root epic drawn with its own epic board (its own status READY_FOR_DEV to VERIFYING,
+   * `hasEpicBoard`), each with its whole subtree as {@link nodeOf} gives it, in the trees' order.
+   */
+  epicBoards(): readonly WorkNode[] {
+    return this.entries
+      .filter(
+        (entry) =>
+          entry.id &&
+          !this.parentOf.has(entry.id) &&
+          entry.archetype === 'EPIC' &&
+          hasEpicBoard(entry),
+      )
+      .sort(byPriority)
+      .map((epic) => this.subtree(epic));
   }
 
   /**
@@ -237,6 +277,14 @@ export class WorkGraph {
       .sort(byPriority)
       .map((child) => this.subtree(child));
     return { entry, children, context: false, tasks: this.tasksBelow(entry) };
+  }
+
+  /** Whether `entry` is in a tree {@link epicBoards} draws: its root is an epic with a board. */
+  private onEpicBoard(entry: WorkEntry): boolean {
+    let root = entry;
+    for (let parent = this.parentEntry(root); parent; parent = this.parentEntry(root))
+      root = parent;
+    return root.archetype === 'EPIC' && hasEpicBoard(root);
   }
 
   private parentEntry(entry: WorkEntry): WorkEntry | undefined {
