@@ -589,6 +589,49 @@ export function routeOutcomes(
     .map((entry) => joinOutcome(manifest, outcomes, entry, fullPath));
 }
 
+/** A route's mark in the tree (qits-2045): its page outcomes, and how many of them are gaps. */
+export interface OutcomeMark {
+  readonly outcomes: number;
+  /** The outcomes no test reaches, or no freeze shows the trigger of. */
+  readonly gaps: number;
+}
+
+/**
+ * Each route's {@link OutcomeMark}, keyed by full path (qits-2045): its page outcomes as
+ * `routeOutcomes` joins them, a gap being one no test reaches or no freeze shows. Shared outcomes are
+ * not counted. Empty when the manifest has no readable outcomes.
+ */
+export function routeOutcomeMarks(manifest: RoutesManifest): ReadonlyMap<string, OutcomeMark> {
+  const outcomes = outcomesOf(manifest);
+  const marks = new Map<string, OutcomeMark>();
+  if (!outcomes) return marks;
+  for (const entry of outcomes.declared) {
+    if (entry.global || entry.route === null || marks.has(entry.route)) continue;
+    const joined = routeOutcomes(manifest, entry.route);
+    marks.set(entry.route, {
+      outcomes: joined.length,
+      gaps: joined.filter((o) => o.reachedBy.length === 0 || o.triggerFreezes.length === 0).length,
+    });
+  }
+  return marks;
+}
+
+/**
+ * How far the app is in declaring outcomes (qits-2045): of the tree's `route` rows (`pages`), how
+ * many have a page outcome (`declaring`).
+ */
+export function outcomeProgress(
+  manifest: RoutesManifest,
+  rows: readonly TreeRow[],
+): { readonly declaring: number; readonly pages: number } {
+  const marks = routeOutcomeMarks(manifest);
+  const pages = rows.filter((row) => row.kind === 'route');
+  return {
+    declaring: pages.filter((row) => (marks.get(row.fullPath)?.outcomes ?? 0) > 0).length,
+    pages: pages.length,
+  };
+}
+
 /** The shared outcomes of one scope (qits-2006): app-wide (`route: null`) or a layout's route. */
 export interface SharedOutcomeGroup {
   readonly route: string | null;

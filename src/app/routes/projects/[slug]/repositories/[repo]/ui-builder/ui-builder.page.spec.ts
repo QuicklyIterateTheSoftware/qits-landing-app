@@ -740,9 +740,9 @@ describe('UiBuilderPage', () => {
           ?.closest('.route-row')
           ?.textContent?.replace(/\s+/g, ''),
       ).toBe('projects0');
-      expect(element.querySelector('aside .no-outcomes')?.textContent?.trim()).toBe(
-        'This route declares no outcomes.',
-      );
+      expect(
+        element.querySelector('aside .no-outcomes')?.textContent?.replace(/\s+/g, ' ').trim(),
+      ).toBe('Not declared yet: 1 of 2 pages declares outcomes.');
     });
 
     it('says why no outcome is listed, and still shows the routes', async () => {
@@ -754,7 +754,7 @@ describe('UiBuilderPage', () => {
         [withOutcomes({ declared: [], fired: [] }), 'qits-landing-app declares no outcomes yet.'],
         [
           withOutcomes({ declared: [OUTCOMES.declared[4]], fired: [] }),
-          'This route declares no outcomes.',
+          'Not declared yet: 0 of 2 pages declare outcomes.',
         ],
         [withOutcomes({ declared: 'x' }), "Could not read this bundle's outcomes."],
       ] as const) {
@@ -769,8 +769,84 @@ describe('UiBuilderPage', () => {
         );
         await answerFreeze(ERROR_FREEZE, fixture);
         expect(texts('nav .route-row')).toHaveLength(6);
-        expect(element.querySelector('aside .no-outcomes')?.textContent?.trim()).toBe(expected);
+        expect(
+          element.querySelector('aside .no-outcomes')?.textContent?.replace(/\s+/g, ' ').trim(),
+        ).toBe(expected);
         expect(element.querySelectorAll('aside li.outcome')).toHaveLength(0);
+        http.verify();
+      }
+    });
+
+    /** The tree's outcome marks (qits-2045): each row's segment with its mark's label, or null. */
+    function marks(element: HTMLElement): [string, string | null][] {
+      return [...element.querySelectorAll<HTMLElement>('nav .route-row')].map((r) => [
+        r.querySelector('button.route > span')!.textContent!.trim(),
+        r.querySelector('.outcome-mark')?.getAttribute('aria-label') ?? null,
+      ]);
+    }
+
+    it('marks a route that declares page outcomes, and only it (qits-2045)', async () => {
+      const reached = {
+        ...OUTCOMES,
+        declared: OUTCOMES.declared.filter(
+          (d) => d.outcome !== 'lost' && d.outcome !== 'unreached',
+        ),
+      };
+      const { element } = await renderOutcomes(reached);
+      const mark = element.querySelector<HTMLElement>('nav .outcome-mark')!;
+      expect(mark.textContent?.trim()).toBe('◆2');
+      expect(mark.getAttribute('role')).toBe('img');
+      expect(mark.getAttribute('title')).toBe('2 outcomes');
+      expect(mark.classList.contains('gap')).toBe(false);
+      // The layout's and app-wide outcomes mark no row: not the root, not the redirect.
+      expect(marks(element)).toEqual([
+        ['/', null],
+        ['projects', null],
+        [':slug', null],
+        ['repositories', '2 outcomes'],
+        ['workspaces', null],
+        ['**', null],
+      ]);
+    });
+
+    it('marks a route with gaps in the gap tone, its label counting them (qits-2045)', async () => {
+      const { element } = await renderOutcomes();
+      const gap = element.querySelectorAll<HTMLElement>('nav .outcome-mark.gap');
+      expect(gap).toHaveLength(1);
+      expect(gap[0].textContent?.trim()).toBe('◆4');
+      expect(gap[0].getAttribute('aria-label')).toBe('4 outcomes, 2 gaps');
+      expect(gap[0].closest('.route-row')?.querySelector('button.route')?.textContent?.trim()).toBe(
+        'repositories',
+      );
+
+      TestBed.resetTestingModule();
+      configure();
+      const one = await renderOutcomes({
+        declared: [OUTCOMES.declared[3]],
+        fired: [],
+      });
+      expect(one.element.querySelector('nav .outcome-mark.gap')?.getAttribute('aria-label')).toBe(
+        '1 outcome, 1 gap',
+      );
+    });
+
+    it('marks no route when the outcomes are absent or unreadable (qits-2045)', async () => {
+      for (const manifest of [
+        artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile'),
+        withOutcomes({ declared: 'x' }),
+      ]) {
+        TestBed.resetTestingModule();
+        configure();
+        const { fixture, element, texts } = await render(
+          'qits-landing-app',
+          undefined,
+          undefined,
+          '',
+          manifest,
+        );
+        await answerFreeze(ERROR_FREEZE, fixture);
+        expect(texts('nav .route-row')).toHaveLength(6);
+        expect(element.querySelectorAll('nav .outcome-mark')).toHaveLength(0);
         http.verify();
       }
     });

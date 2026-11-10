@@ -29,14 +29,17 @@ import {
   inOutcomeScope,
   matchRoute,
   outcomeLeads,
+  outcomeProgress,
   routeCalls,
   routeFreezes,
+  routeOutcomeMarks,
   routeOutcomes,
   routeTree,
   sharedOutcomes,
   type Freeze,
   type FreezeRecord,
   type JoinedOutcome,
+  type OutcomeMark,
   type OutcomeTest,
   type TreeRow,
 } from '$core/ui-builder/routes-manifest';
@@ -85,7 +88,9 @@ interface EntityGroup {
  *
  * - Tree (left): `routeTree` of the manifest. Each route shows its state count. A segment without a
  *   route is greyed and disabled; a redirect and `**` are shown and not selectable. It opens on the
- *   first route with states; choosing another route goes back to its first state.
+ *   first route with states; choosing another route goes back to its first state. A route that
+ *   declares page outcomes carries a mark before its count (qits-2045, `routeOutcomeMarks`): how
+ *   many, toned as the gap chips when some are gaps, its label saying how many of each.
  * - States (middle): the route's freezes by name, as tabs that wrap. The selected one is read on
  *   demand and drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with `allow-scripts`
  *   (see `preview`). A link clicked inside it selects the route it leads to (qits-1949, see
@@ -124,8 +129,9 @@ interface EntityGroup {
  *   target: their line says where they lead (`outcomeLeads`). A `triggered: false` outcome (a guard,
  *   a callback's result) has no "no screenshot shows its trigger" gap. An outcome `@qits/angular`
  *   declares (its `file` under `@qits/angular/`) says so, its file in the tooltip, and links no
- *   source. A bundle without the section, with an unreadable one, or an app or route that declares
- *   none says so in one line instead of the list.
+ *   source. A bundle without the section, with an unreadable one, or an app that declares none says
+ *   so in one line instead of the list; a route that declares none says how many of the tree's pages
+ *   do (qits-2045, `outcomeProgress`).
  * - The Outcomes tab (qits-2006, owner decision 3 of qits-2000): the shared outcomes, a layout's and
  *   app-wide (`sharedOutcomes`), listed once, by scope, with the same rows. The right panel never
  *   repeats them; it ends with a line counting those in the route's scope, which opens the tab.
@@ -217,6 +223,26 @@ interface EntityGroup {
                               >
                             }
                           </button>
+                          @if (
+                            row.kind === 'route' ? outcomeMarks().get(row.fullPath) : null;
+                            as mark
+                          ) {
+                            @if (mark.outcomes > 0) {
+                              <span
+                                class="outcome-mark mr-1 shrink-0 rounded px-1 text-[0.6875rem] leading-4 tabular-nums"
+                                [class.gap]="mark.gaps > 0"
+                                [class]="
+                                  mark.gaps > 0
+                                    ? 'bg-sunflower-gold-100 text-sunflower-gold-800'
+                                    : 'opacity-70'
+                                "
+                                role="img"
+                                [attr.aria-label]="markLabel(mark)"
+                                [title]="markLabel(mark)"
+                                >◆{{ mark.outcomes }}</span
+                              >
+                            }
+                          }
                           @if (row.parent) {
                             <!-- − on hover, + while folded: pseudo-content, so the row's text stays its count. -->
                             <button
@@ -511,7 +537,10 @@ interface EntityGroup {
                           />
                         } @empty {
                           <li class="no-outcomes text-charcoal-brown-600">
-                            This route declares no outcomes.
+                            Not declared yet: {{ outcomeProgress().declaring }} of
+                            {{ outcomeProgress().pages }} pages
+                            {{ outcomeProgress().declaring === 1 ? 'declares' : 'declare' }}
+                            outcomes.
                           </li>
                         }
                       </ul>
@@ -882,6 +911,24 @@ export class UiBuilderPage {
     const path = this.selectedPath();
     return bundle && path !== null ? routeOutcomes(bundle.manifest, path) : [];
   });
+
+  /** Each route's outcome mark in the tree (`routeOutcomeMarks`, qits-2045). */
+  protected readonly outcomeMarks = computed(() => {
+    const bundle = this.loaded();
+    return bundle ? routeOutcomeMarks(bundle.manifest) : new Map<string, OutcomeMark>();
+  });
+
+  /** How many of the tree's pages declare outcomes (`outcomeProgress`, qits-2045). */
+  protected readonly outcomeProgress = computed(() => {
+    const bundle = this.loaded();
+    return bundle ? outcomeProgress(bundle.manifest, this.rows()) : { declaring: 0, pages: 0 };
+  });
+
+  /** A mark's label: `5 outcomes`, with its gaps when it has any (`5 outcomes, 2 gaps`). */
+  protected markLabel({ outcomes, gaps }: OutcomeMark): string {
+    const label = `${outcomes} ${outcomes === 1 ? 'outcome' : 'outcomes'}`;
+    return gaps ? `${label}, ${gaps} ${gaps === 1 ? 'gap' : 'gaps'}` : label;
+  }
 
   /** The Outcomes tab's groups: the layouts' and app-wide outcomes (`sharedOutcomes`, qits-2006). */
   protected readonly sharedGroups = computed(() => {

@@ -6,8 +6,10 @@ import {
   inOutcomeScope,
   matchRoute,
   outcomeLeads,
+  outcomeProgress,
   routeCalls,
   routeFreezes,
+  routeOutcomeMarks,
   routeOutcomes,
   routeTree,
   sharedOutcomes,
@@ -528,6 +530,73 @@ describe('routeOutcomes', () => {
   it('has none without a readable outcomes section', () => {
     expect(routeOutcomes(RECORDED, REPOSITORIES)).toEqual([]);
     expect(routeOutcomes({ ...OUTCOMES, outcomes: 'invalid' }, CREATE)).toEqual([]);
+  });
+});
+
+describe('routeOutcomeMarks (qits-2045)', () => {
+  /** A page outcome of the detail page, which `ITEM` shows the triggers of when it is named. */
+  const detail = (outcome: string): DeclaredOutcome => ({
+    ...page(outcome, 'stay'),
+    route: DETAIL,
+    interaction: 'work-detail',
+  });
+
+  it('counts each route’s page outcomes and its gaps, never a shared one', () => {
+    const marks = routeOutcomeMarks(OUTCOMES);
+    // refused and created are reached and shown; lost, cancelled and empty are neither.
+    expect(marks.get(CREATE)).toEqual({ outcomes: 5, gaps: 3 });
+    // SWITCHED (the layout's) and SIGN_OUT (app-wide) mark no route.
+    expect([...marks.keys()]).toEqual([CREATE]);
+  });
+
+  it('counts an outcome no test reaches as a gap', () => {
+    const manifest: RoutesManifest = {
+      ...OUTCOMES,
+      freezes: [FORM, REFUSED, shot(DETAIL, 'loaded', ['work-detail:closed']), LIST, OLD],
+      outcomes: { declared: [detail('closed')], fired: [] },
+    };
+    expect(routeOutcomeMarks(manifest).get(DETAIL)).toEqual({ outcomes: 1, gaps: 1 });
+  });
+
+  it('counts an outcome no freeze shows the trigger of as a gap', () => {
+    const reached: RoutesManifest = {
+      ...OUTCOMES,
+      outcomes: {
+        declared: [detail('closed')],
+        fired: [fire('closes the item', 'work-detail', 'closed', DETAIL)],
+      },
+    };
+    expect(routeOutcomeMarks(reached).get(DETAIL)).toEqual({ outcomes: 1, gaps: 1 });
+    const shown: RoutesManifest = {
+      ...reached,
+      freezes: [FORM, REFUSED, shot(DETAIL, 'loaded', ['work-detail:closed']), LIST, OLD],
+    };
+    expect(routeOutcomeMarks(shown).get(DETAIL)).toEqual({ outcomes: 1, gaps: 0 });
+  });
+
+  it('is empty without a readable outcomes section', () => {
+    expect(routeOutcomeMarks(RECORDED).size).toBe(0);
+    expect(routeOutcomeMarks({ ...OUTCOMES, outcomes: 'invalid' }).size).toBe(0);
+  });
+});
+
+describe('outcomeProgress (qits-2045)', () => {
+  it('counts the route rows that declare a page outcome among all route rows', () => {
+    // Route rows: the root, projects, create, detail, in-progress (work is a redirect, `**` a
+    // wildcard).
+    const rows = routeTree(OUTCOMES);
+    expect(rows.filter((row) => row.kind === 'route').map((row) => row.fullPath)).toEqual([
+      '',
+      'projects',
+      CREATE,
+      DETAIL,
+      `${WORK}/in-progress`,
+    ]);
+    expect(outcomeProgress(OUTCOMES, rows)).toEqual({ declaring: 1, pages: 5 });
+    expect(outcomeProgress({ ...OUTCOMES, outcomes: 'invalid' }, rows)).toEqual({
+      declaring: 0,
+      pages: 5,
+    });
   });
 });
 
