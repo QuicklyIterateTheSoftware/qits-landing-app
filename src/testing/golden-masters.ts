@@ -79,6 +79,13 @@ export const networkAccessGoldenMasters = goldenMasters(
 );
 
 /**
+ * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
+ * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this
+ * app, so no pact spec of this app calls the idp (see `vitest-browser.config.ts`).
+ */
+export const idpGoldenMasters = goldenMasters('@qits/idp-golden-masters', 'qits-idp');
+
+/**
  * Whether the installed `@qits/projects-golden-masters` records `operationId` in `state`. A spec of
  * a case the provider records from a later release than the pinned one skips itself until
  * qits-maintenance bumps the pin (`it.skipIf(!isRecorded(…))`), as the pact specs' interactions do.

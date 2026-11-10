@@ -14,6 +14,7 @@ import {
   ciGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
+  idpGoldenMasters,
   maintenanceGoldenMasters,
   networkAccessGoldenMasters,
   projectsGoldenMasters,
@@ -53,6 +54,13 @@ const READERS = {
     networkAccessGoldenMasters,
     pactWith('qits-network-access-service'),
   ),
+  // The one reader no pact of this app gates (qits-2044): the sign-in's code swap (`issueToken`)
+  // is `@qits/angular`'s `QitsTokens` calling the idp through `QITS_SIGN_IN_FETCH`, not a store of
+  // this app, and qits-idp records no authorization code issued to this app's client (`qits-spa`,
+  // redirecting to `<origin>/auth/callback`), so a pact interaction could not match the request.
+  // The callback page's browser spec answers the swap with the CLI's recorded token answer, whose
+  // shape is the same for every public client.
+  'qits-idp': idpGoldenMasters,
 };
 
 /**

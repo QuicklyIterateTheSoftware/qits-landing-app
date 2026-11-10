@@ -21,7 +21,8 @@ declare module 'vitest/browser' {
         | 'qits-workspace-daemon'
         | 'qits-system'
         | 'qits-artifacts'
-        | 'qits-network-access',
+        | 'qits-network-access'
+        | 'qits-idp',
     ) => Promise<T>;
     /**
      * Rewrites the running spec's section of the route ledger, `src/testing/browser/routes.json`,
