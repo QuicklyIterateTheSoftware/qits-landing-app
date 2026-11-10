@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   goldenMasters,
   routeLedger,
@@ -158,4 +160,18 @@ export function heldBy(
       return [...(name ? [name] : []), ...Array<string>(arrays).fill('[]')];
     });
   return consumes.filter((path) => holds(body, steps(path)));
+}
+
+/**
+ * qits-projects' own `golden-masters/index.json`, as its npm package carries it: the file a
+ * release publishes into `@contracts/qits-projects` beside `entities.json` (qits-1945), so the
+ * contracts pages' plain specs (qits-1994) answer an index read with it. No recording of
+ * qits-artifacts holds an index, so the browser specs cannot.
+ */
+export function projectsGoldenIndex<T = any>(): T {
+  const file = resolve(
+    process.cwd(),
+    'node_modules/@qits/projects-golden-masters/golden-masters/index.json',
+  );
+  return JSON.parse(readFileSync(file, 'utf8')) as T;
 }

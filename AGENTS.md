@@ -391,14 +391,14 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                                                                          | Pact file                                             | Golden masters                          |
-| ----------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`                                                           | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
-| qits-githost-service    | `core/loc/loc.store*.ts`, `core/githost/raw-images.store*.ts`                                | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon   | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service     | `core/system/targets.store*.ts`                                                              | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
-| qits-artifacts-service  | `core/ui-builder/{routes-bundle,entity-map}.store*.ts`                                       | `pacts/qits-landing-app_qits-artifacts-service.json`  | `@qits/artifacts-golden-masters`        |
+| Provider                | Store and pact spec                                                                                 | Pact file                                             | Golden masters                          |
+| ----------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| qits-projects-service   | `core/projects/projects.store*.ts`                                                                  | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
+| qits-githost-service    | `core/loc/loc.store*.ts`, `core/githost/raw-images.store*.ts`                                       | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
+| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`        | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon   | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                    | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service     | `core/system/targets.store*.ts`                                                                     | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
+| qits-artifacts-service  | `core/ui-builder/{routes-bundle,entity-map}.store*.ts`, `core/contracts/contracts-bundle.store*.ts` | `pacts/qits-landing-app_qits-artifacts-service.json`  | `@qits/artifacts-golden-masters`        |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -525,6 +525,17 @@ published", not an error). `joinEntities` (`entity-map.ts`) matches the manifest
 (provider, operationId) to the maps' operations and derives each verb from method and path; only
 `domain` entities are shown. Its pact spec owns the docs operations' interactions for
 `show-ui-builder-entities` only (`assertPactPart` by interaction), the routes spec the rest.
+
+A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/repositories/<repo>/contracts`
+(its provider states, filtered by name), `contracts/<state slug>` (params, dependencies, each operation
+with its recorded response), `entities` (its `entities.json` by marking) and `entities/<class name>`
+(DTOs and operations with their link kinds, the states recording each operation). The bundle is the
+`@contracts/` site whose newest version names the repository (`EntityMapStore`'s catalog and maps);
+`ContractsBundleStore` (`core/contracts/`) reads its `golden-masters/index.json` and each recorded
+response through the call popover's `getDocsFile` reads and cache. Links to them come from
+`core/contracts/contracts-links.ts`. No qits-artifacts recording holds an index, so the loaded
+contracts pages are covered by plain specs answering with qits-projects' own published index
+(`projectsGoldenIndex()`); their browser specs show the bundle with its index refused.
 
 Every release publishes the freezes as the docs site `@routes/qits-landing` (ticket qits-1948,
 `contracts.routes` in `.config/qits/release.yml`), only when they changed: the release step hashes

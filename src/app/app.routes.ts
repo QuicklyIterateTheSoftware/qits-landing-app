@@ -272,6 +272,34 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'projects/:slug/repositories/:repo/contracts',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/contracts/contracts.page').then(
+            (m) => m.ContractsPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/contracts/:state',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page').then(
+            (m) => m.ContractStatePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/entities',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/entities/entities.page').then(
+            (m) => m.EntitiesPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/entities/:entity',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page').then(
+            (m) => m.EntityPage,
+          ),
+      },
+      {
         path: 'projects/:slug/observability',
         loadComponent: () =>
           import('./routes/projects/[slug]/observability/project-observability.page').then(
