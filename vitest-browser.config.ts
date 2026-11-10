@@ -15,6 +15,7 @@ import {
   eventsGoldenMasters,
   githostGoldenMasters,
   maintenanceGoldenMasters,
+  networkAccessGoldenMasters,
   projectsGoldenMasters,
   systemGoldenMasters,
   workspaceDaemonGoldenMasters,
@@ -48,6 +49,10 @@ const READERS = {
   ),
   'qits-system': pactedGoldenMasters(systemGoldenMasters, pactWith('qits-system-service')),
   'qits-artifacts': pactedGoldenMasters(artifactsGoldenMasters, pactWith('qits-artifacts-service')),
+  'qits-network-access': pactedGoldenMasters(
+    networkAccessGoldenMasters,
+    pactWith('qits-network-access-service'),
+  ),
 };
 
 /**

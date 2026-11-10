@@ -72,6 +72,12 @@ export const artifactsGoldenMasters = goldenMasters(
   'qits-artifacts',
 );
 
+/** qits-network-access' golden masters (epic qits-1977), from its npm package. */
+export const networkAccessGoldenMasters = goldenMasters(
+  '@qits/network-access-golden-masters',
+  'qits-network-access',
+);
+
 /**
  * Whether the installed `@qits/projects-golden-masters` records `operationId` in `state`. A spec of
  * a case the provider records from a later release than the pinned one skips itself until
@@ -127,6 +133,10 @@ export const workspaceDaemonGoldenMaster = <T = any>(state: string, operationId:
 /** The body qits-system recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const systemGoldenMaster = <T = any>(state: string, operationId: string): T =>
   systemGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-network-access recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const networkAccessGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  networkAccessGoldenMasters.body<T>(state, operationId);
 
 /** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>

@@ -18,6 +18,7 @@ import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
+import { client as networkAccessClient } from './api/network-access/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { client as systemClient } from './api/system/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
@@ -47,6 +48,7 @@ const CLIENTS = [
   [ciClient, 'ci'],
   [systemClient, 'system'],
   [artifactsClient, 'artifacts'],
+  [networkAccessClient, 'network-access'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -96,6 +98,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(ciClient),
     provideHeyApiClient(systemClient),
     provideHeyApiClient(artifactsClient),
+    provideHeyApiClient(networkAccessClient),
     provideBackendOrigins(),
     // Work ids in commit subjects (`<qits-commit-message>`, qits-1897): their briefs through the
     // projects client above (`provideQitsWorkBriefs`), their links to this app's work item page.

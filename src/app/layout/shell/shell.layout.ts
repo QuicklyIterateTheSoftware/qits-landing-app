@@ -50,7 +50,7 @@ export interface NavNote {
  * whole page past the screen. The trail truncates instead.
  *
  * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
- * "…" and the current page beside the burger and all five menus.
+ * "…" and the current page beside the burger and all six menus.
  */
 @Component({
   selector: 'app-shell-layout',
@@ -90,10 +90,34 @@ export interface NavNote {
           <span class="block h-0.5 bg-gray-700"></span>
         </button>
         <ui-breadcrumbs [crumbs]="crumbs()" />
-        <!-- The menus at the right end: the platform's version bumps and notifications (always), then the open
-             project's agents, its release requests and its settings (all three hidden, not
-             removed, while no project is open). -->
+        <!-- The menus at the right end: the platform's network access, version bumps and
+             notifications (always), then the open project's agents, its release requests and its
+             settings (all three hidden, not removed, while no project is open). -->
         <div class="ml-auto flex items-center gap-1">
+          <a
+            class="inline-flex size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"
+            routerLink="/network-access"
+            routerLinkActive=""
+            ariaCurrentWhenActive="page"
+            aria-label="Network access"
+            title="Network access"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              class="size-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="2" width="6" height="6" rx="1" />
+              <rect x="2" y="16" width="6" height="6" rx="1" />
+              <rect x="16" y="16" width="6" height="6" rx="1" />
+              <path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2" />
+            </svg>
+          </a>
           <app-bumps-menu />
           <app-notifications-menu />
           <app-agents-menu />

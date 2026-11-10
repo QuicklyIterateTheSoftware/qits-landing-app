@@ -69,6 +69,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * the execution targets a slot is placed on are qits-system's, at its own Targets page, which the
  * Agents page links to directly rather than routing through here.
  *
+ * The Network access pane (epic qits-1977) is at `network-access` (`NetworkAccessPage`): the
+ * platform's peers, nodes and private edge, reached from the top bar with no project open.
+ *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
  * shell, so the guard does not run on it and the catch-all never takes it.
@@ -319,6 +322,12 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/setup/project-setup.page').then(
             (m) => m.ProjectSetupPage,
           ),
+      },
+      {
+        // The platform's private network (epic qits-1977): not a project's, so no project opens.
+        path: 'network-access',
+        loadComponent: () =>
+          import('./routes/network-access/network-access.page').then((m) => m.NetworkAccessPage),
       },
       {
         path: '**',

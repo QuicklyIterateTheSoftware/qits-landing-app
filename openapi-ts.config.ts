@@ -26,6 +26,8 @@ const services = [
   'qits-system/qits-system-service',
   // The docs store (qits-1951): the UI builder reads a frontend's frozen routes, `@routes/<app>`.
   'qits-artifacts/qits-artifacts-service',
+  // The Network access pane (epic qits-1977): peers, nodes and the private edge.
+  'qits-network-access/qits-network-access-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

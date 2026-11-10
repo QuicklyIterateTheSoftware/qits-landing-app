@@ -3,6 +3,7 @@
 // prettier-ignore
 export type RoutePath =
   | ''
+  | 'network-access'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'

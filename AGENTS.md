@@ -305,6 +305,18 @@ managed. A slot's status strip no longer names which runner it is placed on
 field it read, `workspace.runner`, is gone from what this app consumes, ahead of the service
 dropping it.
 
+The Network access pane (epic qits-1977): `network-access` (`NetworkAccessPage`), under the shell
+with no project open, reached by the top bar's Network access link (beside the bumps menu, always
+shown). `PeersStore` (`core/network-access/`) reads qits-network-access' peers (`getPeers`), nodes
+(`getNodes`, naming a NODE peer's target) and private edge (`getPrivateEdge`; its 404 is "No private
+edge has announced itself yet."). The filters All, Devices, Nodes and Revoked narrow the one list;
+Mine reads `getPeers?owner=me`, which no recording holds, so it has no pact interaction yet. Revoke
+on an ACTIVE row is confirmed, then `revokePeer` (a 403 reads "Your credential may not revoke
+peers."), then the lists are read again. An ACTIVE DEVICE row's Download WireGuard config reads
+`getPeerConfig` as text and saves it as `<name>.conf` through a `data:` link, `<PRIVATE_KEY>` kept.
+The pane makes no keys and adds no devices: "Connect this machine" shows the copyable
+`qits network-access up`. qits-network-access sends no domain event, so nothing follows live.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -391,14 +403,15 @@ string built at run time is not found, so write every class out in full.
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                | Store and pact spec                                                                                 | Pact file                                             | Golden masters                          |
-| ----------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
-| qits-projects-service   | `core/projects/projects.store*.ts`                                                                  | `pacts/qits-landing-app_qits-projects-service.json`   | `@qits/projects-golden-masters`         |
-| qits-githost-service    | `core/loc/loc.store*.ts`, `core/githost/raw-images.store*.ts`                                       | `pacts/qits-landing-app_qits-githost-service.json`    | `@qits/githost-golden-masters`          |
-| qits-workspaces-service | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`        | `pacts/qits-landing-app_qits-workspaces-service.json` | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon   | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                    | `pacts/qits-landing-app_qits-workspace-daemon.json`   | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service     | `core/system/targets.store*.ts`                                                                     | `pacts/qits-landing-app_qits-system-service.json`     | `@qits/system-golden-masters`           |
-| qits-artifacts-service  | `core/ui-builder/{routes-bundle,entity-map}.store*.ts`, `core/contracts/contracts-bundle.store*.ts` | `pacts/qits-landing-app_qits-artifacts-service.json`  | `@qits/artifacts-golden-masters`        |
+| Provider                    | Store and pact spec                                                                                 | Pact file                                                 | Golden masters                          |
+| --------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------- |
+| qits-projects-service       | `core/projects/projects.store*.ts`                                                                  | `pacts/qits-landing-app_qits-projects-service.json`       | `@qits/projects-golden-masters`         |
+| qits-githost-service        | `core/loc/loc.store*.ts`, `core/githost/raw-images.store*.ts`                                       | `pacts/qits-landing-app_qits-githost-service.json`        | `@qits/githost-golden-masters`          |
+| qits-workspaces-service     | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`        | `pacts/qits-landing-app_qits-workspaces-service.json`     | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon       | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                    | `pacts/qits-landing-app_qits-workspace-daemon.json`       | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service         | `core/system/targets.store*.ts`                                                                     | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
+| qits-artifacts-service      | `core/ui-builder/{routes-bundle,entity-map}.store*.ts`, `core/contracts/contracts-bundle.store*.ts` | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
+| qits-network-access-service | `core/network-access/peers.store*.ts`                                                               | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

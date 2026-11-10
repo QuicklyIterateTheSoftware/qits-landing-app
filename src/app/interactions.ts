@@ -415,6 +415,21 @@ export const INTERACTIONS = {
    * the entity.
    */
   'show-entity': 'An entity’s page shows its DTOs, operations and the states recording them',
+  /** `network-access.page.ts` via `PeersStore.load`: the Network access pane's peers table. */
+  'show-network-peers': 'The Network access page lists every peer of the platform network',
+  /**
+   * `network-access.page.ts` via `PeersStore.loadMine`: the "mine" filter (`owner=me`). No
+   * recording holds that query yet, so no pact interaction names this slug.
+   */
+  'show-my-network-peers': 'The Network access page’s Mine filter lists the visitor’s own peers',
+  /** `network-access.page.ts` via `PeersStore.load`: the nodes, naming a NODE peer's target. */
+  'show-network-nodes': 'The Network access page names each node peer by its joined node',
+  /** `network-access.page.ts` via `PeersStore.load`: the private edge card. */
+  'show-private-edge': 'The Network access page shows the announced private edge',
+  /** `network-access.page.ts` via `PeersStore.revoke`: Revoke on an ACTIVE row, confirmed. */
+  'revoke-network-peer': 'Revoking a peer on the Network access page',
+  /** `network-access.page.ts` via `PeersStore.config`: a DEVICE row's WireGuard config download. */
+  'download-wireguard-config': 'Downloading a device peer’s WireGuard config',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

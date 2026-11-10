@@ -1,0 +1,517 @@
+{
+  "consumer": {
+    "name": "qits-landing-app"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
+            "operationId": "getPeerConfig"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "download-wireguard-config",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "download-wireguard-config: getPeerConfig",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a device peer behind an announced private edge",
+          "params": {
+            "peerId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/network-access/api/peers/${peerId}/config",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/network-access/api/peers/00000000-0000-4000-8000-000000000001/config"
+      },
+      "response": {
+        "body": {
+          "content": "IyBxaXRzIG5ldHdvcmsgYWNjZXNzOiBsYXB0b3AgKDAwMDAwMDAwLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMSksIERFVklDRQojIExpbnV4OiBzYXZlIGFzIC9ldGMvd2lyZWd1YXJkL3FpdHMuY29uZiwgdGhlbiBgd2ctcXVpY2sgdXAgcWl0c2AuIE5lZWRzIHN5c3RlbWQtcmVzb2x2ZWQgZm9yIHNwbGl0IEROUy4KW0ludGVyZmFjZV0KUHJpdmF0ZUtleSA9IDxQUklWQVRFX0tFWT4KQWRkcmVzcyA9IDEwMC45Ni4wLjEwLzMyCk1UVSA9IDEzODAKUG9zdFVwID0gcmVzb2x2ZWN0bCBkbnMgJWkgMTAwLjk2LjAuMTsgcmVzb2x2ZWN0bCBkb21haW4gJWkgfndvaGxiZW4uZXUKUHJlRG93biA9IHJlc29sdmVjdGwgcmV2ZXJ0ICVpCgpbUGVlcl0KUHVibGljS2V5ID0gQUFBQUFRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBYz0KRW5kcG9pbnQgPSA0Ni4yMjQuMTcxLjMzOjQ3ODEyCkFsbG93ZWRJUHMgPSAxMDAuOTYuMC4xLzMyClBlcnNpc3RlbnRLZWVwYWxpdmUgPSAyNQo=",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "text/plain"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "text/plain"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "text/plain.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
+            "operationId": "revokePeer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "revoke-network-peer",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "revoke-network-peer: revokePeer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a device peer behind an announced private edge",
+          "params": {
+            "peerId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/network-access/api/peers/${peerId}/revoke",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/network-access/api/peers/00000000-0000-4000-8000-000000000001/revoke"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "status": "REVOKED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
+            "operationId": "getNodes"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-network-nodes",
+            "kind": "ui",
+            "route": "network-access"
+          }
+        }
+      },
+      "description": "show-network-nodes: getNodes",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a joined node",
+          "params": {
+            "peerId": "00000000-0000-4000-8000-000000000001",
+            "targetId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/network-access/api/nodes"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "name": "node-a",
+              "peer": {
+                "id": "00000000-0000-4000-8000-000000000001"
+              }
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].peer.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
+            "operationId": "getPeers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-network-peers",
+            "kind": "ui",
+            "route": "network-access"
+          }
+        }
+      },
+      "description": "show-network-peers: getPeers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a device peer behind an announced private edge",
+          "params": {
+            "peerId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/network-access/api/peers"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "createdAt": "2026-01-01T00:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "kind": "DEVICE",
+              "name": "laptop",
+              "ownerUserId": "operator",
+              "status": "ACTIVE",
+              "tunnelIp": "100.96.0.10"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].ownerUserId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].tunnelIp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
+            "operationId": "getPrivateEdge"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-private-edge",
+            "kind": "ui",
+            "route": "network-access"
+          }
+        }
+      },
+      "description": "show-private-edge: getPrivateEdge",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an announced private edge",
+          "params": {
+            "publicKey": "AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc="
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/network-access/api/private-edge"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "announcedAt": "2026-01-01T00:00:00Z",
+            "listenPort": 47812,
+            "publicAddress": "46.224.171.33",
+            "publicKey": "AAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc="
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.announcedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.listenPort": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.publicAddress": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.publicKey": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "qits-network-access-service"
+  }
+}

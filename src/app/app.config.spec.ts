@@ -15,6 +15,7 @@ import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
+import { client as networkAccessClient } from './api/network-access/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { client as systemClient } from './api/system/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
@@ -48,6 +49,7 @@ describe('appConfig', () => {
       eventsClient,
       githostClient,
       maintenanceClient,
+      networkAccessClient,
       projectsClient,
       systemClient,
       workspacesClient,

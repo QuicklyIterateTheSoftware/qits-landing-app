@@ -20,7 +20,8 @@ declare module 'vitest/browser' {
         | 'qits-ci'
         | 'qits-workspace-daemon'
         | 'qits-system'
-        | 'qits-artifacts',
+        | 'qits-artifacts'
+        | 'qits-network-access',
     ) => Promise<T>;
     /**
      * Rewrites the running spec's section of the route ledger, `src/testing/browser/routes.json`,
