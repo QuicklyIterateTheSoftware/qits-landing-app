@@ -50,7 +50,8 @@ export interface NavNote {
  * whole page past the screen. The trail truncates instead.
  *
  * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
- * "…" and the current page beside the burger and all six menus.
+ * "…" and the current page beside the burger and all five menus. The network-access link is the
+ * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977).
  */
 @Component({
   selector: 'app-shell-layout',
@@ -90,12 +91,12 @@ export interface NavNote {
           <span class="block h-0.5 bg-gray-700"></span>
         </button>
         <ui-breadcrumbs [crumbs]="crumbs()" />
-        <!-- The menus at the right end: the platform's network access, version bumps and
-             notifications (always), then the open project's agents, its release requests and its
+        <!-- The menus at the right end: the platform's network access (from 768px), version bumps
+             and notifications (always), then the open project's agents, its release requests and its
              settings (all three hidden, not removed, while no project is open). -->
         <div class="ml-auto flex items-center gap-1">
           <a
-            class="inline-flex size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"
+            class="hidden size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 md:inline-flex aria-[current=page]:text-gray-900"
             routerLink="/network-access"
             routerLinkActive=""
             ariaCurrentWhenActive="page"
