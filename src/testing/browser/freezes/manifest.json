@@ -145,6 +145,22 @@
           "fullPath": "projects/:slug/repositories/:repo/ui-builder"
         },
         {
+          "path": "projects/:slug/repositories/:repo/contracts",
+          "fullPath": "projects/:slug/repositories/:repo/contracts"
+        },
+        {
+          "path": "projects/:slug/repositories/:repo/contracts/:state",
+          "fullPath": "projects/:slug/repositories/:repo/contracts/:state"
+        },
+        {
+          "path": "projects/:slug/repositories/:repo/entities",
+          "fullPath": "projects/:slug/repositories/:repo/entities"
+        },
+        {
+          "path": "projects/:slug/repositories/:repo/entities/:entity",
+          "fullPath": "projects/:slug/repositories/:repo/entities/:entity"
+        },
+        {
           "path": "projects/:slug/observability",
           "fullPath": "projects/:slug/observability"
         },
@@ -2537,7 +2553,7 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > shows a refused discard in the service’s words, and offers force",
       "name": "discard-refused",
-      "route": null,
+      "route": "projects/:slug/agents/:agentId",
       "records": [
         {
           "provider": "qits-projects-service",
@@ -2572,7 +2588,7 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > marks the agent as failed to load",
       "name": "error",
-      "route": null,
+      "route": "projects/:slug/agents/:agentId",
       "records": [
         {
           "provider": "qits-projects-service",
@@ -2592,7 +2608,7 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > shows the agent, its item, its workspace and its slot coming up",
       "name": "starting",
-      "route": null,
+      "route": "projects/:slug/agents/:agentId",
       "records": [
         {
           "provider": "qits-projects-service",
@@ -3560,6 +3576,306 @@
         {
           "provider": "qits-projects-service",
           "state": "a project with pending release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts/none.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts",
+      "test": "ContractStatePage (screenshots) > says so when no contracts bundle is published for the repository",
+      "name": "none",
+      "route": "projects/:slug/repositories/:repo/contracts/:state",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts/unreadable-index.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts",
+      "test": "ContractStatePage (screenshots) > names the bundle and says so when its golden masters cannot be read",
+      "name": "unreadable-index",
+      "route": "projects/:slug/repositories/:repo/contracts/:state",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts/error.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts",
+      "test": "ContractsPage (screenshots) > marks the page as failed when the docs store cannot be read",
+      "name": "error",
+      "route": "projects/:slug/repositories/:repo/contracts",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts/none.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts",
+      "test": "ContractsPage (screenshots) > says so when no contracts bundle is published for the repository",
+      "name": "none",
+      "route": "projects/:slug/repositories/:repo/contracts",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published docs site",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts/unreadable-index.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts",
+      "test": "ContractsPage (screenshots) > names the bundle and says so when its golden masters cannot be read",
+      "name": "unreadable-index",
+      "route": "projects/:slug/repositories/:repo/contracts",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/domain.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts",
+      "test": "EntityPage (screenshots) > shows a domain entity’s DTOs and operations",
+      "name": "domain",
+      "route": "projects/:slug/repositories/:repo/entities/:entity",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/technical.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts",
+      "test": "EntityPage (screenshots) > shows why a technical entity is one",
+      "name": "technical",
+      "route": "projects/:slug/repositories/:repo/entities/:entity",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/unknown.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts",
+      "test": "EntityPage (screenshots) > says so for a class the map does not list",
+      "name": "unknown",
+      "route": "projects/:slug/repositories/:repo/entities/:entity",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts/loaded.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts",
+      "test": "EntitiesPage (screenshots) > lists the entities grouped by marking",
+      "name": "loaded",
+      "route": "projects/:slug/repositories/:repo/entities",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published contracts bundle with an entity map",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts/none.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts",
+      "test": "EntitiesPage (screenshots) > says so when no contracts bundle is published for the repository",
+      "name": "none",
+      "route": "projects/:slug/repositories/:repo/entities",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published docs site",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
         }
       ],
@@ -6813,7 +7129,7 @@
       "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
       "test": "WorkLayout (screenshots) > hides the counts while the work is loading",
       "name": "loading",
-      "route": null,
+      "route": "projects/:slug/work/archive",
       "records": [
         {
           "provider": "qits-projects-service",
@@ -6838,7 +7154,7 @@
       "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
       "test": "WorkLayout (screenshots) > shows the tabs in workflow order, each with its count, no Campaigns or Milestones, and marks the current one",
       "name": "tabs",
-      "route": null,
+      "route": "projects/:slug/work/in-progress",
       "records": [
         {
           "provider": "qits-projects-service",
@@ -7434,6 +7750,15 @@
       "triggers": []
     },
     {
+      "file": "src/app/ui/components/json-block/json-block.browser.spec.ts/short.html",
+      "spec": "src/app/ui/components/json-block/json-block.browser.spec.ts",
+      "test": "JsonBlock (screenshots) > draws the heading, the copy button and the JSON",
+      "name": "short",
+      "route": null,
+      "records": [],
+      "triggers": []
+    },
+    {
       "file": "src/app/ui/components/list/list.browser.spec.ts/list.html",
       "spec": "src/app/ui/components/list/list.browser.spec.ts",
       "test": "List (screenshots) > draws lanes, rows and cards like the board, without its columns",
@@ -7666,6 +7991,11 @@
       "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts/loading.html",
       "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts/slots-and-agents.html"
     ],
+    "projects/:slug/agents/:agentId": [
+      "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/discard-refused.html",
+      "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/error.html",
+      "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts/starting.html"
+    ],
     "projects/:slug/agents/:agentId/chat": [
       "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts/transcript.html"
     ],
@@ -7724,6 +8054,24 @@
       "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/opened.html",
       "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/tree.html"
     ],
+    "projects/:slug/repositories/:repo/contracts": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts/error.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts/none.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts/unreadable-index.html"
+    ],
+    "projects/:slug/repositories/:repo/contracts/:state": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts/none.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts/unreadable-index.html"
+    ],
+    "projects/:slug/repositories/:repo/entities": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts/loaded.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts/none.html"
+    ],
+    "projects/:slug/repositories/:repo/entities/:entity": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/domain.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/technical.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/unknown.html"
+    ],
     "projects/:slug/repositories/:repo/ui-builder": [
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entity-view.html",
@@ -7750,7 +8098,8 @@
       "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/archive.html",
       "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/empty.html",
       "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/error.html",
-      "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/loading.html"
+      "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/loading.html",
+      "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/loading.html"
     ],
     "projects/:slug/work/create": [
       "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic.html",
@@ -7803,7 +8152,8 @@
     "projects/:slug/work/in-progress": [
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/board.html",
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/loading.html",
-      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/nested.html"
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/nested.html",
+      "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs.html"
     ],
     "projects/:slug/work/refinement": [
       "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/backlog.html",

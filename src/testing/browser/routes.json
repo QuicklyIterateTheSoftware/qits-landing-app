@@ -447,6 +447,134 @@
       "route": "projects/:slug/release-requests"
     }
   ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/contracts/:state"
+    }
+  ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published docs site",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/contracts"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/contracts"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/contracts"
+    }
+  ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/repositories/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/entities/:entity"
+    }
+  ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/repositories/:repo/entities"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/entities"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/entities"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published docs site",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/entities"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/entities"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/entities"
+    }
+  ],
   "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",
