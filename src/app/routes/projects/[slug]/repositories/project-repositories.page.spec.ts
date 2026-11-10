@@ -165,6 +165,25 @@ describe('ProjectRepositoriesPage', () => {
     expect(link?.textContent?.trim()).toBe('UI builder →');
   });
 
+  it('links the contracts and entities pages on the cards of services only (qits-1994)', async () => {
+    const answer = recorded();
+    const { element } = await render(answer);
+    const cards = [...element.querySelectorAll('app-repository-card')];
+    const nameOf = (card: Element) => card.querySelector('card-header')?.textContent?.trim();
+    const services = answer.entries
+      .filter((e) => e.repository?.archetype === 'SERVICE')
+      .map((e) => e.repository?.name);
+    expect(services.length).toBeGreaterThan(0);
+    expect(cards.filter((card) => card.querySelector('a.contracts')).map(nameOf)).toEqual(services);
+    expect(cards.filter((card) => card.querySelector('a.entities')).map(nameOf)).toEqual(services);
+    const contracts = element.querySelector<HTMLAnchorElement>('a.contracts');
+    expect(contracts?.getAttribute('href')).toBe(`/${services[0]}/contracts`);
+    expect(contracts?.textContent?.trim()).toBe('Contracts →');
+    const entities = element.querySelector<HTMLAnchorElement>('a.entities');
+    expect(entities?.getAttribute('href')).toBe(`/${services[0]}/entities`);
+    expect(entities?.textContent?.trim()).toBe('Entities →');
+  });
+
   it('alerts with the sign-in when a repository’s backup is AUTH_REQUIRED', async () => {
     const { alert, button } = await render(recorded());
     expect(alert()?.textContent).toContain('refused the platform’s credentials');
