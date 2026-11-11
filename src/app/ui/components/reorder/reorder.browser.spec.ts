@@ -5,12 +5,17 @@ import { REORDER, type ReorderMove } from './reorder';
 
 /**
  * A plain list of fixed-height rows, each with its handle: inline data, it is UI. The row at
- * `tall`, if set, is taller than the viewport, with its handle at its bottom.
+ * `tall`, if set, is taller than the viewport, with its handle at its bottom. With `pane` the list
+ * sits in a 300px box that scrolls it on its own, 100px below the top of the window, as the
+ * shell's `<main>` from 768px up, with room below it for the document to scroll as well.
  */
 @Component({
   imports: [REORDER],
-  styles: '.tall { height: 1200px; align-items: flex-end; padding-bottom: 8px; }',
-  host: { class: 'block p-4', '[style.padding-left.px]': 'indent()' },
+  styles: [
+    '.tall { height: 1200px; align-items: flex-end; padding-bottom: 8px; }',
+    ':host(.pane) { height: 300px; margin: 100px 0 1000px; overflow-y: auto; }',
+  ],
+  host: { class: 'block p-4', '[class.pane]': 'pane()', '[style.padding-left.px]': 'indent()' },
   template: `
     <ul
       uiReorderList
@@ -45,6 +50,8 @@ class Rows {
   readonly indent = input<number | null>(null);
   /** The index of the row taller than the viewport; none if unset. */
   readonly tall = input<number | null>(null);
+  /** Whether the list scrolls in a pane of its own instead of the document. */
+  readonly pane = input(false);
   readonly moves: ReorderMove[] = [];
   cancels = 0;
   rows() {
@@ -58,8 +65,14 @@ async function frames(n = 2): Promise<void> {
 }
 
 describe('Reorder (browser)', () => {
-  async function render(count = 12, indent: number | null = null, tall: number | null = null) {
+  async function render(
+    count = 12,
+    indent: number | null = null,
+    tall: number | null = null,
+    pane = false,
+  ) {
     const fixture = TestBed.createComponent(Rows);
+    fixture.componentRef.setInput('pane', pane);
     fixture.componentRef.setInput('count', count);
     fixture.componentRef.setInput('indent', indent);
     fixture.componentRef.setInput('tall', tall);
@@ -222,6 +235,38 @@ describe('Reorder (browser)', () => {
     await frames(10);
     expect(window.scrollY).toBeGreaterThan(0);
     await userEvent.keyboard('{Escape}');
+    view.expectClean();
+  });
+
+  it('scrolls the list’s own pane, not the document, near the pane’s bottom edge', async () => {
+    const view = await render(30, null, null, true);
+    const pane = view.root;
+    expect(pane.scrollHeight).toBeGreaterThan(pane.clientHeight);
+    expect(document.documentElement.scrollHeight).toBeGreaterThan(window.innerHeight);
+    const bottom = pane.getBoundingClientRect().bottom;
+    // Inside the pane's bottom band, far above the window's.
+    expect(bottom).toBeLessThan(window.innerHeight - 100);
+    const start = await pickUp(view, 0);
+    await commands.mouse('move', start.x, bottom - 4, 5);
+    await frames(10);
+    expect(pane.scrollTop).toBeGreaterThan(0);
+    expect(window.scrollY).toBe(0);
+    await userEvent.keyboard('{Escape}');
+    view.expectClean();
+  });
+
+  it('scrolls the list’s own pane under a finger, and a cancel puts the pane back', async () => {
+    const view = await render(30, null, null, true);
+    const pane = view.root;
+    const start = await fingerPickUp(view, 2);
+    await commands.touch('move', start.x, start.y + 100, 5);
+    await frames();
+    expect(pane.scrollTop).toBe(100);
+    expect(window.scrollY).toBe(0);
+    await commands.touch('cancel', 0, 0);
+    expect(view.host.cancels).toBe(1);
+    expect(pane.scrollTop).toBe(0);
+    expect(window.scrollY).toBe(0);
     view.expectClean();
   });
 

@@ -143,6 +143,15 @@ interface EntityGroup {
  *   again after each load; nothing runs inside the frame. A freeze that lists the trigger without
  *   the element is said so under the tabs.
  *
+ * - Columns (qits-2050): from 1280px up the three panels sit side by side and each scrolls on its
+ *   own, so a long tree, a tall frozen page or a long list of calls never moves the other two. The
+ *   panels are as tall as the shell's scrolling `<main>` (the window below the top bar,
+ *   `--app-header-h`, less the page's pinned actions, `--page-actions-h`, 0 while it has none), and
+ *   the page keeps no bottom padding there: scrolled to its end, `<main>` shows the title row gone
+ *   and the panels filling it exactly. A wheel at a panel's end carries on to `<main>`, which is how
+ *   the title row scrolls away. Below 1280px the panels stack and the page scrolls as one, as
+ *   before. A tree row scrolled into view (`revealSelected`) scrolls the tree's panel.
+ *
  * The data is read in the browser only (the server render holds no token).
  *
  * Staleness (qits-1270): `SCMRelease` of the repository → its bundle (`RoutesBundleStore.follow`):
@@ -157,7 +166,7 @@ interface EntityGroup {
   imports: [Chip, PageLayoutComponent, Spinner, CallDetails, RouterLink, NgTemplateOutlet],
   host: { class: 'block' },
   template: `
-    <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12">
+    <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12 xl:pb-0">
       <app-page-layout>
         <div slot="header" class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 class="m-0 text-3xl leading-[1.1] font-bold">UI builder</h1>
@@ -174,8 +183,11 @@ interface EntityGroup {
               </p>
             }
             @case ('loaded') {
-              <div class="grid grid-cols-1 gap-6 xl:grid-cols-[17rem_minmax(0,1fr)_20rem]">
-                <div class="min-w-0">
+              <div
+                data-columns
+                class="grid grid-cols-1 gap-6 xl:h-[calc(100dvh-var(--app-header-h,0px)-var(--page-actions-h,0px))] xl:grid-cols-[17rem_minmax(0,1fr)_20rem] xl:grid-rows-[minmax(0,1fr)]"
+              >
+                <div class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
                   <div role="tablist" aria-label="Panels" class="mb-2 flex gap-1">
                     @for (tab of leftTabs; track tab.id) {
                       <button
@@ -396,7 +408,7 @@ interface EntityGroup {
                   }
                 </div>
 
-                <section aria-label="Preview" class="min-w-0">
+                <section aria-label="Preview" class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
                   @if (selectedPath(); as path) {
                     <h2 class="m-0 mb-2 font-mono text-base">/{{ path }}</h2>
                     @if (freezes().length) {
@@ -456,7 +468,10 @@ interface EntityGroup {
                 </section>
 
                 @if (selectedEntity(); as entity) {
-                  <aside aria-label="Entity routes" class="text-[0.8125rem]">
+                  <aside
+                    aria-label="Entity routes"
+                    class="text-[0.8125rem] xl:min-h-0 xl:overflow-y-auto xl:pb-6"
+                  >
                     <h3 class="m-0 text-xs font-semibold text-charcoal-brown-700 uppercase">
                       Routes showing
                     </h3>
@@ -495,7 +510,10 @@ interface EntityGroup {
                     </ul>
                   </aside>
                 } @else {
-                  <aside aria-label="Calls" class="text-[0.8125rem]">
+                  <aside
+                    aria-label="Calls"
+                    class="text-[0.8125rem] xl:min-h-0 xl:overflow-y-auto xl:pb-6"
+                  >
                     <h3 class="m-0 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase">
                       Calls and states
                     </h3>

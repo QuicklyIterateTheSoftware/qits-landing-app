@@ -52,6 +52,13 @@ export interface NavNote {
  * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
  * "…" and the current page beside the burger and all five menus. The network-access link is the
  * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977).
+ *
+ * Who scrolls (qits-2050): from 768px up the shell is exactly the window's height and the window
+ * never scrolls; the sidebar and the page (`<main>`) each scroll on their own, with their own
+ * scrollbar, so a long page does not carry the sidebar away and a long sidebar does not move the
+ * page. Below 768px the document scrolls, as on any phone page: the top bar stays pinned to the
+ * top of the window and the sidebar lies over the page. What pins at the top of the scrolling box
+ * (the page's actions, the board's headings) reads `--app-pin-top`, which covers both cases.
  */
 @Component({
   selector: 'app-shell-layout',
@@ -67,14 +74,19 @@ export interface NavNote {
     NotificationsMenu,
     ReleaseMenu,
   ],
-  // `--app-header-h`: the top bar's fixed height. What pins below the bar (the page's actions, the
-  // board's headings) reads it; outside the shell it is unset and they pin at 0.
-  host: { class: 'block [--app-header-h:3.5rem]' },
+  // `--app-header-h`: the top bar's fixed height (what sits below the bar in the window reads it,
+  // such as a menu's sheet on a phone). `--app-pin-top`: where what pins at the top of the scrolling
+  // box (the page's actions, the board's headings) pins. Below 768px the document scrolls under the
+  // pinned bar, so it is the bar's height; `<main>` sets it to 0 from 768px up, where `<main>` is
+  // the scrolling box and the bar lies outside it. Outside the shell both are unset and read as 0.
+  host: { class: 'block [--app-header-h:3.5rem] [--app-pin-top:var(--app-header-h)]' },
   template: `
     <div
-      class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_minmax(0,1fr)]"
+      class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:h-dvh md:min-h-0 md:grid-cols-[15rem_minmax(0,1fr)] md:grid-rows-[var(--app-header-h)_minmax(0,1fr)]"
     >
-      <!-- Pinned to the top of the window, always: the document scrolls, not the shell. -->
+      <!-- At the top of the window, always. Below 768px the document scrolls and the bar is
+           pinned over it; from 768px up the shell is the window's height and the bar stays put
+           while the sidebar and the page below it scroll each on their own. -->
       <header
         class="sticky top-0 z-50 col-span-full flex items-center gap-1 border-b border-gray-200 bg-white px-2 md:gap-3 md:px-4"
       >
@@ -152,7 +164,7 @@ export interface NavNote {
 
       <nav
         id="layout-nav"
-        class="z-1 col-start-1 row-start-2 border-r border-gray-200 bg-gray-50 md:block"
+        class="z-1 col-start-1 row-start-2 border-r border-gray-200 bg-gray-50 md:block md:min-h-0 md:overflow-y-auto"
         [class.hidden]="!navOpen()"
         aria-label="qits"
       >
@@ -202,7 +214,9 @@ export interface NavNote {
         </ul>
       </nav>
 
-      <main class="col-start-1 row-start-2 min-w-0 md:col-start-2">
+      <main
+        class="col-start-1 row-start-2 min-w-0 md:col-start-2 md:min-h-0 md:overflow-y-auto md:[--app-pin-top:0px]"
+      >
         <router-outlet />
       </main>
     </div>

@@ -278,13 +278,14 @@ class LongWords {
 
 /**
  * A board taller than its 20rem scroller, as a long board in the document, with a 2.5rem bar and
- * 2rem of pinned actions above it (`--app-header-h`, `--page-actions-h`) and space after it.
+ * 2rem of pinned actions above it (`--app-pin-top`, as the shell's where the document scrolls,
+ * and `--page-actions-h`) and space after it.
  */
 @Component({
   imports: [Board, BoardCard],
   host: {
     class: 'block h-80 w-[48rem] overflow-y-auto px-4',
-    style: '--app-header-h: 2.5rem; --page-actions-h: 2rem',
+    style: '--app-pin-top: 2.5rem; --page-actions-h: 2rem',
   },
   template: `
     <div class="sticky top-0 z-50 h-10 bg-charcoal-brown-800"></div>

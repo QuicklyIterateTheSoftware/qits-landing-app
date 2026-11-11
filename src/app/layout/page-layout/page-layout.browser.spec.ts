@@ -69,12 +69,15 @@ class Scrolled {
   readonly rows = ROWS;
 }
 
-/** The long page in its scroller under a 2.5rem pinned bar, as the shell's top bar (`--app-header-h`). */
+/**
+ * The long page in its scroller under a 2.5rem pinned bar, as the shell's top bar where the document
+ * scrolls (`--app-pin-top`, below 768px).
+ */
 @Component({
   imports: [PageLayoutComponent],
   host: {
     class: 'block h-80 w-[48rem] overflow-y-auto px-4',
-    style: '--app-header-h: 2.5rem',
+    style: '--app-pin-top: 2.5rem',
   },
   template: `
     <div class="sticky top-0 z-50 -mx-4 h-10 bg-charcoal-brown-800"></div>
@@ -86,6 +89,33 @@ class Scrolled {
   `,
 })
 class ScrolledUnderBar {
+  readonly actions = ACTIONS;
+  readonly rows = ROWS;
+}
+
+/**
+ * The long page as the shell draws it from 768px up: a 2.5rem bar outside the scroller, and the
+ * page in a 20rem `<main>` that scrolls on its own, which sets `--app-pin-top` back to 0 over the
+ * shell's bar height.
+ */
+@Component({
+  imports: [PageLayoutComponent],
+  host: {
+    class: 'block w-[48rem]',
+    style: '--app-header-h: 2.5rem; --app-pin-top: var(--app-header-h)',
+  },
+  template: `
+    <div class="h-10 bg-charcoal-brown-800"></div>
+    <main class="block h-80 overflow-y-auto px-4" style="--app-pin-top: 0px">
+      <app-page-layout title="A long page" [actions]="actions">
+        @for (row of rows; track row) {
+          <p class="m-0 border-b border-charcoal-brown-200 py-3">{{ row }}</p>
+        }
+      </app-page-layout>
+    </main>
+  `,
+})
+class ScrolledInMain {
   readonly actions = ACTIONS;
   readonly rows = ROWS;
 }
@@ -198,8 +228,25 @@ describe('PageLayoutComponent (screenshots)', () => {
     await expect.element(page.elementLocator(element)).toMatchScreenshot('pinned-under-bar');
   });
 
+  it('pins the actions at the top of a scrolling main, not the bar’s height below it', async () => {
+    const { fixture, element } = shown(ScrolledInMain);
+    await fixture.whenStable();
+    const main = element.querySelector('main')!;
+    main.scrollTop = 400;
+    const actions = element.querySelector<HTMLElement>('[data-page-actions]')!;
+    // The bar is outside the scroller, so the actions pin at its top edge, not 2.5rem below it.
+    expect(Math.round(actions.getBoundingClientRect().top)).toBe(
+      Math.round(main.getBoundingClientRect().top),
+    );
+    expect(element.querySelector('h1')!.getBoundingClientRect().bottom).toBeLessThan(
+      main.getBoundingClientRect().top,
+    );
+    // The scroller scrolled, not the document.
+    expect(document.scrollingElement!.scrollTop).toBe(0);
+  });
+
   it('pins the actions while the document scrolls', async () => {
-    // The shell does not scroll an element of its own: the document scrolls. Same check there.
+    // Below 768px the shell lets the document scroll, not an element of its own. Same check there.
     await page.viewport(800, 300);
     try {
       const { element } = shown(Scrolled);

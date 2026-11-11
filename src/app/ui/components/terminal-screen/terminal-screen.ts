@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import type { FitAddon } from '@xterm/addon-fit';
 import type { IDisposable, Terminal } from '@xterm/xterm';
+import { scrollPane } from '$ui/dom/scroll-pane';
 
 /** Raw terminal frames: a new generation clears the screen, then its chunks are written in order. */
 export interface ScreenFrames {
@@ -197,14 +198,4 @@ export class TerminalScreen {
     this.terminal = null;
     this.fitAddon = null;
   }
-}
-
-/** The ancestor that scrolls `el`, or the document. */
-function scrollPane(el: HTMLElement): HTMLElement {
-  const view = el.ownerDocument.defaultView;
-  for (let node = el.parentElement; node && view; node = node.parentElement) {
-    const { overflowY } = view.getComputedStyle(node);
-    if (overflowY === 'auto' || overflowY === 'scroll') return node;
-  }
-  return el.ownerDocument.documentElement;
 }
