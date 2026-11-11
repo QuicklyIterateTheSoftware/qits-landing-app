@@ -54,6 +54,9 @@ import {
  * - "a project with agents needing attention": the project's ACTIVE agents with their open waits
  *   and attention (`listAgents?projectId=&state=ACTIVE`), read by the agents menu, the Agents page
  *   and the agent page alike;
+ * - "a project with an agent overdue on a release request" (qits-2040): the same read, one agent
+ *   whose release request has not moved for hours (`WAIT_OVERDUE` on a `RELEASE_REQUEST` wait) and
+ *   which also waits on its item's comments, which the agent status links (epic qits-2000);
  * - "a project with agents starting up" (qits-2007): the same read while the agents come up, one
  *   per start-up `phase` (QUEUED with no slot, PROVISIONING, STARTING) and two READY (IDLE, BUSY),
  *   each with its `phaseSince`, which the agents menu's chip reads.
@@ -73,6 +76,7 @@ const AGENT = 'an agent with a saved prompt draft';
 const NO_AGENT = 'no agent with that id';
 const NEEDING_ATTENTION = 'a project with agents needing attention';
 const STARTING_UP = 'a project with agents starting up';
+const OVERDUE = 'a project with an agent overdue on a release request';
 
 /**
  * `PROJECT_AGENTS` as "a project with agents starting up" can bind it: no agent there waits on
@@ -295,6 +299,21 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
         expect(noAttention?.waits?.length).toBeGreaterThan(0);
       },
     ));
+
+  it('agents-menu: an agent overdue on a release request, which also waits on comments', () =>
+    given(OVERDUE, 'listAgents', 'agents-menu', PROJECT_AGENTS).executeTest(async (server) => {
+      const projectId = param(OVERDUE, 'listAgents', 'projectId');
+      const { data } = await at(server.url, () =>
+        consume(listAgents({ query: { projectId, state: 'ACTIVE' } }), PROJECT_AGENTS),
+      );
+      const [agent] = data?.agents ?? [];
+      expect(agent?.attention?.code).toBe('WAIT_OVERDUE');
+      const overdue = agent?.waits?.find((w) => w.id === agent.attention?.waitId);
+      expect(overdue?.subjectKind).toBe('RELEASE_REQUEST');
+      expect(overdue?.subjectQualifiedId).toBeTruthy();
+      const comments = agent?.waits?.find((w) => w.subjectKind === 'COMMENTS');
+      expect(comments?.subjectQualifiedId).toBeTruthy();
+    }));
 
   it('agents-menu: the project’s ACTIVE agents starting up, each with its phase', () =>
     given(STARTING_UP, 'listAgents', 'agents-menu', STARTING_UP_AGENTS).executeTest(

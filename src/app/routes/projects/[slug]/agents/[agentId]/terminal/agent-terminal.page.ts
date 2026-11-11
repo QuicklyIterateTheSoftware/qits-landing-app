@@ -11,7 +11,8 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import type { DomainEvent } from '$core/events/domain-events';
 import { PlatformOrigins } from '$core/platform/platform-origins';
@@ -63,7 +64,7 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
 @Component({
   selector: 'app-agent-terminal-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TerminalScreen],
+  imports: [QitsExit, TerminalScreen],
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-2 text-sm" aria-label="Terminal">
@@ -109,10 +110,12 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
               its turn.
             </p>
           }
-          @if (slotLink(); as link) {
+          @if (slotLink(); as params) {
             <p class="m-0 mt-2 text-charcoal-brown-600">
               The harness sign-in and the plugins belong to the workspace’s container: they are on
-              <a class="text-ocean-deep-700" [routerLink]="link">the workspace’s page</a>.
+              <a class="text-ocean-deep-700" [qitsExit]="opening.workspace" [exitParams]="params"
+                >the workspace’s page</a
+              >.
             </p>
           }
         }
@@ -146,10 +149,15 @@ export class AgentTerminalPage {
     () => !!this.rowId() && this.agent()?.runState === 'RUNNING',
   );
 
-  /** The workspace's page, where the harness install is. */
+  /** The workspace's page, where the harness install is (epic qits-2000). */
+  protected readonly opening = outcomes('open-terminal-workspace', {
+    workspace: exit('projects/:slug/workspaces/:slotId'),
+  });
+
+  /** The workspace page's exit params; none without the slug or a slot. */
   protected readonly slotLink = computed(() => {
     const slug = this.selected.slug();
-    return slug && this.rowId() ? `/projects/${slug}/workspaces/${this.rowId()}` : null;
+    return slug && this.rowId() ? { slug, slotId: this.rowId() } : null;
   });
 
   /** Bumped by every harness start: a new harness is a new socket. */

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { agentPath } from '$core/workspaces/agent-attention';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import {
   activityLabel,
   agentName,
@@ -31,7 +30,7 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
 /**
  * One agent, as the Agents and slot pages list it (qits-workspaces-frontend's agent rows): its
  * work item's qualified id, a link to the agent's page (`/projects/<slug>/agents/<agent id>`, epic
- * qits-1681), the item's title, its state and run state, what it is doing, and — on a line of its own
+ * qits-1681; the declared exit `open-agent-row` `open`, epic qits-2000), the item's title, its state and run state, what it is doing, and — on a line of its own
  * — what it waits on and since when (qits-1229). "waiting on you" only when it waits for input and
  * declared no wait: a wait on a release request, a CI run or a work item is not a person's.
  * `wrapperBranch` and `harness` show when given. Projected content (the Agents page's waits and
@@ -40,17 +39,18 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
 @Component({
   selector: 'app-agent-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, RouterLink],
+  imports: [Chip, QitsExit],
   host: { class: 'block' },
   template: `
     <div
       class="flex flex-col gap-1 rounded-md border border-charcoal-brown-200 px-4 py-2.5 text-sm"
     >
       <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        @if (link(); as path) {
+        @if (link(); as params) {
           <a
             class="font-semibold text-ocean-deep-700 no-underline hover:underline"
-            [routerLink]="path"
+            [qitsExit]="opening.open"
+            [exitParams]="params"
             >{{ name() }}</a
           >
         } @else {
@@ -104,9 +104,14 @@ export class AgentRow {
     activityLabel(this.agent().activity, this.agent().waitingOn, this.agent().entityStatus),
   );
   protected readonly wait = computed(() => agentWaitLabel(this.agent()));
+  protected readonly opening = outcomes('open-agent-row', {
+    open: exit('projects/:slug/agents/:agentId'),
+  });
+
+  /** The agent page's exit params; none without the slug and the agent's id. */
   protected readonly link = computed(() => {
     const slug = this.slug();
-    const id = this.agent().agentId?.trim();
-    return slug && id ? agentPath(slug, id) : undefined;
+    const agentId = this.agent().agentId?.trim();
+    return slug && agentId ? { slug, agentId } : undefined;
   });
 }

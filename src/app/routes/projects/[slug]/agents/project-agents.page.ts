@@ -9,7 +9,7 @@ import {
   PLATFORM_ID,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
@@ -26,7 +26,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * here). First its ACTIVE agents (`AgentsStore.loadProjectAgents`) — each a link to the agent's page
  * (`agents/<agent id>`) — with how each runs, what each waits on and, when one needs a person, why
  * and what to do (`app-agent-status`). Then, under a "Workspaces" heading, the project's wrapper's
- * slots, the workspaces agents run in — each a link to the slot's page (`workspaces/<slot id>`) —
+ * slots, the workspaces agents run in — each a link to the slot's page (`workspaces/<slot id>`,
+ * the declared exit `open-agents-slot` `slot`, epic qits-2000) —
  * with its container state, placement and how many agents it hosts. Beside that heading, Targets
  * leads to qits-system's Targets page (`https://system.qits.<domain>/system/targets`,
  * `PlatformOrigins.page('system')`, epic qits-1481), where the execution targets slots are placed
@@ -45,7 +46,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-project-agents-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AgentRow, AgentStatus, Chip, PageLayoutComponent, RouterLink, Spinner],
+  imports: [AgentRow, AgentStatus, Chip, PageLayoutComponent, QitsExit, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -103,7 +104,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   <li>
                     <a
                       class="flex flex-wrap items-center gap-3 rounded-md border border-charcoal-brown-200 px-4 py-2.5 text-sm text-charcoal-brown-900 no-underline transition-shadow duration-150 hover:shadow-md"
-                      [routerLink]="slotLink(slot.id)"
+                      [qitsExit]="opening.slot"
+                      [exitParams]="{ slug: slug() ?? '', slotId: slot.id ?? '' }"
                     >
                       <span class="font-mono font-semibold">{{ slot.workspaceId }}</span>
                       <ui-chip [label]="runtime(slot.runtimeStatus)" />
@@ -130,6 +132,11 @@ export class ProjectAgentsPage {
   private readonly origins = inject(PlatformOrigins);
 
   protected readonly slug = computed(() => this.selected.slug());
+
+  /** A slot's row opens the slot's page (epic qits-2000). */
+  protected readonly opening = outcomes('open-agents-slot', {
+    slot: exit('projects/:slug/workspaces/:slotId'),
+  });
 
   /** qits-system's Targets page, where the slots' execution targets are managed (epic qits-1481). */
   protected readonly targetsHref = computed(() => {
@@ -209,10 +216,6 @@ export class ProjectAgentsPage {
   protected reload(): void {
     const wrapper = this.wrapperId();
     if (wrapper) void this.store.loadProject(wrapper, this.slug());
-  }
-
-  protected slotLink(id: number | undefined): string {
-    return `/projects/${this.slug() ?? ''}/workspaces/${id ?? ''}`;
   }
 
   protected runtime(status: string | undefined): string {

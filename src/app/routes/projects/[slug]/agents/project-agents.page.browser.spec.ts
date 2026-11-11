@@ -1,11 +1,14 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import {
   openRoute,
   provideAppRoute,
   type FrameReads,
+  type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
 
 /**
@@ -22,6 +25,11 @@ import {
  *
  * The clock is pinned four minutes after the recordings' instants, so a wait reads "4m ago". The
  * event stream never connects.
+ *
+ * A slot's row is a declared exit (`open-agents-slot` `slot`, epic qits-2000), shown by
+ * `slots-and-agents` and followed once. The slot's page it leaves for is its own spec's: its reads
+ * are answered with an error (`leftFor`). The agents' rows and statuses are patterns that declare
+ * their own (`agent-row`, `agent-status`).
  */
 
 const NEEDING_ATTENTION = 'a project with agents needing attention';
@@ -97,6 +105,32 @@ describe('ProjectAgentsPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('slots-and-agents', { kind: 'DATA' });
+  });
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's (`idle()`, not
+   * `settled()`, qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  it('open-agents-slot slot: a slot’s row opens the slot’s page', async () => {
+    const opened = await render(NEEDING_ATTENTION, 1200);
+    await answerSlots(opened);
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('link', { name: /ws-contract/ }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-agents-slot:slot',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/workspaces/1`);
   });
 
   it('marks the page as loading, then as failed to load', async () => {

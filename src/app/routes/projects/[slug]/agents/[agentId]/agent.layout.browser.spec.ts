@@ -1,7 +1,10 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { EVENT_SOURCE } from '$core/events/domain-events';
+import { WEB_SOCKET } from '$core/platform/web-socket';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import {
@@ -25,6 +28,11 @@ import {
  * `AGENT_HAS_LEFTOVER_WORK`, the same agent), and the page offers to discard it anyway.
  *
  * The clock is pinned four minutes after the recordings' instants. The event stream never connects.
+ *
+ * Its links are declared exits (epic qits-2000), shown by `starting` and each followed once: the
+ * item (`open-agent-item` `open`), the slot (`open-agent-workspace` `open`) and the tabs
+ * (`switch-agent-tab` `chat`, `files`, `terminal`). The page each leaves for is its own spec's:
+ * its reads are answered with an error (`leftFor`), and the Terminal tab's socket never opens.
  */
 
 const ITEM = 'contract-00000001-9';
@@ -50,6 +58,19 @@ describe('AgentLayout (screenshots)', () => {
             streams.push(url);
             return { onmessage: null, onerror: null, readyState: 0, close: () => {} };
           },
+        },
+        // The Terminal tab's socket, once a tab exit opens it: it never opens.
+        {
+          provide: WEB_SOCKET,
+          useValue: () => ({
+            onopen: null,
+            onmessage: null,
+            onclose: null,
+            onerror: null,
+            readyState: 0,
+            send: () => {},
+            close: () => {},
+          }),
         },
       ],
     });
@@ -115,6 +136,68 @@ describe('AgentLayout (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('starting', { kind: 'DATA' });
+  });
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's (`idle()`, not
+   * `settled()`, qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  /** The outcomes the test reached, as their marks name them. */
+  const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
+
+  it('open-agent-item open: the agent’s item opens the item’s page', async () => {
+    const { opened, agent } = await render();
+    await answerAgent(opened, agent.agentId, agent);
+    await answerStart(opened, agent.agentId);
+    await page.elementLocator(opened.page).getByRole('link', { name: ITEM }).click();
+    await leftFor(opened);
+    expect(reached()).toEqual(['open-agent-item:open']);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/work/detail/${ITEM}`);
+  });
+
+  it('open-agent-workspace open: the agent’s workspace opens the slot’s page', async () => {
+    const { opened, agent } = await render();
+    await answerAgent(opened, agent.agentId, agent);
+    await answerStart(opened, agent.agentId);
+    const slot = agent.workspaceRowId;
+    await page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: `ws-${slot}` })
+      .click();
+    await leftFor(opened);
+    expect(reached()).toEqual(['open-agent-workspace:open']);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/workspaces/${slot}`);
+  });
+
+  it.each([
+    ['chat', 'Chat'],
+    ['files', 'Files'],
+    ['terminal', 'Terminal'],
+  ])('switch-agent-tab %s: the %s tab opens', async (segment, label) => {
+    const { opened, agent } = await render();
+    await answerAgent(opened, agent.agentId, agent);
+    await answerStart(opened, agent.agentId);
+    const tab = page
+      .elementLocator(opened.page)
+      .getByRole('navigation', { name: 'Agent' })
+      .getByRole('link', { name: label });
+    await tab.click();
+    await leftFor(opened);
+    expect(reached()).toEqual([`switch-agent-tab:${segment}`]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/agents/${agent.agentId}/${segment}`,
+    );
+    await expect.element(tab).toHaveAttribute('aria-current', 'page');
   });
 
   it('shows a refused discard in the service’s words, and offers force', async () => {

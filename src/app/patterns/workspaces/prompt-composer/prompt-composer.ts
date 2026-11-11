@@ -12,6 +12,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { QitsTriggers, type Outcome } from '@qits/angular';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
 import { AgentChatStore } from '$core/workspaces/agent-chat.store';
 import { AgentPromptStore } from '$core/workspaces/agent-prompt.store';
@@ -74,7 +75,7 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
 @Component({
   selector: 'app-prompt-composer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton],
+  imports: [ActionButton, QitsTriggers],
   host: { class: 'flex flex-col gap-3' },
   template: `
     @if (restoredAt(); as at) {
@@ -143,6 +144,7 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
                 class="cursor-pointer rounded border border-charcoal-brown-200 bg-white px-1.5 py-0.5 text-xs text-charcoal-brown-600"
                 [attr.aria-label]="'Open ' + label(reference)"
                 title="Open these lines in the Files tab"
+                [qitsTriggers]="referenceOutcomes()"
                 (click)="openReference.emit(reference)"
               >
                 ↗
@@ -197,6 +199,12 @@ export class PromptComposer {
 
   /** A picked reference's ↗: open its lines in the Files tab. */
   readonly openReference = output<CodeReference>();
+
+  /**
+   * The outcomes the page declares for `openReference` (epic qits-2000), marked on each ↗; the page
+   * reaches them itself.
+   */
+  readonly referenceOutcomes = input<readonly Pick<Outcome, 'interaction' | 'outcome'>[]>([]);
 
   /** The prompt box: the draft. */
   protected readonly text = signal('');

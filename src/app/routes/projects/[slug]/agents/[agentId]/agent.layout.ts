@@ -10,12 +10,12 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
 import { activityLabel, agentWaitLabel, runStateLabel } from '$core/workspaces/agent-labels';
 import { AGENT_TABS } from '$core/workspaces/agent-tabs';
-import { workItemPath } from '$core/workspaces/agent-attention';
 import { AgentsStore } from '$core/workspaces/agents.store';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentStatus } from '$patterns/agents/agent-status/agent-status';
@@ -41,7 +41,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  *
  * A layout: the agent's tabs (`AGENT_TABS`: `chat`, `files` and `terminal`) are its child routes,
  * in a row of links below the header, shown once the agent is known; the empty child shows the
- * header alone.
+ * header alone. Its links are declared exits (epic qits-2000): the item (`open-agent-item`), the
+ * slot (`open-agent-workspace`) and one per tab (`switch-agent-tab`, marked current while its tab
+ * is open: `[qitsExit]` sets `aria-current`).
  *
  * The agent comes from `AgentsStore.loadAgent` by the URL's `:agentId` (`getAgent`, in any state);
  * its open waits and attention from the project's ACTIVE agents (`AgentsStore.loadProjectAgents`),
@@ -61,8 +63,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     AgentStatus,
     Chip,
     PageLayoutComponent,
-    RouterLink,
-    RouterLinkActive,
+    QitsExit,
     RouterOutlet,
     Spinner,
     StartingLog,
@@ -80,10 +81,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               <section class="flex flex-col gap-2 text-sm" aria-label="Agent">
                 @if (agent.entityId || agent.entityTitle) {
                   <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-base">
-                    @if (itemLink(); as link) {
+                    @if (slug() && agent.entityId; as id) {
                       <a
                         class="font-semibold text-ocean-deep-700 no-underline hover:underline"
-                        [routerLink]="link"
+                        [qitsExit]="item.open"
+                        [exitParams]="{ slug: slug(), id }"
                         >{{ agent.entityId }}</a
                       >
                     }
@@ -158,7 +160,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   >
                     <a
                       class="font-mono text-ocean-deep-700 no-underline hover:underline"
-                      [routerLink]="slotLink(rowId)"
+                      [qitsExit]="workspace.open"
+                      [exitParams]="{ slug: slug(), slotId: rowId }"
                       >ws-{{ rowId }}</a
                     >
                     <span
@@ -185,9 +188,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 <li class="shrink-0">
                   <a
                     class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:border-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
-                    [routerLink]="tab.segment"
-                    routerLinkActive=""
-                    ariaCurrentWhenActive="page"
+                    [qitsExit]="tab.exit"
+                    [exitParams]="{ slug: slug(), agentId: agentId() }"
                     >{{ tab.label }}</a
                   >
                 </li>
@@ -201,9 +203,40 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   `,
 })
 export class AgentLayout {
-  protected readonly tabs = AGENT_TABS;
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(AgentsStore);
+
+  /** The header's item, linked to its page (epic qits-2000). */
+  protected readonly item = outcomes('open-agent-item', {
+    open: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** The agent's slot, linked to its page (epic qits-2000). */
+  protected readonly workspace = outcomes('open-agent-workspace', {
+    open: exit('projects/:slug/workspaces/:slotId'),
+  });
+
+  private readonly switching = outcomes('switch-agent-tab', {
+    chat: exit('projects/:slug/agents/:agentId/chat'),
+    files: exit('projects/:slug/agents/:agentId/files'),
+    terminal: exit('projects/:slug/agents/:agentId/terminal'),
+  });
+
+  /** Each tab's exit, by its segment (`AGENT_TABS`). */
+  private readonly exits: Readonly<Record<string, ExitOutcome>> = {
+    chat: this.switching.chat,
+    files: this.switching.files,
+    terminal: this.switching.terminal,
+  };
+
+  /** The tabs, each with its exit (one per tab, `switch-agent-tab`). */
+  protected readonly tabs = AGENT_TABS.flatMap((tab) => {
+    const exit = this.exits[tab.segment];
+    return exit ? [{ ...tab, exit }] : [];
+  });
+
+  /** The open project's slug, the exits' param. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** The agent's id in the URL. */
   protected readonly agentId = toSignal(
@@ -232,13 +265,6 @@ export class AgentLayout {
   protected readonly title = computed(() => {
     const item = this.agent()?.entityId;
     return item ? `Agent ${item}` : 'Agent';
-  });
-
-  /** The agent's work item's page. */
-  protected readonly itemLink = computed(() => {
-    const slug = this.selected.slug();
-    const item = this.agent()?.entityId;
-    return slug && item ? workItemPath(slug, item) : null;
   });
 
   protected readonly runState = computed(() => {
@@ -299,9 +325,5 @@ export class AgentLayout {
   protected reload(): void {
     const id = this.agentId();
     if (id) void this.store.loadAgent(id);
-  }
-
-  protected slotLink(rowId: number): string {
-    return `/projects/${this.selected.slug() ?? ''}/workspaces/${rowId}`;
   }
 }

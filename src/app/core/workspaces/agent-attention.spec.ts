@@ -89,6 +89,8 @@ describe('agent attention', () => {
         text: 'contract-qits-rr-368',
         state: 'RELEASED',
         gates: [{ kind: 'QA', state: 'PASSED' }],
+        id: 'contract-qits-rr-368',
+        href: null,
         link: '/projects/contract/release-requests/contract-qits-rr-368',
       });
     });
@@ -106,6 +108,7 @@ describe('agent attention', () => {
       );
       expect(unresolved.text).toBe('release request contract-qits-rr-368 to end');
       expect(unresolved.link).toBeNull();
+      expect(unresolved.id).toBeNull();
     });
 
     it('links a run into qits-ci, and not without its origin', () => {
@@ -113,8 +116,11 @@ describe('agent attention', () => {
         kind: 'CI_RUN',
         text: 'CI run 00000000',
         state: 'RUNNING',
+        id: null,
+        href: `${CI}/runs/${RUN_ID}`,
         link: `${CI}/runs/${RUN_ID}`,
       });
+      expect(waitSubject(runWait, { slug: 'contract' }).href).toBeNull();
       expect(waitSubject(runWait, { slug: 'contract' }).link).toBeNull();
     });
 
@@ -123,6 +129,8 @@ describe('agent attention', () => {
         kind: 'WORK_ITEM',
         text: 'contract-5',
         state: 'VERIFYING',
+        id: 'contract-5',
+        href: null,
         link: '/projects/contract/work/detail/contract-5',
       });
       expect(waitSubject(itemWait, { slug: 'contract' }).state).toBe('IMPLEMENTING');
@@ -133,10 +141,13 @@ describe('agent attention', () => {
         kind: 'COMMENTS',
         text: 'Comments on contract-5',
         state: undefined,
+        id: 'contract-5',
+        href: null,
         link: '/projects/contract/work/detail/contract-5',
       });
       const unresolved = waitSubject(commentsWait, { slug: 'contract' });
       expect(unresolved.text).toBe('a comment on contract-5');
+      expect(unresolved.id).toBeNull();
       expect(unresolved.link).toBeNull();
     });
 
@@ -145,6 +156,8 @@ describe('agent attention', () => {
         kind: 'OTHER',
         text: 'the owner to reply',
         state: undefined,
+        id: null,
+        href: null,
         link: null,
       });
     });
@@ -182,6 +195,7 @@ describe('agent attention', () => {
       expect(attentionAction(agent({ code: 'BLOCKED_NO_DESK' }), ctx)).toEqual({
         kind: 'open-item',
         label: 'Open item',
+        itemId: 'contract-10',
         link: '/projects/contract/work/detail/contract-10',
       });
     });

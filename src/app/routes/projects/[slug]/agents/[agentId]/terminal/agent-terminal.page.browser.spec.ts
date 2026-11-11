@@ -1,10 +1,16 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../../testing/browser/app-route';
 
 /**
  * Screenshots of an agent's Terminal tab, at `agents/<agent id>/terminal`, inside the shell and the
@@ -18,6 +24,11 @@ import { openRoute, provideAppRoute } from '../../../../../../../testing/browser
  *
  * The socket is a fake (`WEB_SOCKET`): it opens when told and delivers a few lines of shell output,
  * raw terminal text that no golden master records. The event streams never connect.
+ *
+ * The link to the workspace's page is a declared exit (`open-terminal-workspace` `workspace`, epic
+ * qits-2000). It sits below the screen, past the fold, so `workspace-link` screenshots its line on
+ * its own, scrolled into view; it is followed once, and the slot's page it leaves for is its own
+ * spec's: its reads are answered with an error (`leftFor`).
  */
 
 const SLOT = 'a workspace slot hosting agents';
@@ -151,4 +162,51 @@ describe('AgentTerminalPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('lost', { kind: 'ERROR' });
   }, 30_000);
+
+  /** The line under the screen that links the workspace's page. */
+  const workspaceLine = (element: HTMLElement) =>
+    page.elementLocator(
+      [...element.querySelectorAll<HTMLElement>('p')].find((p) =>
+        p.textContent?.includes('the workspace’s page'),
+      )!,
+    );
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's (`idle()`, not
+   * `settled()`, qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  it('shows the link to the workspace’s page below the screen', async () => {
+    const { opened, element } = await render();
+    sockets[0].open();
+    await opened.settled();
+    const line = workspaceLine(element);
+    (line.element() as HTMLElement).scrollIntoView({ block: 'center' });
+    await expect.element(line.getByRole('link', { name: 'the workspace’s page' })).toBeVisible();
+    await expect.element(line).toMatchScreenshot('workspace-link', { kind: 'DATA' });
+  });
+
+  it('open-terminal-workspace workspace: the link opens the workspace’s page', async () => {
+    const { opened, element } = await render();
+    sockets[0].open();
+    await opened.settled();
+    const agent = await goldenMaster(DRAFTED, 'getAgent', 'qits-workspaces');
+    await workspaceLine(element).getByRole('link', { name: 'the workspace’s page' }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-terminal-workspace:workspace',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/workspaces/${agent.workspaceRowId}`,
+    );
+  });
 });

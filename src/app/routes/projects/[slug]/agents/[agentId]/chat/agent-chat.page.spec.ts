@@ -49,7 +49,7 @@ describe('AgentChatPage', () => {
         { provide: PLATFORM_ID, useValue: 'browser' },
         provideRouter([
           {
-            path: 'agent/:agentId',
+            path: 'projects/:slug/agents/:agentId',
             children: [
               { path: 'chat', component: AgentChatPage },
               { path: 'files', children: [] },
@@ -101,7 +101,7 @@ describe('AgentChatPage', () => {
 
   /** Opens the tab; with a slot, it reads the agent's transcript through the agent proxy. */
   async function open() {
-    await harness.navigateByUrl(`/agent/${agentId}/chat`);
+    await harness.navigateByUrl(`/projects/contract/agents/${agentId}/chat`);
     await settle();
     harness.detectChanges();
   }
@@ -190,7 +190,7 @@ describe('AgentChatPage', () => {
     element().querySelector<HTMLButtonElement>(`[aria-label="Open ${file.path}:3-4"]`)!.click();
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/agent/${agentId}/files?path=${encodeURIComponent(file.path)}&lines=3-4`,
+      `/projects/contract/agents/${agentId}/files?path=${encodeURIComponent(file.path)}&lines=3-4`,
     );
   });
 
@@ -208,7 +208,7 @@ describe('AgentChatPage', () => {
     await open();
     http.expectOne(LOG).flush(workspaceDaemonGoldenMaster(TURNS, 'getCommandLog'));
     await answerDraft();
-    await harness.navigateByUrl(`/agent/${agentId}`);
+    await harness.navigateByUrl(`/projects/contract/agents/${agentId}`);
     vi.advanceTimersByTime(TRANSCRIPT_POLL_MS * 2);
     await settle();
     http.expectNone(LOG);

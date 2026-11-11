@@ -292,6 +292,54 @@ export const INTERACTIONS = {
    */
   'show-agent': 'An agent’s page shows the agent, what it waits on and its workspace',
   /**
+   * `project-agents.page.ts`: a slot's row under the Agents page's Workspaces heading opens the
+   * slot's page. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-agents-slot': 'A slot on the Agents page opens the slot’s page',
+  /**
+   * `agent-row.ts`: an agent's name in a row (the Agents page, a slot's page) opens the agent's
+   * page. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-agent-row': 'An agent’s name in its row opens the agent’s page',
+  /**
+   * `agent-status.ts`: a wait's subject opens its page, one exit per kind: the release request, the
+   * work item, or the item whose comments it waits on. A CI run is qits-ci's page, no outcome.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-agent-wait': 'What an agent waits on opens its release request or work item',
+  /**
+   * `agent-status.ts`: what to do about an agent needing a person: Prompt agent opens its Chat tab,
+   * Open item its work item, an overdue release request the request. Navigates only, and names no
+   * pact (epic qits-2000).
+   */
+  'act-on-agent-attention':
+    'The action beside an agent needing a person opens its chat, its item or its request',
+  /**
+   * `agent.layout.ts`: the agent page's item id opens the agent's work item. Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-agent-item': 'The item on an agent’s page opens the work item',
+  /**
+   * `agent.layout.ts`: the agent page's `ws-<slot>` link opens the slot's page. Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-agent-workspace': 'The workspace on an agent’s page opens the slot’s page',
+  /**
+   * `agent.layout.ts`: the agent page's tabs (Chat, Files, Terminal), one exit each. Navigates only,
+   * and names no pact (epic qits-2000).
+   */
+  'switch-agent-tab': 'An agent’s tabs open its Chat, Files or Terminal',
+  /**
+   * `agent-chat.page.ts`: a picked reference's ↗ in the prompt composer opens its lines in the
+   * Files tab (`path`, `lines` query params). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-picked-reference': 'A picked reference’s ↗ in the Chat tab opens its lines in Files',
+  /**
+   * `agent-terminal.page.ts`: the Terminal tab's link to the workspace's page, where the harness
+   * sign-in and the plugins are. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-terminal-workspace': 'The Terminal tab’s workspace link opens the slot’s page',
+  /**
    * `agent-terminal.page.ts`: the agent's Terminal tab attaches to its running harness through the
    * agent proxy (epic qits-1667; before it, it looked the command up on the slot's daemon). No
    * pact row: the socket is no recorded answer.

@@ -87,8 +87,21 @@ export interface WaitSubject {
   /** A release request's gates, from the project's request; absent for any other subject. */
   readonly gates?: readonly GateLike[];
   /**
-   * Where the subject is: an app path (`/projects/…`) or, for a run, an absolute URL into qits-ci.
-   * Null when there is none to build (OTHER, a run without qits-ci's origin, an unresolved subject).
+   * The qualified id the subject's page in this app is addressed by: a release request's (its page,
+   * `projects/:slug/release-requests/:requestId`) or a work item's, for a `WORK_ITEM` or `COMMENTS`
+   * wait (`projects/:slug/work/detail/:id`). The caller picks the declared exit by `kind` (epic
+   * qits-2000). Null for a run (see `href`), OTHER, or an unresolved subject.
+   */
+  readonly id: string | null;
+  /**
+   * A run's page in qits-ci, an absolute URL: another app's page, a plain link. Null for any other
+   * kind, and for a run without qits-ci's origin.
+   */
+  readonly href: string | null;
+  /**
+   * Where the subject is, as one string: the app path `id` makes (`/projects/…`), or `href`. Null
+   * when there is neither. Only the agents menu still links this (`agents-menu.ts`, migrated with the
+   * shell, epic qits-2000); the app's own pages go through declared exits by `kind` and `id`.
    */
   readonly link: string | null;
 }
@@ -96,12 +109,20 @@ export interface WaitSubject {
 /**
  * The one thing to do about an agent's attention:
  * - `prompt`: Prompt agent (its Chat tab), with the passed wait's subject beside it, when there is one;
- * - `open-item`: Open item (`link`, the agent's work item page);
- * - `subject`: go to the overdue wait's subject.
+ * - `open-item`: Open item (`itemId`, the agent's work item page);
+ * - `subject`: go to the overdue wait's subject. qits-workspaces calls a wait overdue only on a
+ *   release request or a CI run (`AgentAttention.overdue`).
  */
 export type AttentionAction =
   | { readonly kind: 'prompt'; readonly label: string; readonly subject?: WaitSubject }
-  | { readonly kind: 'open-item'; readonly label: string; readonly link: string | null }
+  | {
+      readonly kind: 'open-item';
+      readonly label: string;
+      /** The agent's work item, by its qualified id; null when the agent names none. */
+      readonly itemId: string | null;
+      /** Its page's app path (for the agents menu, as {@link WaitSubject.link}). */
+      readonly link: string | null;
+    }
   | { readonly kind: 'subject'; readonly label: string; readonly subject: WaitSubject };
 
 /** Whether the agent needs a person: it carries an attention. */
@@ -162,16 +183,21 @@ export function waitSubject(wait: WaitLike, ctx: WaitContext): WaitSubject {
         text: qualifiedId ?? (label || (wait.subjectRef ?? '')),
         state: request?.state ?? wait.subjectState,
         gates: request?.gates ?? [],
+        id: qualifiedId ?? null,
+        href: null,
         link: qualifiedId ? releaseRequestPath(ctx.slug, qualifiedId) : null,
       };
     }
     case 'CI_RUN': {
       const runId = wait.subjectId ?? wait.subjectRef;
+      const href = runId ? ciRunUrl(ctx.ciOrigin, runId) : null;
       return {
         kind: 'CI_RUN',
         text: runId ? `CI run ${runId.slice(0, 8)}` : label,
         state: wait.subjectState,
-        link: runId ? ciRunUrl(ctx.ciOrigin, runId) : null,
+        id: null,
+        href,
+        link: href,
       };
     }
     case 'WORK_ITEM':
@@ -179,22 +205,29 @@ export function waitSubject(wait: WaitLike, ctx: WaitContext): WaitSubject {
       const item = ctx.work?.find((w) => names(wait, w));
       const qualifiedId = wait.subjectQualifiedId ?? item?.qualifiedId;
       const itemText = qualifiedId ?? (label || (wait.subjectRef ?? ''));
+      const target = {
+        id: qualifiedId ?? null,
+        href: null,
+        link: qualifiedId ? workItemPath(ctx.slug, qualifiedId) : null,
+      };
       return wait.subjectKind === 'WORK_ITEM'
-        ? {
-            kind: 'WORK_ITEM',
-            text: itemText,
-            state: item?.status ?? wait.subjectState,
-            link: qualifiedId ? workItemPath(ctx.slug, qualifiedId) : null,
-          }
+        ? { kind: 'WORK_ITEM', text: itemText, state: item?.status ?? wait.subjectState, ...target }
         : {
             kind: 'COMMENTS',
             text: qualifiedId ? `Comments on ${qualifiedId}` : label,
             state: wait.subjectState,
-            link: qualifiedId ? workItemPath(ctx.slug, qualifiedId) : null,
+            ...target,
           };
     }
     default:
-      return { kind: 'OTHER', text: label, state: wait.subjectState, link: null };
+      return {
+        kind: 'OTHER',
+        text: label,
+        state: wait.subjectState,
+        id: null,
+        href: null,
+        link: null,
+      };
   }
 }
 
@@ -222,6 +255,7 @@ export function attentionAction(
       return {
         kind: 'open-item',
         label: 'Open item',
+        itemId: agent.entityId ?? null,
         link: agent.entityId ? workItemPath(ctx.slug, agent.entityId) : null,
       };
     case 'WAIT_OVERDUE':

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
 import { WorkStore } from '$core/work/work.store';
 import {
-  agentPath,
   attentionAction,
   waitSubject,
   type AttentionAgent,
@@ -37,13 +36,20 @@ interface WaitLine {
  * a person stopped it, and nothing starts it again until somebody restarts or prompts it. Shows
  * nothing for an agent with none of these.
  *
+ * Its links are declared exits (epic qits-2000), chosen in the template by the subject's kind: a
+ * wait's subject (`open-agent-wait`: its release request, its work item, the item whose comments it
+ * waits on) and the attention's action (`act-on-agent-attention`: Prompt agent → the Chat tab, Open
+ * item → the item, an overdue release request → the request). A run is qits-ci's page, a plain
+ * link. qits-workspaces calls a wait overdue only on a release request or a run, so no other
+ * subject has an overdue action.
+ *
  * The context is what the app already holds: the open project's slug, its release requests
  * (`ProjectsStore`) and its work (`WorkStore`), and qits-ci's page origin; it reads nothing itself.
  */
 @Component({
   selector: 'app-agent-status',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [QitsExit],
   host: { class: 'block' },
   template: `
     @if (agent().runState === 'STOPPED') {
@@ -58,14 +64,38 @@ interface WaitLine {
         data-wait
       >
         <span>waits on</span>
-        @if (wait.subject.link; as link) {
-          @if (isAppPath(link)) {
-            <a class="text-ocean-deep-700" [routerLink]="link">{{ wait.subject.text }}</a>
-          } @else {
-            <a class="text-ocean-deep-700" [href]="link">{{ wait.subject.text }}</a>
+        @switch (slug() && wait.subject.id ? wait.subject.kind : null) {
+          @case ('RELEASE_REQUEST') {
+            <a
+              class="text-ocean-deep-700"
+              [qitsExit]="opening.releaseRequest"
+              [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
+              >{{ wait.subject.text }}</a
+            >
           }
-        } @else {
-          <span class="text-charcoal-brown-900">{{ wait.subject.text }}</span>
+          @case ('WORK_ITEM') {
+            <a
+              class="text-ocean-deep-700"
+              [qitsExit]="opening.workItem"
+              [exitParams]="{ slug: slug(), id: wait.subject.id! }"
+              >{{ wait.subject.text }}</a
+            >
+          }
+          @case ('COMMENTS') {
+            <a
+              class="text-ocean-deep-700"
+              [qitsExit]="opening.comments"
+              [exitParams]="{ slug: slug(), id: wait.subject.id! }"
+              >{{ wait.subject.text }}</a
+            >
+          }
+          @default {
+            @if (wait.subject.href; as href) {
+              <a class="text-ocean-deep-700" [href]="href">{{ wait.subject.text }}</a>
+            } @else {
+              <span class="text-charcoal-brown-900">{{ wait.subject.text }}</span>
+            }
+          }
         }
         @if (wait.subject.state; as state) {
           <span class="text-xs font-semibold">{{ state }}</span>
@@ -77,30 +107,43 @@ interface WaitLine {
         <span class="text-cinnabar-700">{{ agent().attention?.reason }}</span>
         @switch (action.kind) {
           @case ('prompt') {
-            @if (chat(); as chat) {
-              <a class="font-semibold text-charcoal-brown-900" [routerLink]="chat" data-action>{{
-                action.label
-              }}</a>
+            @if (slug() && agent().agentId; as agentId) {
+              <a
+                class="font-semibold text-charcoal-brown-900"
+                [qitsExit]="acting.prompt"
+                [exitParams]="{ slug: slug(), agentId }"
+                data-action
+                >{{ action.label }}</a
+              >
             }
           }
           @case ('open-item') {
-            @if (action.link; as link) {
-              <a class="font-semibold text-charcoal-brown-900" [routerLink]="link" data-action>{{
-                action.label
-              }}</a>
+            @if (slug() && action.itemId; as id) {
+              <a
+                class="font-semibold text-charcoal-brown-900"
+                [qitsExit]="acting.openItem"
+                [exitParams]="{ slug: slug(), id }"
+                data-action
+                >{{ action.label }}</a
+              >
             }
           }
           @case ('subject') {
-            @if (action.subject.link; as link) {
-              @if (isAppPath(link)) {
-                <a class="font-semibold text-charcoal-brown-900" [routerLink]="link" data-action>{{
-                  action.label
-                }}</a>
-              } @else {
-                <a class="font-semibold text-charcoal-brown-900" [href]="link" data-action>{{
-                  action.label
-                }}</a>
-              }
+            @if (
+              slug() && action.subject.kind === 'RELEASE_REQUEST' && action.subject.id;
+              as requestId
+            ) {
+              <a
+                class="font-semibold text-charcoal-brown-900"
+                [qitsExit]="acting.overdueRequest"
+                [exitParams]="{ slug: slug(), requestId }"
+                data-action
+                >{{ action.label }}</a
+              >
+            } @else if (action.subject.href; as href) {
+              <a class="font-semibold text-charcoal-brown-900" [href]="href" data-action>{{
+                action.label
+              }}</a>
             }
           }
         }
@@ -115,6 +158,23 @@ export class AgentStatus {
   private readonly projects = inject(ProjectsStore);
   private readonly work = inject(WorkStore);
   private readonly origins = inject(PlatformOrigins);
+
+  /** A wait's subject, one exit per kind that has a page here (epic qits-2000). */
+  protected readonly opening = outcomes('open-agent-wait', {
+    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    workItem: exit('projects/:slug/work/detail/:id'),
+    comments: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** What to do about the agent's attention, one exit per action (epic qits-2000). */
+  protected readonly acting = outcomes('act-on-agent-attention', {
+    prompt: exit('projects/:slug/agents/:agentId/chat'),
+    openItem: exit('projects/:slug/work/detail/:id'),
+    overdueRequest: exit('projects/:slug/release-requests/:requestId'),
+  });
+
+  /** The open project's slug, the exits' param. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   private readonly context = computed((): WaitContext => {
     const id = this.selected.project()?.id;
@@ -135,16 +195,4 @@ export class AgentStatus {
   );
 
   protected readonly action = computed(() => attentionAction(this.agent(), this.context()));
-
-  /** The agent page's Chat tab, for Prompt agent. */
-  protected readonly chat = computed(() => {
-    const slug = this.context().slug;
-    const id = this.agent().agentId;
-    return slug && id ? agentPath(slug, id, 'chat') : null;
-  });
-
-  /** Whether a link is the app's own (a router link) rather than another app's page. */
-  protected isAppPath(link: string): boolean {
-    return link.startsWith('/');
-  }
 }

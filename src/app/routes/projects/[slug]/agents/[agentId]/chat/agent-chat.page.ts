@@ -12,7 +12,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { exit, outcomes } from '@qits/angular';
 import { map } from 'rxjs';
+import { projectSlugOf } from '$core/projects/selected-project';
 import { AgentChatStore } from '$core/workspaces/agent-chat.store';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
 import { AgentsStore } from '$core/workspaces/agents.store';
@@ -40,7 +42,7 @@ export const TRANSCRIPT_POLL_MS = 3000;
  * Terminal tab; Interrupt and Stop are the agent page's verbs. Below the transcript, the prompt
  * composer (`PromptComposer`), whose draft lives on the service and whose prompt the agent's prompt
  * door hands to it, with the line ranges picked in the Files tab; a pick's ↗ opens it there
- * (`files?path=…&lines=…`).
+ * (`files?path=…&lines=…`, the declared exit `open-picked-reference` `files`, epic qits-2000).
  *
  * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
  * (`workspaceId`) → the agent (`AgentsStore.loadAgent`, quietly), whose run state starts and stops
@@ -101,6 +103,7 @@ export const TRANSCRIPT_POLL_MS = 3000;
           [workspaceRowId]="rowId()"
           [preamble]="preamble()"
           (sent)="onSent($event)"
+          [referenceOutcomes]="[opening.files]"
           (openReference)="openReference($event)"
         />
       }
@@ -112,7 +115,11 @@ export class AgentChatPage {
   private readonly chats = inject(AgentChatStore);
   private readonly hints = inject(WorkspaceHints);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
+
+  /** A picked reference's ↗ opens its lines in the Files tab (epic qits-2000). */
+  protected readonly opening = outcomes('open-picked-reference', {
+    files: exit('projects/:slug/agents/:agentId/files'),
+  });
 
   /** The agent's id, the agent layout's `:agentId`. */
   private readonly agentId = toSignal(
@@ -217,10 +224,10 @@ export class AgentChatPage {
 
   /** A picked reference's ↗: its lines, open in the Files tab. */
   protected openReference(reference: CodeReference): void {
-    void this.router.navigate(['..', 'files'], {
-      relativeTo: this.route,
-      queryParams: { path: reference.path, lines: formatRange(reference) },
-    });
+    void this.opening.files.go(
+      { slug: projectSlugOf(this.router.url) ?? '', agentId: this.agentId() },
+      { queryParams: { path: reference.path, lines: formatRange(reference) } },
+    );
   }
 
   private followTranscript(agentId: string, rowId: number, running: boolean): void {
