@@ -6,7 +6,7 @@
  * outcome once through `end`. An engine never reorders anything: it measures, draws and reports.
  */
 
-import { paneBounds, scrollPane } from '$ui/dom/scroll-pane';
+import { paneBounds, scrollingPane } from '$ui/dom/scroll-pane';
 
 /** How a gesture ended: a plain click (it never became a drag), a cancel, or a drop at `to`. */
 export type DragOutcome =
@@ -113,7 +113,7 @@ export function pinnedHeight(document: Document, element: HTMLElement): number {
 
 /** Where a drag of `list`'s items scrolls, and the part of the window it shows them in. */
 export interface VisibleArea {
-  /** The list's nearest scrolling ancestor (`scrollPane`), or the document's root element. */
+  /** The list's nearest scrolling ancestor (`scrollingPane`), or the document's root element. */
   readonly pane: HTMLElement;
   /** The top of the visible area below what is pinned there, in viewport px. */
   readonly top: number;
@@ -129,7 +129,7 @@ export interface VisibleArea {
  * ({@link pinnedHeight}), to its bottom, both clipped to the window (`paneBounds`).
  */
 export function visibleArea(document: Document, list: HTMLElement): VisibleArea {
-  const pane = scrollPane(list);
+  const pane = scrollingPane(list);
   const { top, bottom } = paneBounds(pane);
   return { pane, top: top + pinnedHeight(document, list), bottom };
 }

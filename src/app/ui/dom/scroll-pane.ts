@@ -7,20 +7,31 @@
  */
 
 /**
- * The nearest ancestor of `el` that scrolls it vertically (`overflow-y` `auto` or `scroll`, and
- * taller inside than its box), or the document's root element when none does. The height check
- * skips a box that only scrolls sideways (`overflow-x-auto` computes `overflow-y` to `auto` too). The root element stands for the window: its `scrollTop`,
+ * The nearest ancestor of `el` that may scroll it vertically (`overflow-y` `auto` or `scroll`), or
+ * the document's root element when none does. Whether it overflows now does not count: what sizes
+ * itself to the pane (the terminal's screen) would otherwise flip between two panes as it grows. The root element stands for the window: its `scrollTop`,
  * `scrollBy` and `clientHeight` are the window's.
  */
 export function scrollPane(el: Element): HTMLElement {
   const view = el.ownerDocument.defaultView;
   for (let node = el.parentElement; node && view; node = node.parentElement) {
     const { overflowY } = view.getComputedStyle(node);
-    if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight) {
-      return node;
-    }
+    if (overflowY === 'auto' || overflowY === 'scroll') return node;
   }
   return el.ownerDocument.documentElement;
+}
+
+/**
+ * The nearest ancestor of `el` that scrolls it vertically right now: {@link scrollPane}, skipping a
+ * box whose content fits it, such as one that only scrolls sideways (`overflow-x-auto` computes
+ * `overflow-y` to `auto` too), or the document's root element when none is left. What scrolls along
+ * with the pointer (the reorder drags) asks here, measured once at the pick-up.
+ */
+export function scrollingPane(el: Element): HTMLElement {
+  const root = el.ownerDocument.documentElement;
+  let pane = scrollPane(el);
+  while (pane !== root && pane.scrollHeight <= pane.clientHeight) pane = scrollPane(pane);
+  return pane;
 }
 
 /**
