@@ -109,15 +109,22 @@ const routes: RouteLedgerCommand = (context, records) =>
   ledger(context, PAGE_SPEC.test(context.testPath ?? '') ? records : []);
 
 /**
- * `parkPointer`: moves the mouse to the page's top-left corner. The pointer otherwise stays where
- * the previous test clicked, and over a card it draws a hover ring into the next screenshot.
+ * `parkPointer`: moves the mouse off the page, just past its top-left corner, so no element is
+ * hovered. The pointer otherwise stays where the previous test clicked, and over a card it draws a
+ * hover ring into the next screenshot.
+ *
+ * Off the page, not onto its corner (ticket qits-2065): the test page's (0, 0) is the top-left of
+ * every fixture, so a pointer parked there sits on the component under test. Chromium applies the
+ * hover of content that appears under a still pointer on a later frame, so the hover ring was in
+ * the screenshot on a quiet machine and missing on a busy one. With nothing under the pointer,
+ * there is no hover to come late.
  */
 const parkPointer: BrowserCommand<[]> = async (context) => {
   if (context.provider.name !== 'playwright') return;
   // The Playwright provider gives the command the test's page.
   await (
     context as unknown as { page: { mouse: { move(x: number, y: number): Promise<void> } } }
-  ).page.mouse.move(0, 0);
+  ).page.mouse.move(-1, -1);
 };
 
 /** The Playwright side of a command's context, as far as the pointer commands use it. */

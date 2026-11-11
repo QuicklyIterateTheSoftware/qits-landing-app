@@ -102,7 +102,8 @@ beforeAll(async () => {
 });
 
 // The pointer stays where the previous test clicked: over a card it would draw a hover ring into
-// the next screenshot. Park it in the top-left corner before every test.
+// the next screenshot. Park it off the page before every test: its top-left corner is on the
+// fixture, which a hover applied a frame late would put in the screenshot only some of the time.
 beforeEach(async () => {
   await commands.parkPointer();
 });

@@ -39,7 +39,7 @@ declare module 'vitest/browser' {
      * with the routes its recorded answers were shown on (`takeRouteRecords()`, in `setup.ts`).
      */
     goldenMasterRoutes: (records: RouteRecord[]) => Promise<void>;
-    /** Moves the mouse to the page's top-left corner, so no element is hovered. */
+    /** Moves the mouse off the page (past its top-left corner), so no element is hovered. */
     parkPointer: () => Promise<void>;
     /**
      * A real mouse step at (`x`, `y`) in the test page's viewport: `move` there (in `steps`
