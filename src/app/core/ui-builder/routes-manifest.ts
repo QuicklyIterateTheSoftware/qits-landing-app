@@ -13,6 +13,13 @@ export interface ManifestRoute {
   readonly fullPath: string;
   readonly redirectTo?: string;
   readonly children?: readonly ManifestRoute[];
+  /**
+   * Whether the route is an entry point (qits-2049): entered from outside the app (an idp's
+   * redirect, an address another frontend links, a bookmark), declared with the route's
+   * `data: { qitsEntry: true }`, so it needs no outcome leading to it. Absent in a bundle older
+   * than entry points, and on every other route.
+   */
+  readonly entry?: boolean;
 }
 
 /** One call a freeze's test answered with a recording: which provider, operation and state. */
@@ -157,6 +164,7 @@ function isRoute(value: unknown): value is ManifestRoute {
     isString(value['path']) &&
     isString(value['fullPath']) &&
     (value['redirectTo'] === undefined || isString(value['redirectTo'])) &&
+    (value['entry'] === undefined || typeof value['entry'] === 'boolean') &&
     (value['children'] === undefined ||
       (Array.isArray(value['children']) && value['children'].every(isRoute)))
   );
@@ -804,6 +812,77 @@ export function sharedOutcomes(
         .sort(byInteraction)
         .map((entry) => joinOutcome(manifest, outcomes, entry, selected)),
     }));
+}
+
+/**
+ * A declared outcome as {@link routeOutcomes} joins it (qits-2049): with the tests that reach it and
+ * the freezes that show its trigger, `selected` sorting its own freezes first. What the Outcomes
+ * tab's sources hand the highlight. A manifest without readable outcomes joins it with nothing.
+ */
+export function joinedOutcome(
+  manifest: RoutesManifest,
+  entry: DeclaredOutcome,
+  selected: string | null = null,
+): JoinedOutcome {
+  return joinOutcome(
+    manifest,
+    outcomesOf(manifest) ?? { declared: [], fired: [] },
+    entry,
+    selected,
+  );
+}
+
+/** One route the reachability check looks at (qits-2049), with the exits that lead to it. */
+export interface InboundRoute {
+  readonly fullPath: string;
+  /** Whether it is an entry point (`data: { qitsEntry: true }`), which needs no inbound exit. */
+  readonly entry: boolean;
+  /** The declared exits whose `to` is its full path, from any scope, in the manifest's order. */
+  readonly inbound: readonly DeclaredOutcome[];
+}
+
+/** Whether a route row is unreachable (qits-2049): no exit leads to it and it is no entry point. */
+export const unreachable = (row: InboundRoute): boolean => !row.inbound.length && !row.entry;
+
+/**
+ * Every route the reachability check of `@qits/angular`'s `outcomeGaps` looks at, with the exits
+ * that lead to it (qits-2049). The routes checked are the manifest's (its `children` walked) that
+ * have no children, no redirect and a path other than `**`: a parent's `''` child stands for the
+ * parent. An inbound exit is a declared outcome of kind `exit` whose `to` is the route's full path
+ * exactly, declared on a page, a layout or app-wide (the library's too); a stay, a return and an
+ * external add none. Routes sharing a full path are one row, an entry when any of them is. The
+ * unreachable ones ({@link unreachable}) come first, then the rest, each in the manifest's order.
+ * With no readable outcomes every row has no inbound exit.
+ */
+export function inboundExits(manifest: RoutesManifest): readonly InboundRoute[] {
+  const declared = outcomesOf(manifest)?.declared ?? [];
+  const entries = new Map<string, boolean>();
+  const walk = (routes: readonly ManifestRoute[]) => {
+    for (const route of routes) {
+      if (route.children?.length) walk(route.children);
+      else if (route.redirectTo === undefined && route.path !== '**') {
+        entries.set(route.fullPath, (entries.get(route.fullPath) ?? false) || route.entry === true);
+      }
+    }
+  };
+  walk(manifest.routes);
+  const rows = [...entries].map(([fullPath, entry]): InboundRoute => ({
+    fullPath,
+    entry,
+    inbound: declared.filter((d) => d.kind === 'exit' && d.to === fullPath),
+  }));
+  return [...rows.filter(unreachable), ...rows.filter((row) => !unreachable(row))];
+}
+
+/**
+ * The outcomes that leave without a fixed target (qits-2049): the declared `returnTo` and
+ * `external` ones, which lead to no route of the tree, so no route counts them as inbound. In the
+ * manifest's order; none without readable outcomes.
+ */
+export function unfixedOutcomes(manifest: RoutesManifest): readonly DeclaredOutcome[] {
+  return (outcomesOf(manifest)?.declared ?? []).filter(
+    (d) => d.kind === 'returnTo' || d.kind === 'external',
+  );
 }
 
 /** A CSS `url(...)` with its quote and reference. */

@@ -892,10 +892,11 @@ describe('UiBuilderPage', () => {
       expect(
         row(element, 'repositories:opened').querySelector('.reached-by')?.getAttribute('title'),
       ).toBe('project-repositories.page.browser.spec.ts › opens a project');
-      // The shared ones are counted, never repeated.
-      expect(
-        element.querySelector('.shared-outcomes')?.textContent?.replace(/\s+/g, ' ').trim(),
-      ).toBe('2 shared outcomes from layouts');
+      // The shared ones are counted under them, collapsed (qits-2049).
+      const toggle = element.querySelector<HTMLButtonElement>('aside .shared-toggle')!;
+      expect(words(toggle)).toBe('▸ Shared 2');
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(element.querySelectorAll('aside .shared-outcomes')).toHaveLength(0);
     });
 
     it('selects an exit’s target route, unfolding the tree to it', async () => {
@@ -1027,23 +1028,198 @@ describe('UiBuilderPage', () => {
       }
     });
 
-    it('lists the shared outcomes once, by scope, in their own tab', async () => {
-      const { fixture, element } = await renderOutcomes();
-      element.querySelector<HTMLButtonElement>('.shared-outcomes')!.click();
+    /** The Outcomes tab's section, opened (qits-2049). */
+    function inboundTab(fixture: { detectChanges(): void }, element: HTMLElement): HTMLElement {
+      clickTab(element, 'Outcomes');
       fixture.detectChanges();
+      return element.querySelector<HTMLElement>('section[aria-label="Inbound outcomes"]')!;
+    }
+
+    /** The tab's route row for `fullPath`. */
+    function inboundRow(tab: HTMLElement, fullPath: string): HTMLElement {
+      return [...tab.querySelectorAll<HTMLElement>('li.inbound-route')].find(
+        (li) => li.querySelector('button.inbound span')?.textContent?.trim() === `/${fullPath}`,
+      )!;
+    }
+
+    it('lists the routes by how outcomes reach them, unreachable first (qits-2049)', async () => {
+      const { fixture, element } = await renderOutcomes();
+      const tab = inboundTab(fixture, element);
+      expect(tab.querySelector('.inbound-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+        '1 of 2 routes no outcome leads to',
+      );
+      // The repositories route: nothing exits to it. `projects`: its page's exit and the shell's.
+      expect([...tab.querySelectorAll('button.inbound')].map(leaves)).toEqual([
+        '/projects/:slug/repositories No outcome leads here',
+        '/projects 2',
+      ]);
+      const repositories = inboundRow(tab, REPOSITORIES);
+      expect(repositories.querySelector('button.inbound')?.classList).toContain('unreachable');
+      expect(repositories.querySelector('ui-chip.no-inbound')?.getAttribute('tone')).toBe(
+        'waiting',
+      );
+      expect(inboundRow(tab, 'projects').querySelector('ui-chip')).toBeNull();
+    });
+
+    it('chips an entry point, and does not count it unreachable (qits-2049)', async () => {
+      const manifest = withOutcomes();
+      const entered = {
+        ...manifest,
+        routes: manifest.routes.map((root) => ({
+          ...root,
+          children: root.children?.map((child) =>
+            child.fullPath === REPOSITORIES ? { ...child, entry: true } : child,
+          ),
+        })),
+      };
+      const rendered = await render('qits-landing-app', undefined, undefined, '', entered);
+      await answerFreeze(ERROR_FREEZE, rendered.fixture);
+      const tab = inboundTab(rendered.fixture, rendered.element);
+      expect(tab.querySelector('.inbound-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+        '0 of 2 routes no outcome leads to',
+      );
+      expect([...tab.querySelectorAll('button.inbound')].map(leaves)).toEqual([
+        '/projects 2',
+        '/projects/:slug/repositories Entry point',
+      ]);
+      const row = inboundRow(tab, REPOSITORIES);
+      row.querySelector<HTMLButtonElement>('button.inbound')!.click();
+      rendered.fixture.detectChanges();
+      expect(row.querySelector('.no-sources')?.textContent?.trim()).toBe(
+        'Entered from outside the app.',
+      );
+    });
+
+    it('expands a route into its sources, where each is declared (qits-2049)', async () => {
+      const { fixture, element } = await renderOutcomes();
+      const tab = inboundTab(fixture, element);
+      const projects = inboundRow(tab, 'projects');
+      const toggle = projects.querySelector<HTMLButtonElement>('button.inbound')!;
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(projects.querySelectorAll('li.outcome-source')).toHaveLength(0);
+      toggle.click();
+      fixture.detectChanges();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect([...projects.querySelectorAll('li.outcome-source')].map(leaves)).toEqual([
+        '/projects/:slug/repositories repositories:opened',
+        '/ and below shell:signed-out',
+      ]);
+      toggle.click();
+      fixture.detectChanges();
+      expect(projects.querySelectorAll('li.outcome-source')).toHaveLength(0);
+    });
+
+    it('selects a source’s route on the freeze showing its trigger, and highlights it (qits-2049)', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      const tab = inboundTab(fixture, element);
+      const projects = inboundRow(tab, 'projects');
+      projects.querySelector<HTMLButtonElement>('button.inbound')!.click();
+      fixture.detectChanges();
+      const source = (mark: string) =>
+        [...projects.querySelectorAll<HTMLButtonElement>('li.outcome-source button.source')].find(
+          (b) => b.textContent?.includes(mark),
+        )!;
+
+      // The page's exit: its trigger is in the shown state already, so nothing switches.
+      const doc = loadFrame(page, TRIGGER);
+      source('repositories:opened').click();
+      fixture.detectChanges();
+      expect(query()).toEqual({});
+      expect(source('repositories:opened').getAttribute('aria-pressed')).toBe('true');
+      expect(doc.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      // The tab stays open, and a second click clears it.
       expect(
         element.querySelector('[aria-label="Panels"] [aria-selected="true"]')?.textContent?.trim(),
       ).toBe('Outcomes');
-      const tab = element.querySelector<HTMLElement>('section[aria-label="Shared outcomes"]')!;
+      source('repositories:opened').click();
+      fixture.detectChanges();
+      expect(source('repositories:opened').getAttribute('aria-pressed')).toBe('false');
+      expect(doc.querySelector('[data-qits-builder-highlight]')).toBeNull();
+
+      // The shell's: of the freezes showing it, the one nearest /projects (both are the
+      // repositories route's; the selected route's `error` first), so nothing switches either.
+      source('shell:signed-out').click();
+      fixture.detectChanges();
+      expect(query()).toEqual({});
+      const shell = loadFrame(page, '<nav data-qits-outcome="shell:signed-out">x</nav>');
+      expect(shell.querySelector('nav')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+    });
+
+    it('selects the declaring route of a source no freeze shows (qits-2049)', async () => {
+      const { fixture, element } = await renderOutcomes({
+        ...OUTCOMES,
+        declared: [...OUTCOMES.declared, declared('hidden', 'exit', 'projects')],
+      });
+      // From another route, so the source's route is the one selected.
+      [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+        .find((r) => r.textContent?.replace(/\s+/g, '') === 'projects0')!
+        .querySelector<HTMLButtonElement>('button.route')!
+        .click();
+      await navigated(fixture);
+      const tab = inboundTab(fixture, element);
+      const projects = inboundRow(tab, 'projects');
+      projects.querySelector<HTMLButtonElement>('button.inbound')!.click();
+      fixture.detectChanges();
+      [...projects.querySelectorAll<HTMLButtonElement>('button.source')]
+        .find((b) => b.textContent?.includes('repositories:hidden'))!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ route: REPOSITORIES });
+      expect(
+        row(element, 'repositories:hidden')
+          .querySelector('.outcome-pick')
+          ?.getAttribute('aria-pressed'),
+      ).toBe('true');
+    });
+
+    it('lists the outcomes that leave without a fixed target (qits-2049)', async () => {
+      const { fixture, element } = await renderOutcomes({
+        ...OUTCOMES,
+        declared: [
+          ...OUTCOMES.declared,
+          { ...declared('back', 'stay'), kind: 'returnTo' },
+          {
+            route: null,
+            interaction: 'session-guard',
+            outcome: 'signedOut',
+            kind: 'external',
+            to: 'idp',
+            global: true,
+            triggered: false,
+            file: '@qits/angular/src/lib/sign-in/qits-session.ts',
+          },
+        ] satisfies DeclaredOutcome[],
+      });
+      const tab = inboundTab(fixture, element);
       expect(
         [...tab.querySelectorAll('h3.outcome-group')].map((h) => h.textContent?.trim()),
-      ).toEqual(['App-wide', '/ and below']);
-      expect([...tab.querySelectorAll('li.outcome')].map(leaves)).toEqual([
-        'toasts · dismissed stay No test reaches this No screenshot shows its trigger',
-        'shell · signed-out exit → /projects signs out',
+      ).toEqual(['Leaves without a fixed target']);
+      expect([...tab.querySelectorAll('ul.unfixed li.outcome-source')].map(leaves)).toEqual([
+        '/projects/:slug/repositories repositories:back returns to the page it started from',
+        'App-wide session-guard:signedOut leaves the app for idp',
       ]);
-      // The right panel lists the route's own outcomes only.
-      expect(element.querySelectorAll('aside li.outcome')).toHaveLength(4);
+    });
+
+    it('opens the shared outcomes in scope under the route’s own, by layout then app-wide (qits-2049)', async () => {
+      const { fixture, element } = await renderOutcomes();
+      const toggle = element.querySelector<HTMLButtonElement>('aside .shared-toggle')!;
+      toggle.click();
+      fixture.detectChanges();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect(
+        [...element.querySelectorAll('aside h4.shared-group')].map((h) => h.textContent?.trim()),
+      ).toEqual(['/ and below', 'App-wide']);
+      expect(
+        [...element.querySelectorAll('aside .shared-outcomes li.outcome')].map(leaves),
+      ).toEqual([
+        'shell · signed-out exit → /projects signs out',
+        'toasts · dismissed stay No test reaches this No screenshot shows its trigger',
+      ]);
+      // The route's own outcomes are listed once, above.
+      expect(element.querySelectorAll('aside .route-outcomes li.outcome')).toHaveLength(4);
+      toggle.click();
+      fixture.detectChanges();
+      expect(element.querySelectorAll('aside .shared-outcomes')).toHaveLength(0);
     });
 
     it('says where a return and an external lead, asks no trigger of an untriggered one, and names the library (qits-2044)', async () => {
@@ -1090,10 +1266,11 @@ describe('UiBuilderPage', () => {
       expect(succeeded.querySelector('.outcome-target')).toBeNull();
       expect(succeeded.querySelector('.outcome-library')?.getAttribute('title')).toBe(library);
       expect(succeeded.querySelector('a')).toBeNull();
-      element.querySelector<HTMLButtonElement>('.shared-outcomes')!.click();
+      element.querySelector<HTMLButtonElement>('aside .shared-toggle')!.click();
       fixture.detectChanges();
-      const tab = element.querySelector<HTMLElement>('section[aria-label="Shared outcomes"]')!;
-      expect([...tab.querySelectorAll('li.outcome')].map(leaves)).toEqual([
+      expect(
+        [...element.querySelectorAll('aside .shared-outcomes li.outcome')].map(leaves),
+      ).toEqual([
         'session-guard · signedOut external leaves the app for idp Declared by @qits/angular No test reaches this',
       ]);
     });

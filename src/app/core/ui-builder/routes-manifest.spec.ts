@@ -1,6 +1,10 @@
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
   asManifest,
+  inboundExits,
+  joinedOutcome,
+  unfixedOutcomes,
+  unreachable,
   initialRoute,
   inlineAssets,
   inOutcomeScope,
@@ -746,6 +750,113 @@ describe('sharedOutcomes', () => {
   it('has none without a readable outcomes section', () => {
     expect(sharedOutcomes(RECORDED)).toEqual([]);
     expect(sharedOutcomes({ ...OUTCOMES, outcomes: 'invalid' })).toEqual([]);
+  });
+});
+
+describe('inboundExits (qits-2049)', () => {
+  const rows = (manifest: RoutesManifest) =>
+    inboundExits(manifest).map((row) => [
+      row.fullPath,
+      row.entry,
+      row.inbound.map((d) => d.outcome),
+    ]);
+
+  it('lists the checked routes with the exits that lead to them, unreachable first', () => {
+    // The layouts, the redirect and `**` are not checked; `cancelled` leads to the layout `work`.
+    expect(rows(OUTCOMES)).toEqual([
+      [CREATE, false, []],
+      [`${WORK}/in-progress`, false, []],
+      ['projects', false, ['sign-out']],
+      [DETAIL, false, ['created']],
+    ]);
+    expect(inboundExits(OUTCOMES).map(unreachable)).toEqual([true, true, false, false]);
+  });
+
+  it('counts an exit from a page, a layout or app-wide, and only an exit whose `to` is exact', () => {
+    const layoutExit: DeclaredOutcome = {
+      ...SWITCHED,
+      outcome: 'opened',
+      kind: 'exit',
+      to: CREATE,
+    };
+    const manifest: RoutesManifest = {
+      ...OUTCOMES,
+      outcomes: {
+        declared: [
+          ...OUTCOMES_SECTION.declared,
+          layoutExit,
+          { ...SIGN_OUT, outcome: 'wrong', to: `/${CREATE}` },
+          { ...SIGN_OUT, outcome: 'back', kind: 'returnTo', to: null },
+          { ...SIGN_OUT, outcome: 'left', kind: 'external', to: CREATE },
+          { ...page('stayed', 'stay'), to: `${WORK}/in-progress` },
+        ],
+        fired: [],
+      },
+    };
+    expect(rows(manifest)).toEqual([
+      [`${WORK}/in-progress`, false, []],
+      ['projects', false, ['sign-out']],
+      [CREATE, false, ['opened']],
+      [DETAIL, false, ['created']],
+    ]);
+  });
+
+  it("takes an entry point as reached, and a parent’s `''` child as the parent", () => {
+    const manifest: RoutesManifest = {
+      routes: [
+        { path: '', fullPath: '', entry: true },
+        {
+          path: 'a',
+          fullPath: 'a',
+          children: [
+            { path: '', fullPath: 'a' },
+            { path: ':tab', fullPath: 'a/:tab', entry: true },
+          ],
+        },
+      ],
+      freezes: [],
+      byRoute: {},
+      outcomes: { declared: [], fired: [] },
+    };
+    expect(rows(manifest)).toEqual([
+      ['a', false, []],
+      ['', true, []],
+      ['a/:tab', true, []],
+    ]);
+    expect(asManifest(manifest)?.routes).toEqual(manifest.routes);
+    expect(
+      asManifest({ ...manifest, routes: [{ path: '', fullPath: '', entry: 'yes' }] }),
+    ).toBeNull();
+  });
+
+  it('has every route unreached without readable outcomes', () => {
+    expect(rows({ ...OUTCOMES, outcomes: 'invalid' }).map(([, , inbound]) => inbound)).toEqual([
+      [],
+      [],
+      [],
+      [],
+    ]);
+  });
+});
+
+describe('unfixedOutcomes and joinedOutcome (qits-2049)', () => {
+  it('lists the returns and externals, in the manifest’s order', () => {
+    const back: DeclaredOutcome = { ...SIGN_OUT, outcome: 'back', kind: 'returnTo', to: null };
+    const left: DeclaredOutcome = { ...page('left', 'exit'), kind: 'external', to: 'idp' };
+    const manifest: RoutesManifest = {
+      ...OUTCOMES,
+      outcomes: { declared: [left, ...OUTCOMES_SECTION.declared, back], fired: [] },
+    };
+    expect(unfixedOutcomes(manifest)).toEqual([left, back]);
+    expect(unfixedOutcomes(OUTCOMES)).toEqual([]);
+    expect(unfixedOutcomes(RECORDED)).toEqual([]);
+  });
+
+  it('joins one declaration as the lists do, the selected route’s freezes first', () => {
+    expect(joinedOutcome(OUTCOMES, SIGN_OUT, DETAIL)).toEqual(
+      sharedOutcomes(OUTCOMES, DETAIL)[0].outcomes[0],
+    );
+    expect(joinedOutcome(RECORDED, SIGN_OUT).reachedBy).toEqual([]);
   });
 });
 

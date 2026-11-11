@@ -83,7 +83,12 @@ export const routes: Routes = [
     loadComponent: () => import('$layout/shell/shell.layout').then((m) => m.ShellLayout),
     canActivate: [qitsSignedInGuard],
     children: [
-      { path: '', loadComponent: () => import('./routes/root.page').then((m) => m.RootPage) },
+      {
+        path: '',
+        loadComponent: () => import('./routes/root.page').then((m) => m.RootPage),
+        // An entry point (qits-2049): the app's front door, entered from outside whatever leads here.
+        data: { qitsEntry: true },
+      },
       {
         path: 'projects',
         loadComponent: () =>
@@ -110,7 +115,13 @@ export const routes: Routes = [
           ),
         children: [
           { path: '', children: [] },
-          { path: ':tab', children: [] },
+          {
+            path: ':tab',
+            children: [],
+            // An entry point (qits-2049): the old address qits-projects-frontend's `agentAddress`
+            // and bookmarks still link; no outcome of this app leads here.
+            data: { qitsEntry: true },
+          },
         ],
       },
       {

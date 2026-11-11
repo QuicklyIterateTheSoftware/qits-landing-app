@@ -3,6 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { qitsAuthCallbackRoute } from '@qits/angular';
 import { routes } from './app.routes';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkAcceptancePage } from './routes/projects/[slug]/work/acceptance/work-acceptance.page';
@@ -160,5 +161,26 @@ describe('ideas routes', () => {
     ['ideas/detail/i-1/edit', IdeaEditPage],
   ])('opens %s', async (path, page) => {
     expect(await opened(`/projects/x/${path}`)).toEqual([page]);
+  });
+});
+
+describe('entry points (qits-2049)', () => {
+  /** The full paths of the routes whose data marks them an entry, as `describeRoutes` reads it. */
+  function entries(list: typeof routes, parent = ''): string[] {
+    return list.flatMap((route) => {
+      const own = [parent, route.path ?? ''].filter(Boolean).join('/');
+      return [
+        ...(route.data?.['qitsEntry'] === true ? [own] : []),
+        ...entries(route.children ?? [], own),
+      ];
+    });
+  }
+
+  it('marks the front door and the old agent address, beside the library’s own', () => {
+    // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's.
+    expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
+      '',
+      'projects/:slug/work/detail/:id/agent/:tab',
+    ]);
   });
 });
