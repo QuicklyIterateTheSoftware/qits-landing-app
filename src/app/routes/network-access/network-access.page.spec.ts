@@ -4,7 +4,7 @@ import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { client as networkAccessClient } from '../../api/network-access/client.gen';
 import { provideHeyApiClient } from '../../api/network-access/client/client.gen';
 import { networkAccessGoldenMaster } from '../../../testing/golden-masters';
-import { CONNECT_COMMAND, NetworkAccessPage } from './network-access.page';
+import { CONNECT_COMMAND, NetworkAccessPage, PAC_URL } from './network-access.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -114,6 +114,19 @@ describe('NetworkAccessPage', () => {
     );
     expect(CONNECT_COMMAND).toBe('qits network-access up');
     expect(element().textContent).toContain('needs Docker');
+  });
+
+  it('offers the browsers PAC URL to copy, with its own copy button', async () => {
+    await render();
+    const copyTexts = Array.from(element().querySelectorAll('app-copy-text'));
+    const pacCopyText = copyTexts.find(
+      (el) => el.querySelector('code')?.textContent?.trim() === PAC_URL,
+    );
+    expect(PAC_URL).toBe('http://127.0.0.1:47813/proxy.pac');
+    expect(pacCopyText).toBeTruthy();
+    expect(pacCopyText?.querySelector('button')).toBeTruthy();
+    expect(element().textContent).toContain('Browsers');
+    expect(element().textContent).toContain('automatic proxy configuration URL');
   });
 
   it('narrows the list by filter, and reads Mine with owner=me', async () => {

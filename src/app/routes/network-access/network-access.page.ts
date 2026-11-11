@@ -26,6 +26,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 /** The line that connects this machine: the companion container, through the CLI. */
 export const CONNECT_COMMAND = 'qits network-access up';
 
+/** The companion's PAC URL, host-side (qits-network-access-service `proxy.go`, default port). */
+export const PAC_URL = 'http://127.0.0.1:47813/proxy.pac';
+
 /** Each filter's button label. */
 const FILTER_LABELS: Readonly<Record<PeerFilter, string>> = {
   all: 'All',
@@ -62,7 +65,10 @@ function statusTone(status: string | undefined): ChipTone {
  *   pane makes no keys and adds no devices.
  * - The private edge card: its endpoint, public key and announce time, or "No private edge has
  *   announced itself yet." on the service's 404.
- * - Connect this machine: the copyable `qits network-access up`.
+ * - Connect this machine: the copyable `qits network-access up`, then a Browsers step with the
+ *   companion's copyable PAC URL (qits-network-access-service `proxy.go`'s `/proxy.pac`): it only
+ *   routes once `up` is running on this machine, is set as the system's or browser's automatic
+ *   proxy configuration URL, and leaves public apps working while the companion is stopped.
  *
  * Staleness (qits-1270): none yet. qits-network-access sends no domain event, so the pane reads
  * again only after its own revoke, and on Retry.
@@ -96,6 +102,14 @@ function statusTone(status: string | undefined): ChipTone {
             <code>wg-quick</code> file; put your own private key in place of
             <code>&lt;PRIVATE_KEY&gt;</code>.
           </p>
+
+          <h3 class="mt-3 mb-1 text-sm font-semibold text-gray-900">Browsers</h3>
+          <p class="mt-0 mb-2 text-sm text-gray-600">
+            Once <code>qits network-access up</code> is running on this machine, set this URL as the
+            automatic proxy configuration URL in your system’s or browser’s proxy settings. Public
+            apps keep working while the companion is stopped.
+          </p>
+          <app-copy-text [text]="pacUrl" label="Copy" />
         </section>
 
         <section
@@ -217,6 +231,7 @@ export class NetworkAccessPage {
   private readonly document = inject(DOCUMENT);
 
   protected readonly connectCommand = CONNECT_COMMAND;
+  protected readonly pacUrl = PAC_URL;
   protected readonly filters = PEER_FILTERS;
   protected readonly filter = signal<PeerFilter>('all');
   /** The row whose Revoke waits for its confirmation. */
