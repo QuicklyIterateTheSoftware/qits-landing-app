@@ -14,6 +14,14 @@ import { isPlatformBrowser } from '@angular/common';
 import { place, type FloatingAlign, type FloatingSide } from './placement';
 
 /**
+ * A floating panel's stacking order: over the shell's sticky top bar (`z-50`), which it may now
+ * reach when it goes above its trigger or is clamped to the window's top. A host that makes a
+ * stacking context of its own (`ui-popover`'s `z-20`) takes it too while its panel floats, or the
+ * panel stays under the bar.
+ */
+export const FLOATING_Z = '60';
+
+/**
  * A panel that floats over the page next to its trigger: the dropdowns', the popovers' and the UI
  * builder's call panel (qits-2081).
  *
@@ -42,14 +50,6 @@ import { place, type FloatingAlign, type FloatingSide } from './placement';
  * markup as without it. Where `floatingMedia` is given and the window does not match it, the
  * directive leaves the panel to its classes too (a phone's sheet).
  */
-/**
- * A floating panel's stacking order: over the shell's sticky top bar (`z-50`), which it may now
- * reach when it goes above its trigger or is clamped to the window's top. A host that makes a
- * stacking context of its own (`ui-popover`'s `z-20`) takes it too while its panel floats, or the
- * panel stays under the bar.
- */
-export const FLOATING_Z = '60';
-
 @Directive({
   selector: '[uiFloating]',
   exportAs: 'uiFloating',
