@@ -120,8 +120,10 @@ so every `<slug>-<n>` in it is a work reference with the item's brief in a popov
 on a finger or a pen a tap, which neither presses the row nor follows a link around it). The briefs
 come through this app's own projects client, not the library's default read (which needs a
 `/main-navigation`): `workBriefSource` (`core/work/work-briefs.store.ts`, `listProjectWorkBriefs`,
-the ids comma-separated in one `id`, `LIST_PROJECT_WORK_BRIEFS`), provided with `QITS_WORK_LINK` (a
-`routerLink` to `work/detail/<id>`) by `provideWorkReferences()` in `app.config.ts`. A brief's panel
+the ids comma-separated in one `id`, `LIST_PROJECT_WORK_BRIEFS`), provided with `QITS_WORK_LINK` (`workLink`:
+the exit `open-work-ref:opened` to `projects/:slug/work/detail/:id`, rendered through `QitsExit`,
+so the link has a real `href`, records the outcome and carries `data-qits-outcome`; qits-2042) by
+`provideWorkReferences()` in `app.config.ts`. A brief's panel
 stays in the DOM for `aria-describedby`, so a row's `textContent` holds its text: read the message
 element. `app-work-ref` behaves the same on a finger (`ui-popover`'s `tapToOpen`: the tap opens the
 preview instead of following the tag, the id in the preview is the link).

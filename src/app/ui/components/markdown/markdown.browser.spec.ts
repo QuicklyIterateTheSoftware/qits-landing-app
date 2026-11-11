@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { provideQitsWorkBriefs, type QitsWorkBrief } from '@qits/ui-components';
 import { commands, page, userEvent } from 'vitest/browser';
+import { workLink } from '$core/work/work-briefs.store';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { Markdown } from './markdown';
 
@@ -122,6 +124,10 @@ class WorkText {
   text = '';
 }
 
+/** Where a reference's link leads: a work item's page, as a stub. */
+@Component({ template: '' })
+class WorkItemStub {}
+
 describe('Markdown with work references (browser)', () => {
   let ticket: QitsWorkBrief;
   let epic: QitsWorkBrief;
@@ -133,7 +139,9 @@ describe('Markdown with work references (browser)', () => {
     [ticket, epic] = briefs;
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'projects/:slug/work/detail/:id', component: WorkItemStub }]),
+        // The app's own link (`open-work-ref:opened`, qits-2042), so the panel's link is its exit.
+        workLink,
         // The briefs as qits-projects recorded them, without the HTTP read `workBriefSource` makes.
         provideQitsWorkBriefs(async (_project, ids) =>
           briefs.filter((brief) => ids.includes(brief.qualifiedId)),
@@ -223,5 +231,22 @@ describe('Markdown with work references (browser)', () => {
     const link = view.getByRole('link', { name: ticket.qualifiedId, exact: true }).first();
     await expect.element(link).toHaveAttribute('href', 'https://example.test/t');
     expect(link.element().querySelector('qits-work-ref')).toBeNull();
+  });
+
+  it("opens the item's page from the brief's link (open-work-ref:opened)", async () => {
+    const { view, refOf, panel } = await render(description());
+    const project = ticket.qualifiedId.replace(/-\d+$/, '');
+    await userEvent.hover(refOf(ticket.qualifiedId));
+    await expect.element(panel).toBeVisible();
+    const link = view.getByRole('tooltip').getByRole('link', { name: ticket.qualifiedId });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', `/projects/${project}/work/detail/${ticket.qualifiedId}`);
+    await expect.element(link).toHaveAttribute('data-qits-outcome', 'open-work-ref:opened');
+    await userEvent.click(link);
+    await expect.poll(() => outcomeRecords().map((r) => r.outcome)).toEqual(['opened']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${project}/work/detail/${ticket.qualifiedId}`,
+    );
   });
 });

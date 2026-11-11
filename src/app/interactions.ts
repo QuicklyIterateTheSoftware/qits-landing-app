@@ -169,6 +169,13 @@ export const INTERACTIONS = {
   'show-commit-work-briefs':
     'A commit subject or a work item’s text shows the status and title of each work item it names',
   /**
+   * `core/work/work-briefs.store.ts` (`QITS_WORK_LINK`, for `<qits-commit-message>` and the
+   * `[qitsWorkRefs]` markdown): the link in a work reference's popover opens the item's page.
+   * Navigates only, and names no pact (qits-2042).
+   */
+  'open-work-ref':
+    'A work reference in a description, comment or commit subject opens the item’s page',
+  /**
    * `release-changes.ts` and `commit-changes.ts` via `RawImagesStore` (qits-734): a changed image,
    * chosen on the Changes tab or in an opened commit, shows as the image before and after.
    */

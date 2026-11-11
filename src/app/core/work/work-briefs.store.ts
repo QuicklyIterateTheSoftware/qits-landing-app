@@ -1,15 +1,19 @@
-import { makeEnvironmentProviders, type EnvironmentProviders } from '@angular/core';
-import { consume } from '@qits/angular';
+import {
+  makeEnvironmentProviders,
+  type EnvironmentProviders,
+  type FactoryProvider,
+} from '@angular/core';
+import { consume, exit, outcomes } from '@qits/angular';
 import {
   provideQitsWorkBriefs,
   QITS_WORK_LINK,
+  qitsWorkExit,
   type QitsWorkBrief,
   type QitsWorkBriefSource,
   type QitsWorkLinkFactory,
 } from '@qits/ui-components';
 import { listProjectWorkBriefs } from '../../api/projects';
 import { LIST_PROJECT_WORK_BRIEFS } from './work-briefs.consumes';
-import { WORK_DETAIL } from './work-tabs';
 
 /**
  * The briefs of the work items commit subjects name (qits-1897), for `@qits/ui-components`'
@@ -51,18 +55,25 @@ export const workBriefSource: QitsWorkBriefSource = async (project, ids) => {
   }));
 };
 
-/** A work reference leads to the item's page in this app: `/projects/<slug>/work/detail/<id>`. */
-export const workLink: QitsWorkLinkFactory = (project, qualifiedId) => ({
-  routerLink: ['/projects', project, 'work', WORK_DETAIL, qualifiedId],
-});
+/**
+ * A work reference leads to the item's page in this app: `/projects/<slug>/work/detail/<id>`, as
+ * the exit `open-work-ref:opened` (qits-2042). `<qits-work-ref>` renders it through `QitsExit`, so
+ * the popover's link has a real `href`, a plain click records the outcome and navigates through the
+ * router, and the trigger carries `data-qits-outcome`. `outcomes()` needs an injection context,
+ * hence a factory provider; the declaration is app-wide, since this file is outside `routes/`.
+ */
+export const workLink: FactoryProvider = {
+  provide: QITS_WORK_LINK,
+  useFactory: (): QitsWorkLinkFactory => {
+    const refs = outcomes('open-work-ref', { opened: exit('projects/:slug/work/detail/:id') });
+    return (slug, id) => qitsWorkExit(refs.opened, { slug, id });
+  },
+};
 
 /**
- * The work references in commit subjects (`<qits-commit-message>`): briefs from
- * {@link workBriefSource}, links from {@link workLink}.
+ * The work references in commit subjects (`<qits-commit-message>`) and work text
+ * (`[qitsWorkRefs]`): briefs from {@link workBriefSource}, links from {@link workLink}.
  */
 export function provideWorkReferences(): EnvironmentProviders {
-  return makeEnvironmentProviders([
-    provideQitsWorkBriefs(workBriefSource),
-    { provide: QITS_WORK_LINK, useValue: workLink },
-  ]);
+  return makeEnvironmentProviders([provideQitsWorkBriefs(workBriefSource), workLink]);
 }
