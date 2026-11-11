@@ -1,14 +1,4 @@
-import {
-  afterRenderEffect,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  Directive,
-  ElementRef,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
 import { ProjectsStore } from '$core/projects/projects.store';
@@ -92,32 +82,6 @@ export interface NavNote {
 }
 
 /**
- * A sidebar section's `aria-current`, by the shell's own rule (`ShellLayout.currentOf`) rather than
- * `[qitsExit]`'s: `true` on Work while one of its pages below it is open, and `page` on Agents on a
- * slot's page, which the exit's path does not contain. `[qitsExit]` sets `aria-current` too, from a
- * host binding that writes only when its own value changes, so a binding of ours on the same
- * attribute would win or lose by which changed last. This writes after each render the directive's
- * state or ours changes in, so ours is the last word.
- */
-@Directive({ selector: 'a[qitsExit][appSectionCurrent]' })
-export class SectionCurrent {
-  readonly appSectionCurrent = input<'page' | 'true' | null>(null);
-
-  constructor() {
-    const link = inject(QitsExit);
-    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    afterRenderEffect({
-      write: () => {
-        link.isActive();
-        const current = this.appSectionCurrent();
-        if (current) host.setAttribute('aria-current', current);
-        else host.removeAttribute('aria-current');
-      },
-    });
-  }
-}
-
-/**
  * The platform's one layout: a top bar, a sidebar and the page. Mounted as the root route
  * component, so it survives navigation and only the outlet changes.
  *
@@ -146,8 +110,8 @@ export class SectionCurrent {
  * (`follow-breadcrumb`), handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and
  * release menus declare their own, being patterns (app-wide too). The gear, the network icon and a
  * work page are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true`
- * while one of its pages below it is open, and Agents on a slot's page), which `SectionCurrent`
- * applies over the directive's.
+ * while one of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]`
+ * through `[exitCurrent]` (qits-2064).
  */
 @Component({
   selector: 'app-shell-layout',
@@ -156,7 +120,6 @@ export class SectionCurrent {
     AgentsMenu,
     Breadcrumbs,
     QitsExit,
-    SectionCurrent,
     RouterOutlet,
     BumpsMenu,
     FinishToasts,
@@ -261,7 +224,7 @@ export class SectionCurrent {
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900 aria-[current=true]:font-semibold aria-[current=true]:text-gray-900"
                 [qitsExit]="link.exit"
                 [exitParams]="{ slug: slug() }"
-                [appSectionCurrent]="currentOf(link)"
+                [exitCurrent]="currentOf(link)"
                 (click)="closeNav()"
                 >{{ link.label }}
                 <!-- The section's newest item, below the label; switched by class. -->
