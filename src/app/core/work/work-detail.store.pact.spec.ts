@@ -85,9 +85,13 @@ const OTHERS = ['an implemented ticket'];
 const UNBLOCKABLE = ['a feature in detail', 'a task in detail'];
 /**
  * States recording the item alone, no thread or dossier: the IN_FLIGHT ticket of the wrapper
- * closings (qits-1873), whose page says how its closing stands.
+ * closings (qits-1873), whose page says how its closing stands, and the epic an idea inspired
+ * (qits-2039), whose page links that idea ("Inspired by").
  */
-const ITEM_ONLY = ['a project with VERIFIED tickets in every wrapper verdict'];
+const ITEM_ONLY = [
+  'a project with VERIFIED tickets in every wrapper verdict',
+  'a project with ideas',
+];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-detail-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });

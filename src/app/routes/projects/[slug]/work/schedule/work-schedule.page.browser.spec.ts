@@ -1,8 +1,14 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../testing/browser/app-route';
 
 /**
  * Screenshots of a project's Schedule tab inside the shell and the work tabs (`openRoute`),
@@ -11,6 +17,10 @@ import { openRoute, provideAppRoute } from '../../../../../../testing/browser/ap
  * work. Each listed item's acceptance criteria come from a recorded item that has some: an epic's
  * read from "an epic in detail", a ticket's from "an improvement ticket in detail" (no state
  * records the listed items' own reads).
+ *
+ * An item's title is a declared exit (`open-scheduled-item` `open`, epic qits-2000), shown by
+ * `lists` and followed once; the item's page it opens is its own spec's, its reads answered with an
+ * error (`leftFor`).
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -119,5 +129,37 @@ describe('WorkSchedulePage (screenshots)', () => {
     await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
+  });
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's (`idle()`, not
+   * `settled()`, qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  it('open-scheduled-item open: an item’s title opens its page', async () => {
+    const { opened, locator, work } = await shown();
+    const recorded = await goldenMaster('a project with work in every status', 'listProjectWork');
+    work.flush(recorded);
+    await opened.settled();
+    await answerCriteria(recorded.entities);
+    await opened.settled();
+    const item = recorded.entities.find((e: { title: string }) => e.title === 'Refined epic');
+    await locator.getByRole('link', { name: 'Refined epic', exact: true }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-scheduled-item:open',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/work/detail/${item.qualifiedId}`,
+    );
   });
 });

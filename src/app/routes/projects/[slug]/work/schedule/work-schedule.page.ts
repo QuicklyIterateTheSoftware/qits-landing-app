@@ -9,7 +9,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { WorkDetailStore, type WorkCriteria } from '$core/work/work-detail.store';
@@ -50,6 +50,9 @@ const REFINED = 'REFINED';
  * - **Scheduled, not started**: every READY_FOR_DEV epic and ticket. "Unschedule" moves one back to
  *   REFINED.
  *
+ * Each item's title opens its page (the declared exit `open-scheduled-item` `open`, epic
+ * qits-2000); its work reference does too (`app-work-ref`'s own).
+ *
  * A move the service refuses (a 409: no acceptance criteria, or a caller it does not take for a
  * person) shows its message under the item, verbatim, until the item's next move. The lists follow
  * every `EntityTransitioned`, as every work page does (`WorkLayout`).
@@ -57,7 +60,7 @@ const REFINED = 'REFINED';
 @Component({
   selector: 'app-work-schedule-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, NgTemplateOutlet, PageLayoutComponent, RouterLink, Spinner, WorkRef],
+  imports: [Markdown, NgTemplateOutlet, PageLayoutComponent, QitsExit, Spinner, WorkRef],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-6 pb-12">
@@ -157,7 +160,8 @@ const REFINED = 'REFINED';
           <app-work-ref [qualifiedId]="row.qualifiedId" />
           <a
             class="font-medium text-charcoal-brown-900 no-underline wrap-anywhere hover:underline"
-            [routerLink]="detailPath() + '/' + row.qualifiedId"
+            [qitsExit]="opening.open"
+            [exitParams]="{ slug: slug() ?? '', id: row.qualifiedId }"
             >{{ row.entry.title }}</a
           >
         </div>
@@ -222,9 +226,9 @@ export class WorkSchedulePage {
   /** The project's slug: the work ids a criterion names link with their briefs (qits-1898). */
   protected readonly slug = this.selected.slug;
 
-  protected readonly detailPath = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
-  );
+  protected readonly opening = outcomes('open-scheduled-item', {
+    open: exit('projects/:slug/work/detail/:id'),
+  });
 
   constructor() {
     // In the browser only, as the work: the server render holds no token to send.

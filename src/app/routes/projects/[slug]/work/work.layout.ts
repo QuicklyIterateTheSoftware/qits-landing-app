@@ -7,7 +7,8 @@ import {
   inject,
   PLATFORM_ID,
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { InProgressViewStore, type InProgressView } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
@@ -30,7 +31,9 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
  * A project's work section, at `/projects/<slug>/work/…`: a row of links to its pages
  * (Refinement, Schedule, In Progress, Acceptance, Archive, in the order work moves through them),
  * each with its count once the work is loaded (epics and tickets; on Schedule both its lists,
- * REFINED and READY_FOR_DEV), and the page below. `/work` opens In Progress.
+ * REFINED and READY_FOR_DEV), and the page below. `/work` opens In Progress. Each tab is a declared
+ * exit (`switch-work-tab`, one per tab, epic qits-2000), marked current while its page is open
+ * (`[qitsExit]` sets `aria-current`).
  *
  * The pages share the open project's work (`SelectedWork`, one request per project), so moving
  * between them fetches nothing. The layout keeps that work current while any of them is open.
@@ -49,7 +52,7 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
 @Component({
   selector: 'app-work-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [Dropdown, QitsExit, RouterOutlet],
   host: { class: 'block' },
   template: `
     <nav class="mx-auto max-w-[72rem] px-6 pt-6" aria-label="Work">
@@ -59,11 +62,10 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
         @for (tab of tabs(); track tab.segment) {
           <li class="flex shrink-0 items-center">
             <a
-              #active="routerLinkActive"
+              #active="qitsExit"
               class="-mb-px flex items-center gap-2 border-b-2 border-transparent px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:border-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
-              [routerLink]="tab.segment"
-              routerLinkActive=""
-              ariaCurrentWhenActive="page"
+              [qitsExit]="tab.exit"
+              [exitParams]="{ slug: slug() }"
               >{{ tab.label }}
               <span
                 class="rounded-full bg-gray-100 px-1.5 text-xs font-normal text-gray-700 tabular-nums"
@@ -75,7 +77,7 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
               <!-- Hidden by class, never by @if: the link is marked active only after the first
                    render, and a block the server drew that the browser drops at hydration stays
                    until hydration's clean-up. -->
-              <div [class]="active.isActive ? '-ml-1 flex' : 'hidden'">
+              <div [class]="active.isActive() ? '-ml-1 flex' : 'hidden'">
                 <ui-dropdown
                   align="start"
                   label="In Progress view settings"
@@ -130,28 +132,57 @@ export class WorkLayout {
   protected readonly work = inject(SelectedWork);
   protected readonly views = inject(InProgressViewStore);
 
+  private readonly selected = inject(SelectedProject);
+
   protected readonly choices = VIEW_CHOICES;
   protected readonly cog = COG;
 
+  private readonly switching = outcomes('switch-work-tab', {
+    refinement: exit('projects/:slug/work/refinement'),
+    schedule: exit('projects/:slug/work/schedule'),
+    inProgress: exit('projects/:slug/work/in-progress'),
+    acceptance: exit('projects/:slug/work/acceptance'),
+    archive: exit('projects/:slug/work/archive'),
+  });
+
+  /** Each tab's exit, by its segment (`WORK_TABS`). */
+  private readonly exits: Readonly<Record<string, ExitOutcome>> = {
+    refinement: this.switching.refinement,
+    schedule: this.switching.schedule,
+    'in-progress': this.switching.inProgress,
+    acceptance: this.switching.acceptance,
+    archive: this.switching.archive,
+  };
+
+  /** The open project's slug, the tabs' exits' param. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
   /**
-   * The tabs, each with its count (0 until the work is loaded, and hidden until then); In Progress
-   * with its view settings (`viewSettings`).
+   * The tabs, each with its exit and its count (0 until the work is loaded, and hidden until then);
+   * In Progress with its view settings (`viewSettings`).
    */
   protected readonly tabs = computed(() => {
     const graph = this.work.graph();
-    return WORK_TABS.map((tab) => ({
-      segment: tab.segment,
-      label: tab.label,
-      count: tab.count?.(graph),
-      viewSettings: tab.segment === 'in-progress',
-    }));
+    return WORK_TABS.flatMap((tab) => {
+      const exit = this.exits[tab.segment];
+      return exit
+        ? [
+            {
+              segment: tab.segment,
+              label: tab.label,
+              exit,
+              count: tab.count?.(graph),
+              viewSettings: tab.segment === 'in-progress',
+            },
+          ]
+        : [];
+    });
   });
 
   constructor() {
     const destroy = inject(DestroyRef);
     this.work.followTransitions(destroy);
-    const selected = inject(SelectedProject);
-    inject(WrapperClosingsStore).follow(destroy, () => selected.project()?.id);
+    inject(WrapperClosingsStore).follow(destroy, () => this.selected.project()?.id);
     // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       const workspaces = inject(WorkspacesStore);

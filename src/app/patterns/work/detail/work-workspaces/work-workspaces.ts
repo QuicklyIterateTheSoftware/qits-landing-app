@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import type { WorkspaceHistoryEntry } from '$core/workspaces/workspaces.consumes';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { Tag } from '$ui/components/tag/tag';
@@ -8,15 +8,16 @@ import { Tag } from '$ui/components/tag/tag';
 /**
  * A work item's workspaces in every state (active, integrated, abandoned), newest first: each with
  * its state, its branch, when it was opened and, once resolved, when it was closed (UTC). Each
- * links to the item's agent, `link` (`/projects/<slug>/work/detail/<qualified id>/agent`, which
- * leads on to its ACTIVE agent's page: a workspace names no agent). "No workspaces yet" for none. A region named
+ * links to the item's agent, `/projects/<slug>/work/detail/<qualified id>/agent` (the declared exit
+ * `open-workspace-agent` `open`, epic qits-2000), which leads on to its ACTIVE agent's page: a
+ * workspace names no agent. "No workspaces yet" for none. A region named
  * "Workspaces"; `state` is the read's (`WorkspacesStore.historyOf`). The list is read in the
  * browser only, so the server renders none of its rows, and a row may use `@if`.
  */
 @Component({
   selector: 'app-work-workspaces',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, RouterLink, Spinner, Tag],
+  imports: [DatePipe, QitsExit, Spinner, Tag],
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-3" aria-label="Workspaces">
@@ -27,7 +28,8 @@ import { Tag } from '$ui/components/tag/tag';
             <li>
               <a
                 class="flex items-center gap-3 gap-y-1 rounded-md border border-charcoal-brown-200 px-4 py-2 text-sm text-charcoal-brown-900 no-underline transition-shadow duration-150 hover:shadow-md max-sm:flex-wrap"
-                [routerLink]="link()"
+                [qitsExit]="opening.open"
+                [exitParams]="{ slug: slug(), id: qualifiedId() }"
               >
                 <!-- A fixed width, so the branches line up. -->
                 <span class="w-20 shrink-0">
@@ -61,6 +63,11 @@ import { Tag } from '$ui/components/tag/tag';
 export class WorkWorkspaces {
   readonly workspaces = input.required<readonly WorkspaceHistoryEntry[]>();
   readonly state = input.required<LoadState>();
-  /** The item's agent, `/projects/<slug>/work/detail/<qualified id>/agent` (a redirect). */
-  readonly link = input.required<string>();
+  /** The open project's slug and the item's qualified id: its agent address (a redirect). */
+  readonly slug = input.required<string>();
+  readonly qualifiedId = input.required<string>();
+
+  protected readonly opening = outcomes('open-workspace-agent', {
+    open: exit('projects/:slug/work/detail/:id/agent'),
+  });
 }
