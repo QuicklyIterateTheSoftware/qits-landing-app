@@ -8,7 +8,7 @@ import {
   PLATFORM_ID,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { ProjectsStore } from '$core/projects/projects.store';
 import {
@@ -25,7 +25,6 @@ import {
   utcMinute,
 } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
-import { workItemPath } from '$core/workspaces/agent-attention';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Chip, chipClass } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
@@ -51,8 +50,8 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  * that is neither a quiet count of its counted branches (`1/3`). A request that needs a person is
  * ringed, with a link to that check. The logical id
  * and each item's text link to the request's own page, `release-requests/<logical id>` (its uuid where it
- * has no logical id). A request that can still be
- * called off has Withdraw.
+ * has no logical id). Every link is a declared exit (`open-listed-release-request`, epic qits-2000).
+ * A request that can still be called off has Withdraw.
  *
  * The requests come from `ProjectsStore`, the same answer the top bar's release menu and the
  * sidebar entry read; domain events refresh it there. A read that fails says so, with Retry.
@@ -71,8 +70,8 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
     LifecycleLine,
     LoadFailure,
     PageLayoutComponent,
+    QitsExit,
     ReleaseWithdraw,
-    RouterLink,
     Spinner,
   ],
   host: { class: 'block' },
@@ -121,14 +120,16 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     <a
                       class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap no-underline hover:underline"
                       [class]="queuedTone"
-                      [routerLink]="ahead"
+                      [qitsExit]="opening.queuedBehind"
+                      [exitParams]="{ slug: slug(), requestId: ahead }"
                       title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
                       >queued behind {{ ahead }}</a
                     >
                   }
                   <a
                     class="font-semibold break-all text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="ref(request)"
+                    [qitsExit]="opening.request"
+                    [exitParams]="{ slug: slug(), requestId: ref(request) }"
                     >{{ request.qualifiedId ?? request.repoName }}</a
                   >
                   <span class="flex min-w-48 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5">
@@ -137,14 +138,16 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                         @if (item.qualifiedId) {
                           <a
                             class="font-mono text-sm whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
-                            [routerLink]="workItem(item.qualifiedId)"
+                            [qitsExit]="opening.workItem"
+                            [exitParams]="{ slug: slug(), id: item.qualifiedId }"
                             data-work-item
                             >{{ item.qualifiedId }}</a
                           >
                         }
                         <a
                           class="wrap-anywhere text-gray-900 no-underline hover:underline"
-                          [routerLink]="ref(request)"
+                          [qitsExit]="opening.request"
+                          [exitParams]="{ slug: slug(), requestId: ref(request) }"
                           >{{ item.text }}</a
                         >
                       </span>
@@ -177,8 +180,9 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   @if (needs[0]; as first) {
                     <a
                       class="inline-flex items-center gap-1 font-semibold text-sunflower-gold-900 no-underline hover:underline"
-                      [routerLink]="ref(request)"
-                      [fragment]="first.anchor"
+                      [qitsExit]="opening.attention"
+                      [exitParams]="{ slug: slug(), requestId: ref(request) }"
+                      [exitFragment]="first.anchor"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -235,10 +239,19 @@ export class ReleaseRequestsPage {
   protected readonly items = requestItems;
   protected readonly participants = (request: ReleaseRequestEntry) => participantsOf(request);
 
-  /** The page of the work item a request's item names, in the open project. */
-  protected workItem(qualifiedId: string): string {
-    return workItemPath(this.selected.slug() ?? '', qualifiedId);
-  }
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /**
+   * Where a row leads (epic qits-2000): the request's page (its name, an item's text), the request
+   * it is queued behind, the check that needs a person (the request's page at that check's
+   * anchor), and the work item an item names.
+   */
+  protected readonly opening = outcomes('open-listed-release-request', {
+    request: exit('projects/:slug/release-requests/:requestId'),
+    queuedBehind: exit('projects/:slug/release-requests/:requestId'),
+    attention: exit('projects/:slug/release-requests/:requestId'),
+    workItem: exit('projects/:slug/work/detail/:id'),
+  });
 
   private readonly answer = computed(() => {
     const id = this.selected.project()?.id;

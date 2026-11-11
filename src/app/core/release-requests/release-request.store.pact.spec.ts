@@ -56,6 +56,7 @@ const STATES = {
   failedAutomation: 'a release request held by a failed automation',
   heldByUpstream: 'a release request held by an upstream release',
   frozen: 'a frozen release request with a queued next request',
+  obsolete: 'a repository with a tagged release whose request went obsolete mid-publish',
 } as const;
 
 /**
@@ -291,6 +292,26 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
       expect(request?.featureFreeze?.frozen).toBe(false);
     }));
 
+  // An obsolete request (qits-2039): taken over mid-publish by a later request, which it names
+  // (`supersededBy`), and carrying a work item. The page links both (epic qits-2000).
+  it('show-release-request: an obsolete request, read through its project by its logical id', () =>
+    given(
+      'show-release-request',
+      STATES.obsolete,
+      'getProjectReleaseRequest',
+      GET_PROJECT_RELEASE_REQUEST,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const { params } = masters.operation(STATES.obsolete, 'getProjectReleaseRequest');
+      const ref = params['requestQualifiedId'];
+      await store.load(params['projectId'], ref);
+      const request = store.of(ref)?.request.value;
+      expect(request?.state).toBe('OBSOLETE');
+      // An item's work item is read unbound (UNBOUND_RELEASE_REQUEST), so the mock server does
+      // not answer it; the page's spec shows it from the recording.
+      expect(request?.supersededBy).toBeTruthy();
+    }));
+
   // The page's reads, once per state the screenshot specs show. Each runs on its own: the mock
   // server matches a provider-state path by type, so a second read in the same test would get the
   // first one's answer.
@@ -299,6 +320,8 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
     [STATES.released, 'RELEASED', true, true],
     [STATES.conflicted, 'CONFLICTED', false, false],
     [STATES.refolded, 'READY', true, false],
+    // Its failed build filed a bug ticket (`gateTicketId`), which the facts link (epic qits-2000).
+    [STATES.rejected, 'REJECTED', true, false],
   ] as const)('show-release-request: %s', (state, expected, folded, released) => {
     // The page reads the request through its project (getProjectReleaseRequest, pacted above),
     // which qits-projects records in one state only. The screenshot specs show these four states,

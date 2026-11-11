@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import { activeRunsOf } from '$core/ci/active-runs';
 import { CiRunsStore } from '$core/ci/ci-runs.store';
@@ -32,7 +33,6 @@ import {
   requestItems,
 } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
-import { workItemPath } from '$core/workspaces/agent-attention';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import type {
   ReleaseArtifact,
@@ -119,6 +119,11 @@ const UNATTENDED_TITLE =
  * request it left and the one it joined, each linked, who moved it, why and when); an older
  * qits-projects answers no moves, and nothing is listed.
  *
+ * Every link into the app is a declared exit (epic qits-2000): the work it carries
+ * (`open-release-request-work`), the list (`leave-release-request`) and the other requests it names
+ * (`open-related-release-request`). The tabs only change `?tab=` on this page, so they declare
+ * nothing.
+ *
  * On a repository's request the lifecycle follows the facts; on the project's estate release (its
  * wrapper repository) it comes first, because there the open question is the approval.
  *
@@ -142,6 +147,7 @@ const UNATTENDED_TITLE =
     CommitGraphView,
     NgTemplateOutlet,
     PageLayoutComponent,
+    QitsExit,
     ReleaseChangesView,
     ReleaseLifecycle,
     ReleaseRuns,
@@ -169,7 +175,8 @@ const UNATTENDED_TITLE =
                 @if (item.qualifiedId) {
                   <a
                     class="font-mono text-xl whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="workItem(item.qualifiedId)"
+                    [qitsExit]="work.item"
+                    [exitParams]="{ slug: slug(), id: item.qualifiedId }"
                     data-work-item
                     >{{ item.qualifiedId }}</a
                   >
@@ -184,7 +191,8 @@ const UNATTENDED_TITLE =
         <p class="mt-0 mb-4 text-sm">
           <a
             class="text-ocean-deep-700 no-underline hover:underline"
-            [routerLink]="['/projects', slug(), 'release-requests']"
+            [qitsExit]="leaving.list"
+            [exitParams]="{ slug: slug() }"
             >← Release requests</a
           >
         </p>
@@ -240,7 +248,8 @@ const UNATTENDED_TITLE =
                 @if (request.supersededBy?.trim(); as replacement) {
                   <a
                     class="text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="['..', replacement]"
+                    [qitsExit]="related.supersededBy"
+                    [exitParams]="{ slug: slug(), requestId: replacement }"
                     >Open the request that superseded it</a
                   >
                 }
@@ -373,7 +382,8 @@ const UNATTENDED_TITLE =
                 @if (request.gateTicketId) {
                   <a
                     class="text-sunflower-gold-800 underline"
-                    [routerLink]="['/projects', slug(), 'work']"
+                    [qitsExit]="work.gateTicket"
+                    [exitParams]="{ slug: slug() }"
                     >a bug ticket was filed for this failure</a
                   >
                 }
@@ -387,7 +397,8 @@ const UNATTENDED_TITLE =
                 @if (behind(request); as ahead) {
                   <a
                     class="text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="['..', ahead]"
+                    [qitsExit]="related.queuedBehind"
+                    [exitParams]="{ slug: slug(), requestId: ahead }"
                     title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
                     >queued behind <span class="font-mono">{{ ahead }}</span></a
                   >
@@ -395,7 +406,8 @@ const UNATTENDED_TITLE =
                 @if (next(request); as after) {
                   <a
                     class="text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="['..', after]"
+                    [qitsExit]="related.queuedNext"
+                    [exitParams]="{ slug: slug(), requestId: after }"
                     title="The request queued behind this one: new asks land there while this one is frozen"
                     >next: <span class="font-mono">{{ after }}</span></a
                   >
@@ -421,7 +433,8 @@ const UNATTENDED_TITLE =
                           @if (move.fromQualifiedId) {
                             <a
                               class="font-mono text-ocean-deep-700 no-underline hover:underline"
-                              [routerLink]="['..', move.fromQualifiedId]"
+                              [qitsExit]="related.movedFrom"
+                              [exitParams]="{ slug: slug(), requestId: move.fromQualifiedId }"
                               >{{ move.fromQualifiedId }}</a
                             >
                           } @else {
@@ -431,7 +444,8 @@ const UNATTENDED_TITLE =
                           @if (move.toQualifiedId) {
                             <a
                               class="font-mono text-ocean-deep-700 no-underline hover:underline"
-                              [routerLink]="['..', move.toQualifiedId]"
+                              [qitsExit]="related.movedTo"
+                              [exitParams]="{ slug: slug(), requestId: move.toQualifiedId }"
                               >{{ move.toQualifiedId }}</a
                             >
                           } @else {
@@ -642,10 +656,32 @@ export class ReleaseRequestPage {
     return request ? requestItems(request) : [];
   });
 
-  /** The page of the work item an item names, in the open project. */
-  protected workItem(qualifiedId: string): string {
-    return workItemPath(this.slug(), qualifiedId);
-  }
+  /**
+   * The work the page links (epic qits-2000): the work item an item of the head names, and, under
+   * the facts, the project's work where a failed gate filed a bug ticket.
+   */
+  protected readonly work = outcomes('open-release-request-work', {
+    item: exit('projects/:slug/work/detail/:id'),
+    gateTicket: exit('projects/:slug/work'),
+  });
+
+  /** "← Release requests": back to the project's release requests (epic qits-2000). */
+  protected readonly leaving = outcomes('leave-release-request', {
+    list: exit('projects/:slug/release-requests'),
+  });
+
+  /**
+   * The other requests the page links (epic qits-2000): the one that superseded an obsolete
+   * request, the one it is queued behind or the one queued behind it (the feature freeze), and
+   * the requests a moved source left and joined.
+   */
+  protected readonly related = outcomes('open-related-release-request', {
+    supersededBy: exit('projects/:slug/release-requests/:requestId'),
+    queuedBehind: exit('projects/:slug/release-requests/:requestId'),
+    queuedNext: exit('projects/:slug/release-requests/:requestId'),
+    movedFrom: exit('projects/:slug/release-requests/:requestId'),
+    movedTo: exit('projects/:slug/release-requests/:requestId'),
+  });
 
   /** The request's repository, from its answer; `''` until it is read. */
   protected readonly repoId = computed(() => this.row()?.repoId ?? '');

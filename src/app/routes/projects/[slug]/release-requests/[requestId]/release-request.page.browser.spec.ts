@@ -1,9 +1,15 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../testing/browser/app-route';
 
 /**
  * Screenshots of one release request's page inside the shell (`openRoute`). The open project is the
@@ -24,6 +30,17 @@ import { openRoute, provideAppRoute } from '../../../../../../testing/browser/ap
  *
  * qits-ci's calls (the repository's runs, a run's reports) answer with an error unless a spec
  * answers the runs with qits-ci's recording ({@link CI_RUNS}).
+ *
+ * The page's links are declared exits (epic qits-2000), each followed once, its trigger shown in a
+ * screenshot first: on {@link OBSOLETE} (qits-2039), the head's work item
+ * (`open-release-request-work` `item`), "← Release requests" (`leave-release-request` `list`) and
+ * the superseding request (`open-related-release-request` `supersededBy`); on "a release request
+ * rejected by its build", the bug ticket its build filed (`gateTicket`); on {@link FROZEN}, rr-1's
+ * `next:` (`queuedNext`), rr-2's `queued behind` (`queuedBehind`), and after Move on rr-1's
+ * `ticket/contract-11` (its recorded `moveReleaseRequestSource` answer) the moved source's two
+ * requests (`movedFrom`, `movedTo`). Those two states record no fold reads, so those reads answer
+ * with an error ({@link shownBare}). The page each exit leaves for is its own spec's: its reads are
+ * answered with an error (`leftFor`).
  */
 
 /** The state whose recorded project answers the read of one of its requests. */
@@ -31,6 +48,12 @@ const EVERY_STATE = 'a project with release requests in every state';
 
 /** qits-ci's recorded runs of a repository: a release request's QA, release and automation runs. */
 const CI_RUNS = 'a repository with the runs of a release request';
+
+/** An obsolete request, superseded mid-publish, whose item names a work item (qits-2039). */
+const OBSOLETE = 'a repository with a tagged release whose request went obsolete mid-publish';
+
+/** rr-1, frozen at the freeze's threshold, and rr-2, queued behind it (epic qits-1580). */
+const FROZEN = 'a frozen release request with a queued next request';
 
 /** The page's clock: two hours after the recordings' instants, so "2 hours ago" stays put. */
 const NOW = new Date('2026-01-01T02:00:00Z');
@@ -138,6 +161,230 @@ describe('ReleaseRequestPage (screenshots)', () => {
     );
     return { opened, element: opened.page, read };
   }
+
+  /**
+   * The page for `ref`, its read answered with `state`'s `operationId` recording, and the reads
+   * that follow (the fold's commits and CI verdicts, which `state` does not record) with a 404.
+   */
+  async function shownBare(state: string, operationId: string, ref: string, tab?: string) {
+    vi.useFakeTimers({ toFake: ['Date'], now: NOW });
+    const { opened, read } = await render(ref, 1140, tab);
+    read.flush(await goldenMaster(state, operationId));
+    for (let round = 0; round < 3; round++) {
+      await opened.settled();
+      for (const call of http.match((r) => r.url.startsWith('/projects/api/repositories/'))) {
+        call.flush(null, { status: 404, statusText: 'Not Found' });
+      }
+      failCi();
+    }
+    await opened.settled();
+    await page.viewport(1140, 1600);
+    return { opened, view: page.elementLocator(opened.page) };
+  }
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's (`idle()`, not
+   * `settled()`, qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  /** The outcomes recorded so far, as `interaction:outcome`. */
+  const fired = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
+
+  /** The router's URL once the exit's navigation is done. */
+  const url = () => TestBed.inject(Router).url;
+
+  /** The obsolete request's page, by its logical id. */
+  async function obsolete() {
+    const recorded = await goldenMaster(OBSOLETE, 'getProjectReleaseRequest');
+    return shownBare(OBSOLETE, 'getProjectReleaseRequest', recorded.request.qualifiedId);
+  }
+
+  it('shows an obsolete request: its work item and the request that superseded it', async () => {
+    const { opened, view } = await obsolete();
+    await expect
+      .element(view.getByRole('link', { name: 'contract-00000001-1', exact: true }))
+      .toBeVisible();
+    await expect
+      .element(view.getByRole('link', { name: 'Open the request that superseded it' }))
+      .toBeVisible();
+    await expect.element(view.getByRole('link', { name: '← Release requests' })).toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('obsolete', { kind: 'DATA' });
+  });
+
+  it('open-release-request-work item: the head’s work item opens its page', async () => {
+    const { opened, view } = await obsolete();
+    await view.getByRole('link', { name: 'contract-00000001-1', exact: true }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-release-request-work:item']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/work/detail/contract-00000001-1`);
+  });
+
+  it('leave-release-request list: “← Release requests” opens the list', async () => {
+    const { opened, view } = await obsolete();
+    await view.getByRole('link', { name: '← Release requests' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['leave-release-request:list']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/release-requests`);
+  });
+
+  it('open-related-release-request supersededBy: opens the request that took it over', async () => {
+    const recorded = await goldenMaster(OBSOLETE, 'getProjectReleaseRequest');
+    const { opened, view } = await obsolete();
+    await view.getByRole('link', { name: 'Open the request that superseded it' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-related-release-request:supersededBy']);
+    expect(url()).toBe(
+      `/projects/${opened.project.slug}/release-requests/${recorded.request.supersededBy}`,
+    );
+  });
+
+  it('links the bug ticket a rejected request’s build filed', async () => {
+    const { opened, view } = await shown('a release request rejected by its build');
+    await expect
+      .element(view.getByRole('link', { name: 'a bug ticket was filed for this failure' }))
+      .toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('rejected', { kind: 'DATA' });
+  });
+
+  it('open-release-request-work gateTicket: the filed bug ticket opens the project’s work', async () => {
+    const { opened, view } = await shown('a release request rejected by its build');
+    await view.getByRole('link', { name: 'a bug ticket was filed for this failure' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-release-request-work:gateTicket']);
+    // The work section opens on its default tab.
+    expect(url()).toBe(`/projects/${opened.project.slug}/work/in-progress`);
+  });
+
+  /** rr-1, frozen with rr-2 queued behind it, by its uuid. */
+  async function frozen(tab?: string) {
+    const recorded = await goldenMaster(FROZEN, 'getReleaseRequest');
+    return shownBare(FROZEN, 'getReleaseRequest', recorded.request.id, tab);
+  }
+
+  /** rr-2, queued behind rr-1, by its logical id. */
+  async function queued() {
+    const recorded = await goldenMaster(FROZEN, 'getProjectReleaseRequest');
+    return shownBare(FROZEN, 'getProjectReleaseRequest', recorded.request.qualifiedId);
+  }
+
+  it('links the request queued behind a frozen one', async () => {
+    const { opened, view } = await frozen();
+    await expect
+      .element(view.getByRole('link', { name: 'next: contract-service-rr-2' }))
+      .toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('frozen', { kind: 'DATA' });
+  });
+
+  it('open-related-release-request queuedNext: “next:” opens the request queued behind', async () => {
+    const { opened, view } = await frozen();
+    await view.getByRole('link', { name: 'next: contract-service-rr-2' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-related-release-request:queuedNext']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/release-requests/contract-service-rr-2`);
+  });
+
+  it('links the request a queued one waits behind', async () => {
+    const { opened, view } = await queued();
+    await expect
+      .element(view.getByRole('link', { name: 'queued behind contract-service-rr-1' }))
+      .toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('queued', { kind: 'DATA' });
+  });
+
+  it('open-related-release-request queuedBehind: “queued behind” opens the request ahead', async () => {
+    const { opened, view } = await queued();
+    await view.getByRole('link', { name: 'queued behind contract-service-rr-1' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-related-release-request:queuedBehind']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/release-requests/contract-service-rr-1`);
+  });
+
+  /**
+   * rr-1 on its Commits tab, `ticket/contract-11` moved to the next request with its recorded
+   * answer (`moveReleaseRequestSource`, which names the move rr-1 → rr-2), then its Overview, where
+   * the moved source lists both requests. The fold's reads answer with an error, so the Commits
+   * tab's veil lies over the sources: the buttons are pressed on the element itself.
+   */
+  async function moved() {
+    const { opened, view } = await frozen('commits');
+    const request = (await goldenMaster(FROZEN, 'getReleaseRequest')).request;
+    const press = (name: string) =>
+      (view.getByRole('button', { name, exact: true }).first().element() as HTMLElement).click();
+    press('Move to next request');
+    await opened.settled();
+    await view
+      .getByRole('textbox', { name: 'Reason for moving ticket/contract-11 to the next request' })
+      .fill('It conflicts with ticket/contract-11.');
+    await opened.settled();
+    press('Move');
+    await opened.settled();
+    http
+      .expectOne(
+        `/projects/api/repositories/${request.repoId}/release-requests/${request.id}/sources/move`,
+      )
+      .flush(await goldenMaster(FROZEN, 'moveReleaseRequestSource'));
+    for (let round = 0; round < 3; round++) {
+      await opened.settled();
+      for (const call of http.match((r) => r.url.startsWith('/projects/api/repositories/'))) {
+        call.flush(null, { status: 404, statusText: 'Not Found' });
+      }
+      failCi();
+    }
+    await view
+      .getByRole('navigation', { name: 'Release request views' })
+      .getByRole('link', { name: /Overview/ })
+      .click();
+    await opened.settled();
+    const moves = view.getByRole('region', { name: 'Moved sources' });
+    return { opened, view, moves };
+  }
+
+  it('lists a moved source with the request it left and the one it joined', async () => {
+    const { opened, moves } = await moved();
+    await expect.element(moves).toMatchTextContent('ticket/contract-12');
+    await expect
+      .element(moves.getByRole('link', { name: 'contract-service-rr-1', exact: true }))
+      .toBeVisible();
+    await expect
+      .element(moves.getByRole('link', { name: 'contract-service-rr-2', exact: true }))
+      .toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('moved', { kind: 'DATA' });
+  });
+
+  it('open-related-release-request movedFrom: a move’s first request opens', async () => {
+    const { opened, moves } = await moved();
+    await moves.getByRole('link', { name: 'contract-service-rr-1', exact: true }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-related-release-request:movedFrom']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/release-requests/contract-service-rr-1`);
+  });
+
+  it('open-related-release-request movedTo: a move’s second request opens', async () => {
+    const { opened, moves } = await moved();
+    await moves.getByRole('link', { name: 'contract-service-rr-2', exact: true }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-related-release-request:movedTo']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/release-requests/contract-service-rr-2`);
+  });
 
   it('marks the request as loading, then says it could not be read, with Retry', async () => {
     const recorded = await goldenMaster(EVERY_STATE, 'getProjectReleaseRequest');

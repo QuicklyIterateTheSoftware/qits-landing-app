@@ -354,6 +354,28 @@ describe('qits-landing-app → qits-projects-service pact', () => {
       expect(queued?.queuedBehindQualifiedId).toBe(frozen?.qualifiedId);
     }));
 
+  // An obsolete request's successor, carrying a work item (qits-2039): the page links it (epic
+  // qits-2000). An item's work item is read unbound (UNBOUND_RELEASE_REQUESTS), so the mock server
+  // does not answer it; the page's spec shows it from the recording.
+  it('show-project-release-requests: a request whose item names a work item', () =>
+    given(
+      'show-project-release-requests',
+      'a repository with a tagged release whose request went obsolete mid-publish',
+      'listProjectReleaseRequests',
+      LIST_PROJECT_RELEASE_REQUESTS,
+    ).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const op = masters.operation(
+        'a repository with a tagged release whose request went obsolete mid-publish',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      await store.loadReleaseRequests(projectId);
+      const kept = store.releaseRequests()[projectId];
+      expect(kept?.status).toBe('loaded');
+      expect(kept?.requests.some((request) => request.items?.length)).toBe(true);
+    }));
+
   it('show-project-release-requests: a project without any shows none', () =>
     given(
       'show-project-release-requests',

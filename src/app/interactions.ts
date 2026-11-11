@@ -160,6 +160,32 @@ export const INTERACTIONS = {
   'show-release-request-changes':
     'The Changes tab of a release request shows what its fold changed',
   /**
+   * `release-requests.page.ts`: a row of the Release Requests page opens the request (its name, an
+   * item's text), the request it is queued behind, the check that needs a person (the request's
+   * page at that check's anchor), or the work item an item names. Navigates only, and names no
+   * pact (epic qits-2000).
+   */
+  'open-listed-release-request':
+    'A row on the Release Requests page opens the request, its queue, its check or its work item',
+  /**
+   * `release-request.page.ts`: a request's page opens the work item an item of its head names, or
+   * the project's work where a failed gate filed a bug ticket. Navigates only, and names no pact
+   * (epic qits-2000).
+   */
+  'open-release-request-work': 'A release request’s page opens the work item it carries',
+  /**
+   * `release-request.page.ts`: "← Release requests" on a request's page goes back to the list.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'leave-release-request': '“← Release requests” on a request’s page goes back to the list',
+  /**
+   * `release-request.page.ts`: a request's page opens another request: the one that superseded
+   * it, the one it is queued behind or the one queued behind it, and the requests a moved source
+   * left and joined. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-related-release-request':
+    'A release request’s page opens the request superseding it, queued around it or a move’s ends',
+  /**
    * `<qits-commit-message>` and `QitsWorkRefs` (`@qits/ui-components`) via `workBriefSource`: a
    * commit subject on a release request's Commits or Changes tab (qits-1897), and a work item's
    * text — its description, impetus, acceptance criteria and comments, and an open issue's
