@@ -26,6 +26,7 @@ import {
   routesSiteOf,
   RoutesBundleStore,
 } from './routes-bundle.store';
+import { hasViewports, routeStates } from './routes-manifest';
 
 /**
  * qits-landing-app's pact with qits-artifacts-service (qits-1951):
@@ -37,6 +38,11 @@ import {
  * - `a published routes bundle`: `@routes/qits-landing`, whose newest version names
  *   `qits-landing-app`, found through `listDocsSites` and `listDocsVersions`; its `manifest.json`
  *   (`getDocsFile`) and its file list (`getDocsVersion`, for the assets).
+ * - `a published routes bundle with kinds and viewports` (qits-2059): the same site at a newer
+ *   version, whose manifest gives each freeze the kind of its outcome and the preset width it was
+ *   shot at (qits-2046): `projects/:slug/repositories` in the states `loaded` (DATA, at PHONE,
+ *   TABLET and DESKTOP), `empty` (NO_DATA, DESKTOP) and `error` (ERROR, at the test's own width),
+ *   found through `listDocsSites` and `listDocsVersions`, and its `manifest.json` (`getDocsFile`).
  * - `a published docs site`: a catalog with no `@routes/` site, so `load` finds nothing.
  * - `a published routes bundle freeze` / `… font`: one freeze's HTML and one asset (a font).
  *
@@ -72,6 +78,7 @@ const BUNDLE = 'a published routes bundle';
 const FREEZE = 'a published routes bundle freeze';
 const FONT = 'a published routes bundle font';
 const NO_ROUTES = 'a published docs site';
+const KINDS = 'a published routes bundle with kinds and viewports';
 
 /** The repository the bundle's newest version names (`git.repository.name`). */
 const REPO = 'qits-landing-app';
@@ -157,6 +164,42 @@ describe('qits-landing-app → qits-artifacts-service pact: routes bundle', () =
     }).executeTest(async (server) => {
       const manifest = await at(server.url, () => routesManifestOf(bundleOf(BUNDLE)));
       expect(manifest).toEqual(masters.body(BUNDLE, 'getDocsFile'));
+    }));
+
+  it('show-ui-builder-routes: finds a bundle with kinds and viewports by its newest version', () => {
+    given('show-ui-builder-routes', KINDS, 'listDocsSites', LIST_DOCS_SITES);
+    return given(
+      'show-ui-builder-routes',
+      KINDS,
+      'listDocsVersions',
+      LIST_DOCS_VERSIONS,
+    ).executeTest(async (server) => {
+      const found = await at(server.url, () => routesSiteOf(REPO));
+      expect(found).toEqual(bundleOf(KINDS, 'listDocsVersions'));
+    });
+  });
+
+  it('show-ui-builder-routes: reads a manifest whose freezes carry kinds and viewports', () =>
+    given('show-ui-builder-routes', KINDS, 'getDocsFile', GET_DOCS_FILE, {
+      contentType: 'application/json',
+      body: new TextEncoder().encode(JSON.stringify(masters.body(KINDS, 'getDocsFile'))),
+    }).executeTest(async (server) => {
+      const manifest = await at(server.url, () => routesManifestOf(bundleOf(KINDS)));
+      expect(manifest).toEqual(masters.body(KINDS, 'getDocsFile'));
+      // `asManifest` keeps every kind and width: the route's states, data first, each with its
+      // freezes' widths, and the switch shows.
+      expect(hasViewports(manifest!)).toBe(true);
+      expect(
+        routeStates(manifest!, 'projects/:slug/repositories').map((state) => ({
+          name: state.name,
+          kind: state.kind,
+          viewports: state.freezes.map((freeze) => freeze.viewport).sort(),
+        })),
+      ).toEqual([
+        { name: 'loaded', kind: 'DATA', viewports: ['DESKTOP', 'PHONE', 'TABLET'] },
+        { name: 'empty', kind: 'NO_DATA', viewports: ['DESKTOP'] },
+        { name: 'error', kind: 'ERROR', viewports: [null] },
+      ]);
     }));
 
   it('show-ui-builder-routes: a catalog without a @routes/ site publishes nothing for it', () =>
