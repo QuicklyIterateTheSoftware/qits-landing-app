@@ -62,7 +62,7 @@
     "@qits/network-access-golden-masters": "2026.1110.191501",
     "@qits/projects-golden-masters": "2026.1111.82815",
     "@qits/system-golden-masters": "2026.1110.173442",
-    "@qits/workspace-daemon-golden-masters": "2026.1107.140355",
+    "@qits/workspace-daemon-golden-masters": "2026.1111.190934",
     "@qits/workspaces-golden-masters": "2026.1111.70514",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
