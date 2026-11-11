@@ -735,6 +735,12 @@
       "route": "projects/:slug/work/acceptance"
     },
     {
+      "provider": "qits-projects-service",
+      "state": "an implementing epic with features in mixed statuses",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/acceptance"
+    },
+    {
       "provider": "qits-workspaces-service",
       "state": "a project with workspaces bound to work items",
       "operationId": "listOpenWorkspaces",
@@ -1098,13 +1104,19 @@
     },
     {
       "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/in-progress"
+    },
+    {
+      "provider": "qits-projects-service",
       "state": "a project with work in every status",
       "operationId": "listProjectWork",
       "route": "projects/:slug/work/in-progress"
     },
     {
       "provider": "qits-projects-service",
-      "state": "an epic with features and tasks",
+      "state": "an implementing epic with features in mixed statuses",
       "operationId": "listProjectWork",
       "route": "projects/:slug/work/in-progress"
     },

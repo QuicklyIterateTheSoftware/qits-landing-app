@@ -4402,6 +4402,91 @@
       "triggers": []
     },
     {
+      "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/epic-boards-mixed-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
+      "test": "WorkAcceptancePage (screenshots) > leaves out the verified feature of an epic still on its board, with epic boards",
+      "name": "epic-boards-mixed-data",
+      "route": "projects/:slug/work/acceptance",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implementing epic with features in mixed statuses",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/error.html",
+      "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
+      "test": "WorkAcceptancePage (screenshots) > says that the work could not be read",
+      "name": "error",
+      "route": "projects/:slug/work/acceptance",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/inline-mixed-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
+      "test": "WorkAcceptancePage (screenshots) > lists the verified feature under its epic, inline",
+      "name": "inline-mixed-data",
+      "route": "projects/:slug/work/acceptance",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implementing epic with features in mixed statuses",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/loading.html",
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > shows that the work is loading",
@@ -6906,10 +6991,215 @@
       "triggers": []
     },
     {
-      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/board.html",
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-data.html",
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
-      "test": "WorkInProgressPage (screenshots) > shows the work being worked on, and nothing before or after it",
-      "name": "board",
+      "test": "WorkInProgressPage (screenshots) > draws each epic on the board with its own epic board, then one board for the tickets",
+      "name": "epic-boards-data",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-mixed-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > shows a verified feature in its epic board’s Verified column",
+      "name": "epic-boards-mixed-data",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implementing epic with features in mixed statuses",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-phone-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > stacks the epic boards’ epics first on a phone, then the rest",
+      "name": "epic-boards-phone-data",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/error.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > says that the work could not be read",
+      "name": "error",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > shows the work being worked on inline, and nothing before or after it",
+      "name": "inline-data",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-mixed-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > nests an epic’s features and tasks in its lane inline, its verified feature off the board",
+      "name": "inline-mixed-data",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implementing epic with features in mixed statuses",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-phone-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > stacks the board’s work inline within a phone’s width, every handle on screen",
+      "name": "inline-phone-data",
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -6971,10 +7261,10 @@
       "triggers": []
     },
     {
-      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/nested.html",
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data.html",
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
-      "test": "WorkInProgressPage (screenshots) > nests an epic’s features and tasks in its lane",
-      "name": "nested",
+      "test": "WorkInProgressPage (screenshots) > says that nothing is in progress",
+      "name": "no-data",
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -6989,7 +7279,42 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "an epic with features and tasks",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data.html",
+      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
+      "test": "WorkInProgressPage (screenshots) > opens the view settings from the gear on the In Progress tab",
+      "name": "view-settings-data",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
           "operationId": "listProjectWork"
         },
         {
@@ -8194,6 +8519,9 @@
     "projects/:slug/work/acceptance": [
       "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/acceptance.html",
       "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/empty.html",
+      "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/epic-boards-mixed-data.html",
+      "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/error.html",
+      "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/inline-mixed-data.html",
       "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/loading.html",
       "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-unproven.html",
       "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-withdrawn.html",
@@ -8256,9 +8584,16 @@
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-none.html"
     ],
     "projects/:slug/work/in-progress": [
-      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/board.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-data.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-mixed-data.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-phone-data.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/error.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-data.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-mixed-data.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-phone-data.html",
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/loading.html",
-      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/nested.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data.html",
+      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data.html",
       "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs.html"
     ],
     "projects/:slug/work/refinement": [
@@ -8364,6 +8699,16 @@
       },
       {
         "route": null,
+        "interaction": "session-expired",
+        "outcome": "signedOut",
+        "kind": "external",
+        "to": "idp",
+        "global": true,
+        "triggered": false,
+        "file": "@qits/angular/src/lib/sign-in/session-expiry.ts"
+      },
+      {
+        "route": null,
         "interaction": "session-guard",
         "outcome": "signedOut",
         "kind": "external",
@@ -8374,6 +8719,15 @@
       }
     ],
     "fired": [
+      {
+        "spec": "src/app/app.config.browser.spec.ts",
+        "test": "app config: the bearer interceptor’s expired session (qits-2052) > session-expired signedOut: a platform call answering 401 leaves for the idp’s sign-in",
+        "route": null,
+        "interaction": "session-expired",
+        "outcome": "signedOut",
+        "kind": "external",
+        "freeze": null
+      },
       {
         "spec": "src/app/app.routes.browser.spec.ts",
         "test": "app routes: the session guard (qits-2044) > session-guard signedOut: a visitor holding no token leaves for the idp’s sign-in",
