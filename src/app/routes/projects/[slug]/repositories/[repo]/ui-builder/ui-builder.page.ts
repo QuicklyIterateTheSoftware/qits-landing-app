@@ -28,7 +28,9 @@ import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
   FREEZE_VIEWPORTS,
   hasViewports,
+  inboundExits,
   initialRoute,
+  joinedOutcome,
   inOutcomeScope,
   matchRoute,
   outcomeLeads,
@@ -40,11 +42,14 @@ import {
   routeTree,
   sharedOutcomes,
   stateFreeze,
+  unfixedOutcomes,
+  unreachable,
   VIEWPORT_SIZES,
   type Freeze,
   type FreezeKind,
   type FreezeViewport,
   type FreezeRecord,
+  type DeclaredOutcome,
   type JoinedOutcome,
   type OutcomeMark,
   type OutcomeTest,
@@ -98,6 +103,32 @@ const VIEWPORT_CHOICES: readonly {
 
 /** The width the frame's border adds to its box (1px each side), kept out of the frozen width. */
 const FRAME_BORDER = 2;
+
+/** One source in the Outcomes tab (qits-2049): a declared outcome, joined, and where it is declared. */
+interface OutcomeSource {
+  /** The declaring route (`/x`), a layout (`/x and below`) or `App-wide`. */
+  readonly scope: string;
+  readonly outcome: JoinedOutcome;
+}
+
+/** One route of the Outcomes tab (qits-2049): the exits that lead to it, as sources. */
+interface InboundRow {
+  readonly fullPath: string;
+  readonly entry: boolean;
+  readonly unreachable: boolean;
+  readonly sources: readonly OutcomeSource[];
+}
+
+/** The segments of a route pattern (`''` and null have none), for nearness (qits-2049). */
+const segmentsOf = (route: string | null): readonly string[] => (route ? route.split('/') : []);
+
+/** How many leading segments two route patterns share (qits-2049). */
+function shared(a: string | null, b: string | null): number {
+  const [left, right] = [segmentsOf(a), segmentsOf(b)];
+  let n = 0;
+  while (n < left.length && n < right.length && left[n] === right[n]) n++;
+  return n;
+}
 
 /** One application's entities in the Entities tab, or why it has none to show. */
 interface EntityGroup {
@@ -176,9 +207,22 @@ interface EntityGroup {
  *   source. A bundle without the section, with an unreadable one, or an app that declares none says
  *   so in one line instead of the list; a route that declares none says how many of the tree's pages
  *   do (qits-2045, `outcomeProgress`).
- * - The Outcomes tab (qits-2006, owner decision 3 of qits-2000): the shared outcomes, a layout's and
- *   app-wide (`sharedOutcomes`), listed once, by scope, with the same rows. The right panel never
- *   repeats them; it ends with a line counting those in the route's scope, which opens the tab.
+ * - Shared outcomes (qits-2049): under the route's own outcomes, a "Shared" group, collapsed by
+ *   default (a toggle with `aria-expanded`), holds the layouts' and app-wide outcomes whose scope
+ *   takes the route (`sharedOutcomes`, filtered by `inOutcomeScope`), by layout, then app-wide, with
+ *   the same rows.
+ * - The Outcomes tab (qits-2049; before it, the shared list of qits-2006): how each route is
+ *   reached, the inverse of the right panel. `inboundExits` lists the routes the library's
+ *   reachability check looks at (no children, no redirect, not `**`), "N of M routes no outcome
+ *   leads to" above them: a route no declared exit leads to (`to` its full path exactly, from any
+ *   scope) and that is no entry point (`data: { qitsEntry: true }`) comes first, chipped "No outcome
+ *   leads here", as the Entities tab chips "No route shows this"; an entry point is chipped "Entry
+ *   point"; the rest show their inbound count. Expanding a row lists its sources: where each is
+ *   declared (the route, "/x and below" for a layout, "App-wide") and its `interaction:outcome`.
+ *   Clicking one toggles its trigger's highlight as an outcome click does, showing the freeze that
+ *   shows the trigger on the route nearest the row's (`pickSource`), else the declaring route, else
+ *   keeping the route. A last group, "Leaves without a fixed target" (`unfixedOutcomes`), lists the
+ *   returns and externals with their source and where they lead, clicked the same way.
  * - Highlight (qits-2006): clicking an outcome (not its target or result) highlights its trigger in
  *   the frame, the element whose `data-qits-outcome` names it, and clicking it again clears it, as
  *   does choosing another route. The shown state is switched to the first freeze that shows the
@@ -424,30 +468,85 @@ interface EntityGroup {
                       }
                     </section>
                   } @else {
-                    <section aria-label="Shared outcomes" class="text-[0.8125rem]">
+                    <section aria-label="Inbound outcomes" class="text-[0.8125rem]">
                       @if (outcomeStatus() === 'declared') {
-                        @for (group of sharedGroups(); track group.route) {
-                          <h3
-                            class="outcome-group m-0 mb-1 text-xs font-semibold text-charcoal-brown-700"
-                            [class.mt-3]="!$first"
-                          >
-                            {{
-                              group.route === null ? 'App-wide' : '/' + group.route + ' and below'
-                            }}
-                          </h3>
-                          <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
-                            @for (outcome of group.outcomes; track outcome.key) {
-                              <ng-container
-                                [ngTemplateOutlet]="outcomeRow"
-                                [ngTemplateOutletContext]="{ $implicit: outcome }"
-                              />
-                            }
-                          </ul>
-                        } @empty {
-                          <p class="no-outcomes m-0 text-charcoal-brown-600">
-                            No layout or app-wide outcome.
-                          </p>
-                        }
+                        <p class="inbound-summary m-0 font-semibold">
+                          {{ inboundCounts().unreachable }} of {{ inboundCounts().total }} routes no
+                          outcome leads to
+                        </p>
+                        <ul class="m-0 mt-2 flex list-none flex-col gap-0.5 p-0">
+                          @for (route of inboundRoutes(); track route.fullPath) {
+                            <li class="inbound-route">
+                              <button
+                                type="button"
+                                class="inbound flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left hover:bg-charcoal-brown-50"
+                                [class.unreachable]="route.unreachable"
+                                [attr.aria-expanded]="expandedInbound().has(route.fullPath)"
+                                (click)="toggleInbound(route.fullPath)"
+                              >
+                                <span class="min-w-0 truncate font-mono"
+                                  >/{{ route.fullPath }}</span
+                                >
+                                <span class="ml-auto flex shrink-0 items-center gap-1">
+                                  @if (route.entry) {
+                                    <ui-chip class="entry" label="Entry point" />
+                                  }
+                                  @if (route.unreachable) {
+                                    <ui-chip
+                                      class="no-inbound"
+                                      tone="waiting"
+                                      label="No outcome leads here"
+                                    />
+                                  }
+                                  @if (route.sources.length) {
+                                    <span
+                                      class="inbound-count text-[0.6875rem] tabular-nums opacity-70"
+                                      >{{ route.sources.length }}</span
+                                    >
+                                  }
+                                </span>
+                              </button>
+                              @if (expandedInbound().has(route.fullPath)) {
+                                <ul class="m-0 mb-1 ml-4 flex list-none flex-col gap-0.5 p-0">
+                                  @for (source of route.sources; track source.outcome.key) {
+                                    <ng-container
+                                      [ngTemplateOutlet]="outcomeSource"
+                                      [ngTemplateOutletContext]="{
+                                        $implicit: source,
+                                        target: route.fullPath,
+                                      }"
+                                    />
+                                  } @empty {
+                                    <li class="no-sources px-2 text-xs text-charcoal-brown-600">
+                                      {{
+                                        route.entry
+                                          ? 'Entered from outside the app.'
+                                          : 'No outcome leads here.'
+                                      }}
+                                    </li>
+                                  }
+                                </ul>
+                              }
+                            </li>
+                          }
+                        </ul>
+                        <h3
+                          class="outcome-group m-0 mt-3 mb-1 text-xs font-semibold text-charcoal-brown-700"
+                        >
+                          Leaves without a fixed target
+                        </h3>
+                        <ul class="unfixed m-0 flex list-none flex-col gap-0.5 p-0">
+                          @for (source of unfixed(); track source.outcome.key) {
+                            <ng-container
+                              [ngTemplateOutlet]="outcomeSource"
+                              [ngTemplateOutletContext]="{ $implicit: source, target: null }"
+                            />
+                          } @empty {
+                            <li class="text-xs text-charcoal-brown-600">
+                              No return or external outcome.
+                            </li>
+                          }
+                        </ul>
                       } @else {
                         <ng-container [ngTemplateOutlet]="outcomesMissing" />
                       }
@@ -672,15 +771,34 @@ interface EntityGroup {
                           </li>
                         }
                       </ul>
-                      @if (sharedInScope(); as shared) {
+                      @if (scopedShared().count; as count) {
                         <button
                           type="button"
-                          class="shared-outcomes mt-2 cursor-pointer rounded px-1 text-left text-xs text-charcoal-brown-600 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
-                          (click)="leftTab.set('outcomes')"
+                          class="shared-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                          [attr.aria-expanded]="sharedOpen()"
+                          (click)="sharedOpen.set(!sharedOpen())"
                         >
-                          {{ shared }} shared {{ shared === 1 ? 'outcome' : 'outcomes' }} from
-                          layouts
+                          <span aria-hidden="true">{{ sharedOpen() ? '▾' : '▸' }}</span>
+                          <span>Shared</span>
+                          <span class="tabular-nums opacity-70">{{ count }}</span>
                         </button>
+                        @if (sharedOpen()) {
+                          @for (group of scopedShared().groups; track group.route) {
+                            <h4
+                              class="shared-group m-0 mt-2 mb-1 px-1 text-xs font-semibold text-charcoal-brown-600"
+                            >
+                              {{ scopeOf(group.route, true) }}
+                            </h4>
+                            <ul class="shared-outcomes m-0 flex list-none flex-col gap-1.5 p-0">
+                              @for (outcome of group.outcomes; track outcome.key) {
+                                <ng-container
+                                  [ngTemplateOutlet]="outcomeRow"
+                                  [ngTemplateOutletContext]="{ $implicit: outcome }"
+                                />
+                              }
+                            </ul>
+                          }
+                        }
                       }
                     } @else {
                       <ng-container [ngTemplateOutlet]="outcomesMissing" />
@@ -766,7 +884,40 @@ interface EntityGroup {
       }
     </ng-template>
 
-    <!-- One outcome, in the right panel and in the Outcomes tab alike (qits-2006). -->
+    <!--
+      One source of an inbound exit, or an outcome without a fixed target, in the Outcomes tab
+      (qits-2049): where it is declared and its interaction:outcome; a click shows its trigger.
+    -->
+    <ng-template #outcomeSource let-source let-target="target">
+      <li class="outcome-source flex flex-col">
+        <button
+          type="button"
+          class="source flex w-full cursor-pointer flex-wrap items-center gap-x-1.5 rounded px-2 py-0.5 text-left"
+          [class]="
+            source.outcome.key === highlighted()
+              ? 'bg-charcoal-brown-800 text-white'
+              : 'hover:bg-charcoal-brown-50'
+          "
+          [attr.aria-pressed]="source.outcome.key === highlighted()"
+          [title]="
+            'Highlight the trigger of ' +
+            source.outcome.mark +
+            ' (' +
+            source.outcome.declared.file +
+            ')'
+          "
+          (click)="pickSource(source.outcome, target)"
+        >
+          <span class="source-scope text-xs opacity-70">{{ source.scope }}</span>
+          <span class="font-mono text-xs">{{ source.outcome.mark }}</span>
+        </button>
+        @if (target === null && leads(source.outcome); as line) {
+          <p class="outcome-leads m-0 px-2 text-xs text-charcoal-brown-600">{{ line }}</p>
+        }
+      </li>
+    </ng-template>
+
+    <!-- One outcome of the right panel: the page's own, or a shared one (qits-2006, qits-2049). -->
     <ng-template #outcomeRow let-outcome>
       <li class="outcome flex flex-col gap-0.5">
         <button
@@ -1124,28 +1275,102 @@ export class UiBuilderPage {
     return gaps ? `${label}, ${gaps} ${gaps === 1 ? 'gap' : 'gaps'}` : label;
   }
 
-  /** The Outcomes tab's groups: the layouts' and app-wide outcomes (`sharedOutcomes`, qits-2006). */
-  protected readonly sharedGroups = computed(() => {
+  /** The layouts' and app-wide outcomes, joined (`sharedOutcomes`, qits-2006). */
+  private readonly sharedGroups = computed(() => {
     const bundle = this.loaded();
     return bundle ? sharedOutcomes(bundle.manifest, this.selectedPath()) : [];
   });
 
-  /** How many shared outcomes the selected route is in the scope of (qits-2006). */
-  protected readonly sharedInScope = computed(() => {
+  /**
+   * The right panel's "Shared" group (qits-2049): the shared outcomes whose scope takes the selected
+   * route, by layout (by path), then app-wide; the scopes with none left out.
+   */
+  protected readonly scopedShared = computed(() => {
     const path = this.selectedPath();
-    return this.sharedGroups()
-      .flatMap((group) => group.outcomes)
-      .filter((outcome) => inOutcomeScope(outcome.declared, path)).length;
+    const groups = this.sharedGroups()
+      .map((group) => ({
+        route: group.route,
+        outcomes: group.outcomes.filter((outcome) => inOutcomeScope(outcome.declared, path)),
+      }))
+      .filter((group) => group.outcomes.length);
+    return {
+      groups: [
+        ...groups.filter((group) => group.route !== null),
+        ...groups.filter((group) => group.route === null),
+      ],
+      count: groups.reduce((sum, group) => sum + group.outcomes.length, 0),
+    };
   });
+
+  /** Whether the right panel's "Shared" group is open (qits-2049); collapsed until asked. */
+  protected readonly sharedOpen = signal(false);
+
+  /** Where a declaration is scoped, as a source says it (qits-2049). */
+  protected scopeOf(route: string | null, global: boolean): string {
+    if (route === null) return 'App-wide';
+    return global ? `/${route} and below` : `/${route}`;
+  }
+
+  /** `declared` joined (`joinedOutcome`) with where it is declared, for the Outcomes tab (qits-2049). */
+  private source(declared: DeclaredOutcome): OutcomeSource {
+    const bundle = this.loaded();
+    return {
+      scope: this.scopeOf(declared.route, declared.global),
+      outcome: joinedOutcome(bundle!.manifest, declared),
+    };
+  }
+
+  /** The Outcomes tab's routes (`inboundExits`, qits-2049): unreachable first, each with its sources. */
+  protected readonly inboundRoutes = computed((): readonly InboundRow[] => {
+    const bundle = this.loaded();
+    if (!bundle) return [];
+    return inboundExits(bundle.manifest).map((route) => ({
+      fullPath: route.fullPath,
+      entry: route.entry,
+      unreachable: unreachable(route),
+      sources: route.inbound.map((declared) => this.source(declared)),
+    }));
+  });
+
+  /** The Outcomes tab's summary (qits-2049): how many of the checked routes nothing leads to. */
+  protected readonly inboundCounts = computed(() => {
+    const routes = this.inboundRoutes();
+    return { unreachable: routes.filter((r) => r.unreachable).length, total: routes.length };
+  });
+
+  /** The outcomes that leave without a fixed target (`unfixedOutcomes`, qits-2049), as sources. */
+  protected readonly unfixed = computed((): readonly OutcomeSource[] => {
+    const bundle = this.loaded();
+    return bundle ? unfixedOutcomes(bundle.manifest).map((d) => this.source(d)) : [];
+  });
+
+  /** The Outcomes tab's expanded routes (qits-2049), by full path. */
+  protected readonly expandedInbound = signal<ReadonlySet<string>>(new Set());
+
+  protected toggleInbound(fullPath: string): void {
+    this.expandedInbound.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(fullPath)) next.add(fullPath);
+      return next;
+    });
+  }
 
   /** The key of the highlighted outcome (qits-2006); null when none is. */
   protected readonly highlighted = signal<string | null>(null);
 
-  /** The highlighted outcome, among the route's and the shared ones (qits-2006). */
+  /**
+   * The highlighted outcome, among the route's, the shared ones (qits-2006) and the Outcomes tab's
+   * sources (qits-2049), which may be another route's page outcomes.
+   */
   private readonly highlightedOutcome = computed(() => {
     const key = this.highlighted();
     if (key === null) return null;
-    const all = [...this.pageOutcomes(), ...this.sharedGroups().flatMap((group) => group.outcomes)];
+    const all = [
+      ...this.pageOutcomes(),
+      ...this.sharedGroups().flatMap((group) => group.outcomes),
+      ...this.inboundRoutes().flatMap((route) => route.sources.map((source) => source.outcome)),
+      ...this.unfixed().map((source) => source.outcome),
+    ];
     return all.find((outcome) => outcome.key === key) ?? null;
   });
 
@@ -1461,6 +1686,56 @@ export class UiBuilderPage {
       const here = triggers.find((freeze) => (freeze.viewport ?? viewport) === viewport);
       this.showFreeze(here ?? triggers[0], true);
     }
+  }
+
+  /**
+   * Shows the trigger of a source in the Outcomes tab (qits-2049), or clears its highlight when it
+   * is the highlighted one already. Of the freezes in its scope that show the trigger, the one whose
+   * route is nearest `target` (the route the row is about; the selected route for an outcome without
+   * a fixed target) is shown, the selected route's and then one at the chosen viewport first among
+   * equals; with none, its declaring route is selected when it is a route of the tree (a page, or a
+   * layout that is one), else the route stays. The highlight is set as `toggleOutcome` sets it, so
+   * the frame draws it once the freeze is in. The tab stays open.
+   */
+  protected pickSource(outcome: JoinedOutcome, target: string | null): void {
+    const bundle = this.loaded();
+    if (!bundle) return;
+    this.linkNotice.set(null);
+    if (this.highlighted() === outcome.key) {
+      this.highlighted.set(null);
+      this.drawHighlight();
+      return;
+    }
+    const selected = this.selectedPath();
+    const near = target ?? selected;
+    const viewport = this.viewport();
+    const freeze = [...joinedOutcome(bundle.manifest, outcome.declared, selected).triggerFreezes]
+      .map((candidate, order) => ({ candidate, order }))
+      .sort(
+        (a, b) =>
+          shared(b.candidate.route, near) - shared(a.candidate.route, near) ||
+          Number(b.candidate.route === near) - Number(a.candidate.route === near) ||
+          Number((b.candidate.viewport ?? viewport) === viewport) -
+            Number((a.candidate.viewport ?? viewport) === viewport) ||
+          a.order - b.order,
+      )[0]?.candidate;
+    if (freeze) {
+      this.highlighted.set(outcome.key);
+      this.drawHighlight();
+      if (freeze.file !== this.freeze()?.file) this.showFreeze(freeze, true);
+      return;
+    }
+    const declaring = outcome.declared.route;
+    if (
+      declaring !== null &&
+      declaring !== selected &&
+      this.rows().some((row) => row.kind === 'route' && row.fullPath === declaring)
+    ) {
+      this.unfold(declaring);
+      void this.select(declaring);
+    }
+    this.highlighted.set(outcome.key);
+    this.drawHighlight();
   }
 
   /**
