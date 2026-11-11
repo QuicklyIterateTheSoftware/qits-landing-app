@@ -10,9 +10,9 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, stay } from '@qits/angular';
 import { map } from 'rxjs';
-import { ideaPath } from '$core/ideas/idea-path';
 import { IdeasStore, type IdeaPatch } from '$core/ideas/ideas.store';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -42,6 +42,11 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
  * idea's page, read again; a refusal shows the service's 400 `message` under the form. Cancel goes
  * back without a write.
  *
+ * Where it leads is declared (epic qits-2000), and the buttons carry the marks: Save reaches
+ * `edit-idea` `saved` (the idea's page, after the write), `unchanged` (the idea's page, nothing to
+ * send) or `refused` (the form kept, with the service's words); Cancel reaches `cancel-idea-edit`
+ * `back` (the idea's page).
+ *
  * Staleness (qits-1270): reads the idea and the project's ideas once, as the form opens; it
  * follows no event, as a re-read would overwrite what is being typed.
  */
@@ -60,6 +65,8 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
             [options]="options()"
             [busy]="busy()"
             [refusal]="refusal()"
+            [submitOutcomes]="[editing.saved, editing.unchanged, editing.refused]"
+            [cancelOutcomes]="[cancelling.back]"
             (submitted)="save($event)"
             (cancelled)="back()"
           />
@@ -71,7 +78,17 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
 export class IdeaEditPage {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(IdeasStore);
-  private readonly router = inject(Router);
+
+  /** Save: the idea's page after the write, or with nothing to send; the form kept on a refusal. */
+  protected readonly editing = outcomes('edit-idea', {
+    saved: exit('projects/:slug/ideas/detail/:ideaId'),
+    unchanged: exit('projects/:slug/ideas/detail/:ideaId'),
+    refused: stay(),
+  });
+  /** Cancel: back to the idea, without a write. */
+  protected readonly cancelling = outcomes('cancel-idea-edit', {
+    back: exit('projects/:slug/ideas/detail/:ideaId'),
+  });
 
   protected readonly id = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('ideaId') ?? '')),
@@ -124,15 +141,20 @@ export class IdeaEditPage {
     });
   }
 
+  /** The idea's page's params. */
+  private ideaParams() {
+    return { slug: this.selected.slug() ?? '', ideaId: this.id() };
+  }
+
   protected back(): void {
-    void this.router.navigateByUrl(ideaPath(this.selected.slug() ?? '', this.id()));
+    void this.cancelling.back.go(this.ideaParams());
   }
 
   protected async save(value: IdeaFormValue): Promise<void> {
     if (this.busy()) return;
     const patch = ideaPatchOf(this.initial(), value);
     if (Object.keys(patch).length === 0) {
-      this.back();
+      void this.editing.unchanged.go(this.ideaParams());
       return;
     }
     this.busy.set(true);
@@ -140,10 +162,11 @@ export class IdeaEditPage {
     const outcome = await this.store.update(this.id(), patch);
     this.busy.set(false);
     if (!outcome.ok) {
+      this.editing.refused.reach();
       this.refusal.set(outcome.refusal);
       return;
     }
     void this.store.refreshIdea(this.id());
-    this.back();
+    void this.editing.saved.go(this.ideaParams());
   }
 }

@@ -8,6 +8,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import type { Outcome } from '@qits/angular';
 import {
   descriptionLength,
   MAX_DESCRIPTION,
@@ -45,6 +46,10 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
  *
  * `initial` fills the form (the edit's idea), once it is given. `submitted` hands the typed value;
  * the page sends it and sets `busy` while it is on its way.
+ *
+ * Where its buttons lead is the page's to declare (epic qits-2000): the page hands in the outcomes
+ * each button's click can reach (`submitOutcomes`, `cancelOutcomes`), which the buttons name in
+ * their marks, and reaches them itself on `submitted` and `cancelled`.
  */
 @Component({
   selector: 'app-idea-form',
@@ -125,6 +130,10 @@ export class IdeaForm {
   readonly busy = input(false);
   /** Why the service refused the last send, in its words. */
   readonly refusal = input<string | null>(null);
+  /** The page's declared outcomes the submit button's click can reach, for its mark. */
+  readonly submitOutcomes = input<readonly Outcome[]>([]);
+  /** The page's declared outcomes Cancel can reach, for its mark. */
+  readonly cancelOutcomes = input<readonly Outcome[]>([]);
 
   readonly submitted = output<IdeaFormValue>();
   readonly cancelled = output<void>();
@@ -148,6 +157,7 @@ export class IdeaForm {
     variant: 'success',
     disabled: this.busy() || !this.title().trim(),
     callback: () => this.submit(),
+    outcomes: this.submitOutcomes(),
   }));
 
   protected readonly cancelAction = computed((): Action => ({
@@ -155,6 +165,7 @@ export class IdeaForm {
     variant: 'muted',
     disabled: this.busy(),
     callback: () => this.cancelled.emit(),
+    outcomes: this.cancelOutcomes(),
   }));
 
   constructor() {

@@ -416,6 +416,52 @@ export const INTERACTIONS = {
    */
   'reprioritize-idea': 'Dragging an idea among the project’s ideas ranks it',
   /**
+   * `project-ideas.page.ts`: an idea's title on the Ideas page opens the idea's page. Navigates only,
+   * and names no pact (epic qits-2000).
+   */
+  'open-listed-idea': 'An idea’s title on the Ideas page opens the idea',
+  /**
+   * `project-ideas.page.ts`: New idea on the Ideas page opens the idea form. Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-idea-create': 'New idea on the Ideas page opens the idea form',
+  /**
+   * `idea-create.page.ts`: Cancel on the new idea form goes back to the Ideas page. Navigates only,
+   * and names no pact (epic qits-2000).
+   */
+  'cancel-idea-create': 'Cancel on the new idea form goes back to the ideas',
+  /**
+   * `idea-edit.page.ts`: Cancel on an idea's edit form goes back to the idea without a write.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'cancel-idea-edit': 'Cancel on the idea edit form goes back to the idea',
+  /**
+   * `idea.page.ts`: the "Enabled by" link on an idea's page opens the idea enabling it. Navigates
+   * only, and names no pact (epic qits-2000).
+   */
+  'open-enabling-idea': 'An idea’s “Enabled by” link opens the idea enabling it',
+  /**
+   * `idea.page.ts`: an idea under "Enables" on an idea's page opens that idea. Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-enabled-idea': 'An idea under “Enables” opens that idea',
+  /**
+   * `idea.page.ts`: a work item under "Inspired work" on an idea's page opens the item. Navigates
+   * only, and names no pact (epic qits-2000).
+   */
+  'open-inspired-work': 'A work item an idea inspired opens from the idea’s page',
+  /**
+   * `idea.page.ts`: Edit on an idea's page opens its edit form. Navigates only, and names no pact
+   * (epic qits-2000).
+   */
+  'open-idea-edit': 'Edit on an idea’s page opens its edit form',
+  /**
+   * `idea.page.ts`: Create epic and Create ticket on an idea's page open the work create form, filled
+   * with the idea and naming it as the inspiration (query params). Navigates only, and names no
+   * pact (epic qits-2000).
+   */
+  'create-work-from-idea': 'Create epic or Create ticket on an idea’s page opens the work form',
+  /**
    * The work create form (`routes/projects/[slug]/work/create/`) via `WorkWritesStore.create`: a
    * root epic or ticket, inspired by an idea when opened from one (epic qits-888).
    */

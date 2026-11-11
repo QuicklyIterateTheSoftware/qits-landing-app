@@ -11,12 +11,12 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
-import { ideaPath, ideaStatusTone } from '$core/ideas/idea-path';
+import { ideaStatusTone } from '$core/ideas/idea-path';
 import { IdeasStore } from '$core/ideas/ideas.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { workItemPath } from '$core/workspaces/agent-attention';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
@@ -38,6 +38,12 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * description and naming it as the inspiration (`inspiredBy`). A refused write shows the service's
  * words; a write that went through reads the idea again.
  *
+ * Where it leads is declared (epic qits-2000): the enabling idea (`open-enabling-idea` `open`), an
+ * idea it enables (`open-enabled-idea` `open`), a work item it inspired (`open-inspired-work`
+ * `open`), Edit (`open-idea-edit` `open`), and Create epic / Create ticket (`create-work-from-idea`
+ * `epic` / `ticket`, the form's query naming the archetype, the idea's title and description and
+ * the idea as `inspiredBy`).
+ *
  * Staleness (qits-1270): `IDEA_EVENTS` whose `projectId` is the open project → this idea
  * (`IdeasStore.refreshIdea`, through `IdeasStore.follow`): any of the project's ideas can be the
  * one enabling it or one it enables, and its own status follows its work as an `IdeaUpdated`.
@@ -45,7 +51,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-idea-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, Chip, LoadFailure, Markdown, PageLayoutComponent, RouterLink, Spinner],
+  imports: [ActionButton, Chip, LoadFailure, Markdown, PageLayoutComponent, QitsExit, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -101,7 +107,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 @if (idea.enabledByIdea; as enabler) {
                   <a
                     class="text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="ideaLink(enabler.id ?? '')"
+                    [qitsExit]="enabling.open"
+                    [exitParams]="{ slug: slug(), ideaId: enabler.id ?? '' }"
                     >{{ enabler.title }}</a
                   >
                   @if (enabler.archived) {
@@ -109,12 +116,6 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                       >That idea is archived.</span
                     >
                   }
-                } @else if (idea.enabledBy) {
-                  <a
-                    class="text-ocean-deep-700 no-underline hover:underline"
-                    [routerLink]="ideaLink(idea.enabledBy)"
-                    >{{ idea.enabledBy }}</a
-                  >
                 } @else {
                   <span class="text-charcoal-brown-500">No idea.</span>
                 }
@@ -133,7 +134,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                       }
                       <a
                         class="text-ocean-deep-700 no-underline hover:underline"
-                        [routerLink]="ideaLink(enabled.id ?? '')"
+                        [qitsExit]="enabledIdeas.open"
+                        [exitParams]="{ slug: slug(), ideaId: enabled.id ?? '' }"
                         >{{ enabled.title }}</a
                       >
                     </li>
@@ -149,7 +151,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                     <li class="flex flex-wrap items-baseline gap-2">
                       <a
                         class="font-mono whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
-                        [routerLink]="workLink(work.qualifiedId ?? '')"
+                        [qitsExit]="inspiredWork.open"
+                        [exitParams]="{ slug: slug(), id: work.qualifiedId ?? '' }"
                         data-work-item
                         >{{ work.qualifiedId }}</a
                       >
@@ -174,7 +177,28 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 export class IdeaPage {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(IdeasStore);
-  private readonly router = inject(Router);
+
+  /** The "Enabled by" link: the idea enabling this one. */
+  protected readonly enabling = outcomes('open-enabling-idea', {
+    open: exit('projects/:slug/ideas/detail/:ideaId'),
+  });
+  /** An idea under "Enables": that idea's page. */
+  protected readonly enabledIdeas = outcomes('open-enabled-idea', {
+    open: exit('projects/:slug/ideas/detail/:ideaId'),
+  });
+  /** A work item under "Inspired work": the item's page. */
+  protected readonly inspiredWork = outcomes('open-inspired-work', {
+    open: exit('projects/:slug/work/detail/:id'),
+  });
+  /** Edit: the idea's edit form. */
+  private readonly editing = outcomes('open-idea-edit', {
+    open: exit('projects/:slug/ideas/detail/:ideaId/edit'),
+  });
+  /** Create epic, Create ticket: the work create form, filled with the idea. */
+  private readonly creatingWork = outcomes('create-work-from-idea', {
+    epic: exit('projects/:slug/work/create'),
+    ticket: exit('projects/:slug/work/create'),
+  });
 
   /** The idea id in the URL. */
   protected readonly id = toSignal(
@@ -198,7 +222,7 @@ export class IdeaPage {
   protected readonly writing = signal(false);
   protected readonly failure = signal<string | null>(null);
 
-  private readonly slug = computed(() => this.selected.slug() ?? '');
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   protected readonly actions = computed((): readonly Action[] => {
     const idea = this.idea();
@@ -210,18 +234,21 @@ export class IdeaPage {
         variant: 'muted',
         disabled: busy,
         callback: () => this.createWork('EPIC'),
+        outcomes: [this.creatingWork.epic],
       },
       {
         label: 'Create ticket',
         variant: 'muted',
         disabled: busy,
         callback: () => this.createWork('TICKET'),
+        outcomes: [this.creatingWork.ticket],
       },
       {
         label: 'Edit',
         variant: 'muted',
         disabled: busy,
-        callback: () => void this.router.navigateByUrl(`${ideaPath(this.slug(), this.id())}/edit`),
+        callback: () => void this.editing.open.go({ slug: this.slug(), ideaId: this.id() }),
+        outcomes: [this.editing.open],
       },
       idea.archived
         ? {
@@ -269,14 +296,6 @@ export class IdeaPage {
     );
   }
 
-  protected ideaLink(ideaId: string): string {
-    return ideaPath(this.slug(), ideaId);
-  }
-
-  protected workLink(qualifiedId: string): string {
-    return workItemPath(this.slug(), qualifiedId);
-  }
-
   protected text(event: Event): string {
     return (event.target as HTMLTextAreaElement).value;
   }
@@ -290,14 +309,18 @@ export class IdeaPage {
   private createWork(archetype: 'EPIC' | 'TICKET'): void {
     const idea = this.idea();
     if (!idea) return;
-    void this.router.navigate(['/projects', this.slug(), 'work', 'create'], {
-      queryParams: {
-        archetype,
-        title: idea.title ?? '',
-        description: idea.description ?? '',
-        inspiredBy: this.id(),
+    const exit = archetype === 'EPIC' ? this.creatingWork.epic : this.creatingWork.ticket;
+    void exit.go(
+      { slug: this.slug() },
+      {
+        queryParams: {
+          archetype,
+          title: idea.title ?? '',
+          description: idea.description ?? '',
+          inspiredBy: this.id(),
+        },
       },
-    });
+    );
   }
 
   private openArchive(): void {

@@ -31,12 +31,16 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  *   title of three sentences), whose `message` the form shows.
  * - "a project with no work": `createIdea` (Create on the form, a title and a description).
  * - "a project with three ideas, one with a priority": `reprioritizeIdea` (a drop on the Ideas
- *   page, directly below the ranked idea; qits-1791).
+ *   page, directly below the ranked idea; qits-1791), and `getIdea` of the idea the edit form's
+ *   Save then patches (the edit page's `saved` exit, epic qits-2000; qits-2039).
+ * - "an idea enabled by another idea" (qits-2039): `getIdea` of an idea whose enabling idea is
+ *   archived (the "Enabled by" link and its hint), and `patchIdea` refused (400: a title of three
+ *   sentences), the edit form's `refused`.
  *
  * Each test drives the store's own method with what the recording sent, against a pact mock server
  * answering with qits-projects' golden master. `getIdea` binds the fields of `GET_IDEA` the
- * recording holds (`heldBy`): it records an idea nothing enables (`enabledByIdea: null`), so the
- * enabling idea's title and archived flag bind nothing until a recording names one.
+ * recording holds (`heldBy`): a field a recording holds as `null` (`enabledByIdea` of an idea
+ * nothing enables) binds nothing below it.
  *
  * The list's `archived=true` and `status=` queries have no recording: the store sends the first
  * only when the page's "Show archived" is on, and filters by status over the answer itself.
@@ -57,6 +61,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
 const IDEAS = 'a project with ideas';
 const NO_WORK = 'a project with no work';
 const RANKED = 'a project with three ideas, one with a priority';
+const ENABLED = 'an idea enabled by another idea';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-ideas-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -132,6 +137,24 @@ describe('qits-landing-app → qits-projects-service pact: ideas', () => {
       expect(idea?.enables?.[0]?.title).toBe('Share the build cache');
     }));
 
+  it('show-idea: an idea enabled by an archived idea', () =>
+    given(ENABLED, 'getIdea', 'show-idea', GET_IDEA).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const id = params(ENABLED, 'getIdea')['ideaId'];
+      await store.loadIdea(id);
+      const idea = store.ideaOf(id)?.idea;
+      expect(idea?.enabledByIdea?.title).toBe('Faster builds');
+      expect(idea?.enabledByIdea?.archived).toBe(true);
+    }));
+
+  it('show-idea: an idea nothing enables, which the edit form fills in', () =>
+    given(RANKED, 'getIdea', 'show-idea', GET_IDEA).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const id = params(RANKED, 'getIdea')['ideaId'];
+      await store.loadIdea(id);
+      expect(store.ideaOf(id)?.idea?.title).toBe('Smaller images');
+    }));
+
   it('create-idea: a title and a description make an idea', () =>
     given(NO_WORK, 'createIdea', 'create-idea', IDEA_WRITTEN).executeTest(async (server) => {
       const store = storeAt(server.url);
@@ -158,6 +181,15 @@ describe('qits-landing-app → qits-projects-service pact: ideas', () => {
       const id = params(IDEAS, 'patchIdea')['enabledIdeaId'];
       const outcome = await store.update(id, { title: sent(IDEAS, 'patchIdea')['title'] });
       expect(outcome.ok && outcome.idea.title).toBe('Share the build cache across runners');
+    }));
+
+  it('edit-idea: a title of three sentences is refused, in the service’s words', () =>
+    given(ENABLED, 'patchIdea', 'edit-idea', IDEA_REFUSAL).executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const id = params(ENABLED, 'patchIdea')['ideaId'];
+      const outcome = await store.update(id, { title: sent(ENABLED, 'patchIdea')['title'] });
+      expect(outcome.ok).toBe(false);
+      expect(!outcome.ok && outcome.refusal).toContain("'.'");
     }));
 
   it('archive-idea: archived with a reason', () =>

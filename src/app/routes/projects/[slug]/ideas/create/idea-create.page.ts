@@ -9,8 +9,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { ideaPath, ideasPath } from '$core/ideas/idea-path';
+import { exit, outcomes, stay } from '@qits/angular';
 import { IdeasStore } from '$core/ideas/ideas.store';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -22,6 +21,10 @@ import { IdeaForm, type IdeaFormValue } from '$patterns/ideas/idea-form/idea-for
  * ideas that are not archived as the one enabling it. Create sends `IdeasStore.create` and goes to
  * the new idea's page; a refusal shows the service's 400 `message` under the form. Cancel goes back
  * to the list.
+ *
+ * Where it leads is declared (epic qits-2000), and the buttons carry the marks: `create-idea`
+ * `created` (the new idea's page) or `refused` (the form kept, with the service's words), and
+ * `cancel-idea-create` `back` (the Ideas page).
  *
  * Staleness (qits-1270): reads the project's ideas once, for the "Enabled by" choice; it follows
  * no event (the form is short-lived, and the service refuses an enabling idea that went away).
@@ -39,6 +42,8 @@ import { IdeaForm, type IdeaFormValue } from '$patterns/ideas/idea-form/idea-for
           [options]="options()"
           [busy]="busy()"
           [refusal]="refusal()"
+          [submitOutcomes]="[creation.created, creation.refused]"
+          [cancelOutcomes]="[cancelling.back]"
           (submitted)="create($event)"
           (cancelled)="back()"
         />
@@ -49,7 +54,16 @@ import { IdeaForm, type IdeaFormValue } from '$patterns/ideas/idea-form/idea-for
 export class IdeaCreatePage {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(IdeasStore);
-  private readonly router = inject(Router);
+
+  /** Create: the new idea's page, or the form kept with the refusal. */
+  protected readonly creation = outcomes('create-idea', {
+    created: exit('projects/:slug/ideas/detail/:ideaId'),
+    refused: stay(),
+  });
+  /** Cancel: back to the Ideas page. */
+  protected readonly cancelling = outcomes('cancel-idea-create', {
+    back: exit('projects/:slug/ideas'),
+  });
 
   protected readonly busy = signal(false);
   protected readonly refusal = signal<string | null>(null);
@@ -70,7 +84,7 @@ export class IdeaCreatePage {
   }
 
   protected back(): void {
-    void this.router.navigateByUrl(ideasPath(this.selected.slug() ?? ''));
+    void this.cancelling.back.go({ slug: this.selected.slug() ?? '' });
   }
 
   protected async create(value: IdeaFormValue): Promise<void> {
@@ -81,9 +95,13 @@ export class IdeaCreatePage {
     const outcome = await this.store.create(projectId, value);
     this.busy.set(false);
     if (!outcome.ok) {
+      this.creation.refused.reach();
       this.refusal.set(outcome.refusal);
       return;
     }
-    void this.router.navigateByUrl(ideaPath(this.selected.slug() ?? '', outcome.idea.id ?? ''));
+    void this.creation.created.go({
+      slug: this.selected.slug() ?? '',
+      ideaId: outcome.idea.id ?? '',
+    });
   }
 }

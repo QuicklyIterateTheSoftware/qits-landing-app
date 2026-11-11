@@ -10,9 +10,9 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { IDEA_STATUSES, type IdeaStatus } from '$core/ideas/idea-events';
-import { ideaPath, ideaStatusTone } from '$core/ideas/idea-path';
+import { ideaStatusTone } from '$core/ideas/idea-path';
 import { rankableIdea } from '$core/ideas/idea-rank';
 import { IdeasStore } from '$core/ideas/ideas.store';
 import { SelectedProject } from '$core/projects/selected-project';
@@ -41,6 +41,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * the idea already was, send nothing. A refused drop says why above the list, in the service's
  * words, until the next drop; the list is read again, so the idea goes back.
  *
+ * Where it leads is declared (epic qits-2000): an idea's title opens its page (`open-listed-idea`
+ * `open`), and New idea opens the form (`open-idea-create` `open`).
+ *
  * Staleness (qits-1270): `IDEA_EVENTS` whose `projectId` is the open project → the list on show
  * (`IdeasStore.refreshList`, through `IdeasStore.follow`); another project's events read nothing.
  */
@@ -52,9 +55,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     DragHandle,
     LoadFailure,
     PageLayoutComponent,
+    QitsExit,
     ReorderItem,
     ReorderList,
-    RouterLink,
     Spinner,
   ],
   host: { class: 'block' },
@@ -117,7 +120,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 }
                 <a
                   class="font-semibold break-words text-ocean-deep-700 no-underline hover:underline"
-                  [routerLink]="link(idea.id ?? '')"
+                  [qitsExit]="listed.open"
+                  [exitParams]="{ slug: slug(), ideaId: idea.id ?? '' }"
                   >{{ idea.title }}</a
                 >
                 <ui-drag-handle [shown]="rankable(idea)" [label]="'Move ' + (idea.title ?? '')" />
@@ -138,7 +142,17 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 export class ProjectIdeasPage {
   private readonly selected = inject(SelectedProject);
   private readonly store = inject(IdeasStore);
-  private readonly router = inject(Router);
+
+  /** An idea's title: the idea's page. */
+  protected readonly listed = outcomes('open-listed-idea', {
+    open: exit('projects/:slug/ideas/detail/:ideaId'),
+  });
+  /** New idea: the idea form. */
+  private readonly creating = outcomes('open-idea-create', {
+    open: exit('projects/:slug/ideas/create'),
+  });
+
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   protected readonly filters: readonly { label: string; value: IdeaStatus | null }[] = [
     { label: 'All', value: null },
@@ -185,8 +199,8 @@ export class ProjectIdeasPage {
     {
       label: 'New idea',
       variant: 'success',
-      callback: () =>
-        void this.router.navigateByUrl(`/projects/${this.selected.slug() ?? ''}/ideas/create`),
+      callback: () => void this.creating.open.go({ slug: this.slug() }),
+      outcomes: [this.creating.open],
     },
   ]);
 
@@ -203,10 +217,6 @@ export class ProjectIdeasPage {
     const moved = ids[move.from];
     if (!projectId || !moved || !anchor) return;
     void this.store.reprioritize(projectId, moved, anchor);
-  }
-
-  protected link(ideaId: string): string {
-    return ideaPath(this.selected.slug() ?? '', ideaId);
   }
 
   protected checked(event: Event): boolean {
