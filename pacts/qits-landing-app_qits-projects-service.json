@@ -12275,8 +12275,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-desk",
-            "kind": "ui",
-            "route": "projects/:slug/desk"
+            "kind": "ui"
           }
         }
       },
@@ -12577,8 +12576,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-desk",
-            "kind": "ui",
-            "route": "projects/:slug/desk"
+            "kind": "ui"
           }
         }
       },
