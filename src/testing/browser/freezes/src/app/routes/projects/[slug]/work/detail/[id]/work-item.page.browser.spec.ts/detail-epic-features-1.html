@@ -77,9 +77,15 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .font-semibold { --tw-font-weight: var(--font-weight-semibold); font-weight: var(--font-weight-semibold); }
 .text-charcoal-brown-900 { color: var(--color-charcoal-brown-900); }
 .\[--app-header-h\:3\.5rem\] { --app-header-h: 3.5rem; }
+.\[--app-pin-top\:var\(--app-header-h\)\] { --app-pin-top: var(--app-header-h); }
 @media (width >= 48rem) {
 .md\:col-start-2 { grid-column-start: 2; }
+.md\:h-dvh { height: 100dvh; }
+.md\:min-h-0 { min-height: 0px; }
 .md\:grid-cols-\[15rem_minmax\(0\,1fr\)\] { grid-template-columns: 15rem minmax(0px, 1fr); }
+.md\:grid-rows-\[var\(--app-header-h\)_minmax\(0\,1fr\)\] { grid-template-rows: var(--app-header-h) minmax(0, 1fr); }
+.md\:overflow-y-auto { overflow-y: auto; }
+.md\:\[--app-pin-top\:0px\] { --app-pin-top: 0px; }
 }
 }
 html { color-scheme: light; }
@@ -138,4 +144,4 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
-</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:grid-cols-[15rem_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-epic-detail class="flex flex-col gap-8"><section aria-label="Features" class="flex flex-col gap-4"><h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Features</h2></section></app-epic-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>
+</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem] [--app-pin-top:var(--app-header-h)]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:h-dvh md:min-h-0 md:grid-cols-[15rem_minmax(0,1fr)] md:grid-rows-[var(--app-header-h)_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2 md:min-h-0 md:overflow-y-auto md:[--app-pin-top:0px]"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 50px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-epic-detail class="flex flex-col gap-8"><section aria-label="Features" class="flex flex-col gap-4"><h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Features</h2></section></app-epic-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>
