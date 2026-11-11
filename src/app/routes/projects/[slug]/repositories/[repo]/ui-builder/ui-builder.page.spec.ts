@@ -843,10 +843,19 @@ describe('UiBuilderPage', () => {
       return rendered;
     }
 
-    /** Hands `page` a loaded frame holding `html`, as the iframe's `load` does; gives its document. */
-    function loadFrame(page: UiBuilderPage, html: string): Document {
+    /**
+     * Hands `page` a loaded frame holding `html`, as the iframe's `load` does; gives its document.
+     * Its URL is `about:srcdoc`, a freeze's document, unless `url` says `about:blank`: the initial
+     * document a frame drawn anew loads first (qits-2072).
+     */
+    function loadFrame(
+      page: UiBuilderPage,
+      html: string,
+      url: 'about:srcdoc' | 'about:blank' = 'about:srcdoc',
+    ): Document {
       const doc = document.implementation.createHTMLDocument('freeze');
       doc.body.innerHTML = html;
+      Object.defineProperty(doc, 'URL', { configurable: true, value: url });
       (page as unknown as { frameLoaded(e: Event): void }).frameLoaded({
         target: { contentDocument: doc },
       } as unknown as Event);
@@ -1342,6 +1351,185 @@ describe('UiBuilderPage', () => {
       expect(element.querySelector('.link-notice')?.textContent?.trim()).toBe(
         'This screenshot has no element for repositories:refused.',
       );
+    });
+
+    /** The line above the frame's notice, or null when it says nothing (qits-2072). */
+    const notice = (element: HTMLElement) =>
+      element.querySelector('.notice-line .link-notice')?.textContent?.trim() ?? null;
+
+    /** The Outcomes tab opened on `/projects`'s sources; the result clicks the one naming `mark`. */
+    function projectsSources(fixture: { detectChanges(): void }, element: HTMLElement) {
+      const projects = inboundRow(inboundTab(fixture, element), 'projects');
+      projects.querySelector<HTMLButtonElement>('button.inbound')!.click();
+      fixture.detectChanges();
+      return (mark: string) => {
+        [...projects.querySelectorAll<HTMLButtonElement>('li.outcome-source button.source')]
+          .find((b) => b.textContent?.includes(mark))!
+          .click();
+      };
+    }
+
+    /** Clicks the state tab named `name`. */
+    function stateTab(element: HTMLElement, name: string): void {
+      [...element.querySelectorAll<HTMLButtonElement>('[aria-label="States"] [role="tab"]')]
+        .find((tab) => tab.firstChild?.textContent?.trim() === name)!
+        .click();
+    }
+
+    const SHELL = '<nav data-qits-outcome="shell:signed-out">x</nav>';
+
+    it('reserves the notice line above the frame while there is no notice (qits-2072)', async () => {
+      const { element } = await renderOutcomes();
+      const line = element.querySelector('.notice-line')!;
+      expect(line).not.toBeNull();
+      expect(line.classList).toContain('h-4');
+      expect(line.nextElementSibling?.classList).toContain('frame-box');
+      expect(line.textContent?.trim()).toBe('');
+      expect(element.querySelector('.link-notice')).toBeNull();
+    });
+
+    it('draws a source’s trigger shown only in another freeze once that freeze’s srcdoc is in, past its about:blank load (qits-2072)', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      stateTab(element, 'loaded');
+      await navigated(fixture);
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      const loaded = loadFrame(page, '<p>loaded</p>');
+      const pick = projectsSources(fixture, element);
+
+      // `opened`'s trigger is in `error` only: the switch's load draws it, not `loaded`'s document.
+      pick('repositories:opened');
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'error' });
+      expect(loaded.querySelector('style[data-qits-builder]')).toBeNull();
+      // The new frame's initial document is no freeze's: nothing is judged in it.
+      const blank = loadFrame(page, '', 'about:blank');
+      fixture.detectChanges();
+      expect(blank.querySelector('style[data-qits-builder]')).toBeNull();
+      expect(notice(element)).toBeNull();
+      const doc = loadFrame(page, TRIGGER);
+      fixture.detectChanges();
+      expect(doc.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      expect(element.querySelector('.link-notice')).toBeNull();
+    });
+
+    it('says a trigger is missing only for a freeze that lists it, and forgets it on a draw that finds it (qits-2072)', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      loadFrame(page, '<p>none</p>');
+      row(element, 'repositories:opened')
+        .querySelector<HTMLButtonElement>('.outcome-pick')!
+        .click();
+      fixture.detectChanges();
+      expect(notice(element)).toBe('This screenshot has no element for repositories:opened.');
+
+      // An about:blank document is no freeze's: the notice stays as the last freeze left it.
+      loadFrame(page, '<p>none</p>', 'about:blank');
+      fixture.detectChanges();
+      expect(notice(element)).toBe('This screenshot has no element for repositories:opened.');
+
+      const doc = loadFrame(page, TRIGGER);
+      fixture.detectChanges();
+      expect(doc.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      expect(notice(element)).toBeNull();
+
+      // `loaded` does not list `opened`: its document lacking it says nothing.
+      stateTab(element, 'loaded');
+      await navigated(fixture);
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      loadFrame(page, '<p>loaded</p>');
+      fixture.detectChanges();
+      expect(notice(element)).toBeNull();
+    });
+
+    it('judges the notice for the freeze each step of the history shows (qits-2072)', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      const router = TestBed.inject(Router);
+      const base = router.url.split('?')[0];
+      loadFrame(page, '<p>error</p>');
+      projectsSources(fixture, element)('shell:signed-out');
+      fixture.detectChanges();
+      expect(query()).toEqual({});
+      expect(notice(element)).toBe('This screenshot has no element for shell:signed-out.');
+
+      stateTab(element, 'loaded');
+      await navigated(fixture);
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      expect(notice(element)).toBeNull();
+      let doc = loadFrame(page, SHELL);
+      fixture.detectChanges();
+      expect(doc.querySelector('nav')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      expect(notice(element)).toBeNull();
+
+      // Back, as history goes: the URL alone changes, no click.
+      await router.navigateByUrl(base);
+      await navigated(fixture);
+      expect(query()).toEqual({});
+      expect(notice(element)).toBeNull();
+      loadFrame(page, '<p>error</p>');
+      fixture.detectChanges();
+      expect(notice(element)).toBe('This screenshot has no element for shell:signed-out.');
+
+      // Forward: the previous step's notice does not come along.
+      await router.navigateByUrl(`${base}?state=loaded`);
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'loaded' });
+      expect(notice(element)).toBeNull();
+      doc = loadFrame(page, SHELL);
+      fixture.detectChanges();
+      expect(doc.querySelector('nav')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      expect(notice(element)).toBeNull();
+    });
+
+    it('keeps the shown freeze among those showing a source’s trigger (qits-2072)', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      // `error` sorts first of the two showing `shell:signed-out`; `loaded` is the one shown.
+      stateTab(element, 'loaded');
+      await navigated(fixture);
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      const doc = loadFrame(page, SHELL);
+      projectsSources(fixture, element)('shell:signed-out');
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'loaded' });
+      expect(doc.querySelector('nav')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+    });
+
+    it('scrolls only the frame’s own document to the trigger, never with scrollIntoView (qits-2072)', async () => {
+      const { fixture, element, page } = await renderOutcomes();
+      const doc = loadFrame(page, TRIGGER);
+      const scroller = { scrollTop: 100 };
+      Object.defineProperty(doc, 'scrollingElement', { configurable: true, value: scroller });
+      Object.defineProperty(doc, 'defaultView', {
+        configurable: true,
+        value: { innerHeight: 400 },
+      });
+      doc.querySelector('button')!.getBoundingClientRect = () =>
+        ({ top: 300, height: 40 }) as DOMRect;
+      const proto = Element.prototype as { scrollIntoView?: Element['scrollIntoView'] };
+      const original = proto.scrollIntoView;
+      const scrolled = vi.fn();
+      proto.scrollIntoView = scrolled;
+      try {
+        row(element, 'repositories:opened')
+          .querySelector<HTMLButtonElement>('.outcome-pick')!
+          .click();
+        fixture.detectChanges();
+      } finally {
+        if (original) proto.scrollIntoView = original;
+        else delete proto.scrollIntoView;
+      }
+      expect(doc.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
+      // 300px down a frame scrolled 100px: its 40px centred in a 400px window.
+      expect(scroller.scrollTop).toBe(220);
+      expect(
+        (scrolled.mock.contexts as Element[]).filter((context) => context.ownerDocument === doc),
+      ).toEqual([]);
     });
 
     it('opens the state a stay’s result was shot in', async () => {

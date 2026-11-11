@@ -130,6 +130,20 @@ function shared(a: string | null, b: string | null): number {
   return n;
 }
 
+/**
+ * Scrolls `doc`, a frame's document, so `element` sits mid-height in the frame (qits-2072); only
+ * that document scrolls, never the page around the frame. Without a scrolling element nothing
+ * moves.
+ */
+function centre(doc: Document, element: Element): void {
+  const scroller = doc.scrollingElement;
+  if (!scroller) return;
+  const height = doc.defaultView?.innerHeight || doc.documentElement.clientHeight || 0;
+  const box = element.getBoundingClientRect();
+  const top = box.top + scroller.scrollTop;
+  scroller.scrollTop = Math.max(0, top - (height - box.height) / 2);
+}
+
 /** One application's entities in the Entities tab, or why it has none to show. */
 interface EntityGroup {
   readonly key: string;
@@ -228,8 +242,9 @@ interface EntityGroup {
  *   does choosing another route. The shown state is switched to the first freeze that shows the
  *   trigger when it does not. The highlight is drawn from this page into the same-origin frame, a
  *   `<style data-qits-builder>` in its head and an attribute on the element (see `drawHighlight`),
- *   again after each load; nothing runs inside the frame. A freeze that lists the trigger without
- *   the element is said so under the tabs.
+ *   again after each load of a freeze's document; nothing runs inside the frame. A freeze that
+ *   lists the trigger without the element is said so on the line above the frame, which is always
+ *   there, so no notice moves the frame (qits-2072).
  *
  * - Columns (qits-2050): from 1280px up the three panels sit side by side and each scrolls on its
  *   own, so a long tree, a tall frozen page or a long list of calls never moves the other two. The
@@ -606,11 +621,14 @@ interface EntityGroup {
                           }
                         </div>
                       }
-                      @if (linkNotice(); as notice) {
-                        <p class="link-notice m-0 mb-2 truncate text-xs text-charcoal-brown-600">
-                          {{ notice }}
-                        </p>
-                      }
+                      <!--
+                        One line, always as tall, so a notice never moves the frame (qits-2072).
+                      -->
+                      <p class="notice-line m-0 mb-2 h-4 truncate text-xs text-charcoal-brown-600">
+                        @if (linkNotice() ?? highlightNotice(); as notice) {
+                          <span class="link-notice">{{ notice }}</span>
+                        }
+                      </p>
                       <div #frameBox class="frame-box">
                         @if (preview(); as html) {
                           @if (frameSize(); as size) {
@@ -1168,6 +1186,17 @@ export class UiBuilderPage {
   /** Why the last link clicked in the frame selected nothing; null after any selection. */
   protected readonly linkNotice = signal<string | null>(null);
 
+  /**
+   * Why the shown freeze draws no highlight (qits-2072): it lists the trigger, and its document has
+   * no element for it. Judged anew on every draw, and cleared whenever the shown freeze changes, so
+   * a step back or forward never carries the previous step's notice; it shares the line above the
+   * frame with `linkNotice`, which wins.
+   */
+  protected readonly highlightNotice = signal<string | null>(null);
+
+  /** The shown freeze's file (its viewport is in it); what clears `highlightNotice` (qits-2072). */
+  private readonly shownFile = computed(() => this.freeze()?.file ?? null);
+
   protected readonly freezeFailed = computed(() => {
     const bundle = this.loaded();
     const freeze = this.freeze();
@@ -1374,7 +1403,10 @@ export class UiBuilderPage {
     return all.find((outcome) => outcome.key === key) ?? null;
   });
 
-  /** The frame as its last load left it, where the highlight is drawn (qits-2006). */
+  /**
+   * The frame as its last load left it, where the highlight is drawn (qits-2006); a new element
+   * when the frame is drawn anew (a first read of a freeze), reassigned by every load.
+   */
   private frame: HTMLIFrameElement | null = null;
 
   /** Whether a provider (a repository name) is in scope; an unknown scope covers every one. */
@@ -1554,6 +1586,11 @@ export class UiBuilderPage {
       if (browser && this.loaded()) untracked(() => void this.entityMaps.load());
     });
     effect(() => {
+      // Another freeze is shown: its srcdoc load judges it again (qits-2072).
+      this.shownFile();
+      untracked(() => this.highlightNotice.set(null));
+    });
+    effect(() => {
       const sites = this.sitesInScope();
       if (browser) untracked(() => sites.forEach((site) => this.entityMaps.readMap(site)));
     });
@@ -1671,31 +1708,34 @@ export class UiBuilderPage {
    * Highlights `outcome`'s trigger in the frame, or clears the highlight when it is the highlighted
    * one already (qits-2006). When the shown state is not one of the freezes that show its trigger,
    * the first of them is shown first (the one at the chosen viewport when there is one, else at its
-   * own, qits-2047), and the frame's load draws the highlight; with none, nothing switches (the
-   * row's gap chip says why).
+   * own, qits-2047), and the frame's load draws the highlight, never the document still shown
+   * (qits-2072); with none, nothing switches (the row's gap chip says why).
    */
   protected toggleOutcome(outcome: JoinedOutcome): void {
     this.linkNotice.set(null);
     this.highlighted.set(this.highlighted() === outcome.key ? null : outcome.key);
-    this.drawHighlight();
-    if (this.highlighted() === null) return;
-    const shown = this.freeze()?.file;
-    const triggers = outcome.triggerFreezes;
-    if (triggers.length && !triggers.some((freeze) => freeze.file === shown)) {
-      const viewport = this.viewport();
-      const here = triggers.find((freeze) => (freeze.viewport ?? viewport) === viewport);
-      this.showFreeze(here ?? triggers[0], true);
+    if (this.highlighted() !== null) {
+      const shown = this.freeze()?.file;
+      const triggers = outcome.triggerFreezes;
+      if (triggers.length && !triggers.some((freeze) => freeze.file === shown)) {
+        const viewport = this.viewport();
+        const here = triggers.find((freeze) => (freeze.viewport ?? viewport) === viewport);
+        this.showFreeze(here ?? triggers[0], true);
+        return;
+      }
     }
+    this.drawHighlight();
   }
 
   /**
    * Shows the trigger of a source in the Outcomes tab (qits-2049), or clears its highlight when it
-   * is the highlighted one already. Of the freezes in its scope that show the trigger, the one whose
-   * route is nearest `target` (the route the row is about; the selected route for an outcome without
-   * a fixed target) is shown, the selected route's and then one at the chosen viewport first among
-   * equals; with none, its declaring route is selected when it is a route of the tree (a page, or a
-   * layout that is one), else the route stays. The highlight is set as `toggleOutcome` sets it, so
-   * the frame draws it once the freeze is in. The tab stays open.
+   * is the highlighted one already. Of the freezes in its scope that show the trigger, the shown one
+   * is kept (qits-2072); else the one whose route is nearest `target` (the route the row is about;
+   * the selected route for an outcome without a fixed target) is shown, the selected route's and
+   * then one at the chosen viewport first among equals; with none, its declaring route is selected
+   * when it is a route of the tree (a page, or a layout that is one), else the route stays. The
+   * highlight is set as `toggleOutcome` sets it: drawn now when the shown freeze stays, else by the
+   * frame's load once the freeze is in (qits-2072). The tab stays open.
    */
   protected pickSource(outcome: JoinedOutcome, target: string | null): void {
     const bundle = this.loaded();
@@ -1709,10 +1749,12 @@ export class UiBuilderPage {
     const selected = this.selectedPath();
     const near = target ?? selected;
     const viewport = this.viewport();
+    const shown = this.freeze()?.file;
     const freeze = [...joinedOutcome(bundle.manifest, outcome.declared, selected).triggerFreezes]
       .map((candidate, order) => ({ candidate, order }))
       .sort(
         (a, b) =>
+          Number(b.candidate.file === shown) - Number(a.candidate.file === shown) ||
           shared(b.candidate.route, near) - shared(a.candidate.route, near) ||
           Number(b.candidate.route === near) - Number(a.candidate.route === near) ||
           Number((b.candidate.viewport ?? viewport) === viewport) -
@@ -1721,26 +1763,28 @@ export class UiBuilderPage {
       )[0]?.candidate;
     if (freeze) {
       this.highlighted.set(outcome.key);
-      this.drawHighlight();
-      if (freeze.file !== this.freeze()?.file) this.showFreeze(freeze, true);
+      if (freeze.file !== shown) this.showFreeze(freeze, true);
+      else this.drawHighlight();
       return;
     }
     const declaring = outcome.declared.route;
-    if (
+    const selecting =
       declaring !== null &&
       declaring !== selected &&
-      this.rows().some((row) => row.kind === 'route' && row.fullPath === declaring)
-    ) {
+      this.rows().some((row) => row.kind === 'route' && row.fullPath === declaring);
+    if (selecting) {
       this.unfold(declaring);
       void this.select(declaring);
     }
     this.highlighted.set(outcome.key);
-    this.drawHighlight();
+    if (!selecting) this.drawHighlight();
   }
 
   /**
    * Once the frame's document is in: holds its links (`holdLinks`), and draws the highlighted
-   * outcome again (qits-2006), since every state switch loads a new `srcdoc`.
+   * outcome again (qits-2006), since every state switch loads a new `srcdoc`. A frame drawn anew
+   * loads its initial `about:blank` first, before its `srcdoc` is set (Chromium fires that load on
+   * insertion); that document is no freeze's, so nothing is drawn or judged in it (qits-2072).
    */
   protected frameLoaded(event: Event): void {
     this.holdLinks(event);
@@ -1748,20 +1792,31 @@ export class UiBuilderPage {
     this.drawHighlight();
   }
 
+  /** The frame's document when it is the shown freeze's (an `about:srcdoc` one, qits-2072). */
+  private frameDocument(): Document | null {
+    const doc = this.frame?.contentDocument;
+    return doc?.URL === 'about:srcdoc' ? doc : null;
+  }
+
   /**
    * Draws the highlighted outcome into the frame's document (qits-2006): every earlier mark
    * cleared, then one `<style data-qits-builder>` in its head, and the attribute `HIGHLIGHT` on the
    * first element whose `data-qits-outcome` holds the word `<interaction>:<outcome>`, scrolled to
-   * the centre. The frame is same-origin (`allow-same-origin`), as for `holdLinks`; this page
-   * writes into it, and nothing runs inside. A freeze that lists the trigger while its document has
-   * no such element says so under the tabs (`linkNotice`).
+   * the middle of the frame. Only the frame's own document scrolls, never `scrollIntoView`, which
+   * scrolls this page's scroll containers too (qits-2072). The frame is same-origin
+   * (`allow-same-origin`), as for `holdLinks`; this page writes into it, and nothing runs inside.
+   * Every draw judges `highlightNotice` anew (qits-2072): a freeze that lists the trigger while its
+   * document has no such element says so above the frame; any other draw clears it.
    */
   private drawHighlight(): void {
-    const doc = this.frame?.contentDocument;
+    const doc = this.frameDocument();
     if (!doc) return;
     for (const marked of doc.querySelectorAll(`[${HIGHLIGHT}]`)) marked.removeAttribute(HIGHLIGHT);
     const outcome = this.highlightedOutcome();
-    if (!outcome) return;
+    if (!outcome) {
+      this.highlightNotice.set(null);
+      return;
+    }
     if (!doc.querySelector('style[data-qits-builder]')) {
       const style = doc.createElement('style');
       style.setAttribute('data-qits-builder', '');
@@ -1771,10 +1826,13 @@ export class UiBuilderPage {
     const element = doc.querySelector(`[data-qits-outcome~="${quoted(outcome.mark)}"]`);
     if (element) {
       element.setAttribute(HIGHLIGHT, '');
-      element.scrollIntoView?.({ block: 'center' });
-    } else if ((this.freeze()?.triggers ?? []).includes(outcome.mark)) {
-      this.linkNotice.set(`This screenshot has no element for ${outcome.mark}.`);
+      centre(doc, element);
     }
+    this.highlightNotice.set(
+      !element && (this.freeze()?.triggers ?? []).includes(outcome.mark)
+        ? `This screenshot has no element for ${outcome.mark}.`
+        : null,
+    );
   }
 
   /**
@@ -1782,7 +1840,7 @@ export class UiBuilderPage {
    * document is in. Every click on a link is cancelled, so the frame never navigates; its written
    * `href` (never `anchor.href`, resolved against this page) goes through `matchRoute`. A route of
    * the app is selected as a tree click would, and its row scrolled into view; a link outside the
-   * app or to no route of it leaves the route as it is and says so under the tabs (`linkNotice`); a
+   * app or to no route of it leaves the route as it is and says so above the frame (`linkNotice`); a
    * fragment does nothing. The frame is same-origin (`allow-same-origin`), so this page can reach
    * its document; the listener is this page's, the frame runs nothing of its own.
    */
