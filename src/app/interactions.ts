@@ -176,6 +176,78 @@ export const INTERACTIONS = {
   'open-work-ref':
     'A work reference in a description, comment or commit subject opens the item’s page',
   /**
+   * `ticket-card.ts`: a ticket's card on the board opens the ticket's page. Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-ticket-card': 'A ticket’s card on the board opens the ticket’s page',
+  /**
+   * `ticket-list-item.ts`: a ticket's card in a list (Backlog, the board stacked, Acceptance,
+   * Archive) opens the ticket's page. Navigates only (epic qits-2000).
+   */
+  'open-ticket-list-item': 'A ticket’s card in a list opens the ticket’s page',
+  /**
+   * `epic-card.ts`: an epic's lane on the board opens the epic (its title, its id), a feature (its
+   * row's title) or a task (its card). Navigates only (epic qits-2000).
+   */
+  'open-epic-card': 'An epic’s lane on the board opens the epic, one of its features or a task',
+  /**
+   * `epic-board.ts`: an epic's own board opens the epic (its bar's title and id), a feature (its
+   * row's title) or a task (its card). Navigates only (epic qits-2000).
+   */
+  'open-epic-board': 'An epic’s own board opens the epic, one of its features or a task',
+  /**
+   * `epic-list-item.ts`: an epic's lane in a list opens the epic (its title, its id). Navigates only
+   * (epic qits-2000).
+   */
+  'open-epic-list-item': 'An epic’s lane in a list opens the epic’s page',
+  /**
+   * `feature-list-row.ts`: a feature's row opens the feature (its title) or a task (its card).
+   * Navigates only (epic qits-2000).
+   */
+  'open-feature-list-row': 'A feature’s row opens the feature or one of its tasks',
+  /**
+   * `work-ref.ts`: a work reference tag opens the item's page (`open`), and so does the id in its
+   * preview (`openFromPreview`). Navigates only (epic qits-2000).
+   */
+  'open-work-ref-tag': 'A work reference tag, or the id in its preview, opens the item’s page',
+  /**
+   * `workspace-link.ts`: a work item's Workspace link leads to the item's agent address, which goes
+   * on to its ACTIVE agent. Navigates only (epic qits-2000).
+   */
+  'open-item-workspace': 'A work item’s Workspace link leads to its agent',
+  /**
+   * `wrapper-closing.ts`: a VERIFIED ticket's closing line opens the wrapper release request it
+   * names. Navigates only (epic qits-2000).
+   */
+  'open-closing-request': 'A verified ticket’s closing line opens its wrapper release request',
+  /**
+   * `work-inspiration.ts`: the work item page's "Inspired by" link opens the inspiring idea.
+   * Navigates only (epic qits-2000).
+   */
+  'open-work-inspiration': 'The work item page’s “Inspired by” link opens the inspiring idea',
+  /**
+   * `work-workspaces.ts`: a workspace in the work item page's list leads to the item's agent
+   * address. Navigates only (epic qits-2000).
+   */
+  'open-workspace-agent': 'A workspace on the work item page leads to the item’s agent',
+  /**
+   * `work.layout.ts`: the work section's tabs, one exit each. Navigates only (epic qits-2000).
+   */
+  'switch-work-tab':
+    'The work section’s tabs open Refinement, Schedule, In Progress, Acceptance or Archive',
+  /**
+   * `work-schedule.page.ts`: an item's title on the Schedule tab opens its page. Navigates only
+   * (epic qits-2000).
+   */
+  'open-scheduled-item': 'An item’s title on the Schedule tab opens the item’s page',
+  /**
+   * `work-agent.layout.ts`: the item's old agent address leaves, with no trigger, for its ACTIVE
+   * agent's page on the same tab, or for the item's page when it has none. Navigates only (epic
+   * qits-2000).
+   */
+  'follow-work-item-agent':
+    'A work item’s old agent address leads on to its active agent or to the item',
+  /**
    * `release-changes.ts` and `commit-changes.ts` via `RawImagesStore` (qits-734): a changed image,
    * chosen on the Changes tab or in an opened commit, shows as the image before and after.
    */

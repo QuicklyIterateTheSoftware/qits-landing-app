@@ -22,11 +22,7 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   imports: [EpicListItem],
   // The list the work list draws the item in (qits-753).
   hostDirectives: [ReorderList],
-  template: `<app-epic-list-item
-    [node]="node()"
-    base="/projects/qits/work/detail"
-    [view]="view()"
-  />`,
+  template: `<app-epic-list-item [node]="node()" [view]="view()" />`,
 })
 class InAcceptance {
   readonly node = input.required<WorkNode>();

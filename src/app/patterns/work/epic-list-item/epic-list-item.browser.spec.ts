@@ -8,9 +8,11 @@ import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
 import {
+  follow,
   nodeOf,
   openRecordedWork,
   routedQualifiedId,
+  WORK_LINK_TARGETS,
 } from '../../../../testing/browser/recorded-work';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 import { ReorderList } from '$ui/components/reorder/reorder';
@@ -20,6 +22,11 @@ import { EpicListItem } from './epic-list-item';
  * Screenshots of one epic in a list, per case: in the Backlog (REPORTED), Acceptance (VERIFIED,
  * with its finish button) or the Archive (DONE and DROPPED), 40rem wide. The epic is the node the app builds from qits-projects' golden masters
  * (`recorded-work.ts`); each case names its view, its state and the epic's qualified id.
+ *
+ * Its links are declared exits (epic qits-2000), each followed once on the Backlog's epic in flight
+ * (`backlog-task-handle` shows them all): the epic's title and id (`open-epic-list-item` `epic`),
+ * and its feature row's (`app-feature-list-row`'s `open-feature-list-row`) title (`feature`) and
+ * task card (`task`).
  */
 @Component({
   imports: [EpicListItem],
@@ -28,7 +35,7 @@ import { EpicListItem } from './epic-list-item';
   host: { class: 'flex w-[40rem] flex-col gap-12 p-4 pb-8 [&_ui-board-card]:self-stretch' },
   template: `
     @if (node(); as node) {
-      <app-epic-list-item [node]="node" base="/projects/contract/work/detail" [view]="view" />
+      <app-epic-list-item [node]="node" [view]="view" />
     }
   `,
 })
@@ -62,7 +69,10 @@ describe('EpicListItem (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneEpic }]),
+        provideRouter([
+          ...WORK_LINK_TARGETS,
+          { path: 'projects/:slug/:view/:qualifiedId', component: OneEpic },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -183,5 +193,19 @@ describe('EpicListItem (screenshots)', () => {
     await commands.parkPointer();
     await expect.element(locator).toMatchTextContent('Second shipped task');
     await expect.element(locator).toMatchScreenshot('all-done-expanded', { kind: 'DATA' });
+  });
+
+  it.each([
+    ['open-epic-list-item:epic', 'Epic in flight', 'contract-00000001-1', false],
+    // The id up the gutter lies under the title's stretched link: reached from the keyboard.
+    ['open-epic-list-item:epic', 'contract-00000001-1', 'contract-00000001-1', true],
+    ['open-feature-list-row:feature', 'Feature in flight', 'contract-00000001-2', false],
+    ['open-feature-list-row:task', 'Reported task', 'contract-00000001-3', false],
+  ])('%s: the link “%s” opens its item’s page', async (outcome, name, qualifiedId, keyboard) => {
+    await shown('backlog', TASKS_EVERY_STATUS, 'contract-00000001-1', 'Epic in flight');
+    const link = page.getByRole('link', { name, exact: true });
+    const { url, reached } = await follow(link, { keyboard });
+    expect(url).toBe(`/projects/contract-00000001/work/detail/${qualifiedId}`);
+    expect(reached).toEqual([outcome]);
   });
 });

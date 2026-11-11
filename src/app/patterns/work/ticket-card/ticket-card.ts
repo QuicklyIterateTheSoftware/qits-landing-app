@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { exit, outcomes } from '@qits/angular';
+import { SelectedProject } from '$core/projects/selected-project';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { movable } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
@@ -12,7 +14,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 
 /**
  * A ticket on the board: a card (`ui-board-card`) in its column, its id down the left edge, its
- * title linking to it, its kind, its "needs" badge while it needs an item not at its status yet
+ * title linking to its page (`open-ticket-card` `open`, epic qits-2000), its kind, its "needs" badge while it needs an item not at its status yet
  * (`app-work-needs`, epic qits-1899), and a Workspace bubble in its bottom-right
  * corner while it has an ACTIVE workspace (`app-workspace-link`). A VERIFIED ticket is not on the board:
  * it waits in the Acceptance list (`ticket-list-item`), closing on its own once its workspace's
@@ -38,7 +40,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       [title]="n.entry.title ?? ''"
       [kind]="n.entry.archetype?.toLowerCase() ?? ''"
       [border]="border()"
-      [link]="base() + '/' + n.entry.qualifiedId"
+      [exit]="opening.open"
+      [exitParams]="{ slug: slug(), id: n.entry.qualifiedId ?? '' }"
       uiReorderItem
       [reorderItemLabel]="n.entry.qualifiedId ?? ''"
       [uiLeave]="leaving()"
@@ -61,13 +64,19 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 })
 export class TicketCard {
   readonly node = input.required<WorkNode>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   /** The ticket is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
 
   protected readonly movable = movable;
+
+  protected readonly opening = outcomes('open-ticket-card', {
+    open: exit('projects/:slug/work/detail/:id'),
+  });
+
+  private readonly selected = inject(SelectedProject);
+  /** The open project's slug, for the ticket's page. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** Whether it needs an item not at its status yet: its badge then shows in the tag row. */
   protected readonly needs = computed(() => hasUnmetNeeds(this.node().entry));

@@ -3,10 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
+import { SelectedProject } from '$core/projects/selected-project';
 import { epicBoardCounts, epicBoardRows } from '$core/work/epic-board';
 import { EPIC_BOARD_COLUMNS } from '$core/work/work-statuses';
 import type { WorkNode } from '$core/work/work-tree';
@@ -35,16 +37,19 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  *   Verified, REPORTED and DROPPED ones left out), with its Workspace bubble.
  *
  * With no feature, the board says "No features". When `leaving` is set, the whole shrinks away
- * (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`.
+ * (`uiLeave`), then emits `left`. Every item links to its page,
+ * `/projects/<slug>/work/detail/<qualified id>`, through a declared exit (`open-epic-board`, epic
+ * qits-2000): `epic` (the bar's title and the strip's id), `feature` (a row's title) and `task` (a
+ * card).
  */
 @Component({
   selector: 'app-epic-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Board, BoardRow, BoardCard, Leave, Tag, WorkspaceLink],
+  imports: [QitsExit, Board, BoardRow, BoardCard, Leave, Tag, WorkspaceLink],
   host: { class: 'block' },
   template: `
     @let n = node();
-    @let link = base() + '/' + n.entry.qualifiedId;
+    @let s = slug();
     <article
       class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-black/10"
       data-highlight-target
@@ -61,7 +66,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         >
           <a
             class="rotate-180 font-mono text-[0.6875rem] whitespace-nowrap text-inherit no-underline [writing-mode:vertical-rl] hover:underline"
-            [routerLink]="link"
+            [qitsExit]="opening.epic"
+            [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
             >{{ n.entry.qualifiedId }}</a
           >
         </div>
@@ -69,9 +75,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           class="col-start-2 row-start-1 flex flex-wrap items-center gap-2 bg-charcoal-brown-800/40 px-3 py-1.5 text-xs text-white [&>a]:text-inherit [&>a]:no-underline [&>a]:hover:underline"
         >
           <!-- First for a screen reader, drawn last: at the bar's right end. -->
-          <a class="order-last ml-auto text-right text-sm font-semibold" [routerLink]="link">{{
-            n.entry.title
-          }}</a>
+          <a
+            class="order-last ml-auto text-right text-sm font-semibold"
+            [qitsExit]="opening.epic"
+            [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
+            >{{ n.entry.title }}</a
+          >
           <ui-tag [label]="status()" [class.hidden]="!status()" />
           <app-workspace-link [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
         </header>
@@ -96,7 +105,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
                 [title]="card.node.entry.title ?? ''"
                 [kind]="card.node.entry.archetype?.toLowerCase() ?? ''"
                 [border]="borders[card.column]"
-                [link]="base() + '/' + card.node.entry.qualifiedId"
+                [exit]="opening.task"
+                [exitParams]="{ slug: s, id: card.node.entry.qualifiedId ?? '' }"
               >
                 <app-workspace-link
                   card-corner
@@ -107,9 +117,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               </ui-board-card>
             }
             <span row-id class="font-mono">{{ row.node.entry.qualifiedId }}</span>
-            <a row-footer [routerLink]="base() + '/' + row.node.entry.qualifiedId">{{
-              row.node.entry.title
-            }}</a>
+            <a
+              row-footer
+              [qitsExit]="opening.feature"
+              [exitParams]="{ slug: s, id: row.node.entry.qualifiedId ?? '' }"
+              >{{ row.node.entry.title }}</a
+            >
             <app-workspace-link
               row-footer-end
               [workId]="row.node.entry.id"
@@ -130,13 +143,21 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 export class EpicBoard {
   /** The epic's node: its children are its features, theirs its tasks. */
   readonly node = input.required<WorkNode>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   /** Shows the epic's own bar; off on the epic's page, which names it already. */
   readonly header = input(true, { transform: booleanAttribute });
   /** The epic is leaving the list: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
+
+  protected readonly opening = outcomes('open-epic-board', {
+    epic: exit('projects/:slug/work/detail/:id'),
+    feature: exit('projects/:slug/work/detail/:id'),
+    task: exit('projects/:slug/work/detail/:id'),
+  });
+
+  private readonly selected = inject(SelectedProject);
+  /** The open project's slug, for the items' pages. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   protected readonly borders = EPIC_BOARD_COLUMNS.map((column) => column.cardBorder);
 

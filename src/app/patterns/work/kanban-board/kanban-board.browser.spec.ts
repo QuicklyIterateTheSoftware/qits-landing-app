@@ -20,7 +20,7 @@ import { KanbanBoard } from './kanban-board';
 @Component({
   imports: [KanbanBoard],
   host: { class: 'block w-[48rem] p-4' },
-  template: `<app-kanban-board [tree]="tree()" base="/projects/contract/work/detail" />`,
+  template: `<app-kanban-board [tree]="tree()" />`,
 })
 class WholeBoard {
   private readonly work = inject(SelectedWork);

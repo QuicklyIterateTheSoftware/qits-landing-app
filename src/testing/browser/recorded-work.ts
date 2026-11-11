@@ -1,8 +1,10 @@
 import { inject } from '@angular/core';
 import type { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, type Routes } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { outcomeRecords } from '@qits/angular/testing/browser';
+import { userEvent, type Locator } from 'vitest/browser';
 import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
@@ -19,6 +21,10 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
  * exists", the work from the case's state, and
  * the wrapper closings a VERIFIED ticket's line asks for ({@link answerWrapperClosings}). {@link openWorkspaces} then
  * loads the open workspaces, for the cards' Workspace links.
+ *
+ * The patterns' links are declared exits (epic qits-2000). {@link WORK_LINK_TARGETS} routes their
+ * targets to nothing, before the host's route, so {@link follow} can click one and read where it
+ * led and which outcome it recorded.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -121,4 +127,39 @@ export async function openWorkspaces(
   await load;
   await harness.fixture.whenStable();
   harness.fixture.detectChanges();
+}
+
+/**
+ * Where the work patterns' links lead (epic qits-2000), routed to nothing: an item's page, its old
+ * agent address and a release request's page. A spec lists them before its host's route, so a click
+ * on a link navigates and renders nothing, reading no data.
+ */
+export const WORK_LINK_TARGETS: Routes = [
+  { path: 'projects/:slug/work/detail/:id', children: [] },
+  { path: 'projects/:slug/work/detail/:id/agent', children: [] },
+  { path: 'projects/:slug/release-requests/:requestId', children: [] },
+];
+
+/**
+ * Clicks `link` (a plain primary click, so its exit navigates through `go()`), lets the navigation
+ * finish, and gives the URL it led to and the outcomes the test reached, as their marks name them.
+ * With `keyboard`, it focuses the link and presses Enter instead: for a link that a stretched link
+ * lies over (an epic lane's id, under its title's), which a pointer click would not reach.
+ */
+export async function follow(
+  link: Locator,
+  { keyboard = false } = {},
+): Promise<{ url: string; reached: string[] }> {
+  if (keyboard) {
+    (link.element() as HTMLElement).focus();
+    await userEvent.keyboard('{Enter}');
+  } else {
+    await userEvent.click(link);
+  }
+  await settle();
+  await settle();
+  return {
+    url: TestBed.inject(Router).url,
+    reached: outcomeRecords().map((record) => `${record.interaction}:${record.outcome}`),
+  };
 }

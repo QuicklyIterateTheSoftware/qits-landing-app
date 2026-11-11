@@ -6,6 +6,7 @@ import { BoardCard } from '$ui/components/board/board-card';
 import { Tag } from '$ui/components/tag/tag';
 import { ListLane } from './list-lane';
 import { ListRow } from './list-row';
+import { uiSpecExits } from '../../../../testing/ui-exits';
 
 /** Screenshots of the list pieces, with inline data: they are UI, not API answers. */
 @Component({
@@ -19,12 +20,19 @@ import { ListRow } from './list-row';
       <a lane-gutter class="font-mono" routerLink="/e">qits-1</a>
       <span lane-summary>2 tasks</span>
       <ui-list-row>
-        <ui-board-card code="qits-3" title="A task in the list" kind="task" link="/t" />
+        <ui-board-card
+          code="qits-3"
+          title="A task in the list"
+          kind="task"
+          [exit]="to.item"
+          [exitParams]="params"
+        />
         <ui-board-card
           code="qits-4"
           title="A second task, with a title long enough to wrap around the kind badge"
           kind="task"
-          link="/t2"
+          [exit]="to.item"
+          [exitParams]="params"
         />
         <span row-id class="font-mono">qits-2</span>
         <a row-footer routerLink="/f">A feature</a>
@@ -36,12 +44,21 @@ import { ListRow } from './list-row';
       <a lane-gutter class="font-mono" routerLink="/d">qits-5</a>
       <span lane-summary>3 / 3 ✅</span>
     </ui-list-lane>
-    <ui-board-card code="qits-6" title="A standalone ticket" kind="ticket" link="/k">
+    <ui-board-card
+      code="qits-6"
+      title="A standalone ticket"
+      kind="ticket"
+      [exit]="to.item"
+      [exitParams]="params"
+    >
       <div class="mt-1"><ui-tag label="Second campaign" /></div>
     </ui-board-card>
   `,
 })
-class Variants {}
+class Variants {
+  protected readonly to = uiSpecExits();
+  protected readonly params = { slug: 'qits', id: 'qits-1' };
+}
 
 describe('List (screenshots)', () => {
   beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));

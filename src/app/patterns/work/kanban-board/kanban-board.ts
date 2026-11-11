@@ -68,14 +68,12 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
         @if (row.node.entry.archetype === 'EPIC') {
           <app-epic-card
             [node]="row.node"
-            [base]="base()"
             [leaving]="row.leaving"
             (left)="drop(row.node.entry.id)"
           />
         } @else {
           <app-ticket-card
             [node]="row.node"
-            [base]="base()"
             [leaving]="row.leaving"
             (left)="drop(row.node.entry.id)"
           />
@@ -87,8 +85,6 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
 export class KanbanBoard {
   /** The board's work tree: its top-level nodes, in order. */
   readonly tree = input.required<readonly WorkNode[]>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
 
   /**
    * The top-level nodes as drawn: the tree's, plus any that just left it, kept in place while they

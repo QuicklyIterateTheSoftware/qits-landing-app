@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { QitsExit, type ExitOutcome } from '@qits/angular';
 import { IdStrip } from '$ui/components/id-strip/id-strip';
 import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
 
 /**
  * One item on a board: a small white card in its column, its code down the left edge
  * (`ui-id-strip`), then its title and a kind chip. `border` is the card's border colour (a full Tailwind class, e.g. `border-ocean-deep-400`).
- * With `link`, the title is a link stretched over the whole card; hovering it shadows the card
+ * With `exit` (a declared exit of the pattern that draws the card, with its `exitParams`), the
+ * title is a link to it (`[qitsExit]`, so it carries the exit's mark) stretched over the whole
+ * card; hovering it shadows the card
  * itself (the card clips its content, so a shadow inside it would not show). Projected content (tags, say)
  * goes under the title; a word too long for the card breaks anywhere (`wrap-anywhere`), so it never overflows.
  * `[card-corner]` (a `ui-tag-link` of variant `corner`) goes last, in the bottom-right corner,
@@ -20,7 +22,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
 @Component({
   selector: 'ui-board-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IdStrip],
+  imports: [QitsExit, IdStrip],
   host: {
     class:
       'relative z-10 mx-2 flex self-start transition-shadow duration-150 focus-within:z-20 hover:z-20 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm [&:has(>ui-finish-button>button.flex)]:[--card-corner-inset:1.25rem] [&:has(>ui-drag-handle>button.flex)]:[--card-corner-inset:1.25rem]',
@@ -37,10 +39,11 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
           class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] text-[0.6875rem] text-ocean-deep-800"
           >{{ kind() }}</span
         >
-        @if (link(); as link) {
+        @if (exit(); as exit) {
           <a
             class="text-inherit no-underline after:absolute after:inset-0 hover:underline"
-            [routerLink]="link"
+            [qitsExit]="exit"
+            [exitParams]="exitParams()"
             >{{ title() }}</a
           >
         } @else {
@@ -61,8 +64,10 @@ export class BoardCard {
   readonly title = input('');
   readonly kind = input('');
   readonly border = input('border-charcoal-brown-200');
-  /** Where the card leads, as a router link; none makes it plain. */
-  readonly link = input<string | undefined>(undefined);
+  /** Where the card leads: an exit its pattern declares; none makes it plain. */
+  readonly exit = input<ExitOutcome | undefined>(undefined);
+  /** The exit's path params. */
+  readonly exitParams = input<Readonly<Record<string, string | number>> | undefined>(undefined);
 
   private readonly context = inject(BOARD_CONTEXT, { optional: true });
   protected readonly atRoot = this.context?.root === true;

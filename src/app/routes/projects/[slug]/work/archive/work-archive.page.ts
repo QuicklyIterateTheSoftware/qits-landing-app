@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -18,7 +17,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
     <div class="mx-auto max-w-[72rem] px-6 pt-6 pb-12">
       <app-page-layout title="Archive">
         <ui-spinner [state]="work.state()" class="min-h-48">
-          <app-work-list [tree]="archived()" [base]="detailPath()" view="archive" />
+          <app-work-list [tree]="archived()" view="archive" />
         </ui-spinner>
       </app-page-layout>
     </div>
@@ -26,11 +25,6 @@ import { WorkList } from '$patterns/work/work-list/work-list';
 })
 export class WorkArchivePage {
   protected readonly work = inject(SelectedWork);
-  private readonly selected = inject(SelectedProject);
 
   protected readonly archived = computed(() => this.work.graph().tree('archive'));
-
-  protected readonly detailPath = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
-  );
 }

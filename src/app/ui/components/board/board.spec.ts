@@ -7,6 +7,7 @@ import { BoardCard } from './board-card';
 import { BoardCount } from './board-count';
 import { BoardLane } from './board-lane';
 import { BoardRow } from './board-row';
+import { uiSpecExits } from '../../../../testing/ui-exits';
 
 const COLUMNS: readonly BoardColumnSpec[] = [
   { label: 'One', count: 1, body: 'bg-ocean-deep-300', header: 'bg-ocean-deep-400' },
@@ -30,7 +31,8 @@ const COLUMNS: readonly BoardColumnSpec[] = [
             code="c-1"
             title="In two"
             kind="task"
-            link="/x/c-1"
+            [exit]="to.item"
+            [exitParams]="{ slug: 'x', id: 'c-1' }"
           />
           <span row-footer>Row</span>
         </ui-board-row>
@@ -42,6 +44,7 @@ const COLUMNS: readonly BoardColumnSpec[] = [
 })
 class Host {
   readonly columns = COLUMNS;
+  protected readonly to = uiSpecExits();
 }
 
 @Component({
@@ -146,7 +149,8 @@ describe('Board', () => {
 
   it('makes a card with a link a link', () => {
     const link = render().querySelector('#in-row a') as HTMLAnchorElement;
-    expect(link.getAttribute('href')).toBe('/x/c-1');
+    expect(link.getAttribute('href')).toBe('/projects/x/work/detail/c-1');
+    expect(link.dataset['qitsOutcome']).toBe('ui-spec:item');
     expect(render().querySelector('#on-board a')).toBeNull();
   });
 

@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
-import { SelectedProject } from '$core/projects/selected-project';
 import { InProgressViewStore } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
@@ -52,26 +51,26 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">
               Agents on earlier work
             </h2>
-            <app-work-list [tree]="before()" [base]="detailPath()" view="mixed" />
+            <app-work-list [tree]="before()" view="mixed" />
           </section>
           @if (epics()) {
             <div class="hidden flex-col gap-12 md:flex">
               @for (epic of epicBoards(); track epic.entry.id) {
-                <app-epic-board [node]="epic" [base]="detailPath()" [header]="true" />
+                <app-epic-board [node]="epic" [header]="true" />
               }
               @if (rest().length || !epicBoards().length) {
-                <app-kanban-board [tree]="rest()" [base]="detailPath()" />
+                <app-kanban-board [tree]="rest()" />
               }
             </div>
             <div class="md:hidden">
-              <app-work-list [tree]="stacked()" [base]="detailPath()" view="board" />
+              <app-work-list [tree]="stacked()" view="board" />
             </div>
           } @else {
             <div class="hidden md:block">
-              <app-kanban-board [tree]="board()" [base]="detailPath()" />
+              <app-kanban-board [tree]="board()" />
             </div>
             <div class="md:hidden">
-              <app-work-list [tree]="board()" [base]="detailPath()" view="board" />
+              <app-work-list [tree]="board()" view="board" />
             </div>
           }
           <section
@@ -82,7 +81,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">
               Agents on later work
             </h2>
-            <app-work-list [tree]="after()" [base]="detailPath()" view="mixed" />
+            <app-work-list [tree]="after()" view="mixed" />
           </section>
         </ui-spinner>
       </app-page-layout>
@@ -91,7 +90,6 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 })
 export class WorkInProgressPage {
   protected readonly work = inject(SelectedWork);
-  private readonly selected = inject(SelectedProject);
   private readonly workspaces = inject(WorkspacesStore);
   private readonly views = inject(InProgressViewStore);
 
@@ -120,10 +118,6 @@ export class WorkInProgressPage {
   /** Work an agent is on that is past the board. */
   protected readonly after = computed(() =>
     this.work.graph().treeOf(this.workspaces.agentSet(), ['acceptance', 'archive']),
-  );
-
-  protected readonly detailPath = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
   );
 
   constructor() {

@@ -11,10 +11,12 @@ import { SelectedWork } from '$core/work/selected-work';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { Board } from '$ui/components/board/board';
 import {
+  follow,
   nodeOf,
   openRecordedWork,
   openWorkspaces,
   routedQualifiedId,
+  WORK_LINK_TARGETS,
 } from '../../../../testing/browser/recorded-work';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { ReorderList } from '$ui/components/reorder/reorder';
@@ -28,6 +30,10 @@ import { TicketCard } from './ticket-card';
  * Only READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED and VERIFYING tickets are on the board; the
  * Backlog, Acceptance and Archive ones are in `ticket-list-item.browser.spec.ts`. A REFINED ticket
  * waits on the Schedule tab, so the recorded tickets of every type (all REFINED) are not on it.
+ *
+ * Its links are declared exits (epic qits-2000), each followed once: the card's title
+ * (`open-ticket-card` `open`) and its Workspace bubble (`app-workspace-link`'s `open-item-workspace`
+ * `open`), which the `workspace` screenshot shows.
  */
 @Component({
   imports: [Board, TicketCard],
@@ -37,7 +43,7 @@ import { TicketCard } from './ticket-card';
   template: `
     <ui-board [columns]="columns" gutter>
       @if (node(); as node) {
-        <app-ticket-card [node]="node" base="/projects/contract/work/detail" />
+        <app-ticket-card [node]="node" />
       }
     </ui-board>
   `,
@@ -65,7 +71,10 @@ describe('TicketCard (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneTicket }]),
+        provideRouter([
+          ...WORK_LINK_TARGETS,
+          { path: 'projects/:slug/:view/:qualifiedId', component: OneTicket },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -104,7 +113,8 @@ describe('TicketCard (screenshots)', () => {
   // The open workspaces of qits-workspaces' "a project with workspaces bound to work items": the bug
   // ticket of the "… in detail" seed has an ACTIVE one. (Its improvement ticket, which has none, is
   // REFINED and so not on the board; the cards above, drawn without workspaces, show no link.)
-  it('workspace', async () => {
+  /** The bug ticket of "a bug ticket in detail", with its ACTIVE workspace's link shown. */
+  async function withWorkspace() {
     // The ticket's number comes from the recording, which renumbers it.
     const work = await goldenMaster('a bug ticket in detail', 'listProjectWork');
     const qualifiedId = work.entities.find(
@@ -117,7 +127,11 @@ describe('TicketCard (screenshots)', () => {
       'a bug ticket in detail',
     );
     await openWorkspaces(http, harness);
-    const locator = page.elementLocator(element);
+    return { qualifiedId, locator: page.elementLocator(element) };
+  }
+
+  it('workspace', async () => {
+    const { qualifiedId, locator } = await withWorkspace();
     await expect.element(locator).toMatchTextContent('Invoice totals are off');
     const link = locator.getByRole('link', { name: 'Workspace', exact: true });
     await expect
@@ -141,5 +155,21 @@ describe('TicketCard (screenshots)', () => {
       .element(tooltip)
       .toMatchTextContent('contract-00000001-1 at VERIFIED (now REFINED)');
     await expect.element(locator).toMatchScreenshot('needs-tooltip', { kind: 'DATA' });
+  });
+
+  it('open-ticket-card open: the title opens the ticket’s page', async () => {
+    await shown(EVERY_STATUS, 'contract-00000001-6', 'Ready for dev ticket');
+    const { url, reached } = await follow(page.getByRole('link', { name: 'Ready for dev ticket' }));
+    expect(url).toBe('/projects/contract-00000001/work/detail/contract-00000001-6');
+    expect(reached).toEqual(['open-ticket-card:open']);
+  });
+
+  it('open-item-workspace open: the Workspace bubble leads to the ticket’s agent', async () => {
+    const { qualifiedId, locator } = await withWorkspace();
+    const { url, reached } = await follow(
+      locator.getByRole('link', { name: 'Workspace', exact: true }),
+    );
+    expect(url).toBe(`/projects/contract-00000001/work/detail/${qualifiedId}/agent`);
+    expect(reached).toEqual(['open-item-workspace:open']);
   });
 });

@@ -8,9 +8,12 @@ import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
 import {
+  follow,
   nodeOf,
   openRecordedWork,
   routedQualifiedId,
+  WORK_LINK_TARGETS,
+  WRAPPER_CLOSINGS,
 } from '../../../../testing/browser/recorded-work';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 import { ReorderList } from '$ui/components/reorder/reorder';
@@ -20,6 +23,11 @@ import { TicketListItem } from './ticket-list-item';
  * Screenshots of one ticket in a list, per case: in the Backlog (REPORTED), Acceptance (VERIFIED,
  * with its quiet "closes on its own" hint, qits-150) or the Archive (DONE and DROPPED), 40rem wide. The ticket is the node the app builds from qits-projects' golden
  * masters (`recorded-work.ts`); each case names its view, its state and the ticket's qualified id.
+ *
+ * Its links are declared exits (epic qits-2000), each followed once: the card's title
+ * (`open-ticket-list-item` `open`), and a VERIFIED ticket's closing line's request
+ * (`app-wrapper-closing`'s `open-closing-request` `open`), shown by `closing-request` from
+ * `WRAPPER_CLOSINGS`.
  */
 @Component({
   imports: [TicketListItem],
@@ -28,7 +36,7 @@ import { TicketListItem } from './ticket-list-item';
   host: { class: 'flex w-[40rem] flex-col gap-12 p-4 pb-8 [&_ui-board-card]:self-stretch' },
   template: `
     @if (node(); as node) {
-      <app-ticket-list-item [node]="node" base="/projects/contract/work/detail" [view]="view" />
+      <app-ticket-list-item [node]="node" [view]="view" />
     }
   `,
 })
@@ -61,7 +69,10 @@ describe('TicketListItem (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneTicket }]),
+        provideRouter([
+          ...WORK_LINK_TARGETS,
+          { path: 'projects/:slug/:view/:qualifiedId', component: OneTicket },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -123,5 +134,33 @@ describe('TicketListItem (screenshots)', () => {
       locator.element().querySelector('button[aria-label="Mark contract-00000001-16 done"]'),
     ).toBeNull();
     expect(locator.element().textContent).not.toContain('Closes once its release lands');
+  });
+
+  it('open-ticket-list-item open: the title opens the ticket’s page', async () => {
+    await shown('backlog', EVERY_STATUS, 'contract-00000001-2', 'Reported ticket');
+    const { url, reached } = await follow(page.getByRole('link', { name: 'Reported ticket' }));
+    expect(url).toBe('/projects/contract-00000001/work/detail/contract-00000001-2');
+    expect(reached).toEqual(['open-ticket-list-item:open']);
+  });
+
+  // qits-1873: the closing line names the pending wrapper request and links it.
+  const REQUEST = 'contract-00000001-contract-00000001-rr-1';
+
+  it('closing-request', async () => {
+    const locator = await shown(
+      'acceptance',
+      WRAPPER_CLOSINGS,
+      'contract-00000001-2',
+      'Riding a pending wrapper request',
+    );
+    await expect.element(locator.getByRole('link', { name: REQUEST })).toBeVisible();
+    await expect.element(locator).toMatchScreenshot('closing-request', { kind: 'DATA' });
+  });
+
+  it('open-closing-request open: the closing line opens its wrapper release request', async () => {
+    await shown('acceptance', WRAPPER_CLOSINGS, 'contract-00000001-2', 'Riding a pending');
+    const { url, reached } = await follow(page.getByRole('link', { name: REQUEST }));
+    expect(url).toBe(`/projects/contract-00000001/release-requests/${REQUEST}`);
+    expect(reached).toEqual(['open-closing-request:open']);
   });
 });

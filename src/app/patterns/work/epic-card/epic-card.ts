@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { exit, outcomes, QitsExit } from '@qits/angular';
+import { SelectedProject } from '$core/projects/selected-project';
 import { BOARD_COLUMNS } from '$core/work/work-statuses';
 import { movable } from '$core/work/work-reorder';
 import { taskDistribution, type WorkNode } from '$core/work/work-tree';
@@ -37,14 +38,16 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  *
  * A VERIFIED epic is not on the board: it waits in the Acceptance list (`epic-list-item`), with
  * its finish button. When `leaving` is set (the epic left the board), the lane shrinks away
- * (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
+ * (`uiLeave`), then emits `left`. Every item links to its page, `/projects/<slug>/work/detail/<qualified id>`, through a declared
+ * exit (`open-epic-card`, epic qits-2000): `epic` (its title and its id), `feature` (a row's title)
+ * and `task` (a card). `display: contents`, so the lane
  * is itself the grid item of the board.
  */
 @Component({
   selector: 'app-epic-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink,
+    QitsExit,
     BoardLane,
     BoardRow,
     BoardCard,
@@ -58,7 +61,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   host: { class: 'contents' },
   template: `
     @let n = node();
-    @let link = base() + '/' + n.entry.qualifiedId;
+    @let s = slug();
     <ui-board-lane
       collapsible
       uiReorderItem
@@ -77,10 +80,22 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       } @empty {
         <span lane-summary>No tasks</span>
       }
-      <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
+      <a
+        lane-header
+        class="font-semibold"
+        [qitsExit]="opening.epic"
+        [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
+        >{{ n.entry.title }}</a
+      >
       <app-work-needs lane-tags [needs]="n.entry.needs" [unmet]="n.entry.unmetNeeds" />
       <app-workspace-link lane-tags [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
-      <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
+      <a
+        lane-gutter
+        class="font-mono"
+        [qitsExit]="opening.epic"
+        [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
+        >{{ n.entry.qualifiedId }}</a
+      >
       @for (feature of n.children; track feature.entry.id) {
         <ui-board-row [idLength]="feature.entry.qualifiedId?.length ?? 0">
           @for (task of feature.children; track task.entry.id) {
@@ -90,7 +105,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               [title]="task.entry.title ?? ''"
               [kind]="task.entry.archetype?.toLowerCase() ?? ''"
               [border]="border(task)"
-              [link]="base() + '/' + task.entry.qualifiedId"
+              [exit]="opening.task"
+              [exitParams]="{ slug: s, id: task.entry.qualifiedId ?? '' }"
             >
               @if (hasUnmetNeeds(task.entry)) {
                 <div class="mt-1 flex flex-wrap gap-1">
@@ -109,9 +125,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
             <ui-board-count row-gutter column="gutter" [count]="count" label="verified" />
           }
           <span row-id class="font-mono">{{ feature.entry.qualifiedId }}</span>
-          <a row-footer [routerLink]="base() + '/' + feature.entry.qualifiedId">{{
-            feature.entry.title
-          }}</a>
+          <a
+            row-footer
+            [qitsExit]="opening.feature"
+            [exitParams]="{ slug: s, id: feature.entry.qualifiedId ?? '' }"
+            >{{ feature.entry.title }}</a
+          >
           <app-workspace-link
             row-footer-end
             [workId]="feature.entry.id"
@@ -128,13 +147,21 @@ export class EpicCard {
 
   /** The epic's node: its children are its features, theirs its tasks. */
   readonly node = input.required<WorkNode>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   /** The epic is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
 
   protected readonly movable = movable;
+
+  protected readonly opening = outcomes('open-epic-card', {
+    epic: exit('projects/:slug/work/detail/:id'),
+    feature: exit('projects/:slug/work/detail/:id'),
+    task: exit('projects/:slug/work/detail/:id'),
+  });
+
+  private readonly selected = inject(SelectedProject);
+  /** The open project's slug, for the items' pages. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** The collapsed lane's tiles: one per column with tasks, then the verified ones' in the gutter. */
   protected readonly tiles = computed(() => {

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { SelectedProject } from '$core/projects/selected-project';
 import { InProgressViewStore } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
 import { Spinner } from '$ui/components/spinner/spinner';
@@ -27,7 +26,7 @@ import { WorkList } from '$patterns/work/work-list/work-list';
     <div class="mx-auto max-w-[72rem] px-6 pt-6 pb-12">
       <app-page-layout title="Acceptance">
         <ui-spinner [state]="work.state()" class="min-h-48">
-          <app-work-list [tree]="acceptance()" [base]="detailPath()" view="acceptance" />
+          <app-work-list [tree]="acceptance()" view="acceptance" />
         </ui-spinner>
       </app-page-layout>
     </div>
@@ -35,14 +34,9 @@ import { WorkList } from '$patterns/work/work-list/work-list';
 })
 export class WorkAcceptancePage {
   protected readonly work = inject(SelectedWork);
-  private readonly selected = inject(SelectedProject);
   private readonly views = inject(InProgressViewStore);
 
   protected readonly acceptance = computed(() =>
     this.work.graph().tree('acceptance', { withoutEpicBoards: this.views.view() === 'epics' }),
-  );
-
-  protected readonly detailPath = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
   );
 }

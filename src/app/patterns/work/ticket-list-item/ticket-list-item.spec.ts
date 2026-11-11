@@ -22,11 +22,7 @@ const node = (entry: Partial<WorkEntry>, context = false): WorkNode => ({
   imports: [TicketListItem],
   // The list the work list draws the item in (qits-753).
   hostDirectives: [ReorderList],
-  template: `<app-ticket-list-item
-    [node]="node()"
-    base="/projects/qits/work/detail"
-    [view]="view()"
-  />`,
+  template: `<app-ticket-list-item [node]="node()" [view]="view()" />`,
 })
 class InAcceptance {
   readonly node = input.required<WorkNode>();

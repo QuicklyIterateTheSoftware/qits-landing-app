@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
-import { WORK_DETAIL } from '$core/work/work-tabs';
 import { Popover } from '$ui/components/popover/popover';
 import { Tag } from '$ui/components/tag/tag';
 import { TagLink } from '$ui/components/tag-link/tag-link';
@@ -22,19 +21,32 @@ import { TagLink } from '$ui/components/tag-link/tag-link';
  * subject): a tap opens the preview without following the tag's link; a second tap, or a press
  * outside, closes it. The id in the preview is the link to the item's page.
  *
+ * Both links are declared exits (epic qits-2000): `open-work-ref-tag` `open` (the tag) and
+ * `openFromPreview` (the preview's id).
+ *
  * `display: contents`, so the tag is itself the item of the row it is put in (`[lane-tags]`, say).
  */
 @Component({
   selector: 'app-work-ref',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Popover, RouterLink, Tag, TagLink],
+  imports: [Popover, QitsExit, Tag, TagLink],
   host: { class: 'contents' },
   template: `
     <ui-popover #popover tapToOpen>
-      <ui-tag-link [label]="label()" [link]="link()" [describedBy]="popover.panelId()" />
+      <ui-tag-link
+        [label]="label()"
+        [exit]="opening.open"
+        [exitParams]="params()"
+        [describedBy]="popover.panelId()"
+      />
       <div popover-content class="flex w-72 flex-col gap-1">
         <div class="flex items-center gap-2 text-xs text-charcoal-brown-500">
-          <a class="font-mono hover:underline" [routerLink]="link()">{{ qualifiedId() }}</a>
+          <a
+            class="font-mono hover:underline"
+            [qitsExit]="opening.openFromPreview"
+            [exitParams]="params()"
+            >{{ qualifiedId() }}</a
+          >
           <span [class.hidden]="!archetype()">{{ archetype() }}</span>
           <ui-tag [label]="status()" [class.hidden]="!status()" />
         </div>
@@ -64,9 +76,16 @@ export class WorkRef {
     this.archetype() ? `${this.archetype()}: ${this.qualifiedId()}` : this.qualifiedId(),
   );
 
-  protected readonly link = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/${WORK_DETAIL}/${this.qualifiedId()}`,
-  );
+  protected readonly opening = outcomes('open-work-ref-tag', {
+    open: exit('projects/:slug/work/detail/:id'),
+    openFromPreview: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** The item's page's params. */
+  protected readonly params = computed(() => ({
+    slug: this.selected.slug() ?? '',
+    id: this.qualifiedId(),
+  }));
 
   protected readonly status = computed(() => this.entry()?.status?.toLowerCase() ?? '');
 }

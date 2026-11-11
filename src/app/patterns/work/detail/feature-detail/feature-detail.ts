@@ -31,7 +31,7 @@ import { WorkComments } from '$patterns/work/detail/work-comments/work-comments'
         uiReorderList
         reorderDisabled
       >
-        <app-feature-list-row [node]="node()" [base]="base()" />
+        <app-feature-list-row [node]="node()" />
       </div>
     </section>
     <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" [project]="slug()" />
@@ -40,8 +40,6 @@ import { WorkComments } from '$patterns/work/detail/work-comments/work-comments'
 export class FeatureDetail {
   readonly entry = input.required<WorkEntry>();
   readonly detail = input<WorkDetail>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
 
   /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
   protected readonly slug = inject(SelectedProject).slug;

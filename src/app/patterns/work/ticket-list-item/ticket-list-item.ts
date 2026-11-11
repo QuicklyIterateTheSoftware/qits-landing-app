@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { exit, outcomes } from '@qits/angular';
+import { SelectedProject } from '$core/projects/selected-project';
 import { movable } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
@@ -14,7 +16,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 
 /**
  * A ticket in a list (Backlog, the board stacked, Acceptance, Archive): the board's small card
- * (`ui-board-card`), its id down the left edge, its title linking to it, its kind, and a Workspace
+ * (`ui-board-card`), its id down the left edge, its title linking to its page (`open-ticket-list-item`
+ * `open`, epic qits-2000), its kind, and a Workspace
  * bubble in its bottom-right corner while it has an ACTIVE workspace (`app-workspace-link`).
  * Beside its status, its "needs" badge while it needs an item not at its status yet
  * (`app-work-needs`, epic qits-1899). In the Archive it also shows its final state (Done and
@@ -55,7 +58,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       [code]="n.entry.qualifiedId ?? ''"
       [title]="n.entry.title ?? ''"
       [kind]="n.entry.archetype?.toLowerCase() ?? ''"
-      [link]="base() + '/' + n.entry.qualifiedId"
+      [exit]="opening.open"
+      [exitParams]="{ slug: slug(), id: n.entry.qualifiedId ?? '' }"
       uiReorderItem
       [reorderItemLabel]="n.entry.qualifiedId ?? ''"
       [uiLeave]="leaving()"
@@ -87,12 +91,18 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 })
 export class TicketListItem {
   readonly node = input.required<WorkNode>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
   /** The ticket is leaving the list: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
   readonly left = output<void>();
+
+  protected readonly opening = outcomes('open-ticket-list-item', {
+    open: exit('projects/:slug/work/detail/:id'),
+  });
+
+  private readonly selected = inject(SelectedProject);
+  /** The open project's slug, for the ticket's page. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** Whether it needs an item not at its status yet: its badge then shows in the tag row. */
   protected readonly needs = computed(() => hasUnmetNeeds(this.node().entry));
