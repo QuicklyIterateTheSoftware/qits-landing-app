@@ -1515,8 +1515,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "create-idea",
-            "kind": "ui",
-            "route": "projects/:slug/ideas/create"
+            "kind": "ui"
           }
         }
       },
@@ -3726,8 +3725,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "edit-idea",
-            "kind": "ui",
-            "route": "projects/:slug/ideas/detail/:ideaId/edit"
+            "kind": "ui"
           }
         }
       },
@@ -11730,8 +11728,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-idea",
-            "kind": "ui",
-            "route": "projects/:slug/ideas/detail/:ideaId/edit"
+            "kind": "ui"
           }
         }
       },
@@ -11850,8 +11847,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-idea",
-            "kind": "ui",
-            "route": "projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit"
+            "kind": "ui"
           }
         }
       },
