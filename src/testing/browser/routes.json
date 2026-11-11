@@ -241,6 +241,12 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/ideas/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "createIdea",
+      "route": "projects/:slug/ideas/create"
     }
   ],
   "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts": [
@@ -264,8 +270,26 @@
     },
     {
       "provider": "qits-projects-service",
+      "state": "a project with ideas",
+      "operationId": "patchIdea",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit"
+    },
+    {
+      "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with three ideas, one with a priority",
+      "operationId": "getIdea",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an idea enabled by another idea",
+      "operationId": "getIdea",
       "route": "projects/:slug/ideas/detail/:ideaId/edit"
     }
   ],
@@ -286,6 +310,12 @@
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/ideas/detail/:ideaId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an idea enabled by another idea",
+      "operationId": "getIdea",
       "route": "projects/:slug/ideas/detail/:ideaId"
     }
   ],

@@ -28,7 +28,6 @@ body { padding: 0px; margin: 0px; min-height: 100vh; }
 @layer base {
 *, ::after, ::before, ::backdrop, ::file-selector-button { box-sizing: border-box; margin: 0px; padding: 0px; border: 0px solid; }
 html, :host { line-height: 1.5; text-size-adjust: 100%; tab-size: 4; font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"); font-feature-settings: var(--default-font-feature-settings, normal); font-variation-settings: var(--default-font-variation-settings, normal); -webkit-tap-highlight-color: transparent; }
-a { color: inherit; text-decoration: inherit; }
 button, input, select, optgroup, textarea, ::file-selector-button { font: inherit; letter-spacing: inherit; color: inherit; border-radius: 0px; background-color: transparent; opacity: 1; }
 ::file-selector-button { margin-inline-end: 4px; }
 ::placeholder { opacity: 1; }
@@ -59,7 +58,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .flex { display: flex; }
 .flow-root { display: flow-root; }
 .grid { display: grid; }
-.hidden { display: none; }
 .min-h-24 { min-height: calc(var(--spacing) * 24); }
 .min-h-48 { min-height: calc(var(--spacing) * 48); }
 .min-h-screen { min-height: 100vh; }
@@ -82,8 +80,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .leading-5 { --tw-leading: calc(var(--spacing) * 5); line-height: calc(var(--spacing) * 5); }
 .text-charcoal-brown-600 { color: var(--color-charcoal-brown-600); }
 .text-charcoal-brown-900 { color: var(--color-charcoal-brown-900); }
-.text-ocean-deep-700 { color: var(--color-ocean-deep-700); }
-.underline { text-decoration-line: underline; }
 .\[--app-header-h\:3\.5rem\] { --app-header-h: 3.5rem; }
 .\[--app-pin-top\:var\(--app-header-h\)\] { --app-pin-top: var(--app-header-h); }
 @media (width >= 48rem) {
@@ -152,4 +148,4 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
-</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem] [--app-pin-top:var(--app-header-h)]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:h-dvh md:min-h-0 md:grid-cols-[15rem_minmax(0,1fr)] md:grid-rows-[var(--app-header-h)_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2 md:min-h-0 md:overflow-y-auto md:[--app-pin-top:0px]"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 86px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-task-detail class="flex flex-col gap-8"><app-work-fields class="block"><dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm"><dt class="text-charcoal-brown-600">Repository</dt><dd class="m-0 min-w-0 text-charcoal-brown-900 font-mono text-xs leading-5"><a class="text-ocean-deep-700 underline hidden">00000000-0000-4000-8000-000000000009</a><span>00000000-0000-4000-8000-000000000009</span></dd><dt class="text-charcoal-brown-600">Started</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">1 Jan 2026, 00:00</a><span>1 Jan 2026, 00:00</span></dd><dt class="text-charcoal-brown-600">Implemented</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><a class="text-ocean-deep-700 underline hidden">1 Jan 2026, 00:00</a><span>1 Jan 2026, 00:00</span></dd></dl></app-work-fields></app-task-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>
+</style></head><body><div id="f0"><app-shell-layout class="block [--app-header-h:3.5rem] [--app-pin-top:var(--app-header-h)]"><div class="grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[var(--app-header-h)_1fr] md:h-dvh md:min-h-0 md:grid-cols-[15rem_minmax(0,1fr)] md:grid-rows-[var(--app-header-h)_minmax(0,1fr)]"><main class="col-start-1 row-start-2 min-w-0 md:col-start-2 md:min-h-0 md:overflow-y-auto md:[--app-pin-top:0px]"><app-work-item-page class="block"><div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12"><app-page-layout class="flow-root" style="--page-actions-h: 86px;"><div class="clear-both pt-6"><ui-spinner class="relative block min-h-48" aria-busy="false"><ui-spinner class="relative block mt-6 min-h-24" aria-busy="false"><app-task-detail class="flex flex-col gap-8"><app-work-fields class="block"><dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm"><dt class="text-charcoal-brown-600">Repository</dt><dd class="m-0 min-w-0 text-charcoal-brown-900 font-mono text-xs leading-5"><span>00000000-0000-4000-8000-000000000009</span></dd><dt class="text-charcoal-brown-600">Started</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><span>1 Jan 2026, 00:00</span></dd><dt class="text-charcoal-brown-600">Implemented</dt><dd class="m-0 min-w-0 text-charcoal-brown-900"><span>1 Jan 2026, 00:00</span></dd></dl></app-work-fields></app-task-detail></ui-spinner></ui-spinner></div></app-page-layout></div></app-work-item-page></main></div></app-shell-layout></div></body></html>
