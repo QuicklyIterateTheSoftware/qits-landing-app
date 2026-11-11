@@ -50,7 +50,7 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 }
 @layer utilities {
 .sticky { position: sticky; }
-.top-\[var\(--app-header-h\,0px\)\] { top: var(--app-header-h,0px); }
+.top-\[var\(--app-pin-top\,0px\)\] { top: var(--app-pin-top,0px); }
 .z-40 { z-index: 40; }
 .float-right { float: right; }
 .clear-both { clear: both; }
@@ -137,4 +137,4 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
-</style></head><body><div id="f0" class="block w-[48rem] p-4"><app-page-layout title="Ignored" class="flow-root" style="--page-actions-h: 40px;"><div data-page-actions="" class="sticky top-[var(--app-header-h,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"><a slot="actions" href="/archive" class="text-sm text-charcoal-brown-600">Archive</a></div><div class="flex min-h-10 min-w-[min(12rem,100%)] items-center"><div slot="header"><h1 class="m-0 text-2xl font-bold">qits</h1><p class="m-0 text-sm text-charcoal-brown-600">A custom header with a subtitle</p></div></div><div class="clear-both pt-6"><p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p></div></app-page-layout></div></body></html>
+</style></head><body><div id="f0" class="block w-[48rem] p-4"><app-page-layout title="Ignored" class="flow-root" style="--page-actions-h: 40px;"><div data-page-actions="" class="sticky top-[var(--app-pin-top,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"><a slot="actions" href="/archive" class="text-sm text-charcoal-brown-600">Archive</a></div><div class="flex min-h-10 min-w-[min(12rem,100%)] items-center"><div slot="header"><h1 class="m-0 text-2xl font-bold">qits</h1><p class="m-0 text-sm text-charcoal-brown-600">A custom header with a subtitle</p></div></div><div class="clear-both pt-6"><p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p></div></app-page-layout></div></body></html>

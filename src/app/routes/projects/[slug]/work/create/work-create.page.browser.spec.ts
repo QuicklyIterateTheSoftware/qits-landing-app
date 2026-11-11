@@ -62,12 +62,15 @@ describe('WorkCreatePage (screenshots)', () => {
 
   /**
    * Lets the navigation an exit started finish, and answers every read the page it left for makes
-   * with a 404 (an error answer is only a status): that page is its own spec's. Answers in rounds,
-   * as a read may follow another's answer, until a round leaves nothing open.
+   * — its frame reads included — with a 404 (an error answer is only a status): that page is its
+   * own spec's, so none of its reads may show as answered from a golden master in the route ledger.
+   * `idle()`, not `settled()`, so the destination's frame reads (its `WorkLayout`, say) get the same
+   * 404 instead of a recorded answer (qits-2056). Answers in rounds, as a read may follow another's
+   * answer, until a round leaves nothing open.
    */
   async function leftFor(opened: OpenedRoute) {
     for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
-      await opened.settled();
+      await opened.idle();
       const open = http.match(() => true).filter((request) => !request.cancelled);
       for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
       quiet = open.length ? 0 : quiet + 1;
