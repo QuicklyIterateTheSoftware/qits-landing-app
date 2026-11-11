@@ -12497,6 +12497,163 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/call-open-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > opens a call’s popover whole, out of the Calls panel that scrolls (qits-2081)",
+      "name": "call-open",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/call-open-phone.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > opens a call’s popover whole, out of the Calls panel that scrolls (qits-2081)",
+      "name": "call-open",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:project",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/call-open-tablet.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > opens a call’s popover whole, out of the Calls panel that scrolls (qits-2081)",
+      "name": "call-open",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities-desktop.html",
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > lists the domain entities the route touches, with their verbs",
@@ -28561,6 +28718,9 @@
       "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts/unknown-tablet.html"
     ],
     "projects/:slug/repositories/:repo/ui-builder": [
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/call-open-desktop.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/call-open-phone.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/call-open-tablet.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities-desktop.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities-phone.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/entities-tablet.html",
