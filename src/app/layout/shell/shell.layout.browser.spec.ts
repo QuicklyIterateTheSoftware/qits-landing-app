@@ -554,25 +554,88 @@ describe('ShellLayout (screenshots)', () => {
   });
 
   it('pins the top bar, the page’s actions below it and the board’s headings below those', async () => {
+    // 800px wide: the page scrolls in <main>, below the bar, and the window does not scroll.
     const { fixture } = await renderProject('/work/in-progress');
     await fixture.whenStable();
     const root = fixture.nativeElement as HTMLElement;
     const header = root.querySelector('header')!;
+    const main = root.querySelector('main')!;
     const actions = root.querySelector<HTMLElement>('[data-page-actions]')!;
     const headings = root.querySelector<HTMLElement>('[data-board-headings]')!;
+    main.scrollTop = 400;
+    expect(main.scrollTop).toBe(400);
+    expect(header.getBoundingClientRect().top).toBe(0);
+    expect(header.getBoundingClientRect().height).toBe(56);
+    // At the top of <main>, which starts right below the bar: not the bar's height further down.
+    expect(Math.round(main.getBoundingClientRect().top)).toBe(56);
+    expect(Math.round(actions.getBoundingClientRect().top)).toBe(56);
+    await expect
+      .poll(() => Math.round(headings.getBoundingClientRect().top))
+      .toBe(Math.round(actions.getBoundingClientRect().bottom));
+    // Nothing of the page shows above the bar: the bar is drawn over it.
+    const atBar = document.elementFromPoint(400, 28);
+    expect(header.contains(atBar)).toBe(true);
+    expect(document.scrollingElement!.scrollTop).toBe(0);
+    // No screenshot: an element screenshot scrolls the element into view, undoing the scroll.
+    // The board's and the page layout's specs shoot the pinned states in a scroller instead.
+  });
+
+  /** The shell's scrolling parts on `/work/in-progress` (the tall page). */
+  async function renderTall() {
+    const { fixture } = await renderProject('/work/in-progress');
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    return {
+      root,
+      main: root.querySelector('main')!,
+      nav: root.querySelector<HTMLElement>('#layout-nav')!,
+      actions: root.querySelector<HTMLElement>('[data-page-actions]')!,
+    };
+  }
+
+  it('keeps the window still on a wide screen: the sidebar and the page scroll each on their own', async () => {
+    // Short enough that the open project's sidebar overflows too.
+    await page.viewport(1280, 300);
     try {
+      const { main, nav, actions } = await renderTall();
+      // The shell is the window's height; nothing is left for the window to scroll.
+      expect(document.scrollingElement!.scrollHeight).toBe(window.innerHeight);
+      expect(main.scrollHeight).toBeGreaterThan(main.clientHeight);
+      expect(nav.scrollHeight).toBeGreaterThan(nav.clientHeight);
       window.scrollTo(0, 400);
-      expect(header.getBoundingClientRect().top).toBe(0);
-      expect(header.getBoundingClientRect().height).toBe(56);
+      expect(document.scrollingElement!.scrollTop).toBe(0);
+
+      main.scrollTop = 300;
+      expect(main.scrollTop).toBe(300);
+      expect(nav.scrollTop).toBe(0);
+      expect(document.scrollingElement!.scrollTop).toBe(0);
+      // The page's actions stay at the top of <main>, right below the bar.
+      expect(Math.round(actions.getBoundingClientRect().top)).toBe(
+        Math.round(main.getBoundingClientRect().top),
+      );
+
+      nav.scrollTop = 100;
+      expect(nav.scrollTop).toBeGreaterThan(0);
+      expect(main.scrollTop).toBe(300);
+      expect(document.scrollingElement!.scrollTop).toBe(0);
+    } finally {
+      window.scrollTo(0, 0);
+    }
+  });
+
+  it('scrolls the document on a phone, with the bar and the page’s actions pinned below it', async () => {
+    await page.viewport(390, 600);
+    try {
+      const { root, main, actions } = await renderTall();
+      expect(document.scrollingElement!.scrollHeight).toBeGreaterThan(window.innerHeight);
+      window.scrollTo(0, 400);
+      expect(document.scrollingElement!.scrollTop).toBe(400);
+      // <main> does not scroll on its own below 768px: the document does.
+      expect(main.scrollTop).toBe(0);
+      expect(main.scrollHeight).toBe(main.clientHeight);
+      expect(root.querySelector('header')!.getBoundingClientRect().top).toBe(0);
+      // Pinned below the bar (`--app-pin-top` is the bar's height here), not behind it.
       expect(Math.round(actions.getBoundingClientRect().top)).toBe(56);
-      await expect
-        .poll(() => Math.round(headings.getBoundingClientRect().top))
-        .toBe(Math.round(actions.getBoundingClientRect().bottom));
-      // Nothing of the page shows above the bar: the bar is drawn over it.
-      const atBar = document.elementFromPoint(400, 28);
-      expect(header.contains(atBar)).toBe(true);
-      // No screenshot: an element screenshot scrolls the element into view, undoing the scroll.
-      // The board's and the page layout's specs shoot the pinned states in a scroller instead.
     } finally {
       window.scrollTo(0, 0);
     }

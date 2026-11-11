@@ -3,8 +3,9 @@ import {
   type DragEngine,
   type DragOutcome,
   Marker,
-  pinnedHeight,
   placeholder,
+  type VisibleArea,
+  visibleArea,
 } from './drag';
 import { edgeScrollStep, gapY, overTarget, referenceY, slotAt, targetIndex } from './slots';
 
@@ -24,8 +25,10 @@ const OUTSIDE_OPACITY = '0.5';
  * measured again as the clone moves), so the marker stays on the screen. Over the item's own gaps
  * the marker hides and the placeholder is the preview; outside the list (its rect, widened by
  * `TARGET_SLACK_PX`) the marker hides and the clone fades. Near the top or bottom of the visible
- * area the document scrolls (`edgeScrollStep`). Everything is measured again each
- * animation frame from `getBoundingClientRect()`, so the wheel keeps working.
+ * area the list's scrolling box scrolls (`edgeScrollStep`): its nearest scrolling ancestor, which
+ * from 768px up is the shell's `<main>`, or the document where none scrolls (`visibleArea`).
+ * Everything is measured again each animation frame from `getBoundingClientRect()`, so the wheel
+ * keeps working.
  *
  * It ends once: a release over a new slot is a drop, a release over its own slot or outside the
  * list a cancel; Escape, `pointercancel`, a lost capture, the window losing focus or `cancel()`
@@ -45,8 +48,8 @@ export class MouseDrag implements DragEngine {
   private y: number;
   /** Where in the item it was grabbed, from its top. */
   private grabY = 0;
-  /** The top of the visible area, below what is pinned there. */
-  private visibleTop = 0;
+  /** The box that scrolls the list, and the part of the window it shows (`visibleArea`). */
+  private area?: VisibleArea;
 
   constructor(
     private readonly context: DragContext,
@@ -109,7 +112,7 @@ export class MouseDrag implements DragEngine {
     const { document, item } = this.context;
     const rect = item.getBoundingClientRect();
     this.grabY = this.press.clientY - rect.top;
-    this.visibleTop = pinnedHeight(document, this.context.list);
+    this.area = visibleArea(document, this.context.list);
 
     const clone = item.cloneNode(true) as HTMLElement;
     clone.removeAttribute('id');
@@ -144,12 +147,9 @@ export class MouseDrag implements DragEngine {
   private readonly onFrame = () => {
     if (this.ended) return;
     this.update();
-    const step = edgeScrollStep(
-      this.y,
-      this.visibleTop,
-      this.context.document.documentElement.clientHeight,
-    );
-    if (step) this.window.scrollBy(0, step);
+    const { pane, top, bottom } = this.area!;
+    const step = edgeScrollStep(this.y, top, bottom);
+    if (step) pane.scrollBy({ top: step, behavior: 'instant' });
     this.frame = this.window.requestAnimationFrame(this.onFrame);
   };
 
@@ -174,12 +174,7 @@ export class MouseDrag implements DragEngine {
     const rects = this.context.rects();
     const slot = slotAt(
       rects,
-      referenceY(
-        top,
-        top + itemRect.height,
-        this.visibleTop,
-        this.context.document.documentElement.clientHeight,
-      ),
+      referenceY(top, top + itemRect.height, this.area!.top, this.area!.bottom),
     );
     const to = targetIndex(from, slot);
     if (to === from) {

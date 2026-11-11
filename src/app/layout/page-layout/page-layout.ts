@@ -43,9 +43,11 @@ interface ShownGroup {
  *   bar wraps its buttons inside the bar instead of spilling past its edge.
  * - Content: everything else.
  *
- * The page scrolls as a whole (the document scrolls, not the shell), and the actions stay pinned
- * to the top of the window, just below the shell's top bar (`--app-header-h`), while any of the
- * page is in view. Their height is `--page-actions-h` on this component, measured in the browser
+ * The actions stay pinned to the top of the box that scrolls the page while any of the page is in
+ * view, at `--app-pin-top` (0 where unset): from 768px up that box is the shell's `<main>`, which
+ * scrolls on its own below the top bar, so they pin at its top edge (0); below 768px the document
+ * scrolls, so they pin just below the shell's top bar (its height). Their height is
+ * `--page-actions-h` on this component, measured in the browser
  * (0 on the server and while there are no actions), so what pins inside the content (the board's
  * headings) sits below them instead of under them. The actions float right and come
  * first; the header after them is a box of its own (flex) beside the float, so a long title wraps
@@ -66,7 +68,7 @@ interface ShownGroup {
   template: `
     <div
       #actionsBar
-      class="sticky top-[var(--app-header-h,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
+      class="sticky top-[var(--app-pin-top,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
       data-page-actions
     >
       <ng-content select="[slot=actions], [uiPageActions]">

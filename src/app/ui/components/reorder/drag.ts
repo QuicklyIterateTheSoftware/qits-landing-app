@@ -6,6 +6,8 @@
  * outcome once through `end`. An engine never reorders anything: it measures, draws and reports.
  */
 
+import { paneBounds, scrollPane } from '$ui/dom/scroll-pane';
+
 /** How a gesture ended: a plain click (it never became a drag), a cancel, or a drop at `to`. */
 export type DragOutcome =
   | { readonly kind: 'click' }
@@ -93,16 +95,41 @@ export class Marker {
 }
 
 /**
- * The top of the page's visible area below what is pinned there (the shell's top bar,
- * `--app-header-h`, and the page's actions, `--page-actions-h`, both 0 where unset), in px, as
- * seen from `element`. A custom property reads back unresolved (`3.5rem`), so a probe measures it.
+ * The height of what is pinned at the top of the box that scrolls `element` (the shell's top bar
+ * below 768px, where the document scrolls, then the page's actions, `--page-actions-h`), in px, as
+ * seen from `element`: `--app-pin-top`, which the shell sets to its top bar's height where the
+ * document scrolls and to 0 inside its own scrolling `<main>`, plus the actions' height; both are
+ * 0 where unset. A custom property reads back unresolved (`3.5rem`), so a probe measures it.
  */
 export function pinnedHeight(document: Document, element: HTMLElement): number {
   const probe = document.createElement('div');
   probe.style.cssText =
-    'position:absolute;visibility:hidden;pointer-events:none;width:0;height:calc(var(--app-header-h,0px) + var(--page-actions-h,0px))';
+    'position:absolute;visibility:hidden;pointer-events:none;width:0;height:calc(var(--app-pin-top,0px) + var(--page-actions-h,0px))';
   element.append(probe);
   const height = probe.getBoundingClientRect().height;
   probe.remove();
   return height;
+}
+
+/** Where a drag of `list`'s items scrolls, and the part of the window it shows them in. */
+export interface VisibleArea {
+  /** The list's nearest scrolling ancestor (`scrollPane`), or the document's root element. */
+  readonly pane: HTMLElement;
+  /** The top of the visible area below what is pinned there, in viewport px. */
+  readonly top: number;
+  /** The bottom of the visible area, in viewport px. */
+  readonly bottom: number;
+}
+
+/**
+ * The box a drag of `list`'s items scrolls, and the part of the window it shows them in: the
+ * list's nearest scrolling ancestor, the document when there is none (below 768px the shell lets
+ * the document scroll; from 768px up its `<main>` scrolls and the window never does). The area
+ * runs from the pane's top (0 for the document), below what is pinned inside it
+ * ({@link pinnedHeight}), to its bottom, both clipped to the window (`paneBounds`).
+ */
+export function visibleArea(document: Document, list: HTMLElement): VisibleArea {
+  const pane = scrollPane(list);
+  const { top, bottom } = paneBounds(pane);
+  return { pane, top: top + pinnedHeight(document, list), bottom };
 }

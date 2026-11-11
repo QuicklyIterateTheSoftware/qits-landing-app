@@ -148,6 +148,49 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('entity-view');
   });
 
+  it('scrolls each of the three panels on its own, and never the window', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites);
+    // 1280px is the narrowest the panels sit side by side; 400px is short enough that the frozen
+    // page overflows its panel.
+    await page.viewport(1280, 400);
+    await opened.settled();
+    const main = opened.frame.querySelector('main')!;
+    const grid = opened.page.querySelector<HTMLElement>('[data-columns]')!;
+    const columns = [...grid.children] as HTMLElement[];
+    expect(columns.map((column) => column.getAttribute('aria-label'))).toEqual([
+      null,
+      'Preview',
+      'Calls',
+    ]);
+    // The recording's tree and calls are short; a spacer makes every panel taller than its box,
+    // so each has room to scroll (the layout is under test, not the recording).
+    for (const column of columns) {
+      if (column.scrollHeight > column.clientHeight) continue;
+      const spacer = document.createElement('div');
+      spacer.style.height = '1200px';
+      column.append(spacer);
+    }
+    for (const column of columns) {
+      expect(column.scrollHeight).toBeGreaterThan(column.clientHeight);
+    }
+    // Scrolled to its end, <main> shows the panels filling it exactly, the title row gone.
+    main.scrollTop = main.scrollHeight;
+    const box = main.getBoundingClientRect();
+    expect(Math.round(grid.getBoundingClientRect().top)).toBe(Math.round(box.top));
+    expect(Math.round(grid.getBoundingClientRect().bottom)).toBe(Math.round(box.bottom));
+    const mainTop = main.scrollTop;
+    for (const [i, column] of columns.entries()) {
+      column.scrollTop = 150;
+      expect(column.scrollTop).toBe(150);
+      for (const [j, other] of columns.entries()) {
+        if (j !== i) expect(other.scrollTop).toBe(j < i ? 150 : 0);
+      }
+      expect(main.scrollTop).toBe(mainTop);
+      expect(document.scrollingElement!.scrollTop).toBe(0);
+    }
+  });
+
   it('says a route without states has nothing frozen', async () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites);

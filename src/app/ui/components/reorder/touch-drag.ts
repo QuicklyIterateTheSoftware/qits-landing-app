@@ -3,8 +3,9 @@ import {
   type DragEngine,
   type DragOutcome,
   Marker,
-  pinnedHeight,
   placeholder,
+  type VisibleArea,
+  visibleArea,
 } from './drag';
 import { REORDER_MESSAGES } from './reorder-messages';
 import { edgeScrollStep, gapY, referenceY, slotAt, type SlotRect, targetIndex } from './slots';
@@ -46,8 +47,10 @@ export function overscrollRange(
  * It is inverted: the item does not follow the finger, the page moves under the item. It captures
  * the pointer, and once the finger has moved {@link TOUCH_DRAG_THRESHOLD_PX} it dims the item into
  * a placeholder and puts a clone of it in `document.body`, fixed where the item was on the screen;
- * the clone stays there until the end. Moving the finger down scrolls the document down by as
- * much (and up, up), in the next animation frame, so the rows pass under the clone; the slot under
+ * the clone stays there until the end. Moving the finger down scrolls the list's scrolling box
+ * down by as much (and up, up), in the next animation frame, so the rows pass under the clone: its
+ * nearest scrolling ancestor, which from 768px up is the shell's `<main>`, or the document where
+ * none scrolls, as below 768px (`visibleArea`; "the page" below is that box). The slot under
  * the middle of the clone's visible part (`referenceY`, taken at the pick-up: its middle unless the
  * item is taller than the visible area or partly off it) is where it lands, and the marker shows
  * its gap (hidden over the item's own slot), so the marker stays on the screen. Held near the top
@@ -82,15 +85,15 @@ export class TouchDrag implements DragEngine {
   private followedY: number;
   /** The scroll the finger has asked for and the next frame applies, in px (down is positive). */
   private pending = 0;
-  /** The document's scroll at the pick-up, restored by a cancel. */
-  private startScrollY = 0;
+  /** The scrolling box's scroll at the pick-up, restored by a cancel. */
+  private startScrollTop = 0;
   /**
    * The line the slot is read at, in viewport coordinates: the middle of the clone's visible part
    * at the pick-up (`referenceY`), fixed for the whole drag as the clone is.
    */
   private lineY = 0;
-  /** The top of the visible area, below what is pinned there. */
-  private visibleTop = 0;
+  /** The box that scrolls the list, and the part of the window it shows (`visibleArea`). */
+  private area?: VisibleArea;
   /** The list's items, shifted past the ends of the page, and their own inline transforms. */
   private shifted: readonly { readonly element: HTMLElement; readonly transform: string }[] = [];
   /** How far the items are shifted up past the end of the page, in px (negative: down). */
@@ -157,14 +160,10 @@ export class TouchDrag implements DragEngine {
     this.dragging = true;
     const { document, item } = this.context;
     const rect = item.getBoundingClientRect();
-    this.startScrollY = this.window.scrollY;
-    this.visibleTop = pinnedHeight(document, this.context.list);
-    this.lineY = referenceY(
-      rect.top,
-      rect.bottom,
-      this.visibleTop,
-      document.documentElement.clientHeight,
-    );
+    const area = visibleArea(document, this.context.list);
+    this.area = area;
+    this.startScrollTop = area.pane.scrollTop;
+    this.lineY = referenceY(rect.top, rect.bottom, area.top, area.bottom);
     this.shifted = this.context.items().map((element) => ({
       element,
       transform: element.style.getPropertyValue('transform'),
@@ -212,11 +211,7 @@ export class TouchDrag implements DragEngine {
 
   private readonly onFrame = () => {
     if (this.ended) return;
-    this.pending += edgeScrollStep(
-      this.y,
-      this.visibleTop,
-      this.context.document.documentElement.clientHeight,
-    );
+    this.pending += edgeScrollStep(this.y, this.area!.top, this.area!.bottom);
     this.scroll();
     this.draw();
     this.frame = this.window.requestAnimationFrame(this.onFrame);
@@ -231,7 +226,7 @@ export class TouchDrag implements DragEngine {
   /**
    * Applies the pending scroll in whole px, keeping the fraction for later: the browser rounds
    * every scroll, and rounding each small step would drift from the finger. A movement back first
-   * takes back the items' shift, then scrolls the document; what the document cannot take shifts
+   * takes back the items' shift, then scrolls the page; what the page cannot take shifts
    * the items, within `overscrollRange`.
    */
   private scroll(): void {
@@ -244,9 +239,10 @@ export class TouchDrag implements DragEngine {
       step -= back;
     }
     if (step) {
-      const before = this.window.scrollY;
-      this.window.scrollBy({ top: step, behavior: 'instant' });
-      step -= this.window.scrollY - before;
+      const pane = this.area!.pane;
+      const before = pane.scrollTop;
+      pane.scrollBy({ top: step, behavior: 'instant' });
+      step -= pane.scrollTop - before;
     }
     if (step) {
       const unshifted = this.context.rects().map((rect) => ({
@@ -337,12 +333,9 @@ export class TouchDrag implements DragEngine {
     this.marker?.remove();
     this.unshift();
     this.restoreItem?.();
-    if (outcome.kind === 'cancel' && this.window.scrollY !== this.startScrollY) {
-      this.window.scrollTo({
-        left: this.window.scrollX,
-        top: this.startScrollY,
-        behavior: 'instant',
-      });
+    const pane = this.area?.pane;
+    if (outcome.kind === 'cancel' && pane && pane.scrollTop !== this.startScrollTop) {
+      pane.scrollTo({ left: pane.scrollLeft, top: this.startScrollTop, behavior: 'instant' });
     }
     this.context.end(outcome);
   }
