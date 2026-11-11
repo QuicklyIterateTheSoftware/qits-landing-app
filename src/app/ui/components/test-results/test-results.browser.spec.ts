@@ -40,6 +40,6 @@ describe('TestResultsView (screenshots)', () => {
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view.getByRole('list', { name: 'Failing tests' })).toBeVisible();
     await expect.element(view).toMatchTextContent('1 errored');
-    await expect.element(view).toMatchScreenshot('failing');
+    await expect.element(view).toMatchScreenshot('failing', { kind: 'DATA' });
   });
 });

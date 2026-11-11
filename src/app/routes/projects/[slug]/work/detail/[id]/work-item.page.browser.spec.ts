@@ -199,7 +199,7 @@ describe('WorkItemPage (screenshots)', () => {
     // A part with nothing in it (an item without a description) has no picture.
     if (!(part instanceof HTMLElement) || !part.offsetHeight) return;
     if (part.offsetHeight <= 560) {
-      await expect.element(page.elementLocator(part)).toMatchScreenshot(name);
+      await expect.element(page.elementLocator(part)).toMatchScreenshot(name, { kind: 'DATA' });
       return;
     }
     const children = [...part.children].filter(
@@ -302,7 +302,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(features.getByRole('link', { name: 'Shipped feature' })).toBeVisible();
       expect(features.element().querySelector('app-epic-board')).toBeNull();
       expect(features.element().querySelectorAll('app-feature-list-row')).toHaveLength(1);
-      await expect.element(features).toMatchScreenshot('detail-verified-epic-features');
+      await expect
+        .element(features)
+        .toMatchScreenshot('detail-verified-epic-features', { kind: 'DATA' });
     });
 
     it('a feature: description, tasks, comments', async () => {
@@ -375,7 +377,7 @@ describe('WorkItemPage (screenshots)', () => {
       );
     await expect
       .element(page.elementLocator(line.element().closest('p') as HTMLElement))
-      .toMatchScreenshot('detail-ticket-wrapper-closing');
+      .toMatchScreenshot('detail-ticket-wrapper-closing', { kind: 'DATA' });
   });
 
   // Epic qits-1899: the item's "needs" badge beside its facts, and its Needs panel below the body:
@@ -386,7 +388,7 @@ describe('WorkItemPage (screenshots)', () => {
     await expect.element(badge).toBeVisible();
     await expect
       .element(page.elementLocator(badge.element().closest('p') as HTMLElement))
-      .toMatchScreenshot('detail-needs-facts');
+      .toMatchScreenshot('detail-needs-facts', { kind: 'DATA' });
     const panel = element.getByRole('region', { name: 'Needs' });
     await expect
       .element(panel.getByRole('link', { name: 'Ticket: contract-00000001-1' }))
@@ -395,7 +397,7 @@ describe('WorkItemPage (screenshots)', () => {
     await expect.element(panel).toMatchTextContent('(now refined)');
     await expect.element(panel).toMatchTextContent('not met');
     await commands.parkPointer();
-    await expect.element(panel).toMatchScreenshot('detail-needs-panel');
+    await expect.element(panel).toMatchScreenshot('detail-needs-panel', { kind: 'DATA' });
   });
 
   describe('workspaces', () => {
@@ -422,7 +424,7 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(rows.nth(0).getByRole('link'))
         .toHaveAttribute('href', `/projects/contract-00000001/work/detail/${qualifiedId}/agent`);
-      await expect.element(region).toMatchScreenshot('workspaces-history');
+      await expect.element(region).toMatchScreenshot('workspaces-history', { kind: 'DATA' });
     });
 
     it('an item with no workspaces', async () => {
@@ -434,7 +436,7 @@ describe('WorkItemPage (screenshots)', () => {
       const region = workspacesOf(element);
       await expect.element(region).toMatchTextContent('No workspaces yet');
       expect(region.getByRole('listitem').elements()).toHaveLength(0);
-      await expect.element(region).toMatchScreenshot('workspaces-none');
+      await expect.element(region).toMatchScreenshot('workspaces-none', { kind: 'NO_DATA' });
     });
   });
 
@@ -448,7 +450,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Plan' }))
         .toMatchTextContent('Edit Reshape Refinement room');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-reported-ticket');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-reported-ticket', { kind: 'DATA' });
     });
 
     // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so the
@@ -459,7 +463,9 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Back to verifying Drop');
       expect(element.getByRole('group').elements()).toHaveLength(1);
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-verified-ticket');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-verified-ticket', { kind: 'DATA' });
     });
 
     it('done work: nothing', async () => {
@@ -480,7 +486,9 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark implementing Skip to implemented Back to refined Drop');
       expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-scheduled-feature');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-scheduled-feature', { kind: 'DATA' });
     });
 
     it('an implemented ticket: the verify phase, its flow, and the move to VERIFYING', async () => {
@@ -493,7 +501,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark verifying Skip to verified Back to implementing Drop Block');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-implemented-ticket');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-implemented-ticket', { kind: 'DATA' });
 
       // The next phase: one phase, PHASE.
       const ref = (await goldenMaster(IMPLEMENTED, 'getWork')).qualifiedId;
@@ -510,7 +520,9 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark verified Back to implemented Drop Block');
       await expect.element(element).toMatchTextContent('ticket · verifying');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-verifying-ticket');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-verifying-ticket', { kind: 'DATA' });
     });
 
     it('an implementing epic: Dispatch lists the flow it runs', async () => {
@@ -526,7 +538,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('tooltip'))
         .toMatchTextContent('Runsimplement → IMPLEMENTEDverify → VERIFIED');
-      await expect.element(frame).toMatchScreenshot('actions-implementing-epic-runs');
+      await expect
+        .element(frame)
+        .toMatchScreenshot('actions-implementing-epic-runs', { kind: 'DATA' });
     });
 
     it('a refined epic offers Dispatch (qits-1075)', async () => {
@@ -536,7 +550,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Mark ready for dev Back to reported Drop Block');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-refined-epic');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-refined-epic', { kind: 'DATA' });
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
         (e: { title: string }) => e.title === 'Refined epic',
@@ -555,7 +571,9 @@ describe('WorkItemPage (screenshots)', () => {
     it('a ready for dev epic: the implement phase, and the move to IMPLEMENTING', async () => {
       const { element } = await render(EVERY_STATUS, 'Ready for dev epic');
       await agentButtons(element, ['Dispatch', 'Implement']);
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-ready-for-dev-epic');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-ready-for-dev-epic', { kind: 'DATA' });
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
         (e: { title: string }) => e.title === 'Ready for dev epic',
@@ -570,7 +588,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark implemented Drop Block');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-implementing-epic');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-implementing-epic', { kind: 'DATA' });
     });
 
     it('a dropped ticket: Reopen, back to REPORTED', async () => {
@@ -578,7 +598,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Reopen');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-dropped-ticket');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-dropped-ticket', { kind: 'DATA' });
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
         (e: { title: string }) => e.title === 'Dropped ticket',
@@ -590,7 +612,9 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark refined Drop Block');
-      await expect.element(actionsOf(element)).toMatchScreenshot('actions-reopened-ticket');
+      await expect
+        .element(actionsOf(element))
+        .toMatchScreenshot('actions-reopened-ticket', { kind: 'DATA' });
     });
   });
 

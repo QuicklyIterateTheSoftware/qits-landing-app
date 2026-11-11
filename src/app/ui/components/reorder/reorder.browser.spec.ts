@@ -142,7 +142,9 @@ describe('Reorder (browser)', () => {
     expect((document.querySelector('[data-reorder-marker]') as HTMLElement).style.display).not.toBe(
       'none',
     );
-    await expect.element(page.elementLocator(document.body)).toMatchScreenshot('reorder-drag');
+    await expect
+      .element(page.elementLocator(document.body))
+      .toMatchScreenshot('reorder-drag', { kind: 'DATA' });
     await commands.mouse('up', start.x, view.gap(6));
     expect(view.host.moves).toEqual([{ from: 1, to: 5 }]);
     expect(view.host.cancels).toBe(0);
@@ -177,7 +179,9 @@ describe('Reorder (browser)', () => {
     expect((document.querySelector('[data-reorder-clone]') as HTMLElement).style.opacity).toBe(
       '0.5',
     );
-    await expect.element(page.elementLocator(document.body)).toMatchScreenshot('reorder-outside');
+    await expect
+      .element(page.elementLocator(document.body))
+      .toMatchScreenshot('reorder-outside', { kind: 'DATA' });
     await commands.mouse('up', outside, view.gap(5));
     expect(view.host.moves).toEqual([]);
     expect(view.host.cancels).toBe(1);
@@ -221,7 +225,9 @@ describe('Reorder (browser)', () => {
     expect(marker.style.top).toBe(
       `${(view.gap(4) + view.items[3].getBoundingClientRect().bottom) / 2 - 1}px`,
     );
-    await expect.element(page.elementLocator(document.body)).toMatchScreenshot('reorder-keyboard');
+    await expect
+      .element(page.elementLocator(document.body))
+      .toMatchScreenshot('reorder-keyboard', { kind: 'DATA' });
     await userEvent.keyboard('[Space]');
     expect(view.host.moves).toEqual([{ from: 1, to: 3 }]);
     view.expectClean();
@@ -305,7 +311,7 @@ describe('Reorder (browser)', () => {
     await expect.element(page.getByText('Release to cancel')).toBeVisible();
     await expect
       .element(page.elementLocator(document.body))
-      .toMatchScreenshot('reorder-touch-cancel');
+      .toMatchScreenshot('reorder-touch-cancel', { kind: 'DATA' });
     await commands.touch('move', start.x - 20, start.y + 100, 2);
     expect(label().style.display).toBe('none');
     await commands.touch('move', start.x - 70, start.y + 100, 2);
@@ -357,7 +363,7 @@ describe('Reorder (browser)', () => {
     expect(marker().style.top).toBe(`${view.gap(6) - 1}px`);
     await expect
       .element(page.elementLocator(document.body))
-      .toMatchScreenshot('reorder-touch-marker');
+      .toMatchScreenshot('reorder-touch-marker', { kind: 'DATA' });
     await commands.touch('move', start.x, start.y, 4);
     await frames();
     expect(window.scrollY).toBe(200);
@@ -383,7 +389,9 @@ describe('Reorder (browser)', () => {
     expect(view.items[29].style.transform).toBe(view.items[0].style.transform);
     const marker = document.querySelector<HTMLElement>('[data-reorder-marker]')!;
     expect(marker.style.top).toBe(`${middle}px`);
-    await expect.element(page.elementLocator(document.body)).toMatchScreenshot('reorder-touch-end');
+    await expect
+      .element(page.elementLocator(document.body))
+      .toMatchScreenshot('reorder-touch-end', { kind: 'DATA' });
     await commands.touch('up', start.x, 20);
     expect(view.host.moves).toEqual([{ from: 5, to: 0 }]);
     view.expectClean();

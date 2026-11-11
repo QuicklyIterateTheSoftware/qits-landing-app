@@ -37,7 +37,9 @@ describe('IdeaPage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('Cache the build dependencies');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('idea');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('idea', { kind: 'DATA' });
   });
 
   it('asks for a reason before it archives', async () => {
@@ -49,6 +51,8 @@ describe('IdeaPage (screenshots)', () => {
     await view.getByRole('button', { name: 'Archive', exact: true }).click();
     await opened.settled();
     await expect.element(view.getByRole('textbox', { name: 'Reason' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('archiving');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('archiving', { kind: 'DATA' });
   });
 });

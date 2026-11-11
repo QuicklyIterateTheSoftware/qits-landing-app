@@ -40,7 +40,9 @@ describe('IdeaCreatePage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('0/3 paragraphs');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('form');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('form', { kind: 'DATA' });
     await view
       .getByRole('textbox', { name: 'Title' })
       .fill('Faster builds. Fewer waits. Less cost');
@@ -51,6 +53,8 @@ describe('IdeaCreatePage (screenshots)', () => {
       .flush(await goldenMaster(IDEAS, 'createIdea'), { status: 400, statusText: 'Bad Request' });
     await opened.settled();
     await expect.element(view.getByRole('alert')).toMatchTextContent('at most one');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('refused');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('refused', { kind: 'ERROR' });
   });
 });

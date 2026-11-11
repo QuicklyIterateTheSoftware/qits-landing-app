@@ -116,7 +116,9 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(view.getByRole('group', { name: 'Container' }).getByRole('button', { name: 'Stop' }))
       .toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('slot');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('slot', { kind: 'DATA' });
   });
 
   it('names the agents a stop affects before it is confirmed', async () => {
@@ -135,7 +137,9 @@ describe('WorkspaceSlotPage (screenshots)', () => {
       .toMatchTextContent(
         'Stopping the container affects its 2 agents: contract-00000001-1, contract-00000001-9.',
       );
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('confirm-stop');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('confirm-stop', { kind: 'DATA' });
   });
 
   it('says nobody signed the container’s harness in, and offers the sign-in terminal', async () => {
@@ -147,7 +151,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(notice.getByRole('button', { name: 'Open the sign-in terminal' }))
       .toBeVisible();
-    await expect.element(notice).toMatchScreenshot('sign-in-notice');
+    await expect.element(notice).toMatchScreenshot('sign-in-notice', { kind: 'NO_DATA' });
   });
 
   it('lists the plugins on the shared agent home', async () => {
@@ -157,7 +161,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     const plugins = page.elementLocator(element.querySelector('app-plugins-section')!);
     await expect.element(plugins).toMatchTextContent('installed, switched off');
     await expect.element(plugins.getByRole('button', { name: 'Install' }).first()).toBeVisible();
-    await expect.element(plugins).toMatchScreenshot('plugins');
+    await expect.element(plugins).toMatchScreenshot('plugins', { kind: 'DATA' });
   });
 
   it('says a slot that answers 404 is gone', async () => {
@@ -174,6 +178,8 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(element);
     await expect.element(view).toMatchTextContent('This workspace is gone');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('gone');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('gone', { kind: 'ERROR' });
   });
 });

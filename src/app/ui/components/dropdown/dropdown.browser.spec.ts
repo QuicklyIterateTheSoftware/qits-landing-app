@@ -35,9 +35,9 @@ describe('Dropdown (screenshots)', () => {
     const fixture = TestBed.createComponent(Example);
     fixture.detectChanges();
     const element = page.elementLocator(fixture.nativeElement);
-    await expect.element(element).toMatchScreenshot('closed');
+    await expect.element(element).toMatchScreenshot('closed', { kind: 'DATA' });
     await page.getByRole('button', { name: 'Things' }).click();
     fixture.detectChanges();
-    await expect.element(element).toMatchScreenshot('open');
+    await expect.element(element).toMatchScreenshot('open', { kind: 'DATA' });
   });
 });

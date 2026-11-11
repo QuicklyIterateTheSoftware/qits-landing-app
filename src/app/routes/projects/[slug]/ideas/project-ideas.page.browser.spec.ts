@@ -47,7 +47,9 @@ describe('ProjectIdeasPage (screenshots)', () => {
     await expect
       .element(view.getByRole('button', { name: 'Move Share the build cache' }))
       .toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('list');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('list', { kind: 'DATA' });
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {
@@ -55,10 +57,14 @@ describe('ProjectIdeasPage (screenshots)', () => {
     const read = listRead();
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     read.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

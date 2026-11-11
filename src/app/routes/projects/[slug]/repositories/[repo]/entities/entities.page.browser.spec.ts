@@ -60,7 +60,9 @@ describe('EntitiesPage (screenshots)', () => {
     await expect.element(view.getByRole('heading', { name: 'domain 3' })).toBeVisible();
     await expect.element(view.getByRole('heading', { name: 'technical 1' })).toBeVisible();
     await expect.element(view.getByRole('link', { name: 'LegacyPlacement' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   it('says so when no contracts bundle is published for the repository', async () => {
@@ -73,6 +75,8 @@ describe('EntitiesPage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent('No contracts bundle is published for qits-projects-service.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('none');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('none', { kind: 'NO_DATA' });
   });
 });

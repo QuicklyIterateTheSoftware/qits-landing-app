@@ -90,28 +90,28 @@ describe('BumpsMenu (screenshots)', () => {
 
   it('is a lighthouse, closed', async () => {
     const { frame } = await render();
-    await expect.element(frame).toMatchScreenshot('closed');
+    await expect.element(frame).toMatchScreenshot('closed', { kind: 'DATA' });
   });
 
   it('lists the pending version bumps, and the upstream pools below them', async () => {
     const { fixture, frame, list } = await opened(SOME_POOLS);
     list.flush(await goldenMaster('pending bumps', 'listPendingBumps', 'qits-maintenance'));
     await answered(fixture);
-    await expect.element(frame).toMatchScreenshot('open');
+    await expect.element(frame).toMatchScreenshot('open', { kind: 'DATA' });
   });
 
   it('says so when there are none', async () => {
     const { fixture, frame, list } = await opened();
     list.flush(await goldenMaster('no pending bumps', 'listPendingBumps', 'qits-maintenance'));
     await answered(fixture);
-    await expect.element(frame).toMatchScreenshot('empty');
+    await expect.element(frame).toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('shows the spinner while loading, and the error icon when the list fails', async () => {
     const { fixture, frame, list } = await opened();
-    await expect.element(frame).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     list.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
-    await expect.element(frame).toMatchScreenshot('error');
+    await expect.element(frame).toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

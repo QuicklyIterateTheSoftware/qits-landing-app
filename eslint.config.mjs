@@ -12,6 +12,7 @@ export default tseslint.config(
     // connects); EVENT_SOURCE's payloads still go through assertRecorded, and a socket's frames are
     // raw terminal text, which no golden master records.
     rules: {
+      'qits/screenshot-kind': 'error',
       'qits/browser-spec-data-from-golden-masters': [
         'error',
         { allowTokens: ['EVENT_SOURCE', 'WEB_SOCKET'] },

@@ -85,7 +85,9 @@ describe('TicketListItem (screenshots)', () => {
     ['done', 'archive', EVERY_STATUS, 'contract-00000001-16', 'Done ticket'],
     ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-18', 'Dropped ticket'],
   ])('%s', async (name, view, state, qualifiedId, title) => {
-    await expect.element(await shown(view, state, qualifiedId, title)).toMatchScreenshot(name);
+    await expect
+      .element(await shown(view, state, qualifiedId, title))
+      .toMatchScreenshot(name, { kind: 'DATA' });
   });
 
   // Its "needs" badge (epic qits-1899): the READY_FOR_DEV ticket on the board stacked, its own
@@ -98,7 +100,7 @@ describe('TicketListItem (screenshots)', () => {
       'Render work ids in the list',
     );
     await expect.element(locator.getByText('needs 1')).toBeVisible();
-    await expect.element(locator).toMatchScreenshot('needs');
+    await expect.element(locator).toMatchScreenshot('needs', { kind: 'DATA' });
   });
 
   // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so a ticket

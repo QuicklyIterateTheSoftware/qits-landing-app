@@ -49,6 +49,8 @@ describe('List (screenshots)', () => {
   it('draws lanes, rows and cards like the board, without its columns', async () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('list');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('list', { kind: 'DATA' });
   });
 });

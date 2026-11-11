@@ -55,7 +55,9 @@ describe('ContractsPage (screenshots)', () => {
       .toMatchTextContent(
         'Could not read the golden masters of @contracts/qits-projects 2100.1.0.',
       );
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('unreadable-index');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('unreadable-index', { kind: 'ERROR' });
   });
 
   it('says so when no contracts bundle is published for the repository', async () => {
@@ -68,7 +70,9 @@ describe('ContractsPage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent('No contracts bundle is published for qits-projects-service.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('none');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('none', { kind: 'NO_DATA' });
   });
 
   it('marks the page as failed when the docs store cannot be read', async () => {
@@ -77,6 +81,8 @@ describe('ContractsPage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

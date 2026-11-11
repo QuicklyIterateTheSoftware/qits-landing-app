@@ -87,7 +87,7 @@ describe('WorkCreatePage (screenshots)', () => {
     await expect.element(page.elementLocator(opened.page)).toMatchTextContent('Inspired by');
     await expect
       .element(page.elementLocator(opened.frame))
-      .toMatchScreenshot(`from-idea-${archetype.toLowerCase()}`);
+      .toMatchScreenshot(`from-idea-${archetype.toLowerCase()}`, { kind: 'DATA' });
   });
 
   it('create-work-item created: goes to the new ticket’s page', async () => {
@@ -122,7 +122,9 @@ describe('WorkCreatePage (screenshots)', () => {
     await expect
       .element(view.getByRole('button', { name: 'Cancel' }))
       .toHaveAttribute('data-qits-outcome', 'cancel-work-create:toWork');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('refused');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('refused', { kind: 'ERROR' });
     expect(url()).toBe(`/projects/${opened.project.slug}/work/create?archetype=TICKET`);
     expect(reached()).toEqual(['create-work-item:refused']);
   });

@@ -56,7 +56,9 @@ describe('ContractStatePage (screenshots)', () => {
       .toMatchTextContent(
         'Could not read the golden masters of @contracts/qits-projects 2100.1.0.',
       );
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('unreadable-index');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('unreadable-index', { kind: 'ERROR' });
   });
 
   it('says so when no contracts bundle is published for the repository', async () => {
@@ -73,6 +75,8 @@ describe('ContractStatePage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent('No contracts bundle is published for contract-frontend.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('none');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('none', { kind: 'NO_DATA' });
   });
 });

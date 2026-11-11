@@ -42,18 +42,18 @@ describe('Popover (screenshots)', () => {
   it('draws closed', async () => {
     const { element } = shown();
     await expect.element(element.getByText(/left edge/)).not.toBeVisible();
-    await expect.element(element).toMatchScreenshot('closed');
+    await expect.element(element).toMatchScreenshot('closed', { kind: 'DATA' });
   });
 
   it('opens on hover, at either edge', async () => {
     const { element } = shown();
     await userEvent.hover(element.getByRole('button', { name: 'Start' }));
     await expect.element(element.getByText(/left edge/)).toBeVisible();
-    await expect.element(element).toMatchScreenshot('hover-start');
+    await expect.element(element).toMatchScreenshot('hover-start', { kind: 'DATA' });
     await userEvent.hover(element.getByRole('button', { name: 'End' }));
     await expect.element(element.getByText(/left edge/)).not.toBeVisible();
     await expect.element(element.getByText(/right edge/)).toBeVisible();
-    await expect.element(element).toMatchScreenshot('hover-end');
+    await expect.element(element).toMatchScreenshot('hover-end', { kind: 'DATA' });
   });
 
   it('opens on keyboard focus, and Escape closes it', async () => {
@@ -64,7 +64,7 @@ describe('Popover (screenshots)', () => {
       .element(element.getByRole('button', { name: 'Start' }))
       .toHaveAccessibleDescription('Lines up with the left edge of its trigger.');
     await expect.element(element.getByText(/left edge/)).toBeVisible();
-    await expect.element(element).toMatchScreenshot('focus');
+    await expect.element(element).toMatchScreenshot('focus', { kind: 'DATA' });
     await userEvent.keyboard('{Escape}');
     fixture.detectChanges();
     await expect.element(element.getByText(/left edge/)).not.toBeVisible();

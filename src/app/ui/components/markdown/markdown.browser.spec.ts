@@ -71,7 +71,7 @@ describe('Markdown (screenshots)', () => {
     fixture.detectChanges();
     const element = page.elementLocator(fixture.nativeElement);
     await expect.element(element.getByRole('table')).toBeVisible();
-    await expect.element(element).toMatchScreenshot('every-part');
+    await expect.element(element).toMatchScreenshot('every-part', { kind: 'DATA' });
   });
 
   // qits-1913: a long inline-code path and a wide table used to push the whole page sideways on a
@@ -96,7 +96,7 @@ describe('Markdown (screenshots)', () => {
       host.getBoundingClientRect().right,
     );
 
-    await expect.element(element).toMatchScreenshot('narrow');
+    await expect.element(element).toMatchScreenshot('narrow', { kind: 'DATA' });
   });
 });
 
@@ -187,7 +187,7 @@ describe('Markdown with work references (browser)', () => {
     await expect
       .element(tooltip)
       .toHaveTextContent(`${ticket.qualifiedId}${status}1h ago${ticket.title}`);
-    await expect.element(view).toMatchScreenshot('work-text-ref-open');
+    await expect.element(view).toMatchScreenshot('work-text-ref-open', { kind: 'DATA' });
   });
 
   it("on a finger, a tap opens a comment's brief without following anything", async () => {

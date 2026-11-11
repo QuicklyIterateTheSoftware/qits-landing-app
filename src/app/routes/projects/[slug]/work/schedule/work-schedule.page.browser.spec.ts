@@ -73,7 +73,7 @@ describe('WorkSchedulePage (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('Ready for dev ticket');
     await expect.element(locator).toMatchTextContent('It does what it says.');
     await expect.element(locator).not.toMatchTextContent('Implementing ticket');
-    await expect.element(frame).toMatchScreenshot('lists');
+    await expect.element(frame).toMatchScreenshot('lists', { kind: 'DATA' });
   });
 
   it('shows the service’s refusal under an item it would not schedule', async () => {
@@ -101,7 +101,7 @@ describe('WorkSchedulePage (screenshots)', () => {
     await opened.settled();
     await expect.element(locator.getByRole('alert')).toMatchTextContent('PERSON_APPROVAL');
     expect(element.querySelectorAll('[role=alert]:not(.hidden)').length).toBe(1);
-    await expect.element(frame).toMatchScreenshot('refused');
+    await expect.element(frame).toMatchScreenshot('refused', { kind: 'ERROR' });
   });
 
   it('says so when nothing waits to be scheduled', async () => {
@@ -110,13 +110,13 @@ describe('WorkSchedulePage (screenshots)', () => {
     await opened.settled();
     await expect.element(locator).toMatchTextContent('Nothing to schedule.');
     await expect.element(locator).toMatchTextContent('Nothing scheduled.');
-    await expect.element(frame).toMatchScreenshot('empty');
+    await expect.element(frame).toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('shows that the work is loading', async () => {
     const { opened, locator, frame, work } = await shown();
     await expect.element(locator.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
   });

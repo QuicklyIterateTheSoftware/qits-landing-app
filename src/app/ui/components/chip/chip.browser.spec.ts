@@ -20,6 +20,8 @@ describe('Chip (screenshots)', () => {
   it('draws each tone', async () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('tones');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('tones', { kind: 'DATA' });
   });
 });

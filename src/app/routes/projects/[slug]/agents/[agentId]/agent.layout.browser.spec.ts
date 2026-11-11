@@ -112,7 +112,9 @@ describe('AgentLayout (screenshots)', () => {
     expect(streams).toEqual([
       `https://workspaces.test/workspaces/api/technical-processes/${process.technicalProcessId}/events`,
     ]);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('starting');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('starting', { kind: 'DATA' });
   });
 
   it('shows a refused discard in the service’s words, and offers force', async () => {
@@ -131,7 +133,9 @@ describe('AgentLayout (screenshots)', () => {
     await opened.settled();
     await expect.element(view).toMatchTextContent(refusal.message);
     await expect.element(view.getByRole('button', { name: 'Discard anyway' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('discard-refused');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('discard-refused', { kind: 'ERROR' });
   });
 
   it('marks the agent as failed to load', async () => {
@@ -148,6 +152,8 @@ describe('AgentLayout (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

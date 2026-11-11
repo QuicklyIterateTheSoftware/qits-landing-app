@@ -91,14 +91,14 @@ describe('TicketCard (screenshots)', () => {
     ['verifying', EVERY_STATUS, 'contract-00000001-12', 'Verifying ticket'],
   ])('%s', async (name, state, qualifiedId, title) => {
     const { locator } = await shown(state, qualifiedId, title);
-    await expect.element(locator).toMatchScreenshot(name);
+    await expect.element(locator).toMatchScreenshot(name, { kind: 'DATA' });
   });
 
   // Its "needs" badge (epic qits-1899): one need not met.
   it('needs', async () => {
     const { locator } = await shown(NEEDS, 'contract-00000001-2', 'Render work ids in the list');
     await expect.element(locator.getByText('needs 1')).toBeVisible();
-    await expect.element(locator).toMatchScreenshot('needs');
+    await expect.element(locator).toMatchScreenshot('needs', { kind: 'DATA' });
   });
 
   // The open workspaces of qits-workspaces' "a project with workspaces bound to work items": the bug
@@ -123,7 +123,7 @@ describe('TicketCard (screenshots)', () => {
     await expect
       .element(link)
       .toHaveAttribute('href', `/projects/contract-00000001/work/detail/${qualifiedId}/agent`);
-    await expect.element(locator).toMatchScreenshot('workspace');
+    await expect.element(locator).toMatchScreenshot('workspace', { kind: 'DATA' });
   });
 
   it('lists its unmet needs on hover', async () => {
@@ -140,6 +140,6 @@ describe('TicketCard (screenshots)', () => {
     await expect
       .element(tooltip)
       .toMatchTextContent('contract-00000001-1 at VERIFIED (now REFINED)');
-    await expect.element(locator).toMatchScreenshot('needs-tooltip');
+    await expect.element(locator).toMatchScreenshot('needs-tooltip', { kind: 'DATA' });
   });
 });

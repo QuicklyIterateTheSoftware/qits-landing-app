@@ -47,12 +47,16 @@ describe('SegmentLog (screenshots)', () => {
   it('opens the running segment, folds the settled ones, and notes a failure', async () => {
     const fixture = TestBed.createComponent(Log);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('segments');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('segments', { kind: 'DATA' });
   });
 
   it('waits for the first line', async () => {
     const fixture = TestBed.createComponent(Empty);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('waiting');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('waiting', { kind: 'PENDING' });
   });
 });

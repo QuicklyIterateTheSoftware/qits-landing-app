@@ -77,7 +77,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).not.toMatchTextContent('Done ticket');
     await expect.element(element).toMatchTextContent('Closes once its release lands');
     expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(1);
-    await expect.element(frame).toMatchScreenshot('acceptance');
+    await expect.element(frame).toMatchScreenshot('acceptance', { kind: 'DATA' });
   });
 
   // qits-1873: each VERIFIED ticket's card says how its wrapper closing stands, the request linked.
@@ -127,7 +127,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     expect(lineOf('contract-00000001-5')?.classList.contains('text-sunflower-gold-800')).toBe(true);
     // The REFINED ticket is not in Acceptance.
     await expect.element(element).not.toMatchTextContent('Not verified yet');
-    await expect.element(frame).toMatchScreenshot('wrapper-closings');
+    await expect.element(frame).toMatchScreenshot('wrapper-closings', { kind: 'DATA' });
     // The empty wrapper's withdrawal and the UNPROVEN warning are also shot card by card, close up.
     for (const [ticket, name] of [
       ['contract-00000001-4', 'wrapper-closings-withdrawn'],
@@ -135,7 +135,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     ]) {
       const card = lineOf(ticket)?.closest('ui-board-card') as HTMLElement;
       card.scrollIntoView();
-      await expect.element(page.elementLocator(card)).toMatchScreenshot(name);
+      await expect.element(page.elementLocator(card)).toMatchScreenshot(name, { kind: 'DATA' });
     }
   });
 
@@ -159,7 +159,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await answered();
     await expect.element(element).toMatchTextContent('Nothing here');
-    await expect.element(frame).toMatchScreenshot('empty');
+    await expect.element(frame).toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('leaves out the verified feature of an epic still on its board, with epic boards', async () => {
@@ -169,7 +169,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Nothing here');
     await expect.element(element).not.toMatchTextContent('Verified feature');
     await expect.element(element).not.toMatchTextContent('Epic with mixed features');
-    await expect.element(frame).toMatchScreenshot('epic-boards-mixed-data');
+    await expect.element(frame).toMatchScreenshot('epic-boards-mixed-data', { kind: 'NO_DATA' });
   });
 
   it('lists the verified feature under its epic, inline', async () => {
@@ -180,7 +180,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Verified feature');
     await expect.element(element).toMatchTextContent('Verified task');
     await expect.element(element).toMatchTextContent('Epic with mixed features');
-    await expect.element(frame).toMatchScreenshot('inline-mixed-data');
+    await expect.element(frame).toMatchScreenshot('inline-mixed-data', { kind: 'DATA' });
   });
 
   it('says that the work could not be read', async () => {
@@ -188,13 +188,13 @@ describe('WorkAcceptancePage (screenshots)', () => {
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await answered();
     await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('error');
+    await expect.element(frame).toMatchScreenshot('error', { kind: 'ERROR' });
   });
 
   it('shows that the work is loading', async () => {
     const { element, frame, work, answered } = await shown();
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await answered();
   });

@@ -96,20 +96,26 @@ describe('ProjectDeskPage (screenshots)', () => {
     await expect.element(view).toMatchTextContent('delivered');
     await expect.element(view).toMatchTextContent('contract-00000001-1580');
     await expect.element(view).toMatchTextContent('contract-service-rr-7');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {
     const { opened, request } = await render();
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     request.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect
       .element(view.getByRole('alert'))
       .toMatchTextContent('This project’s desk trigger messages could not be read.');
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

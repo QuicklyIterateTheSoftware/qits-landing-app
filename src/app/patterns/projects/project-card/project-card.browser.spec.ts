@@ -122,7 +122,7 @@ describe('ProjectCard (screenshots)', () => {
     await expect
       .element(card.getByRole('button', { name: 'Show more' }))
       .toHaveAttribute('aria-expanded', 'false');
-    await expect.element(card).toMatchScreenshot('collapsed');
+    await expect.element(card).toMatchScreenshot('collapsed', { kind: 'DATA' });
   });
 
   // Skipped: qits-githost records its lines under its own frozen repository ids, and the card
@@ -134,7 +134,7 @@ describe('ProjectCard (screenshots)', () => {
     await expect.element(card).toMatchTextContent('Work 3');
     await expect.element(card).toMatchTextContent('Components 4');
     await expect.element(card).toMatchTextContent('Java');
-    await expect.element(card).toMatchScreenshot('loaded');
+    await expect.element(card).toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   // Skipped: qits-githost records its lines under its own frozen repository ids, and the card
@@ -145,7 +145,7 @@ describe('ProjectCard (screenshots)', () => {
     const card = await shown('two repositories, one counted');
     await expect.element(card).toMatchTextContent('Java');
     await expect.element(card).not.toMatchTextContent('Counting lines');
-    await expect.element(card).toMatchScreenshot('lines-partial');
+    await expect.element(card).toMatchScreenshot('lines-partial', { kind: 'DATA' });
   });
 
   // Skipped: qits-githost records its lines under its own frozen repository ids, and the card
@@ -155,7 +155,7 @@ describe('ProjectCard (screenshots)', () => {
   it.skip('shows the older count of a repository whose tip is not counted yet', async () => {
     const card = await shown('a repository counted at an older commit');
     await expect.element(card).toMatchTextContent('Java');
-    await expect.element(card).toMatchScreenshot('lines-stale');
+    await expect.element(card).toMatchScreenshot('lines-stale', { kind: 'DATA' });
   });
 
   // Skipped: qits-githost records its lines under its own frozen repository ids, and the card
@@ -165,7 +165,7 @@ describe('ProjectCard (screenshots)', () => {
   it.skip('shows that lines are being counted when none is counted yet', async () => {
     const card = await shown('a repository not counted yet');
     await expect.element(card.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(card).toMatchScreenshot('lines-counting');
+    await expect.element(card).toMatchScreenshot('lines-counting', { kind: 'DATA' });
   });
 
   // Skipped: qits-githost records its lines under its own frozen repository ids, and the card
@@ -176,7 +176,7 @@ describe('ProjectCard (screenshots)', () => {
     const card = await shown('a repository with no commit', 'a project with no work');
     await expect.element(card).toMatchTextContent('Work 0');
     await expect.element(card).toMatchTextContent('No lines yet');
-    await expect.element(card).toMatchScreenshot('lines-empty');
+    await expect.element(card).toMatchScreenshot('lines-empty', { kind: 'NO_DATA' });
   });
 
   it('shows that it is loading', async () => {
@@ -185,7 +185,7 @@ describe('ProjectCard (screenshots)', () => {
     const card = page.elementLocator(fixture.nativeElement);
     // One spinner each on the work tile, the components tile and the languages table.
     expect(card.getByRole('img', { name: 'Loading' }).elements()).toHaveLength(3);
-    await expect.element(card).toMatchScreenshot('loading');
+    await expect.element(card).toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     repositories.flush(null, { status: 500, statusText: 'Server Error' });
     lines.flush(null, { status: 500, statusText: 'Server Error' });
@@ -204,6 +204,6 @@ describe('ProjectCard (screenshots)', () => {
     // One error icon each on the work tile, the components tile and the languages table.
     expect(card.getByRole('img', { name: 'Failed to load' }).elements()).toHaveLength(3);
     await expect.element(card).not.toMatchTextContent(/unavailable/i);
-    await expect.element(card).toMatchScreenshot('unavailable');
+    await expect.element(card).toMatchScreenshot('unavailable', { kind: 'ERROR' });
   });
 });

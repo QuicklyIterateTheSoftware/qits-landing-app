@@ -68,20 +68,26 @@ describe('EntityPage (screenshots)', () => {
     await expect.element(view).toMatchTextContent('eu.wohlben.qits.entities.dto.ProjectDto');
     await expect.element(view).toMatchTextContent('ProjectMapper.toDto(Project)');
     await expect.element(view).toMatchTextContent('No ER diagram published for this entity.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('domain');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('domain', { kind: 'DATA' });
   });
 
   it('shows why a technical entity is one', async () => {
     const opened = await open('eu.wohlben.qits.entities.domain.LegacyPlacement');
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('bookkeeping of a retired layout');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('technical');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('technical', { kind: 'DATA' });
   });
 
   it('says so for a class the map does not list', async () => {
     const opened = await open('eu.wohlben.qits.entities.domain.Nothing');
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('No such entity in qits-projects 2100.1.0.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('unknown');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('unknown', { kind: 'NO_DATA' });
   });
 });

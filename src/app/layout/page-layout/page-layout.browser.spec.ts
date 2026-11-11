@@ -185,12 +185,12 @@ describe('PageLayoutComponent (screenshots)', () => {
     const { element } = shown(WithInputs);
     const locator = page.elementLocator(element);
     await expect.element(locator.getByRole('group', { name: 'Release' })).toBeVisible();
-    await expect.element(locator).toMatchScreenshot('inputs');
+    await expect.element(locator).toMatchScreenshot('inputs', { kind: 'DATA' });
   });
 
   it('draws a projected header and projected actions', async () => {
     const { element } = shown(WithSlots);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('slots');
+    await expect.element(page.elementLocator(element)).toMatchScreenshot('slots', { kind: 'DATA' });
   });
 
   it('keeps the actions pinned while the content scrolls under them', async () => {
@@ -204,7 +204,9 @@ describe('PageLayoutComponent (screenshots)', () => {
     expect(element.querySelector('h1')!.getBoundingClientRect().bottom).toBeLessThan(
       element.getBoundingClientRect().top,
     );
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('pinned');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('pinned', { kind: 'DATA' });
   });
 
   it('pins the actions below the top bar, and tells their height to the content', async () => {
@@ -225,7 +227,9 @@ describe('PageLayoutComponent (screenshots)', () => {
       )
       .toBe(`${actions.offsetHeight}px`);
     expect(actions.offsetHeight).toBeGreaterThan(0);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('pinned-under-bar');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('pinned-under-bar', { kind: 'DATA' });
   });
 
   it('pins the actions at the top of a scrolling main, not the bar’s height below it', async () => {
@@ -267,7 +271,9 @@ describe('PageLayoutComponent (screenshots)', () => {
     expect(title.right).toBeLessThanOrEqual(actions.left + 1);
     expect(title.top).toBeLessThan(actions.bottom);
     expect(title.height).toBeGreaterThan(40);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('wrapping');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('wrapping', { kind: 'DATA' });
   });
 
   it('puts the actions on the first line and the title below them when no room is left', async () => {
@@ -275,7 +281,9 @@ describe('PageLayoutComponent (screenshots)', () => {
     const title = element.querySelector('h1')!.getBoundingClientRect();
     const actions = element.querySelector('[data-page-actions]')!.getBoundingClientRect();
     expect(title.top).toBeGreaterThanOrEqual(actions.bottom - 1);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('narrow');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('narrow', { kind: 'DATA' });
   });
 
   it('keeps a group wider than the bar on one row at desktop width', () => {
@@ -299,7 +307,9 @@ describe('PageLayoutComponent (screenshots)', () => {
         expect(rect.left).toBeGreaterThanOrEqual(0);
         expect(rect.right).toBeLessThanOrEqual(window.innerWidth);
       }
-      await expect.element(page.elementLocator(element)).toMatchScreenshot('phone-wide-group');
+      await expect
+        .element(page.elementLocator(element))
+        .toMatchScreenshot('phone-wide-group', { kind: 'DATA' });
     } finally {
       await page.viewport(800, 600);
     }

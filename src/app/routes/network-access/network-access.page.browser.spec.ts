@@ -58,13 +58,17 @@ describe('NetworkAccessPage (screenshots)', () => {
     await expect
       .element(view.getByRole('button', { name: 'Download WireGuard config' }))
       .toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   it('says no private edge has announced itself', async () => {
     const opened = await render('none');
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('No private edge has announced itself yet.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('no-private-edge');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('no-private-edge', { kind: 'NO_DATA' });
   });
 });

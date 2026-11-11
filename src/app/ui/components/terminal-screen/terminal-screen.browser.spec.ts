@@ -37,6 +37,8 @@ describe('TerminalScreen (screenshots)', () => {
       .poll(() => element.querySelector('.xterm-rows')?.textContent ?? '')
       .toContain('working tree clean');
     expect(fixture.componentInstance.sizes.length).toBeGreaterThan(0);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('session');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('session', { kind: 'DATA' });
   });
 });

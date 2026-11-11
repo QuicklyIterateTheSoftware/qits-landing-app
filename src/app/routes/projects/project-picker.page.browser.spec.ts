@@ -30,7 +30,9 @@ describe('ProjectPickerPage (screenshots)', () => {
     const { opened, list } = await render();
     const picker = page.elementLocator(opened.page);
     await expect.element(picker.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     list.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
   });
@@ -67,7 +69,9 @@ describe('ProjectPickerPage (screenshots)', () => {
     await expect.element(cards.nth(1)).toMatchTextContent('telemetry');
     await expect.element(cards.nth(1)).toMatchTextContent('Work 0');
     await expect.element(cards.nth(1)).toMatchTextContent('Components 2');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   it('says so when there are no projects', async () => {
@@ -76,7 +80,9 @@ describe('ProjectPickerPage (screenshots)', () => {
     await opened.settled();
     const picker = page.elementLocator(opened.page);
     await expect.element(picker).toMatchTextContent('There are no projects yet.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('empty');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('marks the list as failed to load when the projects could not be loaded', async () => {
@@ -85,6 +91,8 @@ describe('ProjectPickerPage (screenshots)', () => {
     await opened.settled();
     const picker = page.elementLocator(opened.page);
     await expect.element(picker.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

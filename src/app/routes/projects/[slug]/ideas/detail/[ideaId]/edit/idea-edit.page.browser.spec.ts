@@ -42,6 +42,8 @@ describe('IdeaEditPage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('2/3 paragraphs');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('form');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('form', { kind: 'DATA' });
   });
 });

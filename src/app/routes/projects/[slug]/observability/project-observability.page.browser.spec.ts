@@ -21,6 +21,8 @@ describe('ProjectObservabilityPage (screenshots)', () => {
 
   it('shows the blank page', async () => {
     const opened = await openRoute((project) => `/projects/${project.slug}/observability`);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('blank');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('blank', { kind: 'NO_DATA' });
   });
 });

@@ -23,6 +23,7 @@
  *   declared outcome no test reaches, or whose trigger no screenshot shows.
  */
 import {
+  DEFAULT_ROUTE_SPECS,
   freezeScreenshots,
   guardGoldenMasters,
   recordOutcomes,
@@ -39,7 +40,9 @@ guardGoldenMasters({
 });
 
 // Every passing screenshot, frozen as HTML beside the app's route tree (no lazy route is loaded).
-freezeScreenshots({ routes });
+// Every toMatchScreenshot(...) must name its kind (lint qits/screenshot-kind backs this up at
+// review time), and every route spec (page/layout) shoots at PHONE/TABLET/DESKTOP by default.
+freezeScreenshots({ routes, requireKind: true, viewportSpecs: DEFAULT_ROUTE_SPECS });
 
 // Every declared outcome each test reaches, for the manifest and the outcome check.
 recordOutcomes();

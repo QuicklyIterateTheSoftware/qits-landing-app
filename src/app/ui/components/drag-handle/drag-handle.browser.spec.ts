@@ -37,6 +37,8 @@ describe('DragHandle (screenshots)', () => {
     expect(Math.abs(button.left + button.width / 2 - item.right)).toBeLessThanOrEqual(1.5);
     expect(Math.abs(button.top + button.height / 2 - item.bottom)).toBeLessThanOrEqual(1.5);
     expect(getComputedStyle(element.querySelector('ui-drag-handle button')!).cursor).toBe('grab');
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('drag-handle');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('drag-handle', { kind: 'DATA' });
   });
 });

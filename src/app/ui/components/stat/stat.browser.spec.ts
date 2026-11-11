@@ -22,6 +22,8 @@ describe('Stat (screenshots)', () => {
   it('draws the variants', async () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('variants');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('variants', { kind: 'DATA' });
   });
 });

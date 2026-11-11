@@ -93,13 +93,13 @@ describe('KanbanBoard (screenshots)', () => {
     await expect.element(locator).not.toMatchTextContent('Refined ticket');
     await expect.element(locator).not.toMatchTextContent('Verified ticket');
     await expect.element(locator).not.toMatchTextContent('Done ticket');
-    await expect.element(locator).toMatchScreenshot('every-status');
+    await expect.element(locator).toMatchScreenshot('every-status', { kind: 'DATA' });
   });
 
   it('a board with an epic’s features and tasks', async () => {
     const { locator } = await shown(NESTED);
     await expect.element(locator).toMatchTextContent('Open task');
-    await expect.element(locator).toMatchScreenshot('nested');
+    await expect.element(locator).toMatchScreenshot('nested', { kind: 'DATA' });
   });
 
   /**
@@ -158,6 +158,6 @@ describe('KanbanBoard (screenshots)', () => {
     // No selection colour in the shot; the highlight stays until it fades.
     select((selection) => selection.removeAllRanges());
     expect(card.classList.contains('outline-ocean-deep-600')).toBe(true);
-    await expect.element(locator).toMatchScreenshot('selection-highlight');
+    await expect.element(locator).toMatchScreenshot('selection-highlight', { kind: 'DATA' });
   });
 });

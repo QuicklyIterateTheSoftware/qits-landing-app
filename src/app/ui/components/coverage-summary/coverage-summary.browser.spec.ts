@@ -31,6 +31,6 @@ describe('CoverageSummary (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view).toMatchTextContent('−6.0 vs 2026.1009.122548');
-    await expect.element(view).toMatchScreenshot('diff');
+    await expect.element(view).toMatchScreenshot('diff', { kind: 'DATA' });
   });
 });

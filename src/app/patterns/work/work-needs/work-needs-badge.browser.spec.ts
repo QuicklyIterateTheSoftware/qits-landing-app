@@ -40,7 +40,7 @@ describe('WorkNeedsBadge (screenshots)', () => {
     const host = await render();
     await expect.element(host.getByText('needs 1')).toBeVisible();
     await commands.parkPointer();
-    await expect.element(host).toMatchScreenshot('badge');
+    await expect.element(host).toMatchScreenshot('badge', { kind: 'DATA' });
   });
 
   it('its tooltip, on hover', async () => {
@@ -51,6 +51,6 @@ describe('WorkNeedsBadge (screenshots)', () => {
     await expect
       .element(tooltip)
       .toMatchTextContent('contract-00000001-1 at VERIFIED (now REFINED)');
-    await expect.element(host).toMatchScreenshot('badge-tooltip');
+    await expect.element(host).toMatchScreenshot('badge-tooltip', { kind: 'DATA' });
   });
 });

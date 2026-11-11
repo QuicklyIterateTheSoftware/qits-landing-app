@@ -93,7 +93,7 @@ describe('EpicBoard (screenshots)', () => {
    */
   async function shoot(element: HTMLElement, name: string): Promise<void> {
     if (element.offsetHeight <= 560) {
-      await expect.element(page.elementLocator(element)).toMatchScreenshot(name);
+      await expect.element(page.elementLocator(element)).toMatchScreenshot(name, { kind: 'DATA' });
       return;
     }
     const parts: [string, Element | null][] = [
@@ -106,7 +106,9 @@ describe('EpicBoard (screenshots)', () => {
     ];
     for (const [part, found] of parts) {
       if (found instanceof HTMLElement) {
-        await expect.element(page.elementLocator(found)).toMatchScreenshot(`${name}-${part}`);
+        await expect
+          .element(page.elementLocator(found))
+          .toMatchScreenshot(`${name}-${part}`, { kind: 'DATA' });
       }
     }
   }

@@ -144,14 +144,18 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const { opened, element, read } = await render(recorded.request.qualifiedId);
     const view = page.elementLocator(element);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     read.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect
       .element(view.getByRole('alert'))
       .toMatchTextContent('This release request could not be read.');
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 
   it('reads the request again on Retry', async () => {
@@ -186,7 +190,9 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent('This project has no release request no-such-request.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('not-found');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('not-found', { kind: 'ERROR' });
   });
 
   it('draws a refolded request’s fold as a branch graph under its sources', async () => {
@@ -195,7 +201,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
       name: 'What this release folds in',
     });
     await expect.element(graph).toMatchTextContent('feature/export');
-    await expect.element(graph).toMatchScreenshot('refolded-graph');
+    await expect.element(graph).toMatchScreenshot('refolded-graph', { kind: 'DATA' });
   });
 
   it('shows a pending request: head, facts and its lifecycle', async () => {
@@ -207,7 +213,9 @@ describe('ReleaseRequestPage (screenshots)', () => {
       .element(view.getByRole('heading', { level: 1 }))
       .toMatchTextContent('bump/contract-service');
     await expect.element(view).toMatchTextContent(/asked by /);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('pending');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('pending', { kind: 'DATA' });
   });
 
   it('offers Approve and Decline while a person must approve', async () => {
@@ -242,13 +250,17 @@ describe('ReleaseRequestPage (screenshots)', () => {
     const { opened, view } = await shown('a released release request');
     await expect.element(view).toMatchTextContent('2026.101.100500');
     await expect.element(view.getByRole('heading', { name: 'What it published' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('released');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('released', { kind: 'DATA' });
   });
 
   it('shows the paths a conflicted request could not fold', async () => {
     const recorded = await goldenMaster('a conflicted release request', 'getReleaseRequest');
     const { opened, view } = await shown('a conflicted release request');
     await expect.element(view).toMatchTextContent(recorded.request.conflict.conflicts[0].path);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('conflicted');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('conflicted', { kind: 'DATA' });
   });
 });

@@ -29,6 +29,6 @@ describe('GateShield (screenshots)', () => {
     await expect
       .element(view.getByRole('img', { name: 'Quality gates: CI failed' }).first())
       .toHaveAttribute('data-shield', 'failed');
-    await expect.element(view).toMatchScreenshot('states');
+    await expect.element(view).toMatchScreenshot('states', { kind: 'DATA' });
   });
 });

@@ -47,7 +47,9 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     await expect.element(view).toMatchTextContent('Succeeded');
     await expect.element(view).toMatchTextContent('Auth needed');
     await expect.element(view).toMatchTextContent('No twin');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('tree');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('tree', { kind: 'DATA' });
   });
 
   it('shows a card’s clone URL, backup URL and main branch when opened', async () => {
@@ -64,7 +66,9 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('https://githost.example.test/git/');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('opened');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('opened', { kind: 'DATA' });
   });
 
   it('marks the page as loading, then as failed to load', async () => {
@@ -72,10 +76,10 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     const view = page.elementLocator(opened.page);
     const frame = page.elementLocator(opened.frame);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     request.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('error');
+    await expect.element(frame).toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

@@ -87,7 +87,7 @@ describe('EpicListItem (screenshots)', () => {
     ['dropped', 'archive', EVERY_STATUS, 'contract-00000001-17', 'Dropped epic'],
   ])('%s', async (name, view, state, qualifiedId, title) => {
     const { locator } = await shown(view, state, qualifiedId, title);
-    await expect.element(locator).toMatchScreenshot(name);
+    await expect.element(locator).toMatchScreenshot(name, { kind: 'DATA' });
   });
 
   it('draws the finish button on the bottom-right corner of a VERIFIED epic', async () => {
@@ -140,7 +140,7 @@ describe('EpicListItem (screenshots)', () => {
     expect(hidden('contract-00000001-1')).toBe(true);
     expect(hidden('contract-00000001-2')).toBe(true);
     expect(hidden('contract-00000001-3')).toBe(false);
-    await expect.element(locator).toMatchScreenshot('backlog-task-handle');
+    await expect.element(locator).toMatchScreenshot('backlog-task-handle', { kind: 'DATA' });
   });
 
   // This epic's tasks are IMPLEMENTED by their own status (qits-763), so they are on the board,
@@ -153,13 +153,17 @@ describe('EpicListItem (screenshots)', () => {
       'Verified epic',
     );
     await expect.element(locator).not.toMatchTextContent('Second shipped task');
-    await expect.element(locator).toMatchScreenshot('verified-tasks-open-expanded');
+    await expect
+      .element(locator)
+      .toMatchScreenshot('verified-tasks-open-expanded', { kind: 'DATA' });
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
     await expect.element(locator).toMatchTextContent('0 / 2 ✅');
-    await expect.element(locator).toMatchScreenshot('verified-tasks-open-collapsed');
+    await expect
+      .element(locator)
+      .toMatchScreenshot('verified-tasks-open-collapsed', { kind: 'DATA' });
   });
 
   it('every task implemented (DONE): collapsed, then expanded', async () => {
@@ -172,12 +176,12 @@ describe('EpicListItem (screenshots)', () => {
     // The Archive starts every epic collapsed; a done one counts its finished tasks. Finishing the
     // epic finishes its IMPLEMENTED tasks with it (qits-1685), so both count.
     await expect.element(locator).toMatchTextContent('2 / 2 ✅');
-    await expect.element(locator).toMatchScreenshot('all-done-collapsed');
+    await expect.element(locator).toMatchScreenshot('all-done-collapsed', { kind: 'DATA' });
     await userEvent.click(element.querySelector('ui-expand-button button') as HTMLElement);
     harness.fixture.detectChanges();
     // Park the pointer: the button's hover colour stays out of the screenshot.
     await commands.parkPointer();
     await expect.element(locator).toMatchTextContent('Second shipped task');
-    await expect.element(locator).toMatchScreenshot('all-done-expanded');
+    await expect.element(locator).toMatchScreenshot('all-done-expanded', { kind: 'DATA' });
   });
 });

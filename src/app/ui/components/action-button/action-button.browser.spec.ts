@@ -61,14 +61,16 @@ describe('ActionButton (screenshots)', () => {
   }
 
   it('draws the variants, alone and joined', async () => {
-    await expect.element(shown()).toMatchScreenshot('variants');
+    await expect.element(shown()).toMatchScreenshot('variants', { kind: 'DATA' });
   });
 
   it('draws a hovered button', async () => {
     const element = shown();
     for (const name of ['Approve', 'Delete', 'Archive']) {
       await userEvent.hover(element.getByRole('button', { name }).first());
-      await expect.element(element).toMatchScreenshot(`hover-${name.toLowerCase()}`);
+      await expect
+        .element(element)
+        .toMatchScreenshot(`hover-${name.toLowerCase()}`, { kind: 'DATA' });
     }
   });
 
@@ -77,7 +79,7 @@ describe('ActionButton (screenshots)', () => {
     // Tab to the joined row's middle button (the fifth button).
     for (let i = 0; i < 5; i++) await userEvent.tab();
     await expect.element(element.getByRole('button', { name: 'Archive' }).last()).toHaveFocus();
-    await expect.element(element).toMatchScreenshot('focus');
+    await expect.element(element).toMatchScreenshot('focus', { kind: 'DATA' });
   });
 
   describe('with details', () => {
@@ -88,14 +90,14 @@ describe('ActionButton (screenshots)', () => {
     }
 
     it('draws closed', async () => {
-      await expect.element(detailed()).toMatchScreenshot('details-closed');
+      await expect.element(detailed()).toMatchScreenshot('details-closed', { kind: 'DATA' });
     });
 
     it('opens on hover, below the button and lined up with its right edge', async () => {
       const element = detailed();
       await userEvent.hover(element.getByRole('button', { name: 'Dispatch' }));
       await expect.element(element.getByRole('tooltip')).toBeVisible();
-      await expect.element(element).toMatchScreenshot('details-hover');
+      await expect.element(element).toMatchScreenshot('details-hover', { kind: 'DATA' });
     });
 
     it('opens on keyboard focus, above the joined neighbour', async () => {
@@ -103,7 +105,7 @@ describe('ActionButton (screenshots)', () => {
       await userEvent.tab();
       await expect.element(element.getByRole('button', { name: 'Dispatch' })).toHaveFocus();
       await expect.element(element.getByRole('tooltip')).toBeVisible();
-      await expect.element(element).toMatchScreenshot('details-focus');
+      await expect.element(element).toMatchScreenshot('details-focus', { kind: 'DATA' });
     });
   });
 });

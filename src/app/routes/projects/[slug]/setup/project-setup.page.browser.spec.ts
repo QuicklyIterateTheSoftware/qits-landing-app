@@ -43,14 +43,18 @@ describe('ProjectSetupPage (screenshots)', () => {
     await answer(recorded);
     const element = page.elementLocator(opened.page);
     await expect.element(element.getByRole('heading', { name: 'Setup' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   it('shows that the project is loading', async () => {
     const { opened, list } = await render();
     const element = page.elementLocator(opened.page);
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     list.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
   });
@@ -60,7 +64,9 @@ describe('ProjectSetupPage (screenshots)', () => {
     await answer(null, { status: 500, statusText: 'Server Error' });
     const element = page.elementLocator(opened.page);
     await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 
   it('marks the page as failed to load when no project has the slug', async () => {
@@ -69,6 +75,8 @@ describe('ProjectSetupPage (screenshots)', () => {
     await answer(recorded);
     const element = page.elementLocator(opened.page);
     await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('unknown');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('unknown', { kind: 'ERROR' });
   });
 });

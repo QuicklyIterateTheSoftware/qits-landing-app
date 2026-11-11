@@ -122,13 +122,13 @@ describe('ShellLayout (screenshots)', () => {
   it('shows the sidebar beside the page on a wide screen', async () => {
     const { layout } = await render();
     await expect.element(layout).toMatchTextContent('Page content');
-    await expect.element(layout).toMatchScreenshot('wide');
+    await expect.element(layout).toMatchScreenshot('wide', { kind: 'DATA' });
   });
 
   it('hides the sidebar behind the burger on a narrow screen', async () => {
     await page.viewport(400, 600);
     const { layout } = await render();
-    await expect.element(layout).toMatchScreenshot('narrow');
+    await expect.element(layout).toMatchScreenshot('narrow', { kind: 'DATA' });
   });
 
   it('opens the sidebar from the burger on a narrow screen', async () => {
@@ -141,7 +141,7 @@ describe('ShellLayout (screenshots)', () => {
     expect(
       page.getByRole('navigation', { name: 'qits' }).getByRole('link').elements(),
     ).toHaveLength(0);
-    await expect.element(layout).toMatchScreenshot('narrow-open');
+    await expect.element(layout).toMatchScreenshot('narrow-open', { kind: 'DATA' });
   });
 
   /**
@@ -184,7 +184,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(project.name);
-    await expect.element(layout).toMatchScreenshot('project');
+    await expect.element(layout).toMatchScreenshot('project', { kind: 'DATA' });
   });
 
   it('lists the work section’s pages below Work and marks the current one', async () => {
@@ -203,7 +203,7 @@ describe('ShellLayout (screenshots)', () => {
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Work' })).toBeVisible();
     await expect.element(breadcrumb).toMatchTextContent('Acceptance');
-    await expect.element(layout).toMatchScreenshot('work-tab');
+    await expect.element(layout).toMatchScreenshot('work-tab', { kind: 'DATA' });
   });
 
   it('lists Refinement first below Work, no Campaigns or Milestones, and marks it when open', async () => {
@@ -260,7 +260,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(`${project.name}›Release Requests`);
-    await expect.element(layout).toMatchScreenshot('release-requests');
+    await expect.element(layout).toMatchScreenshot('release-requests', { kind: 'DATA' });
   });
 
   it('shows no line below Release Requests for a project without any', async () => {
@@ -277,7 +277,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(breadcrumb.getByRole('link', { name: 'Projects' })).toBeVisible();
     await expect.element(breadcrumb.getByRole('link', { name: project.name })).toBeVisible();
     await expect.element(breadcrumb.getByRole('button', { includeHidden: true })).not.toBeVisible();
-    await expect.element(layout).toMatchScreenshot('work-item-wide');
+    await expect.element(layout).toMatchScreenshot('work-item-wide', { kind: 'DATA' });
   });
 
   /** True when `element`'s box lies within the window, left to right. */
@@ -306,7 +306,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('region', { name: 'Full path', includeHidden: true }))
       .not.toBeVisible();
-    await expect.element(layout).toMatchScreenshot('work-item-narrow');
+    await expect.element(layout).toMatchScreenshot('work-item-narrow', { kind: 'DATA' });
   });
 
   it('opens the whole path from the … on a phone, and closes it', async () => {
@@ -335,7 +335,7 @@ describe('ShellLayout (screenshots)', () => {
     expect(current.element().scrollWidth).toBeLessThanOrEqual(current.element().clientWidth);
     expect(inWindow(current.element())).toBe(true);
     expect(inWindow(panel.element())).toBe(true);
-    await expect.element(layout).toMatchScreenshot('work-item-narrow-expanded');
+    await expect.element(layout).toMatchScreenshot('work-item-narrow-expanded', { kind: 'DATA' });
 
     // Escape closes it and gives the focus back to the "…".
     await userEvent.keyboard('{Escape}');
@@ -520,7 +520,7 @@ describe('ShellLayout (screenshots)', () => {
       const style = getComputedStyle(panel);
       expect(style.overflowY).toBe('auto');
       expect(style.maxHeight).toBe(`${window.innerHeight - 56}px`);
-      await expect.element(layout).toMatchScreenshot(`menu-${menu.shot}-phone`);
+      await expect.element(layout).toMatchScreenshot(`menu-${menu.shot}-phone`, { kind: 'DATA' });
     });
   }
 
@@ -533,7 +533,7 @@ describe('ShellLayout (screenshots)', () => {
       expect(box.right).toBeLessThanOrEqual(window.innerWidth);
       expect(box.width).toBe(320);
       expect(box.right).toBe(button.getBoundingClientRect().right);
-      await expect.element(layout).toMatchScreenshot(`menu-${menu.shot}-desktop`);
+      await expect.element(layout).toMatchScreenshot(`menu-${menu.shot}-desktop`, { kind: 'DATA' });
     });
   }
 

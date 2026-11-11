@@ -45,7 +45,9 @@ describe('WorkRefinementPage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Reported ticket');
     await expect.element(element).not.toMatchTextContent('Refined ticket');
     await expect.element(element).not.toMatchTextContent('Done ticket');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('backlog');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('backlog', { kind: 'DATA' });
   });
 
   it('says so when nothing waits for refinement', async () => {
@@ -53,13 +55,17 @@ describe('WorkRefinementPage (screenshots)', () => {
     work.flush(await goldenMaster('a project with no work', 'listProjectWork'));
     await opened.settled();
     await expect.element(element).toMatchTextContent('Nothing here');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('empty');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('shows that the work is loading', async () => {
     const { opened, work, element } = await shown();
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
   });

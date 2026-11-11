@@ -22,6 +22,6 @@ describe('LoadFailure (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view.getByRole('button', { name: 'Retry' }).first()).toBeVisible();
-    await expect.element(view).toMatchScreenshot('messages');
+    await expect.element(view).toMatchScreenshot('messages', { kind: 'ERROR' });
   });
 });

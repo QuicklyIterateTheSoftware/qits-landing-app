@@ -97,6 +97,8 @@ describe('AgentChatPage (screenshots)', () => {
       .toHaveValue('Check the rounding in the invoice totals.');
     await expect.element(view.getByRole('button', { name: 'Record' })).not.toBeInTheDocument();
     expect(sockets).toEqual([]);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('transcript');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('transcript', { kind: 'DATA' });
   });
 });

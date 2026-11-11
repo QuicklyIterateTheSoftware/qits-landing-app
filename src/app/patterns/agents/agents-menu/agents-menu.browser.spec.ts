@@ -107,7 +107,7 @@ describe('AgentsMenu (screenshots)', () => {
       (fixture.nativeElement as HTMLElement).querySelector('button span[aria-hidden="true"]')
         ?.textContent,
     ).toBe('4');
-    await expect.element(frame).toMatchScreenshot('closed');
+    await expect.element(frame).toMatchScreenshot('closed', { kind: 'DATA' });
   });
 
   it('lists each agent with what it waits on and what needs a person', async () => {
@@ -133,7 +133,7 @@ describe('AgentsMenu (screenshots)', () => {
       .toHaveAttribute('href', 'https://ci.test/runs/00000000-0000-4000-8000-0000000000c2');
     await expect.element(panel.getByRole('link', { name: 'Open item' })).toBeVisible();
     await expect.element(panel.getByRole('link', { name: 'Prompt agent' }).first()).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('open');
+    await expect.element(frame).toMatchScreenshot('open', { kind: 'DATA' });
   });
 
   describe('while the agents start up', () => {
@@ -163,7 +163,7 @@ describe('AgentsMenu (screenshots)', () => {
         'Idle',
         'Working',
       ]);
-      await expect.element(frame).toMatchScreenshot('starting-up');
+      await expect.element(frame).toMatchScreenshot('starting-up', { kind: 'DATA' });
     });
   });
 });

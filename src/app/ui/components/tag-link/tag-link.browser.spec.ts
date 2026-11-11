@@ -97,12 +97,12 @@ describe('TagLink (screenshots)', () => {
   it('on a board: lane tags, a row footer and card corners', async () => {
     const element = shown(OnBoard);
     await expect.element(element.getByText('A task without one')).toBeVisible();
-    await expect.element(element).toMatchScreenshot('board');
+    await expect.element(element).toMatchScreenshot('board', { kind: 'DATA' });
   });
 
   it('in a list: lane tags, a row footer and a card corner', async () => {
     const element = shown(InList);
     await expect.element(element.getByText('A task with a workspace')).toBeVisible();
-    await expect.element(element).toMatchScreenshot('list');
+    await expect.element(element).toMatchScreenshot('list', { kind: 'DATA' });
   });
 });

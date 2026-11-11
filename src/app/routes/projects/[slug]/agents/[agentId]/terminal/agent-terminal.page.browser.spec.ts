@@ -131,7 +131,9 @@ describe('AgentTerminalPage (screenshots)', () => {
       .poll(() => element.querySelector('.xterm-rows')?.textContent ?? '')
       .toContain('working tree clean');
     expect(sockets[0].sent.some((frame) => JSON.parse(frame).type === 'resize')).toBe(true);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('attached');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('attached', { kind: 'DATA' });
   });
 
   it('shows a socket that cannot attach as closed, with a way to try again', async () => {
@@ -145,6 +147,8 @@ describe('AgentTerminalPage (screenshots)', () => {
     const view = page.elementLocator(element);
     await expect.element(statusLine(element)).toMatchTextContent('Closed: could not attach.');
     await expect.element(view.getByRole('button', { name: 'Try to attach again' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('lost');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('lost', { kind: 'ERROR' });
   }, 30_000);
 });

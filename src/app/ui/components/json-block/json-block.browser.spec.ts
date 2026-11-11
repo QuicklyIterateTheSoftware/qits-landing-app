@@ -17,6 +17,8 @@ describe('JsonBlock (screenshots)', () => {
   it('draws the heading, the copy button and the JSON', async () => {
     const fixture = TestBed.createComponent(Short);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('short');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('short', { kind: 'DATA' });
   });
 });

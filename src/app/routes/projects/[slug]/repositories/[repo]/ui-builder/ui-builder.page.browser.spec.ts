@@ -117,7 +117,9 @@ describe('UiBuilderPage (screenshots)', () => {
       .toBeVisible();
     await expect.element(view.getByRole('tab', { name: 'error' })).toBeVisible();
     await expect.element(view).toMatchTextContent('listProjectRepositories');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loaded');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loaded', { kind: 'DATA' });
   });
 
   it('lists the domain entities the route touches, with their verbs', async () => {
@@ -128,7 +130,9 @@ describe('UiBuilderPage (screenshots)', () => {
       .element(view.getByRole('heading', { name: '/projects/:slug/repositories' }))
       .toBeVisible();
     await expect.element(view.getByText('Repository', { exact: true })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('entities');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('entities', { kind: 'DATA' });
   });
 
   it('marks the entities no route shows, and lists a picked entity’s routes', async () => {
@@ -145,7 +149,9 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect
       .element(view.getByRole('button', { name: '/projects/:slug/repositories' }))
       .toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('entity-view');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('entity-view', { kind: 'DATA' });
   });
 
   it('scrolls each of the three panels on its own, and never the window', async () => {
@@ -201,7 +207,9 @@ describe('UiBuilderPage (screenshots)', () => {
     await commands.parkPointer();
     await opened.settled();
     await expect.element(view).toMatchTextContent('No screenshot test for this route');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('no-states');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('no-states', { kind: 'NO_DATA' });
   });
 
   it('says so when no frozen routes are published for the repository', async () => {
@@ -213,7 +221,9 @@ describe('UiBuilderPage (screenshots)', () => {
       .element(view)
       .toMatchTextContent('No frozen routes published for contract-frontend.');
     await expect.element(view).toMatchTextContent('Scope: contract');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('none');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('none', { kind: 'NO_DATA' });
   });
 
   it('marks the page as failed when the docs store cannot be read', async () => {
@@ -222,6 +232,8 @@ describe('UiBuilderPage (screenshots)', () => {
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

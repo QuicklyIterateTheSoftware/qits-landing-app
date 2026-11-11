@@ -316,7 +316,9 @@ describe('Board (screenshots)', () => {
       Math.round(scroller.getBoundingClientRect().top) + 72,
     );
     expect(board.getBoundingClientRect().top).toBeLessThan(scroller.getBoundingClientRect().top);
-    await expect.element(page.elementLocator(scroller)).toMatchScreenshot('pinned-headings');
+    await expect
+      .element(page.elementLocator(scroller))
+      .toMatchScreenshot('pinned-headings', { kind: 'DATA' });
     // Past the board's end the headings leave with it.
     scroller.scrollTop +=
       board.getBoundingClientRect().bottom - scroller.getBoundingClientRect().top - 20;
@@ -330,7 +332,9 @@ describe('Board (screenshots)', () => {
   it('draws an epic lane with feature rows, tags and cards', async () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('board');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('board', { kind: 'DATA' });
   });
 
   it('draws a collapsed and an expanded lane', async () => {
@@ -338,7 +342,7 @@ describe('Board (screenshots)', () => {
     fixture.detectChanges();
     await expect
       .element(page.elementLocator(fixture.nativeElement))
-      .toMatchScreenshot('lanes-collapsing');
+      .toMatchScreenshot('lanes-collapsing', { kind: 'DATA' });
   });
 
   it('draws a corner bubble beside the finish button, never under it', async () => {
@@ -360,7 +364,9 @@ describe('Board (screenshots)', () => {
     const alone = without.querySelector('ui-tag-link a')!.getBoundingClientRect();
     expect(Math.round(card.right - alone.right)).toBe(1);
     expect(Math.round(card.bottom - alone.bottom)).toBe(1);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('corner-and-finish');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('corner-and-finish', { kind: 'DATA' });
   });
 
   it('draws the drag handle on a lane and on cards, the corner bubble beside it', async () => {
@@ -378,13 +384,17 @@ describe('Board (screenshots)', () => {
     const card = hidden.getBoundingClientRect();
     const alone = hidden.querySelector('ui-tag-link a')!.getBoundingClientRect();
     expect(Math.round(card.right - alone.right)).toBe(1);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('dragging');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('dragging', { kind: 'DATA' });
   });
 
   it('draws the finish button on verified items, idle, running and failed', async () => {
     const fixture = TestBed.createComponent(Finishing);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('finishing');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('finishing', { kind: 'DATA' });
   });
 
   /** Renders one `GutterCase`. */
@@ -423,14 +433,18 @@ describe('Board (screenshots)', () => {
       expect(box(tile).left).toBeGreaterThanOrEqual(box(strip).left);
       expect(box(tile).right).toBeLessThanOrEqual(box(strip).right);
     }
-    await expect.element(page.elementLocator(element)).toMatchScreenshot(`row-${kind}`);
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot(`row-${kind}`, { kind: 'DATA' });
   });
 
   it('draws a collapsed lane with its long id whole', async () => {
     const element = gutterCase('folded');
     const lane = element.querySelector('#folded') as HTMLElement;
     expect(box(lane.querySelector('[lane-gutter]')!).top).toBeGreaterThan(box(lane).top);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('lane-long-id');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('lane-long-id', { kind: 'DATA' });
   });
 
   it('breaks a word too long for its card, lane or feature title instead of overflowing', async () => {
@@ -446,7 +460,9 @@ describe('Board (screenshots)', () => {
     );
     expect(card.scrollWidth).toBeLessThanOrEqual(card.clientWidth);
     expect(header.scrollWidth).toBeLessThanOrEqual(header.clientWidth);
-    await expect.element(page.elementLocator(element)).toMatchScreenshot('long-words');
+    await expect
+      .element(page.elementLocator(element))
+      .toMatchScreenshot('long-words', { kind: 'DATA' });
   });
 
   it('shadows a standalone ticket card', async () => {

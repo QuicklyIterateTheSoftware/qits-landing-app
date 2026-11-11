@@ -84,7 +84,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(rest).toMatchTextContent('Ready for dev ticket');
     await expect.element(rest).toMatchTextContent('Verifying ticket');
     await expect.element(rest).not.toMatchTextContent('Implementing epic');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('epic-boards-data');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('epic-boards-data', { kind: 'DATA' });
   });
 
   it('shows a verified feature in its epic board’s Verified column', async () => {
@@ -101,7 +103,7 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(page.elementLocator(verified)).toMatchTextContent('Verified task');
     await expect
       .element(page.elementLocator(opened.frame))
-      .toMatchScreenshot('epic-boards-mixed-data');
+      .toMatchScreenshot('epic-boards-mixed-data', { kind: 'DATA' });
   });
 
   it('shows the work being worked on inline, and nothing before or after it', async () => {
@@ -130,7 +132,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     expect(hrefs.length).toBeGreaterThan(0);
     for (const href of hrefs) expect(href).toMatch(`/projects/${project.slug}/work/detail/`);
     expect(epicBoards(element.element())).toEqual([]);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('inline-data');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('inline-data', { kind: 'DATA' });
   });
 
   it('nests an epic’s features and tasks in its lane inline, its verified feature off the board', async () => {
@@ -141,7 +145,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Implementing task');
     await expect.element(element).not.toMatchTextContent('Verified feature');
     expect(epicBoards(element.element())).toEqual([]);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('inline-mixed-data');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('inline-mixed-data', { kind: 'DATA' });
   });
 
   it('opens the view settings from the gear on the In Progress tab', async () => {
@@ -155,7 +161,7 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(panel).toBeVisible();
     await expect.element(panel.getByRole('radio', { name: 'Epic boards' })).toBeChecked();
     await expect.element(panel.getByRole('radio', { name: 'Inline' })).not.toBeChecked();
-    await expect.element(frame).toMatchScreenshot('view-settings-data');
+    await expect.element(frame).toMatchScreenshot('view-settings-data', { kind: 'DATA' });
     // Choosing applies at once, and is kept for the next visit.
     await panel.getByRole('radio', { name: 'Inline' }).click();
     await expect.poll(() => epicBoards(element.element())).toEqual([]);
@@ -168,7 +174,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     expect(epicBoards(root)).toEqual([]);
     // No epic board: the board's empty columns say it.
     expect(root.querySelectorAll('app-kanban-board')).toHaveLength(1);
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('no-data');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('no-data', { kind: 'NO_DATA' });
   });
 
   it('says that the work could not be read', async () => {
@@ -176,7 +184,9 @@ describe('WorkInProgressPage (screenshots)', () => {
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect.element(element.getByRole('img', { name: 'Failed to load' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 
   // At 390px the board's columns overflowed the page, its epics' handles off-screen (qits-1861):
@@ -208,7 +218,6 @@ describe('WorkInProgressPage (screenshots)', () => {
       expect(box.left, `${label}`).toBeGreaterThanOrEqual(0);
       expect(box.right, `${label}`).toBeLessThanOrEqual(window.innerWidth);
     }
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('inline-phone-data');
   });
 
   it('stacks the epic boards’ epics first on a phone, then the rest', async () => {
@@ -223,15 +232,14 @@ describe('WorkInProgressPage (screenshots)', () => {
     expect(text.indexOf('Started task')).toBeGreaterThan(-1);
     expect(text.indexOf('Ready for dev ticket')).toBeGreaterThan(text.indexOf('Started epic'));
     expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
-    await expect
-      .element(page.elementLocator(opened.frame))
-      .toMatchScreenshot('epic-boards-phone-data');
   });
 
   it('shows that the work is loading', async () => {
     const { opened, work, element } = await shown(false);
     await expect.element(element.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
   });

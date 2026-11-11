@@ -117,7 +117,7 @@ describe('EpicCard (screenshots)', () => {
     ['verifying', EVERY_STATUS, 'contract-00000001-11', 'Verifying epic'],
   ])('%s', async (name, state, qualifiedId, title) => {
     const { locator } = await shown(state, qualifiedId, title);
-    await expect.element(locator).toMatchScreenshot(name);
+    await expect.element(locator).toMatchScreenshot(name, { kind: 'DATA' });
   });
 
   it('a started feature and task: both in Implementing', async () => {
@@ -136,7 +136,7 @@ describe('EpicCard (screenshots)', () => {
     const middle = card.left + card.width / 2;
     expect(middle).toBeGreaterThan(column.left);
     expect(middle).toBeLessThan(column.right);
-    await expect.element(locator).toMatchScreenshot('implementing-feature-task');
+    await expect.element(locator).toMatchScreenshot('implementing-feature-task', { kind: 'DATA' });
   });
 
   it('several features with their tasks, in a mixed state: expanded, then collapsed', async () => {
@@ -144,7 +144,7 @@ describe('EpicCard (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('Shipped feature');
     await expect.element(locator).toMatchTextContent('Open feature');
     await expect.element(locator).toMatchTextContent('First shipped task');
-    await expect.element(locator).toMatchScreenshot('features-mixed-expanded');
+    await expect.element(locator).toMatchScreenshot('features-mixed-expanded', { kind: 'DATA' });
     await toggle(element, harness);
     // Two open tasks in Ready for Dev, one implemented: a tile in each of those columns, none
     // elsewhere.
@@ -152,7 +152,7 @@ describe('EpicCard (screenshots)', () => {
       ['2 ready for dev', 'Ready for Dev'],
       ['1 implemented', 'Implemented'],
     ]);
-    await expect.element(locator).toMatchScreenshot('features-mixed-collapsed');
+    await expect.element(locator).toMatchScreenshot('features-mixed-collapsed', { kind: 'DATA' });
   });
 
   it('collapsed with one started task: a single tile, in Implementing', async () => {
@@ -163,7 +163,7 @@ describe('EpicCard (screenshots)', () => {
     );
     await toggle(element, harness);
     expect(tiles(element)).toEqual([['1 implementing', 'Implementing']]);
-    await expect.element(locator).toMatchScreenshot('implementing-collapsed');
+    await expect.element(locator).toMatchScreenshot('implementing-collapsed', { kind: 'DATA' });
   });
 
   it('collapsed without tasks: "No tasks", no tiles', async () => {
@@ -175,7 +175,7 @@ describe('EpicCard (screenshots)', () => {
     await toggle(element, harness);
     expect(tiles(element)).toEqual([]);
     await expect.element(locator).toMatchTextContent('No tasks');
-    await expect.element(locator).toMatchScreenshot('verifying-collapsed');
+    await expect.element(locator).toMatchScreenshot('verifying-collapsed', { kind: 'DATA' });
   });
 
   it('a feature with tasks past the board: a tile at the bottom of its row’s gutter, on the title bar’s line', async () => {
@@ -195,7 +195,7 @@ describe('EpicCard (screenshots)', () => {
     const bar = row.querySelector('[row-footer]')!.parentElement!.getBoundingClientRect();
     expect(tile.getBoundingClientRect().top).toBeGreaterThanOrEqual(id.bottom);
     expect(Math.round(tile.getBoundingClientRect().bottom)).toBe(Math.round(bar.bottom));
-    await expect.element(locator).toMatchScreenshot('feature-verified-tasks');
+    await expect.element(locator).toMatchScreenshot('feature-verified-tasks', { kind: 'DATA' });
   });
 
   it('a feature whose tasks are all verified: no cards, its tile and its whole id', async () => {
@@ -211,7 +211,7 @@ describe('EpicCard (screenshots)', () => {
     const id = verified.querySelector('[row-id]')!.getBoundingClientRect();
     expect(id.top).toBeGreaterThan(row.top);
     expect(id.bottom).toBeLessThanOrEqual(tile.getBoundingClientRect().top);
-    await expect.element(locator).toMatchScreenshot('feature-all-verified');
+    await expect.element(locator).toMatchScreenshot('feature-all-verified', { kind: 'DATA' });
   });
 
   it('with workspaces: a tag in the lane, at a feature’s title, a bubble on a task', async () => {
@@ -245,6 +245,6 @@ describe('EpicCard (screenshots)', () => {
       .getBoundingClientRect();
     expect(Math.round(bar.right - tag.right)).toBe(8);
     expect(Math.abs(tag.top - title.getBoundingClientRect().top)).toBeLessThan(4);
-    await expect.element(locator).toMatchScreenshot('workspaces');
+    await expect.element(locator).toMatchScreenshot('workspaces', { kind: 'DATA' });
   });
 });

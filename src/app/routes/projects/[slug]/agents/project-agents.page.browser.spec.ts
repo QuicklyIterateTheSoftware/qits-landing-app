@@ -94,7 +94,9 @@ describe('ProjectAgentsPage (screenshots)', () => {
       .element(view.getByRole('link', { name: /ws-contract/ }))
       .toHaveAttribute('href', `/projects/${project.slug}/workspaces/1`);
     await expect.element(view).toMatchTextContent('placed on a runner');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('slots-and-agents');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('slots-and-agents', { kind: 'DATA' });
   });
 
   it('marks the page as loading, then as failed to load', async () => {
@@ -102,7 +104,9 @@ describe('ProjectAgentsPage (screenshots)', () => {
     const { project } = opened;
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' }).first()).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     // The page's read and the shell's agents menu's: both fail.
     for (const read of http.match(`/workspaces/api/agents?projectId=${project.id}&state=ACTIVE`)) {
       read.flush(null, { status: 500, statusText: 'Server Error' });
@@ -112,6 +116,8 @@ describe('ProjectAgentsPage (screenshots)', () => {
       .flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect.element(view.getByRole('img', { name: 'Failed to load' }).first()).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

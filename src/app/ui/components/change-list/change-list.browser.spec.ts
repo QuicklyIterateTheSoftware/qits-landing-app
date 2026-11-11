@@ -56,6 +56,6 @@ describe('ChangeList (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view).toMatchTextContent('src/main/java/ServiceImpl.java');
-    await expect.element(view).toMatchScreenshot('pin-expanded');
+    await expect.element(view).toMatchScreenshot('pin-expanded', { kind: 'DATA' });
   });
 });

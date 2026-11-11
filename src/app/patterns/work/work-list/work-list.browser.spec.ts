@@ -84,7 +84,7 @@ describe('WorkList (screenshots)', () => {
     const { locator: list } = await shown('backlog', EVERY_STATUS);
     await expect.element(list).toMatchTextContent('Reported epic');
     await expect.element(list).toMatchTextContent('Reported ticket');
-    await expect.element(list).toMatchScreenshot('backlog');
+    await expect.element(list).toMatchScreenshot('backlog', { kind: 'DATA' });
   });
 
   // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so only the
@@ -107,14 +107,14 @@ describe('WorkList (screenshots)', () => {
     expect(button.contains(hit), hit?.outerHTML.slice(0, 200)).toBe(true);
     expect(element.querySelector('button[aria-label="Mark contract-00000001-14 done"]')).toBeNull();
     await expect.element(list).toMatchTextContent('Closes once its release lands');
-    await expect.element(list).toMatchScreenshot('acceptance');
+    await expect.element(list).toMatchScreenshot('acceptance', { kind: 'DATA' });
   });
 
   it('the Archive: Done and Dropped mixed', async () => {
     const { locator: list } = await shown('archive', EVERY_STATUS);
     await expect.element(list).toMatchTextContent('Done ticket');
     await expect.element(list).toMatchTextContent('Dropped epic');
-    await expect.element(list).toMatchScreenshot('archive');
+    await expect.element(list).toMatchScreenshot('archive', { kind: 'DATA' });
   });
 
   // The board stacked, as In Progress draws it below md (qits-1861).
@@ -163,7 +163,7 @@ describe('WorkList (screenshots)', () => {
   it('an empty list says so', async () => {
     const { locator: list } = await shown('archive', 'an epic with features and tasks');
     await expect.element(list).toMatchTextContent('Nothing here');
-    await expect.element(list).toMatchScreenshot('empty');
+    await expect.element(list).toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   /** The list's top-level items, top to bottom, by qualified id. */
@@ -200,7 +200,7 @@ describe('WorkList (screenshots)', () => {
     );
     // The finish waits on a timer: fake from here on, so every step is exact.
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    await expect.element(locator).toMatchScreenshot('finish-initial');
+    await expect.element(locator).toMatchScreenshot('finish-initial', { kind: 'DATA' });
     expect(order(element)).toEqual(['contract-00000001-13', 'contract-00000001-14']);
 
     await finish(element, harness, 'contract-00000001-13');
@@ -210,7 +210,7 @@ describe('WorkList (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('contract-00000001-13 finished');
     await expect.element(locator.getByRole('button', { name: 'Undo' })).toBeVisible();
     http.expectNone(() => true);
-    await expect.element(locator).toMatchScreenshot('finish-pending');
+    await expect.element(locator).toMatchScreenshot('finish-pending', { kind: 'DATA' });
 
     await vi.advanceTimersByTimeAsync(FINISH_DELAY_MS);
     const sent = http.match(() => true);
@@ -224,7 +224,7 @@ describe('WorkList (screenshots)', () => {
     await expect.element(locator).not.toMatchTextContent('finished');
     await expect.element(locator).not.toMatchTextContent('Verified epic');
     expect(order(element)).toEqual(['contract-00000001-14']);
-    await expect.element(locator).toMatchScreenshot('finish-sent');
+    await expect.element(locator).toMatchScreenshot('finish-sent', { kind: 'DATA' });
   });
 
   // Only an epic finishes by hand now (qits-150), so Undo is exercised on the epic.
@@ -241,6 +241,6 @@ describe('WorkList (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('Verified epic');
     await expect.element(locator).not.toMatchTextContent('finished');
     expect(order(element)).toEqual(['contract-00000001-13', 'contract-00000001-14']);
-    await expect.element(locator).toMatchScreenshot('finish-undone');
+    await expect.element(locator).toMatchScreenshot('finish-undone', { kind: 'DATA' });
   });
 });

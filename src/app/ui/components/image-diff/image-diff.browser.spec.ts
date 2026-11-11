@@ -50,6 +50,6 @@ describe('ImageDiff (screenshots)', () => {
     await expect.poll(() => element.textContent).toContain('800 × 200 px');
     await expect.poll(() => element.textContent?.split('120 × 80 px').length).toBe(3);
     const view = page.elementLocator(element);
-    await expect.element(view).toMatchScreenshot('variants');
+    await expect.element(view).toMatchScreenshot('variants', { kind: 'DATA' });
   });
 });

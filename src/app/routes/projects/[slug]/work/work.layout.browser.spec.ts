@@ -84,7 +84,7 @@ describe('WorkLayout (screenshots)', () => {
     await expect
       .element(element.getByRole('heading', { level: 1 }))
       .toMatchTextContent('In Progress');
-    await expect.element(frame).toMatchScreenshot('tabs');
+    await expect.element(frame).toMatchScreenshot('tabs', { kind: 'DATA' });
   });
 
   it('hides the counts while the work is loading', async () => {
@@ -93,7 +93,7 @@ describe('WorkLayout (screenshots)', () => {
     const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
     await expect.element(tabs.nth(4)).toHaveAttribute('aria-current', 'page');
     await expect.element(tabs.nth(0)).toHaveAccessibleName('Refinement');
-    await expect.element(frame).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
   });

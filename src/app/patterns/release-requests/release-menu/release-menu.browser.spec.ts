@@ -112,7 +112,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect
       .element(page.getByRole('button', { name: 'Release requests' }))
       .toHaveAttribute('aria-expanded', 'false');
-    await expect.element(frame).toMatchScreenshot('closed');
+    await expect.element(frame).toMatchScreenshot('closed', { kind: 'DATA' });
   });
 
   it('lists the pending release requests with their lifecycle in a line', async () => {
@@ -141,7 +141,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(panel.getByText('runners: 1')).toBeVisible();
     await expect.element(panel.getByText('workspaces:')).toBeVisible();
     await expect.element(panel.getByText('shared:')).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('open');
+    await expect.element(frame).toMatchScreenshot('open', { kind: 'DATA' });
   });
 
   it('says so when nothing is pending', async () => {
@@ -152,7 +152,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await answered(fixture);
     await open(fixture);
     await expect.element(frame).toMatchTextContent('No pending release requests');
-    await expect.element(frame).toMatchScreenshot('empty');
+    await expect.element(frame).toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('shows the spinner while the requests load', async () => {
@@ -160,7 +160,7 @@ describe('ReleaseMenu (screenshots)', () => {
     await open(fixture);
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     await expect.element(panel.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(frame).toMatchScreenshot('loading');
+    await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     requests.flush(null, { status: 500, statusText: 'Server Error' });
     await answered(fixture);
   });
@@ -179,6 +179,6 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(panel.getByRole('img', { name: 'Failed to load' })).toBeVisible();
     // The empty note is always rendered and hidden by class; on an error it stays hidden.
     await expect.element(page.getByText('No pending release requests')).not.toBeVisible();
-    await expect.element(frame).toMatchScreenshot('error');
+    await expect.element(frame).toMatchScreenshot('error', { kind: 'ERROR' });
   });
 });

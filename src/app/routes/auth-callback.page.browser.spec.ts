@@ -78,7 +78,7 @@ describe('QitsAuthCallbackPage (screenshots)', () => {
     const harness = await render();
     const element = view(harness);
     await expect.element(element.getByRole('status')).toHaveTextContent('Signing you in…');
-    await expect.element(element).toMatchScreenshot('signing-in');
+    await expect.element(element).toMatchScreenshot('signing-in', { kind: 'PENDING' });
     expect(reached()).toEqual([]);
   });
 
@@ -128,7 +128,7 @@ describe('QitsAuthCallbackPage (screenshots)', () => {
           .toHaveAttribute('data-qits-outcome', 'sign-in-failed:restarted');
         expect(logged).toHaveBeenCalled();
         expect(reached()).toEqual(['sign-in:failed stay -']);
-        await expect.element(element).toMatchScreenshot(reason);
+        await expect.element(element).toMatchScreenshot(reason, { kind: 'ERROR' });
       } finally {
         logged.mockRestore();
       }

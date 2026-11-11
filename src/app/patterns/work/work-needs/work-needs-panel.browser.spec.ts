@@ -69,13 +69,13 @@ describe('WorkNeedsPanel (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('(now refined)');
     await expect.element(locator).toMatchTextContent('not met');
     await commands.parkPointer();
-    await expect.element(locator).toMatchScreenshot('panel');
+    await expect.element(locator).toMatchScreenshot('panel', { kind: 'DATA' });
   });
 
   it('an item that needs nothing', async () => {
     const { locator } = await shown('contract-00000001-1');
     await expect.element(locator).toMatchTextContent('It needs no other item.');
-    await expect.element(locator).toMatchScreenshot('panel-empty');
+    await expect.element(locator).toMatchScreenshot('panel-empty', { kind: 'NO_DATA' });
   });
 
   it('adding a need: the item and the status to pick', async () => {
@@ -90,6 +90,6 @@ describe('WorkNeedsPanel (screenshots)', () => {
       .element(locator.getByRole('combobox', { name: 'Needed status' }))
       .toHaveValue('VERIFIED');
     await commands.parkPointer();
-    await expect.element(locator).toMatchScreenshot('panel-adding');
+    await expect.element(locator).toMatchScreenshot('panel-adding', { kind: 'DATA' });
   });
 });

@@ -104,7 +104,9 @@ describe('AgentFilesPage (screenshots)', () => {
     await expect.element(view.getByRole('button', { name: 'LoginTest' })).toBeVisible();
     await expect.element(view.getByText('class Login {')).toBeVisible();
     expect(element.querySelector('[data-path="node_modules"]')?.textContent).toContain('(2)');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('tree-and-file');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('tree-and-file', { kind: 'DATA' });
   });
 
   it('shows a gitignored directory opened, dimmed, with a name search on', async () => {
@@ -119,6 +121,8 @@ describe('AgentFilesPage (screenshots)', () => {
     await opened.settled();
     await expect.element(view.getByText('.package-lock.json')).toBeVisible();
     await expect.element(view.getByText('LoginTest.java')).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('ignored-and-search');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('ignored-and-search', { kind: 'DATA' });
   });
 });

@@ -42,21 +42,27 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     // The finalized request, last: the rows no longer show a summary (qits-1673).
     await expect.element(view).toMatchTextContent('contract-service-rr-1');
     await expect.element(view).toMatchTextContent('The sources cannot be folded.');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('requests');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('requests', { kind: 'DATA' });
   });
 
   it('says so when the project has none', async () => {
     const opened = await render('a project with no release requests');
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('Nothing is open in this project');
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('empty');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {
     const opened = await render('unanswered');
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('loading');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('loading', { kind: 'PENDING' });
     for (const read of http.match(`/projects/api/projects/${opened.project.id}/release-requests`)) {
       read.flush(null, { status: 500, statusText: 'Server Error' });
     }
@@ -65,7 +71,9 @@ describe('ReleaseRequestsPage (screenshots)', () => {
       .element(view.getByRole('alert'))
       .toMatchTextContent('This project’s release requests could not be read.');
     await expect.element(view.getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect.element(page.elementLocator(opened.frame)).toMatchScreenshot('error');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('error', { kind: 'ERROR' });
   });
 
   // At 390px an item's text, read as one unbroken word (a long test name, which qits-projects can

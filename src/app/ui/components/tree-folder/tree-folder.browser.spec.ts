@@ -25,6 +25,8 @@ describe('TreeFolder (screenshots)', () => {
   it('draws nested directories', async () => {
     const fixture = TestBed.createComponent(Variants);
     fixture.detectChanges();
-    await expect.element(page.elementLocator(fixture.nativeElement)).toMatchScreenshot('nested');
+    await expect
+      .element(page.elementLocator(fixture.nativeElement))
+      .toMatchScreenshot('nested', { kind: 'DATA' });
   });
 });

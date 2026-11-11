@@ -76,7 +76,7 @@ describe('CommitGraphView (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view).toMatchTextContent('feature/export');
-    await expect.element(view).toMatchScreenshot('graph');
+    await expect.element(view).toMatchScreenshot('graph', { kind: 'DATA' });
     await view.getByRole('button', { name: '22 earlier folds' }).click();
     expect(fixture.componentInstance.more).toBe('fold');
   });
@@ -87,7 +87,7 @@ describe('CommitGraphView (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view).toMatchTextContent('The changes of feat2');
-    await expect.element(view).toMatchScreenshot('opened');
+    await expect.element(view).toMatchScreenshot('opened', { kind: 'DATA' });
     await view.getByRole('button', { name: /the rounding/ }).click();
     expect(fixture.componentInstance.toggled).toBe('fix1');
   });
@@ -130,7 +130,7 @@ describe('CommitGraphView with lane headers (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     expect(view.getByRole('columnheader').elements()).toHaveLength(4);
-    await expect.element(view).toMatchScreenshot('headed');
+    await expect.element(view).toMatchScreenshot('headed', { kind: 'DATA' });
   });
 });
 
@@ -206,7 +206,7 @@ describe('CommitGraphView on a chain of folds (screenshots)', () => {
     fixture.detectChanges();
     const view = page.elementLocator(fixture.nativeElement);
     await expect.element(view).toMatchTextContent('22 earlier folds');
-    await expect.element(view).toMatchScreenshot('folds');
+    await expect.element(view).toMatchScreenshot('folds', { kind: 'DATA' });
     await page.viewport(800, 600);
   });
 });
@@ -306,7 +306,7 @@ describe('CommitGraphView with work references (browser)', () => {
       .element(tooltip)
       .toHaveTextContent(`${ticket.qualifiedId}${status}1h ago${ticket.title}`);
     await expect.element(ref).toHaveAccessibleDescription(new RegExp(ticket.title));
-    await expect.element(view).toMatchScreenshot('work-ref-open');
+    await expect.element(view).toMatchScreenshot('work-ref-open', { kind: 'DATA' });
   });
 
   it('on a finger, a tap opens the brief without following the row or the link around it', async () => {
