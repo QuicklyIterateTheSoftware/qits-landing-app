@@ -10,7 +10,7 @@ import {
   PLATFORM_ID,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { LocStore, type LanguageLines } from '$core/loc/loc.store';
 import type { Project } from '$core/projects/projects.store';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
@@ -24,7 +24,8 @@ import { Stat } from '$ui/components/stat/stat';
 export const LANGUAGES_SHOWN = 4;
 
 /**
- * One project in the picker: its name, and facts about it read from its repositories.
+ * One project in the picker: its name, and facts about it read from its repositories. The name
+ * opens the project, through the declared exit `open-project-card:project`.
  *
  * - Two `ui-stat` tiles side by side: "Work", the project's work entities that count as work
  *   (`countsAsWork` in `core/work/work.consumes.ts`, REFINED for now), and "Components".
@@ -44,7 +45,7 @@ export const LANGUAGES_SHOWN = 4;
 @Component({
   selector: 'app-project-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CardSilent, CardHeader, CardBody, CardExpandable, Spinner, Stat],
+  imports: [QitsExit, CardSilent, CardHeader, CardBody, CardExpandable, Spinner, Stat],
   host: { class: 'block' },
   template: `
     <!--
@@ -61,7 +62,8 @@ export const LANGUAGES_SHOWN = 4;
         >
           <a
             class="card-link text-inherit no-underline outline-none after:absolute after:inset-0 after:z-[1] after:rounded-xl"
-            [routerLink]="['/projects', project().slug]"
+            [qitsExit]="opening.project"
+            [exitParams]="{ slug: project().slug ?? '' }"
             >{{ project().name }}</a
           >
         </card-header>
@@ -141,6 +143,9 @@ export const LANGUAGES_SHOWN = 4;
 })
 export class ProjectCard {
   readonly project = input.required<Project>();
+
+  /** The card's title opens the project (`open-project-card`, epic qits-2000). */
+  protected readonly opening = outcomes('open-project-card', { project: exit('projects/:slug') });
 
   private readonly repositoriesStore = inject(RepositoriesStore);
   private readonly workStore = inject(WorkStore);

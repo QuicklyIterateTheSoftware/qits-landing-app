@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { commands, page } from 'vitest/browser';
+import { provideRouter, Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
+import { commands, page, userEvent } from 'vitest/browser';
 import { client as githostClient } from '../../../api/githost/client.gen';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
@@ -17,6 +18,9 @@ import { goldenMaster } from '../../../../testing/browser/golden-master';
  * The lines of code come from qits-githost's recordings, put under the ids of the project's
  * recorded repositories: the two providers' frozen ids are unrelated, so each case says which
  * recorded githost entry stands for which repository.
+ *
+ * The card's name is a declared exit (`open-project-card` `project`, epic qits-2000), shown by
+ * `collapsed` and followed once, to a stub of the project's page.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -34,7 +38,7 @@ describe('ProjectCard (screenshots)', () => {
   beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'projects/:slug', children: [] }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -177,6 +181,16 @@ describe('ProjectCard (screenshots)', () => {
     await expect.element(card).toMatchTextContent('Work 0');
     await expect.element(card).toMatchTextContent('No lines yet');
     await expect.element(card).toMatchScreenshot('lines-empty', { kind: 'NO_DATA' });
+  });
+
+  it('open-project-card project: the card’s name opens the project', async () => {
+    const card = await shown('a repository with counted lines', undefined, false);
+    await userEvent.click(card.getByRole('link', { name: project.name, exact: true }));
+    await settle();
+    expect(TestBed.inject(Router).url).toBe(`/projects/${project.slug}`);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-project-card:project',
+    ]);
   });
 
   it('shows that it is loading', async () => {

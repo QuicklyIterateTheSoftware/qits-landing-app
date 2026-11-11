@@ -343,6 +343,15 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     });
   });
 
+  // The Desk's open issues (`open-issues.ts`, qits-1819): an OPEN issue (qits-2039).
+  it('show-open-issues: a project with an open issue', () =>
+    given('show-open-issues', 'a project with an open issue').executeTest(async (server) => {
+      const store = storeAt(server.url);
+      const projectId = projectOf('a project with an open issue');
+      await store.load(projectId);
+      expect(store.byProject()[projectId]?.status).toBe('loaded');
+    }));
+
   it('show-project-work: the work of the first of two projects', () =>
     given('show-project-work', 'two projects exist').executeTest(async (server) => {
       const store = storeAt(server.url);

@@ -65,7 +65,10 @@ const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const OPERATIONS: readonly OwnedOperation[] = [
-  { operationId: 'getWork', interactions: ['show-work-item', 'show-schedule-criteria'] },
+  {
+    operationId: 'getWork',
+    interactions: ['show-work-item', 'show-schedule-criteria', 'show-open-issues'],
+  },
   'listWorkComments',
   'listWorkDossier',
   'listWorkDossierAssets',
@@ -100,12 +103,17 @@ const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel:
 // binds the moment the recording grows it. `authorAgentOf`/`editable` (qits-1452) are not yet in
 // the installed `@qits/projects-golden-masters` — a devDependency qits-maintenance bumps only once
 // qits-projects-service releases this — so no interaction binds them until then.
-const given = (state: string, operationId: string, consumes: readonly string[]) =>
+const given = (
+  state: string,
+  operationId: string,
+  consumes: readonly string[],
+  slug: InteractionSlug = 'show-work-item',
+) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
     operationId,
-    trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-work-item' },
+    trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
     consumes: heldBy(
       masters,
       state,
@@ -220,6 +228,19 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
         expect(data?.archetype).toBeTruthy();
       }),
   );
+
+  // The Desk's open issues read each issue's description (`open-issues.ts`, qits-1819): the
+  // issue "a project with an open issue" records (qits-2039).
+  it('show-open-issues: the item of a project with an open issue', () => {
+    const state = 'a project with an open issue';
+    return given(state, 'getWork', GET_WORK, 'show-open-issues').executeTest(async (server) => {
+      const qualifiedId = refOf(state, 'getWork');
+      const { data } = await at(server.url, () =>
+        consume(getWork({ path: { qualifiedId } }), GET_WORK),
+      );
+      expect(data?.archetype).toBe('ISSUE');
+    });
+  });
 
   // What the item needs (epic qits-1899): a READY_FOR_DEV ticket needing another ticket at
   // VERIFIED, not met. Recorded by qits-projects from 2026.1106.140436 on: until the pin reaches

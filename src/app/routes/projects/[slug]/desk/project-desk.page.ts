@@ -8,14 +8,12 @@ import {
   PLATFORM_ID,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import type { DeskTriggerEvent, DeskTriggerMessage } from '$core/desk/desk-triggers.consumes';
 import { DeskTriggersStore } from '$core/desk/desk-triggers.store';
 import { utcMinute } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { commentAnchor } from '$core/work/comment-anchor';
-import { WORK_DETAIL } from '$core/work/work-tabs';
-import { RELEASE_REQUESTS } from '$layout/shell/shell.layout';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { OpenIssues } from '$patterns/desk/open-issues/open-issues';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
@@ -55,7 +53,7 @@ function when(instant: string | null | undefined): string {
  * deliveries were tried and the last one's refusal, when the service gave one. Below that, the
  * lines it collected: each event's source, the item it names — linking to the work item's or the
  * release request's own page where the qualified id's shape says which, plain text otherwise
- * (`app.routes.ts` has both routes) — its label and its cause. A line that names a comment (a
+ * (`app.routes.ts` has both routes), through the declared exits of `open-desk-line` — its label and its cause. A line that names a comment (a
  * `desk-mentioned` one carries `commentId`, qits-1660) links to that comment on the work item page
  * (`#comment-<commentId>`), so a person can read exactly what the desk was told about. The exact text sent to the desk is
  * in a collapsible `<details>`, hidden while the window is still OPEN (`message` is null until it
@@ -73,7 +71,7 @@ function when(instant: string | null | undefined): string {
 @Component({
   selector: 'app-project-desk-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, OpenIssues, PageLayoutComponent, RouterLink, Spinner],
+  imports: [Chip, LoadFailure, OpenIssues, PageLayoutComponent, QitsExit, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -117,11 +115,20 @@ function when(instant: string | null | undefined): string {
                   @for (event of message.events ?? []; track eventKey(event)) {
                     <li class="flex flex-wrap items-baseline gap-1.5">
                       <span class="text-xs font-semibold text-gray-500">{{ event.source }}</span>
-                      @if (link(event); as href) {
+                      @let kind = linked(event);
+                      @if (kind === 'releaseRequest') {
                         <a
                           class="font-mono text-ocean-deep-700 no-underline hover:underline"
-                          [routerLink]="href"
-                          [fragment]="fragment(event)"
+                          [qitsExit]="opening.releaseRequest"
+                          [exitParams]="{ slug: slug(), requestId: event.itemRef ?? '' }"
+                          >{{ event.itemRef }}</a
+                        >
+                      } @else if (kind === 'workItem') {
+                        <a
+                          class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                          [qitsExit]="opening.workItem"
+                          [exitParams]="{ slug: slug(), id: event.itemRef ?? '' }"
+                          [exitFragment]="fragment(event)"
                           >{{ event.itemRef }}</a
                         >
                       } @else {
@@ -160,6 +167,19 @@ export class ProjectDeskPage {
 
   protected readonly when = when;
 
+  /**
+   * Where a line's item leads (`open-desk-line`, epic qits-2000), one exit per kind, chosen in the
+   * template: a release request's page (`releaseRequest`) or a work item's (`workItem`), at the
+   * comment the line came from when it names one.
+   */
+  protected readonly opening = outcomes('open-desk-line', {
+    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    workItem: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** The open project's slug, for the lines' links. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
   private readonly answer = computed(() => {
     const id = this.selected.project()?.id;
     return id ? this.store.byProject()[id] : undefined;
@@ -190,17 +210,14 @@ export class ProjectDeskPage {
   }
 
   /**
-   * The link an event's `itemRef` opens: the work item page for a work item's qualified id, the
-   * release request page for one shaped like a release request's (`-rr-<n>`), undefined for
-   * anything else — which the template then shows as plain text.
+   * Which page an event's `itemRef` opens: the release request's for one shaped like a release
+   * request's (`-rr-<n>`), the work item's for any other qualified id, none without a ref or a
+   * project — which the template then shows as plain text.
    */
-  protected link(event: DeskTriggerEvent): string | undefined {
+  protected linked(event: DeskTriggerEvent): 'releaseRequest' | 'workItem' | undefined {
     const ref = event.itemRef;
-    const slug = this.selected.slug();
-    if (!ref || !slug) return undefined;
-    return RELEASE_REQUEST_REF.test(ref)
-      ? `/projects/${slug}/${RELEASE_REQUESTS}/${ref}`
-      : `/projects/${slug}/work/${WORK_DETAIL}/${ref}`;
+    if (!ref || !this.slug()) return undefined;
+    return RELEASE_REQUEST_REF.test(ref) ? 'releaseRequest' : 'workItem';
   }
 
   /** The fragment of the link: the comment the line came from, when it names one (qits-1660). */

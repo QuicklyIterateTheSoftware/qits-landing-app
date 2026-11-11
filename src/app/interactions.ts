@@ -670,6 +670,33 @@ export const INTERACTIONS = {
    * (`state`) or an entity's page (`entity`). Navigates only, and names no pact (epic qits-2000).
    */
   'open-call-contract': 'A call’s popover in the UI builder opens its provider state or an entity',
+  /**
+   * `root.page.ts`: the root leaves for the project picker at once, replacing itself in the
+   * history (`projects`). No element triggers it. Navigates only, and names no pact (epic
+   * qits-2000).
+   */
+  'leave-root': 'The root sends the visitor on to the project picker',
+  /**
+   * `project-card.ts`: a project card's name opens the project (`project`). Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-project-card': 'A project card in the picker opens its project',
+  /**
+   * `project-desk.page.ts`: a trigger line's item on the Desk page opens the release request's
+   * page (`releaseRequest`) or the work item's (`workItem`), at the comment the line came from
+   * when it names one. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-desk-line': 'A trigger line’s item on the Desk page opens its release request or work item',
+  /**
+   * `open-issues.ts` via `WorkStore.load` and `WorkDetailStore.load`: the Desk page lists the
+   * project's open issues, each with its description (qits-1819).
+   */
+  'show-open-issues': 'The Desk page lists the project’s open issues, each with its description',
+  /**
+   * `open-issues.ts`: an open issue's id on the Desk page opens the issue's page (`issue`).
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
   /** `network-access.page.ts` via `PeersStore.load`: the Network access pane's peers table. */
   'show-network-peers': 'The Network access page lists every peer of the platform network',
   /**

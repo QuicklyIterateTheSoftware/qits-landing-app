@@ -11,13 +11,12 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { QitsCommitMessage } from '@qits/ui-components';
 import { type WorkEntry } from '$core/work/work.consumes';
 import { SelectedWork } from '$core/work/selected-work';
 import { WorkDetailStore } from '$core/work/work-detail.store';
 import { workRef, WorkStore } from '$core/work/work.store';
-import { WORK_DETAIL } from '$core/work/work-tabs';
 
 /** The issues a person still has to answer, oldest first: `entries` holds every work item. */
 export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] {
@@ -33,12 +32,13 @@ export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] 
  * desk hears of both. A move reaches the list by `EntityTransitioned`. No event marks a new issue
  * (`SelectedWork.followTransitions`), so the list is read again when the page opens. The list row has
  * no description: each issue's own read has it. The work ids of the project in a description are
- * drawn as work references with their briefs (`<qits-commit-message>`, qits-1898).
+ * drawn as work references with their briefs (`<qits-commit-message>`, qits-1898). An issue's id
+ * opens its page through the declared exit `open-open-issue:issue`.
  */
 @Component({
   selector: 'app-open-issues',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [QitsCommitMessage, RouterLink],
+  imports: [QitsCommitMessage, QitsExit],
   host: { class: 'block' },
   template: `
     <section class="mb-6" aria-label="Open issues">
@@ -58,7 +58,8 @@ export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] 
             <div class="flex flex-wrap items-baseline gap-2">
               <a
                 class="font-mono text-sm text-ocean-deep-700 no-underline hover:underline"
-                [routerLink]="link(issue)"
+                [qitsExit]="opening.issue"
+                [exitParams]="{ slug: slug(), id: ref(issue) }"
                 >{{ issue.qualifiedId }}</a
               >
               <span class="text-sm font-semibold text-gray-800">{{ issue.title }}</span>
@@ -105,6 +106,11 @@ export class OpenIssues {
   readonly projectId = input.required<string>();
   readonly slug = input.required<string>();
 
+  /** An issue's id opens its page (`open-open-issue`, epic qits-2000). */
+  protected readonly opening = outcomes('open-open-issue', {
+    issue: exit('projects/:slug/work/detail/:id'),
+  });
+
   private readonly drafts = signal<Readonly<Record<string, string>>>({});
   private readonly refusals = signal<Readonly<Record<string, string>>>({});
 
@@ -132,8 +138,9 @@ export class OpenIssues {
     });
   }
 
-  protected link(issue: WorkEntry): string {
-    return `/projects/${this.slug()}/work/${WORK_DETAIL}/${workRef(issue) ?? ''}`;
+  /** The issue's qualified id, for its page. */
+  protected ref(issue: WorkEntry): string {
+    return workRef(issue) ?? '';
   }
 
   protected descriptionOf(issue: WorkEntry): string {

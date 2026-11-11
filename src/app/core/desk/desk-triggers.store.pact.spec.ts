@@ -19,18 +19,9 @@ import { DeskTriggersStore } from './desk-triggers.store';
  * (see that file's comment for the convention; `assertPactPart` below is what lets several specs
  * share one committed pact).
  *
- * **Skipped today, named individually rather than failing the file** (the
- * `qits-system-frontend`/`qits-system-service` `targets-api.pact.spec.ts` carries the identical
- * pattern for a module ahead of its own pinned package). qits-projects-service's
- * `GET /projects/api/projects/{projectId}/desk-triggers` (`listDeskTriggerMessages`) and its
- * provider state `a project whose desk received a trigger message` are committed on that
- * repository's own `epic/qits-1604` branch
- * (`golden-masters/a-project-whose-desk-received-a-trigger-message/listDeskTriggerMessages.json`,
- * `golden-masters/index.json`) but have not reached a release yet, so
- * `@qits/projects-golden-masters` — a devDependency, pinned here at 2026.1025.140312 — does not
- * carry the state. `recorded()` reads that straight off the installed package, so once a release
- * publishes the state this test starts running on its own: no other edit, because every path below
- * was read from that already-committed fixture.
+ * Two states: a window with a work item's line and a release request's (`a project whose desk
+ * received a trigger message`), and one whose line names the comment that addressed the desk (`a
+ * project whose desk was addressed in a comment`, qits-2039), whose `commentId` the Desk page links.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -39,37 +30,10 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 /** The operation this spec owns in that file. */
 const OPERATIONS = ['listDeskTriggerMessages'];
 
-const STATE = 'a project whose desk received a trigger message';
-
-/**
- * `commentId` (qits-1660) is newer than the pinned `@qits/projects-golden-masters`: the recorded body
- * holds it only from the qits-projects-service release that adds it. Until the pin reaches that
- * release this spec consumes everything else, so the committed pact stays the one CI writes; once
- * it does, the spec consumes `commentId` too, and the pact is rewritten with `QITS_GOLDEN_UPDATE`.
- */
-const COMMENT_ID = 'messages[].events[].commentId';
-
-/** Whether the recorded body of `state`/`operationId` has a line that carries `commentId`. */
-function recordsCommentId(state: string, operationId: string): boolean {
-  try {
-    const body = masters.body(state, operationId) as {
-      messages?: { events?: Record<string, unknown>[] }[];
-    };
-    return (body.messages ?? []).some((m) => (m.events ?? []).some((e) => 'commentId' in e));
-  } catch {
-    return false;
-  }
-}
-
-/** Whether `state`/`operationId` is recorded in the `@qits/projects-golden-masters` this run resolved. */
-function recorded(state: string, operationId: string): boolean {
-  try {
-    masters.operation(state, operationId);
-    return true;
-  } catch {
-    return false;
-  }
-}
+const STATES = [
+  ['a project whose desk received a trigger message', 2],
+  ['a project whose desk was addressed in a comment', 1],
+] as const;
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-desk-triggers-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -90,12 +54,6 @@ function storeAt(url: string) {
 describe('qits-landing-app → qits-projects-service pact: DeskTriggersStore', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
-    if (!recorded(STATE, 'listDeskTriggerMessages')) {
-      // Nothing was recorded against this run (see the file comment above) — nothing to compare
-      // or write. Cleaning the scratch dir is still worth doing.
-      rmSync(dir, { recursive: true, force: true });
-      return;
-    }
     try {
       assertPactPart(
         join(dir, `${CONSUMER}-${PROVIDER}.json`),
@@ -108,26 +66,24 @@ describe('qits-landing-app → qits-projects-service pact: DeskTriggersStore', (
     }
   });
 
-  it.skipIf(!recorded(STATE, 'listDeskTriggerMessages'))(
-    'show-project-desk: the store lists the project’s desk trigger messages, newest first',
-    () =>
+  it.each(STATES)(
+    'show-project-desk: the store lists the desk trigger messages of %s, newest first',
+    (state, lines) =>
       addGoldenInteraction(pact, masters, {
         provider: PROVIDER,
-        state: STATE,
+        state,
         operationId: 'listDeskTriggerMessages',
         trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-project-desk' },
-        consumes: recordsCommentId(STATE, 'listDeskTriggerMessages')
-          ? LIST_DESK_TRIGGER_MESSAGES
-          : LIST_DESK_TRIGGER_MESSAGES.filter((path) => path !== COMMENT_ID),
+        consumes: LIST_DESK_TRIGGER_MESSAGES,
       }).executeTest(async (server) => {
-        const projectId = '00000000-0000-4000-8000-000000000001';
+        const projectId = masters.operation(state, 'listDeskTriggerMessages').params['projectId'];
         const store = storeAt(server.url);
         await store.load(projectId);
         const entry = store.byProject()[projectId];
         expect(entry?.status).toBe('loaded');
         expect(entry?.messages).toHaveLength(1);
         expect(entry?.messages[0]?.state).toBe('DELIVERED');
-        expect(entry?.messages[0]?.events).toHaveLength(2);
+        expect(entry?.messages[0]?.events).toHaveLength(lines);
       }),
   );
 });

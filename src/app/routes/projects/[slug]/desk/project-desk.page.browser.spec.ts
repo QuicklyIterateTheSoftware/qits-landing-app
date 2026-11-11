@@ -1,17 +1,28 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../testing/browser/app-route';
 
 /**
  * Screenshots of the Desk page inside the shell (`openRoute`). The open project is the recorded
  * one ("a project exists"), found by the URL's slug in the recorded project list, the same as the
  * other project pages' specs.
  *
- * `listDeskTriggerMessages` itself is answered from qits-projects' golden master only where the
- * test below is skipped and says why: `@qits/projects-golden-masters` does not carry the provider
- * state yet (see `desk-triggers.store.pact.spec.ts`), and the guard refuses a hand-made 2xx body.
+ * `listDeskTriggerMessages` is answered from qits-projects' golden masters: "a project whose desk
+ * received a trigger message" (a work item's line and a release request's) and "a project whose
+ * desk was addressed in a comment" (a line naming its comment, qits-2039).
+ *
+ * A line's item is a declared exit (`open-desk-line`, epic qits-2000), each followed once: a
+ * release request's (`releaseRequest`), a work item's (`workItem`) and a work item's at the
+ * comment the line names (`workItem` with its `#comment-<id>` fragment). The page each leaves for
+ * is its own spec's: its reads are answered with an error (`leftFor`).
  */
 
 describe('ProjectDeskPage (screenshots)', () => {
@@ -41,64 +52,79 @@ describe('ProjectDeskPage (screenshots)', () => {
     };
   }
 
-  // Skipped: qits-projects-service's provider state "a project whose desk received a trigger
-  // message" is committed on its own `epic/qits-1604` branch
-  // (`golden-masters/a-project-whose-desk-received-a-trigger-message/listDeskTriggerMessages.json`)
-  // but has not reached a release yet, so `@qits/projects-golden-masters` does not carry it and the
-  // guard refuses a hand-made 2xx body. Once a release publishes it, replace the flush below with
-  // `await goldenMaster('a project whose desk received a trigger message', 'listDeskTriggerMessages')`
-  // and unskip — see `desk-triggers.store.pact.spec.ts` for the same hold.
-  it.skip('lists a message with its badge, times, and each line’s source, item and cause', async () => {
+  const RECEIVED = 'a project whose desk received a trigger message';
+  const COMMENTED = 'a project whose desk was addressed in a comment';
+
+  /** The page with `state`'s trigger messages. */
+  async function loaded(state: string) {
     const { opened, request } = await render();
-    const body = {
-      messages: [
-        {
-          id: '00000000-0000-4000-8000-000000000002',
-          state: 'DELIVERED',
-          openedAt: '2026-01-01T00:00:00Z',
-          closesAt: '2026-01-01T00:00:00Z',
-          closedAt: '2026-01-01T00:00:00Z',
-          acceptedAt: '2026-01-01T00:00:00Z',
-          attempts: 1,
-          lastStatus: 200,
-          lastDetail: null,
-          commandId: 'desk-command-1',
-          queuePosition: null,
-          message:
-            'You are the delivery desk of project contract-00000001. Run `qits help guide` and follow your brief. Its guide-hash is 0000000000000000: re-read the guide only when that differs from the hash you last read. Then act on what happened below.',
-          events: [
-            {
-              source: 'work-verified',
-              itemRef: 'contract-00000001-1580',
-              itemId: '00000000-0000-4000-8000-000000000003',
-              label: 'Desk triggers read door',
-              cause: 'tok-workspace-agent-contract',
-              eventId: '00000000-0000-4000-8000-000000000004',
-              occurredAt: '2026-01-01T00:00:00Z',
-            },
-            {
-              source: 'approval-needed',
-              itemRef: 'contract-service-rr-7',
-              itemId: '00000000-0000-4000-8000-000000000005',
-              label: 'Release qits-1580; waits on manual-review: a person approves',
-              cause: 'fold 5eed5eed',
-              eventId: '00000000-0000-4000-8000-000000000006',
-              occurredAt: '2026-01-01T00:00:00Z',
-            },
-          ],
-        },
-      ],
-    };
-    // eslint-disable-next-line qits/browser-spec-data-from-golden-masters -- waits for qits-projects-service's release of "a project whose desk received a trigger message"
-    request.flush(body);
+    request.flush(await goldenMaster(state, 'listDeskTriggerMessages'));
     await opened.settled();
-    const view = page.elementLocator(opened.page);
+    return { opened, view: page.elementLocator(opened.page) };
+  }
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's (`idle()`, not
+   * `settled()`, qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  /** The outcomes recorded so far, as `interaction:outcome`. */
+  const fired = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
+
+  it('lists a message with its badge, times, and each line’s source, item and cause', async () => {
+    const { opened, view } = await loaded(RECEIVED);
     await expect.element(view).toMatchTextContent('delivered');
-    await expect.element(view).toMatchTextContent('contract-00000001-1580');
-    await expect.element(view).toMatchTextContent('contract-service-rr-7');
+    await expect
+      .element(view.getByRole('link', { name: 'contract-00000001-1580', exact: true }))
+      .toBeVisible();
+    await expect
+      .element(view.getByRole('link', { name: 'contract-service-rr-7', exact: true }))
+      .toBeVisible();
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
+  });
+
+  it.each([
+    ['releaseRequest', 'contract-service-rr-7', 'release-requests/contract-service-rr-7'],
+    ['workItem', 'contract-00000001-1580', 'work/detail/contract-00000001-1580'],
+  ])('open-desk-line %s: the line’s item “%s” opens its page', async (outcome, name, path) => {
+    const { opened, view } = await loaded(RECEIVED);
+    await view.getByRole('link', { name, exact: true }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual([`open-desk-line:${outcome}`]);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/${path}`);
+  });
+
+  it('links a line that names a comment to that comment', async () => {
+    const { opened, view } = await loaded(COMMENTED);
+    await expect
+      .element(view.getByRole('link', { name: 'contract-00000001-1', exact: true }))
+      .toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('commented', { kind: 'DATA' });
+  });
+
+  it('open-desk-line workItem: a line that names a comment opens the item at that comment', async () => {
+    const messages = await goldenMaster(COMMENTED, 'listDeskTriggerMessages');
+    const commentId = messages.messages[0].events[0].commentId;
+    const { opened, view } = await loaded(COMMENTED);
+    await view.getByRole('link', { name: 'contract-00000001-1', exact: true }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-desk-line:workItem']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/work/detail/contract-00000001-1#comment-${commentId}`,
+    );
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {
