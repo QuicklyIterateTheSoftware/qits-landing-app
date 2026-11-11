@@ -189,6 +189,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > draws a title, a single action and a group on one row",
       "name": "inputs",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -198,6 +200,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > puts the actions on the first line and the title below them when no room is left",
       "name": "narrow",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -207,6 +211,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > wraps a group wider than the bar inside the bar on a phone-sized viewport",
       "name": "phone-wide-group",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -216,6 +222,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > pins the actions below the top bar, and tells their height to the content",
       "name": "pinned-under-bar",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -225,6 +233,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > keeps the actions pinned while the content scrolls under them",
       "name": "pinned",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -234,6 +244,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > draws a projected header and projected actions",
       "name": "slots",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -243,6 +255,8 @@
       "spec": "src/app/layout/page-layout/page-layout.browser.spec.ts",
       "test": "PageLayoutComponent (screenshots) > wraps a long title beside the actions before it moves",
       "name": "wrapping",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -252,6 +266,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > hangs the agents menu from its button’s right edge on a wide screen",
       "name": "menu-agents-desktop",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -277,6 +293,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the agents menu as a sheet under the top bar on a phone",
       "name": "menu-agents-phone",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -302,6 +320,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > hangs the bumps menu from its button’s right edge on a wide screen",
       "name": "menu-bumps-desktop",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -327,6 +347,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the bumps menu as a sheet under the top bar on a phone",
       "name": "menu-bumps-phone",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -352,6 +374,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > hangs the notifications menu from its button’s right edge on a wide screen",
       "name": "menu-notifications-desktop",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -377,6 +401,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the notifications menu as a sheet under the top bar on a phone",
       "name": "menu-notifications-phone",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -402,6 +428,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the path menu as a sheet under the top bar on a phone",
       "name": "menu-path-phone",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -422,6 +450,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > hangs the release menu from its button’s right edge on a wide screen",
       "name": "menu-release-desktop",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -452,6 +482,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the release menu as a sheet under the top bar on a phone",
       "name": "menu-release-phone",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -482,6 +514,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the sidebar from the burger on a narrow screen",
       "name": "narrow-open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -497,6 +531,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > hides the sidebar behind the burger on a narrow screen",
       "name": "narrow",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -512,6 +548,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > lists the open project’s sections and marks the current one",
       "name": "project",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -532,6 +570,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > shows the newest release request below Release Requests, between Work and Repositories",
       "name": "release-requests",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -552,6 +592,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > shows the sidebar beside the page on a wide screen",
       "name": "wide",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -567,6 +609,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > opens the whole path from the … on a phone, and closes it",
       "name": "work-item-narrow-expanded",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -587,6 +631,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > collapses a work item’s breadcrumbs to the …, the parent and the current page on a phone",
       "name": "work-item-narrow",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -607,6 +653,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > shows the whole breadcrumb trail of a work item on a wide screen",
       "name": "work-item-wide",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -627,6 +675,8 @@
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > lists the work section’s pages below Work and marks the current one",
       "name": "work-tab",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -647,6 +697,8 @@
       "spec": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts",
       "test": "AgentsMenu (screenshots) > is a closed button badged with the agents needing a person",
       "name": "closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -667,6 +719,8 @@
       "spec": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts",
       "test": "AgentsMenu (screenshots) > lists each agent with what it waits on and what needs a person",
       "name": "open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -687,6 +741,8 @@
       "spec": "src/app/patterns/agents/agents-menu/agents-menu.browser.spec.ts",
       "test": "AgentsMenu (screenshots) > while the agents start up > shows where each agent’s start stands, and for how long",
       "name": "starting-up",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -707,6 +763,8 @@
       "spec": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts",
       "test": "NotificationsMenu (screenshots) > is a speech bubble, closed",
       "name": "closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -716,6 +774,8 @@
       "spec": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts",
       "test": "NotificationsMenu (screenshots) > says so when there are none",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -731,6 +791,8 @@
       "spec": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts",
       "test": "NotificationsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -740,6 +802,8 @@
       "spec": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts",
       "test": "NotificationsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -749,6 +813,8 @@
       "spec": "src/app/patterns/events/notifications-menu/notifications-menu.browser.spec.ts",
       "test": "NotificationsMenu (screenshots) > lists the newest events",
       "name": "open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -764,6 +830,8 @@
       "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
       "test": "BumpsMenu (screenshots) > is a lighthouse, closed",
       "name": "closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -773,6 +841,8 @@
       "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
       "test": "BumpsMenu (screenshots) > says so when there are none",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -788,6 +858,8 @@
       "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
       "test": "BumpsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -797,6 +869,8 @@
       "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
       "test": "BumpsMenu (screenshots) > shows the spinner while loading, and the error icon when the list fails",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -806,6 +880,8 @@
       "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
       "test": "BumpsMenu (screenshots) > lists the pending version bumps, and the upstream pools below them",
       "name": "open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -821,6 +897,8 @@
       "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
       "test": "ProjectCard (screenshots) > starts collapsed, with a button to show the languages",
       "name": "collapsed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -841,6 +919,8 @@
       "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
       "test": "ProjectCard (screenshots) > shows that it is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -850,6 +930,8 @@
       "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
       "test": "ProjectCard (screenshots) > marks the work, components and lines as failed to load",
       "name": "unavailable",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -859,6 +941,8 @@
       "spec": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts",
       "test": "ReleaseMenu (screenshots) > is a closed lightning button with the pending count",
       "name": "closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -879,6 +963,8 @@
       "spec": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts",
       "test": "ReleaseMenu (screenshots) > says so when nothing is pending",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -909,6 +995,8 @@
       "spec": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts",
       "test": "ReleaseMenu (screenshots) > shows the error icon when the requests fail",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -934,6 +1022,8 @@
       "spec": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts",
       "test": "ReleaseMenu (screenshots) > shows the spinner while the requests load",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -959,6 +1049,8 @@
       "spec": "src/app/patterns/release-requests/release-menu/release-menu.browser.spec.ts",
       "test": "ReleaseMenu (screenshots) > lists the pending release requests with their lifecycle in a line",
       "name": "open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -989,6 +1081,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > an epic with tasks in every status: each in its column, VERIFIED and DONE in Verified",
       "name": "every-task-status",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1009,6 +1103,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a feature whose tasks are all verified: its cards in Verified",
       "name": "feature-all-verified-bar",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1029,6 +1125,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a feature whose tasks are all verified: its cards in Verified",
       "name": "feature-all-verified-columns",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1049,6 +1147,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a feature whose tasks are all verified: its cards in Verified",
       "name": "feature-all-verified-row-1",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1069,6 +1169,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a feature whose tasks are all verified: its cards in Verified",
       "name": "feature-all-verified-row-2",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1089,6 +1191,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > implemented-no-features: the bar, the five columns, \"No features\"",
       "name": "implemented-no-features",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1109,6 +1213,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > implementing-no-features: the bar, the five columns, \"No features\"",
       "name": "implementing-no-features",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1129,6 +1235,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > an implementing epic with a started feature and task",
       "name": "implementing-started",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1149,6 +1257,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > features in mixed statuses: each task in its own column, whatever its feature’s",
       "name": "mixed-features-bar",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1169,6 +1279,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > features in mixed statuses: each task in its own column, whatever its feature’s",
       "name": "mixed-features-columns",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1189,6 +1301,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > features in mixed statuses: each task in its own column, whatever its feature’s",
       "name": "mixed-features-row-1",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1209,6 +1323,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > features in mixed statuses: each task in its own column, whatever its feature’s",
       "name": "mixed-features-row-2",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1229,6 +1345,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > features in mixed statuses: each task in its own column, whatever its feature’s",
       "name": "mixed-features-row-3",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1249,6 +1367,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > features in mixed statuses: each task in its own column, whatever its feature’s",
       "name": "mixed-features-row-4",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1269,6 +1389,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > ready-for-dev-no-features: the bar, the five columns, \"No features\"",
       "name": "ready-for-dev-no-features",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1289,6 +1411,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a scheduled epic with two features in a mixed state",
       "name": "scheduled-features",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1309,6 +1433,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a verified feature whose tasks are all verified: its cards in Verified",
       "name": "verified-feature-bar",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1329,6 +1455,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a verified feature whose tasks are all verified: its cards in Verified",
       "name": "verified-feature-columns",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1349,6 +1477,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a verified feature whose tasks are all verified: its cards in Verified",
       "name": "verified-feature-row-1",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1369,6 +1499,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > a verified feature whose tasks are all verified: its cards in Verified",
       "name": "verified-feature-row-2",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1389,6 +1521,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > verifying-no-features: the bar, the five columns, \"No features\"",
       "name": "verifying-no-features",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1409,6 +1543,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > with workspaces: a tag in the bar, at a feature’s title, a bubble on a task",
       "name": "workspaces-bar",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1434,6 +1570,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > with workspaces: a tag in the bar, at a feature’s title, a bubble on a task",
       "name": "workspaces-columns",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1459,6 +1597,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > with workspaces: a tag in the bar, at a feature’s title, a bubble on a task",
       "name": "workspaces-row-1",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1484,6 +1624,8 @@
       "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
       "test": "EpicBoard (screenshots) > with workspaces: a tag in the bar, at a feature’s title, a bubble on a task",
       "name": "workspaces-row-2",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1509,6 +1651,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > a feature whose tasks are all verified: no cards, its tile and its whole id",
       "name": "feature-all-verified",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1529,6 +1673,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > a feature with tasks past the board: a tile at the bottom of its row’s gutter, on the title bar’s line",
       "name": "feature-verified-tasks",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1549,6 +1695,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > several features with their tasks, in a mixed state: expanded, then collapsed",
       "name": "features-mixed-collapsed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1569,6 +1717,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > several features with their tasks, in a mixed state: expanded, then collapsed",
       "name": "features-mixed-expanded",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1589,6 +1739,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > implemented",
       "name": "implemented",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1609,6 +1761,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > collapsed with one started task: a single tile, in Implementing",
       "name": "implementing-collapsed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1629,6 +1783,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > a started feature and task: both in Implementing",
       "name": "implementing-feature-task",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1649,6 +1805,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > implementing",
       "name": "implementing",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1669,6 +1827,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > ready-for-dev",
       "name": "ready-for-dev",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1689,6 +1849,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > collapsed without tasks: \"No tasks\", no tiles",
       "name": "verifying-collapsed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1709,6 +1871,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > verifying",
       "name": "verifying",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1729,6 +1893,8 @@
       "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
       "test": "EpicCard (screenshots) > with workspaces: a tag in the lane, at a feature’s title, a bubble on a task",
       "name": "workspaces",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1754,6 +1920,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > every task implemented (DONE): collapsed, then expanded",
       "name": "all-done-collapsed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1774,6 +1942,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > every task implemented (DONE): collapsed, then expanded",
       "name": "all-done-expanded",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1794,6 +1964,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > draws the drag handle on a REPORTED task in the Backlog, not on its context",
       "name": "backlog-task-handle",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1814,6 +1986,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > done",
       "name": "done",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1834,6 +2008,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > dropped",
       "name": "dropped",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1854,6 +2030,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > reported",
       "name": "reported",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1874,6 +2052,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > a VERIFIED epic whose tasks are still on the board: expanded, then collapsed",
       "name": "verified-tasks-open-collapsed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1894,6 +2074,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > a VERIFIED epic whose tasks are still on the board: expanded, then collapsed",
       "name": "verified-tasks-open-expanded",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1914,6 +2096,8 @@
       "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
       "test": "EpicListItem (screenshots) > verified",
       "name": "verified",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1934,6 +2118,8 @@
       "spec": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts",
       "test": "KanbanBoard (screenshots) > a board with work in every status: Ready for Dev, Implementing, Implemented, Verifying",
       "name": "every-status",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1954,6 +2140,8 @@
       "spec": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts",
       "test": "KanbanBoard (screenshots) > a board with an epic’s features and tasks",
       "name": "nested",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1974,6 +2162,8 @@
       "spec": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts",
       "test": "KanbanBoard (screenshots) > highlights the card the text selection is in",
       "name": "selection-highlight",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -1994,6 +2184,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > implemented",
       "name": "implemented",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2014,6 +2206,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > implementing",
       "name": "implementing",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2034,6 +2228,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > lists its unmet needs on hover",
       "name": "needs-tooltip",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2054,6 +2250,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > needs",
       "name": "needs",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2074,6 +2272,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > ready-for-dev",
       "name": "ready-for-dev",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2094,6 +2294,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > verifying",
       "name": "verifying",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2114,6 +2316,8 @@
       "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
       "test": "TicketCard (screenshots) > workspace",
       "name": "workspace",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2139,6 +2343,8 @@
       "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
       "test": "TicketListItem (screenshots) > done",
       "name": "done",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2159,6 +2365,8 @@
       "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
       "test": "TicketListItem (screenshots) > dropped",
       "name": "dropped",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2179,6 +2387,8 @@
       "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
       "test": "TicketListItem (screenshots) > needs",
       "name": "needs",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2199,6 +2409,8 @@
       "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
       "test": "TicketListItem (screenshots) > reported",
       "name": "reported",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2219,6 +2431,8 @@
       "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
       "test": "TicketListItem (screenshots) > verified",
       "name": "verified",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2244,6 +2458,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > Acceptance: verified work, the epic with its finish button, the ticket with its hint",
       "name": "acceptance",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2269,6 +2485,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > the Archive: Done and Dropped mixed",
       "name": "archive",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2289,6 +2507,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > the Backlog",
       "name": "backlog",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2309,6 +2529,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > an empty list says so",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2329,6 +2551,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > finishing a verified epic: the bubble, the Undo toast, the move to DONE",
       "name": "finish-initial",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2354,6 +2578,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > finishing a verified epic: the bubble, the Undo toast, the move to DONE",
       "name": "finish-pending",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2379,6 +2605,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > finishing a verified epic: the bubble, the Undo toast, the move to DONE",
       "name": "finish-sent",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2409,6 +2637,8 @@
       "spec": "src/app/patterns/work/work-list/work-list.browser.spec.ts",
       "test": "WorkList (screenshots) > Undo brings the epic back and sends nothing",
       "name": "finish-undone",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2434,6 +2664,8 @@
       "spec": "src/app/patterns/work/work-needs/work-needs-badge.browser.spec.ts",
       "test": "WorkNeedsBadge (screenshots) > its tooltip, on hover",
       "name": "badge-tooltip",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -2443,6 +2675,8 @@
       "spec": "src/app/patterns/work/work-needs/work-needs-badge.browser.spec.ts",
       "test": "WorkNeedsBadge (screenshots) > one need not met",
       "name": "badge",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -2452,6 +2686,8 @@
       "spec": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts",
       "test": "WorkNeedsPanel (screenshots) > adding a need: the item and the status to pick",
       "name": "panel-adding",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2472,6 +2708,8 @@
       "spec": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts",
       "test": "WorkNeedsPanel (screenshots) > an item that needs nothing",
       "name": "panel-empty",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2492,6 +2730,8 @@
       "spec": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts",
       "test": "WorkNeedsPanel (screenshots) > a need not met: the item linked, the status it needs, where it is now",
       "name": "panel",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [
         {
@@ -2512,6 +2752,8 @@
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
       "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: no-code",
       "name": "no-code",
+      "kind": null,
+      "viewport": null,
       "route": "auth/callback",
       "records": [],
       "triggers": [
@@ -2523,6 +2765,8 @@
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
       "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: not-swapped",
       "name": "not-swapped",
+      "kind": null,
+      "viewport": null,
       "route": "auth/callback",
       "records": [],
       "triggers": [
@@ -2534,6 +2778,8 @@
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
       "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: refused",
       "name": "refused",
+      "kind": null,
+      "viewport": null,
       "route": "auth/callback",
       "records": [],
       "triggers": [
@@ -2545,6 +2791,8 @@
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
       "test": "QitsAuthCallbackPage (screenshots) > shows that the visitor is being signed in",
       "name": "signing-in",
+      "kind": null,
+      "viewport": null,
       "route": "auth/callback",
       "records": [],
       "triggers": []
@@ -2554,6 +2802,8 @@
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
       "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unknown-state",
       "name": "unknown-state",
+      "kind": null,
+      "viewport": null,
       "route": "auth/callback",
       "records": [],
       "triggers": [
@@ -2565,6 +2815,8 @@
       "spec": "src/app/routes/network-access/network-access.page.browser.spec.ts",
       "test": "NetworkAccessPage (screenshots) > lists the peers, the private edge and the connect line",
       "name": "loaded",
+      "kind": null,
+      "viewport": null,
       "route": "network-access",
       "records": [
         {
@@ -2595,6 +2847,8 @@
       "spec": "src/app/routes/network-access/network-access.page.browser.spec.ts",
       "test": "NetworkAccessPage (screenshots) > says no private edge has announced itself",
       "name": "no-private-edge",
+      "kind": null,
+      "viewport": null,
       "route": "network-access",
       "records": [
         {
@@ -2620,6 +2874,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > shows a refused discard in the service’s words, and offers force",
       "name": "discard-refused",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId",
       "records": [
         {
@@ -2655,6 +2911,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > marks the agent as failed to load",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId",
       "records": [
         {
@@ -2675,6 +2933,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/agent.layout.browser.spec.ts",
       "test": "AgentLayout (screenshots) > shows the agent, its item, its workspace and its slot coming up",
       "name": "starting",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId",
       "records": [
         {
@@ -2710,6 +2970,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts",
       "test": "AgentChatPage (screenshots) > shows a running agent’s transcript and its restored prompt draft",
       "name": "transcript",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId/chat",
       "records": [
         {
@@ -2755,6 +3017,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts",
       "test": "AgentFilesPage (screenshots) > shows a gitignored directory opened, dimmed, with a name search on",
       "name": "ignored-and-search",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId/files",
       "records": [
         {
@@ -2805,6 +3069,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts",
       "test": "AgentFilesPage (screenshots) > shows the tree and an open file, with its test linked and lines picked",
       "name": "tree-and-file",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId/files",
       "records": [
         {
@@ -2855,6 +3121,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts",
       "test": "AgentTerminalPage (screenshots) > shows the agent’s terminal, attached, with its output",
       "name": "attached",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId/terminal",
       "records": [
         {
@@ -2890,6 +3158,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts",
       "test": "AgentTerminalPage (screenshots) > shows a socket that cannot attach as closed, with a way to try again",
       "name": "lost",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents/:agentId/terminal",
       "records": [
         {
@@ -2925,6 +3195,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts",
       "test": "ProjectAgentsPage (screenshots) > marks the page as loading, then as failed to load",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents",
       "records": [
         {
@@ -2945,6 +3217,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts",
       "test": "ProjectAgentsPage (screenshots) > marks the page as loading, then as failed to load",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents",
       "records": [
         {
@@ -2965,6 +3239,8 @@
       "spec": "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts",
       "test": "ProjectAgentsPage (screenshots) > lists the project’s agents, with what each waits on and needs a person, and its slots",
       "name": "slots-and-agents",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/agents",
       "records": [
         {
@@ -3005,6 +3281,8 @@
       "spec": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts",
       "test": "ProjectDeskPage (screenshots) > marks the page as loading, then says it failed, with Retry",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/desk",
       "records": [
         {
@@ -3030,6 +3308,8 @@
       "spec": "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts",
       "test": "ProjectDeskPage (screenshots) > marks the page as loading, then says it failed, with Retry",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/desk",
       "records": [
         {
@@ -3055,6 +3335,8 @@
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
       "test": "ProjectEventsPage (screenshots) > shows the blank page",
       "name": "blank",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/events",
       "records": [
         {
@@ -3075,6 +3357,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts",
       "test": "IdeaCreatePage (screenshots) > shows the form with its counts, and the service’s refusal",
       "name": "form",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas/create",
       "records": [
         {
@@ -3100,6 +3384,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts",
       "test": "IdeaCreatePage (screenshots) > shows the form with its counts, and the service’s refusal",
       "name": "refused",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas/create",
       "records": [
         {
@@ -3125,6 +3411,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
       "test": "IdeaEditPage (screenshots) > fills the form with the idea and counts its description",
       "name": "form",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas/detail/:ideaId/edit",
       "records": [
         {
@@ -3155,6 +3443,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
       "test": "IdeaPage (screenshots) > asks for a reason before it archives",
       "name": "archiving",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas/detail/:ideaId",
       "records": [
         {
@@ -3180,6 +3470,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
       "test": "IdeaPage (screenshots) > shows the idea, what it enables and the work it inspired",
       "name": "idea",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas/detail/:ideaId",
       "records": [
         {
@@ -3205,6 +3497,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts",
       "test": "ProjectIdeasPage (screenshots) > marks the page as loading, then says it failed, with Retry",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas",
       "records": [
         {
@@ -3225,6 +3519,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts",
       "test": "ProjectIdeasPage (screenshots) > lists the ideas with their status",
       "name": "list",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas",
       "records": [
         {
@@ -3250,6 +3546,8 @@
       "spec": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts",
       "test": "ProjectIdeasPage (screenshots) > marks the page as loading, then says it failed, with Retry",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/ideas",
       "records": [
         {
@@ -3270,6 +3568,8 @@
       "spec": "src/app/routes/projects/[slug]/observability/project-observability.page.browser.spec.ts",
       "test": "ProjectObservabilityPage (screenshots) > shows the blank page",
       "name": "blank",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/observability",
       "records": [
         {
@@ -3290,6 +3590,8 @@
       "spec": "src/app/routes/projects/[slug]/project.page.browser.spec.ts",
       "test": "ProjectPage (screenshots) > marks the page as failed to load when the projects could not be loaded",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug",
       "records": [],
       "triggers": []
@@ -3299,6 +3601,8 @@
       "spec": "src/app/routes/projects/[slug]/project.page.browser.spec.ts",
       "test": "ProjectPage (screenshots) > names the project",
       "name": "loaded",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug",
       "records": [
         {
@@ -3319,6 +3623,8 @@
       "spec": "src/app/routes/projects/[slug]/project.page.browser.spec.ts",
       "test": "ProjectPage (screenshots) > shows that the project is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug",
       "records": [],
       "triggers": []
@@ -3328,6 +3634,8 @@
       "spec": "src/app/routes/projects/[slug]/project.page.browser.spec.ts",
       "test": "ProjectPage (screenshots) > marks the page as failed to load when no project has the slug",
       "name": "unknown",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug",
       "records": [
         {
@@ -3343,6 +3651,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > shows the paths a conflicted request could not fold",
       "name": "conflicted",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3378,6 +3688,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > marks the request as loading, then says it could not be read, with Retry",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3403,6 +3715,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > marks the request as loading, then says it could not be read, with Retry",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3428,6 +3742,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > says so when the project has no such request",
       "name": "not-found",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3453,6 +3769,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > shows a pending request: head, facts and its lifecycle",
       "name": "pending",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3498,6 +3816,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > draws a refolded request’s fold as a branch graph under its sources",
       "name": "refolded-graph",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3538,6 +3858,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
       "test": "ReleaseRequestPage (screenshots) > shows a released request with its version and what it published",
       "name": "released",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests/:requestId",
       "records": [
         {
@@ -3583,6 +3905,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts",
       "test": "ReleaseRequestsPage (screenshots) > says so when the project has none",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests",
       "records": [
         {
@@ -3603,6 +3927,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts",
       "test": "ReleaseRequestsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests",
       "records": [
         {
@@ -3618,6 +3944,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts",
       "test": "ReleaseRequestsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests",
       "records": [
         {
@@ -3633,6 +3961,8 @@
       "spec": "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts",
       "test": "ReleaseRequestsPage (screenshots) > lists every request with its state, gates and facts",
       "name": "requests",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/release-requests",
       "records": [
         {
@@ -3653,6 +3983,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts",
       "test": "ContractStatePage (screenshots) > says so when no contracts bundle is published for the repository",
       "name": "none",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/contracts/:state",
       "records": [
         {
@@ -3683,6 +4015,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts",
       "test": "ContractStatePage (screenshots) > names the bundle and says so when its golden masters cannot be read",
       "name": "unreadable-index",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/contracts/:state",
       "records": [
         {
@@ -3713,6 +4047,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts",
       "test": "ContractsPage (screenshots) > marks the page as failed when the docs store cannot be read",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/contracts",
       "records": [
         {
@@ -3733,6 +4069,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts",
       "test": "ContractsPage (screenshots) > says so when no contracts bundle is published for the repository",
       "name": "none",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/contracts",
       "records": [
         {
@@ -3758,6 +4096,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts",
       "test": "ContractsPage (screenshots) > names the bundle and says so when its golden masters cannot be read",
       "name": "unreadable-index",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/contracts",
       "records": [
         {
@@ -3788,6 +4128,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts",
       "test": "EntityPage (screenshots) > shows a domain entity’s DTOs and operations",
       "name": "domain",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/entities/:entity",
       "records": [
         {
@@ -3823,6 +4165,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts",
       "test": "EntityPage (screenshots) > shows why a technical entity is one",
       "name": "technical",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/entities/:entity",
       "records": [
         {
@@ -3858,6 +4202,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts",
       "test": "EntityPage (screenshots) > says so for a class the map does not list",
       "name": "unknown",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/entities/:entity",
       "records": [
         {
@@ -3893,6 +4239,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts",
       "test": "EntitiesPage (screenshots) > lists the entities grouped by marking",
       "name": "loaded",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/entities",
       "records": [
         {
@@ -3928,6 +4276,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts",
       "test": "EntitiesPage (screenshots) > says so when no contracts bundle is published for the repository",
       "name": "none",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/entities",
       "records": [
         {
@@ -3953,6 +4303,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > lists the domain entities the route touches, with their verbs",
       "name": "entities",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/ui-builder",
       "records": [
         {
@@ -4008,6 +4360,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > marks the entities no route shows, and lists a picked entity’s routes",
       "name": "entity-view",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/ui-builder",
       "records": [
         {
@@ -4063,6 +4417,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > marks the page as failed when the docs store cannot be read",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/ui-builder",
       "records": [
         {
@@ -4088,6 +4444,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > shows the route tree with the first route with states selected",
       "name": "loaded",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/ui-builder",
       "records": [
         {
@@ -4128,6 +4486,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > says a route without states has nothing frozen",
       "name": "no-states",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/ui-builder",
       "records": [
         {
@@ -4168,6 +4528,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > says so when no frozen routes are published for the repository",
       "name": "none",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories/:repo/ui-builder",
       "records": [
         {
@@ -4198,6 +4560,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts",
       "test": "ProjectRepositoriesPage (screenshots) > marks the page as loading, then as failed to load",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories",
       "records": [
         {
@@ -4218,6 +4582,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts",
       "test": "ProjectRepositoriesPage (screenshots) > marks the page as loading, then as failed to load",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories",
       "records": [
         {
@@ -4238,6 +4604,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts",
       "test": "ProjectRepositoriesPage (screenshots) > shows a card’s clone URL, backup URL and main branch when opened",
       "name": "opened",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories",
       "records": [
         {
@@ -4263,6 +4631,8 @@
       "spec": "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts",
       "test": "ProjectRepositoriesPage (screenshots) > lays the repositories out like the wrapper, with every backup state",
       "name": "tree",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/repositories",
       "records": [
         {
@@ -4288,6 +4658,8 @@
       "spec": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts",
       "test": "ProjectSetupPage (screenshots) > marks the page as failed to load when the projects could not be loaded",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/setup",
       "records": [],
       "triggers": []
@@ -4297,6 +4669,8 @@
       "spec": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts",
       "test": "ProjectSetupPage (screenshots) > names the project",
       "name": "loaded",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/setup",
       "records": [
         {
@@ -4317,6 +4691,8 @@
       "spec": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts",
       "test": "ProjectSetupPage (screenshots) > shows that the project is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/setup",
       "records": [],
       "triggers": []
@@ -4326,6 +4702,8 @@
       "spec": "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts",
       "test": "ProjectSetupPage (screenshots) > marks the page as failed to load when no project has the slug",
       "name": "unknown",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/setup",
       "records": [
         {
@@ -4341,6 +4719,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > shows the verified work, the epic with its finish button, the ticket with its hint",
       "name": "acceptance",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4376,6 +4756,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > says so when nothing waits to be accepted",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4406,6 +4788,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > leaves out the verified feature of an epic still on its board, with epic boards",
       "name": "epic-boards-mixed-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4436,6 +4820,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > says that the work could not be read",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4461,6 +4847,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > lists the verified feature under its epic, inline",
       "name": "inline-mixed-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4491,6 +4879,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > shows that the work is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4516,6 +4906,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > says how each verified ticket’s wrapper closing stands",
       "name": "wrapper-closings-unproven",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4551,6 +4943,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > says how each verified ticket’s wrapper closing stands",
       "name": "wrapper-closings-withdrawn",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4586,6 +4980,8 @@
       "spec": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts",
       "test": "WorkAcceptancePage (screenshots) > says how each verified ticket’s wrapper closing stands",
       "name": "wrapper-closings",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/acceptance",
       "records": [
         {
@@ -4621,6 +5017,8 @@
       "spec": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts",
       "test": "WorkArchivePage (screenshots) > shows the work in a final state",
       "name": "archive",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/archive",
       "records": [
         {
@@ -4651,6 +5049,8 @@
       "spec": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts",
       "test": "WorkArchivePage (screenshots) > says so when nothing is archived",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/archive",
       "records": [
         {
@@ -4681,6 +5081,8 @@
       "spec": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts",
       "test": "WorkArchivePage (screenshots) > marks the work as failed to load",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/archive",
       "records": [
         {
@@ -4706,6 +5108,8 @@
       "spec": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts",
       "test": "WorkArchivePage (screenshots) > shows that the work is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/archive",
       "records": [
         {
@@ -4731,6 +5135,8 @@
       "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
       "test": "WorkCreatePage (screenshots) > is filled from an idea as a new EPIC",
       "name": "from-idea-epic",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/create",
       "records": [
         {
@@ -4761,6 +5167,8 @@
       "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
       "test": "WorkCreatePage (screenshots) > is filled from an idea as a new TICKET",
       "name": "from-idea-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/create",
       "records": [
         {
@@ -4791,6 +5199,8 @@
       "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
       "test": "WorkCreatePage (screenshots) > create-work-item refused: stays, with the service’s words",
       "name": "refused",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/create",
       "records": [
         {
@@ -4815,6 +5225,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a dropped ticket: Reopen, back to REPORTED",
       "name": "actions-dropped-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -4855,6 +5267,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > an implemented ticket: the verify phase, its flow, and the move to VERIFYING",
       "name": "actions-implemented-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -4905,6 +5319,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > an implementing epic: Dispatch lists the flow it runs",
       "name": "actions-implementing-epic-runs",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -4965,6 +5381,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a ready for dev epic: the implement phase, and the move to IMPLEMENTING",
       "name": "actions-implementing-epic",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5010,6 +5428,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a ready for dev epic: the implement phase, and the move to IMPLEMENTING",
       "name": "actions-ready-for-dev-epic",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5050,6 +5470,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a refined epic offers Dispatch (qits-1075)",
       "name": "actions-refined-epic",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5090,6 +5512,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a dropped ticket: Reopen, back to REPORTED",
       "name": "actions-reopened-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5135,6 +5559,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a reported ticket: every group",
       "name": "actions-reported-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5175,6 +5601,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a scheduled feature: its own moves, nothing to dispatch",
       "name": "actions-scheduled-feature",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5215,6 +5643,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > a verified ticket: its moves only, with no Mark done",
       "name": "actions-verified-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5260,6 +5690,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > actions, as the registry serves them > an implemented ticket: the verify phase, its flow, and the move to VERIFYING",
       "name": "actions-verifying-ticket",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5320,6 +5752,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a bug ticket: its facts, description, dossier, comments",
       "name": "detail-bug-ticket-comments",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5375,6 +5809,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a bug ticket: its facts, description, dossier, comments",
       "name": "detail-bug-ticket-description",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5430,6 +5866,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a bug ticket: its facts, description, dossier, comments",
       "name": "detail-bug-ticket-dossier",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5485,6 +5923,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a bug ticket: its facts, description, dossier, comments",
       "name": "detail-bug-ticket-facts",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5540,6 +5980,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-comments",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5600,6 +6042,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-description",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5660,6 +6104,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-dossier-1",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5720,6 +6166,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-dossier-2",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5780,6 +6228,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-dossier-3",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5840,6 +6290,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-dossier-4",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5900,6 +6352,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-features-1",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -5960,6 +6414,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic: description, features, dossier with its figure, comments",
       "name": "detail-epic-features-2",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6020,6 +6476,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a feature: description, tasks, comments",
       "name": "detail-feature-comments",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6070,6 +6528,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a feature: description, tasks, comments",
       "name": "detail-feature-description",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6120,6 +6580,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a feature: description, tasks, comments",
       "name": "detail-feature-tasks",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6170,6 +6632,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a improvement ticket: its facts, description, dossier, comments",
       "name": "detail-improvement-ticket-comments",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6225,6 +6689,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a improvement ticket: its facts, description, dossier, comments",
       "name": "detail-improvement-ticket-description",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6280,6 +6746,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a improvement ticket: its facts, description, dossier, comments",
       "name": "detail-improvement-ticket-dossier",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6335,6 +6803,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a improvement ticket: its facts, description, dossier, comments",
       "name": "detail-improvement-ticket-facts",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6390,6 +6860,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a maintenance ticket: its facts, description, dossier, comments",
       "name": "detail-maintenance-ticket-comments",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6445,6 +6917,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a maintenance ticket: its facts, description, dossier, comments",
       "name": "detail-maintenance-ticket-dossier",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6500,6 +6974,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a maintenance ticket: its facts, description, dossier, comments",
       "name": "detail-maintenance-ticket-facts",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6555,6 +7031,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > a ticket that needs another: its badge and its Needs panel",
       "name": "detail-needs-facts",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6600,6 +7078,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > a ticket that needs another: its badge and its Needs panel",
       "name": "detail-needs-panel",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6645,6 +7125,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a task: repository, progress, description, comments",
       "name": "detail-task-comments",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6695,6 +7177,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a task: repository, progress, description, comments",
       "name": "detail-task-description",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6745,6 +7229,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > a task: repository, progress, description, comments",
       "name": "detail-task-facts",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6795,6 +7281,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > a verified ticket riding a pending wrapper request",
       "name": "detail-ticket-wrapper-closing",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6845,6 +7333,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > each archetype, from its own detail state > an epic off the board: its features as rows, as before",
       "name": "detail-verified-epic-features",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6885,6 +7375,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > workspaces > a ticket’s workspaces in every state, newest first",
       "name": "workspaces-history",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6940,6 +7432,8 @@
       "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
       "test": "WorkItemPage (screenshots) > workspaces > an item with no workspaces",
       "name": "workspaces-none",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/detail/:id",
       "records": [
         {
@@ -6995,6 +7489,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > draws each epic on the board with its own epic board, then one board for the tickets",
       "name": "epic-boards-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7030,6 +7526,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > shows a verified feature in its epic board’s Verified column",
       "name": "epic-boards-mixed-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7065,6 +7563,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > stacks the epic boards’ epics first on a phone, then the rest",
       "name": "epic-boards-phone-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7100,6 +7600,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > says that the work could not be read",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7130,6 +7632,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > shows the work being worked on inline, and nothing before or after it",
       "name": "inline-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7165,6 +7669,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > nests an epic’s features and tasks in its lane inline, its verified feature off the board",
       "name": "inline-mixed-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7200,6 +7706,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > stacks the board’s work inline within a phone’s width, every handle on screen",
       "name": "inline-phone-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7235,6 +7743,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > shows that the work is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7265,6 +7775,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > says that nothing is in progress",
       "name": "no-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7300,6 +7812,8 @@
       "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
       "test": "WorkInProgressPage (screenshots) > opens the view settings from the gear on the In Progress tab",
       "name": "view-settings-data",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7335,6 +7849,8 @@
       "spec": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts",
       "test": "WorkRefinementPage (screenshots) > shows the work not refined yet",
       "name": "backlog",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/refinement",
       "records": [
         {
@@ -7365,6 +7881,8 @@
       "spec": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts",
       "test": "WorkRefinementPage (screenshots) > says so when nothing waits for refinement",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/refinement",
       "records": [
         {
@@ -7395,6 +7913,8 @@
       "spec": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts",
       "test": "WorkRefinementPage (screenshots) > shows that the work is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/refinement",
       "records": [
         {
@@ -7420,6 +7940,8 @@
       "spec": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts",
       "test": "WorkSchedulePage (screenshots) > says so when nothing waits to be scheduled",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/schedule",
       "records": [
         {
@@ -7450,6 +7972,8 @@
       "spec": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts",
       "test": "WorkSchedulePage (screenshots) > lists the refined work to schedule and the scheduled work, each with its criteria",
       "name": "lists",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/schedule",
       "records": [
         {
@@ -7490,6 +8014,8 @@
       "spec": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts",
       "test": "WorkSchedulePage (screenshots) > shows that the work is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/schedule",
       "records": [
         {
@@ -7515,6 +8041,8 @@
       "spec": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts",
       "test": "WorkSchedulePage (screenshots) > shows the service’s refusal under an item it would not schedule",
       "name": "refused",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/schedule",
       "records": [
         {
@@ -7555,6 +8083,8 @@
       "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
       "test": "WorkLayout (screenshots) > hides the counts while the work is loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/archive",
       "records": [
         {
@@ -7580,6 +8110,8 @@
       "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
       "test": "WorkLayout (screenshots) > shows the tabs in workflow order, each with its count, no Campaigns or Milestones, and marks the current one",
       "name": "tabs",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/work/in-progress",
       "records": [
         {
@@ -7615,6 +8147,8 @@
       "spec": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts",
       "test": "WorkspaceSlotPage (screenshots) > names the agents a stop affects before it is confirmed",
       "name": "confirm-stop",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/workspaces/:slotId",
       "records": [
         {
@@ -7660,6 +8194,8 @@
       "spec": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts",
       "test": "WorkspaceSlotPage (screenshots) > says a slot that answers 404 is gone",
       "name": "gone",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/workspaces/:slotId",
       "records": [
         {
@@ -7680,6 +8216,8 @@
       "spec": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts",
       "test": "WorkspaceSlotPage (screenshots) > lists the plugins on the shared agent home",
       "name": "plugins",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/workspaces/:slotId",
       "records": [
         {
@@ -7725,6 +8263,8 @@
       "spec": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts",
       "test": "WorkspaceSlotPage (screenshots) > says nobody signed the container’s harness in, and offers the sign-in terminal",
       "name": "sign-in-notice",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/workspaces/:slotId",
       "records": [
         {
@@ -7770,6 +8310,8 @@
       "spec": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts",
       "test": "WorkspaceSlotPage (screenshots) > shows the slot’s status strip and the agents it hosts",
       "name": "slot",
+      "kind": null,
+      "viewport": null,
       "route": "projects/:slug/workspaces/:slotId",
       "records": [
         {
@@ -7815,6 +8357,8 @@
       "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
       "test": "ProjectPickerPage (screenshots) > says so when there are no projects",
       "name": "empty",
+      "kind": null,
+      "viewport": null,
       "route": "projects",
       "records": [
         {
@@ -7830,6 +8374,8 @@
       "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
       "test": "ProjectPickerPage (screenshots) > marks the list as failed to load when the projects could not be loaded",
       "name": "error",
+      "kind": null,
+      "viewport": null,
       "route": "projects",
       "records": [],
       "triggers": []
@@ -7839,6 +8385,8 @@
       "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
       "test": "ProjectPickerPage (screenshots) > shows one card per project",
       "name": "loaded",
+      "kind": null,
+      "viewport": null,
       "route": "projects",
       "records": [
         {
@@ -7874,6 +8422,8 @@
       "spec": "src/app/routes/projects/project-picker.page.browser.spec.ts",
       "test": "ProjectPickerPage (screenshots) > shows that the projects are loading",
       "name": "loading",
+      "kind": null,
+      "viewport": null,
       "route": "projects",
       "records": [],
       "triggers": []
@@ -7883,6 +8433,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > with details > draws closed",
       "name": "details-closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7892,6 +8444,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > with details > opens on keyboard focus, above the joined neighbour",
       "name": "details-focus",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7901,6 +8455,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > with details > opens on hover, below the button and lined up with its right edge",
       "name": "details-hover",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7910,6 +8466,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > draws the keyboard focus ring above its joined neighbours",
       "name": "focus",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7919,6 +8477,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > draws a hovered button",
       "name": "hover-approve",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7928,6 +8488,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > draws a hovered button",
       "name": "hover-archive",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7937,6 +8499,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > draws a hovered button",
       "name": "hover-delete",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7946,6 +8510,8 @@
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > draws the variants, alone and joined",
       "name": "variants",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7955,6 +8521,8 @@
       "spec": "src/app/ui/components/automation-cog/automation-cog.browser.spec.ts",
       "test": "AutomationCog (screenshots) > draws passed, running with its count, failed (ringed) and pending",
       "name": "states",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7964,6 +8532,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws an epic lane with feature rows, tags and cards",
       "name": "board",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7973,6 +8543,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws a corner bubble beside the finish button, never under it",
       "name": "corner-and-finish",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7982,6 +8554,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws the drag handle on a lane and on cards, the corner bubble beside it",
       "name": "dragging",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -7991,6 +8565,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws the finish button on verified items, idle, running and failed",
       "name": "finishing",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8000,6 +8576,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws a collapsed lane with its long id whole",
       "name": "lane-long-id",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8009,6 +8587,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws a collapsed and an expanded lane",
       "name": "lanes-collapsing",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8018,6 +8598,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > breaks a word too long for its card, lane or feature title instead of overflowing",
       "name": "long-words",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8027,6 +8609,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > pins the headings below the bar and the actions while the board is in view",
       "name": "pinned-headings",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8036,6 +8620,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws a feature row, empty, its long id whole",
       "name": "row-empty",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8045,6 +8631,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws a feature row, mixed, its long id whole",
       "name": "row-mixed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8054,6 +8642,8 @@
       "spec": "src/app/ui/components/board/board.browser.spec.ts",
       "test": "Board (screenshots) > draws a feature row, verified, its long id whole",
       "name": "row-verified",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8063,6 +8653,8 @@
       "spec": "src/app/ui/components/change-list/change-list.browser.spec.ts",
       "test": "ChangeList (screenshots) > nests an expanded pin’s files one level under it, with one selected",
       "name": "pin-expanded",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8072,6 +8664,8 @@
       "spec": "src/app/ui/components/chip/chip.browser.spec.ts",
       "test": "Chip (screenshots) > draws each tone",
       "name": "tones",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8081,6 +8675,8 @@
       "spec": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts",
       "test": "CommitGraphView on a chain of folds (screenshots) > pulls every source lane into the newest fold, earlier folds counted",
       "name": "folds",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8090,6 +8686,8 @@
       "spec": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts",
       "test": "CommitGraphView (screenshots) > draws one lane per line of history, merged at the fold",
       "name": "graph",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8099,6 +8697,8 @@
       "spec": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts",
       "test": "CommitGraphView with lane headers (screenshots) > heads each lane, cut to the column, with an empty lane for a branch without commits",
       "name": "headed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8108,6 +8708,8 @@
       "spec": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts",
       "test": "CommitGraphView (screenshots) > opens a row with the lanes running on beside it, and says which was pressed",
       "name": "opened",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8117,6 +8719,8 @@
       "spec": "src/app/ui/components/commit-graph/commit-graph.browser.spec.ts",
       "test": "CommitGraphView with work references (browser) > opens the brief on hover: the id, its status, when it changed, its title",
       "name": "work-ref-open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8126,6 +8730,8 @@
       "spec": "src/app/ui/components/coverage-summary/coverage-summary.browser.spec.ts",
       "test": "CoverageSummary (screenshots) > shows the total against the baseline and the changed lines no test ran",
       "name": "diff",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8135,6 +8741,8 @@
       "spec": "src/app/ui/components/drag-handle/drag-handle.browser.spec.ts",
       "test": "DragHandle (screenshots) > draws the grip on its item’s bottom-right corner, centred on it",
       "name": "drag-handle",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8144,6 +8752,8 @@
       "spec": "src/app/ui/components/dropdown/dropdown.browser.spec.ts",
       "test": "Dropdown (screenshots) > draws closed and open",
       "name": "closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8153,6 +8763,8 @@
       "spec": "src/app/ui/components/dropdown/dropdown.browser.spec.ts",
       "test": "Dropdown (screenshots) > draws closed and open",
       "name": "open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8162,6 +8774,8 @@
       "spec": "src/app/ui/components/gate-shield/gate-shield.browser.spec.ts",
       "test": "GateShield (screenshots) > draws passed, failed, waiting and pending, the two needing a person ringed",
       "name": "states",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8171,6 +8785,8 @@
       "spec": "src/app/ui/components/image-diff/image-diff.browser.spec.ts",
       "test": "ImageDiff (screenshots) > draws added, modified, failed and loading sides",
       "name": "variants",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8180,6 +8796,8 @@
       "spec": "src/app/ui/components/json-block/json-block.browser.spec.ts",
       "test": "JsonBlock (screenshots) > draws the heading, the copy button and the JSON",
       "name": "short",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8189,6 +8807,8 @@
       "spec": "src/app/ui/components/list/list.browser.spec.ts",
       "test": "List (screenshots) > draws lanes, rows and cards like the board, without its columns",
       "name": "list",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8198,6 +8818,8 @@
       "spec": "src/app/ui/components/load-failure/load-failure.browser.spec.ts",
       "test": "LoadFailure (screenshots) > draws the message and the Retry button",
       "name": "messages",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8207,6 +8829,8 @@
       "spec": "src/app/ui/components/markdown/markdown.browser.spec.ts",
       "test": "Markdown (screenshots) > draws every part",
       "name": "every-part",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8216,6 +8840,8 @@
       "spec": "src/app/ui/components/markdown/markdown.browser.spec.ts",
       "test": "Markdown (screenshots) > keeps every part inside a narrow column",
       "name": "narrow",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8225,6 +8851,8 @@
       "spec": "src/app/ui/components/markdown/markdown.browser.spec.ts",
       "test": "Markdown with work references (browser) > opens a description's brief on hover: the id, its status, when it changed, its title",
       "name": "work-text-ref-open",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8234,6 +8862,8 @@
       "spec": "src/app/ui/components/popover/popover.browser.spec.ts",
       "test": "Popover (screenshots) > draws closed",
       "name": "closed",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8243,6 +8873,8 @@
       "spec": "src/app/ui/components/popover/popover.browser.spec.ts",
       "test": "Popover (screenshots) > opens on keyboard focus, and Escape closes it",
       "name": "focus",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8252,6 +8884,8 @@
       "spec": "src/app/ui/components/popover/popover.browser.spec.ts",
       "test": "Popover (screenshots) > opens on hover, at either edge",
       "name": "hover-end",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8261,6 +8895,8 @@
       "spec": "src/app/ui/components/popover/popover.browser.spec.ts",
       "test": "Popover (screenshots) > opens on hover, at either edge",
       "name": "hover-start",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8270,6 +8906,8 @@
       "spec": "src/app/ui/components/reorder/reorder.browser.spec.ts",
       "test": "Reorder (browser) > drags row 2 between rows 6 and 7, and reports the move",
       "name": "reorder-drag",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8279,6 +8917,8 @@
       "spec": "src/app/ui/components/reorder/reorder.browser.spec.ts",
       "test": "Reorder (browser) > picks up, moves and drops from the keyboard",
       "name": "reorder-keyboard",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8288,6 +8928,8 @@
       "spec": "src/app/ui/components/reorder/reorder.browser.spec.ts",
       "test": "Reorder (browser) > dims the clone outside the list, and cancels a release there",
       "name": "reorder-outside",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8297,6 +8939,8 @@
       "spec": "src/app/ui/components/reorder/reorder.browser.spec.ts",
       "test": "Reorder (browser) > arms the cancel when a finger drags left, and a release then puts the page back",
       "name": "reorder-touch-cancel",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8306,6 +8950,8 @@
       "spec": "src/app/ui/components/reorder/reorder.browser.spec.ts",
       "test": "Reorder (browser) > shifts the rows down at the top of the page, so the first slot is reached",
       "name": "reorder-touch-end",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8315,6 +8961,8 @@
       "spec": "src/app/ui/components/reorder/reorder.browser.spec.ts",
       "test": "Reorder (browser) > draws the marker in the gap under the clone, and hides it over the own slot",
       "name": "reorder-touch-marker",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8324,6 +8972,8 @@
       "spec": "src/app/ui/components/segment-log/segment-log.browser.spec.ts",
       "test": "SegmentLog (screenshots) > opens the running segment, folds the settled ones, and notes a failure",
       "name": "segments",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8333,6 +8983,8 @@
       "spec": "src/app/ui/components/segment-log/segment-log.browser.spec.ts",
       "test": "SegmentLog (screenshots) > waits for the first line",
       "name": "waiting",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8342,6 +8994,8 @@
       "spec": "src/app/ui/components/stat/stat.browser.spec.ts",
       "test": "Stat (screenshots) > draws the variants",
       "name": "variants",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8351,6 +9005,8 @@
       "spec": "src/app/ui/components/tag-link/tag-link.browser.spec.ts",
       "test": "TagLink (screenshots) > on a board: lane tags, a row footer and card corners",
       "name": "board",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8360,6 +9016,8 @@
       "spec": "src/app/ui/components/tag-link/tag-link.browser.spec.ts",
       "test": "TagLink (screenshots) > in a list: lane tags, a row footer and a card corner",
       "name": "list",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8369,6 +9027,8 @@
       "spec": "src/app/ui/components/terminal-screen/terminal-screen.browser.spec.ts",
       "test": "TerminalScreen (screenshots) > draws the session in xterm.js, fitted to its box",
       "name": "session",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8378,6 +9038,8 @@
       "spec": "src/app/ui/components/test-results/test-results.browser.spec.ts",
       "test": "TestResultsView (screenshots) > shows the totals, the failing test first with its place, then the suites",
       "name": "failing",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
@@ -8387,6 +9049,8 @@
       "spec": "src/app/ui/components/tree-folder/tree-folder.browser.spec.ts",
       "test": "TreeFolder (screenshots) > draws nested directories",
       "name": "nested",
+      "kind": null,
+      "viewport": null,
       "route": null,
       "records": [],
       "triggers": []
