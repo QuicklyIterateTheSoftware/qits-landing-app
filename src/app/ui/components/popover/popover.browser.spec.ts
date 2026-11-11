@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { commands, page, userEvent } from 'vitest/browser';
+import { expectUnclipped } from '../../../../testing/browser/unclipped';
 import { Popover } from './popover';
 
 /** Screenshots of the popover: closed, open on hover, open on focus, and lined up at the end. */
@@ -143,5 +144,72 @@ describe('Popover with tapToOpen (browser)', () => {
     await expect.element(element.getByText('Open qits-622')).toBeVisible();
     await element.getByText('qits-622', { exact: true }).click();
     await expect.poll(() => location.hash).toBe('#followed');
+  });
+});
+
+/**
+ * A popover in a short scroll container at the window's bottom right, as a work reference in a
+ * scrolling column (qits-2081): its panel is wider than the box and has no room below it.
+ */
+@Component({
+  imports: [Popover],
+  template: `
+    <div
+      class="fixed right-2 bottom-2 flex h-16 w-32 items-end overflow-y-auto border border-charcoal-brown-300"
+    >
+      <ui-popover #popover>
+        <button type="button" class="px-2 text-sm" [attr.aria-describedby]="popover.panelId()">
+          Explain
+        </button>
+        <p popover-content class="m-0">
+          What the trigger does, at length, so the panel is wider than the box it sits in.
+        </p>
+      </ui-popover>
+    </div>
+  `,
+})
+class Scrolling {}
+
+describe('Popover in a scroll container (browser)', () => {
+  afterEach(async () => {
+    await commands.parkPointer();
+    await page.viewport(800, 600);
+  });
+
+  it('opens whole and inside the window, above its trigger, and the pointer can reach it', async () => {
+    await page.viewport(1280, 800);
+    const fixture = TestBed.createComponent(Scrolling);
+    fixture.detectChanges();
+    const tooltip = page.getByRole('tooltip');
+    const wrapper = document.querySelector<HTMLElement>('[data-popover-panel]')!;
+    await userEvent.hover(page.getByRole('button', { name: 'Explain' }));
+    await expect.element(tooltip).toBeVisible();
+    await expect.poll(() => wrapper.dataset['floatingSide']).toBe('above');
+    expectUnclipped(tooltip.element());
+    const trigger = page.getByRole('button', { name: 'Explain' }).element().getBoundingClientRect();
+    expect(tooltip.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(trigger.top);
+
+    await userEvent.hover(tooltip);
+    await expect.element(tooltip).toBeVisible();
+    await commands.parkPointer();
+    await expect.element(page.getByText(/at length/)).not.toBeVisible();
+    // Closed, it floats no more: the classes place it again.
+    expect(wrapper.getAttribute('style')).toBeNull();
+  });
+
+  it('opens whole on keyboard focus too, and Escape still closes it', async () => {
+    await page.viewport(1280, 800);
+    const fixture = TestBed.createComponent(Scrolling);
+    fixture.detectChanges();
+    const tooltip = page.getByRole('tooltip');
+    await userEvent.tab();
+    await expect.element(page.getByRole('button', { name: 'Explain' })).toHaveFocus();
+    await expect.element(tooltip).toBeVisible();
+    await expect
+      .poll(() => document.querySelector<HTMLElement>('[data-popover-panel]')!.style.position)
+      .toBe('fixed');
+    expectUnclipped(tooltip.element());
+    await userEvent.keyboard('{Escape}');
+    await expect.element(page.getByText(/at length/)).not.toBeVisible();
   });
 });

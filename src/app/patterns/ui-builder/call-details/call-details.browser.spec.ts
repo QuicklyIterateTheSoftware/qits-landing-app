@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, type Type } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -10,6 +10,7 @@ import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
+import { expectUnclipped } from '../../../../testing/browser/unclipped';
 import {
   GITHOST,
   INDEX,
@@ -33,6 +34,11 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
  * itself, so its read is refused and the popover says so. The slug is the recorded project's ("a
  * project exists").
  *
+ * The `column` cases put the call in what the UI builder's Calls panel is at 1280px: a 20rem column
+ * at the window's right edge that scrolls (`overflow-y: auto`), out of which the 28rem popover
+ * sticks (qits-2081). It is drawn whole, below the call or, the call scrolled to the column's
+ * bottom, above it.
+ *
  * The popover's links are declared exits (`open-call-contract`, epic qits-2000), shown by `open`
  * and followed once each, to stubs of the pages: the provider state's (`state`) and the entity's
  * (`entity`).
@@ -48,6 +54,26 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
   />`,
 })
 class Popover {
+  readonly call = input.required<FreezeRecord>();
+  readonly site = input.required<ContractsSite>();
+  readonly entities = input.required<readonly CallEntity[]>();
+  readonly project = input.required<string>();
+}
+
+/** The call in a 20rem column at the window's right edge that scrolls, room above and below it. */
+@Component({
+  imports: [CallDetails],
+  host: { class: 'fixed inset-y-0 right-0 block w-80 overflow-y-auto border-l' },
+  template: `<div class="h-[60rem]"></div>
+    <app-call-details
+      [call]="call()"
+      [site]="site()"
+      [entities]="entities()"
+      [project]="project()"
+    />
+    <div class="h-[60rem]"></div>`,
+})
+class Column {
   readonly call = input.required<FreezeRecord>();
   readonly site = input.required<ContractsSite>();
   readonly entities = input.required<readonly CallEntity[]>();
@@ -81,10 +107,19 @@ describe('CallDetails (screenshots)', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(async () => {
+    http.verify();
+    await page.viewport(800, 600);
+  });
 
-  /** The popover of githost's recorded call, opened, its index answered. */
-  async function opened() {
+  /**
+   * The popover of githost's recorded call in `host`, opened, its index answered; `beforeOpen` has
+   * the host's element first.
+   */
+  async function opened(
+    host: Type<Popover | Column> = Popover,
+    beforeOpen?: (element: HTMLElement) => void,
+  ) {
     const versions = await goldenMaster(INDEX, 'listDocsVersions', 'qits-artifacts');
     const index = await goldenMaster(INDEX, 'getDocsFile', 'qits-artifacts');
     const map = await goldenMaster(PROJECTION, 'getDocsFile', 'qits-artifacts');
@@ -95,7 +130,7 @@ describe('CallDetails (screenshots)', () => {
       (e: { marking: string; operations: { operationId: string }[] }) =>
         e.marking === 'domain' && e.operations.some((op) => op.operationId === 'getGitRepository'),
     );
-    const fixture = TestBed.createComponent(Popover);
+    const fixture = TestBed.createComponent(host);
     fixture.componentRef.setInput('call', {
       provider: GITHOST,
       state: state.name,
@@ -117,6 +152,7 @@ describe('CallDetails (screenshots)', () => {
     fixture.componentRef.setInput('project', slug);
     fixture.detectChanges();
     const locator = page.elementLocator(fixture.nativeElement as HTMLElement);
+    beforeOpen?.(fixture.nativeElement as HTMLElement);
     await locator.getByRole('button', { name: /getGitRepository/ }).click();
     await settle();
     http.expectOne((req) => req.url.endsWith('/golden-masters/index.json')).flush(index);
@@ -143,6 +179,62 @@ describe('CallDetails (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('Could not read the recorded response.');
     await commands.parkPointer();
     await expect.element(locator).toMatchScreenshot('open', { kind: 'DATA' });
+  });
+
+  it('column: the popover sticks out of the scrolling column whole, below the call', async () => {
+    await page.viewport(1280, 800);
+    const { locator } = await opened(Column, (column) => {
+      const call = column.querySelector('app-call-details')!;
+      column.scrollTop = (call as HTMLElement).offsetTop - 200;
+    });
+    const dialog = locator.getByRole('dialog').element();
+    await expect.element(locator.getByRole('dialog')).toBeVisible();
+    await expect.poll(() => dialog.dataset['floatingSide']).toBe('below');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expectUnclipped(dialog);
+    const trigger = locator.getByRole('button', { name: /getGitRepository/ }).element();
+    expect(dialog.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      trigger.getBoundingClientRect().bottom,
+    );
+    // Wider than the column: it reaches out of it, to the left.
+    const column = (locator.element() as HTMLElement).getBoundingClientRect();
+    expect(dialog.getBoundingClientRect().left).toBeLessThan(column.left);
+  });
+
+  it('column: with the call at the column’s bottom, the popover opens above it, whole', async () => {
+    await page.viewport(1280, 800);
+    const { locator } = await opened(Column, (column) => {
+      const call = column.querySelector<HTMLElement>('app-call-details')!;
+      column.scrollTop = call.offsetTop + call.offsetHeight - column.clientHeight;
+    });
+    const dialog = locator.getByRole('dialog').element();
+    await expect.element(locator.getByRole('dialog')).toBeVisible();
+    await expect.poll(() => dialog.dataset['floatingSide']).toBe('above');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expectUnclipped(dialog);
+    const trigger = locator.getByRole('button', { name: /getGitRepository/ }).element();
+    expect(dialog.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      trigger.getBoundingClientRect().top,
+    );
+  });
+
+  it('closes on Escape, its call focused again, and on a click outside', async () => {
+    const { locator } = await opened();
+    await expect.element(locator.getByRole('dialog')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect
+      .element(locator.getByText('Could not read the recorded response.'))
+      .not.toBeInTheDocument();
+    const call = locator.getByRole('button', { name: /getGitRepository/ });
+    await expect.element(call).toHaveFocus();
+
+    // Opened again, it reads nothing again; a click beside it closes it.
+    await call.click();
+    await expect.element(locator.getByRole('dialog')).toBeVisible();
+    document.body.click();
+    await expect
+      .element(locator.getByText('Could not read the recorded response.'))
+      .not.toBeInTheDocument();
   });
 
   it('open-call-contract state: the state’s name opens its page', async () => {

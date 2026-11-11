@@ -7,6 +7,7 @@ import { client as artifactsClient } from '../../../../../../api/artifacts/clien
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster, goldenMasterText } from '../../../../../../../testing/browser/golden-master';
 import { leftFor } from '../../../../../../../testing/browser/contracts-bundles';
+import { expectUnclipped } from '../../../../../../../testing/browser/unclipped';
 import {
   openRoute,
   provideAppRoute,
@@ -157,6 +158,27 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('entities', { kind: 'DATA' });
+  });
+
+  it('opens a call’s popover whole, out of the Calls panel that scrolls (qits-2081)', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites);
+    const view = page.elementLocator(opened.page);
+    const call = view.getByRole('button', { name: /listProjectRepositories/ }).first();
+    await call.click();
+    await commands.parkPointer();
+    await opened.settled();
+    const dialog = view.getByRole('dialog');
+    await expect.element(dialog).toMatchTextContent('No contracts published for');
+    await expect.poll(() => dialog.element().getAttribute('data-floating-side')).toBe('below');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expectUnclipped(dialog.element());
+    // Wider than the Calls panel: it reaches out of it, to the left.
+    const calls = opened.page.querySelector('[aria-label="Calls"]')!.getBoundingClientRect();
+    expect(dialog.element().getBoundingClientRect().left).toBeLessThan(calls.left);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('call-open', { kind: 'DATA' });
   });
 
   it('marks each state with its kind, data first, and shows the viewport switch', async () => {

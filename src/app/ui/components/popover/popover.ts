@@ -12,6 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Floating } from '$ui/components/floating/floating';
 
 let nextPopoverId = 0;
 
@@ -38,9 +39,14 @@ type PointerKind = 'fine' | 'coarse';
  *
  * CSS alone opens it (`group-hover`, `group-focus-within`). The panel is always rendered, so the
  * server and the browser render the same markup, and it works before hydration. It is `absolute`
- * below the host, and the pointer can move onto it without closing it. `align="end"` keeps the
- * panel of a trigger at the window's right edge inside the window. Escape closes it until the
- * pointer or the focus comes back.
+ * below the host, and the pointer can move onto it without closing it: it is the host's child, and
+ * its top padding bridges the gap. `align="end"` keeps the panel of a trigger at the window's right
+ * edge inside the window. Escape closes it until the pointer or the focus comes back.
+ *
+ * In the browser, while the pointer is over the host, the focus is in it or a tap opened it, the
+ * panel floats (`uiFloating`, qits-2081): `fixed` at the host's box, so a scroll container around
+ * the popover does not cut it off. It lines up with the other edge where the `align` side has no
+ * room, and goes above the trigger where there is no room below, its padding then below it.
  *
  * `tapToOpen` is for a trigger that is a link to what the panel previews (a work reference): a
  * finger or a pen has no hover, so there a **tap opens the panel** and is consumed —
@@ -55,19 +61,29 @@ type PointerKind = 'fine' | 'coarse';
 @Component({
   selector: 'ui-popover',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [Floating],
   host: {
     class: 'group/popover relative inline-flex hover:z-20 focus-within:z-20',
     '(pointerdown)': 'onPointerDown($event)',
     '(pointercancel)': 'pressing = undefined',
     '(pointerenter)': 'onPointerEnter($event)',
-    '(focusin)': 'dismissed.set(false)',
+    '(pointerleave)': 'hovered.set(false)',
+    '(focusin)': 'onFocusIn()',
+    '(focusout)': 'onFocusOut($event)',
     '(click)': 'onPanelClick($event)',
     '(document:keydown.escape)': 'onEscape()',
     '(document:pointerdown)': 'onDocumentPointerDown($event)',
   },
   template: `
     <ng-content />
-    <div class="absolute top-full z-20 pt-1" [class]="panelClasses()" data-popover-panel>
+    <div
+      class="absolute top-full z-20 pt-1 data-[floating-side=above]:pt-0 data-[floating-side=above]:pb-1"
+      [class]="panelClasses()"
+      data-popover-panel
+      [uiFloating]="trigger"
+      [floatingActive]="shown()"
+      [floatingAlign]="align()"
+    >
       <div
         [id]="panelId()"
         role="tooltip"
@@ -96,9 +112,21 @@ export class Popover {
   private readonly tapped = signal(false);
   /** The kind of the press in progress, from its `pointerdown` until its `click`. */
   protected pressing: PointerKind | undefined;
+  /** The pointer is over the host (the trigger or the panel). */
+  protected readonly hovered = signal(false);
+  /** The focus is in the host. */
+  private readonly focused = signal(false);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly doc = inject(DOCUMENT);
+
+  /** What the panel hangs from: the host, which is as large as the projected trigger. */
+  protected readonly trigger = this.host.nativeElement;
+
+  /** Whether something may show the panel now: what makes it float. */
+  protected readonly shown = computed(
+    () => !this.dismissed() && (this.hovered() || this.focused() || this.tapped()),
+  );
 
   /** Whether the panel is open by a tap: what a spec, and the panel's classes, read. */
   readonly openedByTap = computed(() => this.tapped() && !this.dismissed());
@@ -132,7 +160,18 @@ export class Popover {
 
   protected onPointerEnter(event: PointerEvent): void {
     this.dismissed.set(false);
+    this.hovered.set(true);
     if (event.pointerType === 'mouse') this.pointer.set('fine');
+  }
+
+  protected onFocusIn(): void {
+    this.dismissed.set(false);
+    this.focused.set(true);
+  }
+
+  protected onFocusOut(event: FocusEvent): void {
+    const next = event.relatedTarget as Node | null;
+    if (!next || !this.host.nativeElement.contains(next)) this.focused.set(false);
   }
 
   protected onEscape(): void {
