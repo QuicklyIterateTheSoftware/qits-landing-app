@@ -35,12 +35,21 @@ import { place, type FloatingAlign, type FloatingSide } from './placement';
  * within itself where it fits nowhere. It follows the trigger as the window resizes and as any
  * ancestor scrolls (a `scroll` listener in the capture phase), and as its own content grows (a
  * `ResizeObserver`). The side it took is the panel's `data-floating-side`, `below` or `above`.
+ * Floating, it stacks over the shell's sticky top bar, as it may reach up to the window's top.
  *
  * It only listens while active, and only in the browser: on the server, and in the browser while
  * inactive, the panel has no inline style and the classes place it, so the server renders the same
  * markup as without it. Where `floatingMedia` is given and the window does not match it, the
  * directive leaves the panel to its classes too (a phone's sheet).
  */
+/**
+ * A floating panel's stacking order: over the shell's sticky top bar (`z-50`), which it may now
+ * reach when it goes above its trigger or is clamped to the window's top. A host that makes a
+ * stacking context of its own (`ui-popover`'s `z-20`) takes it too while its panel floats, or the
+ * panel stays under the bar.
+ */
+export const FLOATING_Z = '60';
+
 @Directive({
   selector: '[uiFloating]',
   exportAs: 'uiFloating',
@@ -106,6 +115,7 @@ export class Floating {
       marginLeft: '0px',
       maxHeight: '',
       overflowY: '',
+      zIndex: FLOATING_Z,
     });
     const origin = this.panel.getBoundingClientRect();
     const root = this.doc.documentElement;
@@ -172,6 +182,7 @@ export class Floating {
       'margin-left',
       'max-height',
       'overflow-y',
+      'z-index',
     ]) {
       this.panel.style.removeProperty(property);
     }

@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Floating } from '$ui/components/floating/floating';
+import { Floating, FLOATING_Z } from '$ui/components/floating/floating';
 
 let nextPopoverId = 0;
 
@@ -46,7 +46,8 @@ type PointerKind = 'fine' | 'coarse';
  * In the browser, while the pointer is over the host, the focus is in it or a tap opened it, the
  * panel floats (`uiFloating`, qits-2081): `fixed` at the host's box, so a scroll container around
  * the popover does not cut it off. It lines up with the other edge where the `align` side has no
- * room, and goes above the trigger where there is no room below, its padding then below it.
+ * room, and goes above the trigger where there is no room below, its padding then below it. The
+ * host stacks over the shell's top bar meanwhile, so the panel is not drawn under it.
  *
  * `tapToOpen` is for a trigger that is a link to what the panel previews (a work reference): a
  * finger or a pen has no hover, so there a **tap opens the panel** and is consumed —
@@ -73,6 +74,7 @@ type PointerKind = 'fine' | 'coarse';
     '(click)': 'onPanelClick($event)',
     '(document:keydown.escape)': 'onEscape()',
     '(document:pointerdown)': 'onDocumentPointerDown($event)',
+    '[style.z-index]': 'shown() ? floatingZ : null',
   },
   template: `
     <ng-content />
@@ -122,6 +124,9 @@ export class Popover {
 
   /** What the panel hangs from: the host, which is as large as the projected trigger. */
   protected readonly trigger = this.host.nativeElement;
+
+  /** The host's stacking order while the panel floats: its `z-20` would keep it under the top bar. */
+  protected readonly floatingZ = FLOATING_Z;
 
   /** Whether something may show the panel now: what makes it float. */
   protected readonly shown = computed(

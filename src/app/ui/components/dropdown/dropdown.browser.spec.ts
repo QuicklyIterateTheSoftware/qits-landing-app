@@ -69,6 +69,30 @@ describe('Dropdown (screenshots)', () => {
 })
 class Scrolling {}
 
+/**
+ * A dropdown just under a sticky top bar, as the shell's (`z-50`), without room below its button:
+ * its panel goes above it, into the bar's height.
+ */
+@Component({
+  imports: [Dropdown],
+  template: `
+    <div class="fixed inset-x-0 top-0 z-50 h-14 bg-gray-800"></div>
+    <div class="mt-[150px] ml-2 h-12 w-40 overflow-y-auto">
+      <ui-dropdown align="start" label="Many" panelLabel="Many things" panelId="many">
+        <span dropdown-trigger>M</span>
+        <ul dropdown-panel class="m-0 list-none p-0">
+          @for (n of things; track n) {
+            <li class="px-3 py-2 text-sm">Thing {{ n }}</li>
+          }
+        </ul>
+      </ui-dropdown>
+    </div>
+  `,
+})
+class UnderTopBar {
+  protected readonly things = Array.from({ length: 3 }, (_, n) => n + 1);
+}
+
 describe('Dropdown in a scroll container (browser)', () => {
   afterEach(() => page.viewport(800, 600));
 
@@ -92,6 +116,21 @@ describe('Dropdown in a scroll container (browser)', () => {
     expect(box.right).toBeCloseTo(trigger.right, 0);
     expect(box.bottom).toBeLessThanOrEqual(trigger.top);
     await expect.element(page.getByRole('region', { name: 'Recent things' })).toHaveFocus();
+  });
+
+  it('stacks over a sticky top bar when it reaches the window’s top', async () => {
+    await page.viewport(1280, 300);
+    const fixture = TestBed.createComponent(UnderTopBar);
+    fixture.detectChanges();
+    const panel = document.querySelector<HTMLElement>('#many')!;
+    // Earlier tests' panels stay open in the page, and would lie over this one.
+    await userEvent.keyboard('{Escape}');
+    await page.getByRole('button', { name: 'Many' }).click();
+    await expect.poll(() => panel.dataset['floatingSide']).toBe('above');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    // Its top inside the bar's 56px.
+    expect(panel.getBoundingClientRect().top).toBeLessThan(56);
+    expectUnclipped(panel);
   });
 
   it('still closes on Escape, the focus back on its button, and on a click outside', async () => {

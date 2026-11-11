@@ -170,6 +170,26 @@ describe('Popover with tapToOpen (browser)', () => {
 })
 class Scrolling {}
 
+/**
+ * A popover just under a sticky top bar, as the shell's (`z-50`), in a host that stacks on its own
+ * (`z-10`, as the needs badge's): without room below, its panel goes above, into the bar's height.
+ */
+@Component({
+  imports: [Popover],
+  template: `
+    <div class="fixed inset-x-0 top-0 z-50 h-14 bg-gray-800"></div>
+    <div class="pt-[80px] pl-4">
+      <ui-popover #popover class="relative z-10">
+        <button type="button" class="px-2 text-sm" [attr.aria-describedby]="popover.panelId()">
+          Explain
+        </button>
+        <p popover-content class="m-0">What the trigger does, in a few words.</p>
+      </ui-popover>
+    </div>
+  `,
+})
+class UnderTopBar {}
+
 describe('Popover in a scroll container (browser)', () => {
   afterEach(async () => {
     await commands.parkPointer();
@@ -195,6 +215,19 @@ describe('Popover in a scroll container (browser)', () => {
     await expect.element(page.getByText(/at length/)).not.toBeVisible();
     // Closed, it floats no more: the classes place it again.
     expect(wrapper.getAttribute('style')).toBeNull();
+  });
+
+  it('stacks over a sticky top bar when it goes up into it', async () => {
+    await page.viewport(1280, 130);
+    const fixture = TestBed.createComponent(UnderTopBar);
+    fixture.detectChanges();
+    const tooltip = page.getByRole('tooltip');
+    const wrapper = document.querySelector<HTMLElement>('[data-popover-panel]')!;
+    await userEvent.hover(page.getByRole('button', { name: 'Explain' }));
+    await expect.poll(() => wrapper.dataset['floatingSide']).toBe('above');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(tooltip.element().getBoundingClientRect().top).toBeLessThan(56);
+    expectUnclipped(tooltip.element());
   });
 
   it('opens whole on keyboard focus too, and Escape still closes it', async () => {
