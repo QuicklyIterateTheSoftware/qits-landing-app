@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
@@ -65,6 +66,12 @@ class TallPage {
  * "a project with pending release requests" where a case says so. The event stream never connects.
  * Each top-bar menu is also opened on a phone and on a wide screen, its reads answered with the
  * golden masters its own browser spec uses, to show where its panel lies.
+ *
+ * The shell's navigation is declared in the layout (epic qits-2000), and each exit is followed once
+ * to a stand-in route: the sidebar's sections (`open-sidebar-section`) and work pages
+ * (`open-sidebar-work-page`), the gear (`open-project-settings`), the network icon
+ * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`). The agents and
+ * release menus' own exits are followed in their own specs.
  */
 describe('ShellLayout (screenshots)', () => {
   let http: HttpTestingController;
@@ -74,12 +81,27 @@ describe('ShellLayout (screenshots)', () => {
       providers: [
         provideRouter([
           { path: '', component: TestPage },
+          { path: 'network-access', component: TestPage },
+          { path: 'projects', component: TestPage },
+          { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
-          { path: 'projects/:slug/work/acceptance', component: TestPage },
           { path: 'projects/:slug/work/refinement', component: TestPage },
+          { path: 'projects/:slug/work/schedule', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
+          { path: 'projects/:slug/work/acceptance', component: TestPage },
+          { path: 'projects/:slug/work/archive', component: TestPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
+          { path: 'projects/:slug/ideas', component: TestPage },
+          { path: 'projects/:slug/agents', component: TestPage },
+          { path: 'projects/:slug/agents/:agentId', component: TestPage },
           { path: 'projects/:slug/release-requests', component: TestPage },
+          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
+          { path: 'projects/:slug/desk', component: TestPage },
+          { path: 'projects/:slug/repositories', component: TestPage },
+          { path: 'projects/:slug/observability', component: TestPage },
+          { path: 'projects/:slug/events', component: TestPage },
+          { path: 'projects/:slug/setup', component: TestPage },
+          { path: 'projects/:slug/workspaces/:slotId', component: TestPage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -299,7 +321,8 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'false');
     // Only the parent and the current page show after the "…"; the panel is closed.
     const trail = root.querySelector('nav[aria-label="Breadcrumb"] > ol')!;
-    const visible = [...trail.querySelectorAll<HTMLElement>('a')].filter(
+    // The parent a link, the current page its text.
+    const visible = [...trail.querySelectorAll<HTMLElement>('a, [aria-current=page]')].filter(
       (link) => link.getBoundingClientRect().width > 0,
     );
     expect(visible.map((link) => link.textContent?.trim())).toEqual(['Work', 'qits-112']);
@@ -358,6 +381,7 @@ describe('ShellLayout (screenshots)', () => {
     await fixture.whenStable();
     fixture.detectChanges();
     expect(TestBed.inject(Router).url).toBe(`/projects/${project.slug}/work`);
+    expect(reached()).toEqual(['follow-breadcrumb:work']);
     await expect.element(panel).not.toBeVisible();
     await expect.element(ellipsis).toHaveAttribute('aria-expanded', 'false');
   });
@@ -409,6 +433,159 @@ describe('ShellLayout (screenshots)', () => {
     expect(inWindow(current)).toBe(true);
     expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   });
+
+  /** The outcomes the test reached, as `<interaction>:<outcome>`. */
+  const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
+
+  /** Clicks `link`, lets the navigation end, and gives the router's URL. */
+  async function follow(
+    fixture: { detectChanges(): void; whenStable(): Promise<unknown> },
+    link: ReturnType<typeof page.getByRole>,
+  ) {
+    await userEvent.click(link);
+    await settle();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return TestBed.inject(Router).url;
+  }
+
+  /** The sidebar's sections, by label, with their segment below the project and their outcome. */
+  const SECTIONS = [
+    { label: 'Work', segment: 'work', outcome: 'work' },
+    { label: 'Ideas', segment: 'ideas', outcome: 'ideas' },
+    { label: 'Agents', segment: 'agents', outcome: 'agents' },
+    { label: /^Release Requests/, segment: 'release-requests', outcome: 'releaseRequests' },
+    { label: 'Desk', segment: 'desk', outcome: 'desk' },
+    { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
+    { label: 'Observability', segment: 'observability', outcome: 'observability' },
+    { label: 'Events', segment: 'events', outcome: 'events' },
+  ] as const;
+
+  for (const section of SECTIONS) {
+    it(`open-sidebar-section ${section.outcome}: the sidebar's ${section.segment} opens it`, async () => {
+      const { fixture, project } = await renderProject('/work/detail/qits-112');
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', {
+        name: section.label,
+        exact: typeof section.label === 'string',
+      });
+      expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/${section.segment}`);
+      expect(reached()).toEqual([`open-sidebar-section:${section.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+    });
+  }
+
+  /** The work pages below Work in the sidebar, by label, with their segment and their outcome. */
+  const WORK_PAGES = [
+    { label: 'Refinement', segment: 'refinement', outcome: 'refinement' },
+    { label: 'Schedule', segment: 'schedule', outcome: 'schedule' },
+    { label: 'In Progress', segment: 'in-progress', outcome: 'inProgress' },
+    { label: 'Acceptance', segment: 'acceptance', outcome: 'acceptance' },
+    { label: 'Archive', segment: 'archive', outcome: 'archive' },
+  ] as const;
+
+  for (const work of WORK_PAGES) {
+    it(`open-sidebar-work-page ${work.outcome}: ${work.label} below Work opens it`, async () => {
+      // On a work page already, so the work pages show below Work.
+      const from = work.segment === 'archive' ? '/work/acceptance' : '/work/archive';
+      const { fixture, project } = await renderProject(from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: work.label, exact: true });
+      expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/work/${work.segment}`);
+      expect(reached()).toEqual([`open-sidebar-work-page:${work.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: 'Work', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
+
+  it('open-project-settings open: the gear opens the project’s settings, marked current there', async () => {
+    const { fixture, project } = await renderProject('/work/acceptance');
+    const gear = page.getByRole('link', { name: 'Settings' });
+    await expect.element(gear).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, gear)).toBe(`/projects/${project.slug}/setup`);
+    expect(reached()).toEqual(['open-project-settings:open']);
+    await expect.element(gear).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toMatchTextContent(`${project.name}›Setup`);
+  });
+
+  it('open-network-access open: the network icon opens the Network access page', async () => {
+    const { fixture } = await renderProject('/work/acceptance');
+    const icon = page.getByRole('link', { name: 'Network access' });
+    expect(await follow(fixture, icon)).toBe('/network-access');
+    expect(reached()).toEqual(['open-network-access:open']);
+    await expect.element(icon).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('marks Agents current on a slot’s page, with the slot below it in the trail', async () => {
+    const { layout } = await renderProject('/workspaces/3');
+    await expect
+      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Agents' }))
+      .toHaveAttribute('aria-current', 'page');
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb.getByRole('link', { name: 'Agents' })).toBeVisible();
+    await expect.element(breadcrumb).toMatchTextContent('Agents›ws-3');
+    await expect.element(layout).toMatchScreenshot('slot', { kind: 'DATA' });
+  });
+
+  it('shows a release request’s trail below Release Requests', async () => {
+    const { layout } = await renderProject(
+      '/release-requests/contract-frontend-rr-1',
+      'a project with pending release requests',
+    );
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb.getByRole('link', { name: 'Release Requests' })).toBeVisible();
+    await expect.element(breadcrumb).toMatchTextContent('Release Requests›contract-frontend-rr-1');
+    await expect.element(layout).toMatchScreenshot('release-request', { kind: 'DATA' });
+  });
+
+  /** A crumb before the current page: where it is shown, its name, where it leads, its outcome. */
+  const CRUMBS = [
+    { from: '/work/detail/qits-112', name: 'qits', to: () => '/', outcome: 'home' },
+    { from: '/work/detail/qits-112', name: 'Projects', to: () => '/projects', outcome: 'projects' },
+    {
+      from: '/work/detail/qits-112',
+      name: 'project',
+      to: (slug: string) => `/projects/${slug}`,
+      outcome: 'project',
+    },
+    {
+      from: '/work/detail/qits-112',
+      name: 'Work',
+      to: (slug: string) => `/projects/${slug}/work`,
+      outcome: 'work',
+    },
+    {
+      from: '/workspaces/3',
+      name: 'Agents',
+      to: (slug: string) => `/projects/${slug}/agents`,
+      outcome: 'agents',
+    },
+    {
+      from: '/release-requests/contract-frontend-rr-1',
+      name: 'Release Requests',
+      to: (slug: string) => `/projects/${slug}/release-requests`,
+      outcome: 'releaseRequests',
+    },
+  ] as const;
+
+  for (const crumb of CRUMBS) {
+    it(`follow-breadcrumb ${crumb.outcome}: the trail's ${crumb.name} opens its page`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture, project } = await renderProject(crumb.from);
+      const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+      const name = crumb.name === 'project' ? project.name : crumb.name;
+      // The brand comes first: the project may share its name.
+      const link = breadcrumb.getByRole('link', { name, exact: true }).first();
+      // Only the current page is marked current: no crumb before it.
+      await expect.element(link).not.toHaveAttribute('aria-current');
+      expect(await follow(fixture, link)).toBe(crumb.to(project.slug));
+      expect(reached()).toEqual([`follow-breadcrumb:${crumb.outcome}`]);
+    });
+  }
 
   /** A top-bar menu: its button, its panel's name, its screenshots' stem and its reads on opening. */
   interface Menu {

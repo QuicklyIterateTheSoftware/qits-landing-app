@@ -3,7 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { page, userEvent } from 'vitest/browser';
+import { outcomeRecords } from '@qits/angular/testing/browser';
+import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
@@ -27,10 +28,19 @@ import { goldenMaster } from '../../../../testing/browser/golden-master';
  * phase (queued with no slot, provisioning its workspace, launching its session) and two READY,
  * one idle and one working. The clock is pinned four minutes after the state's `phaseSince`, so
  * each start-up chip reads "4 min".
+ *
+ * And "a project with an agent overdue on a release request" (qits-2040): the request unchanged
+ * for hours, so its action opens the request, and a wait on the item's comments.
+ *
+ * Its links are declared exits (epic qits-2000), each followed once to a stub of its page:
+ * `open-menu-agent` (`agent`), `open-menu-agent-wait` (`releaseRequest`, `workItem`, `comments`),
+ * `act-on-menu-agent-attention` (`prompt`, `openItem`, `overdueRequest`) and `open-all-agents`
+ * (`agents`). A run stays qits-ci's link, no outcome.
  */
 
 const NEEDING_ATTENTION = 'a project with agents needing attention';
 const STARTING_UP = 'a project with agents starting up';
+const OVERDUE = 'a project with an agent overdue on a release request';
 const NOW = new Date('2026-01-01T00:04:00Z');
 
 /** The routed page under the menu; it renders nothing. */
@@ -51,7 +61,14 @@ describe('AgentsMenu (screenshots)', () => {
     slug = recorded.slug;
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug', component: TestPage }]),
+        provideRouter([
+          { path: 'projects/:slug', component: TestPage },
+          { path: 'projects/:slug/agents', component: TestPage },
+          { path: 'projects/:slug/agents/:agentId', component: TestPage },
+          { path: 'projects/:slug/agents/:agentId/chat', component: TestPage },
+          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
+          { path: 'projects/:slug/work/detail/:id', component: TestPage },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -134,6 +151,127 @@ describe('AgentsMenu (screenshots)', () => {
     await expect.element(panel.getByRole('link', { name: 'Open item' })).toBeVisible();
     await expect.element(panel.getByRole('link', { name: 'Prompt agent' }).first()).toBeVisible();
     await expect.element(frame).toMatchScreenshot('open', { kind: 'DATA' });
+  });
+
+  /** The menu opened on `state`'s agents (read on render, and again on the opening). */
+  async function opened(state: string) {
+    const rendered = await render();
+    const { fixture, agents } = rendered;
+    agents.flush(await goldenMaster(state, 'listAgents', 'qits-workspaces'));
+    await answered(fixture);
+    await userEvent.click(page.getByRole('button', { name: 'Agents' }));
+    fixture.detectChanges();
+    await settle();
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`)
+      .flush(await goldenMaster(state, 'listAgents', 'qits-workspaces'));
+    await answered(fixture);
+    const panel = page.getByRole('region', { name: "The project's agents" });
+    const element = fixture.nativeElement as HTMLElement;
+    /** The row of the agent on `entityId`. */
+    const row = (entityId: string) =>
+      page.elementLocator(
+        [...element.querySelectorAll<HTMLElement>('li')].find(
+          (li) => li.querySelector('span.font-semibold')?.textContent?.trim() === entityId,
+        )!,
+      );
+    return { ...rendered, panel, row };
+  }
+
+  /** Clicks `link` and gives where it led and the outcomes the test reached. */
+  async function follow(link: ReturnType<typeof page.elementLocator>) {
+    await userEvent.click(link);
+    await settle();
+    await settle();
+    return {
+      url: TestBed.inject(Router).url,
+      reached: outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`),
+    };
+  }
+
+  it('shows an agent overdue on a release request, with the request as its action', async () => {
+    const { frame, row } = await opened(OVERDUE);
+    const overdue = row('contract-00000001-11');
+    await expect
+      .element(overdue.getByRole('link', { name: 'Comments on contract-00000001-11' }))
+      .toBeVisible();
+    await expect
+      .element(overdue.getByRole('link', { name: 'contract-qits-rr-369' }).last())
+      .toHaveAttribute('data-action');
+    await commands.parkPointer();
+    await expect.element(frame).toMatchScreenshot('overdue-on-a-request', { kind: 'DATA' });
+  });
+
+  it('open-menu-agent agent: an agent’s item opens the agent’s page', async () => {
+    const { panel } = await opened(NEEDING_ATTENTION);
+    const { url, reached } = await follow(panel.getByRole('link', { name: /contract-00000001-9/ }));
+    expect(url).toBe(`/projects/${slug}/agents/00000000-0000-4000-8000-0000000000a6`);
+    expect(reached).toEqual(['open-menu-agent:agent']);
+  });
+
+  it('open-menu-agent-wait releaseRequest: a request wait opens the request', async () => {
+    const { panel } = await opened(NEEDING_ATTENTION);
+    const { url, reached } = await follow(
+      panel.getByRole('link', { name: 'contract-qits-rr-368', exact: true }),
+    );
+    expect(url).toBe(`/projects/${slug}/release-requests/contract-qits-rr-368`);
+    expect(reached).toEqual(['open-menu-agent-wait:releaseRequest']);
+  });
+
+  it('open-menu-agent-wait workItem: a wait on an item opens the item', async () => {
+    const { row } = await opened(NEEDING_ATTENTION);
+    const { url, reached } = await follow(
+      row('contract-00000001-10').getByRole('link', { name: 'contract-00000001-4', exact: true }),
+    );
+    expect(url).toBe(`/projects/${slug}/work/detail/contract-00000001-4`);
+    expect(reached).toEqual(['open-menu-agent-wait:workItem']);
+  });
+
+  it('open-menu-agent-wait comments: a wait on an item’s comments opens the item', async () => {
+    const { row } = await opened(OVERDUE);
+    const { url, reached } = await follow(
+      row('contract-00000001-11').getByRole('link', { name: 'Comments on contract-00000001-11' }),
+    );
+    expect(url).toBe(`/projects/${slug}/work/detail/contract-00000001-11`);
+    expect(reached).toEqual(['open-menu-agent-wait:comments']);
+  });
+
+  it('act-on-menu-agent-attention prompt: Prompt agent opens the agent’s Chat tab', async () => {
+    const { row } = await opened(NEEDING_ATTENTION);
+    const listed = await goldenMaster(NEEDING_ATTENTION, 'listAgents', 'qits-workspaces');
+    const idle = listed.agents.find(
+      (a: { attention?: { code?: string } }) => a.attention?.code === 'IDLE_NO_WAIT',
+    );
+    const { url, reached } = await follow(
+      row(idle.entityId).getByRole('link', { name: 'Prompt agent' }),
+    );
+    expect(url).toBe(`/projects/${slug}/agents/${idle.agentId}/chat`);
+    expect(reached).toEqual(['act-on-menu-agent-attention:prompt']);
+  });
+
+  it('act-on-menu-agent-attention openItem: Open item opens a blocked agent’s item', async () => {
+    const { row } = await opened(NEEDING_ATTENTION);
+    const { url, reached } = await follow(
+      row('contract-00000001-1').getByRole('link', { name: 'Open item' }),
+    );
+    expect(url).toBe(`/projects/${slug}/work/detail/contract-00000001-1`);
+    expect(reached).toEqual(['act-on-menu-agent-attention:openItem']);
+  });
+
+  it('act-on-menu-agent-attention overdueRequest: an overdue request’s action opens it', async () => {
+    const { row } = await opened(OVERDUE);
+    const { url, reached } = await follow(
+      row('contract-00000001-11').getByRole('link', { name: 'contract-qits-rr-369' }).last(),
+    );
+    expect(url).toBe(`/projects/${slug}/release-requests/contract-qits-rr-369`);
+    expect(reached).toEqual(['act-on-menu-agent-attention:overdueRequest']);
+  });
+
+  it('open-all-agents agents: All agents opens the project’s Agents page', async () => {
+    const { panel } = await opened(NEEDING_ATTENTION);
+    const { url, reached } = await follow(panel.getByRole('link', { name: 'All agents' }));
+    expect(url).toBe(`/projects/${slug}/agents`);
+    expect(reached).toEqual(['open-all-agents:agents']);
   });
 
   describe('while the agents start up', () => {

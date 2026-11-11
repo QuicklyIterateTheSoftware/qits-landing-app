@@ -1,5 +1,4 @@
 import {
-  agentPath,
   attentionAction,
   attentionCount,
   needsAttention,
@@ -77,11 +76,6 @@ describe('agent attention', () => {
     expect(attentionCount([])).toBe(0);
   });
 
-  it('builds an agent’s page and its tabs by the agent’s id', () => {
-    expect(agentPath('contract', 'a-1')).toBe('/projects/contract/agents/a-1');
-    expect(agentPath('contract', 'a-1', 'chat')).toBe('/projects/contract/agents/a-1/chat');
-  });
-
   describe('waitSubject', () => {
     it('shows a release request by its qualified id, with the store’s state and gates', () => {
       expect(waitSubject(requestWait, ctx)).toEqual({
@@ -91,7 +85,6 @@ describe('agent attention', () => {
         gates: [{ kind: 'QA', state: 'PASSED' }],
         id: 'contract-qits-rr-368',
         href: null,
-        link: '/projects/contract/release-requests/contract-qits-rr-368',
       });
     });
 
@@ -101,13 +94,12 @@ describe('agent attention', () => {
       const unknown = waitSubject(requestWait, { slug: 'contract' });
       expect(unknown.state).toBe('FINALIZED');
       expect(unknown.gates).toEqual([]);
-      expect(unknown.link).toBe('/projects/contract/release-requests/contract-qits-rr-368');
+      expect(unknown.id).toBe('contract-qits-rr-368');
       const unresolved = waitSubject(
         { ...requestWait, subjectId: undefined, subjectQualifiedId: undefined },
         { slug: 'contract' },
       );
       expect(unresolved.text).toBe('release request contract-qits-rr-368 to end');
-      expect(unresolved.link).toBeNull();
       expect(unresolved.id).toBeNull();
     });
 
@@ -118,10 +110,8 @@ describe('agent attention', () => {
         state: 'RUNNING',
         id: null,
         href: `${CI}/runs/${RUN_ID}`,
-        link: `${CI}/runs/${RUN_ID}`,
       });
       expect(waitSubject(runWait, { slug: 'contract' }).href).toBeNull();
-      expect(waitSubject(runWait, { slug: 'contract' }).link).toBeNull();
     });
 
     it('links a work item to its page, with the open project’s status', () => {
@@ -131,7 +121,6 @@ describe('agent attention', () => {
         state: 'VERIFYING',
         id: 'contract-5',
         href: null,
-        link: '/projects/contract/work/detail/contract-5',
       });
       expect(waitSubject(itemWait, { slug: 'contract' }).state).toBe('IMPLEMENTING');
     });
@@ -143,12 +132,10 @@ describe('agent attention', () => {
         state: undefined,
         id: 'contract-5',
         href: null,
-        link: '/projects/contract/work/detail/contract-5',
       });
       const unresolved = waitSubject(commentsWait, { slug: 'contract' });
       expect(unresolved.text).toBe('a comment on contract-5');
       expect(unresolved.id).toBeNull();
-      expect(unresolved.link).toBeNull();
     });
 
     it('shows anything else by its label, with no link', () => {
@@ -158,7 +145,6 @@ describe('agent attention', () => {
         state: undefined,
         id: null,
         href: null,
-        link: null,
       });
     });
   });
@@ -196,7 +182,6 @@ describe('agent attention', () => {
         kind: 'open-item',
         label: 'Open item',
         itemId: 'contract-10',
-        link: '/projects/contract/work/detail/contract-10',
       });
     });
 

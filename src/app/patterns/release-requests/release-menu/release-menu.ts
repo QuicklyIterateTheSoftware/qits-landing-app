@@ -7,7 +7,7 @@ import {
   inject,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { activeRunsOf } from '$core/ci/active-runs';
 import { CiRunsStore } from '$core/ci/ci-runs.store';
 import { refreshOn } from '$core/events/refresh-on';
@@ -55,12 +55,15 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
  * are read on each opening until they load (`CiRunsStore.loadActive`), and again after a build
  * event of a pending request's repository (`followActive`). A refused read shows no chip.
  * The button and the panel are `ui-dropdown`'s. Each request links to its page
- * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel.
+ * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel. The link
+ * is a declared exit (`open-menu-release-request`, epic qits-2000), declared here rather than
+ * handed down from the shell that draws the menu: like the shell's, a pattern's declarations are
+ * app-wide. A request needing a person carries its first check's anchor as the fragment.
  */
 @Component({
   selector: 'app-release-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActiveRuns, Dropdown, LifecycleLine, RouterLink, RunnerSlots, Spinner],
+  imports: [ActiveRuns, Dropdown, LifecycleLine, QitsExit, RunnerSlots, Spinner],
   // One display class or the other: a static display class would beat `hidden`. `ml-auto` pushes
   // the menu and the settings gear after it to the right end of the top bar.
   host: {
@@ -113,8 +116,9 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
             >
               <a
                 class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-gray-50"
-                [routerLink]="['/projects', slug(), 'release-requests', ref(request)]"
-                [fragment]="row.attention[0]?.anchor"
+                [qitsExit]="opening.request"
+                [exitParams]="{ slug: slug(), requestId: ref(request) }"
+                [exitFragment]="row.attention[0]?.anchor"
                 [attr.title]="
                   row.attention[0] ? row.attention[0].action + ': ' + row.attention[0].label : null
                 "
@@ -159,8 +163,13 @@ export class ReleaseMenu {
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);
 
-  /** The open project's slug, which the request links name. */
-  protected readonly slug = this.selected.slug;
+  /** The open project's slug, the request links' param. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /** A request's row, linked to the request's page (epic qits-2000). */
+  protected readonly opening = outcomes('open-menu-release-request', {
+    request: exit('projects/:slug/release-requests/:requestId'),
+  });
 
   private readonly requests = computed(() => {
     const id = this.projectId();

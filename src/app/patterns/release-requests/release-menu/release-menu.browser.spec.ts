@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
@@ -16,6 +17,9 @@ import { goldenMaster } from '../../../../testing/browser/golden-master';
  * Screenshots of the top bar's release menu, its answers qits-projects', qits-system's and
  * qits-ci's golden masters. The open project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
  * in the recorded project list.
+ *
+ * A request's row is a declared exit (`open-menu-release-request:request`, epic qits-2000), followed
+ * once to a stub of the request's page, at the anchor of the check that needs a person.
  */
 
 /** The routed page under the menu; it renders nothing. */
@@ -36,7 +40,10 @@ describe('ReleaseMenu (screenshots)', () => {
     slug = recorded.slug;
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug', component: TestPage }]),
+        provideRouter([
+          { path: 'projects/:slug', component: TestPage },
+          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -142,6 +149,29 @@ describe('ReleaseMenu (screenshots)', () => {
     await expect.element(panel.getByText('workspaces:')).toBeVisible();
     await expect.element(panel.getByText('shared:')).toBeVisible();
     await expect.element(frame).toMatchScreenshot('open', { kind: 'DATA' });
+  });
+
+  it('open-menu-release-request request: a request opens its page at the check needing a person', async () => {
+    const { fixture, requests } = await render();
+    requests.flush(
+      await goldenMaster('a project with pending release requests', 'listProjectReleaseRequests'),
+    );
+    await answered(fixture);
+    await open(fixture);
+    const panel = page.getByRole('region', { name: 'Pending release requests' });
+    const link = panel.getByRole('link', { name: /contract-frontend/ }).first();
+    const href = link.element().getAttribute('href')!;
+    expect(href).toMatch(new RegExp(`^/projects/${slug}/release-requests/[^/#]+#.+`));
+    await userEvent.click(link);
+    await settle();
+    await fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe(href);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-menu-release-request:request',
+    ]);
+    await expect
+      .element(page.getByRole('button', { name: 'Release requests' }))
+      .toHaveAttribute('aria-expanded', 'false');
   });
 
   it('says so when nothing is pending', async () => {

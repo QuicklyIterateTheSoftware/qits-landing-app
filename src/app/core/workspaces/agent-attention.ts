@@ -67,7 +67,10 @@ export interface WorkLike {
 
 /** What `waitSubject` and `attentionAction` need beside the wait: the open project's context. */
 export interface WaitContext {
-  /** The open project's slug, for the app's own links. */
+  /**
+   * The open project's slug. The functions build no link: the callers pick a declared exit by the
+   * subject's `kind` and `id` (epic qits-2000).
+   */
   readonly slug: string;
   /** qits-ci's page origin (`PlatformOrigins.page('ci')`); a run has no link without one. */
   readonly ciOrigin?: string;
@@ -98,12 +101,6 @@ export interface WaitSubject {
    * kind, and for a run without qits-ci's origin.
    */
   readonly href: string | null;
-  /**
-   * Where the subject is, as one string: the app path `id` makes (`/projects/…`), or `href`. Null
-   * when there is neither. Only the agents menu still links this (`agents-menu.ts`, migrated with the
-   * shell, epic qits-2000); the app's own pages go through declared exits by `kind` and `id`.
-   */
-  readonly link: string | null;
 }
 
 /**
@@ -120,8 +117,6 @@ export type AttentionAction =
       readonly label: string;
       /** The agent's work item, by its qualified id; null when the agent names none. */
       readonly itemId: string | null;
-      /** Its page's app path (for the agents menu, as {@link WaitSubject.link}). */
-      readonly link: string | null;
     }
   | { readonly kind: 'subject'; readonly label: string; readonly subject: WaitSubject };
 
@@ -135,25 +130,6 @@ export function attentionCount(
   agents: readonly { readonly attention?: AttentionLike | null }[],
 ): number {
   return agents.filter(needsAttention).length;
-}
-
-/** The app's page for a work item of the project. */
-export function workItemPath(slug: string, qualifiedId: string): string {
-  return `/projects/${encodeURIComponent(slug)}/work/detail/${encodeURIComponent(qualifiedId)}`;
-}
-
-/**
- * The app's page for an agent of the project (epic qits-1681), or one of its tabs (`chat`, `files`,
- * `terminal`).
- */
-export function agentPath(slug: string, agentId: string, tab?: string): string {
-  const page = `/projects/${encodeURIComponent(slug)}/agents/${encodeURIComponent(agentId)}`;
-  return tab ? `${page}/${tab}` : page;
-}
-
-/** The app's page for a release request of the project. */
-export function releaseRequestPath(slug: string, qualifiedId: string): string {
-  return `/projects/${encodeURIComponent(slug)}/release-requests/${encodeURIComponent(qualifiedId)}`;
 }
 
 /** qits-ci's page for a run, as the lightning menu's active-run chips link it. */
@@ -185,7 +161,6 @@ export function waitSubject(wait: WaitLike, ctx: WaitContext): WaitSubject {
         gates: request?.gates ?? [],
         id: qualifiedId ?? null,
         href: null,
-        link: qualifiedId ? releaseRequestPath(ctx.slug, qualifiedId) : null,
       };
     }
     case 'CI_RUN': {
@@ -197,7 +172,6 @@ export function waitSubject(wait: WaitLike, ctx: WaitContext): WaitSubject {
         state: wait.subjectState,
         id: null,
         href,
-        link: href,
       };
     }
     case 'WORK_ITEM':
@@ -205,11 +179,7 @@ export function waitSubject(wait: WaitLike, ctx: WaitContext): WaitSubject {
       const item = ctx.work?.find((w) => names(wait, w));
       const qualifiedId = wait.subjectQualifiedId ?? item?.qualifiedId;
       const itemText = qualifiedId ?? (label || (wait.subjectRef ?? ''));
-      const target = {
-        id: qualifiedId ?? null,
-        href: null,
-        link: qualifiedId ? workItemPath(ctx.slug, qualifiedId) : null,
-      };
+      const target = { id: qualifiedId ?? null, href: null };
       return wait.subjectKind === 'WORK_ITEM'
         ? { kind: 'WORK_ITEM', text: itemText, state: item?.status ?? wait.subjectState, ...target }
         : {
@@ -226,7 +196,6 @@ export function waitSubject(wait: WaitLike, ctx: WaitContext): WaitSubject {
         state: wait.subjectState,
         id: null,
         href: null,
-        link: null,
       };
   }
 }
@@ -256,7 +225,6 @@ export function attentionAction(
         kind: 'open-item',
         label: 'Open item',
         itemId: agent.entityId ?? null,
-        link: agent.entityId ? workItemPath(ctx.slug, agent.entityId) : null,
       };
     case 'WAIT_OVERDUE':
       if (subject) return { kind: 'subject', label: subject.text, subject };

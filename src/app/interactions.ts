@@ -712,6 +712,63 @@ export const INTERACTIONS = {
   'revoke-network-peer': 'Revoking a peer on the Network access page',
   /** `network-access.page.ts` via `PeersStore.config`: a DEVICE row's WireGuard config download. */
   'download-wireguard-config': 'Downloading a device peer’s WireGuard config',
+  /**
+   * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
+   * Agents, Release Requests, Desk, Repositories, Observability, Events). Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-sidebar-section': 'A section in the sidebar opens the section’s page',
+  /**
+   * `shell.layout.ts`: a work section's page listed below Work in the sidebar opens it, one exit
+   * per page (`WORK_TABS`). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
+  /**
+   * `shell.layout.ts`: the top bar's gear opens the open project's settings (`setup`). Navigates
+   * only, and names no pact (epic qits-2000).
+   */
+  'open-project-settings': 'The top bar’s gear opens the project’s settings',
+  /**
+   * `shell.layout.ts`: the top bar's network icon opens the Network access page. Navigates only,
+   * and names no pact (epic qits-2000).
+   */
+  'open-network-access': 'The top bar’s network icon opens the Network access page',
+  /**
+   * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
+   * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
+   * the Work, Agents or Release Requests section above a subpage. Navigates only, and names no pact
+   * (epic qits-2000).
+   */
+  'follow-breadcrumb': 'A breadcrumb before the current page opens its page',
+  /**
+   * `agents-menu.ts`: an agent's item in the top bar's agents menu opens the agent's page.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-menu-agent': 'An agent in the agents menu opens the agent’s page',
+  /**
+   * `agents-menu.ts`: a wait's subject in the agents menu opens its page, one exit per kind: the
+   * release request, the work item, or the item whose comments it waits on. A CI run is qits-ci's
+   * page, no outcome. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-menu-agent-wait': 'What an agent waits on, in the agents menu, opens its request or item',
+  /**
+   * `agents-menu.ts`: the action beside an agent needing a person in the agents menu: Prompt agent
+   * opens its Chat tab, Open item its work item, an overdue release request the request.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'act-on-menu-agent-attention':
+    'The action beside an agent needing a person, in the agents menu, opens its chat, item or request',
+  /**
+   * `agents-menu.ts`: the agents menu's "All agents" opens the project's Agents page. Navigates
+   * only, and names no pact (epic qits-2000).
+   */
+  'open-all-agents': 'All agents in the agents menu opens the project’s Agents page',
+  /**
+   * `release-menu.ts`: a request in the top bar's lightning menu opens the request's page, at the
+   * check that needs a person when one does (its anchor as the fragment). Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'open-menu-release-request': 'A request in the lightning menu opens the request’s page',
 } as const;
 
 /** A slug from {@link INTERACTIONS}. A slug that is not in the catalog does not compile. */

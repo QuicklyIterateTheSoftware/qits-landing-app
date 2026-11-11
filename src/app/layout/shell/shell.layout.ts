@@ -1,5 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  afterRenderEffect,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  Directive,
+  ElementRef,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
 import { ProjectsStore } from '$core/projects/projects.store';
 import {
   latestReleaseRequest,
@@ -16,17 +27,59 @@ import { NotificationsMenu } from '$patterns/events/notifications-menu/notificat
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
 import { AgentsMenu } from '$patterns/agents/agents-menu/agents-menu';
-import { Breadcrumbs } from '$ui/components/breadcrumbs/breadcrumbs';
+import { Breadcrumbs, type Crumb } from '$ui/components/breadcrumbs/breadcrumbs';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 
-/** One entry of the sidebar. */
-export interface NavLink {
+/** A page of the trail or the sidebar: its label and its URL, which says where the user is. */
+export interface NavPage {
   readonly label: string;
+  /** The page's URL (absolute, `/projects/…`), matched against the router's. */
   readonly path: string;
+}
+
+/** The shell's sections: one per sidebar entry, and Setup from the gear. */
+type SectionKey =
+  | 'work'
+  | 'ideas'
+  | 'agents'
+  | 'releaseRequests'
+  | 'desk'
+  | 'repositories'
+  | 'observability'
+  | 'events'
+  | 'setup';
+
+/** A page of the open project the sidebar or the gear leads to: its exit takes the slug alone. */
+type ProjectPageExit = ExitOutcome<`projects/:slug/${
+  | 'work'
+  | 'work/refinement'
+  | 'work/schedule'
+  | 'work/in-progress'
+  | 'work/acceptance'
+  | 'work/archive'
+  | 'ideas'
+  | 'agents'
+  | 'release-requests'
+  | 'desk'
+  | 'repositories'
+  | 'observability'
+  | 'events'
+  | 'setup'}`>;
+
+/** One entry of the sidebar, or Setup (the gear's section, no entry). */
+export interface NavLink extends NavPage {
+  readonly key: SectionKey;
+  /** Where the entry leads: its declared exit (epic qits-2000), with the open project's slug. */
+  readonly exit: ProjectPageExit;
   /** The section's own pages, listed below it in the sidebar while the section is open. */
-  readonly children?: readonly NavLink[];
+  readonly children?: readonly NavChild[];
   /** A line below the label: what is newest in the section, with a chip. */
   readonly note?: NavNote;
+}
+
+/** One of a section's own pages, below it in the sidebar. */
+export interface NavChild extends NavPage {
+  readonly exit: ProjectPageExit;
 }
 
 /** The line below a sidebar entry's label. */
@@ -36,6 +89,32 @@ export interface NavNote {
   readonly tone: ChipTone;
   /** The full story, on hover. */
   readonly title: string;
+}
+
+/**
+ * A sidebar section's `aria-current`, by the shell's own rule (`ShellLayout.currentOf`) rather than
+ * `[qitsExit]`'s: `true` on Work while one of its pages below it is open, and `page` on Agents on a
+ * slot's page, which the exit's path does not contain. `[qitsExit]` sets `aria-current` too, from a
+ * host binding that writes only when its own value changes, so a binding of ours on the same
+ * attribute would win or lose by which changed last. This writes after each render the directive's
+ * state or ours changes in, so ours is the last word.
+ */
+@Directive({ selector: 'a[qitsExit][appSectionCurrent]' })
+export class SectionCurrent {
+  readonly appSectionCurrent = input<'page' | 'true' | null>(null);
+
+  constructor() {
+    const link = inject(QitsExit);
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    afterRenderEffect({
+      write: () => {
+        link.isActive();
+        const current = this.appSectionCurrent();
+        if (current) host.setAttribute('aria-current', current);
+        else host.removeAttribute('aria-current');
+      },
+    });
+  }
 }
 
 /**
@@ -59,6 +138,16 @@ export interface NavNote {
  * page. Below 768px the document scrolls, as on any phone page: the top bar stays pinned to the
  * top of the window and the sidebar lies over the page. What pins at the top of the scrolling box
  * (the page's actions, the board's headings) reads `--app-pin-top`, which covers both cases.
+ *
+ * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
+ * sidebar's sections (`open-sidebar-section`) and the work pages below Work
+ * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry), the gear (`open-project-settings`),
+ * the network icon (`open-network-access`), and the trail's brand and crumbs
+ * (`follow-breadcrumb`), handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and
+ * release menus declare their own, being patterns (app-wide too). The gear, the network icon and a
+ * work page are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true`
+ * while one of its pages below it is open, and Agents on a slot's page), which `SectionCurrent`
+ * applies over the directive's.
  */
 @Component({
   selector: 'app-shell-layout',
@@ -66,8 +155,8 @@ export interface NavNote {
   imports: [
     AgentsMenu,
     Breadcrumbs,
-    RouterLink,
-    RouterLinkActive,
+    QitsExit,
+    SectionCurrent,
     RouterOutlet,
     BumpsMenu,
     FinishToasts,
@@ -102,16 +191,14 @@ export interface NavNote {
           <span class="block h-0.5 bg-gray-700"></span>
           <span class="block h-0.5 bg-gray-700"></span>
         </button>
-        <ui-breadcrumbs [crumbs]="crumbs()" />
+        <ui-breadcrumbs [home]="home" [crumbs]="crumbs()" />
         <!-- The menus at the right end: the platform's network access (from 768px), version bumps
              and notifications (always), then the open project's agents, its release requests and its
              settings (all three hidden, not removed, while no project is open). -->
         <div class="ml-auto flex items-center gap-1">
           <a
             class="hidden size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 md:inline-flex aria-[current=page]:text-gray-900"
-            routerLink="/network-access"
-            routerLinkActive=""
-            ariaCurrentWhenActive="page"
+            [qitsExit]="network.open"
             aria-label="Network access"
             title="Network access"
           >
@@ -137,10 +224,9 @@ export interface NavNote {
           <app-release-menu />
           <a
             class="size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"
-            [class]="settingsPath() ? 'inline-flex' : 'hidden'"
-            [routerLink]="settingsPath() ?? '/projects'"
-            routerLinkActive=""
-            ariaCurrentWhenActive="page"
+            [class]="slug() ? 'inline-flex' : 'hidden'"
+            [qitsExit]="settings.open"
+            [exitParams]="{ slug: slug() }"
             aria-label="Settings"
           >
             <svg
@@ -169,12 +255,13 @@ export interface NavNote {
         aria-label="qits"
       >
         <ul class="m-0 list-none px-2 py-3">
-          @for (link of links(); track link.path) {
+          @for (link of links(); track link.key) {
             <li>
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900 aria-[current=true]:font-semibold aria-[current=true]:text-gray-900"
-                [routerLink]="link.path"
-                [attr.aria-current]="currentOf(link)"
+                [qitsExit]="link.exit"
+                [exitParams]="{ slug: slug() }"
+                [appSectionCurrent]="currentOf(link)"
                 (click)="closeNav()"
                 >{{ link.label }}
                 <!-- The section's newest item, below the label; switched by class. -->
@@ -201,8 +288,8 @@ export interface NavNote {
                   <li>
                     <a
                       class="block rounded-md px-3 py-[0.3rem] text-sm text-gray-600 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
-                      [routerLink]="child.path"
-                      [attr.aria-current]="isAt(child) ? 'page' : null"
+                      [qitsExit]="child.exit"
+                      [exitParams]="{ slug: slug() }"
                       (click)="closeNav()"
                       >{{ child.label }}</a
                     >
@@ -228,6 +315,72 @@ export class ShellLayout {
   private readonly selected = inject(SelectedProject);
   private readonly projects = inject(ProjectsStore);
   private readonly agents = inject(AgentsStore);
+
+  /** The sidebar's sections, one exit each (epic qits-2000). */
+  private readonly sections = outcomes('open-sidebar-section', {
+    work: exit('projects/:slug/work'),
+    ideas: exit('projects/:slug/ideas'),
+    agents: exit('projects/:slug/agents'),
+    releaseRequests: exit('projects/:slug/release-requests'),
+    desk: exit('projects/:slug/desk'),
+    repositories: exit('projects/:slug/repositories'),
+    observability: exit('projects/:slug/observability'),
+    events: exit('projects/:slug/events'),
+  });
+
+  /** The work pages below Work in the sidebar, one exit per page (epic qits-2000). */
+  private readonly workPages = outcomes('open-sidebar-work-page', {
+    refinement: exit('projects/:slug/work/refinement'),
+    schedule: exit('projects/:slug/work/schedule'),
+    inProgress: exit('projects/:slug/work/in-progress'),
+    acceptance: exit('projects/:slug/work/acceptance'),
+    archive: exit('projects/:slug/work/archive'),
+  });
+
+  /** Each work page's exit, by its segment (`WORK_TABS`). */
+  private readonly workPageExits: Readonly<Record<string, ProjectPageExit>> = {
+    refinement: this.workPages.refinement,
+    schedule: this.workPages.schedule,
+    'in-progress': this.workPages.inProgress,
+    acceptance: this.workPages.acceptance,
+    archive: this.workPages.archive,
+  };
+
+  /** The gear: the open project's settings (epic qits-2000). */
+  protected readonly settings = outcomes('open-project-settings', {
+    open: exit('projects/:slug/setup'),
+  });
+
+  /** The network icon: the Network access page (epic qits-2000). */
+  protected readonly network = outcomes('open-network-access', {
+    open: exit('network-access'),
+  });
+
+  /**
+   * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
+   * the project, and the sections a subpage crumb can follow (Work, Agents, Release Requests).
+   */
+  private readonly trail = outcomes('follow-breadcrumb', {
+    home: exit(''),
+    projects: exit('projects'),
+    project: exit('projects/:slug'),
+    work: exit('projects/:slug/work'),
+    agents: exit('projects/:slug/agents'),
+    releaseRequests: exit('projects/:slug/release-requests'),
+  });
+
+  /** A section's crumb's exit, for the sections with a subpage below them. */
+  private readonly sectionCrumbExits: Partial<Record<SectionKey, ExitOutcome>> = {
+    work: this.trail.work,
+    agents: this.trail.agents,
+    releaseRequests: this.trail.releaseRequests,
+  };
+
+  /** The trail's brand, home. */
+  protected readonly home: Crumb = { label: 'qits', exit: this.trail.home };
+
+  /** The open project's slug, the exits' param; empty while no project is open. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /**
    * The open project's newest release request (`latestReleaseRequest`), as the line below the
@@ -260,45 +413,60 @@ export class ShellLayout {
    */
   protected readonly links = computed((): readonly NavLink[] => {
     const slug = this.selected.slug();
-    return slug === undefined
-      ? []
-      : [
-          {
-            label: 'Work',
-            path: `/projects/${slug}/work`,
-            children: WORK_TABS.map((tab) => ({
-              label: tab.label,
-              path: `/projects/${slug}/work/${tab.segment}`,
-            })),
-          },
-          { label: 'Ideas', path: `/projects/${slug}/${IDEAS}` },
-          { label: 'Agents', path: `/projects/${slug}/${AGENTS}` },
-          {
-            label: 'Release Requests',
-            path: `/projects/${slug}/${RELEASE_REQUESTS}`,
-            note: this.latestRelease(),
-          },
-          { label: 'Desk', path: `/projects/${slug}/${DESK}` },
-          { label: 'Repositories', path: `/projects/${slug}/repositories` },
-          { label: 'Observability', path: `/projects/${slug}/observability` },
-          { label: 'Events', path: `/projects/${slug}/events` },
-        ];
+    if (slug === undefined) return [];
+    const params = { slug };
+    const link = (key: SectionKey, label: string, to: ProjectPageExit): NavLink => ({
+      key,
+      label,
+      exit: to,
+      path: to.url(params),
+    });
+    const sections = this.sections;
+    return [
+      {
+        ...link('work', 'Work', sections.work),
+        children: WORK_TABS.flatMap((tab) => {
+          const to = this.workPageExits[tab.segment];
+          return to ? [{ label: tab.label, exit: to, path: to.url(params) }] : [];
+        }),
+      },
+      link('ideas', 'Ideas', sections.ideas),
+      link('agents', 'Agents', sections.agents),
+      {
+        ...link('releaseRequests', 'Release Requests', sections.releaseRequests),
+        note: this.latestRelease(),
+      },
+      link('desk', 'Desk', sections.desk),
+      link('repositories', 'Repositories', sections.repositories),
+      link('observability', 'Observability', sections.observability),
+      link('events', 'Events', sections.events),
+    ];
   });
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
    * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
    * Work › <item id>, Release Requests › <request id>, Agents › <agent's item id>, Agents ›
-   * ws-<slot id>). The last crumb is the current page and is not a link.
+   * ws-<slot id>). The last crumb is the current page and is not a link; each one before it leads
+   * through its `follow-breadcrumb` exit.
    */
-  protected readonly crumbs = computed((): readonly NavLink[] => {
-    const projects: NavLink = { label: 'Projects', path: '/projects' };
+  protected readonly crumbs = computed((): readonly Crumb[] => {
+    const projects: Crumb = { label: 'Projects', exit: this.trail.projects };
     const project = this.selected.project();
     const slug = this.selected.slug();
     if (!project || !slug) return [projects];
-    const crumbs = [projects, { label: project.name ?? slug, path: `/projects/${slug}` }];
-    const section = this.section();
-    if (!section) return crumbs;
+    const params = { slug };
+    const crumbs: Crumb[] = [
+      projects,
+      { label: project.name ?? slug, exit: this.trail.project, params },
+    ];
+    const found = this.section();
+    if (!found) return crumbs;
+    const section: Crumb = {
+      label: found.label,
+      exit: this.sectionCrumbExits[found.key],
+      params,
+    };
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
     // Release Requests › <request id>.
     const url = this.selected.url();
@@ -309,7 +477,7 @@ export class ShellLayout {
       releaseRequestSubpage(url, `/projects/${slug}`, requests) ??
       slotSubpage(url, `/projects/${slug}`) ??
       agentSubpage(url, `/projects/${slug}`, agents);
-    return sub ? [...crumbs, section, sub] : [...crumbs, section];
+    return sub ? [...crumbs, section, { label: sub.label }] : [...crumbs, section];
   });
 
   /**
@@ -321,22 +489,20 @@ export class ShellLayout {
     if (slug === undefined) return undefined;
     const url = this.selected.url();
     if (within(url, `/projects/${slug}/${WORKSPACES}`)) {
-      return this.links().find((link) => link.path === `/projects/${slug}/${AGENTS}`);
+      return this.links().find((link) => link.key === 'agents');
     }
-    return [...this.links(), { label: 'Setup', path: `/projects/${slug}/setup` }].find((link) =>
-      within(url, link.path),
-    );
+    const setup: NavLink = {
+      key: 'setup',
+      label: 'Setup',
+      exit: this.settings.open,
+      path: this.settings.open.url({ slug }),
+    };
+    return [...this.links(), setup].find((link) => within(url, link.path));
   });
 
-  /** The open project's settings page, or undefined while no project is open. */
-  protected readonly settingsPath = computed(() => {
-    const slug = this.selected.slug();
-    return slug === undefined ? undefined : `/projects/${slug}/setup`;
-  });
-
-  /** Whether the URL is `link`'s page or one below it. */
-  protected isAt(link: NavLink): boolean {
-    return within(this.selected.url(), link.path);
+  /** Whether the URL is `page` or one below it. */
+  private isAt(page: NavPage): boolean {
+    return within(this.selected.url(), page.path);
   }
 
   /**
@@ -392,7 +558,7 @@ export const WORKSPACES = 'workspaces';
  * `<project>/workspaces/<slot id>` is "ws-<slot id>". Undefined for the list itself, a page whose
  * segment is not a slot id, and anything outside it.
  */
-export function slotSubpage(url: string, project: string): NavLink | undefined {
+export function slotSubpage(url: string, project: string): NavPage | undefined {
   const prefix = `${project}/${WORKSPACES}/`;
   if (!url.startsWith(prefix)) return undefined;
   const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
@@ -410,7 +576,7 @@ export function agentSubpage(
   url: string,
   project: string,
   agents: readonly { readonly agentId?: string; readonly entityId?: string }[] = [],
-): NavLink | undefined {
+): NavPage | undefined {
   const prefix = `${project}/${AGENTS}/`;
   if (!url.startsWith(prefix)) return undefined;
   const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
@@ -426,7 +592,7 @@ export function agentSubpage(
  * (`<project>/work/detail/<item id>` is the id). Undefined for the section itself and anything
  * outside it.
  */
-export function workSubpage(url: string, project: string): NavLink | undefined {
+export function workSubpage(url: string, project: string): NavPage | undefined {
   const work = `${project}/work`;
   const [first, second] = url.startsWith(`${work}/`)
     ? url
@@ -451,7 +617,7 @@ export function releaseRequestSubpage(
   url: string,
   project: string,
   requests: readonly ReleaseRequestEntry[] = [],
-): NavLink | undefined {
+): NavPage | undefined {
   const prefix = `${project}/${RELEASE_REQUESTS}/`;
   if (!url.startsWith(prefix)) return undefined;
   const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];

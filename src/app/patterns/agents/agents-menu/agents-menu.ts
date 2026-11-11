@@ -7,7 +7,7 @@ import {
   inject,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
@@ -16,7 +16,6 @@ import { requestTone } from '$core/projects/release-requests';
 import { lifecycleSummary, type SummaryPoint } from '$core/release-requests/release-lifecycle';
 import { WorkStore } from '$core/work/work.store';
 import {
-  agentPath,
   attentionAction,
   attentionCount,
   needsAttention,
@@ -134,13 +133,10 @@ interface WaitLine {
 /** One agent's row. */
 interface AgentMenuRow {
   readonly agent: ProjectStatusAgent;
-  readonly page: string | null;
   readonly activity: { readonly label: string; readonly tone: ChipTone };
   readonly waits: readonly WaitLine[];
   readonly blockedAt?: string;
   readonly action?: AttentionAction;
-  /** The agent page's Chat tab, for Prompt agent. */
-  readonly chat: string | null;
 }
 
 /**
@@ -170,11 +166,19 @@ interface AgentMenuRow {
  * (`AgentsStore.followProject`, debounced 1 s); a request's gates follow `RELEASE_REQUEST_EVENTS`
  * through the lightning menu's `ProjectsStore` reads, an item's status `WORK_EVENTS` wherever the
  * work is followed. Every link closes the panel.
+ *
+ * Its links are declared exits (epic qits-2000), declared here rather than handed down from the
+ * shell that draws the menu: like the shell's, a pattern's declarations are app-wide. The agent's
+ * page (`open-menu-agent`); a wait's subject, one exit per kind (`open-menu-agent-wait`: its
+ * release request, its work item, the item whose comments it waits on; a CI run is qits-ci's page,
+ * a plain link); the attention's action (`act-on-menu-agent-attention`: Prompt agent → the Chat
+ * tab, Open item → the item, an overdue release request → the request; an overdue run is a plain
+ * link); and "All agents" (`open-all-agents`).
  */
 @Component({
   selector: 'app-agents-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, LifecycleLine, RouterLink, Spinner],
+  imports: [Dropdown, LifecycleLine, QitsExit, Spinner],
   // One display class or the other: a static display class would beat `hidden`.
   host: {
     '[class]': "projectId() ? 'inline-flex' : 'hidden'",
@@ -225,10 +229,11 @@ interface AgentMenuRow {
               [class]="row.action ? 'border-l-4 border-l-cinnabar-600 bg-cinnabar-50' : ''"
             >
               <div class="flex items-baseline justify-between gap-2">
-                @if (row.page; as page) {
+                @if (slug() && agent.agentId; as agentId) {
                   <a
                     class="min-w-0 truncate text-sm text-gray-900 no-underline hover:underline"
-                    [routerLink]="page"
+                    [qitsExit]="opening.agent"
+                    [exitParams]="{ slug: slug(), agentId }"
                     (click)="menu.close()"
                     ><span class="font-semibold">{{ agent.entityId }}</span>
                     {{ agent.entityTitle }}</a
@@ -251,18 +256,43 @@ interface AgentMenuRow {
                   <div class="flex items-baseline justify-between gap-2">
                     <span class="min-w-0 truncate">
                       <span class="text-gray-500">waits on </span>
-                      @if (wait.subject.link; as link) {
-                        @if (isAppPath(link)) {
-                          <a class="text-gray-900" [routerLink]="link" (click)="menu.close()">{{
-                            wait.subject.text
-                          }}</a>
-                        } @else {
-                          <a class="text-gray-900" [href]="link" (click)="menu.close()">{{
-                            wait.subject.text
-                          }}</a>
+                      @switch (slug() && wait.subject.id ? wait.subject.kind : null) {
+                        @case ('RELEASE_REQUEST') {
+                          <a
+                            class="text-gray-900"
+                            [qitsExit]="waiting.releaseRequest"
+                            [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
+                            (click)="menu.close()"
+                            >{{ wait.subject.text }}</a
+                          >
                         }
-                      } @else {
-                        <span class="text-gray-900">{{ wait.subject.text }}</span>
+                        @case ('WORK_ITEM') {
+                          <a
+                            class="text-gray-900"
+                            [qitsExit]="waiting.workItem"
+                            [exitParams]="{ slug: slug(), id: wait.subject.id! }"
+                            (click)="menu.close()"
+                            >{{ wait.subject.text }}</a
+                          >
+                        }
+                        @case ('COMMENTS') {
+                          <a
+                            class="text-gray-900"
+                            [qitsExit]="waiting.comments"
+                            [exitParams]="{ slug: slug(), id: wait.subject.id! }"
+                            (click)="menu.close()"
+                            >{{ wait.subject.text }}</a
+                          >
+                        }
+                        @default {
+                          @if (wait.subject.href; as href) {
+                            <a class="text-gray-900" [href]="href" (click)="menu.close()">{{
+                              wait.subject.text
+                            }}</a>
+                          } @else {
+                            <span class="text-gray-900">{{ wait.subject.text }}</span>
+                          }
+                        }
                       }
                     </span>
                     @if (wait.subject.state; as state) {
@@ -298,10 +328,11 @@ interface AgentMenuRow {
                   <span class="text-cinnabar-600">{{ agent.attention?.reason }}</span>
                   @switch (action.kind) {
                     @case ('prompt') {
-                      @if (row.chat; as chat) {
+                      @if (slug() && agent.agentId; as agentId) {
                         <a
                           class="font-semibold text-gray-900"
-                          [routerLink]="chat"
+                          [qitsExit]="acting.prompt"
+                          [exitParams]="{ slug: slug(), agentId }"
                           (click)="menu.close()"
                           data-action
                           >{{ action.label }}</a
@@ -309,10 +340,11 @@ interface AgentMenuRow {
                       }
                     }
                     @case ('open-item') {
-                      @if (action.link; as link) {
+                      @if (slug() && action.itemId; as id) {
                         <a
                           class="font-semibold text-gray-900"
-                          [routerLink]="link"
+                          [qitsExit]="acting.openItem"
+                          [exitParams]="{ slug: slug(), id }"
                           (click)="menu.close()"
                           data-action
                           >{{ action.label }}</a
@@ -320,24 +352,26 @@ interface AgentMenuRow {
                       }
                     }
                     @case ('subject') {
-                      @if (action.subject.link; as link) {
-                        @if (isAppPath(link)) {
-                          <a
-                            class="font-semibold text-gray-900"
-                            [routerLink]="link"
-                            (click)="menu.close()"
-                            data-action
-                            >{{ action.label }}</a
-                          >
-                        } @else {
-                          <a
-                            class="font-semibold text-gray-900"
-                            [href]="link"
-                            (click)="menu.close()"
-                            data-action
-                            >{{ action.label }}</a
-                          >
-                        }
+                      @if (
+                        slug() && action.subject.kind === 'RELEASE_REQUEST' && action.subject.id;
+                        as requestId
+                      ) {
+                        <a
+                          class="font-semibold text-gray-900"
+                          [qitsExit]="acting.overdueRequest"
+                          [exitParams]="{ slug: slug(), requestId }"
+                          (click)="menu.close()"
+                          data-action
+                          >{{ action.label }}</a
+                        >
+                      } @else if (action.subject.href; as href) {
+                        <a
+                          class="font-semibold text-gray-900"
+                          [href]="href"
+                          (click)="menu.close()"
+                          data-action
+                          >{{ action.label }}</a
+                        >
                       }
                     }
                   }
@@ -354,7 +388,8 @@ interface AgentMenuRow {
         </p>
         <a
           class="block border-t border-gray-100 px-3 py-2 text-center text-sm font-semibold text-gray-700 no-underline hover:bg-gray-50"
-          [routerLink]="['/projects', slug(), 'agents']"
+          [qitsExit]="all.agents"
+          [exitParams]="{ slug: slug() }"
           (click)="menu.close()"
           >All agents</a
         >
@@ -372,8 +407,32 @@ export class AgentsMenu {
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);
 
-  /** The open project's slug, which the links name. */
-  protected readonly slug = this.selected.slug;
+  /** The open project's slug, the exits' param. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /** An agent's item, linked to the agent's page (epic qits-2000). */
+  protected readonly opening = outcomes('open-menu-agent', {
+    agent: exit('projects/:slug/agents/:agentId'),
+  });
+
+  /** A wait's subject, one exit per kind that has a page here (epic qits-2000). */
+  protected readonly waiting = outcomes('open-menu-agent-wait', {
+    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    workItem: exit('projects/:slug/work/detail/:id'),
+    comments: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** What to do about an agent's attention, one exit per action (epic qits-2000). */
+  protected readonly acting = outcomes('act-on-menu-agent-attention', {
+    prompt: exit('projects/:slug/agents/:agentId/chat'),
+    openItem: exit('projects/:slug/work/detail/:id'),
+    overdueRequest: exit('projects/:slug/release-requests/:requestId'),
+  });
+
+  /** The footer's "All agents" (epic qits-2000). */
+  protected readonly all = outcomes('open-all-agents', {
+    agents: exit('projects/:slug/agents'),
+  });
 
   private readonly listed = computed(() => {
     const id = this.projectId();
@@ -391,7 +450,7 @@ export class AgentsMenu {
   private readonly context = computed((): WaitContext => {
     const id = this.projectId();
     return {
-      slug: this.slug() ?? '',
+      slug: this.slug(),
       ciOrigin: this.origins.page('ci') || undefined,
       releaseRequests: this.requests(),
       work: (id === undefined ? undefined : this.work.byProject()[id]?.entries) ?? [],
@@ -407,11 +466,8 @@ export class AgentsMenu {
       (a, b) => Number(needsAttention(b)) - Number(needsAttention(a)) || time(b) - time(a),
     );
     return sorted.map((agent) => {
-      const page = ctx.slug && agent.agentId ? agentPath(ctx.slug, agent.agentId) : null;
       return {
         agent,
-        page,
-        chat: ctx.slug && agent.agentId ? agentPath(ctx.slug, agent.agentId, 'chat') : null,
         activity: activityChip(agent),
         waits: (agent.waits ?? []).map((wait, index) => {
           const subject = waitSubject(wait, ctx);
@@ -462,11 +518,6 @@ export class AgentsMenu {
 
   protected tone(state: string | undefined): ChipTone {
     return stateTone(state);
-  }
-
-  /** Whether a link is the app's own (a router link) rather than another app's page. */
-  protected isAppPath(link: string): boolean {
-    return link.startsWith('/');
   }
 
   constructor() {

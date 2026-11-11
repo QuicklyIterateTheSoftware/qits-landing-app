@@ -1,16 +1,26 @@
 import { ChangeDetectionStrategy, Component, computed, input, viewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { QitsExit, type ExitOutcome } from '@qits/angular';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 
-/** One step of the trail. */
+/**
+ * One step of the trail. A step before the current page leads to `exit` (a declared exit of the
+ * layout that draws the trail, with its `params`); the current page, and a step without one, is
+ * plain text.
+ */
 export interface Crumb {
   readonly label: string;
-  readonly path: string;
+  readonly exit?: ExitOutcome;
+  /** The exit's path params. */
+  readonly params?: Readonly<Record<string, string | number>>;
 }
 
 /**
  * The breadcrumb trail: the brand (`home`, the bold link home), then one link per crumb, the last
  * one the current page (not a link).
+ *
+ * It declares nothing (epic qits-2000): each crumb carries the exit its layout declares, bound to
+ * `<a [qitsExit]>` (marked current only on its very page, `exitActiveExact`, so no ancestor reads as
+ * the current page), and the current page is a plain `aria-current="page"` text.
  *
  * ```html
  * <ui-breadcrumbs [crumbs]="crumbs" />
@@ -37,7 +47,7 @@ export interface Crumb {
 @Component({
   selector: 'ui-breadcrumbs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, RouterLink],
+  imports: [Dropdown, QitsExit],
   host: { class: 'flex min-w-0 items-center' },
   template: `
     <nav aria-label="Breadcrumb" class="flex min-w-0 items-center">
@@ -59,18 +69,20 @@ export interface Crumb {
             <circle cx="19" cy="12" r="1.75" />
           </svg>
           <ol dropdown-panel class="m-0 list-none py-1 pl-0 text-sm">
-            @for (row of path(); track row.path; let last = $last) {
+            @for (row of path(); track $index; let last = $last) {
               <li>
-                @if (last) {
+                @if (last || !row.exit) {
                   <span
                     class="block px-3 py-1.5 font-medium whitespace-normal break-words text-gray-900"
-                    aria-current="page"
+                    [attr.aria-current]="last ? 'page' : null"
                     >{{ row.label }}</span
                   >
                 } @else {
                   <a
                     class="block px-3 py-1.5 whitespace-normal break-words text-gray-600 no-underline hover:bg-gray-100 hover:text-gray-900 focus-visible:-outline-offset-2"
-                    [routerLink]="row.path"
+                    [qitsExit]="row.exit"
+                    [exitParams]="row.params"
+                    [exitActiveExact]="true"
                     (click)="dropdown().close()"
                     >{{ row.label }}</a
                   >
@@ -89,11 +101,19 @@ export interface Crumb {
         <li
           class="hidden min-w-0 shrink-[1000] truncate *:focus-visible:-outline-offset-2 md:block"
         >
-          <a class="font-bold text-gray-900 no-underline" [routerLink]="home().path">{{
-            home().label
-          }}</a>
+          @if (home().exit; as exit) {
+            <a
+              class="font-bold text-gray-900 no-underline"
+              [qitsExit]="exit"
+              [exitParams]="home().params"
+              [exitActiveExact]="true"
+              >{{ home().label }}</a
+            >
+          } @else {
+            <span class="font-bold text-gray-900">{{ home().label }}</span>
+          }
         </li>
-        @for (crumb of crumbs(); track crumb.path; let index = $index) {
+        @for (crumb of crumbs(); track $index; let index = $index) {
           <!-- A crumb before the current page shrinks a thousand times faster than the current page,
                and its separators go with it (the li clips). -->
           <li
@@ -110,13 +130,22 @@ export interface Crumb {
               [class]="index >= crumbs().length - 2 ? 'hidden md:inline' : ''"
               >›</span
             >
-            <!-- One element for both cases (no @if): the last crumb is the current page. -->
-            <a
-              class="min-w-0 truncate text-gray-600 focus-visible:-outline-offset-2 no-underline hover:text-gray-900 aria-[current=page]:pointer-events-none aria-[current=page]:text-gray-900"
-              [routerLink]="crumb.path"
-              [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
-              >{{ crumb.label }}</a
-            >
+            <!-- The current page (the last crumb) is text, not a link. -->
+            @if (index === crumbs().length - 1 || !crumb.exit) {
+              <span
+                class="min-w-0 truncate text-gray-600 aria-[current=page]:text-gray-900"
+                [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
+                >{{ crumb.label }}</span
+              >
+            } @else {
+              <a
+                class="min-w-0 truncate text-gray-600 focus-visible:-outline-offset-2 no-underline hover:text-gray-900"
+                [qitsExit]="crumb.exit"
+                [exitParams]="crumb.params"
+                [exitActiveExact]="true"
+                >{{ crumb.label }}</a
+              >
+            }
             <!-- Below 768px the parent carries the separator before the current page, so it goes
                  with the parent when the parent gives way. Drawn as generated content, so the
                  trail's text still has one "›" between the parent and the current page. -->
@@ -135,8 +164,8 @@ export interface Crumb {
 export class Breadcrumbs {
   readonly crumbs = input.required<readonly Crumb[]>();
 
-  /** The trail's first item, ahead of the crumbs: the brand, linking home. */
-  readonly home = input<Crumb>({ label: 'qits', path: '/' });
+  /** The trail's first item, ahead of the crumbs: the brand, linking home through its exit. */
+  readonly home = input<Crumb>({ label: 'qits' });
 
   /** The "…" menu, which a link in its panel closes as it navigates. */
   protected readonly dropdown = viewChild.required(Dropdown);
