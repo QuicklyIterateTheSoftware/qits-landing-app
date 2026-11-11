@@ -151,6 +151,14 @@ export interface OpenedRoute {
    * excepted), and draws. Call it again after answering a read the frame waits on.
    */
   settled(): Promise<void>;
+  /**
+   * Lets the app run and draws, exactly as `settled()` does, but answers no frame read. For a spec
+   * that has already left its page (`leftFor`): the page it left for is not this spec's, so its
+   * frame reads (the destination's `WorkLayout`, say) must not be answered from a golden master and
+   * noted into the route ledger under this spec's section — they get `leftFor`'s 404 like every
+   * other open request (qits-2056).
+   */
+  idle(): Promise<void>;
 }
 
 /** The project a recording names, as far as a spec builds a URL from it. */
@@ -180,18 +188,8 @@ export async function openRoute(
   };
   const project = list.entries[0].project;
   const harness = await RouterTestingHarness.create();
-  const settled = async () => {
-    // A frame read may follow another's answer (the open project's reads follow the list), so
-    // answer in rounds until a round answers nothing.
-    for (let round = 0; round < 20; round++) {
-      await settle();
-      TestBed.tick();
-      await settle();
-      if (!(await answerFrameReads(http, reads)) && round >= 2) break;
-    }
-    await harness.fixture.whenStable();
-    harness.fixture.detectChanges();
-  };
+  const settled = () => runToStable(harness, () => answerFrameReads(http, reads));
+  const idle = () => runToStable(harness, async () => false);
   await harness.navigateByUrl(typeof url === 'string' ? url : url(project));
   await settled();
   const root = harness.fixture.nativeElement as HTMLElement;
@@ -208,7 +206,28 @@ export async function openRoute(
       return innermostRouted(root);
     },
     settled,
+    idle,
   };
+}
+
+/**
+ * Lets pending async work (request building, navigation) and change detection run, calling
+ * `answerRound` each round so a caller can answer whatever reads it opens. A read may follow
+ * another's answer (the open project's reads follow the list), so this answers in rounds until a
+ * round answers nothing.
+ */
+async function runToStable(
+  harness: RouterTestingHarness,
+  answerRound: () => Promise<boolean>,
+): Promise<void> {
+  for (let round = 0; round < 20; round++) {
+    await settle();
+    TestBed.tick();
+    await settle();
+    if (!(await answerRound()) && round >= 2) break;
+  }
+  await harness.fixture.whenStable();
+  harness.fixture.detectChanges();
 }
 
 /**
