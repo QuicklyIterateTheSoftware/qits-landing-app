@@ -1848,6 +1848,92 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ui-builder-routes",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
+          }
+        }
+      },
+      "description": "show-ui-builder-routes: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published routes bundle with kinds and viewports",
+          "params": {
+            "path": "manifest.json",
+            "site": "@routes/qits-landing",
+            "version": "2026.1111.50732"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@routes/qits-landing/-/2026.1111.50732/manifest.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJyb3V0ZXMiOlt7InBhdGgiOiIiLCJmdWxsUGF0aCI6IiIsImNoaWxkcmVuIjpbeyJwYXRoIjoiIiwiZnVsbFBhdGgiOiIiLCJyZWRpcmVjdFRvIjoicHJvamVjdHMifSx7InBhdGgiOiJwcm9qZWN0cyIsImZ1bGxQYXRoIjoicHJvamVjdHMifSx7InBhdGgiOiJwcm9qZWN0cy86c2x1Zy9yZXBvc2l0b3JpZXMiLCJmdWxsUGF0aCI6InByb2plY3RzLzpzbHVnL3JlcG9zaXRvcmllcyJ9LHsicGF0aCI6InByb2plY3RzLzpzbHVnL3dvcmtzcGFjZXMiLCJmdWxsUGF0aCI6InByb2plY3RzLzpzbHVnL3dvcmtzcGFjZXMiLCJyZWRpcmVjdFRvIjoicHJvamVjdHMvOnNsdWcvYWdlbnRzIn0seyJwYXRoIjoiKioiLCJmdWxsUGF0aCI6IioqIn1dfV0sImZyZWV6ZXMiOlt7ImZpbGUiOiJzcmMvYXBwL2xheW91dC9wYWdlLWxheW91dC9wYWdlLWxheW91dC5icm93c2VyLnNwZWMudHMvc2xvdHMuaHRtbCIsInNwZWMiOiJzcmMvYXBwL2xheW91dC9wYWdlLWxheW91dC9wYWdlLWxheW91dC5icm93c2VyLnNwZWMudHMiLCJ0ZXN0IjoiUGFnZUxheW91dENvbXBvbmVudCAoc2NyZWVuc2hvdHMpID4gZmlsbHMgZXZlcnkgc2xvdCIsIm5hbWUiOiJzbG90cyIsInJvdXRlIjpudWxsLCJyZWNvcmRzIjpbXX0seyJmaWxlIjoic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cy9lbXB0eS1kZXNrdG9wLmh0bWwiLCJzcGVjIjoic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cyIsInRlc3QiOiJQcm9qZWN0UmVwb3NpdG9yaWVzUGFnZSAoc2NyZWVuc2hvdHMpID4gc2F5cyB0aGUgcHJvamVjdCBoYXMgbm8gcmVwb3NpdG9yaWVzIiwibmFtZSI6ImVtcHR5Iiwia2luZCI6Ik5PX0RBVEEiLCJ2aWV3cG9ydCI6IkRFU0tUT1AiLCJyb3V0ZSI6InByb2plY3RzLzpzbHVnL3JlcG9zaXRvcmllcyIsInJlY29yZHMiOlt7InByb3ZpZGVyIjoicWl0cy1wcm9qZWN0cy1zZXJ2aWNlIiwic3RhdGUiOiJhIHByb2plY3QgZXhpc3RzIiwib3BlcmF0aW9uSWQiOiJsaXN0UHJvamVjdHMifSx7InByb3ZpZGVyIjoicWl0cy1wcm9qZWN0cy1zZXJ2aWNlIiwic3RhdGUiOiJhIHByb2plY3Qgd2l0aG91dCByZXBvc2l0b3JpZXMiLCJvcGVyYXRpb25JZCI6Imxpc3RQcm9qZWN0UmVwb3NpdG9yaWVzIn1dfSx7ImZpbGUiOiJzcmMvYXBwL3JvdXRlcy9wcm9qZWN0cy9bc2x1Z10vcmVwb3NpdG9yaWVzL3Byb2plY3QtcmVwb3NpdG9yaWVzLnBhZ2UuYnJvd3Nlci5zcGVjLnRzL2Vycm9yLmh0bWwiLCJzcGVjIjoic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cyIsInRlc3QiOiJQcm9qZWN0UmVwb3NpdG9yaWVzUGFnZSAoc2NyZWVuc2hvdHMpID4gbWFya3MgdGhlIHBhZ2UgYXMgbG9hZGluZywgdGhlbiBhcyBmYWlsZWQgdG8gbG9hZCIsIm5hbWUiOiJlcnJvciIsImtpbmQiOiJFUlJPUiIsInZpZXdwb3J0IjpudWxsLCJyb3V0ZSI6InByb2plY3RzLzpzbHVnL3JlcG9zaXRvcmllcyIsInJlY29yZHMiOlt7InByb3ZpZGVyIjoicWl0cy1wcm9qZWN0cy1zZXJ2aWNlIiwic3RhdGUiOiJhIHByb2plY3QgZXhpc3RzIiwib3BlcmF0aW9uSWQiOiJsaXN0UHJvamVjdHMifV19LHsiZmlsZSI6InNyYy9hcHAvcm91dGVzL3Byb2plY3RzL1tzbHVnXS9yZXBvc2l0b3JpZXMvcHJvamVjdC1yZXBvc2l0b3JpZXMucGFnZS5icm93c2VyLnNwZWMudHMvbG9hZGVkLXBob25lLmh0bWwiLCJzcGVjIjoic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cyIsInRlc3QiOiJQcm9qZWN0UmVwb3NpdG9yaWVzUGFnZSAoc2NyZWVuc2hvdHMpID4gbGlzdHMgdGhlIHByb2plY3QncyByZXBvc2l0b3JpZXMiLCJuYW1lIjoibG9hZGVkIiwia2luZCI6IkRBVEEiLCJ2aWV3cG9ydCI6IlBIT05FIiwicm91dGUiOiJwcm9qZWN0cy86c2x1Zy9yZXBvc2l0b3JpZXMiLCJyZWNvcmRzIjpbeyJwcm92aWRlciI6InFpdHMtcHJvamVjdHMtc2VydmljZSIsInN0YXRlIjoiYSBwcm9qZWN0IGV4aXN0cyIsIm9wZXJhdGlvbklkIjoibGlzdFByb2plY3RzIn0seyJwcm92aWRlciI6InFpdHMtcHJvamVjdHMtc2VydmljZSIsInN0YXRlIjoiYSBwcm9qZWN0IHdpdGggcmVwb3NpdG9yaWVzIiwib3BlcmF0aW9uSWQiOiJsaXN0UHJvamVjdFJlcG9zaXRvcmllcyJ9XX0seyJmaWxlIjoic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cy9sb2FkZWQtdGFibGV0Lmh0bWwiLCJzcGVjIjoic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cyIsInRlc3QiOiJQcm9qZWN0UmVwb3NpdG9yaWVzUGFnZSAoc2NyZWVuc2hvdHMpID4gbGlzdHMgdGhlIHByb2plY3QncyByZXBvc2l0b3JpZXMiLCJuYW1lIjoibG9hZGVkIiwia2luZCI6IkRBVEEiLCJ2aWV3cG9ydCI6IlRBQkxFVCIsInJvdXRlIjoicHJvamVjdHMvOnNsdWcvcmVwb3NpdG9yaWVzIiwicmVjb3JkcyI6W3sicHJvdmlkZXIiOiJxaXRzLXByb2plY3RzLXNlcnZpY2UiLCJzdGF0ZSI6ImEgcHJvamVjdCBleGlzdHMiLCJvcGVyYXRpb25JZCI6Imxpc3RQcm9qZWN0cyJ9LHsicHJvdmlkZXIiOiJxaXRzLXByb2plY3RzLXNlcnZpY2UiLCJzdGF0ZSI6ImEgcHJvamVjdCB3aXRoIHJlcG9zaXRvcmllcyIsIm9wZXJhdGlvbklkIjoibGlzdFByb2plY3RSZXBvc2l0b3JpZXMifV19LHsiZmlsZSI6InNyYy9hcHAvcm91dGVzL3Byb2plY3RzL1tzbHVnXS9yZXBvc2l0b3JpZXMvcHJvamVjdC1yZXBvc2l0b3JpZXMucGFnZS5icm93c2VyLnNwZWMudHMvbG9hZGVkLWRlc2t0b3AuaHRtbCIsInNwZWMiOiJzcmMvYXBwL3JvdXRlcy9wcm9qZWN0cy9bc2x1Z10vcmVwb3NpdG9yaWVzL3Byb2plY3QtcmVwb3NpdG9yaWVzLnBhZ2UuYnJvd3Nlci5zcGVjLnRzIiwidGVzdCI6IlByb2plY3RSZXBvc2l0b3JpZXNQYWdlIChzY3JlZW5zaG90cykgPiBsaXN0cyB0aGUgcHJvamVjdCdzIHJlcG9zaXRvcmllcyIsIm5hbWUiOiJsb2FkZWQiLCJraW5kIjoiREFUQSIsInZpZXdwb3J0IjoiREVTS1RPUCIsInJvdXRlIjoicHJvamVjdHMvOnNsdWcvcmVwb3NpdG9yaWVzIiwicmVjb3JkcyI6W3sicHJvdmlkZXIiOiJxaXRzLXByb2plY3RzLXNlcnZpY2UiLCJzdGF0ZSI6ImEgcHJvamVjdCBleGlzdHMiLCJvcGVyYXRpb25JZCI6Imxpc3RQcm9qZWN0cyJ9LHsicHJvdmlkZXIiOiJxaXRzLXByb2plY3RzLXNlcnZpY2UiLCJzdGF0ZSI6ImEgcHJvamVjdCB3aXRoIHJlcG9zaXRvcmllcyIsIm9wZXJhdGlvbklkIjoibGlzdFByb2plY3RSZXBvc2l0b3JpZXMifV19XSwiYnlSb3V0ZSI6eyJwcm9qZWN0cy86c2x1Zy9yZXBvc2l0b3JpZXMiOlsic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cy9lbXB0eS1kZXNrdG9wLmh0bWwiLCJzcmMvYXBwL3JvdXRlcy9wcm9qZWN0cy9bc2x1Z10vcmVwb3NpdG9yaWVzL3Byb2plY3QtcmVwb3NpdG9yaWVzLnBhZ2UuYnJvd3Nlci5zcGVjLnRzL2Vycm9yLmh0bWwiLCJzcmMvYXBwL3JvdXRlcy9wcm9qZWN0cy9bc2x1Z10vcmVwb3NpdG9yaWVzL3Byb2plY3QtcmVwb3NpdG9yaWVzLnBhZ2UuYnJvd3Nlci5zcGVjLnRzL2xvYWRlZC1waG9uZS5odG1sIiwic3JjL2FwcC9yb3V0ZXMvcHJvamVjdHMvW3NsdWddL3JlcG9zaXRvcmllcy9wcm9qZWN0LXJlcG9zaXRvcmllcy5wYWdlLmJyb3dzZXIuc3BlYy50cy9sb2FkZWQtdGFibGV0Lmh0bWwiLCJzcmMvYXBwL3JvdXRlcy9wcm9qZWN0cy9bc2x1Z10vcmVwb3NpdG9yaWVzL3Byb2plY3QtcmVwb3NpdG9yaWVzLnBhZ2UuYnJvd3Nlci5zcGVjLnRzL2xvYWRlZC1kZXNrdG9wLmh0bWwiXX19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "listDocsSites"
           },
           "qits-trigger": {
@@ -2046,6 +2132,105 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ui-builder-routes",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
+          }
+        }
+      },
+      "description": "show-ui-builder-routes: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published routes bundle with kinds and viewports",
+          "params": {
+            "path": "manifest.json",
+            "site": "@routes/qits-landing",
+            "version": "2026.1111.50732"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestVersion": "2026.1111.50732",
+                "name": "@routes/qits-landing"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "listDocsVersions"
           },
           "qits-trigger": {
@@ -2099,6 +2284,136 @@
                   "git.repository.name": "qits-landing-app"
                 },
                 "version": "2026.1109.73025"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].metadata['content.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.commit.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.repository.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ui-builder-routes",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
+          }
+        }
+      },
+      "description": "show-ui-builder-routes: listDocsVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published routes bundle with kinds and viewports",
+          "params": {
+            "path": "manifest.json",
+            "site": "@routes/qits-landing",
+            "version": "2026.1111.50732"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@routes/qits-landing"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "metadata": {
+                  "content.hash": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                  "git.commit.hash": "ffffffffffffffffffffffffffffffffffffffff",
+                  "git.repository.name": "qits-landing-app"
+                },
+                "version": "2026.1111.50732"
               }
             ]
           },

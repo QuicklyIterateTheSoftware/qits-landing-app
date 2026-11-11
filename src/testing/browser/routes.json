@@ -645,6 +645,24 @@
       "route": "projects/:slug/repositories/:repo/ui-builder"
     },
     {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle with kinds and viewports",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle with kinds and viewports",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle with kinds and viewports",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",

@@ -18,6 +18,12 @@ import {
  * repositories do not list `qits-landing-app`, so its scope is not known and no chip shows; the
  * case without a site is `contract-frontend`, whose component is `contract`.
  *
+ * The `kinds-viewports` cases answer the bundle with "a published routes bundle with kinds and
+ * viewports" (qits-2059: the same site at a newer version, whose `projects/:slug/repositories` has
+ * the states `loaded`, DATA at PHONE, TABLET and DESKTOP, `empty`, NO_DATA at DESKTOP, and `error`,
+ * ERROR at the test's own width): each tab carries its kind's chip, data first, and the Viewport
+ * switch shows, DESKTOP pressed until another width is picked.
+ *
  * A freeze's HTML is recorded without a body, so no recording can answer it: the frame's place
  * shows the state being read, and its request is left unanswered.
  *
@@ -31,6 +37,7 @@ import {
 
 const BUNDLE = 'a published routes bundle';
 const CONTRACTS = 'a published contracts bundle with an entity map';
+const KINDS = 'a published routes bundle with kinds and viewports';
 
 // As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
 if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
@@ -68,29 +75,35 @@ describe('UiBuilderPage (screenshots)', () => {
   }
 
   /**
-   * Answers the catalog, the site's versions and its manifest from the recorded bundle, then the
-   * entity maps' catalog: with the bundle's (no contracts site), or with `entities`.
+   * Answers the catalog, the site's versions and its manifest from the recorded bundle `state`
+   * (`a published routes bundle` unless named), then the entity maps' catalog: with the state's
+   * (no contracts site), or with `entities`.
    */
   async function answerBundle(
     opened: OpenedRoute,
     sites: { flush(body: unknown): void },
-    entities: () => Promise<void> = async () =>
-      http
-        .expectOne('/artifacts/docs/docs')
-        .flush(await goldenMaster(BUNDLE, 'listDocsSites', 'qits-artifacts')),
+    entities?: () => Promise<void>,
+    state = BUNDLE,
   ) {
-    sites.flush(await goldenMaster(BUNDLE, 'listDocsSites', 'qits-artifacts'));
+    sites.flush(await goldenMaster(state, 'listDocsSites', 'qits-artifacts'));
     await opened.settled();
     http
       .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@routes/qits-landing'))
-      .flush(await goldenMaster(BUNDLE, 'listDocsVersions', 'qits-artifacts'));
+      .flush(await goldenMaster(state, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     http
       .expectOne((req) => req.url.endsWith('/manifest.json'))
-      .flush(await goldenMaster(BUNDLE, 'getDocsFile', 'qits-artifacts'));
+      .flush(await goldenMaster(state, 'getDocsFile', 'qits-artifacts'));
     await opened.settled();
-    await entities();
+    await (entities ?? (() => answerNoEntityMap(state)))();
     await opened.settled();
+  }
+
+  /** Answers the entity maps' catalog with `state`'s, which holds no `@contracts/` site. */
+  async function answerNoEntityMap(state: string) {
+    http
+      .expectOne('/artifacts/docs/docs')
+      .flush(await goldenMaster(state, 'listDocsSites', 'qits-artifacts'));
   }
 
   /** Answers the entity maps' catalog, the contracts site's versions and its `entities.json`. */
@@ -133,6 +146,58 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('entities', { kind: 'DATA' });
+  });
+
+  it('marks each state with its kind, data first, and shows the viewport switch', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites, undefined, KINDS);
+    const view = page.elementLocator(opened.page);
+    await expect
+      .element(view.getByRole('heading', { name: '/projects/:slug/repositories' }))
+      .toBeVisible();
+    const tabs = view.getByRole('tablist', { name: 'States' });
+    // Data first: `loaded` is selected, though `empty` and `error` sort before it by name.
+    await expect
+      .element(tabs.getByRole('tab', { name: 'loaded' }))
+      .toHaveAttribute('aria-selected', 'true');
+    // Each tab's chip says its kind.
+    const chip = (name: string) =>
+      tabs.getByRole('tab', { name }).element().querySelector('ui-chip')?.textContent?.trim();
+    expect(chip('loaded')).toBe('data');
+    expect(chip('error')).toBe('error');
+    expect(chip('empty')).toBe('no data');
+    const viewports = view.getByRole('group', { name: 'Viewport' });
+    for (const width of ['Phone', 'Tablet']) {
+      await expect
+        .element(viewports.getByRole('button', { name: width }))
+        .toHaveAttribute('aria-pressed', 'false');
+    }
+    await expect
+      .element(viewports.getByRole('button', { name: 'Desktop' }))
+      .toHaveAttribute('aria-pressed', 'true');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('kinds-viewports', { kind: 'DATA' });
+  });
+
+  it('draws the state at the viewport picked', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites, undefined, KINDS);
+    const view = page.elementLocator(opened.page);
+    const viewports = view.getByRole('group', { name: 'Viewport' });
+    await viewports.getByRole('button', { name: 'Phone' }).click();
+    // The pointer stays on the button after the click; its hover colour would vary the screenshot.
+    await commands.parkPointer();
+    await opened.settled();
+    await expect
+      .element(viewports.getByRole('button', { name: 'Phone' }))
+      .toHaveAttribute('aria-pressed', 'true');
+    await expect
+      .element(viewports.getByRole('button', { name: 'Desktop' }))
+      .toHaveAttribute('aria-pressed', 'false');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('viewport-picked', { kind: 'DATA' });
   });
 
   it('marks the entities no route shows, and lists a picked entity’s routes', async () => {
