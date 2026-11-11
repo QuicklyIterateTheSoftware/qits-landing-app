@@ -82,6 +82,7 @@ const needsPatch: GoldenMasters = {
     state === NEEDS_STATE && operationId === 'patchWork'
       ? masters.body(RECORDED_PATCH, 'patchWork')
       : masters.body(state, operationId),
+  text: (state, operationId) => masters.text(state, operationId),
 };
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-writes-pact-'));

@@ -28,6 +28,7 @@ function queryOutOfPath(masters: GoldenMasters): GoldenMasters {
       return { ...op, path: op.path.slice(0, at), query: { ...query, ...op.query } };
     },
     body: (state, operationId) => masters.body(state, operationId),
+    text: (state, operationId) => masters.text(state, operationId),
   };
 }
 

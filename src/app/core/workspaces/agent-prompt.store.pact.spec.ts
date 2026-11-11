@@ -59,6 +59,7 @@ const masters: GoldenMasters = {
     (workspacesGoldenMasters.operation(state, operationId).file
       ? workspacesGoldenMasters.body<T>(state, operationId)
       : undefined) as T,
+  text: (state, operationId) => workspacesGoldenMasters.text(state, operationId),
 };
 
 const given = (

@@ -210,6 +210,7 @@ const dropOf = (state: string, body: Readonly<Record<string, string>>): GoldenMa
     s === state && operationId === 'setWorkStatus'
       ? { ...masters.body(RECORDED_MOVE, 'setWorkStatus'), status: body['target'] }
       : masters.body(s, operationId),
+  text: (s, operationId) => masters.text(s, operationId),
 });
 
 /** A dispatch press: Dispatch (`FLOW`) or the next phase's button (`PHASE`). */
