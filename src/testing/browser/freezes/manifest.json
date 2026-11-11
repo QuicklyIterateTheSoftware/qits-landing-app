@@ -4864,7 +4864,11 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-create:back",
+        "create-idea:created",
+        "create-idea:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/form-phone.html",
@@ -4891,7 +4895,11 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-create:back",
+        "create-idea:created",
+        "create-idea:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/form-tablet.html",
@@ -4918,7 +4926,11 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-create:back",
+        "create-idea:created",
+        "create-idea:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/refused-desktop.html",
@@ -4945,7 +4957,11 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-create:back",
+        "create-idea:created",
+        "create-idea:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/refused-phone.html",
@@ -4972,7 +4988,11 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-create:back",
+        "create-idea:created",
+        "create-idea:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/refused-tablet.html",
@@ -4999,7 +5019,11 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-create:back",
+        "create-idea:created",
+        "create-idea:refused"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-desktop.html",
@@ -5031,7 +5055,12 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-edit:back",
+        "edit-idea:refused",
+        "edit-idea:saved",
+        "edit-idea:unchanged"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-phone.html",
@@ -5063,7 +5092,12 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-edit:back",
+        "edit-idea:refused",
+        "edit-idea:saved",
+        "edit-idea:unchanged"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-tablet.html",
@@ -5095,7 +5129,123 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "cancel-idea-edit:back",
+        "edit-idea:refused",
+        "edit-idea:saved",
+        "edit-idea:unchanged"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+      "test": "IdeaEditPage (screenshots) > edit-idea refused: a refused Save keeps the form, with the service’s words",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with ideas",
+          "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an idea enabled by another idea",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "cancel-idea-edit:back",
+        "edit-idea:refused",
+        "edit-idea:saved",
+        "edit-idea:unchanged"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-phone.html",
+      "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+      "test": "IdeaEditPage (screenshots) > edit-idea refused: a refused Save keeps the form, with the service’s words",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with ideas",
+          "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an idea enabled by another idea",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "cancel-idea-edit:back",
+        "edit-idea:refused",
+        "edit-idea:saved",
+        "edit-idea:unchanged"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-tablet.html",
+      "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+      "test": "IdeaEditPage (screenshots) > edit-idea refused: a refused Save keeps the form, with the service’s words",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "route": "projects/:slug/ideas/detail/:ideaId/edit",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with ideas",
+          "operationId": "listIdeas"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an idea enabled by another idea",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "cancel-idea-edit:back",
+        "edit-idea:refused",
+        "edit-idea:saved",
+        "edit-idea:unchanged"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving-desktop.html",
@@ -5122,7 +5272,13 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabled-idea:open",
+        "open-idea-edit:open",
+        "open-inspired-work:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving-phone.html",
@@ -5149,7 +5305,13 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabled-idea:open",
+        "open-idea-edit:open",
+        "open-inspired-work:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving-tablet.html",
@@ -5176,7 +5338,109 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabled-idea:open",
+        "open-idea-edit:open",
+        "open-inspired-work:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/enabled-by-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+      "test": "IdeaPage (screenshots) > links the idea enabling it, and says it is archived",
+      "name": "enabled-by",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/ideas/detail/:ideaId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an idea enabled by another idea",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabling-idea:open",
+        "open-idea-edit:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/enabled-by-phone.html",
+      "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+      "test": "IdeaPage (screenshots) > links the idea enabling it, and says it is archived",
+      "name": "enabled-by",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "route": "projects/:slug/ideas/detail/:ideaId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an idea enabled by another idea",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabling-idea:open",
+        "open-idea-edit:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/enabled-by-tablet.html",
+      "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+      "test": "IdeaPage (screenshots) > links the idea enabling it, and says it is archived",
+      "name": "enabled-by",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "route": "projects/:slug/ideas/detail/:ideaId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an idea enabled by another idea",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabling-idea:open",
+        "open-idea-edit:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea-desktop.html",
@@ -5203,7 +5467,13 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabled-idea:open",
+        "open-idea-edit:open",
+        "open-inspired-work:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea-phone.html",
@@ -5230,7 +5500,13 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabled-idea:open",
+        "open-idea-edit:open",
+        "open-inspired-work:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea-tablet.html",
@@ -5257,7 +5533,13 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "create-work-from-idea:epic",
+        "create-work-from-idea:ticket",
+        "open-enabled-idea:open",
+        "open-idea-edit:open",
+        "open-inspired-work:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/error-desktop.html",
@@ -5279,7 +5561,9 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/error-phone.html",
@@ -5301,7 +5585,9 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/error-tablet.html",
@@ -5323,7 +5609,9 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/list-desktop.html",
@@ -5350,7 +5638,10 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open",
+        "open-listed-idea:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/list-phone.html",
@@ -5377,7 +5668,10 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open",
+        "open-listed-idea:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/list-tablet.html",
@@ -5404,7 +5698,10 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open",
+        "open-listed-idea:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/loading-desktop.html",
@@ -5426,7 +5723,9 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/loading-phone.html",
@@ -5448,7 +5747,9 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/loading-tablet.html",
@@ -5470,7 +5771,9 @@
           "operationId": "listProjectReleaseRequests"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-idea-create:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/observability/project-observability.page.browser.spec.ts/blank-desktop.html",
@@ -21628,6 +21931,9 @@
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving-desktop.html",
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving-phone.html",
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/archiving-tablet.html",
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/enabled-by-desktop.html",
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/enabled-by-phone.html",
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/enabled-by-tablet.html",
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea-desktop.html",
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea-phone.html",
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts/idea-tablet.html"
@@ -21635,7 +21941,10 @@
     "projects/:slug/ideas/detail/:ideaId/edit": [
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-desktop.html",
       "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-phone.html",
-      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-tablet.html"
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/form-tablet.html",
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-desktop.html",
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-phone.html",
+      "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-tablet.html"
     ],
     "projects/:slug/observability": [
       "src/app/routes/projects/[slug]/observability/project-observability.page.browser.spec.ts/blank-desktop.html",
@@ -22064,6 +22373,156 @@
         "global": false,
         "triggered": true,
         "file": "@qits/angular/src/lib/sign-in/auth-callback.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas",
+        "interaction": "open-idea-create",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/create",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas",
+        "interaction": "open-listed-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/project-ideas.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/create",
+        "interaction": "cancel-idea-create",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "projects/:slug/ideas",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/create",
+        "interaction": "create-idea",
+        "outcome": "created",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/create",
+        "interaction": "create-idea",
+        "outcome": "refused",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "create-work-from-idea",
+        "outcome": "epic",
+        "kind": "exit",
+        "to": "projects/:slug/work/create",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "create-work-from-idea",
+        "outcome": "ticket",
+        "kind": "exit",
+        "to": "projects/:slug/work/create",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-enabled-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-enabling-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-idea-edit",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId/edit",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-inspired-work",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "cancel-idea-edit",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "edit-idea",
+        "outcome": "refused",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "edit-idea",
+        "outcome": "saved",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.ts"
+      },
+      {
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "edit-idea",
+        "outcome": "unchanged",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.ts"
       },
       {
         "route": "projects/:slug/work",
@@ -22677,6 +23136,141 @@
         "interaction": "sign-in",
         "outcome": "succeeded",
         "kind": "returnTo",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts",
+        "test": "IdeaCreatePage (screenshots) > cancel-idea-create back: Cancel goes back to the ideas",
+        "route": "projects/:slug/ideas/create",
+        "interaction": "cancel-idea-create",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts",
+        "test": "IdeaCreatePage (screenshots) > create-idea created: Create opens the new idea",
+        "route": "projects/:slug/ideas/create",
+        "interaction": "create-idea",
+        "outcome": "created",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts",
+        "test": "IdeaCreatePage (screenshots) > shows the form with its counts, and the service’s refusal",
+        "route": "projects/:slug/ideas/create",
+        "interaction": "create-idea",
+        "outcome": "refused",
+        "kind": "stay",
+        "freeze": "src/app/routes/projects/[slug]/ideas/create/idea-create.page.browser.spec.ts/refused-desktop.html"
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+        "test": "IdeaEditPage (screenshots) > cancel-idea-edit back: Cancel goes back to the idea without a write",
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "cancel-idea-edit",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+        "test": "IdeaEditPage (screenshots) > edit-idea refused: a refused Save keeps the form, with the service’s words",
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "edit-idea",
+        "outcome": "refused",
+        "kind": "stay",
+        "freeze": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts/refused-desktop.html"
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+        "test": "IdeaEditPage (screenshots) > edit-idea saved: Save sends the change, then goes back to the idea",
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "edit-idea",
+        "outcome": "saved",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.browser.spec.ts",
+        "test": "IdeaEditPage (screenshots) > edit-idea unchanged: Save with nothing changed goes back without a write",
+        "route": "projects/:slug/ideas/detail/:ideaId/edit",
+        "interaction": "edit-idea",
+        "outcome": "unchanged",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+        "test": "IdeaPage (screenshots) > create-work-from-idea epic: Create epic opens the work form filled with the idea",
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "create-work-from-idea",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+        "test": "IdeaPage (screenshots) > create-work-from-idea ticket: Create ticket opens the work form filled with the idea",
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "create-work-from-idea",
+        "outcome": "ticket",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+        "test": "IdeaPage (screenshots) > open-enabled-idea open: an idea it enables opens that idea",
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-enabled-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+        "test": "IdeaPage (screenshots) > open-enabling-idea open: the “Enabled by” link opens the enabling idea",
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-enabling-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+        "test": "IdeaPage (screenshots) > open-idea-edit open: Edit opens the edit form",
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-idea-edit",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/idea.page.browser.spec.ts",
+        "test": "IdeaPage (screenshots) > open-inspired-work open: a work item it inspired opens the item",
+        "route": "projects/:slug/ideas/detail/:ideaId",
+        "interaction": "open-inspired-work",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts",
+        "test": "ProjectIdeasPage (screenshots) > open-idea-create open: New idea opens the form",
+        "route": "projects/:slug/ideas",
+        "interaction": "open-idea-create",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts",
+        "test": "ProjectIdeasPage (screenshots) > open-listed-idea open: an idea’s title opens its page",
+        "route": "projects/:slug/ideas",
+        "interaction": "open-listed-idea",
+        "outcome": "open",
+        "kind": "exit",
         "freeze": null
       },
       {
