@@ -32,7 +32,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
     <section class="flex flex-col gap-4" aria-label="Features">
       <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Features</h2>
       @if (boarded()) {
-        <app-epic-board [node]="node()" [base]="base()" [header]="false" />
+        <app-epic-board [node]="node()" [header]="false" />
       } @else {
         <!-- A disabled reorder list: a row is an item of one wherever it is drawn (qits-753). -->
         <div
@@ -42,7 +42,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
           reorderDisabled
         >
           @for (feature of features(); track feature.entry.id) {
-            <app-feature-list-row [node]="feature" [base]="base()" />
+            <app-feature-list-row [node]="feature" />
           }
         </div>
         <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="features().length">
@@ -57,8 +57,6 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
 export class EpicDetail {
   readonly entry = input.required<WorkEntry>();
   readonly detail = input<WorkDetail>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
 
   /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
   protected readonly slug = inject(SelectedProject).slug;

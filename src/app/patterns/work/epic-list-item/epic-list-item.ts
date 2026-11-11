@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
+import { SelectedProject } from '$core/projects/selected-project';
 import { finishControl } from '$core/work/finish-control';
 import { movable, WorkReorders } from '$core/work/work-reorder';
 import { taskDistribution, type WorkNode } from '$core/work/work-tree';
@@ -43,14 +44,17 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
  * must be a `[uiReorderList]`; its features are a list of their own, and each feature's tasks
  * another (`app-feature-list-row`), enabled in the Backlog only. A drop there is sent as the item's
  * place among its drawn siblings (`WorkReorders`). Elsewhere the lists are disabled. When `leaving` is set, the
- * lane shrinks away (`uiLeave`), then emits `left`. Every item links to its page, `<base>/<qualified id>`. `display: contents`, so the lane
+ * lane shrinks away (`uiLeave`), then emits `left`. Every item links to its page,
+ * `/projects/<slug>/work/detail/<qualified id>`: the epic through its declared exit
+ * (`open-epic-list-item` `epic`, its title and its id; epic qits-2000), its features and tasks
+ * through `app-feature-list-row`'s. `display: contents`, so the lane
  * is itself the list's item.
  */
 @Component({
   selector: 'app-epic-list-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink,
+    QitsExit,
     ListLane,
     FeatureListRow,
     DragHandle,
@@ -64,7 +68,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
   host: { class: 'contents' },
   template: `
     @let n = node();
-    @let link = base() + '/' + n.entry.qualifiedId;
+    @let params = { slug: slug(), id: n.entry.qualifiedId ?? '' };
     <ui-list-lane
       collapsible
       [collapsed]="collapsed()"
@@ -74,13 +78,17 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       (left)="left.emit()"
     >
       <span lane-summary>{{ summary() }}</span>
-      <a lane-header class="font-semibold" [routerLink]="link">{{ n.entry.title }}</a>
+      <a lane-header class="font-semibold" [qitsExit]="opening.epic" [exitParams]="params">{{
+        n.entry.title
+      }}</a>
       @if (status(); as status) {
         <ui-tag lane-tags [label]="status" />
       }
       <app-work-needs lane-tags [needs]="n.entry.needs" [unmet]="n.entry.unmetNeeds" />
       <app-workspace-link lane-tags [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
-      <a lane-gutter class="font-mono" [routerLink]="link">{{ n.entry.qualifiedId }}</a>
+      <a lane-gutter class="font-mono" [qitsExit]="opening.epic" [exitParams]="params">{{
+        n.entry.qualifiedId
+      }}</a>
       <ui-finish-button
         lane-action
         [shown]="finishing.shown() && view() !== 'mixed'"
@@ -105,7 +113,6 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
           @for (feature of n.children; track feature.entry.id) {
             <app-feature-list-row
               [node]="feature"
-              [base]="base()"
               [reorderable]="reorderable()"
               [statuses]="view() === 'board'"
             />
@@ -118,8 +125,6 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 export class EpicListItem {
   /** The epic's node: its children are its features, theirs its tasks. */
   readonly node = input.required<WorkNode>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
   /** The epic is leaving the list: it shrinks away, then emits `left`. */
   readonly leaving = input(false);
@@ -128,6 +133,14 @@ export class EpicListItem {
   protected readonly finishing = finishControl(this.node);
   protected readonly reorders = inject(WorkReorders);
   protected readonly movable = movable;
+
+  protected readonly opening = outcomes('open-epic-list-item', {
+    epic: exit('projects/:slug/work/detail/:id'),
+  });
+
+  private readonly selected = inject(SelectedProject);
+  /** The open project's slug, for the epic's page. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** Whether the epic itself can be dragged: in the Backlog and on the board (qits-753, qits-1861). */
   protected readonly draggable = computed(

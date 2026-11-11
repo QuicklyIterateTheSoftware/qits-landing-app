@@ -1,9 +1,14 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent, type Locator } from 'vitest/browser';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../../testing/browser/app-route';
 import {
   answerWrapperClosings,
   WRAPPER_CLOSINGS,
@@ -31,6 +36,11 @@ import {
  * history, and "a work item with no workspaces" for every other item.
  *
  * The page follows transitions through the event stream; the stream here never connects.
+ *
+ * The link of the one linking pattern only this page draws is a declared exit (epic qits-2000),
+ * followed once: a workspace in the item's history (`app-work-workspaces`' `open-workspace-agent`
+ * `open`, shown by `workspaces-history`). The page it leaves for is not this spec's: its reads are
+ * answered with an error (`leftFor`).
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -169,8 +179,27 @@ describe('WorkItemPage (screenshots)', () => {
     await answerWorkspaces(state);
     await opened.settled();
     const view = opened.frame.querySelector<HTMLElement>('app-work-item-page')!;
-    return { element: page.elementLocator(view), frame: page.elementLocator(opened.frame) };
+    return { element: page.elementLocator(view), frame: page.elementLocator(opened.frame), opened };
   }
+
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * — its frame reads included — with a 404 (an error answer is only a status): that page is its
+   * own spec's, so none of its reads may show as answered from a golden master in the route ledger
+   * (`idle()`, not `settled()`, qits-2056). Answers in rounds, as a read may follow another's
+   * answer, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  /** The outcomes the test reached, as their marks name them. */
+  const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
 
   /**
    * Screenshots of a page's body, one per part, each named `<name>-<part>`: its facts, its
@@ -403,6 +432,25 @@ describe('WorkItemPage (screenshots)', () => {
   describe('workspaces', () => {
     /** The Workspaces region. */
     const workspacesOf = (element: Locator) => element.getByRole('region', { name: 'Workspaces' });
+
+    it('open-workspace-agent open: a workspace leads to the item’s agent', async () => {
+      const work = await goldenMaster('a bug ticket in detail', 'listProjectWork');
+      const qualifiedId = work.entities.find(
+        (e: { title: string }) => e.title === 'Invoice totals are off by one cent',
+      ).qualifiedId;
+      const { element, opened } = await render(
+        'a bug ticket in detail',
+        'Invoice totals are off by one cent',
+        true,
+      );
+      await workspacesOf(element).getByRole('listitem').nth(0).getByRole('link').click();
+      await leftFor(opened);
+      // The agent address then leads on by itself (`follow-work-item-agent`, its own spec's).
+      expect(reached()[0]).toBe('open-workspace-agent:open');
+      expect(outcomeRecords()[0].url).toBe(
+        `/projects/${opened.project.slug}/work/detail/${qualifiedId}/agent`,
+      );
+    });
 
     it('a ticket’s workspaces in every state, newest first', async () => {
       // The ticket's own number comes from the recording, which renumbers it.

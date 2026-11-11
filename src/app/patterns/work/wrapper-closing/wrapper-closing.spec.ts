@@ -95,7 +95,9 @@ describe('WrapperClosingLine', () => {
     await answered(fixture);
     const element = fixture.nativeElement as HTMLElement;
     expect(line(element).textContent).toBe(words);
-    expect(link(element).getAttribute('href')).toBe(href);
+    // Hidden by class while the line names no request, so its href then leads nowhere it shows.
+    if (href !== null) expect(link(element).getAttribute('href')).toBe(href);
+    expect(link(element).dataset['qitsOutcome']).toBe('open-closing-request:open');
     expect(link(element).classList.contains('hidden')).toBe(href === null);
     expect(line(element).classList.contains('text-sunflower-gold-800')).toBe(
       ticket === 'contract-00000001-5',

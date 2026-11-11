@@ -66,14 +66,12 @@ import type { WorkListView } from './work-list-view';
         @if (epicBoards() && row.node.entry.archetype === 'EPIC' && boarded(row.node)) {
           <app-epic-board
             [node]="row.node"
-            [base]="base()"
             [leaving]="row.leaving"
             (left)="drop(row.node.entry.id)"
           />
         } @else if (row.node.entry.archetype === 'EPIC') {
           <app-epic-list-item
             [node]="row.node"
-            [base]="base()"
             [view]="view()"
             [leaving]="row.leaving"
             (left)="drop(row.node.entry.id)"
@@ -81,7 +79,6 @@ import type { WorkListView } from './work-list-view';
         } @else {
           <app-ticket-list-item
             [node]="row.node"
-            [base]="base()"
             [view]="view()"
             [leaving]="row.leaving"
             (left)="drop(row.node.entry.id)"
@@ -95,8 +92,6 @@ import type { WorkListView } from './work-list-view';
 export class WorkList {
   /** The list's work tree: its top-level nodes, in order. */
   readonly tree = input.required<readonly WorkNode[]>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   readonly view = input.required<WorkListView>();
   /** Draws an epic on the board (READY_FOR_DEV to VERIFYING) with its own board. */
   readonly epicBoards = input(false, { transform: booleanAttribute });

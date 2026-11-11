@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { page } from 'vitest/browser';
@@ -8,6 +8,7 @@ import { BoardLane } from '$ui/components/board/board-lane';
 import { BoardRow } from '$ui/components/board/board-row';
 import { ListLane } from '$ui/components/list/list-lane';
 import { ListRow } from '$ui/components/list/list-row';
+import { uiSpecExits } from '../../../../testing/ui-exits';
 import { TagLink } from './tag-link';
 
 /**
@@ -31,19 +32,32 @@ const COLUMNS: readonly BoardColumnSpec[] = [
     <ui-board [columns]="columns" gutter>
       <ui-board-lane>
         <span lane-header class="font-semibold">An epic with a workspace</span>
-        <ui-tag-link lane-tags label="Campaign: qits-10" link="/c" />
-        <ui-tag-link lane-tags label="Workspace" link="/w" />
+        <ui-tag-link lane-tags label="Campaign: qits-10" [exit]="to.item" [exitParams]="params" />
+        <ui-tag-link lane-tags label="Workspace" [exit]="to.agent" [exitParams]="params" />
         <span lane-gutter class="font-mono">qits-12</span>
         <ui-board-row>
           <ui-board-card [column]="0" code="qits-14" title="A task with a workspace" kind="task">
-            <ui-tag-link card-corner variant="corner" label="Workspace" link="/w" />
+            <ui-tag-link
+              card-corner
+              variant="corner"
+              label="Workspace"
+              [exit]="to.agent"
+              [exitParams]="params"
+            />
           </ui-board-card>
           <ui-board-card [column]="1" code="qits-15" title="A task without one" kind="task">
-            <ui-tag-link card-corner variant="corner" label="Workspace" link="/w" [shown]="false" />
+            <ui-tag-link
+              card-corner
+              variant="corner"
+              label="Workspace"
+              [exit]="to.agent"
+              [exitParams]="params"
+              [shown]="false"
+            />
           </ui-board-card>
           <span row-id class="font-mono">qits-13</span>
           <span row-footer>A feature with a workspace</span>
-          <ui-tag-link row-footer-end label="Workspace" link="/w" />
+          <ui-tag-link row-footer-end label="Workspace" [exit]="to.agent" [exitParams]="params" />
         </ui-board-row>
       </ui-board-lane>
       <ui-board-card
@@ -53,15 +67,23 @@ const COLUMNS: readonly BoardColumnSpec[] = [
         kind="ticket"
       >
         <div class="mt-1 flex flex-wrap gap-1">
-          <ui-tag-link label="Campaign: qits-10" link="/c" />
+          <ui-tag-link label="Campaign: qits-10" [exit]="to.item" [exitParams]="params" />
         </div>
-        <ui-tag-link card-corner variant="corner" label="Workspace" link="/w" />
+        <ui-tag-link
+          card-corner
+          variant="corner"
+          label="Workspace"
+          [exit]="to.agent"
+          [exitParams]="params"
+        />
       </ui-board-card>
     </ui-board>
   `,
 })
 class OnBoard {
   readonly columns = COLUMNS;
+  protected readonly to = uiSpecExits();
+  protected readonly params = { slug: 'qits', id: 'qits-12' };
 }
 
 @Component({
@@ -70,25 +92,34 @@ class OnBoard {
   template: `
     <ui-list-lane>
       <span lane-header class="font-semibold">An epic in a list</span>
-      <ui-tag-link lane-tags label="Workspace" link="/w" />
+      <ui-tag-link lane-tags label="Workspace" [exit]="to.agent" [exitParams]="params" />
       <span lane-gutter class="font-mono">qits-12</span>
       <ui-list-row>
         <ui-board-card code="qits-14" title="A task with a workspace" kind="task">
-          <ui-tag-link card-corner variant="corner" label="Workspace" link="/w" />
+          <ui-tag-link
+            card-corner
+            variant="corner"
+            label="Workspace"
+            [exit]="to.agent"
+            [exitParams]="params"
+          />
         </ui-board-card>
         <span row-id class="font-mono">qits-13</span>
         <span row-footer>A feature whose title is long enough to wrap before the tag</span>
-        <ui-tag-link row-footer-end label="Workspace" link="/w" />
+        <ui-tag-link row-footer-end label="Workspace" [exit]="to.agent" [exitParams]="params" />
       </ui-list-row>
     </ui-list-lane>
   `,
 })
-class InList {}
+class InList {
+  protected readonly to = uiSpecExits();
+  protected readonly params = { slug: 'qits', id: 'qits-12' };
+}
 
 describe('TagLink (screenshots)', () => {
   beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
 
-  function shown(component: typeof OnBoard | typeof InList) {
+  function shown(component: Type<unknown>) {
     const fixture = TestBed.createComponent(component);
     fixture.detectChanges();
     return page.elementLocator(fixture.nativeElement);

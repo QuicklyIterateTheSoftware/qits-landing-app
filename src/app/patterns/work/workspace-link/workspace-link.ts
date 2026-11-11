@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { exit, outcomes } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
@@ -6,7 +7,8 @@ import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
 /**
  * A "Workspace" link to a work item's agent, `/projects/<slug>/work/detail/<qualified id>/agent`
  * (epic qits-1230), which leads on to its ACTIVE agent's page (`agents/<agent id>`, epic
- * qits-1681): the link knows the item, not its agent. Shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
+ * qits-1681): the link knows the item, not its agent. It is the declared exit `open-item-workspace`
+ * `open` (epic qits-2000). Shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
  * it hides itself. The page loads the open workspaces once (`WorkspacesStore.load()`); the link
  * costs no request.
  *
@@ -19,7 +21,12 @@ import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TagLink],
   host: { '[class]': 'hostClasses()' },
-  template: `<ui-tag-link label="Workspace" [link]="link()" [variant]="variant()" />`,
+  template: `<ui-tag-link
+    label="Workspace"
+    [exit]="opening.open"
+    [exitParams]="params()"
+    [variant]="variant()"
+  />`,
 })
 export class WorkspaceLink {
   /** The item's id: qits-projects' entity id, which qits-workspaces binds a workspace to. */
@@ -38,7 +45,12 @@ export class WorkspaceLink {
     return this.variant() === 'corner' ? 'block' : 'inline-block';
   });
 
-  protected readonly link = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail/${this.qualifiedId() ?? ''}/agent`,
-  );
+  protected readonly opening = outcomes('open-item-workspace', {
+    open: exit('projects/:slug/work/detail/:id/agent'),
+  });
+
+  protected readonly params = computed(() => ({
+    slug: this.selected.slug() ?? '',
+    id: this.qualifiedId() ?? '',
+  }));
 }

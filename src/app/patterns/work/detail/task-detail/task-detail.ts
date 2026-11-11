@@ -37,8 +37,6 @@ import { WorkFields, type WorkField } from '$patterns/work/detail/work-fields/wo
 export class TaskDetail {
   readonly entry = input.required<WorkEntry>();
   readonly detail = input<WorkDetail>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
 
   /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
   protected readonly slug = inject(SelectedProject).slug;

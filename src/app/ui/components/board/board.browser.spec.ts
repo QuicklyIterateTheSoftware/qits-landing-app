@@ -8,6 +8,7 @@ import { FinishButton } from '$ui/components/finish-button/finish-button';
 import { REORDER } from '$ui/components/reorder/reorder';
 import { Tag } from '$ui/components/tag/tag';
 import { TagLink } from '$ui/components/tag-link/tag-link';
+import { uiSpecExits } from '../../../../testing/ui-exits';
 import { Board, type BoardColumnSpec } from './board';
 import { BoardCard } from './board-card';
 import { BoardCount } from './board-count';
@@ -144,17 +145,31 @@ class Finishing {
   template: `
     <ui-board [columns]="columns" gutter>
       <ui-board-card [column]="2" code="qits-44" title="A verified ticket" kind="ticket">
-        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-tag-link
+          card-corner
+          variant="corner"
+          label="Workspace"
+          [exit]="to.agent"
+          [exitParams]="params"
+        />
         <ui-finish-button card-action label="Mark qits-44 done" />
       </ui-board-card>
       <ui-board-card [column]="1" code="qits-45" title="An implemented ticket" kind="ticket">
-        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-tag-link
+          card-corner
+          variant="corner"
+          label="Workspace"
+          [exit]="to.agent"
+          [exitParams]="params"
+        />
       </ui-board-card>
     </ui-board>
   `,
 })
 class CornerAndFinish {
   readonly columns = COLUMNS;
+  protected readonly to = uiSpecExits();
+  protected readonly params = { slug: 'qits', id: 'qits-1' };
 }
 
 /**
@@ -173,14 +188,26 @@ class CornerAndFinish {
         <ui-drag-handle lane-action label="Move qits-50" />
       </ui-board-lane>
       <ui-board-card [column]="0" code="qits-51" title="A ticket" kind="ticket" uiReorderItem>
-        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-tag-link
+          card-corner
+          variant="corner"
+          label="Workspace"
+          [exit]="to.agent"
+          [exitParams]="params"
+        />
         <ui-drag-handle card-action label="Move qits-51" />
       </ui-board-card>
       <ui-board-card [column]="1" code="qits-52" title="Another ticket" kind="ticket" uiReorderItem>
         <ui-drag-handle card-action label="Move qits-52" />
       </ui-board-card>
       <ui-board-card [column]="2" code="qits-53" title="Not movable" kind="ticket" uiReorderItem>
-        <ui-tag-link card-corner variant="corner" label="Workspace" link="/workspace" />
+        <ui-tag-link
+          card-corner
+          variant="corner"
+          label="Workspace"
+          [exit]="to.agent"
+          [exitParams]="params"
+        />
         <ui-drag-handle card-action label="Move qits-53" [shown]="false" />
       </ui-board-card>
     </ui-board>
@@ -188,6 +215,8 @@ class CornerAndFinish {
 })
 class Dragging {
   readonly columns = COLUMNS;
+  protected readonly to = uiSpecExits();
+  protected readonly params = { slug: 'qits', id: 'qits-1' };
 }
 
 @Component({
@@ -195,11 +224,27 @@ class Dragging {
   host: { class: 'block w-[48rem] p-4' },
   template: `
     <ui-board [columns]="columns" gutter>
-      <ui-board-card id="ticket" [column]="1" code="k" title="A ticket" kind="ticket" link="/k" />
+      <ui-board-card
+        id="ticket"
+        [column]="1"
+        code="k"
+        title="A ticket"
+        kind="ticket"
+        [exit]="to.item"
+        [exitParams]="params"
+      />
       <ui-board-lane>
         <a lane-header id="epic" routerLink="/e">An epic</a>
         <ui-board-row>
-          <ui-board-card id="task" [column]="0" code="t" title="A task" kind="task" link="/t" />
+          <ui-board-card
+            id="task"
+            [column]="0"
+            code="t"
+            title="A task"
+            kind="task"
+            [exit]="to.item"
+            [exitParams]="params"
+          />
           <span row-id id="feature-id">f-1</span>
           <a row-footer id="feature" routerLink="/f">A feature</a>
         </ui-board-row>
@@ -209,6 +254,8 @@ class Dragging {
 })
 class Linked {
   readonly columns = COLUMNS;
+  protected readonly to = uiSpecExits();
+  protected readonly params = { slug: 'qits', id: 'qits-1' };
 }
 
 /**

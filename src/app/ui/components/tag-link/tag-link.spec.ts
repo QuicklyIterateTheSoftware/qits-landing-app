@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { tagColour } from '$ui/components/tag/tag-colour';
+import { uiSpecExits } from '../../../../testing/ui-exits';
 import { TagLink, type TagLinkVariant } from './tag-link';
 
 @Component({
@@ -9,7 +10,8 @@ import { TagLink, type TagLinkVariant } from './tag-link';
   template: `
     <ui-tag-link
       label="Workspace"
-      link="/projects/qits/workspaces/qits-111"
+      [exit]="to.agent"
+      [exitParams]="{ slug: 'qits', id: 'qits-111' }"
       [variant]="variant()"
       [shown]="shown()"
       describedBy="preview"
@@ -17,6 +19,7 @@ import { TagLink, type TagLinkVariant } from './tag-link';
   `,
 })
 class Host {
+  protected readonly to = uiSpecExits();
   readonly variant = signal<TagLinkVariant>('tag');
   readonly shown = signal(true);
 }
@@ -33,10 +36,11 @@ describe('TagLink', () => {
     return { fixture, host, link };
   }
 
-  it('links its label to the given path and names its description', () => {
+  it('links its label to the given exit, marked with it, and names its description', () => {
     const { link } = render();
     expect(link.textContent?.trim()).toBe('Workspace');
-    expect(link.getAttribute('href')).toBe('/projects/qits/workspaces/qits-111');
+    expect(link.getAttribute('href')).toBe('/projects/qits/work/detail/qits-111/agent');
+    expect(link.dataset['qitsOutcome']).toBe('ui-spec:agent');
     expect(link.getAttribute('aria-describedby')).toBe('preview');
   });
 

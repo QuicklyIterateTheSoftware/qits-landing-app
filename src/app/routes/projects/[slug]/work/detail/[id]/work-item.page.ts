@@ -158,19 +158,19 @@ const notBuiltYet = (): void => undefined;
             @if (entry(); as entry) {
               @switch (entry.archetype) {
                 @case ('EPIC') {
-                  <app-epic-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
+                  <app-epic-detail [entry]="entry" [detail]="detail()" />
                 }
                 @case ('FEATURE') {
-                  <app-feature-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
+                  <app-feature-detail [entry]="entry" [detail]="detail()" />
                 }
                 @case ('TASK') {
-                  <app-task-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
+                  <app-task-detail [entry]="entry" [detail]="detail()" />
                 }
                 @case ('TICKET') {
-                  <app-ticket-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
+                  <app-ticket-detail [entry]="entry" [detail]="detail()" />
                 }
                 @case ('ISSUE') {
-                  <app-ticket-detail [entry]="entry" [detail]="detail()" [base]="detailPath()" />
+                  <app-ticket-detail [entry]="entry" [detail]="detail()" />
                 }
               }
             }
@@ -203,7 +203,8 @@ const notBuiltYet = (): void => undefined;
             [class.hidden]="!entry()"
             [workspaces]="history()?.entries ?? []"
             [state]="history()?.status ?? 'loading'"
-            [link]="workspaceLink()"
+            [slug]="slug()"
+            [qualifiedId]="id()"
           />
         </ui-spinner>
       </app-page-layout>
@@ -244,10 +245,6 @@ export class WorkItemPage {
     return id ? this.workspaces.historyOf(id) : undefined;
   });
 
-  protected readonly workspaceLink = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail/${this.id()}/agent`,
-  );
-
   protected readonly title = computed(() => this.entry()?.title ?? this.id());
 
   protected readonly facts = computed(() => {
@@ -256,10 +253,6 @@ export class WorkItemPage {
     const status = entry.status ? ` · ${entry.status.toLowerCase()}` : '';
     return `${entry.qualifiedId} · ${(entry.archetype ?? '').toLowerCase()}${status}`;
   });
-
-  protected readonly detailPath = computed(
-    () => `/projects/${this.selected.slug() ?? ''}/work/detail`,
-  );
 
   /**
    * Whether the item is a VERIFIED ticket, which closes on its own (qits-150): its facts then say
@@ -270,7 +263,7 @@ export class WorkItemPage {
     return entry?.archetype === 'TICKET' && entry.status === 'VERIFIED';
   });
 
-  /** The open project's slug, for the inspiration's link to its idea. */
+  /** The open project's slug, for the inspiration's link to its idea and the workspaces' links. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /**

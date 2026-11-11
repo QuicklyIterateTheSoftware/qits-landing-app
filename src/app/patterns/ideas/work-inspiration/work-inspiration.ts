@@ -10,8 +10,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ideaPath } from '$core/ideas/idea-path';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { IdeasStore } from '$core/ideas/ideas.store';
 import { inspirable, WorkWritesStore } from '$core/work/work-writes.store';
 import type { Action } from '$ui/components/action-button/action';
@@ -19,7 +18,8 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 
 /**
  * A work item's inspiration on its page (epic qits-888): "Inspired by <idea title>", linking the
- * idea's page, when the item names one (`inspiredBy`; the idea's title from `IdeasStore.loadIdea`).
+ * idea's page (the declared exit `open-work-inspiration` `open`, epic qits-2000), when the item
+ * names one (`inspiredBy`; the idea's title from `IdeasStore.loadIdea`).
  *
  * On any archetype it can be set or changed (Choose, then one of the project's ideas,
  * `IdeasStore.loadList`, read on the first opening) and cleared, through
@@ -37,7 +37,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 @Component({
   selector: 'app-work-inspiration',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, RouterLink],
+  imports: [ActionButton, QitsExit],
   host: { class: 'block' },
   template: `
     <section
@@ -51,7 +51,8 @@ import { ActionButton } from '$ui/components/action-button/action-button';
             >Inspired by
             <a
               class="font-semibold text-ocean-deep-700 no-underline hover:underline"
-              [routerLink]="link(ideaId)"
+              [qitsExit]="inspiring.open"
+              [exitParams]="{ slug: slug(), ideaId }"
               >{{ ideaTitle() }}</a
             ></span
           >
@@ -102,6 +103,10 @@ export class WorkInspiration {
   /** The service took a new inspiration, or the clearing of it. */
   readonly changed = output<void>();
 
+  protected readonly inspiring = outcomes('open-work-inspiration', {
+    open: exit('projects/:slug/ideas/detail/:ideaId'),
+  });
+
   protected readonly editable = computed(() => inspirable(this.archetype()));
   protected readonly shown = computed(() => this.editable() || !!this.inspiredBy());
 
@@ -149,10 +154,6 @@ export class WorkInspiration {
     disabled: this.writing(),
     callback: () => this.choosing.set(false),
   }));
-
-  protected link(ideaId: string): string {
-    return ideaPath(this.slug(), ideaId);
-  }
 
   protected value(event: Event): string {
     return (event.target as HTMLSelectElement).value;

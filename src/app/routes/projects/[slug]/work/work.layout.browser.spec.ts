@@ -1,8 +1,14 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../testing/browser/app-route';
 
 /**
  * Screenshots of the work section's tabs inside the shell (`openRoute`), over the real tab pages
@@ -12,6 +18,10 @@ import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-r
  * "a project with workspaces bound to work items"; In Progress reads the active agents, answered
  * from "a project with agents bound to work items" as in its own spec. The layout follows
  * transitions through the event stream; the stream here never connects.
+ *
+ * Each tab is a declared exit (`switch-work-tab`, epic qits-2000), shown by `tabs` and followed
+ * once, from the Archive (the Archive's own from Refinement). The tab page it opens is its own
+ * spec's: its reads are answered with an error (`leftFor`).
  */
 
 describe('WorkLayout (screenshots)', () => {
@@ -96,5 +106,43 @@ describe('WorkLayout (screenshots)', () => {
     await expect.element(frame).toMatchScreenshot('loading', { kind: 'PENDING' });
     work.flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
+  });
+
+  /**
+   * Lets the navigation a tab started finish, and answers every read the tab page makes with a 404
+   * (an error answer is only a status): that page is its own spec's (`idle()`, not `settled()`,
+   * qits-2056). Answers in rounds, until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  it.each([
+    ['refinement', 'Refinement', 'refinement'],
+    ['schedule', 'Schedule', 'schedule'],
+    ['inProgress', 'In Progress', 'in-progress'],
+    ['acceptance', 'Acceptance', 'acceptance'],
+    ['archive', 'Archive', 'archive'],
+  ])('switch-work-tab %s: the %s tab opens its page', async (outcome, label, segment) => {
+    const { opened, locate, work, project } = await shown(
+      segment === 'archive' ? 'refinement' : 'archive',
+    );
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
+    await opened.settled();
+    const tab = locate()
+      .getByRole('navigation', { name: 'Work' })
+      .getByRole('link', { name: label });
+    await tab.click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      `switch-work-tab:${outcome}`,
+    ]);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${project.slug}/work/${segment}`);
+    await expect.element(tab).toHaveAttribute('aria-current', 'page');
   });
 });

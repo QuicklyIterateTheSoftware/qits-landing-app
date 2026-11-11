@@ -1,5 +1,13 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
+import { exit, outcomes, QitsExit } from '@qits/angular';
+import { SelectedProject } from '$core/projects/selected-project';
 import { movable, WorkReorders } from '$core/work/work-reorder';
 import type { WorkNode } from '$core/work/work-tree';
 import { BoardCard } from '$ui/components/board/board-card';
@@ -18,7 +26,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
  * While the feature or a task has an
  * ACTIVE workspace, a Workspace link (`app-workspace-link`): at the right end of the title's line,
  * in the card's bottom-right corner. Every item links to its page,
- * `<base>/<qualified id>`. `display: contents`, so the row is itself the list's item.
+ * `/projects/<slug>/work/detail/<qualified id>`, through a declared exit (`open-feature-list-row`,
+ * epic qits-2000): `feature` (its title) and `task` (a card). `display: contents`, so the row is itself the list's item.
  *
  * The row is an item (`uiReorderItem`) of the list it is drawn in, which must be a
  * `[uiReorderList]` (an epic's features, `app-epic-list-item`; a disabled one on a work item's
@@ -37,16 +46,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 @Component({
   selector: 'app-feature-list-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterLink,
-    ListRow,
-    BoardCard,
-    DragHandle,
-    REORDER,
-    Tag,
-    WorkNeedsBadge,
-    WorkspaceLink,
-  ],
+  imports: [QitsExit, ListRow, BoardCard, DragHandle, REORDER, Tag, WorkNeedsBadge, WorkspaceLink],
   host: { class: 'contents' },
   template: `
     @let feature = node();
@@ -65,7 +65,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               [code]="task.entry.qualifiedId ?? ''"
               [title]="task.entry.title ?? ''"
               [kind]="task.entry.archetype?.toLowerCase() ?? ''"
-              [link]="base() + '/' + task.entry.qualifiedId"
+              [exit]="opening.task"
+              [exitParams]="{ slug: slug(), id: task.entry.qualifiedId ?? '' }"
               uiReorderItem
               [reorderItemLabel]="task.entry.qualifiedId ?? ''"
             >
@@ -94,9 +95,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         </div>
       }
       <span row-id class="font-mono">{{ feature.entry.qualifiedId }}</span>
-      <a row-footer [routerLink]="base() + '/' + feature.entry.qualifiedId">{{
-        feature.entry.title
-      }}</a>
+      <a
+        row-footer
+        [qitsExit]="opening.feature"
+        [exitParams]="{ slug: slug(), id: feature.entry.qualifiedId ?? '' }"
+        >{{ feature.entry.title }}</a
+      >
       @if (status(feature); as featureStatus) {
         <ui-tag row-footer class="shrink-0" [label]="featureStatus" />
       }
@@ -119,8 +123,6 @@ export class FeatureListRow {
 
   /** The feature's node: its children are its tasks. */
   readonly node = input.required<WorkNode>();
-  /** The path items' pages are below, e.g. `/projects/qits/work/detail`. */
-  readonly base = input.required<string>();
   /** Shows the drag handles and enables the tasks' list: in the Backlog (qits-753). */
   readonly reorderable = input(false, { transform: booleanAttribute });
   /** Shows the feature's and each task's own status: on the board stacked (qits-1861). */
@@ -128,6 +130,15 @@ export class FeatureListRow {
 
   protected readonly reorders = inject(WorkReorders);
   protected readonly movable = movable;
+
+  protected readonly opening = outcomes('open-feature-list-row', {
+    feature: exit('projects/:slug/work/detail/:id'),
+    task: exit('projects/:slug/work/detail/:id'),
+  });
+
+  private readonly selected = inject(SelectedProject);
+  /** The open project's slug, for the items' pages. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** `node`'s own status, lower case, with `statuses` and unless it is only context. */
   protected status(node: WorkNode): string | undefined {

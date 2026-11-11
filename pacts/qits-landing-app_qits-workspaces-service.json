@@ -4218,6 +4218,97 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-work-item-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item-agent: listAgents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a work item with no workspaces",
+          "params": {
+            "bugTicketId": "00000000-0000-4000-8000-000000000001",
+            "bugTicketQualifiedId": "contract-00000001-9",
+            "epicId": "00000000-0000-4000-8000-000000000005",
+            "featureId": "00000000-0000-4000-8000-000000000006",
+            "improvementTicketId": "00000000-0000-4000-8000-00000000000a",
+            "improvementTicketQualifiedId": "contract-00000001-10",
+            "projectId": "00000000-0000-4000-8000-00000000000e",
+            "repositoryId": "00000000-0000-4000-8000-000000000013",
+            "taskId": "00000000-0000-4000-8000-000000000010"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "workId": {
+              "expression": "${improvementTicketId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "workId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/workspaces/api/agents",
+        "query": {
+          "workId": [
+            "00000000-0000-4000-8000-00000000000a"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "agents": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-workspaces-service",
+            "operationId": "listAgents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item-agent",
             "kind": "ui",
             "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
           }

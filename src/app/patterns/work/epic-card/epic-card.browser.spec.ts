@@ -13,8 +13,10 @@ import { Board } from '$ui/components/board/board';
 import {
   nodeOf,
   openRecordedWork,
+  follow,
   openWorkspaces,
   routedQualifiedId,
+  WORK_LINK_TARGETS,
 } from '../../../../testing/browser/recorded-work';
 import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicCard } from './epic-card';
@@ -27,6 +29,10 @@ import { EpicCard } from './epic-card';
  *
  * Only REFINED, IMPLEMENTING, IMPLEMENTED and VERIFYING epics are on the board; the Backlog,
  * Acceptance and Archive ones are in `epic-list-item.browser.spec.ts`.
+ *
+ * Its links are declared exits (`open-epic-card`, epic qits-2000), each followed once on the nested
+ * epic: the epic's title and id (`epic`), a feature's title (`feature`) and a task's card (`task`),
+ * all shown by `features-mixed-expanded`.
  */
 @Component({
   imports: [Board, EpicCard],
@@ -36,7 +42,7 @@ import { EpicCard } from './epic-card';
   template: `
     <ui-board [columns]="columns" gutter>
       @if (node(); as node) {
-        <app-epic-card [node]="node" base="/projects/contract/work/detail" />
+        <app-epic-card [node]="node" />
       }
     </ui-board>
   `,
@@ -65,7 +71,10 @@ describe('EpicCard (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneEpic }]),
+        provideRouter([
+          ...WORK_LINK_TARGETS,
+          { path: 'projects/:slug/:view/:qualifiedId', component: OneEpic },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -246,5 +255,19 @@ describe('EpicCard (screenshots)', () => {
     expect(Math.round(bar.right - tag.right)).toBe(8);
     expect(Math.abs(tag.top - title.getBoundingClientRect().top)).toBeLessThan(4);
     await expect.element(locator).toMatchScreenshot('workspaces', { kind: 'DATA' });
+  });
+
+  it.each([
+    ['open-epic-card:epic', 'Nested epic', 'contract-00000001-1', false],
+    // The id up the gutter lies under the title's stretched link: reached from the keyboard.
+    ['open-epic-card:epic', 'contract-00000001-1', 'contract-00000001-1', true],
+    ['open-epic-card:feature', 'Shipped feature', 'contract-00000001-2', false],
+    ['open-epic-card:task', 'First shipped task', 'contract-00000001-3', false],
+  ])('%s: the link “%s” opens its item’s page', async (outcome, name, qualifiedId, keyboard) => {
+    await shown(NESTED, 'contract-00000001-1', 'Nested epic');
+    const link = page.getByRole('link', { name, exact: true });
+    const { url, reached } = await follow(link, { keyboard });
+    expect(url).toBe(`/projects/contract-00000001/work/detail/${qualifiedId}`);
+    expect(reached).toEqual([outcome]);
   });
 });

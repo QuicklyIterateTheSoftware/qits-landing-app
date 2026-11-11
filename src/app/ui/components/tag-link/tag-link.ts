@@ -5,14 +5,15 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { QitsExit, type ExitOutcome } from '@qits/angular';
 import { tagColour } from '$ui/components/tag/tag-colour';
 
 /** How a tag link looks: a tag (`ui-tag`), or a bubble in a card's bottom-right corner. */
 export type TagLinkVariant = 'tag' | 'corner';
 
 /**
- * A small label that is a router link.
+ * A small label that is a link to a declared exit (`exit`, with its `exitParams`): the pattern
+ * that draws it declares the exit, and the link carries its mark (`[qitsExit]`).
  *
  * - `tag`: drawn like `ui-tag`, its background coloured from its text (`tagColour`). Where the
  *   row is too narrow (a card), its text wraps, so it never overflows.
@@ -28,7 +29,7 @@ export type TagLinkVariant = 'tag' | 'corner';
 @Component({
   selector: 'ui-tag-link',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [QitsExit],
   host: {
     class: 'relative z-10',
     '[class]': 'hostClasses()',
@@ -38,7 +39,8 @@ export type TagLinkVariant = 'tag' | 'corner';
       class="block text-[0.6875rem] no-underline hover:underline"
       [class]="linkClasses()"
       [style.background-color]="colour()"
-      [routerLink]="link()"
+      [qitsExit]="exit()"
+      [exitParams]="exitParams()"
       [attr.aria-describedby]="describedBy() ?? null"
       >{{ label() }}</a
     >
@@ -46,8 +48,10 @@ export type TagLinkVariant = 'tag' | 'corner';
 })
 export class TagLink {
   readonly label = input.required<string>();
-  /** Where the link leads, as a router link. */
-  readonly link = input.required<string>();
+  /** Where the link leads: an exit the pattern drawing it declares. */
+  readonly exit = input.required<ExitOutcome>();
+  /** The exit's path params. */
+  readonly exitParams = input<Readonly<Record<string, string | number>> | undefined>(undefined);
   readonly variant = input<TagLinkVariant>('tag');
   readonly shown = input(true, { transform: booleanAttribute });
   readonly describedBy = input<string | undefined>(undefined);

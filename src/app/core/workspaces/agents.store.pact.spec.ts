@@ -47,6 +47,8 @@ import {
  * - "an agent whose workspace is starting": the bug ticket's ACTIVE agent, which its old agent
  *   address leads to, and its slot's page while the slot is PROVISIONING and a start is live (the
  *   agent page asks nothing of the slot since epic qits-1667);
+ * - "a work item with no workspaces" (qits-2040): the improvement ticket's agents, none at all, so
+ *   its old agent address leads to the item's page;
  * - "an agent with a saved prompt draft" and "no agent with that id": the agent page's agent, read
  *   by its id, and one the service does not know;
  * - "a project with agents needing attention": the project's ACTIVE agents with their open waits
@@ -66,6 +68,7 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const PROJECT = 'a project with workspace slots hosting agents';
 const SLOT = 'a workspace slot hosting agents';
 const STARTING = 'an agent whose workspace is starting';
+const NO_WORKSPACES = 'a work item with no workspaces';
 const AGENT = 'an agent with a saved prompt draft';
 const NO_AGENT = 'no agent with that id';
 const NEEDING_ATTENTION = 'a project with agents needing attention';
@@ -222,6 +225,17 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
           consume(listAgents({ query: { workId } }), LIST_ITEM_AGENTS),
         );
         expect(data?.agents?.[0]?.state).toBe('ACTIVE');
+      },
+    ));
+
+  it('show-work-item-agent: an item without agents', () =>
+    given(NO_WORKSPACES, 'listAgents', 'show-work-item-agent', LIST_ITEM_AGENTS).executeTest(
+      async (server) => {
+        const workId = param(NO_WORKSPACES, 'listAgents', 'improvementTicketId');
+        const { data } = await at(server.url, () =>
+          consume(listAgents({ query: { workId } }), LIST_ITEM_AGENTS),
+        );
+        expect(data?.agents).toEqual([]);
       },
     ));
 

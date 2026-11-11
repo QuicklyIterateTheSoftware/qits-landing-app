@@ -9,10 +9,12 @@ import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
 import { SelectedWork } from '$core/work/selected-work';
 import {
+  follow,
   nodeOf,
   openRecordedWork,
   openWorkspaces,
   routedQualifiedId,
+  WORK_LINK_TARGETS,
 } from '../../../../testing/browser/recorded-work';
 import { EpicBoard } from './epic-board';
 
@@ -23,13 +25,17 @@ import { EpicBoard } from './epic-board';
  * qualified id in the recorded answer. Only READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED and VERIFYING
  * epics get a board; this covers each of them in every recorded state that has one. (A REFINED
  * epic waits on the Schedule tab.)
+ *
+ * Its links are declared exits (`open-epic-board`, epic qits-2000), each followed once on the
+ * nested epic: the bar's title and the strip's id (`epic`), a feature's title (`feature`) and a
+ * task's card (`task`), all shown by the nested epic's screenshot.
  */
 @Component({
   imports: [EpicBoard],
   host: { class: 'block w-[48rem] p-4' },
   template: `
     @if (node(); as node) {
-      <app-epic-board [node]="node" base="/projects/contract/work/detail" />
+      <app-epic-board [node]="node" />
     }
   `,
 })
@@ -67,7 +73,10 @@ describe('EpicBoard (screenshots)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'projects/:slug/:view/:qualifiedId', component: OneEpic }]),
+        provideRouter([
+          ...WORK_LINK_TARGETS,
+          { path: 'projects/:slug/:view/:qualifiedId', component: OneEpic },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -321,5 +330,17 @@ describe('EpicBoard (screenshots)', () => {
       'Preview the PDF before download': 'Ready for Dev',
     });
     await shoot(element, 'workspaces');
+  });
+
+  it.each([
+    ['open-epic-board:epic', 'Nested epic', 'contract-00000001-1'],
+    ['open-epic-board:epic', 'contract-00000001-1', 'contract-00000001-1'],
+    ['open-epic-board:feature', 'Shipped feature', 'contract-00000001-2'],
+    ['open-epic-board:task', 'First shipped task', 'contract-00000001-3'],
+  ])('%s: the link “%s” opens its item’s page', async (outcome, name, qualifiedId) => {
+    await shown(NESTED, 'contract-00000001-1', 'Nested epic');
+    const { url, reached } = await follow(page.getByRole('link', { name, exact: true }));
+    expect(url).toBe(`/projects/contract-00000001/work/detail/${qualifiedId}`);
+    expect(reached).toEqual([outcome]);
   });
 });

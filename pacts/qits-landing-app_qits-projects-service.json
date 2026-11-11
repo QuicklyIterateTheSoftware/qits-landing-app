@@ -1175,7 +1175,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1442,7 +1443,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -1636,7 +1638,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -3735,7 +3738,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -4067,7 +4071,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -11400,7 +11405,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
@@ -32927,6 +32933,147 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-work-item",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-work-item: getWork",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with ideas",
+          "params": {
+            "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
+            "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
+            "ideaId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/work/${qualifiedId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/work/contract-00000001-1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetype": "EPIC",
+            "assignee": null,
+            "blocked": false,
+            "description": "A shared dependency cache.",
+            "id": "00000000-0000-4000-8000-000000000005",
+            "impetus": null,
+            "implementedAt": null,
+            "implementingAt": null,
+            "inspiredBy": "00000000-0000-4000-8000-000000000003",
+            "repositoryId": null,
+            "ticketType": null,
+            "unmetNeeds": 0
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.blocked": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.inspiredBy": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.unmetNeeds": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "getWork"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-work-item",
             "kind": "ui",
             "route": "projects/:slug/work/detail/:id"
           }
@@ -35890,7 +36037,8 @@
             "archivedIdeaId": "00000000-0000-4000-8000-000000000001",
             "enabledIdeaId": "00000000-0000-4000-8000-000000000002",
             "ideaId": "00000000-0000-4000-8000-000000000003",
-            "projectId": "00000000-0000-4000-8000-000000000004"
+            "projectId": "00000000-0000-4000-8000-000000000004",
+            "qualifiedId": "contract-00000001-1"
           }
         }
       ],
