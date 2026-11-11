@@ -826,6 +826,25 @@
       "triggers": []
     },
     {
+      "file": "src/app/patterns/ideas/work-inspiration/work-inspiration.browser.spec.ts/inspired-by.html",
+      "spec": "src/app/patterns/ideas/work-inspiration/work-inspiration.browser.spec.ts",
+      "test": "WorkInspiration (screenshots) > inspired-by",
+      "name": "inspired-by",
+      "kind": "DATA",
+      "viewport": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with ideas",
+          "operationId": "getIdea"
+        }
+      ],
+      "triggers": [
+        "open-work-inspiration:open"
+      ]
+    },
+    {
       "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/closed.html",
       "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
       "test": "BumpsMenu (screenshots) > is a lighthouse, closed",
@@ -1096,7 +1115,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-bar.html",
@@ -1118,7 +1141,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-columns.html",
@@ -1162,7 +1187,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/feature-all-verified-row-2.html",
@@ -1184,7 +1212,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/implemented-no-features.html",
@@ -1206,7 +1237,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/implementing-no-features.html",
@@ -1228,7 +1261,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/implementing-started.html",
@@ -1250,7 +1285,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-bar.html",
@@ -1272,7 +1311,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-columns.html",
@@ -1316,7 +1357,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-2.html",
@@ -1338,7 +1382,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-3.html",
@@ -1360,7 +1407,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/mixed-features-row-4.html",
@@ -1382,7 +1431,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/ready-for-dev-no-features.html",
@@ -1404,7 +1456,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/scheduled-features.html",
@@ -1426,7 +1480,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-bar.html",
@@ -1448,7 +1506,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-columns.html",
@@ -1492,7 +1552,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verified-feature-row-2.html",
@@ -1514,7 +1577,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/verifying-no-features.html",
@@ -1536,7 +1602,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-bar.html",
@@ -1563,7 +1631,10 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-columns.html",
@@ -1617,7 +1688,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts/workspaces-row-2.html",
@@ -1644,7 +1719,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/feature-all-verified.html",
@@ -1666,7 +1745,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/feature-verified-tasks.html",
@@ -1688,7 +1771,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/features-mixed-collapsed.html",
@@ -1710,7 +1797,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/features-mixed-expanded.html",
@@ -1732,7 +1821,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implemented.html",
@@ -1754,7 +1847,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implementing-collapsed.html",
@@ -1776,7 +1871,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implementing-feature-task.html",
@@ -1798,7 +1895,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/implementing.html",
@@ -1820,7 +1921,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/ready-for-dev.html",
@@ -1842,7 +1945,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/verifying-collapsed.html",
@@ -1864,7 +1969,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/verifying.html",
@@ -1886,7 +1993,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts/workspaces.html",
@@ -1913,7 +2022,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/all-done-collapsed.html",
@@ -1935,7 +2049,9 @@
           "operationId": "listProjects"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/all-done-expanded.html",
@@ -1957,7 +2073,11 @@
           "operationId": "listProjects"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/backlog-task-handle.html",
@@ -1979,7 +2099,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/done.html",
@@ -2001,7 +2125,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/dropped.html",
@@ -2023,7 +2149,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/reported.html",
@@ -2045,7 +2173,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/verified-tasks-open-collapsed.html",
@@ -2067,7 +2197,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/verified-tasks-open-expanded.html",
@@ -2089,7 +2221,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts/verified.html",
@@ -2111,7 +2245,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic"
+      ]
     },
     {
       "file": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts/every-status.html",
@@ -2133,7 +2269,12 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts/nested.html",
@@ -2155,7 +2296,11 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task"
+      ]
     },
     {
       "file": "src/app/patterns/work/kanban-board/kanban-board.browser.spec.ts/selection-highlight.html",
@@ -2177,7 +2322,12 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/implemented.html",
@@ -2199,7 +2349,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/implementing.html",
@@ -2221,7 +2373,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/needs-tooltip.html",
@@ -2243,7 +2397,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/needs.html",
@@ -2265,7 +2421,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/ready-for-dev.html",
@@ -2287,7 +2445,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/verifying.html",
@@ -2309,7 +2469,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-card:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts/workspace.html",
@@ -2336,7 +2498,40 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-item-workspace:open",
+        "open-ticket-card:open"
+      ]
+    },
+    {
+      "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/closing-request.html",
+      "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
+      "test": "TicketListItem (screenshots) > closing-request",
+      "name": "closing-request",
+      "kind": "DATA",
+      "viewport": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with VERIFIED tickets in every wrapper verdict",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with VERIFIED tickets in every wrapper verdict",
+          "operationId": "listWrapperClosings"
+        }
+      ],
+      "triggers": [
+        "open-closing-request:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/done.html",
@@ -2358,7 +2553,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/dropped.html",
@@ -2380,7 +2577,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/needs.html",
@@ -2402,7 +2601,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/reported.html",
@@ -2424,7 +2625,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts/verified.html",
@@ -2451,7 +2654,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/acceptance.html",
@@ -2478,7 +2683,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/archive.html",
@@ -2500,7 +2708,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/backlog.html",
@@ -2522,7 +2733,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/empty.html",
@@ -2571,7 +2785,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-pending.html",
@@ -2598,7 +2815,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-sent.html",
@@ -2630,7 +2849,9 @@
           "operationId": "setWorkStatus"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-list/work-list.browser.spec.ts/finish-undone.html",
@@ -2657,7 +2878,10 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-badge.browser.spec.ts/badge-tooltip.html",
@@ -2701,7 +2925,9 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-work-ref-tag:open"
+      ]
     },
     {
       "file": "src/app/patterns/work/work-needs/work-needs-panel.browser.spec.ts/panel-empty.html",
@@ -2745,7 +2971,58 @@
           "operationId": "listProjectWork"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-work-ref-tag:open"
+      ]
+    },
+    {
+      "file": "src/app/patterns/work/work-ref/work-ref.browser.spec.ts/preview.html",
+      "spec": "src/app/patterns/work/work-ref/work-ref.browser.spec.ts",
+      "test": "WorkRef (screenshots) > preview",
+      "name": "preview",
+      "kind": "DATA",
+      "viewport": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "open-work-ref-tag:open",
+        "open-work-ref-tag:openFromPreview"
+      ]
+    },
+    {
+      "file": "src/app/patterns/work/work-ref/work-ref.browser.spec.ts/tag.html",
+      "spec": "src/app/patterns/work/work-ref/work-ref.browser.spec.ts",
+      "test": "WorkRef (screenshots) > tag",
+      "name": "tag",
+      "kind": "DATA",
+      "viewport": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "open-work-ref-tag:open"
+      ]
     },
     {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/no-code-desktop.html",
@@ -8935,7 +9212,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/acceptance-phone.html",
@@ -8972,7 +9257,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/acceptance-tablet.html",
@@ -9009,7 +9300,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/empty-desktop.html",
@@ -9041,7 +9340,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/empty-phone.html",
@@ -9073,7 +9378,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/empty-tablet.html",
@@ -9105,7 +9414,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/epic-boards-mixed-data-desktop.html",
@@ -9137,7 +9452,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/epic-boards-mixed-data-phone.html",
@@ -9169,7 +9490,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/epic-boards-mixed-data-tablet.html",
@@ -9201,7 +9526,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/error-desktop.html",
@@ -9228,7 +9559,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/error-phone.html",
@@ -9255,7 +9592,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/error-tablet.html",
@@ -9282,7 +9624,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/inline-mixed-data-desktop.html",
@@ -9314,7 +9662,17 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/inline-mixed-data-phone.html",
@@ -9346,7 +9704,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/inline-mixed-data-tablet.html",
@@ -9378,7 +9744,17 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/loading-desktop.html",
@@ -9405,7 +9781,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/loading-phone.html",
@@ -9432,7 +9814,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/loading-tablet.html",
@@ -9459,7 +9846,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-desktop.html",
@@ -9496,7 +9889,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-phone.html",
@@ -9533,7 +9935,14 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-tablet.html",
@@ -9570,7 +9979,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-unproven-desktop.html",
@@ -9607,7 +10025,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-unproven-phone.html",
@@ -9644,7 +10066,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-unproven-tablet.html",
@@ -9681,7 +10107,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-withdrawn-desktop.html",
@@ -9718,7 +10148,10 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-item-workspace:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-withdrawn-phone.html",
@@ -9755,7 +10188,10 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-item-workspace:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/acceptance/work-acceptance.page.browser.spec.ts/wrapper-closings-withdrawn-tablet.html",
@@ -9792,7 +10228,10 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-item-workspace:open",
+        "open-ticket-list-item:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/archive-desktop.html",
@@ -9824,7 +10263,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/archive-phone.html",
@@ -9856,7 +10304,14 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/archive-tablet.html",
@@ -9888,7 +10343,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/empty-desktop.html",
@@ -9920,7 +10384,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/empty-phone.html",
@@ -9952,7 +10422,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/empty-tablet.html",
@@ -9984,7 +10458,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/error-desktop.html",
@@ -10011,7 +10491,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/error-phone.html",
@@ -10038,7 +10524,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/error-tablet.html",
@@ -10065,7 +10556,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/loading-desktop.html",
@@ -10092,7 +10589,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/loading-phone.html",
@@ -10119,7 +10622,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/archive/work-archive.page.browser.spec.ts/loading-tablet.html",
@@ -10146,7 +10654,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic-desktop.html",
@@ -10417,6 +10931,87 @@
         "create-work-item:created",
         "create-work-item:refused"
       ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+      "test": "WorkAgentLayout (screenshots) > waits for the item’s agents",
+      "name": "waiting",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/work/detail/:id/agent",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a bug ticket in detail",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting-phone.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+      "test": "WorkAgentLayout (screenshots) > waits for the item’s agents",
+      "name": "waiting",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "route": "projects/:slug/work/detail/:id/agent",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a bug ticket in detail",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting-tablet.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+      "test": "WorkAgentLayout (screenshots) > waits for the item’s agents",
+      "name": "waiting",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "route": "projects/:slug/work/detail/:id/agent",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a bug ticket in detail",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": []
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-dropped-ticket-desktop.html",
@@ -10854,7 +11449,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-implementing-epic-runs-phone.html",
@@ -10916,7 +11515,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-implementing-epic-runs-tablet.html",
@@ -10978,7 +11581,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/actions-implementing-epic-tablet.html",
@@ -14045,7 +14652,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-features-2-phone.html",
@@ -14107,7 +14718,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-epic-features-2-tablet.html",
@@ -14169,7 +14784,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-feature-comments-desktop.html",
@@ -14533,7 +15152,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-feature-tasks-phone.html",
@@ -14585,7 +15208,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-feature-tasks-tablet.html",
@@ -14637,7 +15264,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-improvement-ticket-comments-desktop.html",
@@ -16022,7 +16653,9 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-work-ref-tag:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-needs-panel-phone.html",
@@ -16069,7 +16702,9 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-work-ref-tag:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-needs-panel-tablet.html",
@@ -16116,7 +16751,9 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-work-ref-tag:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-comments-desktop.html",
@@ -16636,7 +17273,9 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-wrapper-closing-phone.html",
@@ -16688,7 +17327,9 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-wrapper-closing-tablet.html",
@@ -16740,7 +17381,9 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-closing-request:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-verified-epic-features-desktop.html",
@@ -16782,7 +17425,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-verified-epic-features-phone.html",
@@ -16824,7 +17471,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-verified-epic-features-tablet.html",
@@ -16866,7 +17517,11 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-history-desktop.html",
@@ -16923,7 +17578,9 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-workspace-agent:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-history-phone.html",
@@ -16980,7 +17637,9 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-workspace-agent:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-history-tablet.html",
@@ -17037,7 +17696,9 @@
           "operationId": "listWorkItemWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-workspace-agent:open"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-none-desktop.html",
@@ -17245,7 +17906,18 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open",
+        "open-ticket-card:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-data-phone.html",
@@ -17282,7 +17954,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-data-tablet.html",
@@ -17319,7 +18000,18 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open",
+        "open-ticket-card:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-mixed-data-desktop.html",
@@ -17356,7 +18048,17 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-mixed-data-phone.html",
@@ -17393,7 +18095,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-mixed-data-tablet.html",
@@ -17430,7 +18140,17 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/error-desktop.html",
@@ -17462,7 +18182,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/error-phone.html",
@@ -17494,7 +18220,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/error-tablet.html",
@@ -17526,7 +18257,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-data-desktop.html",
@@ -17563,7 +18300,18 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-item-workspace:open",
+        "open-ticket-card:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-data-phone.html",
@@ -17600,7 +18348,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-data-tablet.html",
@@ -17637,7 +18394,18 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-item-workspace:open",
+        "open-ticket-card:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-mixed-data-desktop.html",
@@ -17674,7 +18442,17 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-mixed-data-phone.html",
@@ -17711,7 +18489,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/inline-mixed-data-tablet.html",
@@ -17748,7 +18534,17 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-card:epic",
+        "open-epic-card:feature",
+        "open-epic-card:task",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/loading-desktop.html",
@@ -17780,7 +18576,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/loading-phone.html",
@@ -17812,7 +18614,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/loading-tablet.html",
@@ -17844,7 +18651,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data-desktop.html",
@@ -17881,7 +18694,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data-phone.html",
@@ -17918,7 +18737,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data-tablet.html",
@@ -17955,7 +18778,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-desktop.html",
@@ -17992,7 +18821,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-phone.html",
@@ -18029,7 +18866,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-tablet.html",
@@ -18066,7 +18912,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-item-workspace:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/backlog-desktop.html",
@@ -18098,7 +18952,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/backlog-phone.html",
@@ -18130,7 +18992,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/backlog-tablet.html",
@@ -18162,7 +19030,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/empty-desktop.html",
@@ -18194,7 +19070,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/empty-phone.html",
@@ -18226,7 +19108,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/empty-tablet.html",
@@ -18258,7 +19144,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/loading-desktop.html",
@@ -18285,7 +19177,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/loading-phone.html",
@@ -18312,7 +19210,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/refinement/work-refinement.page.browser.spec.ts/loading-tablet.html",
@@ -18339,7 +19242,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/empty-desktop.html",
@@ -18371,7 +19280,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/empty-phone.html",
@@ -18403,7 +19318,11 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/empty-tablet.html",
@@ -18435,7 +19354,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/lists-desktop.html",
@@ -18477,7 +19402,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-scheduled-item:open",
+        "open-work-ref-tag:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/lists-phone.html",
@@ -18519,7 +19452,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-scheduled-item:open",
+        "open-work-ref-tag:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/lists-tablet.html",
@@ -18561,7 +19500,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-scheduled-item:open",
+        "open-work-ref-tag:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/loading-desktop.html",
@@ -18588,7 +19535,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/loading-phone.html",
@@ -18615,7 +19568,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/loading-tablet.html",
@@ -18642,7 +19600,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/refused-desktop.html",
@@ -18684,7 +19648,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-scheduled-item:open",
+        "open-work-ref-tag:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/refused-phone.html",
@@ -18726,7 +19698,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-scheduled-item:open",
+        "open-work-ref-tag:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts/refused-tablet.html",
@@ -18768,7 +19746,15 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-scheduled-item:open",
+        "open-work-ref-tag:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/loading-desktop.html",
@@ -18795,7 +19781,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/loading-phone.html",
@@ -18822,7 +19814,12 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/loading-tablet.html",
@@ -18849,7 +19846,13 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs-desktop.html",
@@ -18886,7 +19889,18 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open",
+        "open-ticket-card:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs-phone.html",
@@ -18923,7 +19937,16 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs-tablet.html",
@@ -18960,7 +19983,18 @@
           "operationId": "listOpenWorkspaces"
         }
       ],
-      "triggers": []
+      "triggers": [
+        "open-epic-board:epic",
+        "open-epic-board:feature",
+        "open-epic-board:task",
+        "open-item-workspace:open",
+        "open-ticket-card:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
     },
     {
       "file": "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/confirm-stop-desktop.html",
@@ -19939,7 +20973,9 @@
       "viewport": null,
       "route": null,
       "records": [],
-      "triggers": []
+      "triggers": [
+        "ui-spec:agent"
+      ]
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/dragging.html",
@@ -19950,7 +20986,9 @@
       "viewport": null,
       "route": null,
       "records": [],
-      "triggers": []
+      "triggers": [
+        "ui-spec:agent"
+      ]
     },
     {
       "file": "src/app/ui/components/board/board.browser.spec.ts/finishing.html",
@@ -20203,7 +21241,9 @@
       "viewport": null,
       "route": null,
       "records": [],
-      "triggers": []
+      "triggers": [
+        "ui-spec:item"
+      ]
     },
     {
       "file": "src/app/ui/components/load-failure/load-failure.browser.spec.ts/messages.html",
@@ -20403,7 +21443,10 @@
       "viewport": null,
       "route": null,
       "records": [],
-      "triggers": []
+      "triggers": [
+        "ui-spec:agent",
+        "ui-spec:item"
+      ]
     },
     {
       "file": "src/app/ui/components/tag-link/tag-link.browser.spec.ts/list.html",
@@ -20414,7 +21457,9 @@
       "viewport": null,
       "route": null,
       "records": [],
-      "triggers": []
+      "triggers": [
+        "ui-spec:agent"
+      ]
     },
     {
       "file": "src/app/ui/components/terminal-screen/terminal-screen.browser.spec.ts/session.html",
@@ -20911,6 +21956,11 @@
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-none-phone.html",
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/workspaces-none-tablet.html"
     ],
+    "projects/:slug/work/detail/:id/agent": [
+      "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting-desktop.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting-phone.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting-tablet.html"
+    ],
     "projects/:slug/work/in-progress": [
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-data-desktop.html",
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/epic-boards-data-phone.html",
@@ -21016,6 +22066,56 @@
         "file": "@qits/angular/src/lib/sign-in/auth-callback.page.ts"
       },
       {
+        "route": "projects/:slug/work",
+        "interaction": "switch-work-tab",
+        "outcome": "acceptance",
+        "kind": "exit",
+        "to": "projects/:slug/work/acceptance",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/work.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work",
+        "interaction": "switch-work-tab",
+        "outcome": "archive",
+        "kind": "exit",
+        "to": "projects/:slug/work/archive",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/work.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work",
+        "interaction": "switch-work-tab",
+        "outcome": "inProgress",
+        "kind": "exit",
+        "to": "projects/:slug/work/in-progress",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/work.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work",
+        "interaction": "switch-work-tab",
+        "outcome": "refinement",
+        "kind": "exit",
+        "to": "projects/:slug/work/refinement",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/work.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work",
+        "interaction": "switch-work-tab",
+        "outcome": "schedule",
+        "kind": "exit",
+        "to": "projects/:slug/work/schedule",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/work.layout.ts"
+      },
+      {
         "route": "projects/:slug/work/create",
         "interaction": "cancel-work-create",
         "outcome": "toIdea",
@@ -21066,6 +22166,206 @@
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
       },
       {
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgent",
+        "kind": "exit",
+        "to": "projects/:slug/agents/:agentId",
+        "global": true,
+        "triggered": false,
+        "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgentChat",
+        "kind": "exit",
+        "to": "projects/:slug/agents/:agentId/chat",
+        "global": true,
+        "triggered": false,
+        "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgentFiles",
+        "kind": "exit",
+        "to": "projects/:slug/agents/:agentId/files",
+        "global": true,
+        "triggered": false,
+        "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgentTerminal",
+        "kind": "exit",
+        "to": "projects/:slug/agents/:agentId/terminal",
+        "global": true,
+        "triggered": false,
+        "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toItem",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": false,
+        "file": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts"
+      },
+      {
+        "route": "projects/:slug/work/schedule",
+        "interaction": "open-scheduled-item",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-closing-request",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/release-requests/:requestId",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/wrapper-closing/wrapper-closing.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "epic",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-board/epic-board.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "feature",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-board/epic-board.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "task",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-board/epic-board.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "epic",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-card/epic-card.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "feature",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-card/epic-card.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "task",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-card/epic-card.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-epic-list-item",
+        "outcome": "epic",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/epic-list-item/epic-list-item.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-feature-list-row",
+        "outcome": "feature",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/feature-list-row/feature-list-row.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-feature-list-row",
+        "outcome": "task",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/feature-list-row/feature-list-row.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-item-workspace",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id/agent",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/workspace-link/workspace-link.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-ticket-card",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/ticket-card/ticket-card.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-ticket-list-item",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/ticket-list-item/ticket-list-item.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-work-inspiration",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/ideas/work-inspiration/work-inspiration.ts"
+      },
+      {
         "route": null,
         "interaction": "open-work-ref",
         "outcome": "opened",
@@ -21074,6 +22374,36 @@
         "global": true,
         "triggered": true,
         "file": "src/app/core/work/work-briefs.store.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-work-ref-tag",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/work-ref/work-ref.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-work-ref-tag",
+        "outcome": "openFromPreview",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/work-ref/work-ref.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-workspace-agent",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id/agent",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/detail/work-workspaces/work-workspaces.ts"
       },
       {
         "route": null,
@@ -21113,6 +22443,177 @@
         "interaction": "session-guard",
         "outcome": "signedOut",
         "kind": "external",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/ideas/work-inspiration/work-inspiration.browser.spec.ts",
+        "test": "WorkInspiration (screenshots) > open-work-inspiration open: the “Inspired by” link opens the idea",
+        "route": null,
+        "interaction": "open-work-inspiration",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
+        "test": "EpicBoard (screenshots) > open-epic-board:epic: the link “Nested epic” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
+        "test": "EpicBoard (screenshots) > open-epic-board:epic: the link “contract-00000001-1” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
+        "test": "EpicBoard (screenshots) > open-epic-board:feature: the link “Shipped feature” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "feature",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-board/epic-board.browser.spec.ts",
+        "test": "EpicBoard (screenshots) > open-epic-board:task: the link “First shipped task” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-board",
+        "outcome": "task",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
+        "test": "EpicCard (screenshots) > open-epic-card:epic: the link “Nested epic” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
+        "test": "EpicCard (screenshots) > open-epic-card:epic: the link “contract-00000001-1” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
+        "test": "EpicCard (screenshots) > open-epic-card:feature: the link “Shipped feature” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "feature",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-card/epic-card.browser.spec.ts",
+        "test": "EpicCard (screenshots) > open-epic-card:task: the link “First shipped task” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-card",
+        "outcome": "task",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
+        "test": "EpicListItem (screenshots) > open-epic-list-item:epic: the link “Epic in flight” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-list-item",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
+        "test": "EpicListItem (screenshots) > open-epic-list-item:epic: the link “contract-00000001-1” opens its item’s page",
+        "route": null,
+        "interaction": "open-epic-list-item",
+        "outcome": "epic",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
+        "test": "EpicListItem (screenshots) > open-feature-list-row:feature: the link “Feature in flight” opens its item’s page",
+        "route": null,
+        "interaction": "open-feature-list-row",
+        "outcome": "feature",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/epic-list-item/epic-list-item.browser.spec.ts",
+        "test": "EpicListItem (screenshots) > open-feature-list-row:task: the link “Reported task” opens its item’s page",
+        "route": null,
+        "interaction": "open-feature-list-row",
+        "outcome": "task",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
+        "test": "TicketCard (screenshots) > open-item-workspace open: the Workspace bubble leads to the ticket’s agent",
+        "route": null,
+        "interaction": "open-item-workspace",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/ticket-card/ticket-card.browser.spec.ts",
+        "test": "TicketCard (screenshots) > open-ticket-card open: the title opens the ticket’s page",
+        "route": null,
+        "interaction": "open-ticket-card",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
+        "test": "TicketListItem (screenshots) > open-closing-request open: the closing line opens its wrapper release request",
+        "route": null,
+        "interaction": "open-closing-request",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/ticket-list-item/ticket-list-item.browser.spec.ts",
+        "test": "TicketListItem (screenshots) > open-ticket-list-item open: the title opens the ticket’s page",
+        "route": null,
+        "interaction": "open-ticket-list-item",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/work-ref/work-ref.browser.spec.ts",
+        "test": "WorkRef (screenshots) > open-work-ref-tag open: the tag opens the item’s page",
+        "route": null,
+        "interaction": "open-work-ref-tag",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/work/work-ref/work-ref.browser.spec.ts",
+        "test": "WorkRef (screenshots) > open-work-ref-tag openFromPreview: the id in the preview opens the item’s page",
+        "route": null,
+        "interaction": "open-work-ref-tag",
+        "outcome": "openFromPreview",
+        "kind": "exit",
         "freeze": null
       },
       {
@@ -21220,6 +22721,132 @@
         "route": "projects/:slug/work/create",
         "interaction": "open-inspiring-idea",
         "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+        "test": "WorkAgentLayout (screenshots) > follow-work-item-agent toAgent: the ACTIVE agent’s page, tab “”",
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgent",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+        "test": "WorkAgentLayout (screenshots) > follow-work-item-agent toAgentChat: the ACTIVE agent’s page, tab “/chat”",
+        "route": "projects/:slug/work/detail/:id/agent/:tab",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgentChat",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+        "test": "WorkAgentLayout (screenshots) > follow-work-item-agent toAgentFiles: the ACTIVE agent’s page, tab “/files”",
+        "route": "projects/:slug/work/detail/:id/agent/:tab",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgentFiles",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+        "test": "WorkAgentLayout (screenshots) > follow-work-item-agent toAgentTerminal: the ACTIVE agent’s page, tab “/terminal”",
+        "route": "projects/:slug/work/detail/:id/agent/:tab",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toAgentTerminal",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+        "test": "WorkAgentLayout (screenshots) > follow-work-item-agent toItem: an item without an agent leads to its page",
+        "route": "projects/:slug/work/detail/:id/agent/:tab",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toItem",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts",
+        "test": "WorkAgentLayout (screenshots) > waits for the item’s agents",
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toItem",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+        "test": "WorkItemPage (screenshots) > workspaces > open-workspace-agent open: a workspace leads to the item’s agent",
+        "route": "projects/:slug/work/detail/:id",
+        "interaction": "open-workspace-agent",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+        "test": "WorkItemPage (screenshots) > workspaces > open-workspace-agent open: a workspace leads to the item’s agent",
+        "route": "projects/:slug/work/detail/:id/agent",
+        "interaction": "follow-work-item-agent",
+        "outcome": "toItem",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.browser.spec.ts",
+        "test": "WorkSchedulePage (screenshots) > open-scheduled-item open: an item’s title opens its page",
+        "route": "projects/:slug/work/schedule",
+        "interaction": "open-scheduled-item",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+        "test": "WorkLayout (screenshots) > switch-work-tab acceptance: the Acceptance tab opens its page",
+        "route": "projects/:slug/work/archive",
+        "interaction": "switch-work-tab",
+        "outcome": "acceptance",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+        "test": "WorkLayout (screenshots) > switch-work-tab archive: the Archive tab opens its page",
+        "route": "projects/:slug/work/refinement",
+        "interaction": "switch-work-tab",
+        "outcome": "archive",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+        "test": "WorkLayout (screenshots) > switch-work-tab inProgress: the In Progress tab opens its page",
+        "route": "projects/:slug/work/archive",
+        "interaction": "switch-work-tab",
+        "outcome": "inProgress",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+        "test": "WorkLayout (screenshots) > switch-work-tab refinement: the Refinement tab opens its page",
+        "route": "projects/:slug/work/archive",
+        "interaction": "switch-work-tab",
+        "outcome": "refinement",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+        "test": "WorkLayout (screenshots) > switch-work-tab schedule: the Schedule tab opens its page",
+        "route": "projects/:slug/work/archive",
+        "interaction": "switch-work-tab",
+        "outcome": "schedule",
         "kind": "exit",
         "freeze": null
       },
