@@ -11,8 +11,11 @@ import {
   routeFreezes,
   routeOutcomeMarks,
   routeOutcomes,
+  routeStates,
   routeTree,
+  hasViewports,
   sharedOutcomes,
+  stateFreeze,
   type DeclaredOutcome,
   type FiredOutcome,
   type Freeze,
@@ -283,6 +286,123 @@ describe('routeFreezes and routeCalls', () => {
   it('has none for a route without states', () => {
     expect(routeFreezes(RECORDED, 'projects')).toEqual([]);
     expect(routeCalls(RECORDED, 'projects')).toEqual([]);
+  });
+});
+
+describe('routeStates and stateFreeze (qits-2047)', () => {
+  const ROUTE = 'projects/:slug/work';
+  const VIEWPORTS = ['PHONE', 'TABLET', 'DESKTOP'] as const;
+
+  /** A freeze on the work route; with `viewports`, one per width under one name. */
+  const freeze = (name: string, kind?: Freeze['kind'], viewport?: Freeze['viewport']): Freeze => ({
+    file: `work/${name}${viewport ? `-${viewport.toLowerCase()}` : ''}.html`,
+    name,
+    route: ROUTE,
+    records: [],
+    ...(kind === undefined ? {} : { kind }),
+    ...(viewport === undefined ? {} : { viewport }),
+  });
+  const shotAtEveryWidth = (name: string, kind: Freeze['kind']) =>
+    VIEWPORTS.map((viewport) => freeze(name, kind, viewport));
+
+  const manifestOf = (freezes: readonly Freeze[]): RoutesManifest => ({
+    routes: [{ path: ROUTE, fullPath: ROUTE }],
+    freezes,
+    byRoute: { [ROUTE]: freezes.map((f) => f.file) },
+  });
+
+  it('groups a route’s freezes by name, one state for the three widths of a shot', () => {
+    const manifest = manifestOf([
+      ...shotAtEveryWidth('loaded', 'DATA'),
+      ...shotAtEveryWidth('empty', 'NO_DATA'),
+    ]);
+    const states = routeStates(manifest, ROUTE);
+    expect(states.map((state) => [state.name, state.kind, state.freezes.length])).toEqual([
+      ['loaded', 'DATA', 3],
+      ['empty', 'NO_DATA', 3],
+    ]);
+    expect(states[0].freezes.map((f) => f.viewport)).toEqual(['PHONE', 'TABLET', 'DESKTOP']);
+    expect(hasViewports(manifest)).toBe(true);
+    // The tree counts states, not freezes.
+    expect(routeTree(manifest).find((row) => row.fullPath === ROUTE)?.states).toBe(2);
+  });
+
+  it('takes a state’s first kind among its freezes', () => {
+    const manifest = manifestOf([
+      freeze('mixed', null, 'PHONE'),
+      freeze('mixed', 'ERROR', 'TABLET'),
+    ]);
+    expect(routeStates(manifest, ROUTE).map((state) => state.kind)).toEqual(['ERROR']);
+  });
+
+  it('orders the states by kind, by name within a kind, the states without one last', () => {
+    const manifest = manifestOf([
+      freeze('a-unkinded'),
+      freeze('z-error', 'ERROR'),
+      freeze('b-pending', 'PENDING'),
+      freeze('y-data', 'DATA'),
+      freeze('a-error', 'ERROR'),
+      freeze('c-empty', 'NO_DATA'),
+      freeze('b-unkinded', null),
+      freeze('x-data', 'DATA'),
+    ]);
+    expect(routeStates(manifest, ROUTE).map((state) => state.name)).toEqual([
+      'x-data',
+      'y-data',
+      'c-empty',
+      'b-pending',
+      'a-error',
+      'z-error',
+      'a-unkinded',
+      'b-unkinded',
+    ]);
+  });
+
+  it('keeps the order by name for a bundle without kinds', () => {
+    expect(routeStates(RECORDED, REPOSITORIES).map((state) => [state.name, state.kind])).toEqual([
+      ['error', null],
+      ['loaded', null],
+    ]);
+    expect(hasViewports(RECORDED)).toBe(false);
+  });
+
+  it('draws the freeze at the viewport, else the one without, else DESKTOP’s, else the first', () => {
+    const [state] = routeStates(manifestOf(shotAtEveryWidth('loaded', 'DATA')), ROUTE);
+    expect(stateFreeze(state, 'PHONE').viewport).toBe('PHONE');
+    expect(stateFreeze(state, 'TABLET').viewport).toBe('TABLET');
+
+    const plain = freeze('two', 'DATA');
+    const [withPlain] = routeStates(manifestOf([freeze('two', 'DATA', 'PHONE'), plain]), ROUTE);
+    expect(stateFreeze(withPlain, 'TABLET')).toBe(plain);
+
+    const [desktopOnly] = routeStates(
+      manifestOf([freeze('three', 'DATA', 'PHONE'), freeze('three', 'DATA', 'DESKTOP')]),
+      ROUTE,
+    );
+    expect(stateFreeze(desktopOnly, 'TABLET').viewport).toBe('DESKTOP');
+
+    const [phoneOnly] = routeStates(manifestOf([freeze('four', 'DATA', 'PHONE')]), ROUTE);
+    expect(stateFreeze(phoneOnly, 'DESKTOP').viewport).toBe('PHONE');
+
+    const [legacy] = routeStates(RECORDED, REPOSITORIES);
+    expect(stateFreeze(legacy, 'DESKTOP').name).toBe('error');
+  });
+
+  it('reads an unknown kind or viewport as null, and keeps the bundle', () => {
+    const manifest = asManifest({
+      ...manifestOf([freeze('odd'), freeze('known', 'DATA', 'PHONE')]),
+      freezes: [
+        { ...freeze('odd'), kind: 'SOMETHING', viewport: 'WATCH' },
+        freeze('known', 'DATA', 'PHONE'),
+      ],
+    });
+    expect(manifest?.freezes.map((f) => [f.name, f.kind, f.viewport])).toEqual([
+      ['odd', null, null],
+      ['known', 'DATA', 'PHONE'],
+    ]);
+    // An absent field stays absent: an older bundle reads as it is.
+    expect(asManifest(RECORDED)?.freezes[0]).not.toHaveProperty('kind');
+    expect(asManifest(RECORDED)?.freezes[0]).not.toHaveProperty('viewport');
   });
 });
 

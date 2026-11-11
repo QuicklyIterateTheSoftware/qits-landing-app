@@ -22,6 +22,30 @@ export interface FreezeRecord {
   readonly operationId: string;
 }
 
+/**
+ * The state a shot says it shows (qits-2046; `FreezeKind` in `@qits/angular/screenshots`, written
+ * out here because that entry is the build plugin's and pulls in vite's types).
+ */
+export type FreezeKind = 'DATA' | 'NO_DATA' | 'PENDING' | 'ERROR';
+
+/** A preset width a shot was taken at (qits-2046; `FreezeViewport` in `@qits/angular/screenshots`). */
+export type FreezeViewport = 'PHONE' | 'TABLET' | 'DESKTOP';
+
+/** The kinds in the order the builder shows a route's states (qits-2047): data first. */
+export const FREEZE_KINDS: readonly FreezeKind[] = ['DATA', 'NO_DATA', 'PENDING', 'ERROR'];
+
+/** The preset widths, narrowest first, as the library shoots them. */
+export const FREEZE_VIEWPORTS: readonly FreezeViewport[] = ['PHONE', 'TABLET', 'DESKTOP'];
+
+/** The window each preset width was shot in, in CSS px (`viewportSpecs` of `@qits/angular`). */
+export const VIEWPORT_SIZES: Readonly<
+  Record<FreezeViewport, { readonly width: number; readonly height: number }>
+> = {
+  PHONE: { width: 390, height: 844 },
+  TABLET: { width: 1024, height: 768 },
+  DESKTOP: { width: 1440, height: 900 },
+};
+
 /** One frozen screenshot: its HTML file in the bundle, its name, its route and its calls. */
 export interface Freeze {
   /** The path of its HTML in the bundle. */
@@ -36,6 +60,17 @@ export interface Freeze {
    * closed menu's are serialized too). Absent in a bundle older than outcomes; read it as `[]`.
    */
   readonly triggers?: readonly string[];
+  /**
+   * The state the shot says it shows (qits-2046), null when it gave none or one this app does not
+   * know. Absent in a bundle older than the field.
+   */
+  readonly kind?: FreezeKind | null;
+  /**
+   * The preset width it was shot at (qits-2046), null at the test's own viewport or for a width this
+   * app does not know. Absent in a bundle older than the field. A route spec's shot is three
+   * freezes of one `name`, one per width.
+   */
+  readonly viewport?: FreezeViewport | null;
 }
 
 /**
@@ -172,6 +207,33 @@ const isFired = (value: unknown): value is FiredOutcome =>
   isKind(value['kind']) &&
   isStringOrNull(value['freeze']);
 
+/** `value` when it is one of `values`, else null: an unknown kind or width never fails the bundle. */
+const known = <T>(values: readonly T[], value: unknown): T | null =>
+  values.includes(value as T) ? (value as T) : null;
+
+/**
+ * Whether a freeze's `kind` and `viewport` (qits-2046) are absent, null or known: what
+ * {@link asManifest} keeps as it is.
+ */
+function hasKnownShape(freeze: Freeze): boolean {
+  const { kind, viewport } = freeze as { kind?: unknown; viewport?: unknown };
+  return (
+    (kind === undefined || known(FREEZE_KINDS, kind) === kind) &&
+    (viewport === undefined || known(FREEZE_VIEWPORTS, viewport) === viewport)
+  );
+}
+
+/** `freeze` with an unknown `kind` or `viewport` read as null; an absent one stays absent. */
+function withKnownShape(freeze: Freeze): Freeze {
+  if (hasKnownShape(freeze)) return freeze;
+  const { kind, viewport } = freeze as { kind?: unknown; viewport?: unknown };
+  return {
+    ...freeze,
+    ...(kind === undefined ? {} : { kind: known(FREEZE_KINDS, kind) }),
+    ...(viewport === undefined ? {} : { viewport: known(FREEZE_VIEWPORTS, viewport) }),
+  };
+}
+
 /** The `outcomes` section as read (qits-2006): absent, `invalid`, or with its shape. */
 function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined {
   if (value === undefined) return undefined;
@@ -189,13 +251,18 @@ function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined 
  * The outcomes (qits-2006) never fail the manifest: a freeze without `triggers` is an older bundle's
  * and valid, and a malformed `outcomes` section or `triggers` list reads as `outcomes: 'invalid'`
  * (the malformed `triggers` dropped), so the routes still show.
+ *
+ * Neither do a freeze's `kind` and `viewport` (qits-2046): absent is an older bundle's, and a value
+ * this app does not know reads as null.
  */
 export function asManifest(value: unknown): RoutesManifest | null {
   if (!isObject(value)) return null;
   const { routes, freezes: listed, byRoute } = value;
   if (!Array.isArray(routes) || !routes.every(isRoute)) return null;
   if (!Array.isArray(listed) || !listed.every(isFreeze)) return null;
-  let freezes: readonly Freeze[] = listed;
+  let freezes: readonly Freeze[] = listed.every(hasKnownShape)
+    ? listed
+    : listed.map(withKnownShape);
   if (
     !isObject(byRoute) ||
     !Object.values(byRoute).every((files) => Array.isArray(files) && files.every(isString))
@@ -232,7 +299,10 @@ export interface TreeRow {
   readonly kind: TreeRowKind;
   /** Where a redirect goes. */
   readonly redirectTo?: string;
-  /** How many freezes the route has (`byRoute[fullPath].length`, 0 when absent). */
+  /**
+   * How many states the route has: its freezes by name ({@link routeStates}), so a shot at three
+   * widths counts once; 0 when `byRoute` has none.
+   */
   readonly states: number;
 }
 
@@ -274,9 +344,11 @@ export function routeTree(manifest: RoutesManifest): readonly TreeRow[] {
   };
   for (const route of manifest.routes) place(route);
 
+  const byFile = freezesByFile(manifest);
   const rows: TreeRow[] = [];
   const walk = (node: Node, depth: number) => {
-    const states = manifest.byRoute[node.fullPath]?.length ?? 0;
+    const states = new Set(freezesOf(manifest, byFile, node.fullPath).map((freeze) => freeze.name))
+      .size;
     const shown = node.routes.find((r) => !r.layout)?.route ?? node.routes[0]?.route;
     if (!shown)
       rows.push({ segment: node.segment, fullPath: node.fullPath, depth, kind: 'segment', states });
@@ -312,24 +384,86 @@ export function initialRoute(rows: readonly TreeRow[]): string | null {
   return (routes.find((row) => row.states > 0) ?? routes[0])?.fullPath ?? null;
 }
 
+const freezesByFile = (manifest: RoutesManifest): ReadonlyMap<string, Freeze> =>
+  new Map(manifest.freezes.map((freeze) => [freeze.file, freeze]));
+
+/** The freezes `byRoute` names for `fullPath`, in its order; see {@link routeFreezes}. */
+function freezesOf(
+  manifest: RoutesManifest,
+  byFile: ReadonlyMap<string, Freeze>,
+  fullPath: string,
+): Freeze[] {
+  return (manifest.byRoute[fullPath] ?? []).map(
+    (file): Freeze =>
+      byFile.get(file) ?? {
+        file,
+        name: (file.split('/').pop() ?? file).replace(/\.html$/, ''),
+        route: fullPath,
+        records: [],
+      },
+  );
+}
+
 /**
  * The freezes of the route at `fullPath`, sorted by name. A file `byRoute` names that the freeze
  * list does not is shown by its file name, with no calls.
  */
 export function routeFreezes(manifest: RoutesManifest, fullPath: string): readonly Freeze[] {
-  const byFile = new Map(manifest.freezes.map((freeze) => [freeze.file, freeze]));
-  return (manifest.byRoute[fullPath] ?? [])
-    .map(
-      (file): Freeze =>
-        byFile.get(file) ?? {
-          file,
-          name: (file.split('/').pop() ?? file).replace(/\.html$/, ''),
-          route: fullPath,
-          records: [],
-        },
-    )
-    .sort((a, b) => a.name.localeCompare(b.name));
+  return freezesOf(manifest, freezesByFile(manifest), fullPath).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 }
+
+/**
+ * One state of a route (qits-2047): its freezes sharing one `name`, one per width a route spec
+ * shot it at (qits-2046), or the one freeze of a shot at the test's own viewport.
+ */
+export interface FreezeState {
+  readonly name: string;
+  /** The first kind its freezes give; null when none gives one. */
+  readonly kind: FreezeKind | null;
+  /** Its freezes, in the route's order (`byRoute`'s). */
+  readonly freezes: readonly Freeze[];
+}
+
+/** Where a kind sorts: {@link FREEZE_KINDS}' order, a state without one last. */
+const kindRank = (kind: FreezeKind | null) =>
+  kind === null ? FREEZE_KINDS.length : FREEZE_KINDS.indexOf(kind);
+
+/**
+ * The states of the route at `fullPath` (qits-2047): its freezes ({@link routeFreezes}) grouped by
+ * name, sorted by kind (DATA, NO_DATA, PENDING, ERROR, then the states without one) and by name
+ * within a kind. A bundle without kinds keeps the order by name.
+ */
+export function routeStates(manifest: RoutesManifest, fullPath: string): readonly FreezeState[] {
+  const byName = new Map<string, Freeze[]>();
+  for (const freeze of routeFreezes(manifest, fullPath)) {
+    const group = byName.get(freeze.name) ?? [];
+    group.push(freeze);
+    byName.set(freeze.name, group);
+  }
+  return [...byName.entries()]
+    .map(([name, freezes]): FreezeState => ({
+      name,
+      kind: freezes.find((freeze) => freeze.kind)?.kind ?? null,
+      freezes,
+    }))
+    .sort((a, b) => kindRank(a.kind) - kindRank(b.kind) || a.name.localeCompare(b.name));
+}
+
+/**
+ * The freeze `state` draws at `viewport` (qits-2047): the one shot at that width, else the one shot
+ * at the test's own viewport, else the DESKTOP one, else its first.
+ */
+export function stateFreeze(state: FreezeState, viewport: FreezeViewport): Freeze {
+  const at = (width: FreezeViewport | null) =>
+    state.freezes.find((freeze) => (freeze.viewport ?? null) === width);
+  return at(viewport) ?? at(null) ?? at('DESKTOP') ?? state.freezes[0];
+}
+
+/** Whether any freeze of the bundle was shot at a preset width (qits-2047). */
+export const hasViewports = (manifest: RoutesManifest): boolean =>
+  manifest.freezes.some((freeze) => !!freeze.viewport);
 
 /**
  * Every call the route's freezes answered, once each, sorted by provider, operationId and state.

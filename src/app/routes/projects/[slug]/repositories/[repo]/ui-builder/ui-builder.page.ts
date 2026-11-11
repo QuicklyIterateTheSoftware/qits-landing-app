@@ -12,6 +12,7 @@ import {
   PLATFORM_ID,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
@@ -25,18 +26,24 @@ import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
+  FREEZE_VIEWPORTS,
+  hasViewports,
   initialRoute,
   inOutcomeScope,
   matchRoute,
   outcomeLeads,
   outcomeProgress,
   routeCalls,
-  routeFreezes,
   routeOutcomeMarks,
   routeOutcomes,
+  routeStates,
   routeTree,
   sharedOutcomes,
+  stateFreeze,
+  VIEWPORT_SIZES,
   type Freeze,
+  type FreezeKind,
+  type FreezeViewport,
   type FreezeRecord,
   type JoinedOutcome,
   type OutcomeMark,
@@ -44,7 +51,7 @@ import {
   type TreeRow,
 } from '$core/ui-builder/routes-manifest';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
-import { Chip } from '$ui/components/chip/chip';
+import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** Which providers' calls the builder shows: every one, or those of one component. */
@@ -67,6 +74,30 @@ const HIGHLIGHT_CSS = `[${HIGHLIGHT}] { outline: 3px solid oklch(57.66% 0.21 28.
 
 /** `value` escaped for a double-quoted CSS attribute value (qits-2006). */
 const quoted = (value: string) => value.replace(/["\\]/g, '\\$&').replace(/\n/g, '\\a ');
+
+/** A state's kind on its tab (qits-2047): its words and its chip's tone. */
+const KIND_LABELS: Readonly<
+  Record<FreezeKind, { readonly label: string; readonly tone: ChipTone }>
+> = {
+  DATA: { label: 'data', tone: 'ok' },
+  NO_DATA: { label: 'no data', tone: 'neutral' },
+  PENDING: { label: 'pending', tone: 'waiting' },
+  ERROR: { label: 'error', tone: 'failed' },
+};
+
+/** The viewport switch's buttons (qits-2047), narrowest first; the URL's `viewport` is the id. */
+const VIEWPORT_CHOICES: readonly {
+  readonly id: FreezeViewport;
+  readonly query: string;
+  readonly label: string;
+}[] = FREEZE_VIEWPORTS.map((id) => ({
+  id,
+  query: id.toLowerCase(),
+  label: `${id.charAt(0)}${id.slice(1).toLowerCase()}`,
+}));
+
+/** The width the frame's border adds to its box (1px each side), kept out of the frozen width. */
+const FRAME_BORDER = 2;
 
 /** One application's entities in the Entities tab, or why it has none to show. */
 interface EntityGroup {
@@ -91,13 +122,25 @@ interface EntityGroup {
  *   first route with states; choosing another route goes back to its first state. A route that
  *   declares page outcomes carries a mark before its count (qits-2045, `routeOutcomeMarks`): how
  *   many, toned as the gap chips when some are gaps, its label saying how many of each.
- * - States (middle): the route's freezes by name, as tabs that wrap. The selected one is read on
- *   demand and drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with `allow-scripts`
- *   (see `preview`). A link clicked inside it selects the route it leads to (qits-1949, see
- *   `holdLinks`); the frame itself never navigates.
- * - Selection: the URL's query, `route` (the route's full path) and `state` (the freeze's name),
- *   so Back walks back through tree, tab and link clicks. A `route` that is not a route of the tree
- *   opens the first route with states, a `state` the route lacks its first state.
+ * - States (middle): the route's states (`routeStates`: its freezes grouped by name, qits-2047), as
+ *   tabs that wrap, DATA first, then NO_DATA, PENDING, ERROR and the states without a kind, by name
+ *   within each; a state's kind is a chip on its tab. The selected one is read on demand and drawn
+ *   in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with `allow-scripts` (see `preview`).
+ *   A link clicked inside it selects the route it leads to (qits-1949, see `holdLinks`); the frame
+ *   itself never navigates.
+ * - Viewports (qits-2047): when any freeze of the bundle was shot at a preset width (qits-2046), a
+ *   Phone / Tablet / Desktop switch above the frame picks which of the state's freezes is drawn
+ *   (`stateFreeze`: that width's, else the one at the test's own viewport, else DESKTOP's, else the
+ *   first). A freeze with a width is drawn in a frame of that window's size, scaled down with a CSS
+ *   transform to the column's width when it is wider (`frameScale`, measured by a
+ *   `ResizeObserver`), its box as tall as the scaled frame. The highlight and the link clicks live in
+ *   the frame's own document, so the scale moves them with it. A freeze without one keeps the
+ *   full-width, 32rem frame.
+ * - Selection: the URL's query, `route` (the route's full path), `state` (the state's name) and
+ *   `viewport` (`phone`, `tablet`, `desktop`), so Back walks back through tree, tab, switch and link
+ *   clicks. A `route` that is not a route of the tree opens the first route with states; a `state`
+ *   the route lacks its first DATA state, or its first state without one. Choosing a route clears
+ *   `state` and keeps `viewport`, which is DESKTOP when absent or unknown.
  * - Calls (right): `routeCalls`, the union of the freezes' calls, filtered to the scope.
  * - Scope (owner rule in qits-1951): `<project slug>-landing-app` covers every service; any other
  *   frontend only its own component, by the `component` its repository declares (the project's
@@ -411,9 +454,9 @@ interface EntityGroup {
                 <section aria-label="Preview" class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
                   @if (selectedPath(); as path) {
                     <h2 class="m-0 mb-2 font-mono text-base">/{{ path }}</h2>
-                    @if (freezes().length) {
+                    @if (states().length) {
                       <div role="tablist" aria-label="States" class="mb-2 flex flex-wrap gap-1">
-                        @for (freeze of freezes(); track freeze.file; let i = $index) {
+                        @for (item of states(); track item.name; let i = $index) {
                           <button
                             type="button"
                             role="tab"
@@ -424,41 +467,99 @@ interface EntityGroup {
                                 : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
                             "
                             [attr.aria-selected]="i === stateIndex()"
-                            (click)="pickState(freeze.name)"
+                            (click)="pickState(item.name)"
                           >
-                            {{ freeze.name }}
+                            {{ item.name }}
+                            @if (item.kind; as kind) {
+                              <ui-chip
+                                class="kind ml-1"
+                                [label]="kindLabels[kind].label"
+                                [tone]="kindLabels[kind].tone"
+                              />
+                            }
                           </button>
                         }
                       </div>
+                      @if (viewports()) {
+                        <div
+                          role="group"
+                          aria-label="Viewport"
+                          class="viewports mb-2 flex flex-wrap gap-1"
+                        >
+                          @for (choice of viewportChoices; track choice.id) {
+                            <button
+                              type="button"
+                              class="viewport cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                              [class]="
+                                choice.id === viewport()
+                                  ? 'bg-charcoal-brown-800 text-white'
+                                  : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
+                              "
+                              [attr.aria-pressed]="choice.id === viewport()"
+                              (click)="pickViewport(choice.query)"
+                            >
+                              {{ choice.label }}
+                            </button>
+                          }
+                        </div>
+                      }
                       @if (linkNotice(); as notice) {
                         <p class="link-notice m-0 mb-2 truncate text-xs text-charcoal-brown-600">
                           {{ notice }}
                         </p>
                       }
-                      @if (preview(); as html) {
-                        <!--
-                          sandbox without allow-scripts, always: the frozen page is drawn on this
-                          page's own origin. allow-same-origin alone lets this page cancel the
-                          frame's link clicks; nothing in the frame can run.
-                        -->
-                        <iframe
-                          class="block h-[32rem] w-full rounded-md border border-charcoal-brown-200 bg-white"
-                          sandbox="allow-same-origin"
-                          [srcdoc]="html"
-                          [title]="'Frozen state ' + (freeze()?.name ?? '')"
-                          (load)="frameLoaded($event)"
-                        ></iframe>
-                      } @else {
-                        <div
-                          class="frame-placeholder flex h-[32rem] items-center justify-center rounded-md border border-charcoal-brown-200 bg-white text-sm text-charcoal-brown-600"
-                        >
-                          {{
-                            freezeFailed()
-                              ? 'Could not read this frozen state.'
-                              : 'Reading the frozen state…'
-                          }}
-                        </div>
-                      }
+                      <div #frameBox class="frame-box">
+                        @if (preview(); as html) {
+                          @if (frameSize(); as size) {
+                            <!-- The window the freeze was shot in, scaled to the column (qits-2047). -->
+                            <div
+                              class="frame-scaler overflow-hidden"
+                              [style.height.px]="(size.height + frameBorder) * frameScale()"
+                            >
+                              <!--
+                                sandbox without allow-scripts, always: the frozen page is drawn on
+                                this page's own origin. allow-same-origin alone lets this page cancel
+                                the frame's link clicks; nothing in the frame can run.
+                              -->
+                              <iframe
+                                class="block origin-top-left box-content rounded-md border border-charcoal-brown-200 bg-white"
+                                sandbox="allow-same-origin"
+                                [style.width.px]="size.width"
+                                [style.height.px]="size.height"
+                                [style.transform]="
+                                  frameScale() < 1 ? 'scale(' + frameScale() + ')' : null
+                                "
+                                [srcdoc]="html"
+                                [title]="'Frozen state ' + (freeze()?.name ?? '')"
+                                (load)="frameLoaded($event)"
+                              ></iframe>
+                            </div>
+                          } @else {
+                            <!--
+                              sandbox without allow-scripts, always: the frozen page is drawn on this
+                              page's own origin. allow-same-origin alone lets this page cancel the
+                              frame's link clicks; nothing in the frame can run.
+                            -->
+                            <iframe
+                              class="block h-[32rem] w-full rounded-md border border-charcoal-brown-200 bg-white"
+                              sandbox="allow-same-origin"
+                              [srcdoc]="html"
+                              [title]="'Frozen state ' + (freeze()?.name ?? '')"
+                              (load)="frameLoaded($event)"
+                            ></iframe>
+                          }
+                        } @else {
+                          <div
+                            class="frame-placeholder flex h-[32rem] items-center justify-center rounded-md border border-charcoal-brown-200 bg-white text-sm text-charcoal-brown-600"
+                          >
+                            {{
+                              freezeFailed()
+                                ? 'Could not read this frozen state.'
+                                : 'Reading the frozen state…'
+                            }}
+                          </div>
+                        }
+                      </div>
                     } @else {
                       <p class="no-states m-0 text-sm text-charcoal-brown-600">
                         No screenshot test for this route, so nothing is frozen.
@@ -753,12 +854,19 @@ export class UiBuilderPage {
     { initialValue: '' },
   );
 
-  /** The URL's `route` and `state`: what is selected, as asked (see `selectedPath`, `freeze`). */
+  /**
+   * The URL's `route`, `state` and `viewport`: what is selected, as asked (see `selectedPath`,
+   * `stateIndex`, `viewport`).
+   */
   private readonly query = toSignal(
     this.route.queryParamMap.pipe(
-      map((params) => ({ route: params.get('route'), state: params.get('state') })),
+      map((params) => ({
+        route: params.get('route'),
+        state: params.get('state'),
+        viewport: params.get('viewport'),
+      })),
     ),
-    { initialValue: { route: null, state: null } },
+    { initialValue: { route: null, state: null, viewport: null } },
   );
 
   protected readonly bundle = computed(() => this.store.bundles()[this.repo()]);
@@ -822,21 +930,71 @@ export class UiBuilderPage {
       : initialRoute(rows);
   });
 
-  protected readonly freezes = computed(() => {
+  /** The selected route's states (`routeStates`, qits-2047): its freezes by name, DATA first. */
+  protected readonly states = computed(() => {
     const bundle = this.loaded();
     const path = this.selectedPath();
-    return bundle && path !== null ? routeFreezes(bundle.manifest, path) : [];
+    return bundle && path !== null ? routeStates(bundle.manifest, path) : [];
   });
 
-  /** The index of the URL's `state` among the route's freezes; 0 (the first) when it has none. */
-  protected readonly stateIndex = computed(() =>
-    Math.max(
+  /**
+   * The index of the URL's `state` among the route's states; when it names none, the first DATA
+   * state's, else 0 (the first).
+   */
+  protected readonly stateIndex = computed(() => {
+    const states = this.states();
+    const named = states.findIndex((state) => state.name === this.query().state);
+    if (named >= 0) return named;
+    return Math.max(
       0,
-      this.freezes().findIndex((freeze) => freeze.name === this.query().state),
-    ),
+      states.findIndex((state) => state.kind === 'DATA'),
+    );
+  });
+
+  protected readonly kindLabels = KIND_LABELS;
+  protected readonly viewportChoices = VIEWPORT_CHOICES;
+  protected readonly frameBorder = FRAME_BORDER;
+
+  /** Whether the viewport switch shows: some freeze of the bundle has a preset width (qits-2047). */
+  protected readonly viewports = computed(() => {
+    const bundle = this.loaded();
+    return !!bundle && hasViewports(bundle.manifest);
+  });
+
+  /** The URL's `viewport` (qits-2047); DESKTOP when absent or unknown. */
+  protected readonly viewport = computed(
+    (): FreezeViewport =>
+      VIEWPORT_CHOICES.find((choice) => choice.query === this.query().viewport)?.id ?? 'DESKTOP',
   );
 
-  protected readonly freeze = computed(() => this.freezes()[this.stateIndex()] ?? null);
+  /** The freeze drawn: the selected state's at the chosen viewport (`stateFreeze`, qits-2047). */
+  protected readonly freeze = computed((): Freeze | null => {
+    const state = this.states()[this.stateIndex()];
+    return state ? stateFreeze(state, this.viewport()) : null;
+  });
+
+  /** The window the drawn freeze was shot in (qits-2047); null for one at the test's own viewport. */
+  protected readonly frameSize = computed(() => {
+    const viewport = this.freeze()?.viewport;
+    return viewport ? VIEWPORT_SIZES[viewport] : null;
+  });
+
+  /** The frame's box, measured for {@link frameScale} (qits-2047). */
+  private readonly frameBox = viewChild<ElementRef<HTMLElement>>('frameBox');
+
+  /** The frame box's width in px, kept current by a `ResizeObserver`; 0 until measured. */
+  private readonly boxWidth = signal(0);
+
+  /**
+   * How far the sized frame is scaled down to fit the column (qits-2047): 1 when it fits or the box
+   * is not measured (jsdom has no `ResizeObserver`), never more than 1.
+   */
+  protected readonly frameScale = computed(() => {
+    const size = this.frameSize();
+    const box = this.boxWidth();
+    if (!size || box <= 0) return 1;
+    return Math.min(1, box / (size.width + FRAME_BORDER));
+  });
 
   /** Why the last link clicked in the frame selected nothing; null after any selection. */
   protected readonly linkNotice = signal<string | null>(null);
@@ -1156,6 +1314,14 @@ export class UiBuilderPage {
       const sites = this.sitesInScope();
       if (browser) untracked(() => sites.forEach((site) => this.entityMaps.readMap(site)));
     });
+    effect((onCleanup) => {
+      // Absent in jsdom (the plain specs); there the frame is drawn unscaled.
+      const box = this.frameBox()?.nativeElement;
+      if (!box || typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(() => this.boxWidth.set(box.clientWidth));
+      observer.observe(box);
+      onCleanup(() => observer.disconnect());
+    });
     const destroy = inject(DestroyRef);
     this.store.follow(() => this.repo() || undefined, destroy);
     this.entityMaps.follow(() => this.repo() || undefined, destroy);
@@ -1163,8 +1329,9 @@ export class UiBuilderPage {
   }
 
   /**
-   * Selects the route at `fullPath` on its first state, as a new entry in the history. It clears
-   * the highlighted outcome (qits-2006).
+   * Selects the route at `fullPath` on its first state (its first DATA state when it has one), as a
+   * new entry in the history; the viewport stays (qits-2047). It clears the highlighted outcome
+   * (qits-2006).
    */
   protected select(fullPath: string): Promise<boolean> {
     this.linkNotice.set(null);
@@ -1179,7 +1346,17 @@ export class UiBuilderPage {
     void this.navigate({ state: name });
   }
 
-  private navigate(queryParams: { route?: string; state: string | null }): Promise<boolean> {
+  /** Draws the selected state at the viewport `query` names (`phone`, `tablet`, `desktop`). */
+  protected pickViewport(query: string): void {
+    this.linkNotice.set(null);
+    void this.navigate({ viewport: query });
+  }
+
+  private navigate(queryParams: {
+    route?: string;
+    state?: string | null;
+    viewport?: string;
+  }): Promise<boolean> {
     return this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
@@ -1210,18 +1387,26 @@ export class UiBuilderPage {
   }
 
   /**
-   * Shows `freeze` (qits-2006): its state on the selected route, or its route on that state, as a
-   * new entry in the history. The highlight stays: this is how it reaches the freeze showing it.
+   * Shows `freeze` (qits-2006): its state (by name) on the selected route, or its route on that
+   * state, as a new entry in the history. The highlight stays: this is how it reaches the freeze
+   * showing it. The viewport stays too, unless `atItsViewport` asks for the freeze's own width
+   * (qits-2047): a trigger may show at one width only.
    */
-  private showFreeze(freeze: Freeze): void {
+  private showFreeze(freeze: Freeze, atItsViewport = false): void {
     this.linkNotice.set(null);
     const route = freeze.route ?? '';
+    const viewport =
+      atItsViewport && freeze.viewport && freeze.viewport !== this.viewport()
+        ? { viewport: freeze.viewport.toLowerCase() }
+        : {};
     if (route === this.selectedPath()) {
-      void this.navigate({ state: freeze.name });
+      void this.navigate({ state: freeze.name, ...viewport });
       return;
     }
     this.unfold(route);
-    void this.navigate({ route, state: freeze.name }).then(() => this.revealSelected());
+    void this.navigate({ route, state: freeze.name, ...viewport }).then(() =>
+      this.revealSelected(),
+    );
   }
 
   /** Opens the state a stay's result was shot in, from its "Show result" (qits-2006). */
@@ -1242,8 +1427,9 @@ export class UiBuilderPage {
   /**
    * Highlights `outcome`'s trigger in the frame, or clears the highlight when it is the highlighted
    * one already (qits-2006). When the shown state is not one of the freezes that show its trigger,
-   * the first of them is shown first, and the frame's load draws the highlight; with none, nothing
-   * switches (the row's gap chip says why).
+   * the first of them is shown first (the one at the chosen viewport when there is one, else at its
+   * own, qits-2047), and the frame's load draws the highlight; with none, nothing switches (the
+   * row's gap chip says why).
    */
   protected toggleOutcome(outcome: JoinedOutcome): void {
     this.linkNotice.set(null);
@@ -1253,7 +1439,9 @@ export class UiBuilderPage {
     const shown = this.freeze()?.file;
     const triggers = outcome.triggerFreezes;
     if (triggers.length && !triggers.some((freeze) => freeze.file === shown)) {
-      this.showFreeze(triggers[0]);
+      const viewport = this.viewport();
+      const here = triggers.find((freeze) => (freeze.viewport ?? viewport) === viewport);
+      this.showFreeze(here ?? triggers[0], true);
     }
   }
 

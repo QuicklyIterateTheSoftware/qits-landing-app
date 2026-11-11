@@ -14,6 +14,7 @@ import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type {
   DeclaredOutcome,
   FiredOutcome,
+  Freeze,
   RoutesManifest,
 } from '$core/ui-builder/routes-manifest';
 import {
@@ -587,6 +588,181 @@ describe('UiBuilderPage', () => {
         expect(element.querySelector('.no-map, .map-error')?.textContent?.trim()).toBe(expected);
         http.verify();
       }
+    });
+  });
+
+  describe('kinds and viewports (qits-2047)', () => {
+    /** The repositories page's spec directory, where its freezes sit. */
+    const SHOTS = ERROR_FREEZE.replace(/\/error\.html$/, '');
+    const WIDTHS = ['PHONE', 'TABLET', 'DESKTOP'] as const;
+    const fileOf = (name: string, viewport: string) =>
+      `${SHOTS}/${name}-${viewport.toLowerCase()}.html`;
+
+    /**
+     * The recorded manifest, the repositories route's freezes replaced by `states`, each shot at
+     * the three preset widths (qits-2046) as a route spec shoots it.
+     */
+    function shotAtWidths(states: readonly [string, Freeze['kind']][]): RoutesManifest {
+      const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+      const freezes = states.flatMap(([name, kind]) =>
+        WIDTHS.map((viewport): Freeze => ({
+          file: fileOf(name, viewport),
+          name,
+          route: REPOSITORIES,
+          records: [],
+          kind,
+          viewport,
+        })),
+      );
+      return {
+        ...recorded,
+        freezes: [...recorded.freezes.filter((f) => f.route !== REPOSITORIES), ...freezes],
+        byRoute: { [REPOSITORIES]: freezes.map((f) => f.file) },
+      };
+    }
+
+    const STATES: [string, Freeze['kind']][] = [
+      ['error', 'ERROR'],
+      ['loading', 'PENDING'],
+      ['loaded', 'DATA'],
+    ];
+
+    const renderWidths = (query = '', states = STATES) =>
+      render('qits-landing-app', undefined, undefined, query, shotAtWidths(states));
+
+    const selectedTab = (element: HTMLElement) =>
+      element.querySelector('[aria-label="States"] [aria-selected="true"]');
+
+    const pressed = (element: HTMLElement) =>
+      element.querySelector('[aria-label="Viewport"] [aria-pressed="true"]')?.textContent?.trim();
+
+    const viewportButton = (element: HTMLElement, label: string) =>
+      [...element.querySelectorAll<HTMLButtonElement>('[aria-label="Viewport"] button')].find(
+        (b) => b.textContent?.trim() === label,
+      )!;
+
+    it('opens on the first DATA state, one tab per state with its kind, at the desktop width', async () => {
+      const { fixture, element } = await renderWidths();
+      const tabs = [...element.querySelectorAll('[aria-label="States"] [role="tab"]')];
+      expect(tabs.map((tab) => tab.textContent?.replace(/\s+/g, ' ').trim())).toEqual([
+        'loaded data',
+        'loading pending',
+        'error error',
+      ]);
+      expect(tabs.map((tab) => tab.querySelector('ui-chip.kind')?.className)).toEqual([
+        expect.stringContaining('bg-mint-leaf-100'),
+        expect.stringContaining('bg-sunflower-gold-100'),
+        expect.stringContaining('bg-cinnabar-100'),
+      ]);
+      expect(selectedTab(element)?.firstChild?.textContent?.trim()).toBe('loaded');
+      expect(pressed(element)).toBe('Desktop');
+      // The tree counts the states, not their three freezes each.
+      expect(words(element.querySelectorAll('nav .route-row')[3])).toBe('repositories 3');
+
+      await answerFreeze(fileOf('loaded', 'DESKTOP'), fixture);
+      const frame = element.querySelector<HTMLIFrameElement>('iframe')!;
+      expect(frame.style.width).toBe('1440px');
+      expect(frame.style.height).toBe('900px');
+      expect(frame.style.transform).toBe('');
+      expect(frame.getAttribute('sandbox')).toBe('allow-same-origin');
+      expect(frame.classList.contains('h-[32rem]')).toBe(false);
+    });
+
+    it('opens the state the URL names over the first DATA state', async () => {
+      const { fixture, element } = await renderWidths('?state=error');
+      expect(selectedTab(element)?.firstChild?.textContent?.trim()).toBe('error');
+      await answerFreeze(fileOf('error', 'DESKTOP'), fixture);
+    });
+
+    it('opens on the first state when none is DATA', async () => {
+      const { fixture, element } = await renderWidths('', [
+        ['error', 'ERROR'],
+        ['empty', 'NO_DATA'],
+      ]);
+      expect(selectedTab(element)?.firstChild?.textContent?.trim()).toBe('empty');
+      await answerFreeze(fileOf('empty', 'DESKTOP'), fixture);
+    });
+
+    it('draws the state’s freeze at the viewport the switch picks, its frame that wide', async () => {
+      const { fixture, element } = await renderWidths();
+      await answerFreeze(fileOf('loaded', 'DESKTOP'), fixture);
+      viewportButton(element, 'Phone').click();
+      await navigated(fixture);
+      expect(query()).toEqual({ viewport: 'phone' });
+      http.expectOne(fileUrl(fileOf('loaded', 'PHONE'))).flush('<p>phone</p>');
+      await settle();
+      fixture.detectChanges();
+      expect(pressed(element)).toBe('Phone');
+      const frame = element.querySelector<HTMLIFrameElement>('iframe')!;
+      expect(frame.style.width).toBe('390px');
+      expect(frame.style.height).toBe('844px');
+
+      // A state picked keeps the viewport.
+      element.querySelectorAll<HTMLButtonElement>('[aria-label="States"] [role="tab"]')[2].click();
+      await navigated(fixture);
+      expect(query()).toEqual({ viewport: 'phone', state: 'error' });
+      http.expectOne(fileUrl(fileOf('error', 'PHONE'))).flush('<p>error</p>');
+      await settle();
+    });
+
+    it('keeps the URL’s viewport when the tree picks another route', async () => {
+      const { fixture, element } = await renderWidths('?viewport=tablet&state=error');
+      expect(pressed(element)).toBe('Tablet');
+      await answerFreeze(fileOf('error', 'TABLET'), fixture);
+      [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+        .find((row) => row.textContent?.replace(/\s+/g, '') === 'projects0')!
+        .querySelector<HTMLButtonElement>('button.route')!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ route: 'projects', viewport: 'tablet' });
+    });
+
+    it('scales a frame wider than its column down to fit, its box as tall as the scaled frame', async () => {
+      let resized: (() => void) | undefined;
+      class FakeResizeObserver {
+        constructor(private readonly callback: () => void) {}
+        observe() {
+          resized = this.callback;
+        }
+        disconnect() {
+          resized = undefined;
+        }
+      }
+      vi.stubGlobal('ResizeObserver', FakeResizeObserver);
+      try {
+        const { fixture, element } = await renderWidths();
+        await answerFreeze(fileOf('loaded', 'DESKTOP'), fixture);
+        // 1440px and its 2px border in a 721px column: half its size.
+        const box = element.querySelector<HTMLElement>('.frame-box')!;
+        Object.defineProperty(box, 'clientWidth', { configurable: true, value: 721 });
+        resized?.();
+        fixture.detectChanges();
+        const frame = element.querySelector<HTMLIFrameElement>('iframe')!;
+        expect(frame.style.width).toBe('1440px');
+        expect(frame.style.transform).toBe('scale(0.5)');
+        expect(element.querySelector<HTMLElement>('.frame-scaler')!.style.height).toBe('451px');
+
+        // A column wider than the frame draws it at its own size.
+        Object.defineProperty(box, 'clientWidth', { configurable: true, value: 2000 });
+        resized?.();
+        fixture.detectChanges();
+        expect(frame.style.transform).toBe('');
+        expect(element.querySelector<HTMLElement>('.frame-scaler')!.style.height).toBe('902px');
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
+
+    it('shows no switch, no kind and the full-width frame for a bundle without them', async () => {
+      const { fixture, element } = await render('qits-landing-app');
+      expect(element.querySelector('[aria-label="Viewport"]')).toBeNull();
+      expect(element.querySelector('[aria-label="States"] ui-chip')).toBeNull();
+      await answerFreeze(ERROR_FREEZE, fixture);
+      const frame = element.querySelector<HTMLIFrameElement>('iframe')!;
+      expect(frame.classList.contains('h-[32rem]')).toBe(true);
+      expect(frame.classList.contains('w-full')).toBe(true);
+      expect(frame.style.width).toBe('');
+      expect(element.querySelector('.frame-scaler')).toBeNull();
     });
   });
 
