@@ -4593,7 +4593,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "move-release-request-source",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },
@@ -7519,7 +7520,7 @@
             "app": "qits-landing-app",
             "interaction": "open-release-requests",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/events, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/observability, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/desk, projects/:slug/events, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/observability, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -12275,7 +12276,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-desk",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/desk"
           }
         }
       },
@@ -12576,7 +12578,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-desk",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/desk"
           }
         }
       },
@@ -12852,7 +12855,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests"
           }
         }
       },
@@ -13705,7 +13709,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/events, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/observability, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/desk, projects/:slug/events, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/observability, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -14619,7 +14623,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests"
           }
         }
       },
@@ -22209,7 +22214,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },
@@ -23941,7 +23947,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },
@@ -25610,7 +25617,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },
@@ -28225,7 +28233,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },
@@ -30613,7 +30622,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },
@@ -31596,7 +31606,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/release-requests/:requestId"
           }
         }
       },

@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts/:state"
           }
         }
       },
@@ -98,7 +99,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -269,7 +271,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -486,7 +489,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -745,7 +749,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-entity",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -830,7 +835,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-entity",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -1069,7 +1075,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-entity",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -1286,7 +1293,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-entity",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -1545,7 +1553,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -1716,7 +1725,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -1933,7 +1943,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -2512,7 +2523,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-call-details",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
           }
         }
       },
@@ -3801,7 +3813,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-state",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
