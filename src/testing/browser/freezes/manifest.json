@@ -19995,7 +19995,9 @@
       "viewport": null,
       "route": null,
       "records": [],
-      "triggers": []
+      "triggers": [
+        "open-work-ref:opened"
+      ]
     },
     {
       "file": "src/app/ui/components/popover/popover.browser.spec.ts/closed.html",
@@ -20807,6 +20809,16 @@
       },
       {
         "route": null,
+        "interaction": "open-work-ref",
+        "outcome": "opened",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/core/work/work-briefs.store.ts"
+      },
+      {
+        "route": null,
         "interaction": "session-expired",
         "outcome": "signedOut",
         "kind": "external",
@@ -20950,6 +20962,15 @@
         "route": "projects/:slug/work/create",
         "interaction": "open-inspiring-idea",
         "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/ui/components/markdown/markdown.browser.spec.ts",
+        "test": "Markdown with work references (browser) > opens the item's page from the brief's link (open-work-ref:opened)",
+        "route": null,
+        "interaction": "open-work-ref",
+        "outcome": "opened",
         "kind": "exit",
         "freeze": null
       }
