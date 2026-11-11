@@ -10,10 +10,10 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import { ContractsBundleStore, type RecordingRead } from '$core/contracts/contracts-bundle.store';
-import { contractsLink, contractStateLink } from '$core/contracts/contracts-links';
 import {
   bundleOf,
   dependencyRows,
@@ -37,6 +37,8 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
  * A dependency on a state of another provider links to that provider's repository's state page
  * when the catalog names its repository and its index lists the state (`dependencyRows`); that
  * index is read for the link. A slug the index does not list says so, with a link back to the list.
+ * The links are declared exits (epic qits-2000): back to the list (`leave-contract-state`
+ * `allStates`) and a dependency's state (`open-state-dependency` `dependency`).
  *
  * Staleness (qits-1270): as the list's (`ContractsPage`): a release → the catalog; the index and
  * the recordings are keyed by version and never go stale.
@@ -44,12 +46,11 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
 @Component({
   selector: 'app-contract-state-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ContractsFrame, JsonBlock, RouterLink],
+  imports: [ContractsFrame, JsonBlock, QitsExit],
   host: { class: 'block' },
   template: `
     <app-contracts-frame
       [heading]="state()?.name ?? 'Provider state'"
-      active="contracts"
       [slug]="slug()"
       [repo]="repo()"
       [lookup]="lookup()"
@@ -66,7 +67,12 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
             <div class="flex flex-col gap-6 text-sm">
               <section class="flex flex-col gap-2">
                 <p class="m-0">
-                  <a class="back text-xs font-semibold" [routerLink]="listLink()">← All states</a>
+                  <a
+                    class="back text-xs font-semibold"
+                    [qitsExit]="leaving.allStates"
+                    [exitParams]="{ slug: slug(), repo: repo() }"
+                    >← All states</a
+                  >
                 </p>
                 <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
                   <dt class="text-charcoal-brown-500">Slug</dt>
@@ -101,7 +107,11 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     @for (d of dependencies(); track d.label) {
                       <li>
                         @if (d.link; as l) {
-                          <a [routerLink]="stateLink(l.repository, l.slug)">{{ d.label }}</a>
+                          <a
+                            [qitsExit]="following.dependency"
+                            [exitParams]="{ slug: slug(), repo: l.repository, state: l.slug }"
+                            >{{ d.label }}</a
+                          >
                         } @else {
                           {{ d.label }}
                         }
@@ -207,7 +217,12 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
           } @else {
             <p class="unknown m-0 text-sm text-charcoal-brown-600">
               No such state in {{ application() }} {{ site()?.version }}.
-              <a class="back font-semibold" [routerLink]="listLink()">All states</a>
+              <a
+                class="back font-semibold"
+                [qitsExit]="leaving.allStates"
+                [exitParams]="{ slug: slug(), repo: repo() }"
+                >All states</a
+              >
             </p>
           }
         }
@@ -235,6 +250,13 @@ export class ContractStatePage {
   );
   protected readonly slug = computed(() => this.routeParams().slug);
   protected readonly repo = computed(() => this.routeParams().repo);
+
+  protected readonly leaving = outcomes('leave-contract-state', {
+    allStates: exit('projects/:slug/repositories/:repo/contracts'),
+  });
+  protected readonly following = outcomes('open-state-dependency', {
+    dependency: exit('projects/:slug/repositories/:repo/contracts/:state'),
+  });
 
   protected readonly lookup = computed(() => bundleOf(this.entityMaps.catalog(), this.repo()));
 
@@ -306,14 +328,6 @@ export class ContractStatePage {
       });
     });
     this.entityMaps.follow(() => this.repo() || undefined, inject(DestroyRef));
-  }
-
-  protected listLink(): readonly string[] {
-    return contractsLink(this.slug(), this.repo());
-  }
-
-  protected stateLink(repository: string, state: string): readonly string[] {
-    return contractStateLink(this.slug(), repository, state);
   }
 
   protected recording(op: GoldenOperation): RecordingRead | undefined {

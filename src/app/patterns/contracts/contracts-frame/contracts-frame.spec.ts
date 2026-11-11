@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import type { BundleLookup } from '$core/contracts/contracts-view';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { ContractsFrame } from './contracts-frame';
@@ -8,13 +8,7 @@ import { ContractsFrame } from './contracts-frame';
 @Component({
   imports: [ContractsFrame],
   template: `
-    <app-contracts-frame
-      heading="Entities"
-      slug="qits"
-      repo="r"
-      active="entities"
-      [lookup]="lookup()"
-    >
+    <app-contracts-frame heading="Entities" slug="qits" repo="r" [lookup]="lookup()">
       <p class="content">content</p>
     </app-contracts-frame>
   `,
@@ -29,7 +23,10 @@ describe('ContractsFrame', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([]),
+        provideRouter([
+          { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
+          { path: 'projects/:slug/repositories/:repo/entities', children: [] },
+        ]),
         provideTestPlatformOrigins({}, { docs: 'https://docs.example' }),
       ],
     });
@@ -42,7 +39,9 @@ describe('ContractsFrame', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('shows the bundle, its docs link, the two lists and the content once found', () => {
+  it('shows the bundle, its docs link, the two lists and the content once found', async () => {
+    // The open list's tab is marked current by its exit, from the router's URL.
+    await TestBed.inject(Router).navigateByUrl('/projects/qits/repositories/r/entities');
     const element = render({
       status: 'loaded',
       site: { site: '@contracts/qits-r', version: '1.0', repository: 'r' },

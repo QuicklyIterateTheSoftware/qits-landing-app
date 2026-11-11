@@ -14,6 +14,178 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts/:state"
+          }
+        }
+      },
+      "description": "show-contract-state: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle a dependency points into",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-projects",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/golden-masters/index.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJwcm92aWRlciI6InFpdHMtcHJvamVjdHMiLCJzdGF0ZXMiOlt7Im5hbWUiOiJhIHByb2plY3QgZXhpc3RzIiwic2x1ZyI6ImEtcHJvamVjdC1leGlzdHMiLCJwYXJhbXMiOnsicHJvamVjdFNsdWciOiJxaXRzIn0sImRlcGVuZHNPbiI6W10sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoibGlzdFByb2plY3RzIiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9wcm9qZWN0cy9hcGkvcHJvamVjdHMiLCJzdGF0dXMiOjIwMCwiZmlsZSI6ImEtcHJvamVjdC1leGlzdHMvbGlzdFByb2plY3RzLmpzb24iLCJmcm96ZW4iOnsiaWRzIjpbXSwiaW5zdGFudHMiOltdLCJzdHJpbmdzIjpbXSwibGlzdEZpbHRlcmVkVG8iOiIkLmVudHJpZXMifX1dfV19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-contract-state",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-contract-state: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJwcm92aWRlciI6InFpdHMtZ2l0aG9zdCIsInN0YXRlcyI6W3sibmFtZSI6ImEgZ2l0IHByb2plY3QgZXhpc3RzIiwic2x1ZyI6ImEtZ2l0LXByb2plY3QtZXhpc3RzIiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIn0sImRlcGVuZHNPbiI6W10sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoibGlzdEdpdFByb2plY3RzIiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9naXRob3N0L2FwaS9wcm9qZWN0cyIsInN0YXR1cyI6MjAwLCJmaWxlIjoiYS1naXQtcHJvamVjdC1leGlzdHMvbGlzdEdpdFByb2plY3RzLmpzb24iLCJmcm96ZW4iOnsiaWRzIjpbXSwiaW5zdGFudHMiOltdLCJzdHJpbmdzIjpbXSwibGlzdEZpbHRlcmVkVG8iOiIkLnByb2plY3RzIn19XX0seyJuYW1lIjoiYSBnaXQgcHJvamVjdCB3aXRoIGEgcmVwb3NpdG9yeSIsInNsdWciOiJhLWdpdC1wcm9qZWN0LXdpdGgtYS1yZXBvc2l0b3J5IiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIiwicmVwb3NpdG9yeSI6InFpdHMtZ2l0aG9zdC1zZXJ2aWNlIn0sImRlcGVuZHNPbiI6WyJhIGdpdCBwcm9qZWN0IGV4aXN0cyIseyJwcm92aWRlciI6InFpdHMtcHJvamVjdHMiLCJzdGF0ZSI6ImEgcHJvamVjdCBleGlzdHMifV0sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoiZ2V0R2l0UmVwb3NpdG9yeSIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvZ2l0aG9zdC9hcGkvcHJvamVjdHMve3Byb2plY3R9L3JlcG9zaXRvcmllcy97cmVwb3NpdG9yeX0iLCJzdGF0dXMiOjIwMCwiZmlsZSI6ImEtZ2l0LXByb2plY3Qtd2l0aC1hLXJlcG9zaXRvcnkvZ2V0R2l0UmVwb3NpdG9yeS5qc29uIiwicmVzcG9uc2VIZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb24ifSwiZnJvemVuIjp7ImlkcyI6W10sImluc3RhbnRzIjpbXSwic3RyaW5ncyI6W10sImxpc3RGaWx0ZXJlZFRvIjpudWxsfX1dfV19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-contract-state",
+            "kind": "ui",
             "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
           }
         }
@@ -69,6 +241,120 @@
                 {
                   "match": "contentType",
                   "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-contract-state",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-contract-state: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              },
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              },
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.sites[*].latestVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             }
@@ -204,6 +490,136 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-contract-state: listDocsVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "metadata": {
+                  "content.hash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "git.commit.hash": "9999999999999999999999999999999999999999",
+                  "git.repository.name": "qits-githost-service"
+                },
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].metadata['content.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.commit.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.repository.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-contract-state",
+            "kind": "ui",
             "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
           }
         }
@@ -303,6 +719,178 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-entity",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-entity: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJwcm92aWRlciI6InFpdHMtZ2l0aG9zdCIsInN0YXRlcyI6W3sibmFtZSI6ImEgZ2l0IHByb2plY3QgZXhpc3RzIiwic2x1ZyI6ImEtZ2l0LXByb2plY3QtZXhpc3RzIiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIn0sImRlcGVuZHNPbiI6W10sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoibGlzdEdpdFByb2plY3RzIiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9naXRob3N0L2FwaS9wcm9qZWN0cyIsInN0YXR1cyI6MjAwLCJmaWxlIjoiYS1naXQtcHJvamVjdC1leGlzdHMvbGlzdEdpdFByb2plY3RzLmpzb24iLCJmcm96ZW4iOnsiaWRzIjpbXSwiaW5zdGFudHMiOltdLCJzdHJpbmdzIjpbXSwibGlzdEZpbHRlcmVkVG8iOiIkLnByb2plY3RzIn19XX0seyJuYW1lIjoiYSBnaXQgcHJvamVjdCB3aXRoIGEgcmVwb3NpdG9yeSIsInNsdWciOiJhLWdpdC1wcm9qZWN0LXdpdGgtYS1yZXBvc2l0b3J5IiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIiwicmVwb3NpdG9yeSI6InFpdHMtZ2l0aG9zdC1zZXJ2aWNlIn0sImRlcGVuZHNPbiI6WyJhIGdpdCBwcm9qZWN0IGV4aXN0cyIseyJwcm92aWRlciI6InFpdHMtcHJvamVjdHMiLCJzdGF0ZSI6ImEgcHJvamVjdCBleGlzdHMifV0sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoiZ2V0R2l0UmVwb3NpdG9yeSIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvZ2l0aG9zdC9hcGkvcHJvamVjdHMve3Byb2plY3R9L3JlcG9zaXRvcmllcy97cmVwb3NpdG9yeX0iLCJzdGF0dXMiOjIwMCwiZmlsZSI6ImEtZ2l0LXByb2plY3Qtd2l0aC1hLXJlcG9zaXRvcnkvZ2V0R2l0UmVwb3NpdG9yeS5qc29uIiwicmVzcG9uc2VIZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb24ifSwiZnJvemVuIjp7ImlkcyI6W10sImluc3RhbnRzIjpbXSwic3RyaW5ncyI6W10sImxpc3RGaWx0ZXJlZFRvIjpudWxsfX1dfV19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-entity",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-entity: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a projection entity",
+          "params": {
+            "path": "entities.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/entities.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJhcHBsaWNhdGlvbiI6InFpdHMtZ2l0aG9zdCIsImVudGl0aWVzIjpbeyJlbnRpdHkiOiJldS53b2hsYmVuLnFpdHMuZ2l0aG9zdC5wZXJzaXN0ZW5jZS5HaXRQcm9qZWN0IiwidGFibGUiOiJnaXRfcHJvamVjdCIsIm1hcmtpbmciOiJwcm9qZWN0aW9uIiwicmVhc29uIjpudWxsLCJwcm9qZWN0aW9uT2YiOiJxaXRzLXByb2plY3RzOlByb2plY3QiLCJrbm93bkdhcCI6bnVsbCwiZHRvcyI6W10sIm9wZXJhdGlvbnMiOltdfSx7ImVudGl0eSI6ImV1LndvaGxiZW4ucWl0cy5naXRob3N0LnBlcnNpc3RlbmNlLkdpdFJlcG9zaXRvcnkiLCJ0YWJsZSI6ImdpdF9yZXBvc2l0b3J5IiwibWFya2luZyI6ImRvbWFpbiIsInJlYXNvbiI6bnVsbCwicHJvamVjdGlvbk9mIjpudWxsLCJrbm93bkdhcCI6bnVsbCwiZHRvcyI6W3sidHlwZSI6ImV1LndvaGxiZW4ucWl0cy5naXRob3N0LmR0by5HaXRSZXBvc2l0b3J5RHRvIiwia2luZCI6Im1hcHBlciIsInZpYSI6bnVsbCwic2l0ZSI6IkdpdFJlcG9zaXRvcnlNYXBwZXIudG9EdG8oR2l0UmVwb3NpdG9yeSkifV0sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoiZ2V0R2l0UmVwb3NpdG9yeSIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvZ2l0aG9zdC9hcGkvcHJvamVjdHMve3Byb2plY3R9L3JlcG9zaXRvcmllcy97cmVwb3NpdG9yeX0iLCJkdG8iOiJldS53b2hsYmVuLnFpdHMuZ2l0aG9zdC5kdG8uR2l0UmVwb3NpdG9yeUR0byIsImtpbmQiOiJyZXR1cm5zIn1dfV19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
                 }
               ]
             }
@@ -488,6 +1076,120 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-entity: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              },
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              },
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.sites[*].latestVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-entity",
+            "kind": "ui",
             "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
           }
         }
@@ -559,6 +1261,136 @@
                 {
                   "match": "type"
                 },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-entity",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-entity: listDocsVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "metadata": {
+                  "content.hash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "git.commit.hash": "9999999999999999999999999999999999999999",
+                  "git.repository.name": "qits-githost-service"
+                },
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].metadata['content.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.commit.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.repository.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "type"
                 }
@@ -722,6 +1554,92 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-repository-contracts: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJwcm92aWRlciI6InFpdHMtZ2l0aG9zdCIsInN0YXRlcyI6W3sibmFtZSI6ImEgZ2l0IHByb2plY3QgZXhpc3RzIiwic2x1ZyI6ImEtZ2l0LXByb2plY3QtZXhpc3RzIiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIn0sImRlcGVuZHNPbiI6W10sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoibGlzdEdpdFByb2plY3RzIiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9naXRob3N0L2FwaS9wcm9qZWN0cyIsInN0YXR1cyI6MjAwLCJmaWxlIjoiYS1naXQtcHJvamVjdC1leGlzdHMvbGlzdEdpdFByb2plY3RzLmpzb24iLCJmcm96ZW4iOnsiaWRzIjpbXSwiaW5zdGFudHMiOltdLCJzdHJpbmdzIjpbXSwibGlzdEZpbHRlcmVkVG8iOiIkLnByb2plY3RzIn19XX0seyJuYW1lIjoiYSBnaXQgcHJvamVjdCB3aXRoIGEgcmVwb3NpdG9yeSIsInNsdWciOiJhLWdpdC1wcm9qZWN0LXdpdGgtYS1yZXBvc2l0b3J5IiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIiwicmVwb3NpdG9yeSI6InFpdHMtZ2l0aG9zdC1zZXJ2aWNlIn0sImRlcGVuZHNPbiI6WyJhIGdpdCBwcm9qZWN0IGV4aXN0cyIseyJwcm92aWRlciI6InFpdHMtcHJvamVjdHMiLCJzdGF0ZSI6ImEgcHJvamVjdCBleGlzdHMifV0sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoiZ2V0R2l0UmVwb3NpdG9yeSIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvZ2l0aG9zdC9hcGkvcHJvamVjdHMve3Byb2plY3R9L3JlcG9zaXRvcmllcy97cmVwb3NpdG9yeX0iLCJzdGF0dXMiOjIwMCwiZmlsZSI6ImEtZ2l0LXByb2plY3Qtd2l0aC1hLXJlcG9zaXRvcnkvZ2V0R2l0UmVwb3NpdG9yeS5qc29uIiwicmVzcG9uc2VIZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb24ifSwiZnJvemVuIjp7ImlkcyI6W10sImluc3RhbnRzIjpbXSwic3RyaW5ncyI6W10sImxpc3RGaWx0ZXJlZFRvIjpudWxsfX1dfV19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-contracts",
+            "kind": "ui",
             "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
           }
         }
@@ -777,6 +1695,120 @@
                 {
                   "match": "contentType",
                   "value": "application/json"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-contracts",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-repository-contracts: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              },
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              },
+              {
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/qits-githost"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.sites[*].latestVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             }
@@ -879,6 +1911,136 @@
                 {
                   "match": "type"
                 },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-contracts",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-repository-contracts: listDocsVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "metadata": {
+                  "content.hash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "git.commit.hash": "9999999999999999999999999999999999999999",
+                  "git.repository.name": "qits-githost-service"
+                },
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].metadata['content.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.commit.hash']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.repository.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "type"
                 }
@@ -1331,6 +2493,92 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ui-builder-call-details",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+          }
+        }
+      },
+      "description": "show-ui-builder-call-details: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a published contracts bundle with a golden-master index",
+          "params": {
+            "path": "golden-masters/index.json",
+            "site": "@contracts/qits-githost",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}/${path}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+      },
+      "response": {
+        "body": {
+          "content": "eyJmb3JtYXRWZXJzaW9uIjoxLCJwcm92aWRlciI6InFpdHMtZ2l0aG9zdCIsInN0YXRlcyI6W3sibmFtZSI6ImEgZ2l0IHByb2plY3QgZXhpc3RzIiwic2x1ZyI6ImEtZ2l0LXByb2plY3QtZXhpc3RzIiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIn0sImRlcGVuZHNPbiI6W10sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoibGlzdEdpdFByb2plY3RzIiwibWV0aG9kIjoiR0VUIiwicGF0aCI6Ii9naXRob3N0L2FwaS9wcm9qZWN0cyIsInN0YXR1cyI6MjAwLCJmaWxlIjoiYS1naXQtcHJvamVjdC1leGlzdHMvbGlzdEdpdFByb2plY3RzLmpzb24iLCJmcm96ZW4iOnsiaWRzIjpbXSwiaW5zdGFudHMiOltdLCJzdHJpbmdzIjpbXSwibGlzdEZpbHRlcmVkVG8iOiIkLnByb2plY3RzIn19XX0seyJuYW1lIjoiYSBnaXQgcHJvamVjdCB3aXRoIGEgcmVwb3NpdG9yeSIsInNsdWciOiJhLWdpdC1wcm9qZWN0LXdpdGgtYS1yZXBvc2l0b3J5IiwicGFyYW1zIjp7InByb2plY3QiOiJxaXRzIiwicmVwb3NpdG9yeSI6InFpdHMtZ2l0aG9zdC1zZXJ2aWNlIn0sImRlcGVuZHNPbiI6WyJhIGdpdCBwcm9qZWN0IGV4aXN0cyIseyJwcm92aWRlciI6InFpdHMtcHJvamVjdHMiLCJzdGF0ZSI6ImEgcHJvamVjdCBleGlzdHMifV0sIm9wZXJhdGlvbnMiOlt7Im9wZXJhdGlvbklkIjoiZ2V0R2l0UmVwb3NpdG9yeSIsIm1ldGhvZCI6IkdFVCIsInBhdGgiOiIvZ2l0aG9zdC9hcGkvcHJvamVjdHMve3Byb2plY3R9L3JlcG9zaXRvcmllcy97cmVwb3NpdG9yeX0iLCJzdGF0dXMiOjIwMCwiZmlsZSI6ImEtZ2l0LXByb2plY3Qtd2l0aC1hLXJlcG9zaXRvcnkvZ2V0R2l0UmVwb3NpdG9yeS5qc29uIiwicmVzcG9uc2VIZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb24ifSwiZnJvemVuIjp7ImlkcyI6W10sImluc3RhbnRzIjpbXSwic3RyaW5ncyI6W10sImxpc3RGaWx0ZXJlZFRvIjpudWxsfX1dfV19",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "application/json"
                 }
               ]
             }
@@ -2565,7 +3813,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-state",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },

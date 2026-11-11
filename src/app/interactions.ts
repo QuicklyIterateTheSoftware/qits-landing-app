@@ -614,6 +614,62 @@ export const INTERACTIONS = {
    * the entity.
    */
   'show-entity': 'An entity’s page shows its DTOs, operations and the states recording them',
+  /**
+   * `repository-card.ts`: a repository's card on the Repositories page opens its UI builder (a
+   * frontend's), or its contracts or entities page (a service's). Navigates only, and names no
+   * pact (epic qits-2000).
+   */
+  'open-repository-pages':
+    'A repository’s card opens its UI builder, or its contracts or entities page',
+  /**
+   * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
+   * pages, one exit each. Navigates only, and names no pact (epic qits-2000).
+   */
+  'switch-contracts-section': 'The Contracts and Entities tabs switch between a bundle’s two lists',
+  /**
+   * `contracts.page.ts`: a state's name in a repository's contracts list opens the state's page.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-listed-contract-state': 'A state’s name on the contracts page opens the state’s page',
+  /**
+   * `contract-state.page.ts`: "← All states" (and "All states" beside an unknown slug) goes back
+   * to the repository's contracts list. Navigates only, and names no pact (epic qits-2000).
+   */
+  'leave-contract-state': '“← All states” on a provider state’s page goes back to the list',
+  /**
+   * `contract-state.page.ts`: a dependency of a provider state opens the state it depends on, in
+   * its own repository's contracts. Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-state-dependency': 'A dependency on a provider state’s page opens the state it names',
+  /**
+   * `entities.page.ts`: an entity's name in a repository's entity map opens the entity's page.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-listed-entity': 'An entity’s name on the entities page opens the entity’s page',
+  /**
+   * `entity.page.ts`: "← All entities" (and "All entities" beside an unknown class) goes back to
+   * the repository's entity map. Navigates only, and names no pact (epic qits-2000).
+   */
+  'leave-entity': '“← All entities” on an entity’s page goes back to the list',
+  /**
+   * `entity.page.ts`: an entity's page opens the entity a projection projects (`projectionOf`, in
+   * that application's repository) or a state that records an operation handing it out
+   * (`recordedIn`). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-entity-relation':
+    'An entity’s page opens the entity it projects, or a state recording its operation',
+  /**
+   * `ui-builder.page.ts`: an entity's entity page from the UI builder: the ↗ of an entity in the
+   * Entities tab (`listedEntity`), the picked entity's name above its routes (`pickedEntity`), the
+   * ↗ of an entity the route touches (`routeEntity`). Navigates only, and names no pact (epic
+   * qits-2000).
+   */
+  'open-builder-entity': 'An entity in the UI builder opens its entity page',
+  /**
+   * `call-details.ts`: a call's popover in the UI builder opens the provider state's page
+   * (`state`) or an entity's page (`entity`). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-call-contract': 'A call’s popover in the UI builder opens its provider state or an entity',
   /** `network-access.page.ts` via `PeersStore.load`: the Network access pane's peers table. */
   'show-network-peers': 'The Network access page lists every peer of the platform network',
   /**

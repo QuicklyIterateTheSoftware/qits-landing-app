@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { contractsLink, entitiesLink } from '$core/contracts/contracts-links';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { docsUrl, type BundleLookup } from '$core/contracts/contracts-view';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -9,13 +8,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 /**
  * The frame of a repository's contracts and entities pages (qits-1994): the page's heading, the
  * repository, the bundle's site and version with its link into qits-docs' reader, the Contracts
- * and Entities links, and why there is nothing to show when the repository has no readable bundle
+ * and Entities tabs (declared exits, `switch-contracts-section`, epic qits-2000: each marked
+ * current by `[qitsExit]` on its list and the pages below it), and why there is nothing to show when the repository has no readable bundle
  * (`lookup`). The page's own content is projected and drawn only once the bundle is found.
  */
 @Component({
   selector: 'app-contracts-frame',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageLayoutComponent, RouterLink, Spinner],
+  imports: [PageLayoutComponent, QitsExit, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-6xl px-6 pt-8 pb-12">
@@ -27,16 +27,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
           </div>
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
             <nav aria-label="Bundle" class="flex gap-1">
-              @for (section of sections(); track section.id) {
+              @for (section of sections; track section.id) {
                 <a
-                  class="section rounded px-2 py-0.5 text-xs font-semibold"
-                  [class]="
-                    section.id === active()
-                      ? 'bg-charcoal-brown-800 text-white'
-                      : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
-                  "
-                  [routerLink]="section.link"
-                  [attr.aria-current]="section.id === active() ? 'page' : null"
+                  class="section rounded bg-charcoal-brown-100 px-2 py-0.5 text-xs font-semibold text-charcoal-brown-700 not-aria-[current=page]:hover:bg-charcoal-brown-200 aria-[current=page]:bg-charcoal-brown-800 aria-[current=page]:text-white"
+                  [qitsExit]="section.exit"
+                  [exitParams]="{ slug: slug(), repo: repo() }"
                   >{{ section.label }}</a
                 >
               }
@@ -83,8 +78,6 @@ export class ContractsFrame {
   readonly slug = input.required<string>();
   readonly repo = input.required<string>();
   readonly lookup = input.required<BundleLookup>();
-  /** Which of the bundle's two lists the page belongs to. */
-  readonly active = input.required<'contracts' | 'entities'>();
 
   private readonly origins = inject(PlatformOrigins);
 
@@ -103,8 +96,14 @@ export class ContractsFrame {
     return status === 'loading' ? 'loading' : status === 'error' ? 'error' : 'loaded';
   });
 
-  protected readonly sections = computed(() => [
-    { id: 'contracts', label: 'Contracts', link: contractsLink(this.slug(), this.repo()) },
-    { id: 'entities', label: 'Entities', link: entitiesLink(this.slug(), this.repo()) },
-  ]);
+  protected readonly switching = outcomes('switch-contracts-section', {
+    contracts: exit('projects/:slug/repositories/:repo/contracts'),
+    entities: exit('projects/:slug/repositories/:repo/entities'),
+  });
+
+  /** The bundle's two lists, one exit each. */
+  protected readonly sections = [
+    { id: 'contracts', label: 'Contracts', exit: this.switching.contracts },
+    { id: 'entities', label: 'Entities', exit: this.switching.entities },
+  ];
 }

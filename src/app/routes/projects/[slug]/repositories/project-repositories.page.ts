@@ -97,7 +97,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
           <div class="flex flex-col gap-6">
             <section aria-label="Wrapper" [class]="tree().wrapper ? 'block' : 'hidden'">
               @if (tree().wrapper; as wrapper) {
-                <app-repository-card class="max-w-[24rem]" [entry]="wrapper" />
+                <app-repository-card class="max-w-[24rem]" [entry]="wrapper" [slug]="slug()" />
               }
             </section>
 
@@ -107,7 +107,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
               >
                 @for (node of nodes; track $index) {
                   @if (node.kind === 'repository') {
-                    <app-repository-card [entry]="node.entry" />
+                    <app-repository-card [entry]="node.entry" [slug]="slug()" />
                   }
                 }
               </div>
@@ -143,7 +143,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
               </h2>
               <div class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-x-4 gap-y-6">
                 @for (entry of tree().other; track entry.repository?.id) {
-                  <app-repository-card [entry]="entry" />
+                  <app-repository-card [entry]="entry" [slug]="slug()" />
                 }
               </div>
             </section>
@@ -161,6 +161,9 @@ export class ProjectRepositoriesPage {
     const id = this.selected.project()?.id;
     return id ? this.store.byProject()[id] : undefined;
   });
+
+  /** The open project's slug, for the cards' links. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   protected readonly tree = computed(() => {
     const repositories = this.repositories();

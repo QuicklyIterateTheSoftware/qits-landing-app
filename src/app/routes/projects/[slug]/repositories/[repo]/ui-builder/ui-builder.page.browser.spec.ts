@@ -1,9 +1,12 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page } from 'vitest/browser';
 import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
-import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
+import { goldenMaster, goldenMasterText } from '../../../../../../../testing/browser/golden-master';
+import { leftFor } from '../../../../../../../testing/browser/contracts-bundles';
 import {
   openRoute,
   provideAppRoute,
@@ -24,8 +27,11 @@ import {
  * ERROR at the test's own width): each tab carries its kind's chip, data first, and the Viewport
  * switch shows, DESKTOP pressed until another width is picked.
  *
- * A freeze's HTML is recorded without a body, so no recording can answer it: the frame's place
- * shows the state being read, and its request is left unanswered.
+ * A freeze's HTML is left unanswered in most cases, so the frame's place shows the state being
+ * read. The frame link case answers it with qits-2041's "a published routes bundle freeze", whose
+ * recorded body (read as text, `goldenMasterText`, qits-2058) links `/projects/qits/repositories`:
+ * clicked in the frame, it selects that route (`?route=`), a same-route navigation that declares no
+ * outcome.
  *
  * The entity maps (qits-1950) are read once the bundle is in. Answered with the bundle's own
  * catalog they find no `@contracts/` site, so the route's calls touch no mapped entity and
@@ -33,6 +39,11 @@ import {
  * with "a published contracts bundle with an entity map" (`@contracts/qits-projects`, naming
  * qits-projects-service: Project and Repository, which the bundle's calls reach, WorkEntity, which
  * none does, and one technical entity), recorded by qits-artifacts from qits-1950's release on.
+ *
+ * An entity's page is a declared exit (`open-builder-entity`, epic qits-2000), each followed once:
+ * the ↗ of an entity the route touches (`routeEntity`, shown by `entities`), the ↗ of an entity in
+ * the Entities tab (`listedEntity`) and the picked entity's name (`pickedEntity`), both shown by
+ * `entity-view`. The page each leaves for is its own spec's (`leftFor`).
  */
 
 const BUNDLE = 'a published routes bundle';
@@ -217,6 +228,89 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('entity-view', { kind: 'DATA' });
+  });
+
+  /** The outcomes recorded so far, as `interaction:outcome`. */
+  const fired = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
+
+  /** The entity page of qits-projects-service's `entity` (its class name). */
+  const entityPage = (opened: OpenedRoute, entity: string) =>
+    `/projects/${opened.project.slug}/repositories/qits-projects-service/entities/eu.wohlben.qits.entities.${entity}`;
+
+  it('open-builder-entity routeEntity: an entity the route touches opens its page', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites, () => answerEntityMap(opened));
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('link', { name: 'Open Repository entity page' }).click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-builder-entity:routeEntity']);
+    expect(TestBed.inject(Router).url).toBe(entityPage(opened, 'domain.Repository'));
+  });
+
+  it('open-builder-entity listedEntity: an entity’s ↗ in the Entities tab opens its page', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites, () => answerEntityMap(opened));
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('tab', { name: 'Entities' }).click();
+    await opened.settled();
+    // WorkEntity: no route shows it, so its ↗ is the Entities tab's alone.
+    await view.getByRole('link', { name: 'Open WorkEntity entity page' }).click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-builder-entity:listedEntity']);
+    expect(TestBed.inject(Router).url).toBe(entityPage(opened, 'entity.WorkEntity'));
+  });
+
+  it('open-builder-entity pickedEntity: the picked entity’s name opens its page', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites, () => answerEntityMap(opened));
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('tab', { name: 'Entities' }).click();
+    await opened.settled();
+    await view.getByRole('button', { name: 'Project 1' }).click();
+    await opened.settled();
+    await view.getByRole('link', { name: 'Project', exact: true }).click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-builder-entity:pickedEntity']);
+    expect(TestBed.inject(Router).url).toBe(entityPage(opened, 'domain.Project'));
+  });
+
+  it('selects the route a link in the frozen page leads to', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites);
+    // The bundle's assets: no recording lists them here, so the frame draws without its font.
+    for (const request of http.match((req) => /\/-\/[^/]+$/.test(req.url))) {
+      request.flush(null, { status: 404, statusText: 'Not Found' });
+    }
+    http
+      .expectOne((req) => req.url.endsWith('.html'))
+      .flush(
+        await goldenMasterText('a published routes bundle freeze', 'getDocsFile', 'qits-artifacts'),
+      );
+    await opened.settled();
+    const frame = opened.page.querySelector<HTMLIFrameElement>('iframe');
+    // The frame's links are held once its document has loaded (`holdLinks`).
+    await expect
+      .poll(
+        () =>
+          frame?.contentDocument?.readyState === 'complete' &&
+          frame.contentDocument.querySelector('a'),
+      )
+      .toBeTruthy();
+    await opened.settled();
+    const router = TestBed.inject(Router);
+    expect(router.parseUrl(router.url).queryParams['route']).toBeUndefined();
+    frame!
+      .contentDocument!.querySelector<HTMLAnchorElement>('a[href="/projects/qits/repositories"]')!
+      .click();
+    await opened.settled();
+    await expect
+      .poll(() => router.parseUrl(router.url).queryParams['route'])
+      .toBe('projects/:slug/repositories');
+    // A same-route query change: no outcome.
+    expect(fired()).toEqual([]);
   });
 
   it('scrolls each of the three panels on its own, and never the window', async () => {

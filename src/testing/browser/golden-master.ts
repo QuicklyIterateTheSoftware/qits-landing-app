@@ -1,4 +1,4 @@
-import { fromGoldenMasters } from '@qits/angular/testing/browser';
+import { fromGoldenMasters, fromGoldenMasterTexts } from '@qits/angular/testing/browser';
 import { commands } from 'vitest/browser';
 
 /** Each provider's repository name, as its pact and the guard's messages name it. */
@@ -28,6 +28,22 @@ export type Provider = keyof typeof REPOSITORY;
 export const goldenMaster = fromGoldenMasters(
   (state: string, operationId: string, provider?: Provider) =>
     commands.goldenMaster(state, operationId, provider),
+  (state, operationId, provider = 'qits-projects') => ({
+    provider: REPOSITORY[provider],
+    state,
+    operationId,
+  }),
+);
+
+/**
+ * The text body `provider` (default qits-projects) recorded for `operationId` in `state` (a file
+ * recorded as it is, such as a freeze's HTML), registered as a recording (`fromGoldenMasterTexts`,
+ * qits-2058). A spec `flush(...)`es it as it is, to a request read as text. The Node side gives only
+ * a (state, operation) the committed pact uses, as for `goldenMaster`.
+ */
+export const goldenMasterText = fromGoldenMasterTexts(
+  (state: string, operationId: string, provider?: Provider) =>
+    commands.goldenMasterText(state, operationId, provider),
   (state, operationId, provider = 'qits-projects') => ({
     provider: REPOSITORY[provider],
     state,

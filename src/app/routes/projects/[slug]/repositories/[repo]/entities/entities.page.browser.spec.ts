@@ -1,6 +1,8 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { page } from 'vitest/browser';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
+import { commands, page } from 'vitest/browser';
 import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
@@ -9,6 +11,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { leftFor } from '../../../../../../../testing/browser/contracts-bundles';
 
 /**
  * Screenshots of a repository's entity map inside the shell (`openRoute`), answered with
@@ -16,6 +19,9 @@ import {
  * `@contracts/qits-projects` at 2100.1.0, naming qits-projects-service, whose `entities.json`
  * holds Project, Repository and WorkEntity (domain) and LegacyPlacement (technical). The case
  * without a bundle is "a published docs site", whose catalog has no `@contracts/` site.
+ *
+ * An entity's name is a declared exit (`open-listed-entity` `entity`, epic qits-2000), shown by
+ * `loaded` and followed once; the page it leaves for is its own spec's (`leftFor`).
  */
 const CONTRACTS = 'a published contracts bundle with an entity map';
 
@@ -63,6 +69,21 @@ describe('EntitiesPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
+  });
+
+  it('open-listed-entity entity: an entity’s name opens its page', async () => {
+    const opened = await open('qits-projects-service');
+    await answerBundle(opened);
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('link', { name: 'LegacyPlacement' }).click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-listed-entity:entity',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/qits-projects-service/entities/eu.wohlben.qits.entities.domain.LegacyPlacement`,
+    );
   });
 
   it('says so when no contracts bundle is published for the repository', async () => {

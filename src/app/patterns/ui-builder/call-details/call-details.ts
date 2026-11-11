@@ -8,8 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { contractStateLink, entityLink } from '$core/contracts/contracts-links';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import type { ContractsSite } from '$core/ui-builder/entity-map.store';
 import {
@@ -52,7 +51,8 @@ const PREVIEW_CHARS = 12_000;
  * state (params, dependencies), the domain entities it touches, a link to the provider's contracts
  * in qits-docs, and the recorded response as JSON. With the project's slug given (`project`), the
  * state's name links the provider repository's state page and each entity has an "open" link to
- * its entity page beside the button that picks it (qits-1994); without it they stay plain.
+ * its entity page beside the button that picks it (qits-1994); without it they stay plain. Both
+ * are declared exits (`open-call-contract` `state` and `entity`, epic qits-2000).
  *
  * It reads the provider's `golden-masters/index.json` and the recorded file from its `@contracts/`
  * site (`goldenCall`, `goldenResponse`) when it first opens, never before. Escape, a click outside
@@ -61,7 +61,7 @@ const PREVIEW_CHARS = 12_000;
 @Component({
   selector: 'app-call-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [QitsExit],
   host: {
     class: 'relative block',
     '(document:click)': 'closeIfOutside($event)',
@@ -132,10 +132,13 @@ const PREVIEW_CHARS = 12_000;
 
               <section>
                 <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">State</h4>
-                @if (stateLink(); as link) {
-                  <a class="state-link m-0 block font-semibold" [routerLink]="link">{{
-                    l.state.name
-                  }}</a>
+                @if (stateParams(); as params) {
+                  <a
+                    class="state-link m-0 block font-semibold"
+                    [qitsExit]="opening.state"
+                    [exitParams]="params"
+                    >{{ l.state.name }}</a
+                  >
                 } @else {
                   <p class="m-0">{{ l.state.name }}</p>
                 }
@@ -173,7 +176,8 @@ const PREVIEW_CHARS = 12_000;
                   @if (project(); as slug) {
                     <a
                       class="entity-link px-0.5 text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
-                      [routerLink]="entityLink(slug, e.repository, e.entity)"
+                      [qitsExit]="opening.entity"
+                      [exitParams]="{ slug, repo: e.repository, entity: e.entity }"
                       [attr.aria-label]="'Open ' + e.name + ' entity page'"
                       [title]="'Open ' + e.name + ' entity page'"
                       >↗</a
@@ -255,14 +259,20 @@ export class CallDetails {
     return d.status === 'loaded' ? d : null;
   });
 
-  protected readonly entityLink = entityLink;
+  protected readonly opening = outcomes('open-call-contract', {
+    state: exit('projects/:slug/repositories/:repo/contracts/:state'),
+    entity: exit('projects/:slug/repositories/:repo/entities/:entity'),
+  });
 
-  /** The provider repository's page of the state read, when the project and the site are known. */
-  protected readonly stateLink = computed(() => {
-    const project = this.project();
-    const repository = this.site()?.repository;
-    const slug = this.loaded()?.state.slug;
-    return project && repository && slug ? contractStateLink(project, repository, slug) : null;
+  /**
+   * The exit params of the provider repository's page of the state read, when the project and the
+   * site are known.
+   */
+  protected readonly stateParams = computed(() => {
+    const slug = this.project();
+    const repo = this.site()?.repository;
+    const state = this.loaded()?.state.slug;
+    return slug && repo && state ? { slug, repo, state } : null;
   });
 
   protected readonly params = computed(() =>

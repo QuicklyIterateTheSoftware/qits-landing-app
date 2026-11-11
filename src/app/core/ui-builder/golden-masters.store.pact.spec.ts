@@ -28,7 +28,9 @@ import { contractsFileOf } from './golden-masters.store';
  * response. Both are `getDocsFile`: a file as published, so the interaction binds its status and
  * media type (`NonJsonResponse`), never a field. A path from a provider state matches any path, so
  * qits-artifacts' recording of `a published contracts bundle with an entity map` answers it; its
- * example body is that state's recorded file.
+ * example body is that state's recorded file. The popover's links (epic qits-2000) are shown with
+ * qits-2041's `a published contracts bundle with a golden-master index` (`@contracts/qits-githost`),
+ * whose index the popover reads too.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
@@ -38,10 +40,18 @@ const OPERATIONS: readonly OwnedOperation[] = [
   { operationId: 'getDocsFile', interactions: [SLUG] },
 ];
 
-const given = (operationId: string, consumes: readonly string[], response?: NonJsonResponse) =>
+/** qits-2041: `@contracts/qits-githost` with a `golden-masters/index.json`. */
+const INDEX = 'a published contracts bundle with a golden-master index';
+
+const given = (
+  operationId: string,
+  consumes: readonly string[],
+  response?: NonJsonResponse,
+  state = CONTRACTS,
+) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
-    state: CONTRACTS,
+    state,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: SLUG },
     consumes,
@@ -107,5 +117,29 @@ describe('qits-landing-app → qits-artifacts-service pact: call details', () =>
         ),
       );
       expect(file).toEqual(masters.body(CONTRACTS, 'getDocsFile'));
+    }));
+
+  it('show-ui-builder-call-details: reads the githost contracts site’s golden-masters/index.json', () =>
+    given(
+      'getDocsFile',
+      GET_DOCS_FILE,
+      {
+        contentType: 'application/json',
+        body: new TextEncoder().encode(JSON.stringify(masters.body(INDEX, 'getDocsFile'))),
+      },
+      INDEX,
+    ).executeTest(async (server) => {
+      const op = masters.operation(INDEX, 'getDocsFile');
+      const file = await at(server.url, () =>
+        contractsFileOf(
+          {
+            site: op.params['site'],
+            version: op.params['version'],
+            repository: 'qits-githost-service',
+          },
+          'golden-masters/index.json',
+        ),
+      );
+      expect(file).toEqual(masters.body(INDEX, 'getDocsFile'));
     }));
 });

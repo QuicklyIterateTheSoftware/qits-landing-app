@@ -11,10 +11,10 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import { ContractsBundleStore } from '$core/contracts/contracts-bundle.store';
-import { contractStateLink } from '$core/contracts/contracts-links';
 import { bundleOf, filterRows, stateRows } from '$core/contracts/contracts-view';
 import { EntityMapStore } from '$core/ui-builder/entity-map.store';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
@@ -23,7 +23,8 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
  * A repository's provider states (qits-1994), at `/projects/<slug>/repositories/<repo>/contracts`:
  * every state the service's published contracts bundle records, from its
  * `golden-masters/index.json`, one row each (name, how many operations it records, which), linking
- * to the state's page, with a filter on the name.
+ * to the state's page (a declared exit, `open-listed-contract-state` `state`, epic qits-2000), with a
+ * filter on the name.
  *
  * The bundle is the `@contracts/` site whose newest version's `git.repository.name` is the
  * repository (`EntityMapStore`'s catalog, `contractsSitesOf`); its index is read through
@@ -35,16 +36,10 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
 @Component({
   selector: 'app-contracts-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ContractsFrame, RouterLink],
+  imports: [ContractsFrame, QitsExit],
   host: { class: 'block' },
   template: `
-    <app-contracts-frame
-      heading="Contracts"
-      active="contracts"
-      [slug]="slug()"
-      [repo]="repo()"
-      [lookup]="lookup()"
-    >
+    <app-contracts-frame heading="Contracts" [slug]="slug()" [repo]="repo()" [lookup]="lookup()">
       @let read = indexRead();
       @switch (read?.status) {
         @case ('error') {
@@ -80,7 +75,12 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
                 @for (row of shown(); track row.slug) {
                   <tr class="state border-b border-charcoal-brown-100 align-top">
                     <td class="py-1 pr-3">
-                      <a class="font-semibold" [routerLink]="link(row.slug)">{{ row.name }}</a>
+                      <a
+                        class="font-semibold"
+                        [qitsExit]="opening.state"
+                        [exitParams]="{ slug: slug(), repo: repo(), state: row.slug }"
+                        >{{ row.name }}</a
+                      >
                     </td>
                     <td class="py-1 pr-3 text-right tabular-nums">{{ row.operationCount }}</td>
                     <td class="py-1 font-mono text-xs break-all text-charcoal-brown-700">
@@ -119,6 +119,10 @@ export class ContractsPage {
   protected readonly slug = computed(() => this.params().slug);
   protected readonly repo = computed(() => this.params().repo);
 
+  protected readonly opening = outcomes('open-listed-contract-state', {
+    state: exit('projects/:slug/repositories/:repo/contracts/:state'),
+  });
+
   protected readonly lookup = computed(() => bundleOf(this.entityMaps.catalog(), this.repo()));
 
   private readonly site = computed(() => {
@@ -152,10 +156,6 @@ export class ContractsPage {
       if (browser && site) untracked(() => this.bundles.readIndex(site));
     });
     this.entityMaps.follow(() => this.repo() || undefined, inject(DestroyRef));
-  }
-
-  protected link(state: string): readonly string[] {
-    return contractStateLink(this.slug(), this.repo(), state);
   }
 
   protected value(event: Event): string {

@@ -16,9 +16,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
-import { entityLink } from '$core/contracts/contracts-links';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
@@ -160,9 +160,10 @@ interface EntityGroup {
  *   landing app, once the project's repositories answered); an unknown scope covers every service,
  *   as the calls panel does.
  * - Entity pages (qits-1994): each entity of the Entities tab and of the route's entities has a small
- *   "↗" link to its entity page (`entityLink`) beside the action that picks it, and the selected
- *   entity's name heads its routes as that link; the calls' popovers link the same pages and the
- *   provider state's page.
+ *   "↗" link to its entity page beside the action that picks it, and the selected entity's name
+ *   heads its routes as that link; the calls' popovers link the same pages and the provider
+ *   state's page. Each is a declared exit (`open-builder-entity`: `listedEntity`, `pickedEntity`,
+ *   `routeEntity`; epic qits-2000).
  * - Outcomes (qits-2006): below the calls and above the entities, the route's page outcomes
  *   (`routeOutcomes` of the manifest's `outcomes`, which `@qits/angular` writes from 2026.1109.225625
  *   on), each with its kind, the tests that reach it, and a gap chip when no test reaches it or no
@@ -206,7 +207,7 @@ interface EntityGroup {
 @Component({
   selector: 'app-ui-builder-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, Spinner, CallDetails, RouterLink, NgTemplateOutlet],
+  imports: [Chip, PageLayoutComponent, Spinner, CallDetails, QitsExit, NgTemplateOutlet],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12 xl:pb-0">
@@ -399,9 +400,12 @@ interface EntityGroup {
                                     @if (slug(); as project) {
                                       <a
                                         class="entity-link shrink-0 px-1 text-xs text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
-                                        [routerLink]="
-                                          entityLink(project, entity.repository, entity.entity)
-                                        "
+                                        [qitsExit]="entityPages.listedEntity"
+                                        [exitParams]="{
+                                          slug: project,
+                                          repo: entity.repository,
+                                          entity: entity.entity,
+                                        }"
                                         [attr.aria-label]="'Open ' + entity.name + ' entity page'"
                                         [title]="'Open ' + entity.name + ' entity page'"
                                         >↗</a
@@ -580,7 +584,12 @@ interface EntityGroup {
                       @if (slug(); as project) {
                         <a
                           class="entity-page font-mono"
-                          [routerLink]="entityLink(project, entity.repository, entity.entity)"
+                          [qitsExit]="entityPages.pickedEntity"
+                          [exitParams]="{
+                            slug: project,
+                            repo: entity.repository,
+                            entity: entity.entity,
+                          }"
                           [title]="'Open ' + entity.name + ' entity page'"
                           >{{ entity.name }}</a
                         >
@@ -690,7 +699,12 @@ interface EntityGroup {
                             @if (slug(); as project) {
                               <a
                                 class="entity-link text-xs text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
-                                [routerLink]="entityLink(project, entity.repository, entity.entity)"
+                                [qitsExit]="entityPages.routeEntity"
+                                [exitParams]="{
+                                  slug: project,
+                                  repo: entity.repository,
+                                  entity: entity.entity,
+                                }"
                                 [attr.aria-label]="'Open ' + entity.name + ' entity page'"
                                 [title]="'Open ' + entity.name + ' entity page'"
                                 >↗</a
@@ -846,7 +860,11 @@ export class UiBuilderPage {
 
   /** The open project's slug, for the links to the entity and contracts pages (qits-1994). */
   protected readonly slug = this.selected.slug;
-  protected readonly entityLink = entityLink;
+  protected readonly entityPages = outcomes('open-builder-entity', {
+    listedEntity: exit('projects/:slug/repositories/:repo/entities/:entity'),
+    pickedEntity: exit('projects/:slug/repositories/:repo/entities/:entity'),
+    routeEntity: exit('projects/:slug/repositories/:repo/entities/:entity'),
+  });
 
   /** The repository the URL names. */
   protected readonly repo = toSignal(

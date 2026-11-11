@@ -25,6 +25,16 @@ declare module 'vitest/browser' {
         | 'qits-idp',
     ) => Promise<T>;
     /**
+     * The text body `provider` (default qits-projects) recorded for `operationId` in `state`, for
+     * an answer recorded as a file (a freeze's HTML, qits-2058). Specs use `goldenMasterText` of
+     * `golden-master.ts`, which registers it as a recording.
+     */
+    goldenMasterText: (
+      state: string,
+      operationId: string,
+      provider?: Parameters<BrowserCommands['goldenMaster']>[2],
+    ) => Promise<string>;
+    /**
      * Rewrites the running spec's section of the route ledger, `src/testing/browser/routes.json`,
      * with the routes its recorded answers were shown on (`takeRouteRecords()`, in `setup.ts`).
      */

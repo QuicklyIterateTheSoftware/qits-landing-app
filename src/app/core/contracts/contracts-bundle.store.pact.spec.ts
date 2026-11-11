@@ -51,6 +51,14 @@ import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part'
  * index), and the Markdown file as `a repository with published changelogs` records one,
  * `text/markdown`, binding the header only (Pact sniffs a Markdown body as `text/plain`). The
  * provider replays each state's own path.
+ *
+ * The pages' links (epic qits-2000) are shown against qits-2041's states: `a published contracts
+ * bundle with a golden-master index` (`@contracts/qits-githost`, naming qits-githost-service, in a
+ * catalog that also lists `@contracts/qits-projects`: its catalog, versions and index, for the
+ * contracts list, a state's page and an entity's "Recorded in"), `a published contracts bundle a
+ * dependency points into` (`@contracts/qits-projects`'s index, which a githost state's dependency
+ * links into) and `a published contracts bundle with a projection entity` (qits-githost's
+ * `entities.json`, whose GitProject projects qits-projects' Project).
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
@@ -97,6 +105,26 @@ function at<T>(url: string, call: () => Promise<T>): Promise<T> {
 }
 
 const params = (operationId: string) => masters.operation(CONTRACTS, operationId).params;
+
+/** qits-2041: `@contracts/qits-githost` with an index, in a catalog listing two contracts sites. */
+const INDEX = 'a published contracts bundle with a golden-master index';
+/** qits-2041: `@contracts/qits-projects`'s index, holding the state a githost state depends on. */
+const DEPENDENCY = 'a published contracts bundle a dependency points into';
+/** qits-2041: qits-githost's `entities.json`, with a projection of qits-projects' Project. */
+const PROJECTION = 'a published contracts bundle with a projection entity';
+
+/** The contracts site `state`'s `getDocsFile` reads, naming `repository`. */
+const siteOf = (state: string, repository: string) => ({
+  site: masters.operation(state, 'getDocsFile').params['site'],
+  version: masters.operation(state, 'getDocsFile').params['version'],
+  repository,
+});
+
+/** `state`'s recorded file, as `getDocsFile` answers it. */
+const recordedFileOf = (state: string): NonJsonResponse => ({
+  contentType: 'application/json',
+  body: new TextEncoder().encode(JSON.stringify(masters.body(state, 'getDocsFile'))),
+});
 
 /** The state recording a Markdown file of the docs store (a changelog), for a diagram's read. */
 const MARKDOWN = 'a repository with published changelogs';
@@ -179,6 +207,69 @@ describe('qits-landing-app → qits-artifacts-service pact: contracts and entiti
         expect(map).toEqual(asEntityMap(masters.body(CONTRACTS, 'getDocsFile')));
       }));
   }
+
+  const INDEX_READERS: readonly InteractionSlug[] = [
+    'show-repository-contracts',
+    'show-contract-state',
+    'show-entity',
+  ];
+
+  for (const slug of INDEX_READERS) {
+    it(`${slug}: finds a githost contracts site in a catalog of two`, () => {
+      given(slug, 'listDocsSites', LIST_DOCS_SITES, undefined, INDEX);
+      return given(slug, 'listDocsVersions', LIST_DOCS_VERSIONS, undefined, INDEX).executeTest(
+        async (server) => {
+          const found = await at(server.url, () => contractsSitesOf());
+          // Bound by the recorded first element, `@contracts/qits-githost`, repeated.
+          const githost = JSON.stringify(siteOf(INDEX, 'qits-githost-service'));
+          expect(found?.unreadable).toEqual([]);
+          expect(found?.sites.length).toBeGreaterThan(0);
+          expect(found?.sites.every((s) => JSON.stringify(s) === githost)).toBe(true);
+        },
+      );
+    });
+
+    it(`${slug}: reads the githost site’s golden-masters/index.json`, () =>
+      given(slug, 'getDocsFile', GET_DOCS_FILE, recordedFileOf(INDEX), INDEX).executeTest(
+        async (server) => {
+          const file = await at(server.url, () =>
+            contractsFileOf(siteOf(INDEX, 'qits-githost-service'), 'golden-masters/index.json'),
+          );
+          expect(file).toEqual(masters.body(INDEX, 'getDocsFile'));
+        },
+      ));
+  }
+
+  it('show-contract-state: reads the index a dependency points into', () =>
+    given(
+      'show-contract-state',
+      'getDocsFile',
+      GET_DOCS_FILE,
+      recordedFileOf(DEPENDENCY),
+      DEPENDENCY,
+    ).executeTest(async (server) => {
+      const file = await at(server.url, () =>
+        contractsFileOf(siteOf(DEPENDENCY, 'qits-projects-service'), 'golden-masters/index.json'),
+      );
+      expect(file).toEqual(masters.body(DEPENDENCY, 'getDocsFile'));
+    }));
+
+  it('show-entity: reads an entity map holding a projection', () =>
+    given(
+      'show-entity',
+      'getDocsFile',
+      GET_DOCS_FILE,
+      recordedFileOf(PROJECTION),
+      PROJECTION,
+    ).executeTest(async (server) => {
+      const map = await at(server.url, () =>
+        entityMapOf(siteOf(PROJECTION, 'qits-githost-service')),
+      );
+      expect(map).toEqual(asEntityMap(masters.body(PROJECTION, 'getDocsFile')));
+      expect(map && map !== 'none' && map.entities.some((e) => e.marking === 'projection')).toBe(
+        true,
+      );
+    }));
 
   it('show-entity: reads the version’s database/index.json', () =>
     given('show-entity', 'getDocsFile', GET_DOCS_FILE, recordedFile()).executeTest(

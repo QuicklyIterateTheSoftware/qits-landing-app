@@ -10,11 +10,11 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { QitsMermaidDiagram } from '@qits/ui-components';
 import { map } from 'rxjs';
 import { ContractsBundleStore } from '$core/contracts/contracts-bundle.store';
-import { contractStateLink, entitiesLink, entityLink } from '$core/contracts/contracts-links';
 import {
   bundleOf,
   byKind,
@@ -49,18 +49,21 @@ import { Chip } from '$ui/components/chip/chip';
  *
  * A class the map does not list says so, with a link back to the list.
  *
+ * The links are declared exits (epic qits-2000): back to the list (`leave-entity` `allEntities`),
+ * the projected entity (`open-entity-relation` `projectionOf`) and a recording state
+ * (`open-entity-relation` `recordedIn`).
+ *
  * Staleness (qits-1270): a release of the repository → the catalog (`EntityMapStore.follow`); the
  * maps and the index are keyed by version and never go stale.
  */
 @Component({
   selector: 'app-entity-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, ContractsFrame, ErDiagramBox, QitsMermaidDiagram, RouterLink],
+  imports: [Chip, ContractsFrame, ErDiagramBox, QitsExit, QitsMermaidDiagram],
   host: { class: 'block' },
   template: `
     <app-contracts-frame
       [heading]="entity() ? name(entity()!.entity) : 'Entity'"
-      active="entities"
       [slug]="slug()"
       [repo]="repo()"
       [lookup]="lookup()"
@@ -82,7 +85,12 @@ import { Chip } from '$ui/components/chip/chip';
             <div class="flex flex-col gap-6 text-sm">
               <section class="flex flex-col gap-2">
                 <p class="m-0">
-                  <a class="back text-xs font-semibold" [routerLink]="listLink()">← All entities</a>
+                  <a
+                    class="back text-xs font-semibold"
+                    [qitsExit]="leaving.allEntities"
+                    [exitParams]="{ slug: slug(), repo: repo() }"
+                    >← All entities</a
+                  >
                 </p>
                 <dl class="facts m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
                   <dt class="text-charcoal-brown-500">Class</dt>
@@ -99,7 +107,11 @@ import { Chip } from '$ui/components/chip/chip';
                     <dt class="text-charcoal-brown-500">Projection of</dt>
                     <dd class="projection m-0 font-mono">
                       @if (projection(); as p) {
-                        <a [routerLink]="link(p.repository, p.entity)">{{ e.projectionOf }}</a>
+                        <a
+                          [qitsExit]="relating.projectionOf"
+                          [exitParams]="{ slug: slug(), repo: p.repository, entity: p.entity }"
+                          >{{ e.projectionOf }}</a
+                        >
                       } @else {
                         {{ e.projectionOf ?? '—' }}
                       }
@@ -196,7 +208,11 @@ import { Chip } from '$ui/components/chip/chip';
                       <p class="states m-0 flex flex-wrap gap-x-2 text-xs">
                         <span class="text-charcoal-brown-500">Recorded in</span>
                         @for (s of recorded; track s.slug) {
-                          <a [routerLink]="stateLink(s.slug)">{{ s.name }}</a>
+                          <a
+                            [qitsExit]="relating.recordedIn"
+                            [exitParams]="{ slug: slug(), repo: repo(), state: s.slug }"
+                            >{{ s.name }}</a
+                          >
                         }
                       </p>
                     } @else {
@@ -212,7 +228,12 @@ import { Chip } from '$ui/components/chip/chip';
             <p class="unknown m-0 text-sm text-charcoal-brown-600">
               No such entity in {{ read?.status === 'loaded' ? read.map.application : '' }}
               {{ site()?.version }}.
-              <a class="back font-semibold" [routerLink]="listLink()">All entities</a>
+              <a
+                class="back font-semibold"
+                [qitsExit]="leaving.allEntities"
+                [exitParams]="{ slug: slug(), repo: repo() }"
+                >All entities</a
+              >
             </p>
           }
         }
@@ -240,6 +261,14 @@ export class EntityPage {
   );
   protected readonly slug = computed(() => this.routeParams().slug);
   protected readonly repo = computed(() => this.routeParams().repo);
+
+  protected readonly leaving = outcomes('leave-entity', {
+    allEntities: exit('projects/:slug/repositories/:repo/entities'),
+  });
+  protected readonly relating = outcomes('open-entity-relation', {
+    projectionOf: exit('projects/:slug/repositories/:repo/entities/:entity'),
+    recordedIn: exit('projects/:slug/repositories/:repo/contracts/:state'),
+  });
 
   protected readonly lookup = computed(() => bundleOf(this.entityMaps.catalog(), this.repo()));
 
@@ -337,18 +366,6 @@ export class EntityPage {
   protected recordedBy(operationId: string): readonly GoldenState[] | null {
     const read = this.indexRead();
     return read?.status === 'loaded' ? statesRecording(read.index, operationId) : null;
-  }
-
-  protected listLink(): readonly string[] {
-    return entitiesLink(this.slug(), this.repo());
-  }
-
-  protected link(repository: string, entity: string): readonly string[] {
-    return entityLink(this.slug(), repository, entity);
-  }
-
-  protected stateLink(state: string): readonly string[] {
-    return contractStateLink(this.slug(), this.repo(), state);
   }
 
   protected name(entity: string): string {

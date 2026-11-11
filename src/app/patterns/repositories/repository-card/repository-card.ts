@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import type { RepositoryEntry } from '$core/repositories/repositories.consumes';
 import { CardBody, CardExpandable, CardHeader } from '$ui/components/card/base-card';
 import { CardSilent } from '$ui/components/card/card-silent';
@@ -22,13 +22,14 @@ interface Backup {
  *   (cinnabar).
  *
  * A repository whose declared archetype is FRONTEND or APP (never judged by its name) links its UI
- * builder at the bottom of the body (qits-1951), relative to the Repositories page it sits on.
- * A SERVICE links its contracts (provider states) and its entity map there instead (qits-1994).
+ * builder at the bottom of the body (qits-1951). A SERVICE links its contracts (provider states)
+ * and its entity map there instead (qits-1994). Each link is a declared exit of the open project
+ * (`slug`): `open-repository-pages` `uiBuilder`, `contracts` and `entities` (epic qits-2000).
  */
 @Component({
   selector: 'app-repository-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardSilent, CardHeader, CardBody, CardExpandable, Stat, RouterLink],
+  imports: [CardSilent, CardHeader, CardBody, CardExpandable, Stat, QitsExit],
   host: { class: 'block' },
   template: `
     <ui-card-silent>
@@ -61,7 +62,8 @@ interface Backup {
           <div class="flex justify-end border-t-[0.5px] border-black/20 px-2 py-1">
             <a
               class="ui-builder text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
-              [routerLink]="[name(), 'ui-builder']"
+              [qitsExit]="pages.uiBuilder"
+              [exitParams]="params()"
               >UI builder →</a
             >
           </div>
@@ -70,12 +72,14 @@ interface Backup {
           <div class="flex justify-end gap-3 border-t-[0.5px] border-black/20 px-2 py-1">
             <a
               class="contracts text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
-              [routerLink]="[name(), 'contracts']"
+              [qitsExit]="pages.contracts"
+              [exitParams]="params()"
               >Contracts →</a
             >
             <a
               class="entities text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
-              [routerLink]="[name(), 'entities']"
+              [qitsExit]="pages.entities"
+              [exitParams]="params()"
               >Entities →</a
             >
           </div>
@@ -102,8 +106,19 @@ interface Backup {
 })
 export class RepositoryCard {
   readonly entry = input.required<RepositoryEntry>();
+  /** The open project's slug, for the links to the repository's pages. */
+  readonly slug = input.required<string>();
 
   protected readonly name = computed(() => this.entry().repository?.name ?? '');
+
+  protected readonly pages = outcomes('open-repository-pages', {
+    uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
+    contracts: exit('projects/:slug/repositories/:repo/contracts'),
+    entities: exit('projects/:slug/repositories/:repo/entities'),
+  });
+
+  /** The repository's pages' exit params. */
+  protected readonly params = computed(() => ({ slug: this.slug(), repo: this.name() }));
 
   /** The archetype, as a word: SERVICE reads "Service". */
   protected readonly archetype = computed(() => {

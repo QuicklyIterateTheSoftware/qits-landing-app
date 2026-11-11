@@ -54,8 +54,9 @@ import { hasViewports, routeStates } from './routes-manifest';
  *
  * `getDocsFile` answers a file, not JSON the pact binds by field: each of its interactions binds
  * the status and the media type (`NonJsonResponse`). The manifest's example body is the recorded
- * one, so the store reads a real manifest; the freeze and the font are recorded without a body, so
- * the mock server answers an empty one of their media type.
+ * one, so the store reads a real manifest; the freeze and the font bind no example body, so the
+ * mock server answers an empty one of their media type (the freeze's recorded HTML, qits-2041, is
+ * what the UI builder's browser spec shows, read as text).
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
@@ -218,7 +219,7 @@ describe('qits-landing-app → qits-artifacts-service pact: routes bundle', () =
       const html = await at(server.url, () =>
         freezeHtmlOf(bundleOf(FREEZE), params(FREEZE)['path']),
       );
-      // Recorded without a body: the mock server answers an empty page.
+      // No example body bound: the mock server answers an empty page.
       expect(html).toBe('');
     }));
 

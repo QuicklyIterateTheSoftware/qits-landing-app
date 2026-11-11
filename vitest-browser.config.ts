@@ -76,6 +76,16 @@ const goldenMaster: BrowserCommand<
   READERS[provider].body(state, operationId);
 
 /**
+ * `goldenMasterText`: as `goldenMaster`, the recorded body as text (`text`, qits-2058), for an
+ * answer recorded as a file rather than JSON (a freeze's HTML). Specs use `goldenMasterText` of
+ * `src/testing/browser/golden-master.ts`, which registers it as a recording.
+ */
+const goldenMasterText: BrowserCommand<
+  [state: string, operationId: string, provider?: keyof typeof READERS]
+> = (_context, state, operationId, provider = 'qits-projects') =>
+  READERS[provider].text(state, operationId);
+
+/**
  * `goldenMasterRoutes`: keeps the route ledger, `src/testing/browser/routes.json` (ticket qits-1946).
  * After each spec file, `setup.ts` sends what the golden-master guard noted, which recorded answer
  * the spec showed on which route. The command only stages it: at the end of the run, the ledger's
@@ -275,6 +285,7 @@ export default defineConfig({
     browser: {
       commands: {
         goldenMaster,
+        goldenMasterText,
         goldenMasterRoutes: routes,
         parkPointer,
         mouse,

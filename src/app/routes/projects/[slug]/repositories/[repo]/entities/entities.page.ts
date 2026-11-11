@@ -10,9 +10,9 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
-import { entityLink } from '$core/contracts/contracts-links';
 import { bundleOf, entityGroups, simpleName } from '$core/contracts/contracts-view';
 import { EntityMapStore } from '$core/ui-builder/entity-map.store';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
@@ -22,7 +22,8 @@ import { Chip } from '$ui/components/chip/chip';
  * A repository's entity map (qits-1994), at `/projects/<slug>/repositories/<repo>/entities`: every
  * persisted entity of the service's published `entities.json` (qits-1945), grouped by marking
  * (domain, technical, projection), one row each (simple name, table, how many operations hand it
- * out, its known gap), linking to the entity's page.
+ * out, its known gap), linking to the entity's page (a declared exit, `open-listed-entity` `entity`,
+ * epic qits-2000).
  *
  * The bundle is found as on the contracts pages (`bundleOf`); its map is `EntityMapStore.readMap`,
  * the UI builder's read. A version without an `entities.json` publishes no map, which is said.
@@ -33,16 +34,10 @@ import { Chip } from '$ui/components/chip/chip';
 @Component({
   selector: 'app-entities-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, ContractsFrame, RouterLink],
+  imports: [Chip, ContractsFrame, QitsExit],
   host: { class: 'block' },
   template: `
-    <app-contracts-frame
-      heading="Entities"
-      active="entities"
-      [slug]="slug()"
-      [repo]="repo()"
-      [lookup]="lookup()"
-    >
+    <app-contracts-frame heading="Entities" [slug]="slug()" [repo]="repo()" [lookup]="lookup()">
       @let read = mapRead();
       @switch (read?.status) {
         @case ('error') {
@@ -78,9 +73,12 @@ import { Chip } from '$ui/components/chip/chip';
                       <tr class="entity border-b border-charcoal-brown-100 align-top">
                         <td class="py-1 pr-3">
                           <span class="flex flex-wrap items-center gap-1.5">
-                            <a class="font-semibold" [routerLink]="link(e.entity)">{{
-                              name(e.entity)
-                            }}</a>
+                            <a
+                              class="font-semibold"
+                              [qitsExit]="opening.entity"
+                              [exitParams]="{ slug: slug(), repo: repo(), entity: e.entity }"
+                              >{{ name(e.entity) }}</a
+                            >
                             @if (e.knownGap; as gap) {
                               <ui-chip class="gap" tone="waiting" [label]="'Known gap ' + gap" />
                             }
@@ -118,6 +116,10 @@ export class EntitiesPage {
   protected readonly slug = computed(() => this.routeParams().slug);
   protected readonly repo = computed(() => this.routeParams().repo);
 
+  protected readonly opening = outcomes('open-listed-entity', {
+    entity: exit('projects/:slug/repositories/:repo/entities/:entity'),
+  });
+
   protected readonly lookup = computed(() => bundleOf(this.entityMaps.catalog(), this.repo()));
 
   private readonly site = computed(() => {
@@ -148,10 +150,6 @@ export class EntitiesPage {
       if (browser && site) untracked(() => this.entityMaps.readMap(site));
     });
     this.entityMaps.follow(() => this.repo() || undefined, inject(DestroyRef));
-  }
-
-  protected link(entity: string): readonly string[] {
-    return entityLink(this.slug(), this.repo(), entity);
   }
 
   protected name(entity: string): string {

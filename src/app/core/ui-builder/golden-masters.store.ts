@@ -113,6 +113,15 @@ export async function contractsFileOf(site: ContractsSite, path: string): Promis
   return error === undefined ? (data as unknown) : null;
 }
 
+/**
+ * Empties the reads' cache. For the browser specs only: their files share this module, so without
+ * it a read answered in one spec file is never made in the next, and which recorded answers a page
+ * shows (the route ledger) would depend on the order the files run in.
+ */
+export function forgetContractsFiles(): void {
+  cache.clear();
+}
+
 function cached(site: ContractsSite, path: string): Promise<unknown> {
   const key = `${site.site}@${site.version}/${path}`;
   let found = cache.get(key);

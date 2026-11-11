@@ -161,7 +161,7 @@ describe('ProjectRepositoriesPage', () => {
     expect(frontends.length).toBeGreaterThan(0);
     expect(linked).toEqual(frontends);
     const link = element.querySelector<HTMLAnchorElement>('a.ui-builder');
-    expect(link?.getAttribute('href')).toBe(`/${frontends[0]}/ui-builder`);
+    expect(link?.getAttribute('href')).toBe(`/projects/p/repositories/${frontends[0]}/ui-builder`);
     expect(link?.textContent?.trim()).toBe('UI builder →');
   });
 
@@ -177,10 +177,12 @@ describe('ProjectRepositoriesPage', () => {
     expect(cards.filter((card) => card.querySelector('a.contracts')).map(nameOf)).toEqual(services);
     expect(cards.filter((card) => card.querySelector('a.entities')).map(nameOf)).toEqual(services);
     const contracts = element.querySelector<HTMLAnchorElement>('a.contracts');
-    expect(contracts?.getAttribute('href')).toBe(`/${services[0]}/contracts`);
+    expect(contracts?.getAttribute('href')).toBe(
+      `/projects/p/repositories/${services[0]}/contracts`,
+    );
     expect(contracts?.textContent?.trim()).toBe('Contracts →');
     const entities = element.querySelector<HTMLAnchorElement>('a.entities');
-    expect(entities?.getAttribute('href')).toBe(`/${services[0]}/entities`);
+    expect(entities?.getAttribute('href')).toBe(`/projects/p/repositories/${services[0]}/entities`);
     expect(entities?.textContent?.trim()).toBe('Entities →');
   });
 
