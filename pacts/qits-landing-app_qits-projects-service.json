@@ -17744,7 +17744,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-work-board",
             "kind": "ui",
-            "route": "projects/:slug/work/detail/:id, projects/:slug/work/in-progress"
+            "route": "projects/:slug/work/detail/:id"
           }
         }
       },
@@ -18342,7 +18342,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-work-board",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/work/acceptance, projects/:slug/work/in-progress"
           }
         }
       },
@@ -19036,7 +19037,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-work",
             "kind": "ui",
-            "route": "projects, projects/:slug/desk, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/refinement, projects/:slug/work/schedule"
+            "route": "projects, projects/:slug/desk, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule"
           }
         }
       },
