@@ -2,7 +2,8 @@
   "routes": [
     {
       "path": "auth/callback",
-      "fullPath": "auth/callback"
+      "fullPath": "auth/callback",
+      "entry": true
     },
     {
       "path": "",
@@ -10,7 +11,8 @@
       "children": [
         {
           "path": "",
-          "fullPath": ""
+          "fullPath": "",
+          "entry": true
         },
         {
           "path": "projects",
@@ -34,7 +36,8 @@
             },
             {
               "path": ":tab",
-              "fullPath": "projects/:slug/work/detail/:id/agent/:tab"
+              "fullPath": "projects/:slug/work/detail/:id/agent/:tab",
+              "entry": true
             }
           ]
         },
