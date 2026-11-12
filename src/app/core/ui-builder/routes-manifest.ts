@@ -20,6 +20,20 @@ export interface ManifestRoute {
    * than entry points, and on every other route.
    */
   readonly entry?: boolean;
+  /**
+   * Whether the route renders nothing of its own (qits-2076): no component, `loadComponent`,
+   * `loadChildren` or redirect, and every child renders nothing too (a layout's `{ path: '',
+   * children: [] }` and `{ path: ':tab', children: [] }`). The tree gives it no row: its address
+   * folds into its parent's. Absent in a bundle older than the field, and on every other route.
+   */
+  readonly rendersNothing?: true;
+  /**
+   * Whether the route only forwards (qits-2076): it has a component, every outcome declared on its
+   * full path is an untriggered exit (`{ triggered: false }`), and its descendants all render
+   * nothing, so what it shows is only what you see while it forwards. Absent in a bundle older than
+   * the field, and on every other route.
+   */
+  readonly forward?: true;
 }
 
 /** One call a freeze's test answered with a recording: which provider, operation and state. */
@@ -165,6 +179,8 @@ function isRoute(value: unknown): value is ManifestRoute {
     isString(value['fullPath']) &&
     (value['redirectTo'] === undefined || isString(value['redirectTo'])) &&
     (value['entry'] === undefined || typeof value['entry'] === 'boolean') &&
+    (value['rendersNothing'] === undefined || value['rendersNothing'] === true) &&
+    (value['forward'] === undefined || value['forward'] === true) &&
     (value['children'] === undefined ||
       (Array.isArray(value['children']) && value['children'].every(isRoute)))
   );
@@ -312,6 +328,13 @@ export interface TreeRow {
    * widths counts once; 0 when `byRoute` has none.
    */
   readonly states: number;
+  /**
+   * The full paths of the routes that render nothing (qits-2076) folded into this row, other than
+   * its own, in the manifest's order: addresses this row's route also answers. Absent when none.
+   */
+  readonly alsoAnswers?: readonly string[];
+  /** Whether the row's route only forwards (qits-2076, the manifest's `forward`). Absent when not. */
+  readonly forward?: true;
 }
 
 interface Node {
@@ -320,6 +343,8 @@ interface Node {
   /** Every route at this full path, with whether it is a layout (has children). */
   readonly routes: { readonly route: ManifestRoute; readonly layout: boolean }[];
   readonly children: Node[];
+  /** The full paths of the routes that render nothing folded into this node (qits-2076). */
+  readonly folded: string[];
 }
 
 /**
@@ -328,10 +353,24 @@ interface Node {
  * child decides what it is: the layout `projects/:slug/work` with a `''` child redirecting to
  * `in-progress` is a redirect. A segment no route sits at (`projects/:slug`'s `work/detail`) is a
  * row of kind `segment`. `**` is a `wildcard` row.
+ *
+ * A route that renders nothing (qits-2076, `rendersNothing`) has no row and decides nothing: it and
+ * its children fold into the row of the nearest route above it that renders something, whose
+ * `alsoAnswers` names every folded full path but its own. So the agent layout with a `''` and a
+ * `:tab` child that render nothing is one `route` row, answering `…/agent/:tab` as well; the
+ * folded `''` child never makes it a segment. That row's states count the freezes of the folded
+ * addresses too ({@link routeStates}). A manifest without the field lays out as before.
  */
 export function routeTree(manifest: RoutesManifest): readonly TreeRow[] {
-  const root: Node = { segment: '/', fullPath: '', routes: [], children: [] };
-  const place = (route: ManifestRoute) => {
+  const root: Node = { segment: '/', fullPath: '', routes: [], children: [], folded: [] };
+  const place = (route: ManifestRoute, owner: Node) => {
+    if (route.rendersNothing) {
+      if (route.fullPath !== owner.fullPath && !owner.folded.includes(route.fullPath)) {
+        owner.folded.push(route.fullPath);
+      }
+      for (const child of route.children ?? []) place(child, owner);
+      return;
+    }
     let node = root;
     const segments = route.fullPath ? route.fullPath.split('/') : [];
     segments.forEach((segment, i) => {
@@ -342,24 +381,36 @@ export function routeTree(manifest: RoutesManifest): readonly TreeRow[] {
           fullPath: segments.slice(0, i + 1).join('/'),
           routes: [],
           children: [],
+          folded: [],
         };
         node.children.push(child);
       }
       node = child;
     });
     node.routes.push({ route, layout: !!route.children?.length });
-    for (const child of route.children ?? []) place(child);
+    for (const child of route.children ?? []) place(child, node);
   };
-  for (const route of manifest.routes) place(route);
+  for (const route of manifest.routes) place(route, root);
 
   const byFile = freezesByFile(manifest);
   const rows: TreeRow[] = [];
   const walk = (node: Node, depth: number) => {
-    const states = new Set(freezesOf(manifest, byFile, node.fullPath).map((freeze) => freeze.name))
-      .size;
+    const states = new Set(
+      [node.fullPath, ...node.folded]
+        .flatMap((path) => freezesOf(manifest, byFile, path))
+        .map((freeze) => freeze.name),
+    ).size;
+    const folded = node.folded.length ? { alsoAnswers: [...node.folded] } : {};
     const shown = node.routes.find((r) => !r.layout)?.route ?? node.routes[0]?.route;
     if (!shown)
-      rows.push({ segment: node.segment, fullPath: node.fullPath, depth, kind: 'segment', states });
+      rows.push({
+        segment: node.segment,
+        fullPath: node.fullPath,
+        depth,
+        kind: 'segment',
+        states,
+        ...folded,
+      });
     else if (node.segment === '**') {
       rows.push({
         segment: node.segment,
@@ -367,6 +418,7 @@ export function routeTree(manifest: RoutesManifest): readonly TreeRow[] {
         depth,
         kind: 'wildcard',
         states,
+        ...folded,
       });
     } else if (shown.redirectTo !== undefined) {
       rows.push({
@@ -376,9 +428,18 @@ export function routeTree(manifest: RoutesManifest): readonly TreeRow[] {
         kind: 'redirect',
         redirectTo: shown.redirectTo,
         states,
+        ...folded,
       });
     } else {
-      rows.push({ segment: node.segment, fullPath: node.fullPath, depth, kind: 'route', states });
+      rows.push({
+        segment: node.segment,
+        fullPath: node.fullPath,
+        depth,
+        kind: 'route',
+        states,
+        ...folded,
+        ...(node.routes.some(({ route }) => route.forward) ? { forward: true as const } : {}),
+      });
     }
     for (const child of node.children) walk(child, depth + 1);
   };
@@ -390,6 +451,19 @@ export function routeTree(manifest: RoutesManifest): readonly TreeRow[] {
 export function initialRoute(rows: readonly TreeRow[]): string | null {
   const routes = rows.filter((row) => row.kind === 'route');
   return (routes.find((row) => row.states > 0) ?? routes[0])?.fullPath ?? null;
+}
+
+/**
+ * The `route` row that answers `fullPath` (qits-2076): the one at that full path, else the one a
+ * route rendering nothing at that path folds into (`alsoAnswers`); undefined when no route row
+ * does. `?route=…/agent/:tab` selects the agent route this way.
+ */
+export function answeringRow(rows: readonly TreeRow[], fullPath: string): TreeRow | undefined {
+  const routes = rows.filter((row) => row.kind === 'route');
+  return (
+    routes.find((row) => row.fullPath === fullPath) ??
+    routes.find((row) => row.alsoAnswers?.includes(fullPath))
+  );
 }
 
 const freezesByFile = (manifest: RoutesManifest): ReadonlyMap<string, Freeze> =>
@@ -413,13 +487,25 @@ function freezesOf(
 }
 
 /**
- * The freezes of the route at `fullPath`, sorted by name. A file `byRoute` names that the freeze
- * list does not is shown by its file name, with no calls.
+ * The freezes of the route at `fullPath`, sorted by name, and those of the addresses its row also
+ * answers (`also`, a row's `alsoAnswers`, qits-2076), each file once. A file `byRoute` names that
+ * the freeze list does not is shown by its file name, with no calls.
  */
-export function routeFreezes(manifest: RoutesManifest, fullPath: string): readonly Freeze[] {
-  return freezesOf(manifest, freezesByFile(manifest), fullPath).sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
+export function routeFreezes(
+  manifest: RoutesManifest,
+  fullPath: string,
+  also: readonly string[] = [],
+): readonly Freeze[] {
+  const byFile = freezesByFile(manifest);
+  const byName = (a: Freeze, b: Freeze) => a.name.localeCompare(b.name);
+  if (!also.length) return freezesOf(manifest, byFile, fullPath).sort(byName);
+  const freezes = new Map<string, Freeze>();
+  for (const path of [fullPath, ...also]) {
+    for (const freeze of freezesOf(manifest, byFile, path)) {
+      if (!freezes.has(freeze.file)) freezes.set(freeze.file, freeze);
+    }
+  }
+  return [...freezes.values()].sort(byName);
 }
 
 /**
@@ -441,11 +527,16 @@ const kindRank = (kind: FreezeKind | null) =>
 /**
  * The states of the route at `fullPath` (qits-2047): its freezes ({@link routeFreezes}) grouped by
  * name, sorted by kind (DATA, NO_DATA, PENDING, ERROR, then the states without one) and by name
- * within a kind. A bundle without kinds keeps the order by name.
+ * within a kind. A bundle without kinds keeps the order by name. `also` adds the freezes of the
+ * addresses the route's row also answers (qits-2076).
  */
-export function routeStates(manifest: RoutesManifest, fullPath: string): readonly FreezeState[] {
+export function routeStates(
+  manifest: RoutesManifest,
+  fullPath: string,
+  also: readonly string[] = [],
+): readonly FreezeState[] {
   const byName = new Map<string, Freeze[]>();
-  for (const freeze of routeFreezes(manifest, fullPath)) {
+  for (const freeze of routeFreezes(manifest, fullPath, also)) {
     const group = byName.get(freeze.name) ?? [];
     group.push(freeze);
     byName.set(freeze.name, group);
@@ -474,11 +565,16 @@ export const hasViewports = (manifest: RoutesManifest): boolean =>
   manifest.freezes.some((freeze) => !!freeze.viewport);
 
 /**
- * Every call the route's freezes answered, once each, sorted by provider, operationId and state.
+ * Every call the route's freezes answered, once each, sorted by provider, operationId and state;
+ * `also` adds the freezes of the addresses its row also answers (qits-2076).
  */
-export function routeCalls(manifest: RoutesManifest, fullPath: string): readonly FreezeRecord[] {
+export function routeCalls(
+  manifest: RoutesManifest,
+  fullPath: string,
+  also: readonly string[] = [],
+): readonly FreezeRecord[] {
   const calls = new Map<string, FreezeRecord>();
-  for (const freeze of routeFreezes(manifest, fullPath)) {
+  for (const freeze of routeFreezes(manifest, fullPath, also)) {
     for (const record of freeze.records) {
       const { provider, operationId, state } = record;
       calls.set(JSON.stringify([provider, operationId, state]), { provider, operationId, state });
@@ -727,6 +823,21 @@ export function routeOutcomes(
   if (!outcomes) return [];
   return outcomes.declared
     .filter((entry) => !entry.global && entry.route === fullPath)
+    .sort(byInteraction)
+    .map((entry) => joinOutcome(manifest, outcomes, entry, fullPath));
+}
+
+/**
+ * Where a forward (qits-2076, a route with `forward`) at `fullPath` goes: every exit declared on
+ * that full path, a page's (`global: false`) and a layout's (`global: true` with `route` the full
+ * path) alike, joined as {@link routeOutcomes} joins them, so each has its `target` (`matchRoute`,
+ * a redirect followed). Sorted by interaction then outcome; none without readable outcomes.
+ */
+export function forwardExits(manifest: RoutesManifest, fullPath: string): readonly JoinedOutcome[] {
+  const outcomes = outcomesOf(manifest);
+  if (!outcomes) return [];
+  return outcomes.declared
+    .filter((entry) => entry.kind === 'exit' && entry.route === fullPath)
     .sort(byInteraction)
     .map((entry) => joinOutcome(manifest, outcomes, entry, fullPath));
 }

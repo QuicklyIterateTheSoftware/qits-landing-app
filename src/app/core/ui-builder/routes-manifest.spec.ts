@@ -1,6 +1,8 @@
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
+  answeringRow,
   asManifest,
+  forwardExits,
   inboundExits,
   joinedOutcome,
   unfixedOutcomes,
@@ -23,6 +25,7 @@ import {
   type DeclaredOutcome,
   type FiredOutcome,
   type Freeze,
+  type ManifestRoute,
   type RoutesManifest,
 } from './routes-manifest';
 
@@ -258,6 +261,150 @@ describe('routeTree', () => {
         ['chat', 'route', 1],
       ],
     );
+  });
+});
+
+const AGENT = `${DETAIL}/agent`;
+const TAB = `${AGENT}/:tab`;
+const CHAT = 'projects/:slug/agents/:agentId/chat';
+
+/** An untriggered exit of the agent layout, declared for its route and below (qits-2076). */
+const follow = (outcome: string, to: string): DeclaredOutcome => ({
+  route: AGENT,
+  interaction: 'follow-work-item-agent',
+  outcome,
+  kind: 'exit',
+  to,
+  global: true,
+  triggered: false,
+  file: 'src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts',
+});
+
+const WAITING = shot(AGENT, 'waiting');
+const TAB_WAITING = shot(TAB, 'tab-waiting');
+
+/**
+ * The work item's agent layout (qits-2076): it only forwards (`forward`), and its `''` and `:tab`
+ * children render nothing. Its exits lead to the chat, the item and a route the app lacks; the item
+ * declares an exit of its own.
+ */
+const FORWARD: RoutesManifest = {
+  routes: [
+    {
+      path: DETAIL,
+      fullPath: DETAIL,
+      children: [
+        { path: '', fullPath: DETAIL },
+        {
+          path: 'agent',
+          fullPath: AGENT,
+          forward: true,
+          children: [
+            { path: '', fullPath: AGENT, rendersNothing: true, children: [] },
+            { path: ':tab', fullPath: TAB, entry: true, rendersNothing: true, children: [] },
+          ],
+        },
+      ],
+    },
+    { path: CHAT, fullPath: CHAT },
+  ],
+  freezes: [WAITING, TAB_WAITING],
+  byRoute: { [AGENT]: [WAITING.file], [TAB]: [TAB_WAITING.file] },
+  outcomes: {
+    declared: [
+      follow('toItem', DETAIL),
+      follow('toAgentChat', 'projects/:slug/agents/:agentId/chat'),
+      follow('toAgentGone', 'projects/:slug/agents/:agentId/gone'),
+      { ...page('created', 'exit', DETAIL), route: DETAIL },
+    ],
+    fired: [],
+  },
+};
+
+/** `manifest`'s routes without `forward` and `rendersNothing`: a bundle older than them. */
+const withoutForwards = (routes: readonly ManifestRoute[]): ManifestRoute[] =>
+  routes.map(({ forward: _forward, rendersNothing: _nothing, children, ...route }) => ({
+    ...route,
+    ...(children ? { children: withoutForwards(children) } : {}),
+  }));
+
+describe('routes that render nothing and forwards (qits-2076)', () => {
+  it('folds a route that renders nothing into its parent’s row, which stays a route', () => {
+    const rows = routeTree(FORWARD);
+    expect(rows.map((row) => row.fullPath)).not.toContain(TAB);
+    expect(rows.find((row) => row.fullPath === AGENT)).toEqual({
+      segment: 'agent',
+      fullPath: AGENT,
+      depth: 6,
+      kind: 'route',
+      states: 2,
+      alsoAnswers: [TAB],
+      forward: true,
+    });
+    // The rest carry neither field.
+    expect(
+      rows
+        .filter((row) => row.fullPath !== AGENT)
+        .some((row) => 'alsoAnswers' in row || 'forward' in row),
+    ).toBe(false);
+  });
+
+  it('selects the row a folded address folds into', () => {
+    const rows = routeTree(FORWARD);
+    expect(answeringRow(rows, TAB)?.fullPath).toBe(AGENT);
+    expect(answeringRow(rows, AGENT)?.fullPath).toBe(AGENT);
+    expect(answeringRow(rows, DETAIL)?.fullPath).toBe(DETAIL);
+    // A segment and an address nothing answers have no row.
+    expect(answeringRow(rows, 'projects')).toBeUndefined();
+    expect(answeringRow(rows, 'nowhere')).toBeUndefined();
+  });
+
+  it('lays a manifest without the fields out as before', () => {
+    const old = { ...FORWARD, routes: withoutForwards(FORWARD.routes) };
+    const rows = routeTree(old);
+    expect(rows.map(({ segment, kind, states }) => [segment, kind, states]).slice(6, 8)).toEqual([
+      ['agent', 'route', 1],
+      [':tab', 'route', 1],
+    ]);
+    expect(rows.some((row) => 'alsoAnswers' in row || 'forward' in row)).toBe(false);
+    expect(answeringRow(rows, TAB)?.fullPath).toBe(TAB);
+    expect(routeTree(RECORDED).some((row) => 'alsoAnswers' in row || 'forward' in row)).toBe(false);
+  });
+
+  it('shows the folded addresses’ states on the row that answers them', () => {
+    expect(routeStates(FORWARD, AGENT).map((state) => state.name)).toEqual(['waiting']);
+    expect(routeStates(FORWARD, AGENT, [TAB]).map((state) => state.name)).toEqual([
+      'tab-waiting',
+      'waiting',
+    ]);
+  });
+
+  it('lists a forward’s exits with their targets, by interaction and outcome', () => {
+    expect(
+      forwardExits(FORWARD, AGENT).map(({ declared, target }) => [declared.outcome, target]),
+    ).toEqual([
+      ['toAgentChat', { kind: 'route', fullPath: CHAT }],
+      ['toAgentGone', { kind: 'unmatched', path: '/projects/:slug/agents/:agentId/gone' }],
+      ['toItem', { kind: 'route', fullPath: DETAIL }],
+    ]);
+    expect(forwardExits(FORWARD, DETAIL).map(({ declared }) => declared.outcome)).toEqual([
+      'created',
+    ]);
+    expect(forwardExits({ ...FORWARD, outcomes: 'invalid' }, AGENT)).toEqual([]);
+  });
+
+  it('takes the fields as `true` only', () => {
+    expect(asManifest(FORWARD)).toEqual(FORWARD);
+    const agent = FORWARD.routes[0].children![1];
+    for (const changed of [
+      { ...agent, forward: false },
+      { ...agent, rendersNothing: 'yes' },
+    ]) {
+      const routes = [
+        { ...FORWARD.routes[0], children: [FORWARD.routes[0].children![0], changed] },
+      ];
+      expect(asManifest({ ...FORWARD, routes })).toBeNull();
+    }
   });
 });
 
