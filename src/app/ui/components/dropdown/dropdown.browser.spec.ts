@@ -123,8 +123,6 @@ describe('Dropdown in a scroll container (browser)', () => {
     const fixture = TestBed.createComponent(UnderTopBar);
     fixture.detectChanges();
     const panel = document.querySelector<HTMLElement>('#many')!;
-    // Earlier tests' panels stay open in the page, and would lie over this one.
-    await userEvent.keyboard('{Escape}');
     await page.getByRole('button', { name: 'Many' }).click();
     await expect.poll(() => panel.dataset['floatingSide']).toBe('above');
     await new Promise((resolve) => requestAnimationFrame(resolve));
