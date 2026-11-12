@@ -443,12 +443,14 @@ describe('ReleaseRequestPage (screenshots)', () => {
   });
 
   it('draws a refolded request’s fold as a branch graph under its sources', async () => {
-    const { element } = await shown('a refolded release request', 'commits');
+    const { opened, element } = await shown('a refolded release request', 'commits');
     const graph = page.elementLocator(element).getByRole('region', {
       name: 'What this release folds in',
     });
     await expect.element(graph).toMatchTextContent('feature/export');
-    await expect.element(graph).toMatchScreenshot('refolded-graph', { kind: 'DATA' });
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('refolded-graph', { kind: 'DATA' });
   });
 
   it('shows a pending request: head, facts and its lifecycle', async () => {

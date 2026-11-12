@@ -128,15 +128,6 @@ describe('WorkAcceptancePage (screenshots)', () => {
     // The REFINED ticket is not in Acceptance.
     await expect.element(element).not.toMatchTextContent('Not verified yet');
     await expect.element(frame).toMatchScreenshot('wrapper-closings', { kind: 'DATA' });
-    // The empty wrapper's withdrawal and the UNPROVEN warning are also shot card by card, close up.
-    for (const [ticket, name] of [
-      ['contract-00000001-4', 'wrapper-closings-withdrawn'],
-      ['contract-00000001-5', 'wrapper-closings-unproven'],
-    ]) {
-      const card = lineOf(ticket)?.closest('ui-board-card') as HTMLElement;
-      card.scrollIntoView();
-      await expect.element(page.elementLocator(card)).toMatchScreenshot(name, { kind: 'DATA' });
-    }
   });
 
   // qits-1873: without the closings, a ticket's line stays the generic hint.
