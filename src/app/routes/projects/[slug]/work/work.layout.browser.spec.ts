@@ -105,6 +105,25 @@ describe('WorkLayout (screenshots)', () => {
     await expect.element(frame).toMatchScreenshot('tabs', { kind: 'DATA' });
   });
 
+  // qits-2098: the underline is the `<li>`'s (`has-[[aria-current=page]]`), not the link's alone, so
+  // it reaches across the gear, which sits beside the link inside the same `<li>`.
+  it('underlines the active tab’s li, including the gear, and not an inactive one', async () => {
+    const { opened, locate, work } = await shown('in-progress');
+    work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
+    await opened.settled();
+    const element = locate();
+    const tabs = element.getByRole('navigation', { name: 'Work' }).getByRole('link');
+    const activeLi = tabs.nth(2).element().closest('li')!;
+    const inactiveLi = tabs.nth(0).element().closest('li')!;
+    expect(getComputedStyle(activeLi).borderBottomColor).not.toBe('rgba(0, 0, 0, 0)');
+    expect(getComputedStyle(inactiveLi).borderBottomColor).toBe('rgba(0, 0, 0, 0)');
+    await expect
+      .element(
+        page.elementLocator(activeLi).getByRole('button', { name: 'In Progress view settings' }),
+      )
+      .toBeVisible();
+  });
+
   it('hides the counts while the work is loading', async () => {
     const { opened, locate, frame, work } = await shown('archive');
     const element = locate();
