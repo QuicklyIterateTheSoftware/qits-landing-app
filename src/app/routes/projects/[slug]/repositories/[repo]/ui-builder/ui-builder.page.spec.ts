@@ -15,6 +15,7 @@ import type {
   DeclaredOutcome,
   FiredOutcome,
   Freeze,
+  ManifestRoute,
   RoutesManifest,
 } from '$core/ui-builder/routes-manifest';
 import {
@@ -827,6 +828,170 @@ describe('UiBuilderPage', () => {
     await navigated(fixture);
     http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
     expect(element.querySelector('.link-notice')).toBeNull();
+  });
+
+  describe('forwards (qits-2076)', () => {
+    const DETAIL = 'projects/:slug/work/detail/:id';
+    const AGENT = `${DETAIL}/agent`;
+    const TAB = `${AGENT}/:tab`;
+    const AGENT_PAGE = 'projects/:slug/agents/:agentId';
+
+    /** The agent layout's one state: its spinner, shown while it forwards. */
+    const WAITING: Freeze = {
+      file: 'src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.browser.spec.ts/waiting.html',
+      name: 'waiting',
+      route: AGENT,
+      records: [],
+      kind: 'PENDING',
+    };
+
+    /** One of the agent layout's untriggered exits, declared for its route and below. */
+    const follow = (outcome: string, to: string): DeclaredOutcome => ({
+      route: AGENT,
+      interaction: 'follow-work-item-agent',
+      outcome,
+      kind: 'exit',
+      to,
+      global: true,
+      triggered: false,
+      file: 'src/app/routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout.ts',
+    });
+
+    /**
+     * The recorded manifest with the work item's agent layout, as `@qits/angular` writes it: the
+     * layout only forwards (`forward`), its `''` and `:tab` children render nothing. Its five exits
+     * lead to the agent page, its chat and files tabs, a terminal tab the app lacks, and the item.
+     * With `waiting`, the layout has its one PENDING state.
+     */
+    function withForward(waiting = true): RoutesManifest {
+      const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+      const [root] = recorded.routes;
+      const children = root.children ?? [];
+      const added: ManifestRoute[] = [
+        {
+          path: DETAIL,
+          fullPath: DETAIL,
+          children: [
+            { path: '', fullPath: DETAIL },
+            {
+              path: 'agent',
+              fullPath: AGENT,
+              forward: true,
+              children: [
+                { path: '', fullPath: AGENT, rendersNothing: true, children: [] },
+                { path: ':tab', fullPath: TAB, entry: true, rendersNothing: true, children: [] },
+              ],
+            },
+          ],
+        },
+        {
+          path: AGENT_PAGE,
+          fullPath: AGENT_PAGE,
+          children: [
+            { path: '', fullPath: AGENT_PAGE },
+            { path: 'chat', fullPath: `${AGENT_PAGE}/chat` },
+            { path: 'files', fullPath: `${AGENT_PAGE}/files` },
+          ],
+        },
+      ];
+      return {
+        ...recorded,
+        routes: [
+          { ...root, children: [...children.slice(0, -1), ...added, ...children.slice(-1)] },
+        ],
+        freezes: waiting ? [...recorded.freezes, WAITING] : recorded.freezes,
+        byRoute: waiting ? { ...recorded.byRoute, [AGENT]: [WAITING.file] } : recorded.byRoute,
+        outcomes: {
+          declared: [
+            follow('toAgent', AGENT_PAGE),
+            follow('toAgentChat', `${AGENT_PAGE}/chat`),
+            follow('toAgentFiles', `${AGENT_PAGE}/files`),
+            follow('toAgentTerminal', `${AGENT_PAGE}/terminal`),
+            follow('toItem', DETAIL),
+          ],
+          fired: [],
+        },
+      };
+    }
+
+    const renderForward = (route: string, waiting = true) =>
+      render(
+        'qits-landing-app',
+        undefined,
+        undefined,
+        `?route=${encodeURIComponent(route)}`,
+        withForward(waiting),
+      );
+
+    it('selects the forward for an address folded into it, and lists where it forwards to', async () => {
+      const { fixture, element, texts } = await renderForward(TAB);
+      expect(element.querySelector('h2')?.textContent).toBe(`/${AGENT}`);
+      expect(element.querySelector('.also-answers')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+        `Also answers /${TAB}`,
+      );
+      // The folded `:tab` has no row; the forward's row is marked.
+      const rows = texts('nav .route-row');
+      expect(rows).not.toContain(':tab');
+      expect(rows).toContain('agent ↪ 1');
+      const mark = element.querySelector('nav [aria-current="page"] .forward-mark');
+      expect(mark?.getAttribute('aria-label')).toBe('Forwards');
+      expect(mark?.getAttribute('title')).toBe('Forwards');
+      expect(element.querySelectorAll('nav .forward-mark')).toHaveLength(1);
+
+      const forwards = element.querySelector('section[aria-label="Preview"] .forwards')!;
+      expect(forwards.querySelector('h3')?.textContent?.trim()).toBe('Forwards to:');
+      expect(
+        [...forwards.querySelectorAll('li.forward')].map((li) =>
+          (li.textContent ?? '').replace(/\s+/g, ' ').trim(),
+        ),
+      ).toEqual([
+        `toAgent → /${AGENT_PAGE}`,
+        `toAgentChat → /${AGENT_PAGE}/chat`,
+        `toAgentFiles → /${AGENT_PAGE}/files`,
+        `toAgentTerminal No route of this app matches /${AGENT_PAGE}/terminal`,
+        `toItem → /${DETAIL}`,
+      ]);
+      // Above the states, whose one PENDING state is what shows while it forwards.
+      expect(
+        forwards.compareDocumentPosition(element.querySelector('[aria-label="States"]')!) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      expect(
+        [...element.querySelectorAll('[aria-label="States"] [role="tab"]')].map((tab) =>
+          tab.textContent?.replace(/\s+/g, ' ').trim(),
+        ),
+      ).toEqual(['waiting while it forwards']);
+      expect(element.querySelector('.no-states')).toBeNull();
+      await answerFreeze(WAITING.file, fixture);
+
+      [...forwards.querySelectorAll<HTMLButtonElement>('.outcome-target')]
+        .find((button) => button.textContent?.trim().endsWith('/chat'))!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ route: `${AGENT_PAGE}/chat` });
+      expect(element.querySelector('h2')?.textContent).toBe(`/${AGENT_PAGE}/chat`);
+      expect(element.querySelector('.forwards')).toBeNull();
+      expect(element.querySelector('.also-answers')).toBeNull();
+    });
+
+    it('names no missing screenshot test for a forward without states', async () => {
+      const { fixture, element } = await renderForward(AGENT, false);
+      expect(element.querySelector('h2')?.textContent).toBe(`/${AGENT}`);
+      expect(element.querySelectorAll('.forwards li.forward')).toHaveLength(5);
+      expect(element.querySelector('[aria-label="States"]')).toBeNull();
+      expect(element.querySelector('.no-states')).toBeNull();
+      expect(element.textContent).not.toContain('No screenshot test');
+
+      // Another route without states still says so.
+      [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+        .find((row) => row.textContent?.replace(/\s+/g, '') === 'projects0')!
+        .querySelector<HTMLButtonElement>('button.route')!
+        .click();
+      await navigated(fixture);
+      expect(element.querySelector('.no-states')?.textContent).toContain(
+        'No screenshot test for this route, so nothing is frozen.',
+      );
+    });
   });
 
   describe('outcomes (qits-2006)', () => {

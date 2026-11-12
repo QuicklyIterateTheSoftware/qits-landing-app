@@ -26,6 +26,8 @@ import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
+  answeringRow,
+  forwardExits,
   FREEZE_VIEWPORTS,
   hasViewports,
   inboundExits,
@@ -186,6 +188,14 @@ interface EntityGroup {
  *   clicks. A `route` that is not a route of the tree opens the first route with states; a `state`
  *   the route lacks its first DATA state, or its first state without one. Choosing a route clears
  *   `state` and keeps `viewport`, which is DESKTOP when absent or unknown.
+ * - Forwards (qits-2076): a route that renders nothing (`rendersNothing`) has no row; its address
+ *   folds into its parent's row (`routeTree`), which a `route` naming it selects (`answeringRow`),
+ *   whose main panel says "Also answers /…", and whose states and calls include the folded
+ *   addresses' freezes. A route that only forwards (`forward`) is marked "↪" (labelled "Forwards")
+ *   in the tree; its main panel lists "Forwards to:" above the states, each exit declared on its
+ *   full path (`forwardExits`) with its target as an outcome row has it, a button selecting that
+ *   route; its PENDING state is chipped "while it forwards", and it names no missing screenshot
+ *   test. A bundle without the fields shows as before.
  * - Calls (right): `routeCalls`, the union of the freezes' calls, filtered to the scope.
  * - Scope (owner rule in qits-1951): `<project slug>-landing-app` covers every service; any other
  *   frontend only its own component, by the `component` its repository declares (the project's
@@ -335,6 +345,15 @@ interface EntityGroup {
                             (click)="select(row.fullPath)"
                           >
                             <span class="shrink-0">{{ row.segment }}</span>
+                            @if (row.forward) {
+                              <span
+                                class="forward-mark shrink-0 text-[0.6875rem] opacity-70"
+                                role="img"
+                                aria-label="Forwards"
+                                title="Forwards"
+                                >↪</span
+                              >
+                            }
                             @if (row.kind === 'redirect') {
                               <span class="min-w-0 truncate text-[0.6875rem]"
                                 >→ {{ row.redirectTo }}</span
@@ -578,6 +597,39 @@ interface EntityGroup {
                 <section aria-label="Preview" class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
                   @if (selectedPath(); as path) {
                     <h2 class="m-0 mb-2 font-mono text-base">/{{ path }}</h2>
+                    @if (selectedRow()?.alsoAnswers; as also) {
+                      <p class="also-answers m-0 mb-2 text-xs text-charcoal-brown-600">
+                        Also answers
+                        @for (address of also; track address; let last = $last) {
+                          <span class="font-mono">/{{ address }}</span
+                          >{{ last ? '' : ', ' }}
+                        }
+                      </p>
+                    }
+                    @if (forward()) {
+                      <section aria-label="Forwards to" class="forwards mb-3 text-[0.8125rem]">
+                        <h3 class="m-0 mb-1 text-xs font-semibold text-charcoal-brown-700">
+                          Forwards to:
+                        </h3>
+                        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+                          @for (exit of forwards(); track exit.key) {
+                            <li class="forward flex flex-wrap items-center gap-1">
+                              <span
+                                class="forward-outcome font-mono text-xs"
+                                [title]="exit.declared.interaction + ':' + exit.declared.outcome"
+                                >{{ exit.declared.outcome }}</span
+                              >
+                              <ng-container
+                                [ngTemplateOutlet]="exitTarget"
+                                [ngTemplateOutletContext]="{ $implicit: exit }"
+                              />
+                            </li>
+                          } @empty {
+                            <li class="text-xs text-charcoal-brown-600">No exit declared.</li>
+                          }
+                        </ul>
+                      </section>
+                    }
                     @if (states().length) {
                       <div role="tablist" aria-label="States" class="mb-2 flex flex-wrap gap-1">
                         @for (item of states(); track item.name; let i = $index) {
@@ -597,7 +649,7 @@ interface EntityGroup {
                             @if (item.kind; as kind) {
                               <ui-chip
                                 class="kind ml-1"
-                                [label]="kindLabels[kind].label"
+                                [label]="kindLabel(kind)"
                                 [tone]="kindLabels[kind].tone"
                               />
                             }
@@ -687,7 +739,7 @@ interface EntityGroup {
                           </div>
                         }
                       </div>
-                    } @else {
+                    } @else if (!forward()) {
                       <p class="no-states m-0 text-sm text-charcoal-brown-600">
                         No screenshot test for this route, so nothing is frozen.
                       </p>
@@ -941,6 +993,28 @@ interface EntityGroup {
       </li>
     </ng-template>
 
+    <!--
+      Where an exit leads (qits-2006): a button selecting its target route, or the target no route
+      matches. An outcome row's and a forward's (qits-2076).
+    -->
+    <ng-template #exitTarget let-outcome>
+      @if (outcome.target; as target) {
+        @if (target.kind === 'route') {
+          <button
+            type="button"
+            class="outcome-target cursor-pointer self-start rounded px-1 text-left font-mono text-xs hover:bg-charcoal-brown-50"
+            (click)="openRoute(target.fullPath)"
+          >
+            → /{{ target.fullPath }}
+          </button>
+        } @else {
+          <p class="outcome-unmatched m-0 px-1 text-xs text-charcoal-brown-600">
+            No route of this app matches /{{ outcome.declared.to ?? '' }}
+          </p>
+        }
+      }
+    </ng-template>
+
     <!-- One outcome of the right panel: the page's own, or a shared one (qits-2006, qits-2049). -->
     <ng-template #outcomeRow let-outcome>
       <li class="outcome flex flex-col gap-0.5">
@@ -961,20 +1035,11 @@ interface EntityGroup {
           <span class="font-mono text-xs">{{ outcome.declared.outcome }}</span>
           <ui-chip class="kind ml-auto" [label]="outcome.declared.kind" />
         </button>
-        @if (outcome.target; as target) {
-          @if (target.kind === 'route') {
-            <button
-              type="button"
-              class="outcome-target cursor-pointer self-start rounded px-1 text-left font-mono text-xs hover:bg-charcoal-brown-50"
-              (click)="openRoute(target.fullPath)"
-            >
-              → /{{ target.fullPath }}
-            </button>
-          } @else {
-            <p class="outcome-unmatched m-0 px-1 text-xs text-charcoal-brown-600">
-              No route of this app matches /{{ outcome.declared.to ?? '' }}
-            </p>
-          }
+        @if (outcome.target) {
+          <ng-container
+            [ngTemplateOutlet]="exitTarget"
+            [ngTemplateOutletContext]="{ $implicit: outcome }"
+          />
         } @else if (leads(outcome); as line) {
           <p class="outcome-leads m-0 px-1 text-xs text-charcoal-brown-600">{{ line }}</p>
         }
@@ -1114,21 +1179,54 @@ export class UiBuilderPage {
     return bundle ? routeTree(bundle.manifest) : [];
   });
 
-  /** The URL's `route` when it is a route of the tree, else the first route with states. */
-  protected readonly selectedPath = computed(() => {
+  /**
+   * The row of the URL's `route` when a route row answers it (`answeringRow`: its own, or an
+   * address a route rendering nothing folds into it, qits-2076), else the first route with states.
+   */
+  protected readonly selectedRow = computed((): TreeRow | null => {
     const picked = this.query().route;
     const rows = this.rows();
-    return rows.some((row) => row.kind === 'route' && row.fullPath === picked)
-      ? picked
-      : initialRoute(rows);
+    const path = (picked === null ? undefined : answeringRow(rows, picked))?.fullPath;
+    const shown = path ?? initialRoute(rows);
+    return shown === null ? null : (answeringRow(rows, shown) ?? null);
   });
 
-  /** The selected route's states (`routeStates`, qits-2047): its freezes by name, DATA first. */
+  /** The selected row's full path (see `selectedRow`). */
+  protected readonly selectedPath = computed(() => this.selectedRow()?.fullPath ?? null);
+
+  /** The addresses the selected row also answers (qits-2076), whose freezes and calls it shows too. */
+  private readonly selectedAlso = computed(() => this.selectedRow()?.alsoAnswers ?? []);
+
+  /**
+   * The selected route's states (`routeStates`, qits-2047): its freezes by name, DATA first, with
+   * those of the addresses it also answers (qits-2076).
+   */
   protected readonly states = computed(() => {
     const bundle = this.loaded();
     const path = this.selectedPath();
-    return bundle && path !== null ? routeStates(bundle.manifest, path) : [];
+    return bundle && path !== null ? routeStates(bundle.manifest, path, this.selectedAlso()) : [];
   });
+
+  /** Whether the selected route only forwards (qits-2076, the manifest's `forward`). */
+  protected readonly forward = computed(() => this.selectedRow()?.forward === true);
+
+  /**
+   * Where the selected forward goes (`forwardExits`, qits-2076): the exits declared on its full
+   * path, each with its target; none for a route that is no forward.
+   */
+  protected readonly forwards = computed((): readonly JoinedOutcome[] => {
+    const bundle = this.loaded();
+    const path = this.selectedPath();
+    return bundle && path !== null && this.forward() ? forwardExits(bundle.manifest, path) : [];
+  });
+
+  /**
+   * A state kind's words on its tab (qits-2047); a forward's PENDING state is what you see while it
+   * forwards (qits-2076).
+   */
+  protected kindLabel(kind: FreezeKind): string {
+    return kind === 'PENDING' && this.forward() ? 'while it forwards' : KIND_LABELS[kind].label;
+  }
 
   /**
    * The index of the URL's `state` among the route's states; when it names none, the first DATA
@@ -1261,7 +1359,7 @@ export class UiBuilderPage {
     const bundle = this.loaded();
     const path = this.selectedPath();
     const all: readonly FreezeRecord[] =
-      bundle && path !== null ? routeCalls(bundle.manifest, path) : [];
+      bundle && path !== null ? routeCalls(bundle.manifest, path, this.selectedAlso()) : [];
     const scope = this.scope();
     if (!scope || scope.all) return { shown: all, hidden: 0 };
     const components = this.componentOf();
@@ -1739,7 +1837,8 @@ export class UiBuilderPage {
    * is kept (qits-2072); else the one whose route is nearest `target` (the route the row is about;
    * the selected route for an outcome without a fixed target) is shown, the selected route's and
    * then one at the chosen viewport first among equals; with none, its declaring route is selected
-   * when it is a route of the tree (a page, or a layout that is one), else the route stays. The
+   * when a route row answers it (a page, a layout that is one, or the row a route rendering nothing
+   * folds into, qits-2076), else the route stays. The
    * highlight is set as `toggleOutcome` sets it: drawn now when the shown freeze stays, else by the
    * frame's load once the freeze is in (qits-2072). The tab stays open.
    */
@@ -1774,13 +1873,11 @@ export class UiBuilderPage {
       return;
     }
     const declaring = outcome.declared.route;
-    const selecting =
-      declaring !== null &&
-      declaring !== selected &&
-      this.rows().some((row) => row.kind === 'route' && row.fullPath === declaring);
+    const row = declaring === null ? undefined : answeringRow(this.rows(), declaring);
+    const selecting = row !== undefined && row.fullPath !== selected;
     if (selecting) {
-      this.unfold(declaring);
-      void this.select(declaring);
+      this.unfold(row.fullPath);
+      void this.select(row.fullPath);
     }
     this.highlighted.set(outcome.key);
     if (!selecting) this.drawHighlight();
