@@ -20,11 +20,11 @@ import { ActionButton } from '$ui/components/action-button/action-button';
     @if (signedOut(); as out) {
       @if (!signIn()?.commandId) {
         <div
-          class="flex flex-col items-start gap-2 rounded-md border border-sunflower-gold-300 bg-sunflower-gold-50 px-3 py-2.5 text-sm"
+          class="flex flex-col items-start gap-2 rounded-md border border-warning-line bg-warning-soft px-3 py-2.5 text-sm"
           role="alert"
         >
-          <p class="m-0 text-sunflower-gold-900">{{ out.message }}</p>
-          <p class="m-0 text-sunflower-gold-800">
+          <p class="m-0 text-warning-strong">{{ out.message }}</p>
+          <p class="m-0 text-warning-strong">
             The sign-in writes to the shared agent home, so completing it once signs every workspace
             on this platform in. The service starts the agent again on its own afterwards.
           </p>
@@ -33,7 +33,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
       }
     }
     @if (signIn()?.problem; as problem) {
-      <p class="m-0 mt-1 text-sm text-cinnabar-700" role="alert">{{ problem }}</p>
+      <p class="m-0 mt-1 text-sm text-danger" role="alert">{{ problem }}</p>
     }
   `,
 })

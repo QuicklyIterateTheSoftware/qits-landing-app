@@ -4,8 +4,8 @@ import { IdStrip } from '$ui/components/id-strip/id-strip';
 import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
 
 /**
- * One item on a board: a small white card in its column, its code down the left edge
- * (`ui-id-strip`), then its title and a kind chip. `border` is the card's border colour (a full Tailwind class, e.g. `border-ocean-deep-400`).
+ * One item on a board: a small card in its column, its code down the left edge
+ * (`ui-id-strip`), then its title and a kind chip. `border` is the card's border colour (a full Tailwind class, e.g. `border-accent-line`).
  * With `exit` (a declared exit of the pattern that draws the card, with its `exitParams`), the
  * title is a link to it (`[qitsExit]`, so it carries the exit's mark) stretched over the whole
  * card; hovering it shadows the card
@@ -25,7 +25,7 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
   imports: [QitsExit, IdStrip],
   host: {
     class:
-      'relative z-10 mx-2 flex self-start transition-shadow duration-150 focus-within:z-20 hover:z-20 has-[a:hover]:shadow-md rounded-l-md border bg-white text-sm [&:has(>ui-finish-button>button.flex)]:[--card-corner-inset:1.25rem] [&:has(>ui-drag-handle>button.flex)]:[--card-corner-inset:1.25rem]',
+      'relative z-10 mx-2 flex self-start transition-shadow duration-150 focus-within:z-20 hover:z-20 has-[a:hover]:shadow-md rounded-l-md border bg-surface text-sm [&:has(>ui-finish-button>button.flex)]:[--card-corner-inset:1.25rem] [&:has(>ui-drag-handle>button.flex)]:[--card-corner-inset:1.25rem]',
     '[class]': "border() + (atRoot ? ' ' + spacing : '')",
     '[style.grid-column]': 'placement()',
     'data-highlight-target': '',
@@ -34,9 +34,9 @@ import { BOARD_CONTEXT, gridColumn, ROOT_ITEM_SPACING } from './board-context';
     <ui-id-strip class="rounded-l-[5px]" [id]="code()" />
     <div class="min-w-0 flex-1 p-2">
       <!-- The kind floats flush into the top-right corner; the title flows around it. -->
-      <p class="m-0 text-charcoal-brown-900 wrap-anywhere">
+      <p class="m-0 text-fg wrap-anywhere">
         <span
-          class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] text-[0.6875rem] text-ocean-deep-800"
+          class="float-right -mt-2 -mr-2 mb-1 ml-2 rounded-bl-md bg-accent-soft px-[0.65rem] py-[0.1625rem] text-[0.6875rem] text-accent"
           >{{ kind() }}</span
         >
         @if (exit(); as exit) {
@@ -63,7 +63,7 @@ export class BoardCard {
   readonly code = input('');
   readonly title = input('');
   readonly kind = input('');
-  readonly border = input('border-charcoal-brown-200');
+  readonly border = input('border-line');
   /** Where the card leads: an exit its pattern declares; none makes it plain. */
   readonly exit = input<ExitOutcome | undefined>(undefined);
   /** The exit's path params. */

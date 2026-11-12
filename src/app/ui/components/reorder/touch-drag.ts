@@ -177,7 +177,7 @@ export class TouchDrag implements DragEngine {
     clone.classList.add('shadow-lg');
     // A see-through item would show the rows passing under it through its clone.
     if (this.window.getComputedStyle(item).backgroundColor === 'rgba(0, 0, 0, 0)') {
-      clone.classList.add('bg-white');
+      clone.classList.add('bg-surface');
     }
     Object.assign(clone.style, {
       position: 'fixed',
@@ -193,7 +193,7 @@ export class TouchDrag implements DragEngine {
     const label = document.createElement('div');
     label.setAttribute('data-reorder-cancel', '');
     label.className =
-      'absolute inset-0 flex items-center justify-center gap-1.5 bg-white/70 text-sm font-semibold text-gray-900';
+      'absolute inset-0 flex items-center justify-center gap-1.5 bg-surface/70 text-sm font-semibold text-fg';
     label.style.display = 'none';
     const cross = document.createElement('span');
     cross.textContent = '×';

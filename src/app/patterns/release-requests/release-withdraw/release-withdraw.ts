@@ -24,7 +24,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
     <div class="flex flex-wrap items-center justify-end gap-2">
       @if (pending()) {
         <input
-          class="h-8 min-w-48 rounded-md border border-charcoal-brown-300 px-2 text-sm"
+          class="h-8 min-w-48 rounded-md border border-line-strong px-2 text-sm"
           type="text"
           [value]="reason()"
           (input)="reasonTyped($event)"
@@ -35,7 +35,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
       <ui-action-button [action]="action()" />
     </div>
     @if (failure(); as failure) {
-      <p class="mt-1 mb-0 text-right text-sm text-cinnabar-700" role="alert">
+      <p class="mt-1 mb-0 text-right text-sm text-danger" role="alert">
         Could not withdraw this request — {{ failure }}.
       </p>
     }

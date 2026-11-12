@@ -41,11 +41,11 @@ export function diffLines(patch: string): readonly DiffLine[] {
 }
 
 const LINE_CLASSES: Readonly<Record<DiffLineKind, string>> = {
-  add: 'bg-mint-leaf-50 text-mint-leaf-900',
-  del: 'bg-cinnabar-50 text-cinnabar-900',
-  hunk: 'bg-ocean-deep-50 text-ocean-deep-800',
-  meta: 'text-charcoal-brown-500',
-  context: 'text-charcoal-brown-900',
+  add: 'bg-success-soft text-success-strong',
+  del: 'bg-danger-soft text-danger-strong',
+  hunk: 'bg-accent-soft text-accent',
+  meta: 'text-fg-muted',
+  context: 'text-fg',
 };
 
 /**
@@ -60,16 +60,16 @@ const LINE_CLASSES: Readonly<Record<DiffLineKind, string>> = {
   host: { class: 'block min-w-0' },
   template: `
     @if (!path()) {
-      <p class="m-0 p-3 text-sm text-charcoal-brown-500" role="status">
+      <p class="m-0 p-3 text-sm text-fg-muted" role="status">
         Select a changed file to view its diff.
       </p>
     } @else if (lines().length === 0) {
-      <p class="m-0 p-3 text-sm text-charcoal-brown-500" role="status">
+      <p class="m-0 p-3 text-sm text-fg-muted" role="status">
         No textual change to show — a binary file, a pure rename, or a patch too large to send.
       </p>
     } @else {
       <ol
-        class="m-0 list-none overflow-x-auto rounded border border-charcoal-brown-200 p-0 font-mono text-xs leading-5"
+        class="m-0 list-none overflow-x-auto rounded border border-line p-0 font-mono text-xs leading-5"
       >
         @for (line of lines(); track $index) {
           <li class="px-2 whitespace-pre" [class]="lineClass(line.kind)">{{ line.text }}</li>

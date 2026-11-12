@@ -17,11 +17,11 @@ import { TagLink } from './tag-link';
  */
 
 const COLUMNS: readonly BoardColumnSpec[] = [
-  { label: 'Refined', body: 'bg-ocean-deep-300', header: 'bg-ocean-deep-400 text-ocean-deep-950' },
+  { label: 'Refined', body: 'bg-accent-soft', header: 'bg-accent-line text-accent' },
   {
     label: 'Implemented',
-    body: 'bg-sunflower-gold-300',
-    header: 'bg-sunflower-gold-400 text-sunflower-gold-950',
+    body: 'bg-warning-soft',
+    header: 'bg-warning-line text-warning',
   },
 ];
 

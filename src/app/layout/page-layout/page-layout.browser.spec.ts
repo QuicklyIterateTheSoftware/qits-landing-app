@@ -26,7 +26,7 @@ const ROWS = Array.from({ length: 24 }, (_, i) => `Row ${i + 1} of the page's lo
   host: { class: 'block w-[48rem] p-4' },
   template: `
     <app-page-layout title="Work" [actions]="actions">
-      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+      <p class="m-0 rounded-md bg-accent-soft p-4">The page's content.</p>
     </app-page-layout>
   `,
 })
@@ -41,10 +41,10 @@ class WithInputs {
     <app-page-layout title="Ignored" [actions]="actions">
       <div slot="header">
         <h1 class="m-0 text-2xl font-bold">qits</h1>
-        <p class="m-0 text-sm text-charcoal-brown-600">A custom header with a subtitle</p>
+        <p class="m-0 text-sm text-fg-soft">A custom header with a subtitle</p>
       </div>
-      <a slot="actions" class="text-sm text-charcoal-brown-600" href="/archive">Archive</a>
-      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+      <a slot="actions" class="text-sm text-fg-soft" href="/archive">Archive</a>
+      <p class="m-0 rounded-md bg-accent-soft p-4">The page's content.</p>
     </app-page-layout>
   `,
 })
@@ -59,7 +59,7 @@ class WithSlots {
   template: `
     <app-page-layout title="A long page" [actions]="actions">
       @for (row of rows; track row) {
-        <p class="m-0 border-b border-charcoal-brown-200 py-3">{{ row }}</p>
+        <p class="m-0 border-b border-line py-3">{{ row }}</p>
       }
     </app-page-layout>
   `,
@@ -80,10 +80,10 @@ class Scrolled {
     style: '--app-pin-top: 2.5rem',
   },
   template: `
-    <div class="sticky top-0 z-50 -mx-4 h-10 bg-charcoal-brown-800"></div>
+    <div class="sticky top-0 z-50 -mx-4 h-10 bg-surface-inverse"></div>
     <app-page-layout title="A long page" [actions]="actions">
       @for (row of rows; track row) {
-        <p class="m-0 border-b border-charcoal-brown-200 py-3">{{ row }}</p>
+        <p class="m-0 border-b border-line py-3">{{ row }}</p>
       }
     </app-page-layout>
   `,
@@ -105,11 +105,11 @@ class ScrolledUnderBar {
     style: '--app-header-h: 2.5rem; --app-pin-top: var(--app-header-h)',
   },
   template: `
-    <div class="h-10 bg-charcoal-brown-800"></div>
+    <div class="h-10 bg-surface-inverse"></div>
     <main class="block h-80 overflow-y-auto px-4" style="--app-pin-top: 0px">
       <app-page-layout title="A long page" [actions]="actions">
         @for (row of rows; track row) {
-          <p class="m-0 border-b border-charcoal-brown-200 py-3">{{ row }}</p>
+          <p class="m-0 border-b border-line py-3">{{ row }}</p>
         }
       </app-page-layout>
     </main>
@@ -125,7 +125,7 @@ class ScrolledInMain {
   host: { class: 'block w-[22rem] p-4' },
   template: `
     <app-page-layout title="Repositories of the project" [actions]="actions">
-      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+      <p class="m-0 rounded-md bg-accent-soft p-4">The page's content.</p>
     </app-page-layout>
   `,
 })
@@ -138,7 +138,7 @@ class Narrow {
   host: { class: 'block w-[34rem] p-4' },
   template: `
     <app-page-layout title="Repositories of the project" [actions]="actions">
-      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+      <p class="m-0 rounded-md bg-accent-soft p-4">The page's content.</p>
     </app-page-layout>
   `,
 })
@@ -164,7 +164,7 @@ const WIDE_GROUP_ACTIONS: readonly (Action | ActionGroup)[] = [
   host: { class: 'block w-full p-4' },
   template: `
     <app-page-layout title="qits-1913" [actions]="actions">
-      <p class="m-0 rounded-md bg-ocean-deep-100 p-4">The page's content.</p>
+      <p class="m-0 rounded-md bg-accent-soft p-4">The page's content.</p>
     </app-page-layout>
   `,
 })

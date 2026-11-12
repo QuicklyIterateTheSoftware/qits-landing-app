@@ -58,10 +58,10 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
   host: { class: 'block' },
   template: `
     <form class="flex max-w-2xl flex-col gap-4" (submit)="$event.preventDefault(); submit()">
-      <label class="flex flex-col gap-1 text-sm text-charcoal-brown-800">
+      <label class="flex flex-col gap-1 text-sm text-fg">
         Title
         <input
-          class="h-8 w-full rounded-md border border-charcoal-brown-300 px-2 text-sm"
+          class="h-8 w-full rounded-md border border-line-strong px-2 text-sm"
           type="text"
           name="title"
           aria-label="Title"
@@ -69,34 +69,34 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
           (input)="title.set(text($event))"
         />
         @for (problem of titleHints(); track problem) {
-          <span class="text-xs text-cinnabar-700" data-title-hint>{{ problem }}</span>
+          <span class="text-xs text-danger" data-title-hint>{{ problem }}</span>
         }
       </label>
-      <label class="flex flex-col gap-1 text-sm text-charcoal-brown-800">
+      <label class="flex flex-col gap-1 text-sm text-fg">
         Description
         <textarea
-          class="min-h-32 w-full rounded-md border border-charcoal-brown-300 p-2 text-sm"
+          class="min-h-32 w-full rounded-md border border-line-strong p-2 text-sm"
           name="description"
           aria-label="Description"
           [value]="description()"
           (input)="description.set(text($event))"
         ></textarea>
-        <span class="flex gap-4 text-xs text-charcoal-brown-600">
+        <span class="flex gap-4 text-xs text-fg-soft">
           <span
             data-paragraphs
-            [class.text-cinnabar-700]="paragraphs() > maxParagraphs"
+            [class.text-danger]="paragraphs() > maxParagraphs"
             title="Paragraphs are blocks separated by a blank line"
             >{{ paragraphs() }}/{{ maxParagraphs }} paragraphs</span
           >
-          <span data-characters [class.text-cinnabar-700]="characters() > maxCharacters"
+          <span data-characters [class.text-danger]="characters() > maxCharacters"
             >{{ characters() }}/{{ maxCharacters }} characters</span
           >
         </span>
       </label>
-      <label class="flex flex-col gap-1 text-sm text-charcoal-brown-800">
+      <label class="flex flex-col gap-1 text-sm text-fg">
         Enabled by
         <select
-          class="h-8 w-full max-w-md rounded-md border border-charcoal-brown-300 px-2 text-sm"
+          class="h-8 w-full max-w-md rounded-md border border-line-strong px-2 text-sm"
           name="enabledBy"
           aria-label="Enabled by"
           [value]="enabledBy()"
@@ -115,7 +115,7 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
         <ui-action-button [action]="submitAction()" />
       </div>
       @if (refusal(); as refusal) {
-        <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ refusal }}</p>
+        <p class="m-0 text-sm text-danger" role="alert">{{ refusal }}</p>
       }
     </form>
   `,

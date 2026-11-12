@@ -38,7 +38,7 @@ import { Spinner } from '$ui/components/spinner/spinner';
     <ui-spinner [state]="changes()?.status ?? 'loading'" class="min-h-12">
       @let files = changes()?.value?.files ?? [];
       <p
-        class="m-0 py-1 text-sm text-charcoal-brown-500"
+        class="m-0 py-1 text-sm text-fg-muted"
         [class]="changes()?.status === 'loaded' && files.length === 0 ? 'block' : 'hidden'"
       >
         This commit changes no files against its first parent (a merge shows none).

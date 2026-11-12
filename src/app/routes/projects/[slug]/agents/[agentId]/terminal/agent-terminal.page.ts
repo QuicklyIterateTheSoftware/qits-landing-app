@@ -70,22 +70,20 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
     <section class="flex flex-col gap-2 text-sm" aria-label="Terminal">
       @if (agent(); as agent) {
         @if (!rowId()) {
-          <p class="m-0 text-charcoal-brown-600">
-            This agent has no workspace yet, so there is no terminal.
-          </p>
+          <p class="m-0 text-fg-soft">This agent has no workspace yet, so there is no terminal.</p>
         } @else {
           @if (running()) {
             <p
               class="m-0 flex items-center gap-3"
-              [class.text-charcoal-brown-600]="link() === 'open' || link() === 'connecting'"
-              [class.text-cinnabar-700]="link() !== 'open' && link() !== 'connecting'"
+              [class.text-fg-soft]="link() === 'open' || link() === 'connecting'"
+              [class.text-danger]="link() !== 'open' && link() !== 'connecting'"
               role="status"
             >
               {{ linkLabel() }}
               @if (link() === 'lost') {
                 <button
                   type="button"
-                  class="cursor-pointer border-0 bg-transparent p-0 text-sm text-ocean-deep-700 underline"
+                  class="cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
                   (click)="rearm()"
                 >
                   Try to attach again
@@ -100,20 +98,20 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
               (resized)="socket()?.resize($event.cols, $event.rows)"
             />
           } @else if (agent.runState === 'STOPPED') {
-            <p class="m-0 text-charcoal-brown-600">
+            <p class="m-0 text-fg-soft">
               The agent was stopped, so its harness is not running. Restart it, or prompt it, to
               bring its terminal back.
             </p>
           } @else {
-            <p class="m-0 text-charcoal-brown-600">
+            <p class="m-0 text-fg-soft">
               The agent’s harness is not running. The service starts it again when the agent gets
               its turn.
             </p>
           }
           @if (slotLink(); as params) {
-            <p class="m-0 mt-2 text-charcoal-brown-600">
+            <p class="m-0 mt-2 text-fg-soft">
               The harness sign-in and the plugins belong to the workspace’s container: they are on
-              <a class="text-ocean-deep-700" [qitsExit]="opening.workspace" [exitParams]="params"
+              <a class="text-accent" [qitsExit]="opening.workspace" [exitParams]="params"
                 >the workspace’s page</a
               >.
             </p>

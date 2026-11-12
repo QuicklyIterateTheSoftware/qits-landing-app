@@ -51,19 +51,17 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Agents">
-        <p class="m-0 mb-6 max-w-[48rem] text-sm text-charcoal-brown-600">
+        <p class="m-0 mb-6 max-w-[48rem] text-sm text-fg-soft">
           An agent works on one ticket or epic in its own worktree of the project's wrapper.
           Workspaces are the slots agents run in; the platform makes and removes them as agents need
           them.
         </p>
         <div class="flex flex-col gap-8">
           <section class="flex flex-col gap-3" aria-labelledby="project-agents">
-            <h2 id="project-agents" class="m-0 text-base font-semibold text-charcoal-brown-900">
-              Active agents
-            </h2>
+            <h2 id="project-agents" class="m-0 text-base font-semibold text-fg">Active agents</h2>
             <ui-spinner [state]="agentsState()" class="min-h-16">
               <p
-                class="m-0 text-sm text-charcoal-brown-500"
+                class="m-0 text-sm text-fg-muted"
                 [class.hidden]="agentsState() !== 'loaded' || agents().length"
               >
                 No active agents.
@@ -82,19 +80,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
           <section class="flex flex-col gap-3" aria-labelledby="project-workspaces">
             <div class="flex flex-wrap items-baseline gap-3">
-              <h2
-                id="project-workspaces"
-                class="m-0 text-base font-semibold text-charcoal-brown-900"
-              >
+              <h2 id="project-workspaces" class="m-0 text-base font-semibold text-fg">
                 Workspaces
               </h2>
               @if (targetsHref(); as href) {
-                <a class="text-sm text-ocean-deep-700" [href]="href">Targets</a>
+                <a class="text-sm text-accent" [href]="href">Targets</a>
               }
             </div>
             <ui-spinner [state]="state()" class="min-h-16">
               <p
-                class="m-0 text-sm text-charcoal-brown-500"
+                class="m-0 text-sm text-fg-muted"
                 [class.hidden]="state() !== 'loaded' || slots().length"
               >
                 No workspaces right now.
@@ -103,17 +98,17 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 @for (slot of slots(); track slot.id) {
                   <li>
                     <a
-                      class="flex flex-wrap items-center gap-3 rounded-md border border-charcoal-brown-200 px-4 py-2.5 text-sm text-charcoal-brown-900 no-underline transition-shadow duration-150 hover:shadow-md"
+                      class="flex flex-wrap items-center gap-3 rounded-md border border-line px-4 py-2.5 text-sm text-fg no-underline transition-shadow duration-150 hover:shadow-md"
                       [qitsExit]="opening.slot"
                       [exitParams]="{ slug: slug() ?? '', slotId: slot.id ?? '' }"
                     >
                       <span class="font-mono font-semibold">{{ slot.workspaceId }}</span>
                       <ui-chip [label]="runtime(slot.runtimeStatus)" />
-                      <span class="text-charcoal-brown-600">{{ placement(slot) }}</span>
+                      <span class="text-fg-soft">{{ placement(slot) }}</span>
                       @if (slot.admin) {
                         <ui-chip label="docker socket" tone="waiting" />
                       }
-                      <span class="ml-auto text-charcoal-brown-600">{{ hosted(slot.id) }}</span>
+                      <span class="ml-auto text-fg-soft">{{ hosted(slot.id) }}</span>
                     </a>
                   </li>
                 }

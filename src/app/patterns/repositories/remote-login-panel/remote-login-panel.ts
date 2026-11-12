@@ -59,15 +59,15 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
       <div class="flex items-center justify-between gap-3">
         <p
           class="m-0 flex items-center gap-3"
-          [class.text-charcoal-brown-600]="link() !== 'lost'"
-          [class.text-cinnabar-700]="link() === 'lost'"
+          [class.text-fg-soft]="link() !== 'lost'"
+          [class.text-danger]="link() === 'lost'"
           role="status"
         >
           {{ linkLabel() }}
           @if (link() === 'lost') {
             <button
               type="button"
-              class="cursor-pointer border-0 bg-transparent p-0 text-sm text-ocean-deep-700 underline"
+              class="cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
               (click)="socket()?.rearm()"
             >
               Try to attach again
@@ -83,7 +83,7 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
         (data)="socket()?.send($event)"
         (resized)="socket()?.resize($event.cols, $event.rows)"
       />
-      <p class="m-0 text-charcoal-brown-600">
+      <p class="m-0 text-fg-soft">
         git asks for a username and a password: use a scoped personal access token, not your account
         password. Nothing is echoed at the password prompt.
       </p>

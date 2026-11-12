@@ -50,10 +50,10 @@ let nextLaneId = 0;
   host: {
     // Exactly one display class, chosen by where the lane is (a static one would fight it).
     // The chin below the last row; the id at the bottom of the left strip keeps the same distance.
-    class: 'ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
+    class: 'ring-1 ring-line-strong [--lane-chin:--spacing(4)]',
     'data-highlight-target': '',
     '[class]':
-      "(onBoard ? 'relative mx-1 grid min-h-28 grid-cols-subgrid grid-rows-[auto_auto_1fr] self-start rounded-tl-xl pb-(--lane-chin) bg-white/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-charcoal-brown-50')",
+      "(onBoard ? 'relative mx-1 grid min-h-28 grid-cols-subgrid grid-rows-[auto_auto_1fr] self-start rounded-tl-xl pb-(--lane-chin) bg-surface/25' + (atRoot ? ' ' + spacing : '') : 'relative mx-1 flex flex-col gap-1 rounded-md pb-1 bg-surface-subtle')",
     '[style.grid-column]': "onBoard ? '1 / -1' : null",
   },
   template: `
@@ -65,7 +65,7 @@ let nextLaneId = 0;
         reaches into the chin (the negative margin), and keeps the chin above the id too.
       -->
       <div
-        class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex w-6 items-end justify-center justify-self-start rounded-tl-xl bg-charcoal-brown-800/40 pt-(--lane-chin) pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
+        class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex w-6 items-end justify-center justify-self-start rounded-tl-xl bg-surface-inverse/40 pt-(--lane-chin) pb-(--lane-chin) text-fg-on-inverse [&_a]:text-inherit [&_a]:no-underline"
       >
         <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
           <ng-content select="[lane-gutter]" />
@@ -76,10 +76,10 @@ let nextLaneId = 0;
       class="col-span-full flex items-center gap-2 px-2 py-1 text-xs wrap-anywhere [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
-          ? 'row-start-1 ml-6 justify-end bg-charcoal-brown-800/40 text-white [&>a]:after:rounded-tl-xl'
+          ? 'row-start-1 ml-6 justify-end bg-surface-inverse/40 text-fg-on-inverse [&>a]:after:rounded-tl-xl'
           : muted()
-            ? 'relative bg-charcoal-brown-100 text-charcoal-brown-600'
-            : 'relative bg-charcoal-brown-800 font-semibold text-white'
+            ? 'relative bg-surface-muted text-fg-soft'
+            : 'relative bg-surface-inverse font-semibold text-fg-on-inverse'
       "
     >
       <ng-content select="[lane-header]" />
@@ -134,7 +134,7 @@ let nextLaneId = 0;
         spans the lane, centred.
       -->
       <div
-        class="col-span-full row-start-3 grid grid-cols-subgrid items-center self-start py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out *:col-span-full *:justify-self-center"
+        class="col-span-full row-start-3 grid grid-cols-subgrid items-center self-start py-2 text-sm text-fg transition-opacity duration-200 ease-out *:col-span-full *:justify-self-center"
         [class]="isCollapsed() ? 'opacity-100' : 'pointer-events-none opacity-0'"
         [attr.inert]="isCollapsed() ? null : ''"
         [attr.aria-hidden]="isCollapsed() ? null : 'true'"

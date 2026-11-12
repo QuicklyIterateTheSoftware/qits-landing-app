@@ -99,7 +99,7 @@ describe('WrapperClosingLine', () => {
     if (href !== null) expect(link(element).getAttribute('href')).toBe(href);
     expect(link(element).dataset['qitsOutcome']).toBe('open-closing-request:open');
     expect(link(element).classList.contains('hidden')).toBe(href === null);
-    expect(line(element).classList.contains('text-sunflower-gold-800')).toBe(
+    expect(line(element).classList.contains('text-warning-strong')).toBe(
       ticket === 'contract-00000001-5',
     );
   });

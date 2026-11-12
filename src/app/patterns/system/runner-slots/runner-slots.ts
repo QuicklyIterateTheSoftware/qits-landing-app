@@ -24,18 +24,18 @@ import { TargetsStore } from '$core/system/targets.store';
   template: `
     @if (summary(); as line) {
       <div
-        class="flex items-start justify-between gap-4 border-b border-gray-100 px-3 py-1.5 text-[0.6875rem] leading-4 text-gray-500 tabular-nums"
+        class="flex items-start justify-between gap-4 border-b border-line-subtle px-3 py-1.5 text-[0.6875rem] leading-4 text-fg-muted tabular-nums"
         data-testid="runner-slots"
       >
         <div class="flex flex-col">
           <span>runners: {{ line.runners }}</span>
           <span
             >slots: {{ line.used }}/{{ line.total }}
-            <span class="text-[0.625rem] text-gray-400">used / total</span></span
+            <span class="text-[0.625rem] text-fg-faint">used / total</span></span
           >
           <span
             >shared: {{ line.shared.used }}/{{ line.shared.unreserved }}
-            <span class="text-[0.625rem] text-gray-400">used / unreserved</span></span
+            <span class="text-[0.625rem] text-fg-faint">used / unreserved</span></span
           >
         </div>
         <dl class="m-0 grid grid-cols-[auto_auto] gap-x-3">

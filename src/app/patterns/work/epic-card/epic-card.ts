@@ -179,6 +179,6 @@ export class EpicCard {
   }
 
   protected border(task: WorkNode): string {
-    return BOARD_COLUMNS[task.column ?? 0]?.cardBorder ?? 'border-charcoal-brown-200';
+    return BOARD_COLUMNS[task.column ?? 0]?.cardBorder ?? 'border-line';
   }
 }

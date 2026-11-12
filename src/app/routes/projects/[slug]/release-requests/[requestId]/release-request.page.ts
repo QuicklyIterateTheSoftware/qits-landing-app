@@ -174,7 +174,7 @@ const UNATTENDED_TITLE =
               <span class="inline-flex min-w-0 items-baseline gap-2" data-item>
                 @if (item.qualifiedId) {
                   <a
-                    class="font-mono text-xl whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
+                    class="font-mono text-xl whitespace-nowrap text-accent no-underline hover:underline"
                     [qitsExit]="work.item"
                     [exitParams]="{ slug: slug(), id: item.qualifiedId }"
                     data-work-item
@@ -190,13 +190,13 @@ const UNATTENDED_TITLE =
         </div>
         <p class="mt-0 mb-4 text-sm">
           <a
-            class="text-ocean-deep-700 no-underline hover:underline"
+            class="text-accent no-underline hover:underline"
             [qitsExit]="leaving.list"
             [exitParams]="{ slug: slug() }"
             >← Release requests</a
           >
         </p>
-        <p class="m-0 text-sm text-charcoal-brown-600" [class.hidden]="!missing()">
+        <p class="m-0 text-sm text-fg-soft" [class.hidden]="!missing()">
           This project has no release request {{ requestId() }}.
         </p>
         <ui-load-failure
@@ -220,18 +220,18 @@ const UNATTENDED_TITLE =
                 <ui-chip label="nobody watching" tone="waiting" [title]="unattendedTitle" />
               }
               <app-active-runs [runs]="activeRuns()" />
-              <span class="font-semibold break-all text-charcoal-brown-800">{{
+              <span class="font-semibold break-all text-fg">{{
                 view()?.qualifiedId ?? request.repoName
               }}</span>
               @if (watching()) {
-                <span class="text-xs whitespace-nowrap text-charcoal-brown-500" role="status"
+                <span class="text-xs whitespace-nowrap text-fg-muted" role="status"
                   >Watching for changes…</span
                 >
               }
             </div>
 
             @if (wrapper()) {
-              <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">
+              <p class="mt-2 mb-0 text-sm break-words text-fg-soft">
                 This is the project's own estate release. What it releases is the project repository
                 — the declaration of which commit of every component this project is made of —
                 rather than a version of any one of them.
@@ -240,14 +240,14 @@ const UNATTENDED_TITLE =
 
             @if (request.state === 'OBSOLETE') {
               <p
-                class="mt-2 mb-0 rounded border border-charcoal-brown-200 bg-charcoal-brown-50 px-2 py-1.5 text-sm text-charcoal-brown-700"
+                class="mt-2 mb-0 rounded border border-line bg-surface-subtle px-2 py-1.5 text-sm text-fg-soft"
                 role="status"
               >
                 A later release request for this repository took this one over before it finished,
                 so nothing here is waiting on anybody and nothing on it can be changed.
                 @if (request.supersededBy?.trim(); as replacement) {
                   <a
-                    class="text-ocean-deep-700 no-underline hover:underline"
+                    class="text-accent no-underline hover:underline"
                     [qitsExit]="related.supersededBy"
                     [exitParams]="{ slug: slug(), requestId: replacement }"
                     >Open the request that superseded it</a
@@ -258,7 +258,7 @@ const UNATTENDED_TITLE =
 
             <!-- The tab rides in ?tab=, so the path keeps meaning "which request". -->
             <nav
-              class="mt-3 flex flex-wrap gap-1 border-b border-charcoal-brown-200"
+              class="mt-3 flex flex-wrap gap-1 border-b border-line"
               aria-label="Release request views"
             >
               @for (entry of tabs(); track entry.key) {
@@ -266,8 +266,8 @@ const UNATTENDED_TITLE =
                   class="-mb-px border-b-2 px-3 py-1 text-sm no-underline"
                   [class]="
                     tab() === entry.key
-                      ? 'border-ocean-deep-700 font-semibold text-charcoal-brown-950'
-                      : 'border-transparent text-charcoal-brown-600 hover:text-charcoal-brown-950'
+                      ? 'border-accent font-semibold text-fg'
+                      : 'border-transparent text-fg-soft hover:text-fg'
                   "
                   [attr.aria-current]="tab() === entry.key ? 'page' : null"
                   [routerLink]="[]"
@@ -275,7 +275,7 @@ const UNATTENDED_TITLE =
                   queryParamsHandling="merge"
                   >{{ entry.label
                   }}<span
-                    class="ml-1 text-xs text-charcoal-brown-500"
+                    class="ml-1 text-xs text-fg-muted"
                     [class.hidden]="entry.count === undefined"
                     >{{ entry.count }}</span
                   ></a
@@ -285,7 +285,7 @@ const UNATTENDED_TITLE =
 
             @if (tab() === 'commits') {
               <section
-                class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                class="mt-4 rounded-md border border-line bg-surface px-3 py-2"
                 aria-labelledby="folds-in"
               >
                 <h2 id="folds-in" class="m-0 mb-1 text-base font-semibold">
@@ -294,7 +294,7 @@ const UNATTENDED_TITLE =
                 <ui-spinner [state]="commitsState()" class="min-h-8">
                   @let fold = view()?.commits?.value;
                   <p
-                    class="m-0 mb-1 text-xs text-charcoal-brown-500"
+                    class="m-0 mb-1 text-xs text-fg-muted"
                     [class]="fold?.commits?.length && !graph().known ? 'block' : 'hidden'"
                   >
                     The branch graph appears once the service sends each commit's parents. Until
@@ -304,12 +304,12 @@ const UNATTENDED_TITLE =
                     class="mb-2 flex flex-wrap items-start gap-2"
                     [class.hidden]="!graph().graph.emptySources.length"
                   >
-                    <span class="w-full text-xs text-charcoal-brown-500">{{
+                    <span class="w-full text-xs text-fg-muted">{{
                       graph().known ? 'Sources without commits of their own:' : 'Sources:'
                     }}</span>
                     @for (name of graph().graph.emptySources; track name) {
                       <app-release-lane-header
-                        class="w-36 rounded border border-charcoal-brown-200 px-1.5 py-1"
+                        class="w-36 rounded border border-line px-1.5 py-1"
                         [lane]="{ label: name, kind: 'source' }"
                         [request]="request"
                         [mainBranch]="mainBranch()"
@@ -344,7 +344,7 @@ const UNATTENDED_TITLE =
                     />
                   </ng-template>
                   <p
-                    class="m-0 py-2 text-sm text-charcoal-brown-500"
+                    class="m-0 py-2 text-sm text-fg-muted"
                     [class]="fold && !fold.commits?.length ? 'block' : 'hidden'"
                   >
                     {{ fold?.detail || 'Nothing was folded in.' }}
@@ -366,9 +366,7 @@ const UNATTENDED_TITLE =
               @if (wrapper()) {
                 <ng-container [ngTemplateOutlet]="gatesSection" />
               }
-              <div
-                class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-charcoal-brown-500"
-              >
+              <div class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-fg-muted">
                 <span
                   >folded onto <span class="font-mono">{{ request.backingBranch }}</span></span
                 >
@@ -381,7 +379,7 @@ const UNATTENDED_TITLE =
                 <span data-participants>asked by {{ participants(request) }}</span>
                 @if (request.gateTicketId) {
                   <a
-                    class="text-sunflower-gold-800 underline"
+                    class="text-warning underline"
                     [qitsExit]="work.gateTicket"
                     [exitParams]="{ slug: slug() }"
                     >a bug ticket was filed for this failure</a
@@ -396,7 +394,7 @@ const UNATTENDED_TITLE =
                 }
                 @if (behind(request); as ahead) {
                   <a
-                    class="text-ocean-deep-700 no-underline hover:underline"
+                    class="text-accent no-underline hover:underline"
                     [qitsExit]="related.queuedBehind"
                     [exitParams]="{ slug: slug(), requestId: ahead }"
                     title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
@@ -405,7 +403,7 @@ const UNATTENDED_TITLE =
                 }
                 @if (next(request); as after) {
                   <a
-                    class="text-ocean-deep-700 no-underline hover:underline"
+                    class="text-accent no-underline hover:underline"
                     [qitsExit]="related.queuedNext"
                     [exitParams]="{ slug: slug(), requestId: after }"
                     title="The request queued behind this one: new asks land there while this one is frozen"
@@ -415,13 +413,13 @@ const UNATTENDED_TITLE =
               </div>
 
               @if (detail(request); as sentence) {
-                <p class="mt-2 mb-0 text-sm break-words text-charcoal-brown-700">{{ sentence }}</p>
+                <p class="mt-2 mb-0 text-sm break-words text-fg-soft">{{ sentence }}</p>
               }
 
               @let moved = moves(request);
               @if (moved.length) {
                 <section
-                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
+                  class="mt-4 rounded-md border border-line bg-surface px-3 py-2"
                   aria-labelledby="source-moves"
                 >
                   <h2 id="source-moves" class="m-0 mb-1 text-base font-semibold">Moved sources</h2>
@@ -429,10 +427,10 @@ const UNATTENDED_TITLE =
                     @for (move of moved; track $index) {
                       <li class="flex flex-wrap items-baseline gap-x-2" data-source-move>
                         <span class="font-mono font-semibold break-all">{{ move.branch }}</span>
-                        <span class="text-charcoal-brown-600">
+                        <span class="text-fg-soft">
                           @if (move.fromQualifiedId) {
                             <a
-                              class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                              class="font-mono text-accent no-underline hover:underline"
                               [qitsExit]="related.movedFrom"
                               [exitParams]="{ slug: slug(), requestId: move.fromQualifiedId }"
                               >{{ move.fromQualifiedId }}</a
@@ -443,7 +441,7 @@ const UNATTENDED_TITLE =
                           →
                           @if (move.toQualifiedId) {
                             <a
-                              class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                              class="font-mono text-accent no-underline hover:underline"
                               [qitsExit]="related.movedTo"
                               [exitParams]="{ slug: slug(), requestId: move.toQualifiedId }"
                               >{{ move.toQualifiedId }}</a
@@ -452,18 +450,12 @@ const UNATTENDED_TITLE =
                             {{ none }}
                           }
                         </span>
-                        <span class="text-xs text-charcoal-brown-500"
-                          >by {{ move.movedBy || none }}</span
-                        >
-                        <span
-                          class="text-xs text-charcoal-brown-500"
-                          [title]="instant(move.movedAt)"
-                          >{{ ago(move.movedAt) }}</span
-                        >
+                        <span class="text-xs text-fg-muted">by {{ move.movedBy || none }}</span>
+                        <span class="text-xs text-fg-muted" [title]="instant(move.movedAt)">{{
+                          ago(move.movedAt)
+                        }}</span>
                         @if (move.reason) {
-                          <span class="w-full break-words text-charcoal-brown-700">{{
-                            move.reason
-                          }}</span>
+                          <span class="w-full break-words text-fg-soft">{{ move.reason }}</span>
                         }
                       </li>
                     }
@@ -476,19 +468,17 @@ const UNATTENDED_TITLE =
               }
 
               @if (released(request)) {
-                <section
-                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
-                >
+                <section class="mt-4 rounded-md border border-line bg-surface px-3 py-2">
                   <h2 class="m-0 mb-1 text-base font-semibold">
                     {{ request.state === 'FINALIZED' ? 'Released and finalized' : 'Released' }}
                   </h2>
                   <p class="m-0 flex flex-wrap items-baseline gap-2">
                     <span class="font-mono font-semibold">{{ request.version || none }}</span>
-                    <span class="text-xs text-charcoal-brown-500 italic">{{
+                    <span class="text-xs text-fg-muted italic">{{
                       request.mergedToMainAt ? 'on main' : 'not on main yet'
                     }}</span>
                     @if (request.releasedSha) {
-                      <span class="text-xs text-charcoal-brown-500"
+                      <span class="text-xs text-fg-muted"
                         >released commit
                         <span class="font-mono" [title]="request.releasedSha">{{
                           short(request.releasedSha)
@@ -499,9 +489,7 @@ const UNATTENDED_TITLE =
                   <ul class="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-sm">
                     @for (link of releaseLinks(); track link.label) {
                       <li>
-                        <a
-                          class="text-ocean-deep-700 no-underline hover:underline"
-                          [href]="link.href"
+                        <a class="text-accent no-underline hover:underline" [href]="link.href"
                           >{{ link.label }}
                           @if (link.label === 'The released commit') {
                             <span class="font-mono">{{ short(request.releasedSha) }}</span>
@@ -514,14 +502,12 @@ const UNATTENDED_TITLE =
               }
 
               @if (released(request)) {
-                <section
-                  class="mt-4 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2"
-                >
+                <section class="mt-4 rounded-md border border-line bg-surface px-3 py-2">
                   <h2 class="m-0 mb-1 text-base font-semibold">What it published</h2>
                   <ui-spinner [state]="artifactsState()" class="min-h-8">
                     @let published = view()?.artifacts?.value;
                     <p
-                      class="m-0 mb-1 text-sm text-charcoal-brown-700"
+                      class="m-0 mb-1 text-sm text-fg-soft"
                       [class]="published?.detail ? 'block' : 'hidden'"
                     >
                       {{ published?.detail }}
@@ -530,13 +516,13 @@ const UNATTENDED_TITLE =
                       @for (artifact of published?.artifacts ?? []; track artifact.name) {
                         <li class="flex flex-wrap items-baseline gap-2 text-sm">
                           <span
-                            class="rounded border border-charcoal-brown-200 bg-charcoal-brown-50 px-1.5 text-xs text-charcoal-brown-600"
+                            class="rounded border border-line bg-surface-subtle px-1.5 text-xs text-fg-soft"
                             >{{ artifact.type }}</span
                           >
                           @for (link of artifactLinks(artifact); track link.label) {
                             @if (link.href) {
                               <a
-                                class="break-all text-ocean-deep-700 no-underline hover:underline"
+                                class="break-all text-accent no-underline hover:underline"
                                 [href]="link.href"
                                 >{{ link.label }}</a
                               >
@@ -544,14 +530,12 @@ const UNATTENDED_TITLE =
                               <span class="break-all">{{ link.label }}</span>
                             }
                           }
-                          <span class="font-mono text-charcoal-brown-500">{{
-                            artifact.version
-                          }}</span>
+                          <span class="font-mono text-fg-muted">{{ artifact.version }}</span>
                         </li>
                       }
                     </ul>
                     <p
-                      class="m-0 py-2 text-sm text-charcoal-brown-500"
+                      class="m-0 py-2 text-sm text-fg-muted"
                       [class]="
                         published && !published.artifacts?.length && !published.detail
                           ? 'block'
@@ -577,7 +561,7 @@ const UNATTENDED_TITLE =
                 <app-run-reports class="mt-4" [runId]="run.runId" [title]="run.title" />
               }
               <p
-                class="mt-4 mb-0 rounded-md border border-charcoal-brown-200 bg-white px-3 py-2 text-sm text-charcoal-brown-600"
+                class="mt-4 mb-0 rounded-md border border-line bg-surface px-3 py-2 text-sm text-fg-soft"
                 [class]="noFinishedBuild() ? 'block' : 'hidden'"
               >
                 No finished build of this fold yet.

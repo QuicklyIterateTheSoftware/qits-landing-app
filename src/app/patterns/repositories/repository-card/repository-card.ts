@@ -18,8 +18,8 @@ interface Backup {
  *
  * - A repository without a forge twin (no backup URL) reads "No twin".
  * - A twin never backed up reads "Never".
- * - Otherwise the last outcome: Succeeded (mint-leaf), Failed / Unreachable / Auth needed
- *   (cinnabar).
+ * - Otherwise the last outcome: Succeeded (the success tone), Failed / Unreachable / Auth needed
+ *   (the danger tone).
  *
  * A repository whose declared archetype is FRONTEND or APP (never judged by its name) links its UI
  * builder at the bottom of the body (qits-1951). A SERVICE links its contracts (provider states)
@@ -33,9 +33,7 @@ interface Backup {
   host: { class: 'block' },
   template: `
     <ui-card-silent>
-      <card-header class="bg-charcoal-brown-100 text-center font-mono text-charcoal-brown-900">{{
-        name()
-      }}</card-header>
+      <card-header class="bg-surface-muted text-center font-mono text-fg">{{ name() }}</card-header>
       <card-body flush>
         <div class="grid grid-cols-2">
           <ui-stat class="backup w-full" label="Backup" mirrored>
@@ -43,25 +41,25 @@ interface Backup {
               class="whitespace-nowrap"
               [class]="
                 backup().tone === 'ok'
-                  ? 'text-mint-leaf-700'
+                  ? 'text-success'
                   : backup().tone === 'failed'
-                    ? 'text-cinnabar-600'
-                    : 'text-charcoal-brown-600'
+                    ? 'text-danger'
+                    : 'text-fg-soft'
               "
               >{{ backup().label }}</span
             >
           </ui-stat>
           <ui-stat
-            class="archetype w-full [&_dt]:border-l-[0.5px] [&_dt]:border-black/40"
+            class="archetype w-full [&_dt]:border-l-[0.5px] [&_dt]:border-line-strong"
             label="Archetype"
           >
             {{ archetype() }}
           </ui-stat>
         </div>
         @if (frontend()) {
-          <div class="flex justify-end border-t-[0.5px] border-black/20 px-2 py-1">
+          <div class="flex justify-end border-t-[0.5px] border-line-strong px-2 py-1">
             <a
-              class="ui-builder text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
+              class="ui-builder text-xs font-semibold text-fg no-underline hover:underline"
               [qitsExit]="pages.uiBuilder"
               [exitParams]="params()"
               >UI builder →</a
@@ -69,15 +67,15 @@ interface Backup {
           </div>
         }
         @if (service()) {
-          <div class="flex justify-end gap-3 border-t-[0.5px] border-black/20 px-2 py-1">
+          <div class="flex justify-end gap-3 border-t-[0.5px] border-line-strong px-2 py-1">
             <a
-              class="contracts text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
+              class="contracts text-xs font-semibold text-fg no-underline hover:underline"
               [qitsExit]="pages.contracts"
               [exitParams]="params()"
               >Contracts →</a
             >
             <a
-              class="entities text-xs font-semibold text-charcoal-brown-800 no-underline hover:underline"
+              class="entities text-xs font-semibold text-fg no-underline hover:underline"
               [qitsExit]="pages.entities"
               [exitParams]="params()"
               >Entities →</a
@@ -87,15 +85,15 @@ interface Backup {
       </card-body>
       <card-expandable>
         <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pt-2 text-[0.8125rem]">
-          <dt class="text-charcoal-brown-600">Clone</dt>
+          <dt class="text-fg-soft">Clone</dt>
           <dd class="clone m-0 font-mono break-all select-all">
             {{ entry().repository?.cloneUrl ?? '–' }}
           </dd>
-          <dt class="text-charcoal-brown-600">Backup</dt>
+          <dt class="text-fg-soft">Backup</dt>
           <dd class="backup-url m-0 font-mono break-all select-all">
             {{ entry().repository?.backupUrl ?? '–' }}
           </dd>
-          <dt class="text-charcoal-brown-600">Main branch</dt>
+          <dt class="text-fg-soft">Main branch</dt>
           <dd class="main-branch m-0 font-mono select-all">
             {{ entry().repository?.mainBranch ?? '–' }}
           </dd>

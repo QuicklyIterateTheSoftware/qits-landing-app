@@ -20,17 +20,17 @@ export function previewOf(text: string, limit = PREVIEW_CHARS): string {
   host: { class: 'block min-w-0' },
   template: `
     <div class="mb-1 flex items-center gap-2">
-      <h4 class="m-0 text-xs font-semibold text-charcoal-brown-700 uppercase">{{ heading() }}</h4>
+      <h4 class="m-0 text-xs font-semibold text-fg-soft uppercase">{{ heading() }}</h4>
       <button
         type="button"
-        class="copy ml-auto cursor-pointer rounded border border-charcoal-brown-300 px-1.5 text-xs hover:bg-charcoal-brown-50"
+        class="copy ml-auto cursor-pointer rounded border border-line-strong px-1.5 text-xs hover:bg-surface-subtle"
         (click)="copy()"
       >
         {{ copied() ? 'Copied' : copyLabel() }}
       </button>
     </div>
     <pre
-      class="json m-0 max-h-96 overflow-auto rounded bg-charcoal-brown-50 p-2 font-mono text-[0.6875rem] leading-4"
+      class="json m-0 max-h-96 overflow-auto rounded bg-surface-subtle p-2 font-mono text-[0.6875rem] leading-4"
       >{{ preview() }}</pre>
   `,
 })

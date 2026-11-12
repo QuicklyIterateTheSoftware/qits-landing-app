@@ -40,7 +40,7 @@ import { TagLink } from '$ui/components/tag-link/tag-link';
         [describedBy]="popover.panelId()"
       />
       <div popover-content class="flex w-72 flex-col gap-1">
-        <div class="flex items-center gap-2 text-xs text-charcoal-brown-500">
+        <div class="flex items-center gap-2 text-xs text-fg-muted">
           <a
             class="font-mono hover:underline"
             [qitsExit]="opening.openFromPreview"

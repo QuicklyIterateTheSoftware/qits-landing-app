@@ -27,7 +27,7 @@ export const COPIED_MS = 2000;
   host: { class: 'flex items-start gap-2' },
   template: `
     <code
-      class="min-w-0 flex-1 rounded-md bg-charcoal-brown-50 px-2 py-1.5 font-mono text-xs break-all whitespace-pre-wrap text-charcoal-brown-900"
+      class="min-w-0 flex-1 rounded-md bg-surface-subtle px-2 py-1.5 font-mono text-xs break-all whitespace-pre-wrap text-fg"
       >{{ text() }}</code
     >
     <ui-action-button [action]="copy()" />

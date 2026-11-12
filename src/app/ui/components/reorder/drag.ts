@@ -71,7 +71,7 @@ export class Marker {
     this.line = document.createElement('div');
     this.line.setAttribute('aria-hidden', 'true');
     this.line.setAttribute('data-reorder-marker', '');
-    this.line.className = 'pointer-events-none fixed z-50 h-0.5 rounded-full bg-ocean-deep-600';
+    this.line.className = 'pointer-events-none fixed z-50 h-0.5 rounded-full bg-accent';
     this.line.style.display = 'none';
     document.body.append(this.line);
   }

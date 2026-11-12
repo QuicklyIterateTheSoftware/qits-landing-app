@@ -33,8 +33,8 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
   imports: [ActionButton, Chip, WorkRef],
   host: { class: 'block' },
   template: `
-    <section class="flex flex-col gap-2 text-sm text-charcoal-brown-800" aria-label="Needs">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Needs</h2>
+    <section class="flex flex-col gap-2 text-sm text-fg" aria-label="Needs">
+      <h2 class="m-0 text-base font-semibold text-fg">Needs</h2>
       <ul class="m-0 flex list-none flex-col gap-1 p-0">
         @for (need of needs(); track need.qualifiedId) {
           <li class="flex flex-wrap items-center gap-2" data-work-need>
@@ -43,7 +43,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
               >at <span class="font-semibold">{{ word(need.status) }}</span></span
             >
             @if (need.currentStatus) {
-              <span class="text-charcoal-brown-500">(now {{ word(need.currentStatus) }})</span>
+              <span class="text-fg-muted">(now {{ word(need.currentStatus) }})</span>
             }
             @if (need.met) {
               <ui-chip label="met" tone="ok" />
@@ -53,13 +53,13 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
             <ui-action-button [action]="removeAction(need)" />
           </li>
         } @empty {
-          <li class="text-charcoal-brown-500">It needs no other item.</li>
+          <li class="text-fg-muted">It needs no other item.</li>
         }
       </ul>
       @if (adding()) {
         <div class="flex flex-wrap items-center gap-2">
           <input
-            class="h-8 w-40 rounded-md border border-charcoal-brown-300 px-2 font-mono text-sm"
+            class="h-8 w-40 rounded-md border border-line-strong px-2 font-mono text-sm"
             type="text"
             aria-label="Needed item"
             placeholder="qits-1897"
@@ -67,7 +67,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
             (input)="item.set(value($event))"
           />
           <select
-            class="h-8 rounded-md border border-charcoal-brown-300 px-2 text-sm"
+            class="h-8 rounded-md border border-line-strong px-2 text-sm"
             aria-label="Needed status"
             [value]="status()"
             (change)="status.set(value($event))"
@@ -83,7 +83,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
         <div><ui-action-button [action]="openAction()" /></div>
       }
       @if (failure(); as failure) {
-        <p class="m-0 text-cinnabar-700" role="alert">{{ failure }}</p>
+        <p class="m-0 text-danger" role="alert">{{ failure }}</p>
       }
     </section>
   `,

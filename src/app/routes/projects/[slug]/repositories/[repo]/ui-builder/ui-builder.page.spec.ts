@@ -8,9 +8,11 @@ import { client as artifactsClient } from '../../../../../../api/artifacts/clien
 import { provideHeyApiClient as provideArtifactsClient } from '../../../../../../api/artifacts/client/client.gen';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
+import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
+import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import type {
   DeclaredOutcome,
   FiredOutcome,
@@ -181,8 +183,12 @@ describe('UiBuilderPage', () => {
   /** The recorded map's Project, on its entity page in the project (qits-1994). */
   const PROJECT_PAGE = `/projects/${SLUG}/repositories/qits-projects-service/entities/eu.wohlben.qits.entities.domain.Project`;
 
+  /** The app's resolved colour scheme (`ThemePreferenceStore.resolved`, qits-2086); light per case. */
+  const appScheme = signal<'light' | 'dark'>('light');
+
   /** The testing module, as every case starts with it. */
   function configure() {
+    appScheme.set('light');
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -202,6 +208,7 @@ describe('UiBuilderPage', () => {
           provide: SelectedProject,
           useValue: { project: signal({ id: ID }), slug: signal(SLUG), url: signal('') },
         },
+        { provide: ThemePreferenceStore, useValue: { resolved: appScheme.asReadonly() } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -671,10 +678,12 @@ describe('UiBuilderPage', () => {
         'loading pending',
         'error error',
       ]);
+      // Each kind's chip in its tone's colours (the chip's first class: its background).
+      const tone = (name: ChipTone) => expect.stringContaining(chipClass(name).split(' ')[0]);
       expect(tabs.map((tab) => tab.querySelector('ui-chip.kind')?.className)).toEqual([
-        expect.stringContaining('bg-mint-leaf-100'),
-        expect.stringContaining('bg-sunflower-gold-100'),
-        expect.stringContaining('bg-cinnabar-100'),
+        tone('ok'),
+        tone('waiting'),
+        tone('failed'),
       ]);
       expect(selectedTab(element)?.firstChild?.textContent?.trim()).toBe('loaded');
       expect(pressed(element)).toBe('Desktop');
@@ -775,9 +784,126 @@ describe('UiBuilderPage', () => {
       }
     });
 
+    describe('colour schemes (qits-2086)', () => {
+      type Scheme = NonNullable<Freeze['colorScheme']>;
+      const schemedFile = (name: string, viewport: string, scheme: Scheme) =>
+        `${SHOTS}/${name}-${viewport.toLowerCase()}-${scheme.toLowerCase()}.html`;
+
+      /**
+       * The recorded manifest, the repositories route's freezes replaced by `states`, each shot at
+       * the three widths in `schemes`, the manifest listing LIGHT and DARK.
+       */
+      function shotInSchemes(schemes: readonly Scheme[] = ['LIGHT', 'DARK']): RoutesManifest {
+        const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+        const freezes = STATES.flatMap(([name, kind]) =>
+          WIDTHS.flatMap((viewport) =>
+            schemes.map((colorScheme): Freeze => ({
+              file: schemedFile(name, viewport, colorScheme),
+              name,
+              route: REPOSITORIES,
+              records: [],
+              kind,
+              viewport,
+              colorScheme,
+            })),
+          ),
+        );
+        return {
+          ...recorded,
+          colorSchemes: ['LIGHT', 'DARK'],
+          freezes: [...recorded.freezes.filter((f) => f.route !== REPOSITORIES), ...freezes],
+          byRoute: { [REPOSITORIES]: freezes.map((f) => f.file) },
+        };
+      }
+
+      const renderSchemes = (query = '', schemes?: readonly Scheme[]) =>
+        render('qits-landing-app', undefined, undefined, query, shotInSchemes(schemes));
+
+      const schemePressed = (element: HTMLElement) =>
+        element
+          .querySelector('[aria-label="Colour scheme"] [aria-pressed="true"]')
+          ?.textContent?.trim();
+
+      const schemeButton = (element: HTMLElement, label: string) =>
+        [
+          ...element.querySelectorAll<HTMLButtonElement>('[aria-label="Colour scheme"] button'),
+        ].find((b) => b.textContent?.trim() === label)!;
+
+      it('draws the app’s scheme beside the viewport switch until one is picked', async () => {
+        appScheme.set('dark');
+        const { fixture, element } = await renderSchemes();
+        const group = element.querySelector('[aria-label="Colour scheme"]')!;
+        expect([...group.querySelectorAll('button')].map((b) => b.textContent?.trim())).toEqual([
+          'Light',
+          'Dark',
+        ]);
+        expect(group.querySelector('button')!.className).toContain('scheme');
+        // Beside the viewport switch, in one row.
+        expect(group.parentElement).toBe(
+          element.querySelector('[aria-label="Viewport"]')!.parentElement,
+        );
+        expect(schemePressed(element)).toBe('Dark');
+        await answerFreeze(schemedFile('loaded', 'DESKTOP', 'DARK'), fixture);
+
+        // The app turning light draws its light freeze, while nothing is picked.
+        appScheme.set('light');
+        fixture.detectChanges();
+        await navigated(fixture);
+        http.expectOne(fileUrl(schemedFile('loaded', 'DESKTOP', 'LIGHT'))).flush('<p>light</p>');
+        await navigated(fixture);
+        expect(schemePressed(element)).toBe('Light');
+        expect(element.querySelector('iframe')!.srcdoc).toContain('<p>light</p>');
+
+        // Picked: Dark, whatever the app's scheme; the URL does not hold it. The dark freeze is
+        // read already.
+        schemeButton(element, 'Dark').click();
+        await navigated(fixture);
+        expect(schemePressed(element)).toBe('Dark');
+        expect(query()).toEqual({});
+        expect(element.querySelector('iframe')!.srcdoc).toContain('/projects/x');
+        appScheme.set('light');
+        fixture.detectChanges();
+        expect(schemePressed(element)).toBe('Dark');
+      });
+
+      it('keeps the picked scheme across viewports and states', async () => {
+        const { fixture, element } = await renderSchemes();
+        expect(schemePressed(element)).toBe('Light');
+        await answerFreeze(schemedFile('loaded', 'DESKTOP', 'LIGHT'), fixture);
+        schemeButton(element, 'Dark').click();
+        await navigated(fixture);
+        http.expectOne(fileUrl(schemedFile('loaded', 'DESKTOP', 'DARK'))).flush('<p>dark</p>');
+        await navigated(fixture);
+
+        viewportButton(element, 'Phone').click();
+        await navigated(fixture);
+        http.expectOne(fileUrl(schemedFile('loaded', 'PHONE', 'DARK'))).flush('<p>phone</p>');
+        await settle();
+        fixture.detectChanges();
+        expect(schemePressed(element)).toBe('Dark');
+        expect(pressed(element)).toBe('Phone');
+
+        element
+          .querySelectorAll<HTMLButtonElement>('[aria-label="States"] [role="tab"]')[2]
+          .click();
+        await navigated(fixture);
+        http.expectOne(fileUrl(schemedFile('error', 'PHONE', 'DARK'))).flush('<p>error</p>');
+        await settle();
+      });
+
+      it('draws the scheme a shot has when it lacks the chosen one', async () => {
+        appScheme.set('dark');
+        const { fixture, element } = await renderSchemes('', ['LIGHT']);
+        // The manifest lists both, so the switch offers both.
+        expect(schemePressed(element)).toBe('Dark');
+        await answerFreeze(schemedFile('loaded', 'DESKTOP', 'LIGHT'), fixture);
+      });
+    });
+
     it('shows no switch, no kind and the full-width frame for a bundle without them', async () => {
       const { fixture, element } = await render('qits-landing-app');
       expect(element.querySelector('[aria-label="Viewport"]')).toBeNull();
+      expect(element.querySelector('[aria-label="Colour scheme"]')).toBeNull();
       expect(element.querySelector('[aria-label="States"] ui-chip')).toBeNull();
       await answerFreeze(ERROR_FREEZE, fixture);
       const frame = element.querySelector<HTMLIFrameElement>('iframe')!;
@@ -1743,6 +1869,10 @@ describe('UiBuilderPage', () => {
       expect(doc.head.querySelectorAll('style[data-qits-builder]')).toHaveLength(1);
       expect(doc.head.querySelector('style[data-qits-builder]')?.textContent).toContain(
         '[data-qits-builder-highlight]',
+      );
+      // The theme's accent, the freeze's own value first (qits-2086), never a literal colour.
+      expect(doc.head.querySelector('style[data-qits-builder]')?.textContent).toMatch(
+        /outline: 3px solid var\(--color-accent, [^)]+\)/,
       );
       // The shown state shows the trigger: nothing switches.
       expect(query()).toEqual({});

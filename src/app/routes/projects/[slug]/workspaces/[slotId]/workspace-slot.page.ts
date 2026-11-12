@@ -61,14 +61,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
       <app-page-layout [title]="title()">
         <ui-spinner [state]="state()" class="min-h-48">
           @if (missing()) {
-            <p class="m-0 text-sm text-charcoal-brown-600">
+            <p class="m-0 text-sm text-fg-soft">
               This workspace is gone: it resolved once its last agent was removed, or it never
               existed.
             </p>
           }
           @if (slot(); as slot) {
             <div class="flex flex-col gap-8">
-              <p class="m-0 max-w-[48rem] text-sm text-charcoal-brown-600">
+              <p class="m-0 max-w-[48rem] text-sm text-fg-soft">
                 A workspace is a slot that hosts agents. It runs one working agent at a time; an
                 agent that waits for a person keeps its harness and terminal, but yields the slot to
                 the next one.
@@ -82,12 +82,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 <app-starting-log [processId]="processId" />
               }
               <section class="flex flex-col gap-3" aria-labelledby="slot-agents">
-                <h2 id="slot-agents" class="m-0 text-base font-semibold text-charcoal-brown-900">
-                  Agents
-                </h2>
+                <h2 id="slot-agents" class="m-0 text-base font-semibold text-fg">Agents</h2>
                 <ui-spinner [state]="agentsState()" class="min-h-12">
                   <p
-                    class="m-0 text-sm text-charcoal-brown-500"
+                    class="m-0 text-sm text-fg-muted"
                     [class.hidden]="agentsState() !== 'loaded' || agents().length"
                   >
                     No agent is in this workspace. The platform removes an empty workspace.

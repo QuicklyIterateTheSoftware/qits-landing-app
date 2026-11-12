@@ -29,9 +29,9 @@ export const CHANGES_SHOWN = 3;
 
 /** A chip's Tailwind classes, written out in full so Tailwind finds them. */
 const CHIP = {
-  running: 'bg-ocean-deep-100 text-ocean-deep-800',
-  waiting: 'bg-sunflower-gold-100 text-sunflower-gold-800',
-  neutral: 'bg-charcoal-brown-100 text-charcoal-brown-700',
+  running: 'bg-accent-soft text-accent',
+  waiting: 'bg-warning-soft text-warning-strong',
+  neutral: 'bg-surface-muted text-fg-soft',
 } as const;
 
 /** How a pending bump stands, in a word: its run, or, once green, its release. */
@@ -109,14 +109,12 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
         <ui-spinner [state]="state()" class="min-h-16">
           <ul class="m-0 max-h-96 list-none overflow-y-auto p-0">
             @for (bump of store.pending(); track bump.id) {
-              <li class="flex flex-col gap-1 border-b border-gray-100 px-3 py-2 last:border-b-0">
+              <li class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0">
                 <div class="flex items-baseline justify-between gap-2">
-                  <span class="truncate text-sm font-semibold text-gray-900">{{
-                    bump.repository
-                  }}</span>
+                  <span class="truncate text-sm font-semibold text-fg">{{ bump.repository }}</span>
                   <span class="flex shrink-0 gap-1">
                     <span
-                      class="rounded bg-charcoal-brown-100 px-1.5 text-[0.6875rem] leading-4 text-charcoal-brown-700"
+                      class="rounded bg-surface-muted px-1.5 text-[0.6875rem] leading-4 text-fg-soft"
                       >{{ bump.mode }}</span
                     >
                     <span
@@ -128,36 +126,36 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
                 </div>
                 <ul class="m-0 list-none p-0">
                   @for (change of shown(bump); track $index) {
-                    <li class="truncate text-[0.8125rem] text-gray-600">
-                      <span class="text-gray-900">{{ change.name }}</span>
+                    <li class="truncate text-[0.8125rem] text-fg-soft">
+                      <span class="text-fg">{{ change.name }}</span>
                       {{ change.from }} → {{ change.to }}
-                      <span class="text-[0.6875rem] text-gray-500">{{
+                      <span class="text-[0.6875rem] text-fg-muted">{{
                         change.ecosystem?.toLowerCase()
                       }}</span>
                     </li>
                   }
                 </ul>
-                <span class="text-[0.6875rem] text-gray-500" [class.hidden]="!more(bump)"
+                <span class="text-[0.6875rem] text-fg-muted" [class.hidden]="!more(bump)"
                   >+{{ more(bump) }} more</span
                 >
               </li>
             }
           </ul>
           <p
-            class="m-0 px-3 py-4 text-center text-sm text-gray-500"
+            class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
             [class.hidden]="state() !== 'loaded' || store.pending().length > 0"
           >
             No pending version bumps
           </p>
         </ui-spinner>
         @if (pools().length > 0) {
-          <ul class="m-0 list-none border-t border-gray-100 p-0">
+          <ul class="m-0 list-none border-t border-line-subtle p-0">
             @for (pool of pools(); track pool.origin) {
               <li
-                class="flex items-center justify-between gap-2 px-3 py-1.5 text-[0.8125rem] text-gray-600"
+                class="flex items-center justify-between gap-2 px-3 py-1.5 text-[0.8125rem] text-fg-soft"
               >
-                <span class="truncate text-gray-900">{{ pool.name }}</span>
-                <span class="shrink-0 text-gray-500">{{ pool.open }}/{{ pool.max }}</span>
+                <span class="truncate text-fg">{{ pool.name }}</span>
+                <span class="shrink-0 text-fg-muted">{{ pool.open }}/{{ pool.max }}</span>
               </li>
             }
           </ul>

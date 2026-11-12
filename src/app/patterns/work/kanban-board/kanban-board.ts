@@ -53,7 +53,7 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
   hostDirectives: [SelectionHighlight],
   host: { class: 'block' },
   template: `
-    <p role="alert" class="m-0 mb-4 text-sm text-cinnabar-700" [class.hidden]="!reorders.refusal()">
+    <p role="alert" class="m-0 mb-4 text-sm text-danger" [class.hidden]="!reorders.refusal()">
       {{ reorders.refusal() }}
     </p>
     <ui-board

@@ -73,15 +73,15 @@ const PREVIEW_CHARS = 12_000;
     <ui-dropdown
       #dropdown
       class="w-full"
-      triggerClass="call-trigger w-full cursor-pointer rounded px-1 py-0.5 text-left hover:bg-charcoal-brown-50 aria-expanded:bg-charcoal-brown-100"
+      triggerClass="call-trigger w-full cursor-pointer rounded px-1 py-0.5 text-left hover:bg-surface-subtle aria-expanded:bg-surface-muted"
       haspopup="dialog"
       panelRole="dialog"
       [panelLabel]="c.operationId + ' in ' + c.state"
-      panelClass="w-[28rem] max-w-[calc(100vw-2rem)] rounded-lg border border-charcoal-brown-200 bg-white shadow-lg"
+      panelClass="w-[28rem] max-w-[calc(100vw-2rem)] rounded-lg border border-line bg-surface shadow-lg"
       (opened)="onOpened()"
     >
       <span dropdown-trigger class="block font-mono text-xs">{{ c.operationId }}</span>
-      <span dropdown-trigger class="block text-xs text-charcoal-brown-500"
+      <span dropdown-trigger class="block text-xs text-fg-muted"
         >{{ c.provider }} · “{{ c.state }}”</span
       >
 
@@ -90,10 +90,10 @@ const PREVIEW_CHARS = 12_000;
           @let d = details();
           @switch (d.status) {
             @case ('loading') {
-              <p class="m-0 text-charcoal-brown-600">Reading the golden masters…</p>
+              <p class="m-0 text-fg-soft">Reading the golden masters…</p>
             }
             @case ('none') {
-              <p class="m-0 text-charcoal-brown-600">
+              <p class="m-0 text-fg-soft">
                 {{
                   site()
                     ? 'The contracts of ' + c.provider + ' list no state “' + c.state + '”.'
@@ -102,17 +102,15 @@ const PREVIEW_CHARS = 12_000;
               </p>
             }
             @case ('error') {
-              <p class="m-0 text-cinnabar-700">Could not read the golden masters.</p>
+              <p class="m-0 text-danger">Could not read the golden masters.</p>
             }
             @case ('loaded') {
               @if (loaded(); as l) {
                 <section>
-                  <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">
-                    Operation
-                  </h4>
+                  <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Operation</h4>
                   @if (l.operation; as op) {
                     <p class="m-0 flex flex-wrap items-center gap-1.5 font-mono">
-                      <span class="rounded bg-charcoal-brown-100 px-1 font-semibold">{{
+                      <span class="rounded bg-surface-muted px-1 font-semibold">{{
                         op.method
                       }}</span>
                       <span class="break-all">{{ op.path }}</span>
@@ -120,21 +118,19 @@ const PREVIEW_CHARS = 12_000;
                         class="rounded px-1 font-semibold"
                         [class]="
                           op.status < 300
-                            ? 'bg-mint-leaf-100 text-mint-leaf-800'
-                            : 'bg-sunflower-gold-100 text-sunflower-gold-800'
+                            ? 'bg-success-soft text-success-strong'
+                            : 'bg-warning-soft text-warning-strong'
                         "
                         >{{ op.status }}</span
                       >
                     </p>
                   } @else {
-                    <p class="m-0 text-charcoal-brown-600">
-                      The state records no {{ c.operationId }}.
-                    </p>
+                    <p class="m-0 text-fg-soft">The state records no {{ c.operationId }}.</p>
                   }
                 </section>
 
                 <section>
-                  <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">State</h4>
+                  <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">State</h4>
                   @if (stateParams(); as params) {
                     <a
                       class="state-link m-0 block font-semibold"
@@ -148,15 +144,13 @@ const PREVIEW_CHARS = 12_000;
                   @if (params().length) {
                     <dl class="m-0 mt-1 grid grid-cols-[auto_1fr] gap-x-2 font-mono">
                       @for (p of params(); track p.key) {
-                        <dt class="text-charcoal-brown-500">{{ p.key }}</dt>
+                        <dt class="text-fg-muted">{{ p.key }}</dt>
                         <dd class="m-0 break-all">{{ p.value }}</dd>
                       }
                     </dl>
                   }
                   @if (dependsOn().length) {
-                    <p class="m-0 mt-1 text-charcoal-brown-600">
-                      Depends on: {{ dependsOn().join(', ') }}
-                    </p>
+                    <p class="m-0 mt-1 text-fg-soft">Depends on: {{ dependsOn().join(', ') }}</p>
                   }
                 </section>
               }
@@ -165,20 +159,20 @@ const PREVIEW_CHARS = 12_000;
 
           @if (entities().length) {
             <section>
-              <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">Entities</h4>
+              <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Entities</h4>
               <div class="flex flex-wrap gap-1">
                 @for (e of entities(); track e.key) {
                   <span class="inline-flex items-center gap-0.5">
                     <button
                       type="button"
-                      class="cursor-pointer rounded bg-charcoal-brown-100 px-1.5 font-mono font-semibold hover:bg-charcoal-brown-200"
+                      class="cursor-pointer rounded bg-surface-muted px-1.5 font-mono font-semibold hover:bg-surface-active"
                       (click)="pickEntity(e.key)"
                     >
                       {{ e.name }}
                     </button>
                     @if (project(); as slug) {
                       <a
-                        class="entity-link px-0.5 text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
+                        class="entity-link px-0.5 text-fg-soft no-underline hover:text-fg"
                         [qitsExit]="opening.entity"
                         [exitParams]="{ slug, repo: e.repository, entity: e.entity }"
                         [attr.aria-label]="'Open ' + e.name + ' entity page'"
@@ -194,7 +188,7 @@ const PREVIEW_CHARS = 12_000;
 
           @if (docsUrl(); as url) {
             <section>
-              <h4 class="m-0 mb-1 font-semibold text-charcoal-brown-700 uppercase">Docs</h4>
+              <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Docs</h4>
               <a class="docs font-semibold" [href]="url" target="_blank" rel="noopener"
                 >Contracts of {{ c.provider }} in qits-docs ↗</a
               >
@@ -205,13 +199,11 @@ const PREVIEW_CHARS = 12_000;
             @if (l.operation) {
               <section class="min-w-0">
                 <div class="mb-1 flex items-center gap-2">
-                  <h4 class="m-0 font-semibold text-charcoal-brown-700 uppercase">
-                    Recorded response
-                  </h4>
+                  <h4 class="m-0 font-semibold text-fg-soft uppercase">Recorded response</h4>
                   @if (l.json) {
                     <button
                       type="button"
-                      class="ml-auto cursor-pointer rounded border border-charcoal-brown-300 px-1.5 hover:bg-charcoal-brown-50"
+                      class="ml-auto cursor-pointer rounded border border-line-strong px-1.5 hover:bg-surface-subtle"
                       (click)="copy(l.json)"
                     >
                       {{ copied() ? 'Copied' : 'Copy JSON' }}
@@ -220,17 +212,17 @@ const PREVIEW_CHARS = 12_000;
                 </div>
                 @switch (l.jsonStatus) {
                   @case ('loading') {
-                    <p class="m-0 text-charcoal-brown-600">Reading…</p>
+                    <p class="m-0 text-fg-soft">Reading…</p>
                   }
                   @case ('error') {
-                    <p class="m-0 text-cinnabar-700">Could not read the recorded response.</p>
+                    <p class="m-0 text-danger">Could not read the recorded response.</p>
                   }
                   @case ('none') {
-                    <p class="m-0 text-charcoal-brown-600">The response has no JSON body.</p>
+                    <p class="m-0 text-fg-soft">The response has no JSON body.</p>
                   }
                   @case ('loaded') {
                     <pre
-                      class="json m-0 max-h-72 overflow-auto rounded bg-charcoal-brown-50 p-2 font-mono text-[0.6875rem] leading-4"
+                      class="json m-0 max-h-72 overflow-auto rounded bg-surface-subtle p-2 font-mono text-[0.6875rem] leading-4"
                       >{{ preview() }}</pre>
                   }
                 }

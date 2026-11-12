@@ -82,6 +82,6 @@ export class TicketCard {
   protected readonly needs = computed(() => hasUnmetNeeds(this.node().entry));
 
   protected readonly border = computed(
-    () => BOARD_COLUMNS[this.node().column ?? 0]?.cardBorder ?? 'border-charcoal-brown-200',
+    () => BOARD_COLUMNS[this.node().column ?? 0]?.cardBorder ?? 'border-line',
   );
 }

@@ -33,17 +33,17 @@ import { ActionButton } from '$ui/components/action-button/action-button';
   host: { class: 'block' },
   template: `
     <div
-      class="flex flex-col gap-3 rounded-md border border-cinnabar-200 bg-cinnabar-50 p-4"
+      class="flex flex-col gap-3 rounded-md border border-danger-line bg-danger-soft p-4"
       role="group"
       [attr.aria-label]="'Drop ' + (entry().qualifiedId ?? '')"
     >
-      <p class="m-0 text-sm font-semibold text-charcoal-brown-900">
+      <p class="m-0 text-sm font-semibold text-fg">
         Drop {{ entry().qualifiedId }} — why is it closed?
       </p>
-      <label class="flex flex-col gap-1 text-sm text-charcoal-brown-800">
+      <label class="flex flex-col gap-1 text-sm text-fg">
         Outcome
         <select
-          class="h-8 w-full max-w-xs rounded-md border border-charcoal-brown-300 px-2 text-sm"
+          class="h-8 w-full max-w-xs rounded-md border border-line-strong px-2 text-sm"
           aria-label="Outcome"
           [value]="outcome() ?? ''"
           (change)="outcomeChanged($event)"
@@ -55,10 +55,10 @@ import { ActionButton } from '$ui/components/action-button/action-button';
         </select>
       </label>
       @if (needsReference()) {
-        <label class="flex flex-col gap-1 text-sm text-charcoal-brown-800">
+        <label class="flex flex-col gap-1 text-sm text-fg">
           Reference
           <input
-            class="h-8 w-full max-w-xs rounded-md border border-charcoal-brown-300 px-2 text-sm"
+            class="h-8 w-full max-w-xs rounded-md border border-line-strong px-2 text-sm"
             type="text"
             aria-label="Reference"
             [value]="reference()"
@@ -72,7 +72,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
         <ui-action-button [action]="confirmAction()" />
       </div>
       @if (failure(); as failure) {
-        <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ failure }}</p>
+        <p class="m-0 text-sm text-danger" role="alert">{{ failure }}</p>
       }
     </div>
   `,

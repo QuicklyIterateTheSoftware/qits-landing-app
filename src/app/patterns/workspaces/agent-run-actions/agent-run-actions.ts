@@ -57,10 +57,10 @@ const RESTARTABLE: ReadonlySet<string> = new Set(['RUNNING', 'YIELDED', 'STOPPED
       }
     </div>
     @if (note(); as note) {
-      <p class="m-0 mt-1 text-sm text-charcoal-brown-600" role="status">{{ note }}</p>
+      <p class="m-0 mt-1 text-sm text-fg-soft" role="status">{{ note }}</p>
     }
     @if (failure(); as failure) {
-      <p class="m-0 mt-1 text-sm text-cinnabar-700" role="alert">{{ failure }}</p>
+      <p class="m-0 mt-1 text-sm text-danger" role="alert">{{ failure }}</p>
     }
   `,
 })

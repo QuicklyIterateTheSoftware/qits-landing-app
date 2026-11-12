@@ -29,12 +29,12 @@ type Decision = 'approve' | 'decline';
   host: { class: 'block' },
   template: `
     @if (offer().note; as note) {
-      <p class="m-0 text-sm text-charcoal-brown-600">{{ note }}</p>
+      <p class="m-0 text-sm text-fg-soft">{{ note }}</p>
     }
     @if (offer().approve || offer().decline) {
       <div class="flex flex-wrap items-center gap-2">
         <input
-          class="h-8 min-w-48 flex-1 rounded-md border border-charcoal-brown-300 px-2 text-sm"
+          class="h-8 min-w-48 flex-1 rounded-md border border-line-strong px-2 text-sm"
           type="text"
           [value]="note()"
           (input)="noteTyped($event)"
@@ -49,16 +49,16 @@ type Decision = 'approve' | 'decline';
             <ui-action-button [action]="decline()" [join]="offer().approve ? 'end' : 'none'" />
           }
         </div>
-        <span class="text-xs text-charcoal-brown-500"
+        <span class="text-xs text-fg-muted"
           >of <span class="font-mono">{{ fold() }}</span></span
         >
       </div>
     }
     @if (moved(); as moved) {
-      <p class="mt-1 mb-0 text-sm text-sunflower-gold-900" role="alert">{{ moved }}</p>
+      <p class="mt-1 mb-0 text-sm text-warning" role="alert">{{ moved }}</p>
     }
     @if (failure(); as failure) {
-      <p class="mt-1 mb-0 text-sm text-cinnabar-700" role="alert">
+      <p class="mt-1 mb-0 text-sm text-danger" role="alert">
         That decision was not recorded — {{ failure }}.
       </p>
     }

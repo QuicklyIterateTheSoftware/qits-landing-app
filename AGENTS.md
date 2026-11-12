@@ -394,11 +394,28 @@ carries `<meta name="traceparent">`, so the browser's page load joins the render
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in
 the templates, and no component `styles:` or `styleUrl` blocks. A component's own host styling goes
-in `host: { class: '…' }`. Colours come from Tailwind's theme, not hex literals. The app's own
-palettes are in `src/theme.css` (Tailwind v4's `@theme`, imported by `src/styles.css`):
-`charcoal-brown`, `sunflower-gold`, `cinnabar`, `mint-leaf` and `ocean-deep`, each 50–950
-(`bg-ocean-deep-100`, `text-cinnabar-600`). Tailwind's default palette stays available. Tailwind finds the classes in the inline templates by itself; a class written as a
-string built at run time is not found, so write every class out in full.
+in `host: { class: '…' }`. Tailwind finds the classes in the inline templates by itself; a class
+written as a string built at run time is not found, so write every class out in full.
+
+**Colours come from the semantic tokens of `@qits/ui-components/theme.css` (qits-2085), imported
+by `src/styles.css`, and only from them** (qits-2086): `bg-surface`, `text-fg-muted`, `border-line`,
+`bg-accent-soft`, `text-danger`, … or `var(--color-surface)` where a utility cannot reach. The
+library's README holds the token table, each with its light value, dark value and role; choose a
+token by its role, not by its light value. Never a palette step (`bg-cinnabar-600`,
+`text-gray-500`), `white` or `black`, a literal (`#fff`, `oklch(…)`), an app-local token or a
+`dark:` variant: the tokens already switch with the scheme. A role no token names is added to
+qits-ui-components-jslib, with a light and a dark value, never here. `qits/theme-colors` is
+`error` in `eslint.config.mjs`; it does not read the global `src/styles.css` or a hex inside a plain
+TS string, so keep those clean by hand. The one computed colour is `tagColour()`
+(`ui/components/tag/tag-colour.ts`), a hashed hue written as `light-dark(…)`.
+
+**Light, dark or System** is the reader's choice, from the theme menu in the top bar
+(`$core/appearance/theme-preference`, `localStorage` key `qits.appearance.theme`): it sets
+`data-theme` on `<html>`, and System removes it so `prefers-color-scheme` decides. The inline
+script in `src/index.html` applies a stored choice before the first paint; the server render is
+always System. Code that paints for itself (the xterm terminal, mermaid) follows the scheme as it
+changes. Every screenshot is taken, and frozen, in both schemes (`colorSchemes` in
+`src/testing/browser/setup.ts`).
 
 ## Pact contracts (epics qits-546, qits-112)
 

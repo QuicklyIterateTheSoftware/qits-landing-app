@@ -148,7 +148,7 @@ interface AgentMenuRow {
  * per open wait
  * (`waitSubject`: a request with its state and lifecycle line, a run, an item, comments, or the
  * wait's label), "Blocked since HH:mm" when its item is blocked (the work list carries no block
- * reason), and, when it needs a person (`needsAttention`), the attention's reason in cinnabar with
+ * reason), and, when it needs a person (`needsAttention`), the attention's reason in the danger tone with
  * its action (`attentionAction`: Prompt agent → the agent page's Chat tab, Open item → the item,
  * or the overdue wait's subject). Shown only while a project is open, like the lightning menu.
  *
@@ -214,8 +214,9 @@ interface AgentMenuRow {
         class="absolute -top-0.5 -right-0.5 min-w-4 rounded-full px-1 text-[0.625rem] leading-4 font-semibold"
         [class]="
           (attention()
-            ? 'bg-cinnabar-600 text-white'
-            : 'bg-sunflower-gold-500 text-charcoal-brown-950') + (count() ? '' : ' hidden')
+            ? 'bg-danger text-fg-on-accent'
+            : 'bg-warning-soft text-warning-strong ring-1 ring-warning-line') +
+          (count() ? '' : ' hidden')
         "
         aria-hidden="true"
         >{{ attention() || count() }}</span
@@ -225,13 +226,13 @@ interface AgentMenuRow {
           @for (row of rows(); track row.agent.agentId) {
             @let agent = row.agent;
             <li
-              class="flex flex-col gap-1 border-b border-gray-100 px-3 py-2 last:border-b-0"
-              [class]="row.action ? 'border-l-4 border-l-cinnabar-600 bg-cinnabar-50' : ''"
+              class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0"
+              [class]="row.action ? 'border-l-4 border-l-danger bg-danger-soft' : ''"
             >
               <div class="flex items-baseline justify-between gap-2">
                 @if (slug() && agent.agentId; as agentId) {
                   <a
-                    class="min-w-0 truncate text-sm text-gray-900 no-underline hover:underline"
+                    class="min-w-0 truncate text-sm text-fg no-underline hover:underline"
                     [qitsExit]="opening.agent"
                     [exitParams]="{ slug: slug(), agentId }"
                     (click)="menu.close()"
@@ -239,7 +240,7 @@ interface AgentMenuRow {
                     {{ agent.entityTitle }}</a
                   >
                 } @else {
-                  <span class="min-w-0 truncate text-sm text-gray-900"
+                  <span class="min-w-0 truncate text-sm text-fg"
                     ><span class="font-semibold">{{ agent.entityId ?? agent.agentId }}</span>
                     {{ agent.entityTitle }}</span
                   >
@@ -252,14 +253,14 @@ interface AgentMenuRow {
                 >
               </div>
               @for (wait of row.waits; track wait.id) {
-                <div class="flex flex-col gap-0.5 text-[0.8125rem] text-gray-600" data-wait>
+                <div class="flex flex-col gap-0.5 text-[0.8125rem] text-fg-soft" data-wait>
                   <div class="flex items-baseline justify-between gap-2">
                     <span class="min-w-0 truncate">
-                      <span class="text-gray-500">waits on </span>
+                      <span class="text-fg-muted">waits on </span>
                       @switch (slug() && wait.subject.id ? wait.subject.kind : null) {
                         @case ('RELEASE_REQUEST') {
                           <a
-                            class="text-gray-900"
+                            class="text-fg"
                             [qitsExit]="waiting.releaseRequest"
                             [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
                             (click)="menu.close()"
@@ -268,7 +269,7 @@ interface AgentMenuRow {
                         }
                         @case ('WORK_ITEM') {
                           <a
-                            class="text-gray-900"
+                            class="text-fg"
                             [qitsExit]="waiting.workItem"
                             [exitParams]="{ slug: slug(), id: wait.subject.id! }"
                             (click)="menu.close()"
@@ -277,7 +278,7 @@ interface AgentMenuRow {
                         }
                         @case ('COMMENTS') {
                           <a
-                            class="text-gray-900"
+                            class="text-fg"
                             [qitsExit]="waiting.comments"
                             [exitParams]="{ slug: slug(), id: wait.subject.id! }"
                             (click)="menu.close()"
@@ -286,11 +287,11 @@ interface AgentMenuRow {
                         }
                         @default {
                           @if (wait.subject.href; as href) {
-                            <a class="text-gray-900" [href]="href" (click)="menu.close()">{{
+                            <a class="text-fg" [href]="href" (click)="menu.close()">{{
                               wait.subject.text
                             }}</a>
                           } @else {
-                            <span class="text-gray-900">{{ wait.subject.text }}</span>
+                            <span class="text-fg">{{ wait.subject.text }}</span>
                           }
                         }
                       }
@@ -319,18 +320,18 @@ interface AgentMenuRow {
                 </div>
               }
               @if (row.blockedAt !== undefined) {
-                <span class="text-[0.8125rem] text-gray-600" data-blocked>{{
+                <span class="text-[0.8125rem] text-fg-soft" data-blocked>{{
                   row.blockedAt ? 'Blocked since ' + row.blockedAt : 'Blocked'
                 }}</span>
               }
               @if (row.action; as action) {
                 <div class="flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]" data-attention>
-                  <span class="text-cinnabar-600">{{ agent.attention?.reason }}</span>
+                  <span class="text-danger">{{ agent.attention?.reason }}</span>
                   @switch (action.kind) {
                     @case ('prompt') {
                       @if (slug() && agent.agentId; as agentId) {
                         <a
-                          class="font-semibold text-gray-900"
+                          class="font-semibold text-fg"
                           [qitsExit]="acting.prompt"
                           [exitParams]="{ slug: slug(), agentId }"
                           (click)="menu.close()"
@@ -342,7 +343,7 @@ interface AgentMenuRow {
                     @case ('open-item') {
                       @if (slug() && action.itemId; as id) {
                         <a
-                          class="font-semibold text-gray-900"
+                          class="font-semibold text-fg"
                           [qitsExit]="acting.openItem"
                           [exitParams]="{ slug: slug(), id }"
                           (click)="menu.close()"
@@ -357,7 +358,7 @@ interface AgentMenuRow {
                         as requestId
                       ) {
                         <a
-                          class="font-semibold text-gray-900"
+                          class="font-semibold text-fg"
                           [qitsExit]="acting.overdueRequest"
                           [exitParams]="{ slug: slug(), requestId }"
                           (click)="menu.close()"
@@ -366,7 +367,7 @@ interface AgentMenuRow {
                         >
                       } @else if (action.subject.href; as href) {
                         <a
-                          class="font-semibold text-gray-900"
+                          class="font-semibold text-fg"
                           [href]="href"
                           (click)="menu.close()"
                           data-action
@@ -381,13 +382,13 @@ interface AgentMenuRow {
           }
         </ul>
         <p
-          class="m-0 px-3 py-4 text-center text-sm text-gray-500"
+          class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
           [class.hidden]="state() !== 'loaded' || rows().length > 0"
         >
           No active agents
         </p>
         <a
-          class="block border-t border-gray-100 px-3 py-2 text-center text-sm font-semibold text-gray-700 no-underline hover:bg-gray-50"
+          class="block border-t border-line-subtle px-3 py-2 text-center text-sm font-semibold text-fg-soft no-underline hover:bg-surface-subtle"
           [qitsExit]="all.agents"
           [exitParams]="{ slug: slug() }"
           (click)="menu.close()"

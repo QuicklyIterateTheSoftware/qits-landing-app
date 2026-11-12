@@ -42,43 +42,43 @@ export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] 
   host: { class: 'block' },
   template: `
     <section class="mb-6" aria-label="Open issues">
-      <h2 class="mt-0 mb-2 text-base font-semibold text-gray-800">Open issues</h2>
+      <h2 class="mt-0 mb-2 text-base font-semibold text-fg">Open issues</h2>
       <p
-        class="m-0 text-sm text-gray-500"
+        class="m-0 text-sm text-fg-muted"
         [class.hidden]="status() !== 'loaded' || issues().length > 0"
       >
         Nothing waits on a person.
       </p>
-      <p class="m-0 text-sm text-red-700" [class.hidden]="status() !== 'error'">
+      <p class="m-0 text-sm text-danger" [class.hidden]="status() !== 'error'">
         This project’s issues could not be read.
       </p>
       <ul class="m-0 flex list-none flex-col gap-2 p-0">
         @for (issue of issues(); track issue.id) {
-          <li class="rounded-md border border-gray-200 bg-white px-3 py-2">
+          <li class="rounded-md border border-line bg-surface px-3 py-2">
             <div class="flex flex-wrap items-baseline gap-2">
               <a
-                class="font-mono text-sm text-ocean-deep-700 no-underline hover:underline"
+                class="font-mono text-sm text-accent no-underline hover:underline"
                 [qitsExit]="opening.issue"
                 [exitParams]="{ slug: slug(), id: ref(issue) }"
                 >{{ issue.qualifiedId }}</a
               >
-              <span class="text-sm font-semibold text-gray-800">{{ issue.title }}</span>
+              <span class="text-sm font-semibold text-fg">{{ issue.title }}</span>
             </div>
-            <p class="mt-1 mb-2 text-sm text-gray-700">
+            <p class="mt-1 mb-2 text-sm text-fg-soft">
               <qits-commit-message [message]="descriptionOf(issue)" [project]="slug()" />
             </p>
             <textarea
-              class="block w-full rounded-md border border-charcoal-brown-300 px-2 py-1.5 text-sm"
+              class="block w-full rounded-md border border-line-strong px-2 py-1.5 text-sm"
               rows="2"
               [attr.aria-label]="'Answer ' + issue.qualifiedId"
               [value]="draftOf(issue)"
               (input)="setDraft(issue, $event)"
             ></textarea>
             <div class="mt-2 flex items-center justify-end gap-2">
-              <span class="mr-auto text-xs text-red-700" role="alert">{{ refusalOf(issue) }}</span>
+              <span class="mr-auto text-xs text-danger" role="alert">{{ refusalOf(issue) }}</span>
               <button
                 type="button"
-                class="rounded-md border border-charcoal-brown-300 bg-white px-2 py-1 text-sm disabled:opacity-50"
+                class="rounded-md border border-line-strong bg-surface px-2 py-1 text-sm disabled:opacity-50"
                 [disabled]="!draftOf(issue).trim()"
                 (click)="comment(issue)"
               >
@@ -86,7 +86,7 @@ export function openIssues(entries: readonly WorkEntry[]): readonly WorkEntry[] 
               </button>
               <button
                 type="button"
-                class="rounded-md border border-ocean-deep-700 bg-ocean-deep-700 px-2 py-1 text-sm text-white"
+                class="rounded-md border border-accent bg-accent px-2 py-1 text-sm text-fg-on-accent"
                 (click)="resolve(issue)"
               >
                 Resolve

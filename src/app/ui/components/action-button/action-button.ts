@@ -8,12 +8,9 @@ import { Action } from './action';
 export type ActionJoin = 'none' | 'start' | 'middle' | 'end';
 
 const VARIANTS = {
-  success:
-    'border-mint-leaf-700 bg-mint-leaf-700 text-white hover:border-mint-leaf-800 hover:bg-mint-leaf-800',
-  danger:
-    'border-cinnabar-700 bg-cinnabar-600 text-white hover:border-cinnabar-800 hover:bg-cinnabar-700',
-  muted:
-    'border-charcoal-brown-300 bg-white text-charcoal-brown-800 hover:bg-charcoal-brown-100 hover:text-charcoal-brown-950',
+  success: 'border-success bg-success text-fg-on-accent hover:bg-success/90',
+  danger: 'border-danger bg-danger text-fg-on-accent hover:bg-danger/90',
+  muted: 'border-line-strong bg-surface text-fg-soft hover:bg-surface-muted hover:text-fg',
 } as const;
 
 const JOINS = {
@@ -66,7 +63,7 @@ const JOINS = {
     <ng-template #button let-describedBy="describedBy">
       <button
         type="button"
-        class="relative inline-flex h-8 cursor-pointer items-center disabled:cursor-not-allowed disabled:opacity-60 border px-3 text-sm font-semibold whitespace-nowrap focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-deep-600"
+        class="relative inline-flex h-8 cursor-pointer items-center disabled:cursor-not-allowed disabled:opacity-60 border px-3 text-sm font-semibold whitespace-nowrap focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
         [class]="classes()"
         [disabled]="action().disabled ?? false"
         [attr.data-variant]="action().variant"

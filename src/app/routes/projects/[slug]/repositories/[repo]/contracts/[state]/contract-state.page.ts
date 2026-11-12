@@ -58,7 +58,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
       @let read = indexRead();
       @switch (read?.status) {
         @case ('error') {
-          <p class="index-error m-0 text-sm text-cinnabar-700">
+          <p class="index-error m-0 text-sm text-danger">
             Could not read the golden masters of {{ siteLabel() }}.
           </p>
         }
@@ -75,7 +75,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                   >
                 </p>
                 <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-                  <dt class="text-charcoal-brown-500">Slug</dt>
+                  <dt class="text-fg-muted">Slug</dt>
                   <dd class="slug m-0 font-mono break-all">{{ s.slug }}</dd>
                 </dl>
               </section>
@@ -86,8 +86,8 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                   <table class="params border-collapse font-mono text-xs">
                     <tbody>
                       @for (p of params(); track p.key) {
-                        <tr class="border-b border-charcoal-brown-100 align-top">
-                          <th class="py-0.5 pr-3 text-left font-normal text-charcoal-brown-500">
+                        <tr class="border-b border-line-subtle align-top">
+                          <th class="py-0.5 pr-3 text-left font-normal text-fg-muted">
                             {{ p.key }}
                           </th>
                           <td class="py-0.5 break-all">{{ p.value }}</td>
@@ -96,7 +96,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     </tbody>
                   </table>
                 } @else {
-                  <p class="m-0 text-charcoal-brown-600">None</p>
+                  <p class="m-0 text-fg-soft">None</p>
                 }
               </section>
 
@@ -119,7 +119,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     }
                   </ul>
                 } @else {
-                  <p class="depends m-0 text-charcoal-brown-600">None</p>
+                  <p class="depends m-0 text-fg-soft">None</p>
                 }
               </section>
 
@@ -127,11 +127,11 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                 <h2 class="m-0 text-base font-semibold">Operations</h2>
                 @for (op of s.operations; track $index) {
                   <article
-                    class="operation flex min-w-0 flex-col gap-2 rounded-lg border border-charcoal-brown-200 p-3"
+                    class="operation flex min-w-0 flex-col gap-2 rounded-lg border border-line p-3"
                   >
                     <h3 class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs">
                       <span class="font-semibold">{{ op.operationId }}</span>
-                      <span class="rounded bg-charcoal-brown-100 px-1 font-semibold">{{
+                      <span class="rounded bg-surface-muted px-1 font-semibold">{{
                         op.method
                       }}</span>
                       <span class="break-all">{{ op.path }}</span>
@@ -139,20 +139,18 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                         class="status rounded px-1 font-semibold"
                         [class]="
                           op.status < 300
-                            ? 'bg-mint-leaf-100 text-mint-leaf-800'
-                            : 'bg-sunflower-gold-100 text-sunflower-gold-800'
+                            ? 'bg-success-soft text-success-strong'
+                            : 'bg-warning-soft text-warning-strong'
                         "
                         >{{ op.status }}</span
                       >
                     </h3>
                     @if (op.query; as query) {
                       <div>
-                        <h4 class="m-0 text-xs font-semibold text-charcoal-brown-700 uppercase">
-                          Query
-                        </h4>
+                        <h4 class="m-0 text-xs font-semibold text-fg-soft uppercase">Query</h4>
                         <dl class="query m-0 grid grid-cols-[auto_1fr] gap-x-2 font-mono text-xs">
                           @for (q of entries(query); track q.key) {
-                            <dt class="text-charcoal-brown-500">{{ q.key }}</dt>
+                            <dt class="text-fg-muted">{{ q.key }}</dt>
                             <dd class="m-0 break-all">{{ q.value }}</dd>
                           }
                         </dl>
@@ -167,19 +165,17 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     }
                     @if (op.file === null) {
                       <div class="bytes text-xs">
-                        <p class="m-0 text-charcoal-brown-600">
+                        <p class="m-0 text-fg-soft">
                           Status {{ op.status }}{{ op.contentType ? ', ' + op.contentType : '' }};
                           no JSON body is recorded.
                         </p>
                         @if (op.responseHeaders; as headers) {
-                          <h4
-                            class="m-0 mt-1 text-xs font-semibold text-charcoal-brown-700 uppercase"
-                          >
+                          <h4 class="m-0 mt-1 text-xs font-semibold text-fg-soft uppercase">
                             Response headers
                           </h4>
                           <dl class="headers m-0 grid grid-cols-[auto_1fr] gap-x-2 font-mono">
                             @for (h of entries(headers); track h.key) {
-                              <dt class="text-charcoal-brown-500">{{ h.key }}</dt>
+                              <dt class="text-fg-muted">{{ h.key }}</dt>
                               <dd class="m-0 break-all">{{ h.value }}</dd>
                             }
                           </dl>
@@ -194,28 +190,26 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                           }
                         }
                         @case ('error') {
-                          <p class="m-0 text-xs text-cinnabar-700">
+                          <p class="m-0 text-xs text-danger">
                             Could not read the recorded response.
                           </p>
                         }
                         @case ('none') {
-                          <p class="m-0 text-xs text-charcoal-brown-600">
-                            The response has no JSON body.
-                          </p>
+                          <p class="m-0 text-xs text-fg-soft">The response has no JSON body.</p>
                         }
                         @default {
-                          <p class="m-0 text-xs text-charcoal-brown-600">Reading…</p>
+                          <p class="m-0 text-xs text-fg-soft">Reading…</p>
                         }
                       }
                     }
                   </article>
                 } @empty {
-                  <p class="m-0 text-charcoal-brown-600">The state records no operation.</p>
+                  <p class="m-0 text-fg-soft">The state records no operation.</p>
                 }
               </section>
             </div>
           } @else {
-            <p class="unknown m-0 text-sm text-charcoal-brown-600">
+            <p class="unknown m-0 text-sm text-fg-soft">
               No such state in {{ application() }} {{ site()?.version }}.
               <a
                 class="back font-semibold"
@@ -227,7 +221,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
           }
         }
         @default {
-          <p class="m-0 text-sm text-charcoal-brown-600">Reading the golden masters…</p>
+          <p class="m-0 text-sm text-fg-soft">Reading the golden masters…</p>
         }
       }
     </app-contracts-frame>

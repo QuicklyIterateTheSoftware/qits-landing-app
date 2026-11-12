@@ -39,7 +39,7 @@ export type LoadState = 'loading' | 'error' | 'loaded';
       which waits for every open request.
     -->
     <div
-      class="absolute inset-0 flex items-center justify-center bg-white/30 p-1 text-red-600"
+      class="absolute inset-0 flex items-center justify-center bg-surface/30 p-1 text-danger"
       [class.hidden]="state() !== 'error'"
     >
       <svg
@@ -58,7 +58,7 @@ export type LoadState = 'loading' | 'error' | 'loaded';
       </svg>
     </div>
     <div
-      class="absolute inset-0 flex items-center justify-center bg-white/30 p-1 text-gray-500"
+      class="absolute inset-0 flex items-center justify-center bg-surface/30 p-1 text-fg-muted"
       [class.hidden]="state() !== 'loading'"
     >
       <svg

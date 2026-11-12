@@ -21,30 +21,30 @@ export const BOARD_COLUMNS: readonly BoardColumn[] = [
   {
     status: 'READY_FOR_DEV',
     label: 'Ready for Dev',
-    body: 'bg-charcoal-brown-300',
-    header: 'bg-charcoal-brown-400 text-charcoal-brown-950',
-    cardBorder: 'border-charcoal-brown-400',
+    body: 'bg-surface-muted',
+    header: 'bg-surface-active text-fg',
+    cardBorder: 'border-line-strong',
   },
   {
     status: 'IMPLEMENTING',
     label: 'Implementing',
-    body: 'bg-cinnabar-200',
-    header: 'bg-cinnabar-300 text-cinnabar-950',
-    cardBorder: 'border-cinnabar-300',
+    body: 'bg-danger-soft',
+    header: 'bg-danger-line text-danger-strong',
+    cardBorder: 'border-danger-line',
   },
   {
     status: 'IMPLEMENTED',
     label: 'Implemented',
-    body: 'bg-sunflower-gold-300',
-    header: 'bg-sunflower-gold-400 text-sunflower-gold-950',
-    cardBorder: 'border-sunflower-gold-400',
+    body: 'bg-warning-soft',
+    header: 'bg-warning-line text-warning-strong',
+    cardBorder: 'border-warning-line',
   },
   {
     status: 'VERIFYING',
     label: 'Verifying',
-    body: 'bg-mint-leaf-300',
-    header: 'bg-mint-leaf-400 text-mint-leaf-950',
-    cardBorder: 'border-mint-leaf-400',
+    body: 'bg-success-soft',
+    header: 'bg-success-line text-success-strong',
+    cardBorder: 'border-success-line',
   },
 ];
 
@@ -57,9 +57,9 @@ export const EPIC_BOARD_COLUMNS: readonly BoardColumn[] = [
   {
     status: 'VERIFIED',
     label: 'Verified',
-    body: 'bg-mint-leaf-500',
-    header: 'bg-mint-leaf-600 text-mint-leaf-950',
-    cardBorder: 'border-mint-leaf-600',
+    body: 'bg-success',
+    header: 'bg-success text-fg-on-accent',
+    cardBorder: 'border-success',
   },
 ];
 

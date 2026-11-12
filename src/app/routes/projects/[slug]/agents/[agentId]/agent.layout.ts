@@ -73,7 +73,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout [title]="title()">
         <ui-spinner [state]="spinnerState()" class="min-h-48">
-          <p class="m-0 text-sm text-charcoal-brown-600" [class.hidden]="state() !== 'missing'">
+          <p class="m-0 text-sm text-fg-soft" [class.hidden]="state() !== 'missing'">
             No agent {{ agentId() }}.
           </p>
           @if (agent(); as agent) {
@@ -83,18 +83,18 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-base">
                     @if (slug() && agent.entityId; as id) {
                       <a
-                        class="font-semibold text-ocean-deep-700 no-underline hover:underline"
+                        class="font-semibold text-accent no-underline hover:underline"
                         [qitsExit]="item.open"
                         [exitParams]="{ slug: slug(), id }"
                         >{{ agent.entityId }}</a
                       >
                     }
                     @if (agent.entityTitle; as title) {
-                      <span class="text-charcoal-brown-900">{{ title }}</span>
+                      <span class="text-fg">{{ title }}</span>
                     }
                   </p>
                 }
-                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-brown-600">
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-fg-soft">
                   <ui-chip
                     [label]="(agent.state ?? 'unknown').toLowerCase()"
                     [tone]="stateTone()"
@@ -104,7 +104,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                     <span aria-hidden="true">·</span>
                     <span
                       [class.font-semibold]="doing === 'waiting on you'"
-                      [class.text-cinnabar-700]="doing === 'waiting on you'"
+                      [class.text-danger]="doing === 'waiting on you'"
                       >{{ doing }}</span
                     >
                   }
@@ -124,14 +124,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   }
                 </div>
                 @if (wait(); as wait) {
-                  <p class="m-0 text-sunflower-gold-800" role="status">{{ wait }}</p>
+                  <p class="m-0 text-warning" role="status">{{ wait }}</p>
                 }
                 @if (status(); as status) {
                   <app-agent-status [agent]="status" />
                 }
                 @if (agent.wrapperBranch; as branch) {
-                  <p class="m-0 flex items-center gap-2 text-charcoal-brown-600">
-                    <span class="font-semibold text-charcoal-brown-700">Branch</span>
+                  <p class="m-0 flex items-center gap-2 text-fg-soft">
+                    <span class="font-semibold text-fg-soft">Branch</span>
                     <code class="font-mono text-xs">{{ branch }}</code>
                   </p>
                 }
@@ -148,18 +148,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               </section>
 
               <section class="flex flex-col gap-3" aria-labelledby="agent-workspace">
-                <h2
-                  id="agent-workspace"
-                  class="m-0 text-base font-semibold text-charcoal-brown-900"
-                >
-                  Workspace
-                </h2>
+                <h2 id="agent-workspace" class="m-0 text-base font-semibold text-fg">Workspace</h2>
                 @if (agent.workspaceRowId; as rowId) {
-                  <p
-                    class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-charcoal-brown-600"
-                  >
+                  <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-fg-soft">
                     <a
-                      class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                      class="font-mono text-accent no-underline hover:underline"
                       [qitsExit]="workspace.open"
                       [exitParams]="{ slug: slug(), slotId: rowId }"
                       >ws-{{ rowId }}</a
@@ -169,7 +162,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                     >
                   </p>
                 } @else if (agent.state !== 'REMOVED') {
-                  <p class="m-0 text-sm text-charcoal-brown-600">
+                  <p class="m-0 text-sm text-fg-soft">
                     No workspace yet: the agent waits for a free slot.
                   </p>
                 }
@@ -183,11 +176,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
         </ui-spinner>
         @if (agent()) {
           <nav class="mt-8" aria-label="Agent">
-            <ul class="m-0 flex list-none gap-1 overflow-x-auto border-b border-gray-200 p-0">
+            <ul class="m-0 flex list-none gap-1 overflow-x-auto border-b border-line p-0">
               @for (tab of tabs; track tab.segment) {
                 <li class="shrink-0">
                   <a
-                    class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:border-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
+                    class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-fg-soft no-underline hover:text-fg aria-[current=page]:border-fg aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                     [qitsExit]="tab.exit"
                     [exitParams]="{ slug: slug(), agentId: agentId() }"
                     >{{ tab.label }}</a

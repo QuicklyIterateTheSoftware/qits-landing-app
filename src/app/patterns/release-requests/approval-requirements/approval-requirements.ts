@@ -15,10 +15,7 @@ import { Chip } from '$ui/components/chip/chip';
   template: `
     <ul class="m-0 flex list-none flex-col gap-1 p-0" aria-label="Approval requirements">
       @for (line of lines(); track line.id) {
-        <li
-          class="rounded border border-charcoal-brown-100 px-2 py-1"
-          [attr.data-requirement]="line.id"
-        >
+        <li class="rounded border border-line-subtle px-2 py-1" [attr.data-requirement]="line.id">
           <div class="flex flex-wrap items-center gap-2">
             <span class="font-semibold">{{ line.reason }}</span>
             <ui-chip
@@ -27,7 +24,7 @@ import { Chip } from '$ui/components/chip/chip';
             />
           </div>
           @if (line.admits || line.excludesAuthors) {
-            <p class="m-0 mt-0.5 text-xs text-charcoal-brown-600">
+            <p class="m-0 mt-0.5 text-xs text-fg-soft">
               @if (line.admits) {
                 May be approved by {{ line.admits }}
               }
@@ -37,10 +34,10 @@ import { Chip } from '$ui/components/chip/chip';
             </p>
           }
           @if (line.detail) {
-            <p class="m-0 mt-0.5 break-words text-xs text-charcoal-brown-700">{{ line.detail }}</p>
+            <p class="m-0 mt-0.5 break-words text-xs text-fg-soft">{{ line.detail }}</p>
           }
           @if (line.satisfiedBy; as by) {
-            <p class="m-0 mt-0.5 text-xs text-mint-leaf-800">
+            <p class="m-0 mt-0.5 text-xs text-success">
               Satisfied by {{ by.approver }}
               @if (by.roles) {
                 <span>({{ by.roles }})</span>
@@ -50,9 +47,7 @@ import { Chip } from '$ui/components/chip/chip';
               }
             </p>
           } @else if (!line.satisfied) {
-            <p class="m-0 mt-0.5 text-xs text-charcoal-brown-500">
-              Open: nobody has approved it yet.
-            </p>
+            <p class="m-0 mt-0.5 text-xs text-fg-muted">Open: nobody has approved it yet.</p>
           }
         </li>
       }

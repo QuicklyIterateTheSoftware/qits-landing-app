@@ -24,7 +24,7 @@ import { WorkComments } from '$patterns/work/detail/work-comments/work-comments'
       [workProject]="slug()"
     />
     <section class="flex flex-col gap-4" aria-label="Tasks">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Tasks</h2>
+      <h2 class="m-0 text-base font-semibold text-fg">Tasks</h2>
       <!-- A disabled reorder list: the row is an item of one wherever it is drawn (qits-753). -->
       <div
         class="flex flex-col gap-4 pr-6 [--lane-chin:--spacing(4)]"

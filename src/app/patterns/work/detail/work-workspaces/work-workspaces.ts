@@ -21,13 +21,13 @@ import { Tag } from '$ui/components/tag/tag';
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-3" aria-label="Workspaces">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Workspaces</h2>
+      <h2 class="m-0 text-base font-semibold text-fg">Workspaces</h2>
       <ui-spinner [state]="state()" class="min-h-8">
         <ol class="m-0 flex list-none flex-col gap-2 p-0">
           @for (workspace of workspaces(); track workspace.id) {
             <li>
               <a
-                class="flex items-center gap-3 gap-y-1 rounded-md border border-charcoal-brown-200 px-4 py-2 text-sm text-charcoal-brown-900 no-underline transition-shadow duration-150 hover:shadow-md max-sm:flex-wrap"
+                class="flex items-center gap-3 gap-y-1 rounded-md border border-line px-4 py-2 text-sm text-fg no-underline transition-shadow duration-150 hover:shadow-md max-sm:flex-wrap"
                 [qitsExit]="opening.open"
                 [exitParams]="{ slug: slug(), id: qualifiedId() }"
               >
@@ -39,7 +39,7 @@ import { Tag } from '$ui/components/tag/tag';
                   workspace.branch
                 }}</span>
                 <span
-                  class="shrink-0 text-xs whitespace-nowrap text-charcoal-brown-600 max-sm:basis-full max-sm:whitespace-normal"
+                  class="shrink-0 text-xs whitespace-nowrap text-fg-soft max-sm:basis-full max-sm:whitespace-normal"
                 >
                   Opened {{ workspace.createdAt | date: 'd MMM y, HH:mm' : 'UTC' }}
                   @if (workspace.resolvedAt; as closed) {
@@ -51,7 +51,7 @@ import { Tag } from '$ui/components/tag/tag';
           }
         </ol>
         <p
-          class="m-0 text-sm text-charcoal-brown-500"
+          class="m-0 text-sm text-fg-muted"
           [class.hidden]="state() !== 'loaded' || workspaces().length"
         >
           No workspaces yet

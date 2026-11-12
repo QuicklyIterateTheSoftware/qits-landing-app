@@ -39,7 +39,7 @@ let nextListLaneId = 0;
   imports: [ExpandButton, Findable],
   host: {
     class:
-      'relative mx-1 grid grid-cols-[1.5rem_minmax(0,1fr)] grid-rows-[auto_auto_1fr] rounded-tl-xl bg-white/25 pb-(--lane-chin) ring-1 ring-black/10 [--lane-chin:--spacing(4)]',
+      'relative mx-1 grid grid-cols-[1.5rem_minmax(0,1fr)] grid-rows-[auto_auto_1fr] rounded-tl-xl bg-surface/25 pb-(--lane-chin) ring-1 ring-line-strong [--lane-chin:--spacing(4)]',
     'data-highlight-target': '',
   },
   template: `
@@ -49,14 +49,14 @@ let nextListLaneId = 0;
       above the id too.
     -->
     <div
-      class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 pt-(--lane-chin) pb-(--lane-chin) text-white [&_a]:text-inherit [&_a]:no-underline"
+      class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex items-end justify-center rounded-tl-xl bg-surface-inverse/40 pt-(--lane-chin) pb-(--lane-chin) text-fg-on-inverse [&_a]:text-inherit [&_a]:no-underline"
     >
       <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
         <ng-content select="[lane-gutter]" />
       </span>
     </div>
     <div
-      class="col-start-2 row-start-1 flex items-center justify-end gap-2 bg-charcoal-brown-800/40 px-2 py-1 text-xs wrap-anywhere text-white [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-start-2 row-start-1 flex items-center justify-end gap-2 bg-surface-inverse/40 px-2 py-1 text-xs wrap-anywhere text-fg-on-inverse [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[lane-header]" />
     </div>
@@ -81,7 +81,7 @@ let nextListLaneId = 0;
         </div>
       </div>
       <div
-        class="absolute inset-x-0 top-0 flex items-center justify-center py-2 text-sm text-charcoal-brown-900 transition-opacity duration-200 ease-out"
+        class="absolute inset-x-0 top-0 flex items-center justify-center py-2 text-sm text-fg transition-opacity duration-200 ease-out"
         [class]="isCollapsed() ? 'opacity-100' : 'pointer-events-none opacity-0'"
         [attr.inert]="isCollapsed() ? null : ''"
         [attr.aria-hidden]="isCollapsed() ? null : 'true'"

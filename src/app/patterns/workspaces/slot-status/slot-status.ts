@@ -35,20 +35,20 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
   host: { class: 'block' },
   template: `
     <dl
-      class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 rounded-md border border-charcoal-brown-200 px-4 py-3 text-sm"
+      class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 rounded-md border border-line px-4 py-3 text-sm"
       aria-label="Status"
     >
-      <dt class="font-semibold text-charcoal-brown-700">Container</dt>
-      <dd class="m-0 flex flex-wrap items-center gap-2 text-charcoal-brown-900">
+      <dt class="font-semibold text-fg-soft">Container</dt>
+      <dd class="m-0 flex flex-wrap items-center gap-2 text-fg">
         <ui-chip [label]="runtime()" [tone]="tone()" />
-        <span class="text-charcoal-brown-600">{{ placement() }}</span>
+        <span class="text-fg-muted">{{ placement() }}</span>
         @if (slot().runtimeError; as fault) {
-          <span class="text-cinnabar-700" role="alert">{{ fault }}</span>
+          <span class="text-danger" role="alert">{{ fault }}</span>
         }
       </dd>
 
-      <dt class="font-semibold text-charcoal-brown-700">Daemon</dt>
-      <dd class="m-0 flex flex-wrap items-center gap-2 text-charcoal-brown-900">
+      <dt class="font-semibold text-fg-soft">Daemon</dt>
+      <dd class="m-0 flex flex-wrap items-center gap-2 text-fg">
         @switch (daemon()) {
           @case ('connected') {
             <span
@@ -62,29 +62,27 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
             }
           }
           @case ('gone') {
-            <span class="text-cinnabar-700"
+            <span class="text-danger"
               >Not connected: files, terminals and the agent surface cannot work right now. It
               usually comes back on its own.</span
             >
           }
           @case ('not-running') {
-            <span class="text-charcoal-brown-600"
-              >No container running, so there is no daemon to reach.</span
-            >
+            <span class="text-fg-muted">No container running, so there is no daemon to reach.</span>
           }
         }
       </dd>
 
       @if (hosted() !== undefined) {
-        <dt class="font-semibold text-charcoal-brown-700">Agents</dt>
-        <dd class="m-0 text-charcoal-brown-900">{{ hostedLabel() }}</dd>
+        <dt class="font-semibold text-fg-soft">Agents</dt>
+        <dd class="m-0 text-fg">{{ hostedLabel() }}</dd>
       }
 
       @if (slot().admin) {
-        <dt class="font-semibold text-charcoal-brown-700">Admin</dt>
-        <dd class="m-0 flex items-center gap-2 text-charcoal-brown-900">
+        <dt class="font-semibold text-fg-soft">Admin</dt>
+        <dd class="m-0 flex items-center gap-2 text-fg">
           <ui-chip label="docker socket" tone="waiting" />
-          <span class="text-charcoal-brown-600">its container holds the host's docker socket</span>
+          <span class="text-fg-muted">its container holds the host's docker socket</span>
         </dd>
       }
     </dl>

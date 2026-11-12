@@ -5,10 +5,10 @@ export type ChipTone = 'ok' | 'waiting' | 'failed' | 'neutral';
 
 /** A chip's colours per tone, written out in full so Tailwind finds them. */
 const TONES: Readonly<Record<ChipTone, string>> = {
-  ok: 'bg-mint-leaf-100 text-mint-leaf-800',
-  waiting: 'bg-sunflower-gold-100 text-sunflower-gold-800',
-  failed: 'bg-cinnabar-100 text-cinnabar-700',
-  neutral: 'bg-charcoal-brown-100 text-charcoal-brown-700',
+  ok: 'bg-success-soft text-success-strong',
+  waiting: 'bg-warning-soft text-warning-strong',
+  failed: 'bg-danger-soft text-danger-strong',
+  neutral: 'bg-surface-muted text-fg-soft',
 };
 
 /** The colour classes of a chip in `tone`, for markup that draws a chip without the component. */

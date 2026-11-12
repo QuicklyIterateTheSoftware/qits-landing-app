@@ -16,8 +16,8 @@ describe('Chip', () => {
       (fixture.nativeElement as HTMLElement).querySelectorAll('ui-chip'),
     );
     expect(ok.textContent).toBe('ready');
-    expect(ok.classList).toContain('bg-mint-leaf-100');
-    expect(neutral.classList).toContain('bg-charcoal-brown-100');
+    expect(ok.classList).toContain('bg-success-soft');
+    expect(neutral.classList).toContain('bg-surface-muted');
   });
 
   it('gives each tone its own colours', () => {

@@ -36,7 +36,7 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
   imports: [Chip, Spinner],
   host: { class: 'block' },
   template: `
-    <section class="rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
+    <section class="rounded-md border border-line bg-surface px-3 py-2">
       <h2 class="m-0 mb-1 text-base font-semibold">Builds</h2>
       <ui-spinner [state]="state()" class="min-h-8">
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
@@ -48,30 +48,26 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
                 [tone]="tone(entry.run)"
               />
               @if (href(entry.id); as link) {
-                <a class="text-ocean-deep-700 no-underline hover:underline" [href]="link">{{
+                <a class="text-accent no-underline hover:underline" [href]="link">{{
                   entry.label
                 }}</a>
               } @else {
                 <span>{{ entry.label }}</span>
               }
-              <span class="font-mono text-xs text-charcoal-brown-500">{{
+              <span class="font-mono text-xs text-fg-muted">{{
                 entry.run?.branch ?? entry.id
               }}</span>
               @if (entry.run?.commitSha; as sha) {
-                <span class="font-mono text-xs text-charcoal-brown-500" [title]="sha">{{
-                  short(sha)
-                }}</span>
+                <span class="font-mono text-xs text-fg-muted" [title]="sha">{{ short(sha) }}</span>
               }
               @if (entry.run?.createdAt; as at) {
-                <span class="text-xs text-charcoal-brown-500" [title]="instant(at)">{{
-                  ago(at)
-                }}</span>
+                <span class="text-xs text-fg-muted" [title]="instant(at)">{{ ago(at) }}</span>
               }
             </li>
           }
         </ul>
         <p
-          class="m-0 py-1 text-sm text-charcoal-brown-500"
+          class="m-0 py-1 text-sm text-fg-muted"
           [class]="state() === 'loaded' && entries().length === 0 ? 'block' : 'hidden'"
         >
           No build of this request yet.
@@ -79,7 +75,7 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
       </ui-spinner>
       @if (repositoryHref(); as link) {
         <p class="mt-2 mb-0 text-sm">
-          <a class="text-ocean-deep-700 no-underline hover:underline" [href]="link"
+          <a class="text-accent no-underline hover:underline" [href]="link"
             >All runs of {{ request().repoName }} in CI</a
           >
         </p>

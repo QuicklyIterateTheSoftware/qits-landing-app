@@ -22,21 +22,19 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-2 text-sm" aria-labelledby="agent-plugins">
-      <h3 id="agent-plugins" class="m-0 text-sm font-semibold text-charcoal-brown-900">Plugins</h3>
+      <h3 id="agent-plugins" class="m-0 text-sm font-semibold text-fg">Plugins</h3>
       <ui-spinner [state]="state()" class="min-h-12">
         <ul class="m-0 flex list-none flex-col p-0">
           @for (row of rows(); track row.pluginId) {
-            <li
-              class="flex items-center gap-3 border-t border-charcoal-brown-100 py-1.5 first:border-t-0"
-            >
+            <li class="flex items-center gap-3 border-t border-line-subtle py-1.5 first:border-t-0">
               <div class="flex flex-1 flex-wrap items-center gap-x-2 gap-y-0.5">
-                <span class="font-semibold text-charcoal-brown-900">{{ row.name }}</span>
+                <span class="font-semibold text-fg">{{ row.name }}</span>
                 @if (row.installed && row.enabled) {
                   <ui-chip label="installed" tone="ok" />
                 } @else if (row.installed) {
                   <ui-chip label="installed, switched off" />
                 }
-                <span class="text-charcoal-brown-600">{{ row.summary }}</span>
+                <span class="text-fg-muted">{{ row.summary }}</span>
               </div>
               @if (!row.installed) {
                 <ui-action-button [action]="install(row)" />
@@ -44,13 +42,13 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             </li>
           }
         </ul>
-        <p class="m-0 mt-1 text-xs text-charcoal-brown-600">
+        <p class="m-0 mt-1 text-xs text-fg-muted">
           The plugin store is the shared agent home, so installing one here turns it on in every
           workspace on this platform. There is no uninstall here.
         </p>
       </ui-spinner>
       @if (plugins()?.problem; as problem) {
-        <p class="m-0 text-cinnabar-700" role="alert">
+        <p class="m-0 text-danger" role="alert">
           {{ problem }} The agent has to be signed in and its container running for an install.
         </p>
       }

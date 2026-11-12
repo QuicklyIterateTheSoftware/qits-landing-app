@@ -79,7 +79,7 @@ function when(instant: string | null | undefined): string {
         @if (selected.project()?.id; as projectId) {
           <app-open-issues [projectId]="projectId" [slug]="selected.slug() ?? ''" />
         }
-        <p class="mt-0 mb-4 text-sm text-gray-600">
+        <p class="mt-0 mb-4 text-sm text-fg-soft">
           The messages this project’s delivery desk was sent by its desk triggers, newest first.
         </p>
         <ui-load-failure
@@ -90,19 +90,19 @@ function when(instant: string | null | undefined): string {
         <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="state() === 'error'">
           <ul class="m-0 flex list-none flex-col gap-2 p-0">
             @for (message of messages(); track message.id) {
-              <li class="rounded-md border border-gray-200 bg-white px-3 py-2">
+              <li class="rounded-md border border-line bg-surface px-3 py-2">
                 <div class="flex flex-wrap items-baseline gap-2">
                   <ui-chip [label]="label(message)" [tone]="tone(message)" />
-                  <span class="text-xs whitespace-nowrap text-gray-500">{{
+                  <span class="text-xs whitespace-nowrap text-fg-muted">{{
                     when(message.openedAt)
                   }}</span>
                   <span
-                    class="text-xs whitespace-nowrap text-gray-500"
+                    class="text-xs whitespace-nowrap text-fg-muted"
                     [class.hidden]="!message.closedAt"
                     >– {{ when(message.closedAt) }}</span
                   >
                   <span
-                    class="text-xs whitespace-nowrap text-gray-500"
+                    class="text-xs whitespace-nowrap text-fg-muted"
                     [class.hidden]="accepted(message)"
                   >
                     {{ message.attempts ?? 0 }} attempt{{ message.attempts === 1 ? '' : 's' }}
@@ -111,21 +111,21 @@ function when(instant: string | null | undefined): string {
                     >
                   </span>
                 </div>
-                <ul class="mt-2 flex list-none flex-col gap-1 p-0 text-sm text-gray-700">
+                <ul class="mt-2 flex list-none flex-col gap-1 p-0 text-sm text-fg-soft">
                   @for (event of message.events ?? []; track eventKey(event)) {
                     <li class="flex flex-wrap items-baseline gap-1.5">
-                      <span class="text-xs font-semibold text-gray-500">{{ event.source }}</span>
+                      <span class="text-xs font-semibold text-fg-muted">{{ event.source }}</span>
                       @let kind = linked(event);
                       @if (kind === 'releaseRequest') {
                         <a
-                          class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                          class="font-mono text-accent no-underline hover:underline"
                           [qitsExit]="opening.releaseRequest"
                           [exitParams]="{ slug: slug(), requestId: event.itemRef ?? '' }"
                           >{{ event.itemRef }}</a
                         >
                       } @else if (kind === 'workItem') {
                         <a
-                          class="font-mono text-ocean-deep-700 no-underline hover:underline"
+                          class="font-mono text-accent no-underline hover:underline"
                           [qitsExit]="opening.workItem"
                           [exitParams]="{ slug: slug(), id: event.itemRef ?? '' }"
                           [exitFragment]="fragment(event)"
@@ -135,23 +135,23 @@ function when(instant: string | null | undefined): string {
                         <span class="font-mono">{{ event.itemRef }}</span>
                       }
                       <span [class.hidden]="!event.label">({{ event.label }})</span>
-                      <span class="text-xs text-gray-500" [class.hidden]="!event.cause">{{
+                      <span class="text-xs text-fg-muted" [class.hidden]="!event.cause">{{
                         event.cause
                       }}</span>
                     </li>
                   }
                 </ul>
                 <details class="mt-2" [class.hidden]="!message.message">
-                  <summary class="cursor-pointer text-xs text-gray-500">Message</summary>
+                  <summary class="cursor-pointer text-xs text-fg-muted">Message</summary>
                   <pre
-                    class="mt-1 max-h-64 overflow-auto rounded bg-charcoal-brown-950 p-2 text-xs whitespace-pre-wrap text-charcoal-brown-50"
+                    class="mt-1 max-h-64 overflow-auto rounded bg-surface-inverse p-2 text-xs whitespace-pre-wrap text-fg-on-inverse"
                     >{{ message.message }}</pre>
                 </details>
               </li>
             }
           </ul>
           <p
-            class="m-0 px-3 py-8 text-center text-sm text-gray-500"
+            class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
             [class]="state() === 'loaded' && messages().length === 0 ? 'block' : 'hidden'"
           >
             No desk trigger messages yet.

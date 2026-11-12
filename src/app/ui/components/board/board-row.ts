@@ -32,15 +32,15 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
   providers: [{ provide: BOARD_CONTEXT, useExisting: BoardRow }],
   host: {
     class:
-      'relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 pt-2 ring-1 ring-black/5 has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))]',
+      'relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 pt-2 ring-1 ring-line has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))]',
     '[style.--row-id-chars]': 'idLength()',
-    '[class]': "solid() ? 'bg-white/20' : 'bg-white/50'",
+    '[class]': "solid() ? 'bg-surface/20' : 'bg-surface/50'",
     '[style.grid-column]': 'placement()',
     'data-highlight-target': '',
   },
   template: `
     <span
-      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 *:shrink-0 [&>[row-gutter]]:mt-auto [&>[row-gutter]]:rounded-br-xl"
+      class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 text-[0.625rem] leading-none whitespace-nowrap text-fg *:shrink-0 [&>[row-gutter]]:mt-auto [&>[row-gutter]]:rounded-br-xl"
       [class]="fill()"
     >
       <!-- The id starts the chin (pt-2 + mt-2) below the top; the tile sits at the bottom, on the
@@ -52,7 +52,7 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
     </span>
     <ng-content />
     <div
-      class="col-span-full flex self-end items-baseline justify-start gap-2 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
+      class="col-span-full flex self-end items-baseline justify-start gap-2 py-1 pr-2 pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-fg [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
       [class]="fill()"
     >
       <ng-content select="[row-footer]" />
@@ -70,7 +70,7 @@ export class BoardRow implements BoardContext {
   readonly solid = input(false, { transform: booleanAttribute });
 
   protected readonly fill = computed(() =>
-    this.solid() ? 'bg-charcoal-brown-300' : 'bg-charcoal-brown-600/40',
+    this.solid() ? 'bg-surface-active' : 'bg-surface-inverse/40',
   );
 
   private readonly parent = inject(BOARD_CONTEXT, { skipSelf: true });

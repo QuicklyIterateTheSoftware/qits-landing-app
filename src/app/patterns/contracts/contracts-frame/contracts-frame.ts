@@ -23,13 +23,13 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
         <div slot="header" class="flex flex-col gap-1">
           <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h1 class="m-0 text-3xl leading-[1.1] font-bold break-all">{{ heading() }}</h1>
-            <span class="repo font-mono text-charcoal-brown-700">{{ repo() }}</span>
+            <span class="repo font-mono text-fg-soft">{{ repo() }}</span>
           </div>
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
             <nav aria-label="Bundle" class="flex gap-1">
               @for (section of sections; track section.id) {
                 <a
-                  class="section rounded bg-charcoal-brown-100 px-2 py-0.5 text-xs font-semibold text-charcoal-brown-700 not-aria-[current=page]:hover:bg-charcoal-brown-200 aria-[current=page]:bg-charcoal-brown-800 aria-[current=page]:text-white"
+                  class="section rounded bg-surface-muted px-2 py-0.5 text-xs font-semibold text-fg-soft not-aria-[current=page]:hover:bg-surface-active aria-[current=page]:bg-surface-inverse aria-[current=page]:text-fg-on-inverse"
                   [qitsExit]="section.exit"
                   [exitParams]="{ slug: slug(), repo: repo() }"
                   >{{ section.label }}</a
@@ -37,9 +37,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               }
             </nav>
             @if (site(); as s) {
-              <span class="site font-mono text-xs text-charcoal-brown-600"
-                >{{ s.site }} {{ s.version }}</span
-              >
+              <span class="site font-mono text-xs text-fg-soft">{{ s.site }} {{ s.version }}</span>
               @if (docs(); as url) {
                 <a class="docs text-xs font-semibold" [href]="url" target="_blank" rel="noopener"
                   >Docs ↗</a
@@ -52,13 +50,13 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
           @let l = lookup();
           @switch (l.status) {
             @case ('none') {
-              <p class="none m-0 text-sm text-charcoal-brown-600">
+              <p class="none m-0 text-sm text-fg-soft">
                 No contracts bundle is published for {{ repo() }}.
               </p>
             }
             @case ('unreadable') {
               @if (l.status === 'unreadable') {
-                <p class="unreadable m-0 text-sm text-cinnabar-700">
+                <p class="unreadable m-0 text-sm text-danger">
                   Could not read {{ l.sites.join(', ') }}, so whether {{ repo() }} publishes a
                   contracts bundle is not known.
                 </p>

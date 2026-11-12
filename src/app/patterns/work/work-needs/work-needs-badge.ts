@@ -7,9 +7,10 @@ import { Popover } from '$ui/components/popover/popover';
  * not at their status yet, and nothing at all once every need is met (or it has none). Hovering or
  * focusing it lists those needs, one per line: `qits-1897 at VERIFIED (now REFINED)`.
  *
- * Apart from the BLOCKED mark (a problem found during work, cinnabar) and an agent's wait (the
- * word "waiting", sunflower gold): a need is foreseeable ordering, so the badge is ocean blue with
- * a dashed border, and it never says "waiting". Its accessible name says it in full.
+ * Apart from the BLOCKED mark (a problem found during work, the danger tone) and an agent's wait
+ * (the word "waiting", the warning tone): a need is foreseeable ordering, so the badge is the
+ * accent tone with a dashed border, and it never says "waiting". Its accessible name says it in
+ * full.
  *
  * `display: contents`, so the badge is itself an item of the row it is put in (a card's tags, a
  * lane's tags, the item page's facts). It is positioned, so it sits above a card's stretched title
@@ -24,7 +25,7 @@ import { Popover } from '$ui/components/popover/popover';
     @if (count() > 0) {
       <ui-popover #popover class="relative z-10">
         <span
-          class="inline-block rounded-sm border border-dashed border-ocean-deep-400 bg-ocean-deep-50 px-1.5 text-[0.6875rem] leading-4 font-medium whitespace-nowrap text-ocean-deep-800"
+          class="inline-block rounded-sm border border-dashed border-accent-line bg-accent-soft px-1.5 text-[0.6875rem] leading-4 font-medium whitespace-nowrap text-accent"
           tabindex="0"
           data-work-needs
           [attr.aria-label]="name()"

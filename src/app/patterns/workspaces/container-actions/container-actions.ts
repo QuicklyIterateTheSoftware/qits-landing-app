@@ -57,7 +57,7 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
       }
     </div>
     @if (confirming(); as verb) {
-      <p class="m-0 mt-1 text-sm text-charcoal-brown-700" role="status" data-confirm>
+      <p class="m-0 mt-1 text-sm text-fg-soft" role="status" data-confirm>
         @if (agents().length) {
           {{ verb === 'stop' ? 'Stopping' : 'Recreating' }} the container affects
           {{ agents().length === 1 ? 'its agent' : 'its ' + agents().length + ' agents' }}:
@@ -68,7 +68,7 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
       </p>
     }
     @if (affected(); as affected) {
-      <p class="m-0 mt-1 text-sm text-charcoal-brown-600" role="status" data-affected>
+      <p class="m-0 mt-1 text-sm text-fg-soft" role="status" data-affected>
         @if (affected.length) {
           Affected {{ affected.length === 1 ? 'agent' : 'agents' }}: {{ affectedNames() }}.
         } @else {
@@ -77,12 +77,12 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
       </p>
     }
     @if (unavailable()) {
-      <p class="m-0 mt-1 text-sm text-charcoal-brown-600">
+      <p class="m-0 mt-1 text-sm text-fg-soft">
         The slot’s runner is offline; the container waits for it to come back.
       </p>
     }
     @if (failure(); as failure) {
-      <p class="m-0 mt-1 text-sm text-cinnabar-700" role="alert">{{ failure }}</p>
+      <p class="m-0 mt-1 text-sm text-danger" role="alert">{{ failure }}</p>
     }
   `,
 })

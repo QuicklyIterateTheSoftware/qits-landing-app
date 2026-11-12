@@ -51,7 +51,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
     @let n = node();
     @let s = slug();
     <article
-      class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-black/10"
+      class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-line"
       data-highlight-target
       [attr.aria-label]="n.entry.title"
       [uiLeave]="leaving()"
@@ -62,7 +62,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
              headings, so it runs on unbroken past them. The headings are not pinned here: one
              epic's board is small enough not to need it. -->
         <div
-          class="relative z-40 col-start-1 row-span-2 row-start-1 flex items-end justify-center rounded-tl-xl bg-charcoal-brown-800/40 py-4 text-white"
+          class="relative z-40 col-start-1 row-span-2 row-start-1 flex items-end justify-center rounded-tl-xl bg-surface-inverse/40 py-4 text-fg-on-inverse"
         >
           <a
             class="rotate-180 font-mono text-[0.6875rem] whitespace-nowrap text-inherit no-underline [writing-mode:vertical-rl] hover:underline"
@@ -72,7 +72,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           >
         </div>
         <header
-          class="col-start-2 row-start-1 flex flex-wrap items-center gap-2 bg-charcoal-brown-800/40 px-3 py-1.5 text-xs text-white [&>a]:text-inherit [&>a]:no-underline [&>a]:hover:underline"
+          class="col-start-2 row-start-1 flex flex-wrap items-center gap-2 bg-surface-inverse/40 px-3 py-1.5 text-xs text-fg-on-inverse [&>a]:text-inherit [&>a]:no-underline [&>a]:hover:underline"
         >
           <!-- First for a screen reader, drawn last: at the bar's right end. -->
           <a
@@ -131,7 +131,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           </ui-board-row>
         }
         <p
-          class="col-span-full m-0 mb-8 justify-self-center text-sm text-charcoal-brown-900"
+          class="col-span-full m-0 mb-8 justify-self-center text-sm text-fg"
           [class.hidden]="rows().length"
         >
           No features

@@ -28,7 +28,7 @@ export const HIGHLIGHT_TARGET = 'data-highlight-target';
  * The outline of a highlighted element. An outline takes no room, so nothing moves. Written out
  * in full so that Tailwind finds the classes.
  */
-const STRONG = ['outline-3', 'outline-offset-2', 'outline-ocean-deep-600'];
+const STRONG = ['outline-3', 'outline-offset-2', 'outline-focus-ring'];
 const FADING = ['outline-transparent', 'transition-[outline-color]', 'duration-1000'];
 
 /**
@@ -53,7 +53,7 @@ export class Highlighter {
     if (!this.fades) return;
     this.timers = [
       setTimeout(() => {
-        element.classList.remove('outline-ocean-deep-600');
+        element.classList.remove('outline-focus-ring');
         element.classList.add(...FADING);
       }, HIGHLIGHT_MS),
       setTimeout(() => this.clear(), HIGHLIGHT_MS + HIGHLIGHT_FADE_MS),

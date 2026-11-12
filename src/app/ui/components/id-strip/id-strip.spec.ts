@@ -8,7 +8,7 @@ describe('IdStrip', () => {
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent?.trim()).toBe('qits-112');
-    expect(element.classList).toContain('bg-charcoal-brown-100');
+    expect(element.classList).toContain('bg-surface-muted');
     expect(element.querySelector('span')?.className).toContain('[writing-mode:vertical-rl]');
   });
 });

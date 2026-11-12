@@ -10,14 +10,14 @@ const SHIELD = 'M12 2.5 4.5 5.5v5.5c0 4.7 3.2 8.8 7.5 10.5 4.3-1.7 7.5-5.8 7.5-1
 
 /** Colours per state: the shield's fill and outline, and what is drawn on it. */
 const LOOKS: Readonly<Record<GateShieldState, { fill: string; stroke: string; mark: string }>> = {
-  passed: { fill: 'fill-mint-leaf-600', stroke: 'stroke-mint-leaf-700', mark: 'stroke-white' },
-  failed: { fill: 'fill-cinnabar-600', stroke: 'stroke-cinnabar-700', mark: 'stroke-white' },
+  passed: { fill: 'fill-success', stroke: 'stroke-success-strong', mark: 'stroke-fg-on-accent' },
+  failed: { fill: 'fill-danger', stroke: 'stroke-danger-strong', mark: 'stroke-fg-on-accent' },
   waiting: {
-    fill: 'fill-sunflower-gold-400',
-    stroke: 'stroke-sunflower-gold-600',
-    mark: 'stroke-charcoal-brown-950',
+    fill: 'fill-warning-fill',
+    stroke: 'stroke-warning-strong',
+    mark: 'stroke-fg-on-accent',
   },
-  pending: { fill: 'fill-white', stroke: 'stroke-charcoal-brown-400', mark: 'stroke-none' },
+  pending: { fill: 'fill-surface', stroke: 'stroke-line-strong', mark: 'stroke-none' },
 };
 
 /**
@@ -92,6 +92,6 @@ export class GateShield {
     () => this.state() === 'failed' || this.state() === 'waiting',
   );
   protected readonly ring = computed(() =>
-    this.state() === 'failed' ? 'ring-cinnabar-400' : 'ring-sunflower-gold-400',
+    this.state() === 'failed' ? 'ring-danger-line' : 'ring-warning-line',
   );
 }

@@ -52,6 +52,15 @@ export type FreezeKind = 'DATA' | 'NO_DATA' | 'PENDING' | 'ERROR';
 /** A preset width a shot was taken at (qits-2046; `FreezeViewport` in `@qits/angular/screenshots`). */
 export type FreezeViewport = 'PHONE' | 'TABLET' | 'DESKTOP';
 
+/**
+ * A colour scheme a shot was taken in (qits-2086; `FreezeColorScheme` in `@qits/angular/screenshots`,
+ * `freezeScreenshots({ colorSchemes })`, ticket qits-2083).
+ */
+export type FreezeColorScheme = 'LIGHT' | 'DARK';
+
+/** The schemes in the order the library shoots them: LIGHT, then DARK. */
+export const FREEZE_COLOR_SCHEMES: readonly FreezeColorScheme[] = ['LIGHT', 'DARK'];
+
 /** The kinds in the order the builder shows a route's states (qits-2047): data first. */
 export const FREEZE_KINDS: readonly FreezeKind[] = ['DATA', 'NO_DATA', 'PENDING', 'ERROR'];
 
@@ -92,6 +101,13 @@ export interface Freeze {
    * freezes of one `name`, one per width.
    */
   readonly viewport?: FreezeViewport | null;
+  /**
+   * The colour scheme it was shot in (qits-2086): `LIGHT` or `DARK` in a bundle frozen with
+   * `freezeScreenshots({ colorSchemes })`, where a shot is two freezes of one `name` and width, its
+   * file suffixed `-light` / `-dark`; null for a shot taken without one or in a scheme this app does
+   * not know. Absent in a bundle frozen without the option, and in one older than the field.
+   */
+  readonly colorScheme?: FreezeColorScheme | null;
 }
 
 /**
@@ -159,6 +175,12 @@ export interface RoutesManifest {
   readonly freezes: readonly Freeze[];
   /** Each route's full path, mapped to the files of its freezes. */
   readonly byRoute: Readonly<Record<string, readonly string[]>>;
+  /**
+   * The schemes the app froze every shot in (qits-2086, the manifest's `colorSchemes`), the known
+   * ones in {@link FREEZE_COLOR_SCHEMES}' order. Absent in a bundle frozen without
+   * `freezeScreenshots({ colorSchemes })` or older than the option: one freeze per shot, unschemed.
+   */
+  readonly colorSchemes?: readonly FreezeColorScheme[];
   /**
    * The app's outcomes (qits-2006). Absent in a bundle frozen before outcomes were recorded;
    * `invalid` when the section (or a freeze's `triggers`) does not have its shape, which leaves the
@@ -235,27 +257,43 @@ const isFired = (value: unknown): value is FiredOutcome =>
 const known = <T>(values: readonly T[], value: unknown): T | null =>
   values.includes(value as T) ? (value as T) : null;
 
+/** A freeze's optional enum fields, as read from JSON. */
+type RawShape = { kind?: unknown; viewport?: unknown; colorScheme?: unknown };
+
 /**
- * Whether a freeze's `kind` and `viewport` (qits-2046) are absent, null or known: what
- * {@link asManifest} keeps as it is.
+ * Whether a freeze's `kind` and `viewport` (qits-2046) and `colorScheme` (qits-2086) are absent,
+ * null or known: what {@link asManifest} keeps as it is.
  */
 function hasKnownShape(freeze: Freeze): boolean {
-  const { kind, viewport } = freeze as { kind?: unknown; viewport?: unknown };
+  const { kind, viewport, colorScheme } = freeze as RawShape;
   return (
     (kind === undefined || known(FREEZE_KINDS, kind) === kind) &&
-    (viewport === undefined || known(FREEZE_VIEWPORTS, viewport) === viewport)
+    (viewport === undefined || known(FREEZE_VIEWPORTS, viewport) === viewport) &&
+    (colorScheme === undefined || known(FREEZE_COLOR_SCHEMES, colorScheme) === colorScheme)
   );
 }
 
-/** `freeze` with an unknown `kind` or `viewport` read as null; an absent one stays absent. */
+/** `freeze` with an unknown `kind`, `viewport` or `colorScheme` read as null; an absent one stays absent. */
 function withKnownShape(freeze: Freeze): Freeze {
   if (hasKnownShape(freeze)) return freeze;
-  const { kind, viewport } = freeze as { kind?: unknown; viewport?: unknown };
+  const { kind, viewport, colorScheme } = freeze as RawShape;
   return {
     ...freeze,
     ...(kind === undefined ? {} : { kind: known(FREEZE_KINDS, kind) }),
     ...(viewport === undefined ? {} : { viewport: known(FREEZE_VIEWPORTS, viewport) }),
+    ...(colorScheme === undefined ? {} : { colorScheme: known(FREEZE_COLOR_SCHEMES, colorScheme) }),
   };
+}
+
+/**
+ * The manifest's `colorSchemes` (qits-2086): the known schemes it lists, in
+ * {@link FREEZE_COLOR_SCHEMES}' order; undefined when it lists none (absent, not a list, empty or
+ * only unknown ones), so a bundle without the option reads as it always did.
+ */
+function readColorSchemes(value: unknown): readonly FreezeColorScheme[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const schemes = FREEZE_COLOR_SCHEMES.filter((scheme) => value.includes(scheme));
+  return schemes.length ? schemes : undefined;
 }
 
 /** The `outcomes` section as read (qits-2006): absent, `invalid`, or with its shape. */
@@ -276,8 +314,10 @@ function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined 
  * and valid, and a malformed `outcomes` section or `triggers` list reads as `outcomes: 'invalid'`
  * (the malformed `triggers` dropped), so the routes still show.
  *
- * Neither do a freeze's `kind` and `viewport` (qits-2046): absent is an older bundle's, and a value
- * this app does not know reads as null.
+ * Neither do a freeze's `kind` and `viewport` (qits-2046), nor its `colorScheme` and the
+ * manifest's `colorSchemes` (qits-2086): absent is an older bundle's (or one frozen without
+ * schemes), a value this app does not know reads as null, and unknown schemes are dropped from
+ * `colorSchemes` (which is left out when none is known).
  */
 export function asManifest(value: unknown): RoutesManifest | null {
   if (!isObject(value)) return null;
@@ -298,10 +338,12 @@ export function asManifest(value: unknown): RoutesManifest | null {
     outcomes = 'invalid';
     freezes = freezes.map(({ triggers: _dropped, ...freeze }) => freeze);
   }
+  const colorSchemes = readColorSchemes(value['colorSchemes']);
   return {
     routes,
     freezes,
     byRoute: byRoute as RoutesManifest['byRoute'],
+    ...(colorSchemes === undefined ? {} : { colorSchemes }),
     ...(outcomes === undefined ? {} : { outcomes }),
   };
 }
@@ -552,17 +594,49 @@ export function routeStates(
 
 /**
  * The freeze `state` draws at `viewport` (qits-2047): the one shot at that width, else the one shot
- * at the test's own viewport, else the DESKTOP one, else its first.
+ * at the test's own viewport, else the DESKTOP one, else its first. Among the freezes of the width
+ * it lands on, the one in `scheme` (qits-2086) when there is one, else the first: a bundle without
+ * schemes, or a shot that opted out of `scheme`, draws what it has.
  */
-export function stateFreeze(state: FreezeState, viewport: FreezeViewport): Freeze {
-  const at = (width: FreezeViewport | null) =>
-    state.freezes.find((freeze) => (freeze.viewport ?? null) === width);
+export function stateFreeze(
+  state: FreezeState,
+  viewport: FreezeViewport,
+  scheme: FreezeColorScheme | null = null,
+): Freeze {
+  const at = (width: FreezeViewport | null) => {
+    const freezes = state.freezes.filter((freeze) => (freeze.viewport ?? null) === width);
+    return freezes.find((freeze) => (freeze.colorScheme ?? null) === scheme) ?? freezes[0];
+  };
   return at(viewport) ?? at(null) ?? at('DESKTOP') ?? state.freezes[0];
 }
 
 /** Whether any freeze of the bundle was shot at a preset width (qits-2047). */
 export const hasViewports = (manifest: RoutesManifest): boolean =>
   manifest.freezes.some((freeze) => !!freeze.viewport);
+
+/**
+ * The schemes the bundle's freezes can be drawn in (qits-2086), in {@link FREEZE_COLOR_SCHEMES}'
+ * order: the manifest's `colorSchemes`, and any scheme a freeze names. Empty for a bundle frozen
+ * without schemes, which then shows no Light / Dark switch.
+ */
+export const colorSchemesOf = (manifest: RoutesManifest): readonly FreezeColorScheme[] =>
+  FREEZE_COLOR_SCHEMES.filter(
+    (scheme) =>
+      !!manifest.colorSchemes?.includes(scheme) ||
+      manifest.freezes.some((freeze) => freeze.colorScheme === scheme),
+  );
+
+/**
+ * The shot a freeze is one scheme of (qits-2086): its file without the `-light` / `-dark` suffix the
+ * library gives a schemed freeze, so the LIGHT and DARK freezes of one shot share it. A freeze
+ * without a scheme is its own shot.
+ */
+export function freezeShot(freeze: Freeze): string {
+  const suffix = freeze.colorScheme ? `-${freeze.colorScheme.toLowerCase()}.html` : null;
+  return suffix && freeze.file.endsWith(suffix)
+    ? `${freeze.file.slice(0, -suffix.length)}.html`
+    : freeze.file;
+}
 
 /**
  * The calls one freeze answered (qits-2080): its `records`, once each, sorted by provider,
@@ -617,14 +691,22 @@ export function appWideCalls(manifest: RoutesManifest): ReadonlySet<string> {
 /**
  * The outcomes whose result `freeze` shows (qits-2080): the `<interaction>:<outcome>` of each fired
  * record whose `freeze` is its file, once each, in the manifest's order. None without readable
- * outcomes.
+ * outcomes. A record links one scheme's freeze of a shot (the library links the first scheme it
+ * took, qits-2083), so the other scheme's freeze of that shot shows its result too (qits-2086).
  */
 export function freezeResults(manifest: RoutesManifest, freeze: Freeze): readonly string[] {
   const fired = outcomesOf(manifest)?.fired ?? [];
+  const byFile = new Map(manifest.freezes.map((each) => [each.file, each]));
+  const shot = freezeShot(freeze);
+  const shows = (file: string | null) => {
+    if (file === freeze.file) return true;
+    const linked = file === null ? undefined : byFile.get(file);
+    return !!linked && !!freeze.colorScheme && freezeShot(linked) === shot;
+  };
   return [
     ...new Set(
       fired
-        .filter((record) => record.freeze === freeze.file)
+        .filter((record) => shows(record.freeze))
         .map((record) => `${record.interaction}:${record.outcome}`),
     ),
   ];

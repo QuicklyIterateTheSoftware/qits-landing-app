@@ -66,17 +66,14 @@ import { Spinner } from '$ui/components/spinner/spinner';
   template: `
     <ui-spinner [state]="changes()?.status ?? 'loading'" class="min-h-24">
       @let set = changes()?.value;
-      <p class="m-0 mb-2 text-sm text-charcoal-brown-600">{{ lede() }}</p>
+      <p class="m-0 mb-2 text-sm text-fg-soft">{{ lede() }}</p>
       <div class="grid gap-3 md:grid-cols-[minmax(14rem,22rem)_minmax(0,1fr)]">
         <aside class="min-w-0">
-          <p
-            class="m-0 mb-1 text-sm text-charcoal-brown-600"
-            [class]="set?.detail ? 'block' : 'hidden'"
-          >
+          <p class="m-0 mb-1 text-sm text-fg-soft" [class]="set?.detail ? 'block' : 'hidden'">
             {{ set?.detail }}
           </p>
           <p
-            class="m-0 text-sm text-charcoal-brown-500"
+            class="m-0 text-sm text-fg-muted"
             [class]="set && !set.files?.length && !set.detail ? 'block' : 'hidden'"
           >
             This fold changes no files.
@@ -94,22 +91,22 @@ import { Spinner } from '$ui/components/spinner/spinner';
             <h3 class="m-0 mb-1 font-mono text-sm font-semibold break-all">{{ path() }}</h3>
             <p class="m-0 mb-2 font-mono text-sm">
               <span [title]="pinOld() ?? ''">{{ short(pinOld()) }}</span>
-              <span class="text-charcoal-brown-400" aria-hidden="true"> → </span>
+              <span class="text-fg-faint" aria-hidden="true"> → </span>
               <span [title]="pinNew() ?? ''">{{ short(pinNew()) }}</span>
             </p>
             @if (ref.detail) {
-              <p class="m-0 text-sm text-charcoal-brown-600">{{ ref.detail }}</p>
+              <p class="m-0 text-sm text-fg-soft">{{ ref.detail }}</p>
             } @else {
               <ui-spinner [state]="expansion()?.status ?? 'loading'" class="min-h-12">
                 @let moved = expansion()?.value;
                 <p
-                  class="m-0 mb-1 text-sm text-charcoal-brown-600"
+                  class="m-0 mb-1 text-sm text-fg-soft"
                   [class]="moved?.detail ? 'block' : 'hidden'"
                 >
                   {{ moved?.detail }}
                 </p>
                 <p
-                  class="m-0 text-sm text-charcoal-brown-500"
+                  class="m-0 text-sm text-fg-muted"
                   [class]="moved && !moved.commits?.length && !moved.detail ? 'block' : 'hidden'"
                 >
                   This pin move brings in no commits.
@@ -117,27 +114,23 @@ import { Spinner } from '$ui/components/spinner/spinner';
                 <ul class="m-0 flex list-none flex-col gap-1 p-0">
                   @for (commit of moved?.commits ?? []; track commit.hash) {
                     <li class="flex flex-wrap items-baseline gap-2 text-sm">
-                      <span class="font-mono text-charcoal-brown-600" [title]="commit.hash ?? ''">{{
+                      <span class="font-mono text-fg-soft" [title]="commit.hash ?? ''">{{
                         commit.shortHash
                       }}</span>
                       <span class="min-w-48 flex-1 break-words"
                         ><qits-commit-message [message]="commit.message ?? ''" [project]="slug()"
                       /></span>
-                      <span class="text-xs text-charcoal-brown-500">{{ commit.author }}</span>
-                      <span
-                        class="text-xs text-charcoal-brown-500"
-                        [title]="instant(commit.date)"
-                        >{{ ago(commit.date) }}</span
-                      >
+                      <span class="text-xs text-fg-muted">{{ commit.author }}</span>
+                      <span class="text-xs text-fg-muted" [title]="instant(commit.date)">{{
+                        ago(commit.date)
+                      }}</span>
                     </li>
                   }
                 </ul>
               </ui-spinner>
             }
           } @else if (path() && !inChangeSet()) {
-            <p class="m-0 p-3 text-sm text-charcoal-brown-500">
-              {{ path() }} is not changed by this fold.
-            </p>
+            <p class="m-0 p-3 text-sm text-fg-muted">{{ path() }} is not changed by this fold.</p>
           } @else if (image(); as shown) {
             <h3 class="m-0 mb-2 font-mono text-sm font-semibold break-all">{{ path() }}</h3>
             <ui-image-diff

@@ -100,9 +100,9 @@ describe('FileViewer', () => {
       anchor: { startLine: 4, endLine: 5 },
       picks: [{ startLine: 1, endLine: 1 }],
     });
-    expect(line(4).classList).toContain('bg-sunflower-gold-100');
-    expect(line(5).classList).toContain('bg-sunflower-gold-100');
-    expect(line(6).classList).not.toContain('bg-sunflower-gold-100');
-    expect(line(1).classList).toContain('bg-ocean-deep-50');
+    expect(line(4).classList).toContain('bg-warning-soft');
+    expect(line(5).classList).toContain('bg-warning-soft');
+    expect(line(6).classList).not.toContain('bg-warning-soft');
+    expect(line(1).classList).toContain('bg-accent-soft');
   });
 });

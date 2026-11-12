@@ -70,7 +70,7 @@ describe('ReleaseAutomations', () => {
     const deferred = row('Entity diagram');
     expect(deferred.className).toContain('border-dashed');
     expect(deferred.textContent).toContain('checked by QA');
-    expect(row('Estate pins').className).toContain('border-cinnabar-200');
+    expect(row('Estate pins').className).toContain('border-danger-line');
   });
 
   it('offers Re-run on a rejected request, for the failed, fresh and deferred rows', () => {

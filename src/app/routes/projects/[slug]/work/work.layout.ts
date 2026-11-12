@@ -76,9 +76,9 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
   imports: [Dropdown, NgTemplateOutlet, QitsExit, RouterOutlet],
   host: { class: 'block md:pt-4 [--work-pin-base:var(--app-pin-top,0px)]' },
   template: `
-    <div #pinned class="sticky top-[var(--app-pin-top,0px)] z-45 bg-white" data-work-tabs>
+    <div #pinned class="sticky top-[var(--app-pin-top,0px)] z-45 bg-surface" data-work-tabs>
       <!-- Below md: the burger and the open page's name. Not a nav named Work: that is the row's. -->
-      <div class="flex items-center gap-1 border-b border-gray-200 px-4 py-1 md:hidden">
+      <div class="flex items-center gap-1 border-b border-line px-4 py-1 md:hidden">
         <ui-dropdown #menu align="start" label="Work views" panelLabel="Work views">
           <svg
             dropdown-trigger
@@ -96,13 +96,13 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
             @for (tab of tabs(); track tab.segment) {
               <li>
                 <a
-                  class="flex items-center justify-between gap-4 px-4 py-2 text-sm text-charcoal-brown-600 no-underline hover:bg-gray-50 hover:text-charcoal-brown-900 aria-[current=page]:bg-gray-100 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
+                  class="flex items-center justify-between gap-4 px-4 py-2 text-sm text-fg-soft no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                   [qitsExit]="tab.exit"
                   [exitParams]="{ slug: slug() }"
                   (click)="menu.close()"
                   >{{ tab.label }}
                   <span
-                    class="rounded-full bg-gray-100 px-1.5 text-xs font-normal text-gray-700 tabular-nums"
+                    class="rounded-full bg-surface-muted px-1.5 text-xs font-normal text-fg-soft tabular-nums"
                     [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
                     >{{ tab.count }}</span
                   ></a
@@ -112,10 +112,10 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
           </ul>
         </ui-dropdown>
         @if (currentTab(); as tab) {
-          <p class="m-0 flex items-center gap-2 text-sm font-semibold text-charcoal-brown-900">
+          <p class="m-0 flex items-center gap-2 text-sm font-semibold text-fg">
             {{ tab.label }}
             <span
-              class="rounded-full bg-gray-100 px-1.5 text-xs font-normal text-gray-700 tabular-nums"
+              class="rounded-full bg-surface-muted px-1.5 text-xs font-normal text-fg-soft tabular-nums"
               [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
               >{{ tab.count }}</span
             >
@@ -127,19 +127,19 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
         </div>
       </div>
       <nav class="mx-auto max-w-[72rem] px-6 max-md:hidden md:pt-2" aria-label="Work">
-        <ul class="m-0 flex list-none flex-wrap gap-1 border-b border-gray-200 p-0">
+        <ul class="m-0 flex list-none flex-wrap gap-1 border-b border-line p-0">
           @for (tab of tabs(); track tab.segment) {
             <li
-              class="-mb-px flex shrink-0 items-center border-b-2 border-transparent has-[[aria-current=page]]:border-charcoal-brown-900"
+              class="-mb-px flex shrink-0 items-center border-b-2 border-transparent has-[[aria-current=page]]:border-fg"
             >
               <a
                 #active="qitsExit"
-                class="flex items-center gap-2 px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
+                class="flex items-center gap-2 px-3 py-2 text-sm text-fg-soft no-underline hover:text-fg aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                 [qitsExit]="tab.exit"
                 [exitParams]="{ slug: slug() }"
                 >{{ tab.label }}
                 <span
-                  class="rounded-full bg-gray-100 px-1.5 text-xs font-normal text-gray-700 tabular-nums"
+                  class="rounded-full bg-surface-muted px-1.5 text-xs font-normal text-fg-soft tabular-nums"
                   [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
                   >{{ tab.count }}</span
                 ></a
@@ -181,13 +181,9 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
         </svg>
         <div dropdown-panel class="px-3 py-2">
           <fieldset class="m-0 flex flex-col gap-1 border-0 p-0 text-sm">
-            <legend class="mb-1 p-0 text-xs font-semibold text-charcoal-brown-600">
-              In Progress view
-            </legend>
+            <legend class="mb-1 p-0 text-xs font-semibold text-fg-soft">In Progress view</legend>
             @for (choice of choices; track choice.view) {
-              <label
-                class="flex cursor-pointer items-center gap-2 py-1 whitespace-nowrap text-charcoal-brown-900"
-              >
+              <label class="flex cursor-pointer items-center gap-2 py-1 whitespace-nowrap text-fg">
                 <input
                   type="radio"
                   class="m-0"

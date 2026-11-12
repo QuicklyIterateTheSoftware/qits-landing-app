@@ -14,46 +14,40 @@ import { percentText, pointsDelta, type Coverage } from '$core/ci/reports';
     @let c = coverage();
     <p class="m-0">
       <strong>Total line coverage {{ percent(c.percent) }}</strong>
-      <span class="text-charcoal-brown-500"> ({{ c.linesCovered }}/{{ c.linesTotal }} lines)</span>
+      <span class="text-fg-muted"> ({{ c.linesCovered }}/{{ c.linesTotal }} lines)</span>
       @if (delta(); as d) {
         <span
           class="ml-2 font-semibold"
-          [class]="
-            d.value < 0
-              ? 'text-cinnabar-700'
-              : d.value > 0
-                ? 'text-mint-leaf-700'
-                : 'text-charcoal-brown-700'
-          "
+          [class]="d.value < 0 ? 'text-danger' : d.value > 0 ? 'text-success' : 'text-fg-soft'"
           >{{ d.text }} vs {{ d.version }}</span
         >
       }
     </p>
     @if (c.sources.length) {
-      <p class="m-0 text-xs text-charcoal-brown-500">From {{ c.sources.join(', ') }}</p>
+      <p class="m-0 text-xs text-fg-muted">From {{ c.sources.join(', ') }}</p>
     }
     @if (c.diff; as diff) {
       <p class="m-0 mt-1">
         <strong>Diff coverage {{ percent(diff.percent) }}</strong>
-        <span class="text-charcoal-brown-500">
+        <span class="text-fg-muted">
           ({{ diff.linesCovered }}/{{ diff.linesChanged }} changed lines covered, vs
           {{ diff.baselineVersion }})</span
         >
       </p>
       @if (diff.uncovered.length) {
-        <p class="m-0 text-xs text-charcoal-brown-500">Changed lines no test ran:</p>
+        <p class="m-0 text-xs text-fg-muted">Changed lines no test ran:</p>
         <ul class="m-0 list-none p-0 pl-3 font-mono text-xs">
           @for (entry of diff.uncovered; track entry.file) {
             <li class="break-all">{{ entry.file }}: {{ entry.ranges }}</li>
           }
         </ul>
       } @else if (diff.linesChanged > 0) {
-        <p class="m-0 text-xs text-charcoal-brown-500">Every changed line was covered.</p>
+        <p class="m-0 text-xs text-fg-muted">Every changed line was covered.</p>
       } @else {
-        <p class="m-0 text-xs text-charcoal-brown-500">No coverable line changed.</p>
+        <p class="m-0 text-xs text-fg-muted">No coverable line changed.</p>
       }
     } @else {
-      <p class="m-0 text-xs text-charcoal-brown-500">
+      <p class="m-0 text-xs text-fg-muted">
         No baseline: diff coverage needs a released version to compare with.
       </p>
     }

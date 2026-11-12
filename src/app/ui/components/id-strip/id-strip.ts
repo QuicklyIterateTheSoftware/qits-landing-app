@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class:
-      'flex shrink-0 items-center justify-center bg-charcoal-brown-100 px-0.5 py-1.5 font-mono text-[0.625rem] leading-none text-charcoal-brown-900',
+      'flex shrink-0 items-center justify-center bg-surface-muted px-0.5 py-1.5 font-mono text-[0.625rem] leading-none text-fg',
   },
   template: `<span class="rotate-180 whitespace-nowrap [writing-mode:vertical-rl]">{{
     id()

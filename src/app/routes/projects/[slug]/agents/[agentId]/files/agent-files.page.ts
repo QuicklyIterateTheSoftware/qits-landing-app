@@ -72,7 +72,7 @@ type ListingState =
 
 /** A chip's button, written out in full so Tailwind finds it. */
 const CHIP =
-  'cursor-pointer rounded-full border px-2.5 py-0.5 font-sans text-xs aria-pressed:border-ocean-deep-600 aria-pressed:bg-ocean-deep-50 aria-pressed:text-ocean-deep-800 border-charcoal-brown-200 bg-white text-charcoal-brown-700';
+  'cursor-pointer rounded-full border px-2.5 py-0.5 font-sans text-xs aria-pressed:border-accent-line aria-pressed:bg-accent-soft aria-pressed:text-accent border-line bg-surface text-fg-soft';
 
 /**
  * An agent's Files tab, at `/projects/<slug>/agents/<agent id>/files` (epic qits-1230; by the
@@ -120,7 +120,7 @@ const CHIP =
     <section class="flex flex-col gap-3 text-sm" aria-label="Files">
       @if (agent()) {
         @if (!rowId()) {
-          <p class="m-0 text-charcoal-brown-600">
+          <p class="m-0 text-fg-soft">
             This agent has no workspace yet, so there is no worktree to show.
           </p>
         } @else {
@@ -142,7 +142,7 @@ const CHIP =
                 <label class="sr-only" for="file-filter">Filter files by name</label>
                 <input
                   id="file-filter"
-                  class="min-w-0 grow rounded-md border border-charcoal-brown-300 bg-white px-2 py-1 font-sans text-sm"
+                  class="min-w-0 grow rounded-md border border-line-strong bg-surface px-2 py-1 font-sans text-sm"
                   type="search"
                   autocomplete="off"
                   spellcheck="false"
@@ -164,20 +164,20 @@ const CHIP =
                 </button>
               </div>
               @if (fullyExpanded()) {
-                <p class="m-0 text-xs text-charcoal-brown-600" role="status">
+                <p class="m-0 text-xs text-fg-soft" role="status">
                   Searching: the tree is open to its full depth.
                 </p>
               }
               @switch (listing().status) {
                 @case ('loading') {
-                  <p class="m-0 text-charcoal-brown-600" role="status">Loading files…</p>
+                  <p class="m-0 text-fg-soft" role="status">Loading files…</p>
                 }
                 @case ('error') {
-                  <p class="m-0 flex items-center gap-3 text-cinnabar-700" role="alert">
+                  <p class="m-0 flex items-center gap-3 text-danger" role="alert">
                     Could not load the working tree.
                     <button
                       type="button"
-                      class="cursor-pointer border-0 bg-transparent p-0 text-sm text-ocean-deep-700 underline"
+                      class="cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
                       (click)="reload()"
                     >
                       Try again
@@ -186,7 +186,7 @@ const CHIP =
                 }
               }
               @if (noMatch()) {
-                <p class="m-0 text-charcoal-brown-600">No files match.</p>
+                <p class="m-0 text-fg-soft">No files match.</p>
               }
               @if (rows().length > 0) {
                 <app-file-tree
@@ -198,7 +198,7 @@ const CHIP =
                 />
               }
               @if (unsearched() > 0) {
-                <p class="m-0 text-xs text-charcoal-brown-600" role="status">
+                <p class="m-0 text-xs text-fg-soft" role="status">
                   {{ unsearched() }} collapsed
                   {{ unsearched() === 1 ? 'directory' : 'directories' }} not searched: open to
                   include.
@@ -247,9 +247,7 @@ const CHIP =
                   </nav>
                 }
                 <header class="flex flex-wrap items-center justify-between gap-2">
-                  <code class="font-mono text-xs break-all text-charcoal-brown-800">{{
-                    path
-                  }}</code>
+                  <code class="font-mono text-xs break-all text-fg">{{ path }}</code>
                   <button
                     type="button"
                     [class]="chip"
@@ -266,18 +264,18 @@ const CHIP =
                   >
                     @for (reference of picksHere(); track label(reference)) {
                       <li
-                        class="flex items-center gap-1 rounded-full border border-ocean-deep-200 bg-ocean-deep-50 px-2 py-0.5 text-xs"
+                        class="flex items-center gap-1 rounded-full border border-accent-line bg-accent-soft px-2 py-0.5 text-xs"
                       >
                         <button
                           type="button"
-                          class="cursor-pointer border-0 bg-transparent p-0 font-mono text-xs text-ocean-deep-800"
+                          class="cursor-pointer border-0 bg-transparent p-0 font-mono text-xs text-accent"
                           (click)="show(reference)"
                         >
                           {{ rangeOf(reference) }}
                         </button>
                         <button
                           type="button"
-                          class="cursor-pointer border-0 bg-transparent p-0 text-xs text-charcoal-brown-500"
+                          class="cursor-pointer border-0 bg-transparent p-0 text-xs text-fg-muted"
                           [attr.aria-label]="'Remove ' + label(reference)"
                           (click)="picked.remove(label(reference))"
                         >

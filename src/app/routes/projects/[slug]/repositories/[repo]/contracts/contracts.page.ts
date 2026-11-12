@@ -43,7 +43,7 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
       @let read = indexRead();
       @switch (read?.status) {
         @case ('error') {
-          <p class="index-error m-0 text-sm text-cinnabar-700">
+          <p class="index-error m-0 text-sm text-danger">
             Could not read the golden masters of {{ siteLabel() }}.
           </p>
         }
@@ -51,21 +51,21 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
           <div class="flex flex-col gap-3">
             <div class="flex flex-wrap items-center gap-3">
               <input
-                class="h-8 w-72 max-w-full rounded-md border border-charcoal-brown-300 px-2 text-sm"
+                class="h-8 w-72 max-w-full rounded-md border border-line-strong px-2 text-sm"
                 type="search"
                 aria-label="Filter states"
                 placeholder="Filter by name"
                 [value]="filter()"
                 (input)="filter.set(value($event))"
               />
-              <span class="count text-xs text-charcoal-brown-600"
+              <span class="count text-xs text-fg-soft"
                 >{{ shown().length }} of {{ rows().length }}
                 {{ rows().length === 1 ? 'state' : 'states' }}</span
               >
             </div>
             <table class="states w-full border-collapse text-left text-sm">
               <thead>
-                <tr class="border-b border-charcoal-brown-200 text-xs text-charcoal-brown-600">
+                <tr class="border-b border-line text-xs text-fg-soft">
                   <th class="py-1 pr-3 font-semibold">State</th>
                   <th class="py-1 pr-3 text-right font-semibold">Operations</th>
                   <th class="py-1 font-semibold">Recorded</th>
@@ -73,7 +73,7 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
               </thead>
               <tbody>
                 @for (row of shown(); track row.slug) {
-                  <tr class="state border-b border-charcoal-brown-100 align-top">
+                  <tr class="state border-b border-line-subtle align-top">
                     <td class="py-1 pr-3">
                       <a
                         class="font-semibold"
@@ -83,13 +83,13 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
                       >
                     </td>
                     <td class="py-1 pr-3 text-right tabular-nums">{{ row.operationCount }}</td>
-                    <td class="py-1 font-mono text-xs break-all text-charcoal-brown-700">
+                    <td class="py-1 font-mono text-xs break-all text-fg-soft">
                       {{ row.operationIds.join(', ') }}
                     </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="3" class="py-2 text-charcoal-brown-600">
+                    <td colspan="3" class="py-2 text-fg-soft">
                       {{ rows().length ? 'No state matches the filter.' : 'No states recorded.' }}
                     </td>
                   </tr>
@@ -99,7 +99,7 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
           </div>
         }
         @default {
-          <p class="m-0 text-sm text-charcoal-brown-600">Reading the golden masters…</p>
+          <p class="m-0 text-sm text-fg-soft">Reading the golden masters…</p>
         }
       }
     </app-contracts-frame>

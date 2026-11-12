@@ -81,30 +81,30 @@ function statusTone(status: string | undefined): ChipTone {
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Network access">
-        <p class="mt-0 mb-4 text-sm text-gray-600">
+        <p class="mt-0 mb-4 text-sm text-fg-soft">
           The devices and nodes on the platform’s private network, newest first.
         </p>
 
         <section
-          class="mb-6 rounded-md border border-gray-200 bg-white px-4 py-3"
+          class="mb-6 rounded-md border border-line bg-surface px-4 py-3"
           aria-labelledby="connect-heading"
         >
-          <h2 id="connect-heading" class="m-0 mb-1 text-base font-semibold text-gray-900">
+          <h2 id="connect-heading" class="m-0 mb-1 text-base font-semibold text-fg">
             Connect this machine
           </h2>
-          <p class="mt-0 mb-2 text-sm text-gray-600">
+          <p class="mt-0 mb-2 text-sm text-fg-soft">
             Run this with the qits CLI. It registers this machine as a device of yours and runs the
             network-access companion container, so it needs Docker.
           </p>
           <app-copy-text [text]="connectCommand" label="Copy" />
-          <p class="mt-2 mb-0 text-xs text-gray-500">
+          <p class="mt-2 mb-0 text-xs text-fg-muted">
             For a client outside the CLI, a device row’s Download WireGuard config gives its
             <code>wg-quick</code> file; put your own private key in place of
             <code>&lt;PRIVATE_KEY&gt;</code>.
           </p>
 
-          <h3 class="mt-3 mb-1 text-sm font-semibold text-gray-900">Browsers</h3>
-          <p class="mt-0 mb-2 text-sm text-gray-600">
+          <h3 class="mt-3 mb-1 text-sm font-semibold text-fg">Browsers</h3>
+          <p class="mt-0 mb-2 text-sm text-fg-soft">
             Once <code>qits network-access up</code> is running on this machine, set this URL as the
             automatic proxy configuration URL in your system’s or browser’s proxy settings. Public
             apps keep working while the companion is stopped.
@@ -113,36 +113,34 @@ function statusTone(status: string | undefined): ChipTone {
         </section>
 
         <section
-          class="mb-6 rounded-md border border-gray-200 bg-white px-4 py-3"
+          class="mb-6 rounded-md border border-line bg-surface px-4 py-3"
           aria-labelledby="edge-heading"
           data-private-edge
         >
-          <h2 id="edge-heading" class="m-0 mb-1 text-base font-semibold text-gray-900">
-            Private edge
-          </h2>
+          <h2 id="edge-heading" class="m-0 mb-1 text-base font-semibold text-fg">Private edge</h2>
           @switch (edge().status) {
             @case ('loaded') {
               @if (edgeEntry(); as entry) {
                 <dl class="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 text-sm">
-                  <dt class="text-gray-500">Endpoint</dt>
+                  <dt class="text-fg-muted">Endpoint</dt>
                   <dd class="m-0 font-mono">{{ entry.publicAddress }}:{{ entry.listenPort }}</dd>
-                  <dt class="text-gray-500">Public key</dt>
+                  <dt class="text-fg-muted">Public key</dt>
                   <dd class="m-0 font-mono break-all">{{ entry.publicKey }}</dd>
-                  <dt class="text-gray-500">Announced</dt>
+                  <dt class="text-fg-muted">Announced</dt>
                   <dd class="m-0">{{ when(entry.announcedAt) }}</dd>
                 </dl>
               }
             }
             @case ('none') {
-              <p class="m-0 text-sm text-gray-600">No private edge has announced itself yet.</p>
+              <p class="m-0 text-sm text-fg-soft">No private edge has announced itself yet.</p>
             }
             @case ('error') {
-              <p class="m-0 text-sm text-cinnabar-700" role="alert">
+              <p class="m-0 text-sm text-danger" role="alert">
                 The private edge could not be read.
               </p>
             }
             @default {
-              <p class="m-0 text-sm text-gray-500">Reading the private edge…</p>
+              <p class="m-0 text-sm text-fg-muted">Reading the private edge…</p>
             }
           }
         </section>
@@ -151,7 +149,7 @@ function statusTone(status: string | undefined): ChipTone {
           @for (option of filters; track option) {
             <button
               type="button"
-              class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 aria-pressed:border-ocean-deep-600 aria-pressed:bg-ocean-deep-50 aria-pressed:text-ocean-deep-800"
+              class="cursor-pointer rounded-md border border-line-strong bg-surface px-3 py-1 text-sm text-fg-soft hover:bg-surface-muted aria-pressed:border-accent aria-pressed:bg-accent-soft aria-pressed:text-accent"
               [attr.aria-pressed]="filter() === option"
               (click)="choose(option)"
             >
@@ -169,7 +167,7 @@ function statusTone(status: string | undefined): ChipTone {
           <div class="overflow-x-auto">
             <table class="w-full border-collapse text-left text-sm" aria-label="Peers">
               <thead>
-                <tr class="border-b border-gray-200 text-xs text-gray-500">
+                <tr class="border-b border-line text-xs text-fg-muted">
                   <th class="py-1.5 pr-3 font-semibold">Name</th>
                   <th class="py-1.5 pr-3 font-semibold">Kind</th>
                   <th class="py-1.5 pr-3 font-semibold">Tunnel IP</th>
@@ -181,15 +179,15 @@ function statusTone(status: string | undefined): ChipTone {
               </thead>
               <tbody>
                 @for (peer of shown(); track peer.id) {
-                  <tr class="border-b border-gray-100 align-top" [attr.data-peer]="peer.id">
-                    <td class="py-1.5 pr-3 font-medium text-gray-900">{{ peer.name }}</td>
+                  <tr class="border-b border-line-subtle align-top" [attr.data-peer]="peer.id">
+                    <td class="py-1.5 pr-3 font-medium text-fg">{{ peer.name }}</td>
                     <td class="py-1.5 pr-3">{{ kindLabel(peer) }}</td>
                     <td class="py-1.5 pr-3 font-mono">{{ peer.tunnelIp }}</td>
                     <td class="py-1.5 pr-3">{{ owner(peer) }}</td>
                     <td class="py-1.5 pr-3">
                       <ui-chip [label]="statusLabel(peer)" [tone]="tone(peer)" />
                     </td>
-                    <td class="py-1.5 pr-3 whitespace-nowrap text-gray-600">
+                    <td class="py-1.5 pr-3 whitespace-nowrap text-fg-soft">
                       {{ when(peer.createdAt) }}
                     </td>
                     <td class="py-1.5">
@@ -211,14 +209,14 @@ function statusTone(status: string | undefined): ChipTone {
             </table>
           </div>
           <p
-            class="m-0 px-3 py-8 text-center text-sm text-gray-500"
+            class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
             [class]="state() === 'loaded' && shown().length === 0 ? 'block' : 'hidden'"
           >
             No peers match this filter.
           </p>
         </ui-spinner>
         @if (failure(); as failure) {
-          <p class="mt-2 mb-0 text-sm text-cinnabar-700" role="alert" data-refusal>
+          <p class="mt-2 mb-0 text-sm text-danger" role="alert" data-refusal>
             {{ failure }}
           </p>
         }

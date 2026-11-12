@@ -23,12 +23,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     <div
       role="heading"
       [attr.aria-level]="level()"
-      class="flex items-center gap-2 py-1 font-mono text-sm font-semibold text-charcoal-brown-800"
+      class="flex items-center gap-2 py-1 font-mono text-sm font-semibold text-fg"
     >
       <svg
         viewBox="0 0 24 24"
         aria-hidden="true"
-        class="size-4 shrink-0 text-sunflower-gold-600"
+        class="size-4 shrink-0 text-warning"
         fill="currentColor"
       >
         <path
@@ -37,7 +37,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       </svg>
       {{ name() }}/
     </div>
-    <div class="ml-2 border-l border-charcoal-brown-200 pl-4">
+    <div class="ml-2 border-l border-line pl-4">
       <ng-content />
     </div>
   `,

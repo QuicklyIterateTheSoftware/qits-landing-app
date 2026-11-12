@@ -71,14 +71,12 @@ import { Chip } from '$ui/components/chip/chip';
       @let read = mapRead();
       @switch (read?.status) {
         @case ('error') {
-          <p class="map-error m-0 text-sm text-cinnabar-700">
+          <p class="map-error m-0 text-sm text-danger">
             Could not read the entity map of {{ siteLabel() }}.
           </p>
         }
         @case ('none') {
-          <p class="no-map m-0 text-sm text-charcoal-brown-600">
-            {{ siteLabel() }} publishes no entity map.
-          </p>
+          <p class="no-map m-0 text-sm text-fg-soft">{{ siteLabel() }} publishes no entity map.</p>
         }
         @case ('loaded') {
           @if (entity(); as e) {
@@ -93,18 +91,18 @@ import { Chip } from '$ui/components/chip/chip';
                   >
                 </p>
                 <dl class="facts m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-                  <dt class="text-charcoal-brown-500">Class</dt>
+                  <dt class="text-fg-muted">Class</dt>
                   <dd class="fqn m-0 font-mono break-all">{{ e.entity }}</dd>
-                  <dt class="text-charcoal-brown-500">Table</dt>
+                  <dt class="text-fg-muted">Table</dt>
                   <dd class="m-0 font-mono">{{ e.table ?? '—' }}</dd>
-                  <dt class="text-charcoal-brown-500">Marking</dt>
+                  <dt class="text-fg-muted">Marking</dt>
                   <dd class="marking m-0">{{ e.marking }}</dd>
                   @if (e.marking === 'technical') {
-                    <dt class="text-charcoal-brown-500">Reason</dt>
+                    <dt class="text-fg-muted">Reason</dt>
                     <dd class="reason m-0">{{ e.reason ?? '—' }}</dd>
                   }
                   @if (e.marking === 'projection') {
-                    <dt class="text-charcoal-brown-500">Projection of</dt>
+                    <dt class="text-fg-muted">Projection of</dt>
                     <dd class="projection m-0 font-mono">
                       @if (projection(); as p) {
                         <a
@@ -118,7 +116,7 @@ import { Chip } from '$ui/components/chip/chip';
                     </dd>
                   }
                   @if (e.knownGap; as gap) {
-                    <dt class="text-charcoal-brown-500">Known gap</dt>
+                    <dt class="text-fg-muted">Known gap</dt>
                     <dd class="m-0"><ui-chip class="gap" tone="waiting" [label]="gap" /></dd>
                   }
                 </dl>
@@ -128,11 +126,11 @@ import { Chip } from '$ui/components/chip/chip';
                 <h2 class="m-0 mb-1 text-base font-semibold">ER diagram</h2>
                 @let diagram = diagramRead();
                 @if (diagram?.status === 'loaded') {
-                  <p class="unit m-0 mb-2 text-xs text-charcoal-brown-600">
+                  <p class="unit m-0 mb-2 text-xs text-fg-soft">
                     Persistence unit <span class="font-mono">{{ diagram.unit }}</span>
                   </p>
                   <div
-                    class="diagram-box max-h-[70vh] overflow-auto rounded border border-charcoal-brown-100"
+                    class="diagram-box max-h-[70vh] overflow-auto rounded border border-line-subtle"
                     [appErDiagramBox]="diagram.table"
                   >
                     <qits-mermaid-diagram
@@ -142,50 +140,50 @@ import { Chip } from '$ui/components/chip/chip';
                     />
                   </div>
                 } @else if (diagram?.status === 'none') {
-                  <p class="no-diagram m-0 text-charcoal-brown-600">
+                  <p class="no-diagram m-0 text-fg-soft">
                     No ER diagram published for this entity.
                   </p>
                 } @else if (diagram?.status === 'error') {
-                  <p class="diagram-error m-0 text-cinnabar-700">Could not read the ER diagram.</p>
+                  <p class="diagram-error m-0 text-danger">Could not read the ER diagram.</p>
                 } @else {
-                  <p class="m-0 text-charcoal-brown-600">Reading the ER diagram…</p>
+                  <p class="m-0 text-fg-soft">Reading the ER diagram…</p>
                 }
               </section>
 
               <section>
                 <h2 class="m-0 mb-1 text-base font-semibold">DTOs</h2>
                 @for (dto of dtos(); track dto.type) {
-                  <div class="dto border-b border-charcoal-brown-100 py-1.5">
+                  <div class="dto border-b border-line-subtle py-1.5">
                     <p class="m-0 flex flex-wrap items-center gap-1.5">
                       <span class="font-mono text-xs font-semibold break-all">{{ dto.type }}</span>
                       <ui-chip class="kind" [label]="dto.kind" />
                       @if (dto.via; as via) {
-                        <span class="via text-xs text-charcoal-brown-600"
+                        <span class="via text-xs text-fg-soft"
                           >via <span class="font-mono">{{ via }}</span></span
                         >
                       }
                     </p>
                     @if (dtoNote(dto.kind); as note) {
-                      <p class="note m-0 text-xs text-charcoal-brown-600">{{ note }}</p>
+                      <p class="note m-0 text-xs text-fg-soft">{{ note }}</p>
                     }
                     @if (dto.site; as site) {
-                      <p class="m-0 font-mono text-xs break-all text-charcoal-brown-500">
+                      <p class="m-0 font-mono text-xs break-all text-fg-muted">
                         {{ site }}
                       </p>
                     }
                   </div>
                 } @empty {
-                  <p class="m-0 text-charcoal-brown-600">No operation hands out a DTO of it.</p>
+                  <p class="m-0 text-fg-soft">No operation hands out a DTO of it.</p>
                 }
               </section>
 
               <section>
                 <h2 class="m-0 mb-1 text-base font-semibold">Operations</h2>
                 @for (op of operations(); track op.operationId + op.method + op.path) {
-                  <div class="operation border-b border-charcoal-brown-100 py-1.5">
+                  <div class="operation border-b border-line-subtle py-1.5">
                     <p class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs">
                       <span class="font-semibold">{{ op.operationId }}</span>
-                      <span class="rounded bg-charcoal-brown-100 px-1 font-semibold">{{
+                      <span class="rounded bg-surface-muted px-1 font-semibold">{{
                         op.method
                       }}</span>
                       <span class="break-all">{{ op.path }}</span>
@@ -194,19 +192,19 @@ import { Chip } from '$ui/components/chip/chip';
                       }
                     </p>
                     @if (op.dto; as dto) {
-                      <p class="m-0 font-mono text-xs break-all text-charcoal-brown-600">
+                      <p class="m-0 font-mono text-xs break-all text-fg-soft">
                         {{ dto }}
                       </p>
                     }
                     @if (operationNote(op.kind); as note) {
-                      <p class="note m-0 text-xs text-charcoal-brown-600">{{ note }}</p>
+                      <p class="note m-0 text-xs text-fg-soft">{{ note }}</p>
                     }
                     @let recorded = recordedBy(op.operationId);
                     @if (recorded === null) {
-                      <p class="m-0 text-xs text-charcoal-brown-500">{{ indexNote() }}</p>
+                      <p class="m-0 text-xs text-fg-muted">{{ indexNote() }}</p>
                     } @else if (recorded.length) {
                       <p class="states m-0 flex flex-wrap gap-x-2 text-xs">
-                        <span class="text-charcoal-brown-500">Recorded in</span>
+                        <span class="text-fg-muted">Recorded in</span>
                         @for (s of recorded; track s.slug) {
                           <a
                             [qitsExit]="relating.recordedIn"
@@ -216,16 +214,16 @@ import { Chip } from '$ui/components/chip/chip';
                         }
                       </p>
                     } @else {
-                      <p class="m-0 text-xs text-charcoal-brown-500">No state records it.</p>
+                      <p class="m-0 text-xs text-fg-muted">No state records it.</p>
                     }
                   </div>
                 } @empty {
-                  <p class="m-0 text-charcoal-brown-600">No operation hands it out.</p>
+                  <p class="m-0 text-fg-soft">No operation hands it out.</p>
                 }
               </section>
             </div>
           } @else {
-            <p class="unknown m-0 text-sm text-charcoal-brown-600">
+            <p class="unknown m-0 text-sm text-fg-soft">
               No such entity in {{ read?.status === 'loaded' ? read.map.application : '' }}
               {{ site()?.version }}.
               <a
@@ -238,7 +236,7 @@ import { Chip } from '$ui/components/chip/chip';
           }
         }
         @default {
-          <p class="m-0 text-sm text-charcoal-brown-600">Reading the entity map…</p>
+          <p class="m-0 text-sm text-fg-soft">Reading the entity map…</p>
         }
       }
     </app-contracts-frame>

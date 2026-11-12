@@ -15,8 +15,8 @@ import { BOARD_CONTEXT, gridColumn } from './board-context';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class:
-      'flex size-6 items-center justify-center justify-self-center rounded-sm text-xs font-semibold text-charcoal-brown-950 tabular-nums ring-1 ring-black/5',
-    '[class]': "column() === 'gutter' ? 'bg-mint-leaf-500/40' : 'bg-white/50'",
+      'flex size-6 items-center justify-center justify-self-center rounded-sm text-xs font-semibold text-fg tabular-nums ring-1 ring-line',
+    '[class]': "column() === 'gutter' ? 'bg-success/40' : 'bg-surface/50'",
     '[style.grid-column]': 'placement()',
   },
   template: `<span aria-hidden="true">{{ count() }}</span

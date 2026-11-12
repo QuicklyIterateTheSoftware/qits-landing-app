@@ -45,7 +45,7 @@ export const ASKED =
   host: { class: 'block' },
   template: `
     @if (rows().length === 0) {
-      <span class="text-sm text-charcoal-brown-600">— nothing applies to this repository</span>
+      <span class="text-sm text-fg-soft">— nothing applies to this repository</span>
     } @else {
       <ul class="m-0 flex list-none flex-col gap-1 p-0">
         @for (row of rows(); track row.kind) {
@@ -53,32 +53,30 @@ export const ASKED =
             class="rounded border px-2 py-1 text-sm"
             [class]="
               row.state === 'FAILED'
-                ? 'border-cinnabar-200 bg-cinnabar-50'
+                ? 'border-danger-line bg-danger-soft'
                 : setAside(row)
-                  ? 'border-dashed border-charcoal-brown-200 bg-white text-charcoal-brown-400'
-                  : 'border-charcoal-brown-200 bg-white'
+                  ? 'border-dashed border-line bg-surface text-fg-faint'
+                  : 'border-line bg-surface'
             "
           >
             <div class="flex flex-wrap items-center gap-2">
               <span class="font-semibold">{{ row.label }}</span>
-              <span class="text-charcoal-brown-700">{{ sentence(row) }}</span>
+              <span class="text-fg-soft">{{ sentence(row) }}</span>
               @if (runHref(row); as href) {
-                <a class="text-ocean-deep-700 no-underline hover:underline" [href]="href"
-                  >the run in CI</a
-                >
+                <a class="text-accent no-underline hover:underline" [href]="href">the run in CI</a>
               }
               @if (rerunnable(row)) {
                 <ui-action-button [action]="rerunAction(row)" />
               }
               @if (messages()[row.kind ?? '']; as message) {
-                <span class="text-xs text-charcoal-brown-600">{{ message }}</span>
+                <span class="text-xs text-fg-soft">{{ message }}</span>
               }
             </div>
             @if (row.state === 'FAILED' && row.failure; as failure) {
-              <p class="mt-1 mb-0 font-mono text-xs text-cinnabar-800">{{ failed(failure) }}</p>
+              <p class="mt-1 mb-0 font-mono text-xs text-danger-strong">{{ failed(failure) }}</p>
               @if (failure.excerpt) {
                 <pre
-                  class="mt-1 mb-0 max-h-48 overflow-auto rounded bg-charcoal-brown-950 p-2 text-xs whitespace-pre-wrap text-charcoal-brown-50"
+                  class="mt-1 mb-0 max-h-48 overflow-auto rounded bg-surface-inverse p-2 text-xs whitespace-pre-wrap text-fg-on-inverse"
                   >{{ failure.excerpt }}</pre>
               }
             }
@@ -93,7 +91,7 @@ export const ASKED =
           <ui-action-button [action]="startWaive" />
         } @else {
           <input
-            class="h-8 min-w-48 flex-1 rounded-md border border-charcoal-brown-300 px-2 text-sm"
+            class="h-8 min-w-48 flex-1 rounded-md border border-line-strong px-2 text-sm"
             type="text"
             [value]="reason()"
             (input)="reasonTyped($event)"
@@ -104,16 +102,16 @@ export const ASKED =
             <ui-action-button [action]="confirmWaive()" join="start" />
             <ui-action-button [action]="cancelWaive()" join="end" />
           </div>
-          <span class="text-xs text-charcoal-brown-500"
+          <span class="text-xs text-fg-muted"
             >of <span class="font-mono">{{ fold() }}</span></span
           >
         }
       </div>
       @if (waiveMoved(); as moved) {
-        <p class="mt-1 mb-0 text-sm text-sunflower-gold-900" role="alert">{{ moved }}</p>
+        <p class="mt-1 mb-0 text-sm text-warning" role="alert">{{ moved }}</p>
       }
       @if (waiveFailure(); as failure) {
-        <p class="mt-1 mb-0 text-sm text-cinnabar-700" role="alert">
+        <p class="mt-1 mb-0 text-sm text-danger" role="alert">
           That waiver was not recorded — {{ failure }}.
         </p>
       }

@@ -69,22 +69,19 @@ const REFINED = 'REFINED';
           <div class="flex flex-col gap-10">
             <section class="flex flex-col gap-3" aria-labelledby="schedule-to-schedule">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <h2
-                  id="schedule-to-schedule"
-                  class="m-0 text-lg font-semibold text-charcoal-brown-900"
-                >
+                <h2 id="schedule-to-schedule" class="m-0 text-lg font-semibold text-fg">
                   To schedule
                 </h2>
                 <button
                   type="button"
-                  class="rounded-md border border-mint-leaf-700 bg-mint-leaf-700 px-3 py-1.5 text-sm text-white hover:border-mint-leaf-800 hover:bg-mint-leaf-800 disabled:cursor-not-allowed disabled:border-charcoal-brown-200 disabled:bg-charcoal-brown-100 disabled:text-charcoal-brown-500"
+                  class="rounded-md border border-success bg-success px-3 py-1.5 text-sm text-fg-on-accent hover:bg-success/90 disabled:cursor-not-allowed disabled:border-line disabled:bg-surface-muted disabled:text-fg-muted"
                   [disabled]="!chosen().length"
                   (click)="schedule()"
                 >
                   {{ chosen().length ? 'Schedule ' + chosen().length : 'Schedule' }}
                 </button>
               </div>
-              <p class="m-0 text-sm text-charcoal-brown-600">
+              <p class="m-0 text-sm text-fg-soft">
                 Refined epics and tickets. Scheduling marks them ready for dev, so an agent may
                 start them; an epic takes its features and tasks along.
               </p>
@@ -94,11 +91,11 @@ const REFINED = 'REFINED';
               >
                 @for (row of toSchedule(); track row.id) {
                   <li
-                    class="flex items-start gap-3 rounded-md border border-charcoal-brown-200 bg-white p-3 text-sm"
+                    class="flex items-start gap-3 rounded-md border border-line bg-surface p-3 text-sm"
                   >
                     <input
                       type="checkbox"
-                      class="mt-0.5 size-4 shrink-0 accent-mint-leaf-700"
+                      class="mt-0.5 size-4 shrink-0 accent-success"
                       [checked]="picked().has(row.id)"
                       [disabled]="row.moving"
                       [attr.aria-label]="'Select ' + row.qualifiedId"
@@ -110,16 +107,16 @@ const REFINED = 'REFINED';
                   </li>
                 }
               </ul>
-              <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="toSchedule().length">
+              <p class="m-0 text-sm text-fg-muted" [class.hidden]="toSchedule().length">
                 Nothing to schedule.
               </p>
             </section>
 
             <section class="flex flex-col gap-3" aria-labelledby="schedule-scheduled">
-              <h2 id="schedule-scheduled" class="m-0 text-lg font-semibold text-charcoal-brown-900">
+              <h2 id="schedule-scheduled" class="m-0 text-lg font-semibold text-fg">
                 Scheduled, not started
               </h2>
-              <p class="m-0 text-sm text-charcoal-brown-600">
+              <p class="m-0 text-sm text-fg-soft">
                 Ready for dev and not started yet. Unscheduling takes one back to refined.
               </p>
               <ul
@@ -128,14 +125,14 @@ const REFINED = 'REFINED';
               >
                 @for (row of scheduled(); track row.id) {
                   <li
-                    class="flex items-start gap-3 rounded-md border border-charcoal-brown-200 bg-white p-3 text-sm"
+                    class="flex items-start gap-3 rounded-md border border-line bg-surface p-3 text-sm"
                   >
                     <ng-container
                       *ngTemplateOutlet="item; context: { $implicit: row }"
                     ></ng-container>
                     <button
                       type="button"
-                      class="shrink-0 rounded-md border border-charcoal-brown-300 bg-white px-3 py-1 text-sm text-charcoal-brown-800 hover:bg-charcoal-brown-100 hover:text-charcoal-brown-950 disabled:cursor-not-allowed disabled:text-charcoal-brown-400"
+                      class="shrink-0 rounded-md border border-line-strong bg-surface px-3 py-1 text-sm text-fg-soft hover:bg-surface-muted hover:text-fg disabled:cursor-not-allowed disabled:text-fg-faint"
                       [disabled]="row.moving"
                       [attr.aria-label]="'Unschedule ' + row.qualifiedId"
                       (click)="unschedule(row.entry)"
@@ -145,7 +142,7 @@ const REFINED = 'REFINED';
                   </li>
                 }
               </ul>
-              <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="scheduled().length">
+              <p class="m-0 text-sm text-fg-muted" [class.hidden]="scheduled().length">
                 Nothing scheduled.
               </p>
             </section>
@@ -159,41 +156,39 @@ const REFINED = 'REFINED';
         <div class="flex flex-wrap items-center gap-2">
           <app-work-ref [qualifiedId]="row.qualifiedId" />
           <a
-            class="font-medium text-charcoal-brown-900 no-underline wrap-anywhere hover:underline"
+            class="font-medium text-fg no-underline wrap-anywhere hover:underline"
             [qitsExit]="opening.open"
             [exitParams]="{ slug: slug() ?? '', id: row.qualifiedId }"
             >{{ row.entry.title }}</a
           >
         </div>
         <div class="flex flex-col gap-1">
-          <p class="m-0 text-xs font-semibold tracking-wide text-charcoal-brown-600 uppercase">
+          <p class="m-0 text-xs font-semibold tracking-wide text-fg-soft uppercase">
             Acceptance criteria
           </p>
           @switch (row.criteria?.status) {
             @case ('loaded') {
               @if (row.criteria.items.length) {
-                <ul class="m-0 list-disc pl-5 text-charcoal-brown-800">
+                <ul class="m-0 list-disc pl-5 text-fg">
                   @for (criterion of row.criteria.items; track $index) {
                     <li><ui-markdown [text]="criterion" [workProject]="slug()" /></li>
                   }
                 </ul>
               } @else {
-                <p class="m-0 text-charcoal-brown-600">
-                  None yet: scheduling is refused until it has some.
-                </p>
+                <p class="m-0 text-fg-soft">None yet: scheduling is refused until it has some.</p>
               }
             }
             @case ('error') {
-              <p class="m-0 text-charcoal-brown-600">They could not be read.</p>
+              <p class="m-0 text-fg-soft">They could not be read.</p>
             }
             @default {
-              <p class="m-0 text-charcoal-brown-500">Reading…</p>
+              <p class="m-0 text-fg-muted">Reading…</p>
             }
           }
         </div>
         <p
           role="alert"
-          class="m-0 rounded-md bg-cinnabar-50 px-2 py-1 text-cinnabar-800 wrap-anywhere"
+          class="m-0 rounded-md bg-danger-soft px-2 py-1 text-danger-strong wrap-anywhere"
           [class.hidden]="!row.refusal"
         >
           {{ row.refusal }}
