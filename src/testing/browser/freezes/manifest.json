@@ -12,7 +12,8 @@
         {
           "path": "",
           "fullPath": "",
-          "entry": true
+          "entry": true,
+          "forward": true
         },
         {
           "path": "projects",
@@ -32,14 +33,17 @@
           "children": [
             {
               "path": "",
-              "fullPath": "projects/:slug/work/detail/:id/agent"
+              "fullPath": "projects/:slug/work/detail/:id/agent",
+              "rendersNothing": true
             },
             {
               "path": ":tab",
               "fullPath": "projects/:slug/work/detail/:id/agent/:tab",
-              "entry": true
+              "entry": true,
+              "rendersNothing": true
             }
-          ]
+          ],
+          "forward": true
         },
         {
           "path": "projects/:slug/work/create",
@@ -102,7 +106,8 @@
           "children": [
             {
               "path": "",
-              "fullPath": "projects/:slug/agents/:agentId"
+              "fullPath": "projects/:slug/agents/:agentId",
+              "rendersNothing": true
             },
             {
               "path": "chat",
