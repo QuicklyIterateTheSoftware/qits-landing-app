@@ -16,14 +16,16 @@ import {
 
 /**
  * Screenshots of one work item's page and its actions inside the shell (`openRoute`; the page sits
- * outside the work tabs), answered with qits-projects' golden masters and the archetype registry:
+ * outside the work tabs), answered with qits-projects' golden masters and the archetype registry.
+ * Every screenshot is of the whole page (the frame), the viewport made tall enough to hold all of
+ * it (`fitWholePage`):
  *
  * - each archetype (and each ticket type) from its own detail state ("an epic in detail", …): the
- *   page as a whole, with the item's own reads (description, facts, dossier, comments);
- * - the actions bar for several statuses: the work of "a project with work in every status" and
- *   "an epic with features and tasks", whose states record no item reads (they answer 404, and only
- *   the actions are shot), and "an implemented ticket", in full. A press answers with the move or
- *   dispatch a move state recorded ("a refined epic", "a dropped ticket", …);
+ *   page with the item's own reads (description, facts, dossier, comments);
+ * - the actions for several statuses: the work of "a project with work in every status" and "an
+ *   epic with features and tasks", whose states record no item reads (they answer 404: the page
+ *   shows its actions and children only), and "an implemented ticket", in full. A press answers
+ *   with the move or dispatch a move state recorded ("a refined epic", "a dropped ticket", …);
  * - a VERIFIED ticket's wrapper closing (qits-1873): the IN_FLIGHT ticket of "a project with
  *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings (the
  *   state records no thread or dossier: those answer 404);
@@ -202,48 +204,19 @@ describe('WorkItemPage (screenshots)', () => {
   const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
 
   /**
-   * Screenshots of a page's body, one per part, each named `<name>-<part>`: its facts, its
-   * description, then each region it has (Features, Tasks, Dossier, Comments). A whole page is
-   * taller than the viewport, and a taller viewport is scaled down to fit the test window, so each
-   * part is shot on its own; a part taller than the viewport is shot child by child
-   * (`<name>-<part>-<n>`). The actions bar is unpinned first: pinned, it would cover each part the
-   * page scrolls to.
+   * Makes the viewport tall enough for the whole page, so a screenshot holds all of it at every
+   * width it is shot at (each is as tall as the viewport, `toMatchScreenshot`). The page is
+   * measured at the phone's width, where it is tallest: there the document scrolls and the frame
+   * grows with the page (the shell's `<main>` scrolls on its own from 768px up only).
    */
-  async function shootParts(element: Locator, name: string) {
-    const root = element.element();
-    (root.querySelector('[data-page-actions]') as HTMLElement).style.position = 'static';
-    const parts: [string, Element | null][] = [
-      ['facts', root.querySelector('app-work-fields:not(.hidden)')],
-      ['description', root.querySelector('ui-markdown')],
-      ...['Features', 'Tasks', 'Dossier', 'Comments'].map((region): [string, Element | null] => [
-        region.toLowerCase(),
-        root.querySelector(`section[aria-label=${region}]`),
-      ]),
-    ];
-    for (const [part, found] of parts) await shoot(found, `${name}-${part}`);
+  async function fitWholePage(opened: OpenedRoute) {
+    const width = window.innerWidth;
+    await page.viewport(390, 844);
+    await opened.settled();
+    const height = opened.frame.scrollHeight;
+    await page.viewport(width, Math.max(height, 900) + 40);
+    await opened.settled();
   }
-
-  /** Shoots `part`, or each of its children when it is taller than the viewport. */
-  async function shoot(part: Element | null, name: string): Promise<void> {
-    // A part with nothing in it (an item without a description) has no picture.
-    if (!(part instanceof HTMLElement) || !part.offsetHeight) return;
-    if (part.offsetHeight <= 560) {
-      await expect.element(page.elementLocator(part)).toMatchScreenshot(name, { kind: 'DATA' });
-      return;
-    }
-    const children = [...part.children].filter(
-      (child) => child instanceof HTMLElement && child.offsetHeight,
-    );
-    // `display: contents` children (the list items) have no box of their own: go one deeper.
-    const boxes = children.length
-      ? children
-      : [...part.children].flatMap((child) => [...child.children]);
-    for (const [i, child] of boxes.entries()) await shoot(child, `${name}-${i + 1}`);
-  }
-
-  /** The page's actions bar: what the action screenshots show. */
-  const actionsOf = (element: Locator) =>
-    page.elementLocator(element.element().querySelector('[data-page-actions]') as HTMLElement);
 
   /** Presses the button labelled `label`, and returns the request it sent. */
   async function press(element: Locator, label: string, url: string) {
@@ -276,7 +249,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an epic: description, features, dossier with its figure, comments', async () => {
-      const { element } = await render(
+      const { element, frame, opened } = await render(
         'an epic in detail',
         'Export invoices for the accountants',
         true,
@@ -296,7 +269,8 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('region', { name: 'Comments' }))
         .toMatchTextContent('Agreed. Start with the CSV export.');
       await figuresLoaded(element);
-      await shootParts(element, 'detail-epic');
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('detail-epic', { kind: 'DATA' });
     });
 
     it('an epic on the board: its features are its own board, five columns', async () => {
@@ -323,7 +297,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an epic off the board: its features as rows, as before', async () => {
-      const { element } = await render(
+      const { element, frame, opened } = await render(
         'a verified epic with every task implemented',
         'Verified epic',
       );
@@ -331,13 +305,14 @@ describe('WorkItemPage (screenshots)', () => {
       await expect.element(features.getByRole('link', { name: 'Shipped feature' })).toBeVisible();
       expect(features.element().querySelector('app-epic-board')).toBeNull();
       expect(features.element().querySelectorAll('app-feature-list-row')).toHaveLength(1);
+      await fitWholePage(opened);
       await expect
-        .element(features)
+        .element(frame)
         .toMatchScreenshot('detail-verified-epic-features', { kind: 'DATA' });
     });
 
     it('a feature: description, tasks, comments', async () => {
-      const { element } = await render('a feature in detail', 'PDF export', true);
+      const { element, frame, opened } = await render('a feature in detail', 'PDF export', true);
       // No "Depends on" any more (epic qits-1899): what it needs is the Needs panel.
       await expect.element(element).not.toMatchTextContent('Depends on');
       await expect
@@ -347,11 +322,12 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('region', { name: 'Comments' }))
         .toMatchTextContent('Started on the renderer.');
-      await shootParts(element, 'detail-feature');
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('detail-feature', { kind: 'DATA' });
     });
 
     it('a task: repository, progress, description, comments', async () => {
-      const { element } = await render(
+      const { element, frame, opened } = await render(
         'a task in detail',
         'Download button on the invoice list',
         true,
@@ -361,7 +337,8 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('region', { name: 'Features' }))
         .not.toBeInTheDocument();
-      await shootParts(element, 'detail-task');
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('detail-task', { kind: 'DATA' });
     });
 
     it.each([
@@ -381,19 +358,24 @@ describe('WorkItemPage (screenshots)', () => {
     ])(
       'a %s ticket: its facts, description, dossier, comments',
       async (type, state, title, dossier) => {
-        const { element } = await render(state, title, true);
+        const { element, frame, opened } = await render(state, title, true);
         await expect.element(element).toMatchTextContent(`Type${type}`);
         await expect
           .element(element.getByRole('region', { name: 'Dossier' }))
           .toMatchTextContent(dossier);
-        await shootParts(element, `detail-${type}-ticket`);
+        await fitWholePage(opened);
+        await expect.element(frame).toMatchScreenshot(`detail-${type}-ticket`, { kind: 'DATA' });
       },
     );
   });
 
   // qits-1873: a VERIFIED ticket's facts say how its wrapper closing stands, the request linked.
   it('a verified ticket riding a pending wrapper request', async () => {
-    const { element } = await render(WRAPPER_CLOSINGS, 'Riding a pending wrapper request', 'item');
+    const { element, frame, opened } = await render(
+      WRAPPER_CLOSINGS,
+      'Riding a pending wrapper request',
+      'item',
+    );
     const line = element.getByText('Closes with', { exact: false });
     await expect
       .element(line)
@@ -404,20 +386,18 @@ describe('WorkItemPage (screenshots)', () => {
         'href',
         '/projects/contract-00000001/release-requests/contract-00000001-contract-00000001-rr-1',
       );
+    await fitWholePage(opened);
     await expect
-      .element(page.elementLocator(line.element().closest('p') as HTMLElement))
+      .element(frame)
       .toMatchScreenshot('detail-ticket-wrapper-closing', { kind: 'DATA' });
   });
 
   // Epic qits-1899: the item's "needs" badge beside its facts, and its Needs panel below the body:
   // the needed ticket linked, at VERIFIED, now REFINED, not met.
   it('a ticket that needs another: its badge and its Needs panel', async () => {
-    const { element } = await render(NEEDS, 'Render work ids in the list', 'item');
+    const { element, frame, opened } = await render(NEEDS, 'Render work ids in the list', 'item');
     const badge = element.getByText('needs 1');
     await expect.element(badge).toBeVisible();
-    await expect
-      .element(page.elementLocator(badge.element().closest('p') as HTMLElement))
-      .toMatchScreenshot('detail-needs-facts', { kind: 'DATA' });
     const panel = element.getByRole('region', { name: 'Needs' });
     await expect
       .element(panel.getByRole('link', { name: 'Ticket: contract-00000001-1' }))
@@ -425,8 +405,9 @@ describe('WorkItemPage (screenshots)', () => {
     await expect.element(panel).toMatchTextContent('at verified');
     await expect.element(panel).toMatchTextContent('(now refined)');
     await expect.element(panel).toMatchTextContent('not met');
+    await fitWholePage(opened);
     await commands.parkPointer();
-    await expect.element(panel).toMatchScreenshot('detail-needs-panel', { kind: 'DATA' });
+    await expect.element(frame).toMatchScreenshot('detail-needs', { kind: 'DATA' });
   });
 
   describe('workspaces', () => {
@@ -458,7 +439,7 @@ describe('WorkItemPage (screenshots)', () => {
       const qualifiedId = work.entities.find(
         (e: { title: string }) => e.title === 'Invoice totals are off by one cent',
       ).qualifiedId;
-      const { element } = await render(
+      const { element, frame, opened } = await render(
         'a bug ticket in detail',
         'Invoice totals are off by one cent',
         true,
@@ -472,11 +453,12 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(rows.nth(0).getByRole('link'))
         .toHaveAttribute('href', `/projects/contract-00000001/work/detail/${qualifiedId}/agent`);
-      await expect.element(region).toMatchScreenshot('workspaces-history', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('workspaces-history', { kind: 'DATA' });
     });
 
     it('an item with no workspaces', async () => {
-      const { element } = await render(
+      const { element, frame, opened } = await render(
         'an improvement ticket in detail',
         'Remember the last export format',
         true,
@@ -484,13 +466,14 @@ describe('WorkItemPage (screenshots)', () => {
       const region = workspacesOf(element);
       await expect.element(region).toMatchTextContent('No workspaces yet');
       expect(region.getByRole('listitem').elements()).toHaveLength(0);
-      await expect.element(region).toMatchScreenshot('workspaces-none', { kind: 'NO_DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('workspaces-none', { kind: 'NO_DATA' });
     });
   });
 
   describe('actions, as the registry serves them', () => {
     it('a reported ticket: every group', async () => {
-      const { element } = await render(EVERY_STATUS, 'Reported ticket');
+      const { element, frame, opened } = await render(EVERY_STATUS, 'Reported ticket');
       await agentButtons(element, ['Dispatch', 'Refine']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
@@ -498,22 +481,20 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Plan' }))
         .toMatchTextContent('Edit Reshape Refinement room');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-reported-ticket', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-reported-ticket', { kind: 'DATA' });
     });
 
     // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so the
     // registry's "Mark done" move is held back for a ticket; only the platform uses it.
     it('a verified ticket: its moves only, with no Mark done', async () => {
-      const { element } = await render(EVERY_STATUS, 'Verified ticket');
+      const { element, frame, opened } = await render(EVERY_STATUS, 'Verified ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Back to verifying Drop');
       expect(element.getByRole('group').elements()).toHaveLength(1);
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-verified-ticket', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-verified-ticket', { kind: 'DATA' });
     });
 
     it('done work: nothing', async () => {
@@ -529,18 +510,20 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a scheduled feature: its own moves, nothing to dispatch', async () => {
-      const { element } = await render('an epic with features and tasks', 'Open feature');
+      const { element, frame, opened } = await render(
+        'an epic with features and tasks',
+        'Open feature',
+      );
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark implementing Skip to implemented Back to refined Drop');
       expect(element.getByRole('group', { name: 'Agent' }).elements()).toHaveLength(0);
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-scheduled-feature', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-scheduled-feature', { kind: 'DATA' });
     });
 
     it('an implemented ticket: the verify phase, its flow, and the move to VERIFYING', async () => {
-      const { element } = await render(
+      const { element, frame, opened } = await render(
         IMPLEMENTED,
         'Database runs out of connection slots during deploys',
         true,
@@ -549,9 +532,8 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark verifying Skip to verified Back to implementing Drop Block');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-implemented-ticket', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-implemented-ticket', { kind: 'DATA' });
 
       // The next phase: one phase, PHASE.
       const ref = (await goldenMaster(IMPLEMENTED, 'getWork')).qualifiedId;
@@ -568,9 +550,8 @@ describe('WorkItemPage (screenshots)', () => {
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark verified Back to implemented Drop Block');
       await expect.element(element).toMatchTextContent('ticket · verifying');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-verifying-ticket', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-verifying-ticket', { kind: 'DATA' });
     });
 
     it('an implementing epic: Dispatch lists the flow it runs', async () => {
@@ -592,15 +573,14 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a refined epic offers Dispatch (qits-1075)', async () => {
-      const { element } = await render(EVERY_STATUS, 'Refined epic');
+      const { element, frame, opened } = await render(EVERY_STATUS, 'Refined epic');
       // A person's Dispatch pre-approves the scheduling, running the whole flow in one press.
       await agentButtons(element, ['Dispatch']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Mark ready for dev Back to reported Drop Block');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-refined-epic', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-refined-epic', { kind: 'DATA' });
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
         (e: { title: string }) => e.title === 'Refined epic',
@@ -617,11 +597,10 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a ready for dev epic: the implement phase, and the move to IMPLEMENTING', async () => {
-      const { element } = await render(EVERY_STATUS, 'Ready for dev epic');
+      const { element, frame, opened } = await render(EVERY_STATUS, 'Ready for dev epic');
       await agentButtons(element, ['Dispatch', 'Implement']);
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-ready-for-dev-epic', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-ready-for-dev-epic', { kind: 'DATA' });
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
         (e: { title: string }) => e.title === 'Ready for dev epic',
@@ -636,19 +615,17 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark implemented Drop Block');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-implementing-epic', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-implementing-epic', { kind: 'DATA' });
     });
 
     it('a dropped ticket: Reopen, back to REPORTED', async () => {
-      const { element } = await render(EVERY_STATUS, 'Dropped ticket');
+      const { element, frame, opened } = await render(EVERY_STATUS, 'Dropped ticket');
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Reopen');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-dropped-ticket', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-dropped-ticket', { kind: 'DATA' });
       const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
       const ref = work.entities.find(
         (e: { title: string }) => e.title === 'Dropped ticket',
@@ -660,9 +637,8 @@ describe('WorkItemPage (screenshots)', () => {
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark refined Drop Block');
-      await expect
-        .element(actionsOf(element))
-        .toMatchScreenshot('actions-reopened-ticket', { kind: 'DATA' });
+      await fitWholePage(opened);
+      await expect.element(frame).toMatchScreenshot('actions-reopened-ticket', { kind: 'DATA' });
     });
   });
 

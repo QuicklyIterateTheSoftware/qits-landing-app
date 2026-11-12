@@ -16,6 +16,9 @@ export default tseslint.config(
       // warning.
       'qits/navigation-through-outcomes': 'error',
       'qits/screenshot-kind': 'error',
+      // qits-2075: a route's screenshot is a state of that route, so it shows the whole page; the
+      // library ships it as a warning.
+      'qits/page-screenshot-whole-page': 'error',
       'qits/browser-spec-data-from-golden-masters': [
         'error',
         { allowTokens: ['EVENT_SOURCE', 'WEB_SOCKET'] },

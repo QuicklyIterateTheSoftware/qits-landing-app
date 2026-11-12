@@ -26,9 +26,9 @@ import {
  * raw terminal text that no golden master records. The event streams never connect.
  *
  * The link to the workspace's page is a declared exit (`open-terminal-workspace` `workspace`, epic
- * qits-2000). It sits below the screen, past the fold, so `workspace-link` screenshots its line on
- * its own, scrolled into view; it is followed once, and the slot's page it leaves for is its own
- * spec's: its reads are answered with an error (`leftFor`).
+ * qits-2000). It sits below the screen, past the fold, so `workspace-link` scrolls its line into
+ * view before screenshotting the whole page; it is followed once, and the slot's page it leaves
+ * for is its own spec's: its reads are answered with an error (`leftFor`).
  */
 
 const SLOT = 'a workspace slot hosting agents';
@@ -192,7 +192,9 @@ describe('AgentTerminalPage (screenshots)', () => {
     const line = workspaceLine(element);
     (line.element() as HTMLElement).scrollIntoView({ block: 'center' });
     await expect.element(line.getByRole('link', { name: 'the workspace’s page' })).toBeVisible();
-    await expect.element(line).toMatchScreenshot('workspace-link', { kind: 'DATA' });
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('workspace-link', { kind: 'DATA' });
   });
 
   it('open-terminal-workspace workspace: the link opens the workspace’s page', async () => {

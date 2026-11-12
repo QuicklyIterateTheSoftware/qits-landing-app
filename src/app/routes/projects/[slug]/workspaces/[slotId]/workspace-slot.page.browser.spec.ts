@@ -72,6 +72,21 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     return { opened, element: opened.page, project: opened.project };
   }
 
+  /**
+   * Makes the viewport tall enough for the whole page, so a screenshot holds all of it at every
+   * width it is shot at (each is as tall as the viewport, `toMatchScreenshot`). The page is
+   * measured at the phone's width, where it is tallest: there the document scrolls and the frame
+   * grows with the page (the shell's `<main>` scrolls on its own from 768px up only).
+   */
+  async function fitWholePage(opened: OpenedRoute) {
+    const width = window.innerWidth;
+    await page.viewport(390, 844);
+    await opened.settled();
+    const height = opened.frame.scrollHeight;
+    await page.viewport(width, Math.max(height, 900) + 40);
+    await opened.settled();
+  }
+
   /** Answers the slot's reads from "a workspace slot hosting agents", and its harness install. */
   async function answerSlot(opened: OpenedRoute, id: string, report = SIGNED_IN) {
     http
@@ -151,7 +166,10 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(notice.getByRole('button', { name: 'Open the sign-in terminal' }))
       .toBeVisible();
-    await expect.element(notice).toMatchScreenshot('sign-in-notice', { kind: 'NO_DATA' });
+    await fitWholePage(opened);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('sign-in-notice', { kind: 'NO_DATA' });
   });
 
   it('lists the plugins on the shared agent home', async () => {
@@ -161,7 +179,10 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     const plugins = page.elementLocator(element.querySelector('app-plugins-section')!);
     await expect.element(plugins).toMatchTextContent('installed, switched off');
     await expect.element(plugins.getByRole('button', { name: 'Install' }).first()).toBeVisible();
-    await expect.element(plugins).toMatchScreenshot('plugins', { kind: 'DATA' });
+    await fitWholePage(opened);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('plugins', { kind: 'DATA' });
   });
 
   it('says a slot that answers 404 is gone', async () => {
