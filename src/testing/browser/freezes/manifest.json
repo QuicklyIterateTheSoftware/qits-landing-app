@@ -14846,10 +14846,7 @@
         "follow-breadcrumb:work",
         "open-epic-list-item:epic",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -15005,10 +15002,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -15157,10 +15151,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -15299,11 +15290,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -15455,10 +15442,7 @@
         "open-feature-list-row:feature",
         "open-feature-list-row:task",
         "open-item-workspace:open",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -15601,11 +15585,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -15765,10 +15745,7 @@
         "open-closing-request:open",
         "open-item-workspace:open",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -15931,10 +15908,7 @@
         "open-epic-list-item:epic",
         "open-item-workspace:open",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -16086,10 +16060,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -16228,11 +16199,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -16366,11 +16333,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -21399,10 +21362,7 @@
         "open-feature-list-row:task",
         "open-item-workspace:open",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -21579,10 +21539,7 @@
         "open-feature-list-row:feature",
         "open-feature-list-row:task",
         "open-item-workspace:open",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -21740,11 +21697,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -21913,10 +21866,7 @@
         "open-feature-list-row:task",
         "open-item-workspace:open",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -22093,10 +22043,7 @@
         "open-feature-list-row:feature",
         "open-feature-list-row:task",
         "open-item-workspace:open",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -22254,11 +22201,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -22417,10 +22360,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -22544,54 +22484,6 @@
         "open-sidebar-work-page:schedule",
         "switch-work-tab:acceptance",
         "switch-work-tab:archive",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
-      ]
-    },
-    {
-      "file": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-phone.html",
-      "spec": "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts",
-      "test": "WorkInProgressPage (screenshots) > opens the view settings from the gear on the In Progress tab",
-      "name": "view-settings-data",
-      "kind": "DATA",
-      "viewport": "PHONE",
-      "route": "projects/:slug/work/in-progress",
-      "records": [
-        {
-          "provider": "qits-projects-service",
-          "state": "a project exists",
-          "operationId": "listProjects"
-        },
-        {
-          "provider": "qits-projects-service",
-          "state": "a project with no release requests",
-          "operationId": "listProjectReleaseRequests"
-        },
-        {
-          "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-workspaces-service",
-          "state": "a project with agents bound to work items",
-          "operationId": "listAgents"
-        },
-        {
-          "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
-        }
-      ],
-      "triggers": [
-        "follow-breadcrumb:work",
-        "open-epic-list-item:epic",
-        "open-feature-list-row:feature",
-        "open-feature-list-row:task",
-        "open-item-workspace:open",
-        "open-project-settings:open",
-        "open-ticket-list-item:open",
         "switch-work-tab:inProgress",
         "switch-work-tab:refinement",
         "switch-work-tab:schedule"
@@ -22754,10 +22646,7 @@
         "follow-breadcrumb:work",
         "open-epic-list-item:epic",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -22908,10 +22797,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -23050,11 +22936,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -23198,10 +23080,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -23374,10 +23253,7 @@
         "follow-breadcrumb:work",
         "open-project-settings:open",
         "open-scheduled-item:open",
-        "open-work-ref-tag:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-work-ref-tag:open"
       ]
     },
     {
@@ -23528,11 +23404,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -23700,10 +23572,7 @@
         "follow-breadcrumb:work",
         "open-project-settings:open",
         "open-scheduled-item:open",
-        "open-work-ref-tag:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-work-ref-tag:open"
       ]
     },
     {
@@ -23854,11 +23723,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:work",
-        "open-project-settings:open",
-        "switch-work-tab:acceptance",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-project-settings:open"
       ]
     },
     {
@@ -23906,6 +23771,166 @@
         "open-sidebar-work-page:inProgress",
         "open-sidebar-work-page:refinement",
         "open-sidebar-work-page:schedule",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/phone-bar-phone.html",
+      "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+      "test": "WorkLayout (screenshots) > shows the tabs on a phone as a burger and the open page’s name with its count",
+      "name": "phone-bar",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:work",
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "open-project-settings:open",
+        "open-ticket-list-item:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/phone-menu-phone.html",
+      "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+      "test": "WorkLayout (screenshots) > opens the list of the tabs from the burger on a phone, and closes it as one opens",
+      "name": "phone-menu",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:work",
+        "open-epic-list-item:epic",
+        "open-feature-list-row:feature",
+        "open-feature-list-row:task",
+        "open-item-workspace:open",
+        "open-project-settings:open",
+        "open-ticket-list-item:open",
+        "switch-work-tab:acceptance",
+        "switch-work-tab:archive",
+        "switch-work-tab:inProgress",
+        "switch-work-tab:refinement",
+        "switch-work-tab:schedule"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/scrolled-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+      "test": "WorkLayout (screenshots) > keeps the tabs at the top while the page scrolls, and pins the page’s headings below them",
+      "name": "scrolled",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/work/in-progress",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with work in every status",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with agents bound to work items",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a project with workspaces bound to work items",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:work",
+        "open-epic-card:epic",
+        "open-item-workspace:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule",
+        "open-ticket-card:open",
         "switch-work-tab:acceptance",
         "switch-work-tab:archive",
         "switch-work-tab:inProgress",
@@ -24022,10 +24047,7 @@
         "open-feature-list-row:task",
         "open-item-workspace:open",
         "open-project-settings:open",
-        "open-ticket-list-item:open",
-        "switch-work-tab:inProgress",
-        "switch-work-tab:refinement",
-        "switch-work-tab:schedule"
+        "open-ticket-list-item:open"
       ]
     },
     {
@@ -26279,8 +26301,10 @@
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data-phone.html",
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/no-data-tablet.html",
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-desktop.html",
-      "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-phone.html",
       "src/app/routes/projects/[slug]/work/in-progress/work-in-progress.page.browser.spec.ts/view-settings-data-tablet.html",
+      "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/phone-bar-phone.html",
+      "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/phone-menu-phone.html",
+      "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/scrolled-desktop.html",
       "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs-desktop.html",
       "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs-phone.html",
       "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/tabs-tablet.html"
@@ -28892,6 +28916,15 @@
         "route": "projects/:slug/work/schedule",
         "interaction": "open-scheduled-item",
         "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts",
+        "test": "WorkLayout (screenshots) > opens the list of the tabs from the burger on a phone, and closes it as one opens",
+        "route": "projects/:slug/work/in-progress",
+        "interaction": "switch-work-tab",
+        "outcome": "archive",
         "kind": "exit",
         "freeze": null
       },
