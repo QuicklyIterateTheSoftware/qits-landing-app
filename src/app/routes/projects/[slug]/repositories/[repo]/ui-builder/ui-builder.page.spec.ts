@@ -99,6 +99,14 @@ function withOutcomes(outcomes: unknown = OUTCOMES): RoutesManifest {
   };
 }
 
+/** The recorded manifest with `outcomes` and no freeze's `triggers`: a bundle older than them. */
+function withoutTriggers(outcomes: unknown = OUTCOMES): RoutesManifest {
+  return {
+    ...artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile'),
+    outcomes: outcomes as RoutesManifest['outcomes'],
+  };
+}
+
 const OUTCOMES = {
   declared: [
     declared('refused', 'stay'),
@@ -336,8 +344,19 @@ describe('UiBuilderPage', () => {
     expect(texts('[aria-label="States"] [role="tab"]')).toEqual(['error', 'loaded']);
     expect(texts('[aria-label="Panels"] [role="tab"]')).toEqual(['Routes', 'Entities', 'Outcomes']);
     expect(element.querySelector('.frame-placeholder')?.textContent).toContain('Reading');
-    expect(texts('li.call')).toEqual([
-      'listProjectRepositories qits-projects-service · “a project with repositories”',
+    // The selected state's calls (qits-2080): `error` answers listProjects alone, which the one
+    // route with freezes records, so it is app-wide, in its group, collapsed.
+    expect(texts('li.call')).toEqual([]);
+    expect(element.querySelector('.only-app-wide')?.textContent?.trim()).toBe(
+      'No call but the app-wide ones.',
+    );
+    const appWide = element.querySelector<HTMLButtonElement>('aside .app-wide-toggle')!;
+    expect(words(appWide)).toBe('▸ 1 app-wide call');
+    expect(appWide.getAttribute('aria-expanded')).toBe('false');
+    appWide.click();
+    fixture.detectChanges();
+    expect(appWide.getAttribute('aria-expanded')).toBe('true');
+    expect(texts('aside .app-wide-calls li.call')).toEqual([
       'listProjects qits-projects-service · “a project exists”',
     ]);
 
@@ -440,7 +459,7 @@ describe('UiBuilderPage', () => {
     );
     await answerFreeze(ERROR_FREEZE, fixture);
     expect(element.querySelector('.scope')?.textContent).toBe('Scope: all services');
-    expect(texts('li.call')).toHaveLength(2);
+    expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
     expect(element.querySelector('.hidden-calls')).toBeNull();
   });
 
@@ -452,8 +471,10 @@ describe('UiBuilderPage', () => {
     await answerFreeze(ERROR_FREEZE, fixture);
     expect(element.querySelector('.scope')?.textContent).toBe('Scope: contract');
     expect(texts('li.call')).toEqual([]);
+    // `error` answers one call; the scope hides it, app-wide or not (qits-2080).
+    expect(element.querySelector('.app-wide-toggle')).toBeNull();
     expect(element.querySelector('.hidden-calls')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-      'Hid 2 calls to providers outside contract.',
+      'Hid 1 call to providers outside contract.',
     );
     // The hidden calls are neither matched nor counted, and their provider is not named.
     expect(element.querySelector('.unmatched')).toBeNull();
@@ -484,11 +505,11 @@ describe('UiBuilderPage', () => {
   });
 
   it('keeps the page up when the entity maps cannot be read', async () => {
-    const { fixture, element, texts } = await render('qits-landing-app', undefined, async () => {
+    const { fixture, element } = await render('qits-landing-app', undefined, async () => {
       http.expectOne(SITES_URL).flush(null, { status: 500, statusText: 'Server Error' });
     });
     await answerFreeze(ERROR_FREEZE, fixture);
-    expect(texts('li.call')).toHaveLength(2);
+    expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
     expect(element.querySelector('aside .entities-error')?.textContent?.trim()).toBe(
       'Could not read the entity maps.',
     );
@@ -496,14 +517,14 @@ describe('UiBuilderPage', () => {
 
   describe('with a published entity map', () => {
     it('lists the route’s domain entities with their verbs', async () => {
-      const { fixture, element, texts } = await render('qits-landing-app', undefined, recordedMap);
+      const { fixture, element } = await render('qits-landing-app', undefined, recordedMap);
       await answerFreeze(ERROR_FREEZE, fixture);
       expect([...element.querySelectorAll('li.route-entity')].map(words)).toEqual([
         'Project ↗ qits-projects list',
         'Repository ↗ qits-projects list',
       ]);
       expect(element.querySelector('.unmatched')).toBeNull();
-      expect(texts('li.call')).toHaveLength(2);
+      expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
     });
 
     it('lists the entities by application, untouched first, and an entity’s routes', async () => {
@@ -581,7 +602,8 @@ describe('UiBuilderPage', () => {
           answerContracts((read) => read.flush(null, { status, statusText: 'x' })),
         );
         await answerFreeze(ERROR_FREEZE, fixture);
-        expect(texts('li.call')).toHaveLength(2);
+        expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+        // The route's entities stay the route's: both its calls (qits-2080).
         expect(element.querySelector('.unmatched')?.textContent).toContain('2 calls touch');
         clickTab(element, 'Entities');
         fixture.detectChanges();
@@ -996,14 +1018,11 @@ describe('UiBuilderPage', () => {
 
   describe('outcomes (qits-2006)', () => {
     /** The page for the landing app, its manifest carrying `outcomes`, its first state answered. */
-    async function renderOutcomes(outcomes: unknown = OUTCOMES) {
-      const rendered = await render(
-        'qits-landing-app',
-        undefined,
-        undefined,
-        '',
-        withOutcomes(outcomes),
-      );
+    async function renderOutcomes(
+      outcomes: unknown = OUTCOMES,
+      manifest: RoutesManifest = withOutcomes(outcomes),
+    ) {
+      const rendered = await render('qits-landing-app', undefined, undefined, '', manifest);
       await answerFreeze(ERROR_FREEZE, rendered.fixture);
       return rendered;
     }
@@ -1034,6 +1053,13 @@ describe('UiBuilderPage', () => {
       )!;
     }
 
+    /** The row, among those not visible here (qits-2080), of the outcome `mark`. */
+    function unseen(element: HTMLElement, mark: string): HTMLElement {
+      return [...element.querySelectorAll<HTMLElement>('aside li.unseen-outcome')].find(
+        (li) => li.querySelector('.font-mono')?.textContent?.trim() === mark,
+      )!;
+    }
+
     /** An element's text: its innermost elements' texts joined by spaces. */
     function leaves(element: Element): string {
       const parts = [...element.querySelectorAll('*')].filter((e) => !e.children.length);
@@ -1046,31 +1072,254 @@ describe('UiBuilderPage', () => {
     const TRIGGER = '<p>x</p><button data-qits-outcome="a:b repositories:opened">open</button>';
 
     it('lists the route’s outcomes below Calls and states, with their gaps', async () => {
-      const { element } = await renderOutcomes();
+      const { fixture, element } = await renderOutcomes();
       expect(
         [...element.querySelectorAll('aside[aria-label="Calls"] h3')].map((h) =>
           h.textContent?.trim(),
         ),
       ).toEqual(['Calls and states', 'Outcomes', 'Entities']);
+      // `error` shows the trigger of `opened` alone of the page's (qits-2080).
       expect([...element.querySelectorAll('aside li.outcome')].map(leaves)).toEqual([
-        'repositories · lost exit No route of this app matches /nowhere No test reaches this No screenshot shows its trigger',
         'repositories · opened exit → /projects opens a project',
-        'repositories · refused stay Show result lists the project’s repositories',
-        'repositories · unreached stay No test reaches this No screenshot shows its trigger',
       ]);
-      const unreached = row(element, 'repositories:unreached');
+      expect(
+        row(element, 'repositories:opened').querySelector('.reached-by')?.getAttribute('title'),
+      ).toBe('project-repositories.page.browser.spec.ts › opens a project');
+      expect(element.querySelector('aside .predates')).toBeNull();
+      expect(element.querySelector('aside .shown-result')).toBeNull();
+      // The shared ones it shows are counted under them, collapsed (qits-2049): the shell's.
+      const toggle = element.querySelector<HTMLButtonElement>('aside .shared-toggle')!;
+      expect(words(toggle)).toBe('▸ Shared 1');
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(element.querySelectorAll('aside .shared-outcomes')).toHaveLength(0);
+
+      // The rest of the route's, page and shared, below, collapsed, with their gaps (qits-2080).
+      const more = element.querySelector<HTMLButtonElement>('aside .unseen-toggle')!;
+      expect(words(more)).toBe('▸ 4 more outcomes of this route are not visible here');
+      expect(more.getAttribute('aria-expanded')).toBe('false');
+      expect(element.querySelector('aside .unseen-outcomes')).toBeNull();
+      more.click();
+      fixture.detectChanges();
+      expect(more.getAttribute('aria-expanded')).toBe('true');
+      expect([...element.querySelectorAll('aside li.unseen-outcome')].map(leaves)).toEqual([
+        'repositories:lost exit No test reaches this No screenshot shows its trigger',
+        'repositories:refused stay Shown in loaded',
+        'repositories:unreached stay No test reaches this No screenshot shows its trigger',
+        'toasts:dismissed stay No test reaches this No screenshot shows its trigger',
+      ]);
+      const unreached = unseen(element, 'repositories:unreached');
       expect(unreached.querySelector('ui-chip.no-test')?.textContent).toBe('No test reaches this');
       expect(unreached.querySelector('ui-chip.no-trigger')?.textContent).toBe(
         'No screenshot shows its trigger',
       );
+      expect(unreached.querySelector('.shown-in')).toBeNull();
+    });
+
+    it('scopes the calls and the outcomes to the selected state, through the URL (qits-2080)', async () => {
+      // A second route with a freeze (after the repositories route in the tree, which still opens
+      // first): listProjects is recorded on both routes (app-wide), listProjectRepositories on one
+      // of two, exactly half (the route's own).
+      const manifest = withOutcomes();
+      const WORKSPACES = 'projects/:slug/workspaces';
+      const shot: Freeze = {
+        file: 'src/app/routes/projects/[slug]/workspaces/workspaces.page.browser.spec.ts/x.html',
+        name: 'x',
+        route: WORKSPACES,
+        records: [manifest.freezes[1].records[0]],
+      };
+      const { fixture, element, texts, page } = await renderOutcomes(OUTCOMES, {
+        ...manifest,
+        freezes: [...manifest.freezes, shot],
+        byRoute: { ...manifest.byRoute, [WORKSPACES]: [shot.file] },
+      });
+      const router = TestBed.inject(Router);
+      const base = router.url.split('?')[0];
+      const own = () => texts('aside .own-calls li.call');
+      const outcomes = () => [...element.querySelectorAll('aside li.outcome')].map(leaves);
+
+      // `error`: listProjects alone, app-wide; the trigger of `opened`.
+      expect(own()).toEqual([]);
+      expect(words(element.querySelector('aside .app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+      expect(outcomes()).toEqual(['repositories · opened exit → /projects opens a project']);
+      const doc = loadFrame(page, TRIGGER);
+      row(element, 'repositories:opened')
+        .querySelector<HTMLButtonElement>('.outcome-pick')!
+        .click();
+      fixture.detectChanges();
+      expect(doc.querySelector('[data-qits-builder-highlight]')).not.toBeNull();
+
+      // `loaded`, from the state list: its own call too, the trigger of `refused`, and the result
+      // a test shot it for. `opened` is not in it: its highlight goes.
+      stateTab(element, 'loaded');
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'loaded' });
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      expect(own()).toEqual([
+        'listProjectRepositories qits-projects-service · “a project with repositories”',
+      ]);
+      expect(words(element.querySelector('aside .app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+      expect(outcomes()).toEqual([
+        'repositories · refused stay Show result lists the project’s repositories',
+      ]);
       expect(
-        row(element, 'repositories:opened').querySelector('.reached-by')?.getAttribute('title'),
-      ).toBe('project-repositories.page.browser.spec.ts › opens a project');
-      // The shared ones are counted under them, collapsed (qits-2049).
-      const toggle = element.querySelector<HTMLButtonElement>('aside .shared-toggle')!;
-      expect(words(toggle)).toBe('▸ Shared 2');
-      expect(toggle.getAttribute('aria-expanded')).toBe('false');
-      expect(element.querySelectorAll('aside .shared-outcomes')).toHaveLength(0);
+        [...element.querySelectorAll('aside .shown-result')].map((p) =>
+          p.textContent?.replace(/\s+/g, ' ').trim(),
+        ),
+      ).toEqual(['This screenshot shows the result of repositories:refused']);
+      expect(element.querySelector('aside [aria-pressed="true"]')).toBeNull();
+      element.querySelector<HTMLButtonElement>('aside .unseen-toggle')!.click();
+      fixture.detectChanges();
+      expect(leaves(unseen(element, 'repositories:opened'))).toBe(
+        'repositories:opened exit Shown in error',
+      );
+
+      // Back, as history goes: `error`'s again.
+      await router.navigateByUrl(base);
+      await navigated(fixture);
+      expect(query()).toEqual({});
+      expect(own()).toEqual([]);
+      expect(outcomes()).toEqual(['repositories · opened exit → /projects opens a project']);
+      expect(element.querySelector('aside .shown-result')).toBeNull();
+
+      // A link among those not visible selects its state as the state list does.
+      unseen(element, 'repositories:refused')
+        .querySelector<HTMLButtonElement>('.shown-in')!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'loaded' });
+      expect(outcomes()).toEqual([
+        'repositories · refused stay Show result lists the project’s repositories',
+      ]);
+    });
+
+    it('keeps a highlight whose trigger the next state shows too (qits-2080)', async () => {
+      const { fixture, element } = await renderOutcomes();
+      element.querySelector<HTMLButtonElement>('aside .shared-toggle')!.click();
+      fixture.detectChanges();
+      row(element, 'shell:signed-out').querySelector<HTMLButtonElement>('.outcome-pick')!.click();
+      fixture.detectChanges();
+      stateTab(element, 'loaded');
+      await navigated(fixture);
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await settle();
+      fixture.detectChanges();
+      expect(
+        row(element, 'shell:signed-out')
+          .querySelector('.outcome-pick')
+          ?.getAttribute('aria-pressed'),
+      ).toBe('true');
+    });
+
+    it('shows the whole route’s outcomes for a state without triggers, and says why (qits-2080)', async () => {
+      const { element } = await renderOutcomes(OUTCOMES, withoutTriggers());
+      expect(element.querySelector('aside .predates')?.textContent?.trim()).toBe(
+        'This bundle predates per-screenshot outcomes; showing the whole route.',
+      );
+      expect(
+        [...element.querySelectorAll('aside .route-outcomes li.outcome')].map(
+          (li) => li.querySelector('.outcome-pick')?.getAttribute('title') ?? '',
+        ),
+      ).toEqual([
+        'Highlight the trigger of repositories:lost',
+        'Highlight the trigger of repositories:opened',
+        'Highlight the trigger of repositories:refused',
+        'Highlight the trigger of repositories:unreached',
+      ]);
+      expect(words(element.querySelector('aside .shared-toggle')!)).toBe('▸ Shared 2');
+      expect(element.querySelector('aside .unseen-toggle')).toBeNull();
+      // Its calls are still the state's.
+      expect(words(element.querySelector('aside .app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+    });
+
+    it('says one more outcome is not visible, in the singular (qits-2080)', async () => {
+      const { element } = await renderOutcomes({
+        declared: [declared('opened', 'exit', 'projects'), declared('refused', 'stay')],
+        fired: [],
+      });
+      expect(words(element.querySelector('aside .unseen-toggle')!)).toBe(
+        '▸ 1 more outcome of this route is not visible here',
+      );
+    });
+
+    describe('at the preset widths (qits-2080)', () => {
+      const SHOTS = ERROR_FREEZE.replace(/\/error\.html$/, '');
+      const at = (name: string, viewport: 'PHONE' | 'TABLET' | 'DESKTOP', triggers: string[]) =>
+        ({
+          file: `${SHOTS}/${name}-${viewport.toLowerCase()}.html`,
+          name,
+          route: REPOSITORIES,
+          records: [],
+          kind: name === 'loaded' ? 'DATA' : 'ERROR',
+          viewport,
+          triggers,
+        }) satisfies Freeze;
+
+      /**
+       * `loaded` (DATA) and `error` at the three widths: `refused` shows in `loaded` at every
+       * width, the menu's `opened` in it at PHONE only; `error` shows `lost`'s trigger at PHONE and
+       * TABLET.
+       */
+      const FREEZES = [
+        at('loaded', 'PHONE', ['repositories:refused', 'repositories:opened']),
+        at('loaded', 'TABLET', ['repositories:refused']),
+        at('loaded', 'DESKTOP', ['repositories:refused']),
+        at('error', 'PHONE', ['repositories:lost']),
+        at('error', 'TABLET', ['repositories:lost']),
+        at('error', 'DESKTOP', []),
+      ];
+
+      async function renderWidths(query = '', shown = FREEZES[2]) {
+        const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+        const rendered = await render('qits-landing-app', undefined, undefined, query, {
+          ...recorded,
+          freezes: [...recorded.freezes.filter((f) => f.route !== REPOSITORIES), ...FREEZES],
+          byRoute: { [REPOSITORIES]: FREEZES.map((f) => f.file) },
+          outcomes: OUTCOMES,
+        });
+        await answerFreeze(shown.file, rendered.fixture);
+        rendered.element.querySelector<HTMLButtonElement>('aside .unseen-toggle')!.click();
+        rendered.fixture.detectChanges();
+        return rendered;
+      }
+
+      const shownIn = (element: HTMLElement, mark: string) =>
+        unseen(element, mark).querySelector<HTMLButtonElement>('.shown-in');
+
+      it('links the state that shows a trigger, at the chosen width first, else the first', async () => {
+        const { fixture, element } = await renderWidths();
+        // `lost`: at DESKTOP no state shows it; `error` at PHONE is the first that does.
+        expect(shownIn(element, 'repositories:lost')?.textContent?.trim()).toBe(
+          'Shown in error · Phone',
+        );
+        expect(shownIn(element, 'repositories:opened')?.textContent?.trim()).toBe(
+          'Shown in loaded · Phone',
+        );
+        shownIn(element, 'repositories:lost')!.click();
+        await navigated(fixture);
+        expect(query()).toEqual({ state: 'error', viewport: 'phone' });
+        http.expectOne(fileUrl(FREEZES[3].file)).flush('<p>error</p>');
+        await settle();
+        fixture.detectChanges();
+        expect(
+          [...element.querySelectorAll('aside li.outcome')].map(
+            (li) => li.querySelector('.outcome-pick')?.getAttribute('title') ?? '',
+          ),
+        ).toEqual(['Highlight the trigger of repositories:lost']);
+        // At PHONE, `loaded`'s PHONE freeze is the one at the chosen width.
+        expect(shownIn(element, 'repositories:refused')?.textContent?.trim()).toBe(
+          'Shown in loaded · Phone',
+        );
+      });
+
+      it('prefers the chosen width over the first state that shows the trigger', async () => {
+        const { element } = await renderWidths('?state=error&viewport=tablet', FREEZES[4]);
+        // `loaded` at TABLET, though its PHONE freeze comes first.
+        expect(shownIn(element, 'repositories:refused')?.textContent?.trim()).toBe(
+          'Shown in loaded · Tablet',
+        );
+      });
     });
 
     it('selects an exit’s target route, unfolding the tree to it', async () => {
@@ -1351,11 +1600,18 @@ describe('UiBuilderPage', () => {
         .click();
       await navigated(fixture);
       expect(query()).toEqual({ route: REPOSITORIES });
-      expect(
-        row(element, 'repositories:hidden')
-          .querySelector('.outcome-pick')
-          ?.getAttribute('aria-pressed'),
-      ).toBe('true');
+      // Its state shows no trigger of it (qits-2080): the highlight goes, and it is listed among
+      // the outcomes not visible here, with its gap and no state to open.
+      expect(element.querySelector('aside [aria-pressed="true"]')).toBeNull();
+      element.querySelector<HTMLButtonElement>('aside .unseen-toggle')!.click();
+      fixture.detectChanges();
+      const hidden = [...element.querySelectorAll<HTMLElement>('aside li.unseen-outcome')].find(
+        (li) => li.textContent?.includes('repositories:hidden'),
+      )!;
+      expect(leaves(hidden)).toBe(
+        'repositories:hidden exit No test reaches this No screenshot shows its trigger',
+      );
+      expect(hidden.querySelector('.shown-in')).toBeNull();
     });
 
     it('lists the outcomes that leave without a fixed target (qits-2049)', async () => {
@@ -1392,17 +1648,15 @@ describe('UiBuilderPage', () => {
       toggle.click();
       fixture.detectChanges();
       expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      // Those whose trigger the shown state shows (qits-2080): the toasts' is in no screenshot.
       expect(
         [...element.querySelectorAll('aside h4.shared-group')].map((h) => h.textContent?.trim()),
-      ).toEqual(['/ and below', 'App-wide']);
+      ).toEqual(['/ and below']);
       expect(
         [...element.querySelectorAll('aside .shared-outcomes li.outcome')].map(leaves),
-      ).toEqual([
-        'shell · signed-out exit → /projects signs out',
-        'toasts · dismissed stay No test reaches this No screenshot shows its trigger',
-      ]);
+      ).toEqual(['shell · signed-out exit → /projects signs out']);
       // The route's own outcomes are listed once, above.
-      expect(element.querySelectorAll('aside .route-outcomes li.outcome')).toHaveLength(4);
+      expect(element.querySelectorAll('aside .route-outcomes li.outcome')).toHaveLength(1);
       toggle.click();
       fixture.detectChanges();
       expect(element.querySelectorAll('aside .shared-outcomes')).toHaveLength(0);
@@ -1410,7 +1664,7 @@ describe('UiBuilderPage', () => {
 
     it('says where a return and an external lead, asks no trigger of an untriggered one, and names the library (qits-2044)', async () => {
       const library = '@qits/angular/src/lib/sign-in/auth-callback.page.ts';
-      const { fixture, element } = await renderOutcomes({
+      const section = {
         declared: [
           {
             route: REPOSITORIES,
@@ -1443,7 +1697,9 @@ describe('UiBuilderPage', () => {
           },
         ] satisfies DeclaredOutcome[],
         fired: [{ ...fired('signs in', 'sign-in', 'succeeded'), kind: 'returnTo' }],
-      });
+      };
+      // The whole route's, as a bundle older than per-screenshot outcomes shows them (qits-2080).
+      const { fixture, element } = await renderOutcomes(section, withoutTriggers(section));
       expect([...element.querySelectorAll('aside li.outcome')].map(leaves)).toEqual([
         'repositories · left external leaves the app for githost No test reaches this No screenshot shows its trigger',
         'sign-in · succeeded returnTo returns to the page it started from Declared by @qits/angular signs in',
@@ -1507,11 +1763,13 @@ describe('UiBuilderPage', () => {
       expect(element.querySelector('aside [aria-pressed="true"]')).toBeNull();
     });
 
-    it('switches to a state that shows the trigger, and highlights it there', async () => {
+    it('opens a state that shows the trigger, and highlights it there', async () => {
       const { fixture, element, page } = await renderOutcomes();
       loadFrame(page, TRIGGER);
-      row(element, 'repositories:refused')
-        .querySelector<HTMLButtonElement>('.outcome-pick')!
+      element.querySelector<HTMLButtonElement>('aside .unseen-toggle')!.click();
+      fixture.detectChanges();
+      unseen(element, 'repositories:refused')
+        .querySelector<HTMLButtonElement>('.shown-in')!
         .click();
       await navigated(fixture);
       expect(query()).toEqual({ state: 'loaded' });
@@ -1519,6 +1777,10 @@ describe('UiBuilderPage', () => {
       await settle();
       fixture.detectChanges();
       const doc = loadFrame(page, '<form data-qits-outcome="repositories:refused">x</form>');
+      row(element, 'repositories:refused')
+        .querySelector<HTMLButtonElement>('.outcome-pick')!
+        .click();
+      fixture.detectChanges();
       expect(doc.querySelector('form')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
       expect(element.querySelector('.link-notice')).toBeNull();
 
@@ -1710,7 +1972,7 @@ describe('UiBuilderPage', () => {
     });
 
     it('opens the state a stay’s result was shot in', async () => {
-      const { fixture, element } = await renderOutcomes();
+      const { fixture, element } = await renderOutcomes(OUTCOMES, withoutTriggers());
       row(element, 'repositories:refused')
         .querySelector<HTMLButtonElement>('.outcome-result')!
         .click();

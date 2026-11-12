@@ -141,7 +141,8 @@ describe('UiBuilderPage (screenshots)', () => {
       .element(view.getByRole('heading', { name: '/projects/:slug/repositories' }))
       .toBeVisible();
     await expect.element(view.getByRole('tab', { name: 'error' })).toBeVisible();
-    await expect.element(view).toMatchTextContent('listProjectRepositories');
+    // `error` answers listProjects alone, app-wide in a one-route bundle, so collapsed (qits-2080).
+    await expect.element(view).toMatchTextContent(/\b1\s*app-wide call(?!s)/);
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
@@ -164,7 +165,10 @@ describe('UiBuilderPage (screenshots)', () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites);
     const view = page.elementLocator(opened.page);
-    const call = view.getByRole('button', { name: /listProjectRepositories/ }).first();
+    // The shown state's one call is app-wide (qits-2080): its group opened first.
+    await view.getByRole('button', { name: /app-wide call/ }).click();
+    await opened.settled();
+    const call = view.getByRole('button', { name: /listProjects/ }).first();
     await call.click();
     await commands.parkPointer();
     await opened.settled();
@@ -211,6 +215,38 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('kinds-viewports', { kind: 'DATA' });
+  });
+
+  it('lists the calls of the state picked, not the route’s (qits-2080)', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites, undefined, KINDS);
+    const view = page.elementLocator(opened.page);
+    const calls = page.elementLocator(opened.page.querySelector('[aria-label="Calls"]')!);
+    const tabs = view.getByRole('tablist', { name: 'States' });
+    // `loaded` (DATA) answers both calls; the one route with freezes makes both app-wide.
+    await expect
+      .element(tabs.getByRole('tab', { name: 'loaded' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await calls.getByRole('button', { name: /app-wide calls/ }).click();
+    await commands.parkPointer();
+    await opened.settled();
+    await expect.element(calls).toMatchTextContent('listProjectRepositories');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('state-data', { kind: 'DATA' });
+
+    // `error` answers listProjects alone; the group stays open.
+    await tabs.getByRole('tab', { name: 'error' }).click();
+    await commands.parkPointer();
+    await opened.settled();
+    await expect
+      .element(tabs.getByRole('tab', { name: 'error' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await expect.element(calls).toMatchTextContent(/\b1\s*app-wide call(?!s)/);
+    await expect.element(calls).not.toMatchTextContent('listProjectRepositories');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('state-error', { kind: 'ERROR' });
   });
 
   it('draws the state at the viewport picked', async () => {

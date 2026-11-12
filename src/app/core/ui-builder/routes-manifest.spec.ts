@@ -1,7 +1,11 @@
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
   answeringRow,
+  appWideCalls,
   asManifest,
+  callKey,
+  freezeCalls,
+  freezeResults,
   forwardExits,
   inboundExits,
   joinedOutcome,
@@ -13,7 +17,6 @@ import {
   matchRoute,
   outcomeLeads,
   outcomeProgress,
-  routeCalls,
   routeFreezes,
   routeOutcomeMarks,
   routeOutcomes,
@@ -418,25 +421,130 @@ describe('initialRoute', () => {
   });
 });
 
-describe('routeFreezes and routeCalls', () => {
-  it('lists a route’s freezes by name, and their calls once each, sorted', () => {
+describe('routeFreezes', () => {
+  it('lists a route’s freezes by name', () => {
     expect(routeFreezes(RECORDED, REPOSITORIES).map((freeze) => freeze.name)).toEqual([
       'error',
       'loaded',
-    ]);
-    expect(routeCalls(RECORDED, REPOSITORIES)).toEqual([
-      {
-        provider: 'qits-projects-service',
-        operationId: 'listProjectRepositories',
-        state: 'a project with repositories',
-      },
-      { provider: 'qits-projects-service', operationId: 'listProjects', state: 'a project exists' },
     ]);
   });
 
   it('has none for a route without states', () => {
     expect(routeFreezes(RECORDED, 'projects')).toEqual([]);
-    expect(routeCalls(RECORDED, 'projects')).toEqual([]);
+  });
+});
+
+describe('the selected freeze’s calls and results (qits-2080)', () => {
+  const call = (provider: string, operationId: string, state = 'a state') => ({
+    provider,
+    operationId,
+    state,
+  });
+  const PROJECTS = call('qits-projects-service', 'listProjects', 'a project exists');
+  const REQUESTS = call('qits-projects-service', 'listProjectReleaseRequests');
+  const WORK_ITEM = call('qits-projects-service', 'getWorkItem');
+
+  /** A freeze of `route` named `name`, answering `records`, showing `triggers`. */
+  const freeze = (
+    route: string | null,
+    name: string,
+    records: Freeze['records'],
+    triggers?: string[],
+  ): Freeze => ({ ...shot(route, name, triggers), records });
+
+  /**
+   * Two states of the work-create page that differ in calls and triggers, and freezes of three
+   * other routes: `listProjects` is recorded on all four routes, `listProjectReleaseRequests` on two
+   * (exactly half), `getWorkItem` on one. A shot outside a page spec records all three.
+   */
+  const FORM_STATE = freeze(
+    CREATE,
+    'form',
+    [WORK_ITEM, PROJECTS, PROJECTS, REQUESTS],
+    ['create-work-item:created', 'shell:sign-out'],
+  );
+  const REFUSED_STATE = freeze(CREATE, 'refused', [PROJECTS], ['create-work-item:refused']);
+  const MANIFEST: RoutesManifest = {
+    ...OUTCOMES,
+    freezes: [
+      FORM_STATE,
+      REFUSED_STATE,
+      freeze(DETAIL, 'loaded', [PROJECTS, REQUESTS]),
+      freeze('projects', 'list', [PROJECTS]),
+      freeze(WORK, 'board', [{ ...PROJECTS, state: 'no project' }]),
+      freeze(null, 'slots', [WORK_ITEM, REQUESTS, WORK_ITEM]),
+    ],
+  };
+
+  it('lists one freeze’s calls once each, sorted by provider, operationId and state', () => {
+    expect(freezeCalls(FORM_STATE)).toEqual([WORK_ITEM, REQUESTS, PROJECTS]);
+    expect(freezeCalls(REFUSED_STATE)).toEqual([PROJECTS]);
+    expect(
+      freezeCalls(freeze(CREATE, 'x', [call('b', 'op'), call('a', 'op', 'z'), call('a', 'op')])),
+    ).toEqual([call('a', 'op'), call('a', 'op', 'z'), call('b', 'op')]);
+    expect(freezeCalls(freeze(CREATE, 'none', []))).toEqual([]);
+  });
+
+  it('takes a call as app-wide when more than half of the routes with freezes record it', () => {
+    // listProjects: 4 of 4 routes, in any state. listProjectReleaseRequests: 2 of 4, exactly half.
+    // The route-less shot is no route and adds none of its records.
+    expect([...appWideCalls(MANIFEST)]).toEqual([callKey(PROJECTS)]);
+    expect(appWideCalls(MANIFEST).has(callKey(REQUESTS))).toBe(false);
+    expect(appWideCalls(MANIFEST).has(callKey(WORK_ITEM))).toBe(false);
+
+    // One more route recording listProjectReleaseRequests makes it 3 of 5.
+    const more = {
+      ...MANIFEST,
+      freezes: [...MANIFEST.freezes, freeze('projects/:slug', 'home', [REQUESTS])],
+    };
+    expect(appWideCalls(more)).toEqual(new Set([callKey(PROJECTS), callKey(REQUESTS)]));
+  });
+
+  it('counts each route once however many of its freezes record the call', () => {
+    const one = {
+      ...MANIFEST,
+      freezes: [
+        freeze(CREATE, 'a', [WORK_ITEM]),
+        freeze(CREATE, 'b', [WORK_ITEM]),
+        freeze(CREATE, 'c', [WORK_ITEM]),
+        freeze(DETAIL, 'd', []),
+        freeze('projects', 'e', []),
+      ],
+    };
+    expect(appWideCalls(one).size).toBe(0);
+  });
+
+  it('has no app-wide call without a freeze on a route', () => {
+    expect(appWideCalls({ ...MANIFEST, freezes: [freeze(null, 'slots', [PROJECTS])] }).size).toBe(
+      0,
+    );
+  });
+
+  it('finds the outcomes whose result a freeze shows by its file, once each', () => {
+    // `refuses a long title` fired `refused` twice: shot as REFUSED, then as FORM.
+    expect(freezeResults(OUTCOMES, REFUSED)).toEqual(['create-work-item:refused']);
+    expect(freezeResults(OUTCOMES, FORM)).toEqual(['create-work-item:refused']);
+    expect(freezeResults(OUTCOMES, ITEM)).toEqual([]);
+    const twice = {
+      ...OUTCOMES,
+      outcomes: {
+        ...OUTCOMES_SECTION,
+        fired: [
+          ...OUTCOMES_SECTION.fired,
+          fire('refuses twice', 'create-work-item', 'refused', CREATE, REFUSED.file),
+          fire('switches', 'work-tabs', 'switched', CREATE, REFUSED.file),
+        ],
+      },
+    };
+    expect(freezeResults(twice, REFUSED)).toEqual([
+      'create-work-item:refused',
+      'work-tabs:switched',
+    ]);
+  });
+
+  it('finds no result without a readable outcomes section', () => {
+    expect(freezeResults({ ...OUTCOMES, outcomes: undefined }, REFUSED)).toEqual([]);
+    expect(freezeResults({ ...OUTCOMES, outcomes: 'invalid' }, REFUSED)).toEqual([]);
   });
 });
 
