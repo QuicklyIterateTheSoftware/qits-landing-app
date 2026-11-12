@@ -28,6 +28,7 @@
  *   declared outcome no test reaches, or whose trigger no screenshot shows.
  */
 import {
+  DEFAULT_EMPTIED_ELEMENTS,
   DEFAULT_ROUTE_SPECS,
   freezeScreenshots,
   guardGoldenMasters,
@@ -48,12 +49,15 @@ guardGoldenMasters({
 // Every toMatchScreenshot(...) must name its kind (lint qits/screenshot-kind backs this up at
 // review time), every route spec (page/layout) shoots at PHONE/TABLET/DESKTOP by default, and
 // every shot is taken in both colour schemes, LIGHT then DARK (qits-2086), unless it opts out with
-// `{ colorSchemes: ['LIGHT'], reason }`.
+// `{ colorSchemes: ['LIGHT'], reason }`. Besides xterm's screen-reader tree (the default), its
+// live region is frozen empty: it announces the terminal's text whenever xterm gets to it, so a
+// freeze caught it in one run and not the next (qits-2087).
 freezeScreenshots({
   routes,
   requireKind: true,
   viewportSpecs: DEFAULT_ROUTE_SPECS,
   colorSchemes: ['LIGHT', 'DARK'],
+  emptyElements: [...DEFAULT_EMPTIED_ELEMENTS, '.xterm-accessibility .live-region'],
 });
 
 // Every declared outcome each test reaches, for the manifest and the outcome check.
