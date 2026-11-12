@@ -565,20 +565,13 @@ export const hasViewports = (manifest: RoutesManifest): boolean =>
   manifest.freezes.some((freeze) => !!freeze.viewport);
 
 /**
- * Every call the route's freezes answered, once each, sorted by provider, operationId and state;
- * `also` adds the freezes of the addresses its row also answers (qits-2076).
+ * The calls one freeze answered (qits-2080): its `records`, once each, sorted by provider,
+ * operationId and state. What the builder's Calls and states lists for the selected screenshot.
  */
-export function routeCalls(
-  manifest: RoutesManifest,
-  fullPath: string,
-  also: readonly string[] = [],
-): readonly FreezeRecord[] {
+export function freezeCalls(freeze: Freeze): readonly FreezeRecord[] {
   const calls = new Map<string, FreezeRecord>();
-  for (const freeze of routeFreezes(manifest, fullPath, also)) {
-    for (const record of freeze.records) {
-      const { provider, operationId, state } = record;
-      calls.set(JSON.stringify([provider, operationId, state]), { provider, operationId, state });
-    }
+  for (const { provider, operationId, state } of freeze.records) {
+    calls.set(JSON.stringify([provider, operationId, state]), { provider, operationId, state });
   }
   return [...calls.values()].sort(
     (a, b) =>
@@ -586,6 +579,50 @@ export function routeCalls(
       a.operationId.localeCompare(b.operationId) ||
       a.state.localeCompare(b.state),
   );
+}
+
+/** A call's key among the {@link appWideCalls} (qits-2080): its provider and operationId. */
+export const callKey = ({
+  provider,
+  operationId,
+}: Pick<FreezeRecord, 'provider' | 'operationId'>) => JSON.stringify([provider, operationId]);
+
+/**
+ * The calls the whole app makes (qits-2080), by {@link callKey}: a (provider, operationId) the
+ * freezes of more than half of the routes with freezes record, in any state. A freeze without a
+ * route (`route: null`, a shot outside a page spec) neither counts as a route nor records for one.
+ * Exactly half is not app-wide. Empty when no freeze has a route.
+ */
+export function appWideCalls(manifest: RoutesManifest): ReadonlySet<string> {
+  const routesOf = new Map<string, Set<string>>();
+  const routes = new Set<string>();
+  for (const freeze of manifest.freezes) {
+    if (freeze.route === null) continue;
+    routes.add(freeze.route);
+    for (const record of freeze.records) {
+      const key = callKey(record);
+      const of = routesOf.get(key) ?? new Set<string>();
+      of.add(freeze.route);
+      routesOf.set(key, of);
+    }
+  }
+  return new Set([...routesOf].filter(([, of]) => of.size * 2 > routes.size).map(([key]) => key));
+}
+
+/**
+ * The outcomes whose result `freeze` shows (qits-2080): the `<interaction>:<outcome>` of each fired
+ * record whose `freeze` is its file, once each, in the manifest's order. None without readable
+ * outcomes.
+ */
+export function freezeResults(manifest: RoutesManifest, freeze: Freeze): readonly string[] {
+  const fired = outcomesOf(manifest)?.fired ?? [];
+  return [
+    ...new Set(
+      fired
+        .filter((record) => record.freeze === freeze.file)
+        .map((record) => `${record.interaction}:${record.outcome}`),
+    ),
+  ];
 }
 
 /**

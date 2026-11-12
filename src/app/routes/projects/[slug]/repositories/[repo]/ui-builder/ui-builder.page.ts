@@ -27,7 +27,11 @@ import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
   answeringRow,
+  appWideCalls,
+  callKey,
   forwardExits,
+  freezeCalls,
+  freezeResults,
   FREEZE_VIEWPORTS,
   hasViewports,
   inboundExits,
@@ -37,7 +41,6 @@ import {
   matchRoute,
   outcomeLeads,
   outcomeProgress,
-  routeCalls,
   routeOutcomeMarks,
   routeOutcomes,
   routeStates,
@@ -113,6 +116,25 @@ interface OutcomeSource {
   readonly outcome: JoinedOutcome;
 }
 
+/** A state of the selected route showing an outcome's trigger (qits-2080), as a link selects it. */
+interface StateLink {
+  /** The state's name, the URL's `state`. */
+  readonly state: string;
+  /** The URL's `viewport` (`phone`, …) of a freeze at a preset width; null keeps the chosen one. */
+  readonly viewport: string | null;
+  /** The viewport the state is drawn at once selected. */
+  readonly at: FreezeViewport;
+  /** Its name, and its width's label when it has one (`loaded · Phone`). */
+  readonly label: string;
+}
+
+/** An outcome of the selected route the selected freeze does not show (qits-2080). */
+interface UnseenOutcome {
+  readonly outcome: JoinedOutcome;
+  /** A state showing its trigger; null for an untriggered one, or when none of the route's does. */
+  readonly shownIn: StateLink | null;
+}
+
 /** One route of the Outcomes tab (qits-2049): the exits that lead to it, as sources. */
 interface InboundRow {
   readonly fullPath: string;
@@ -160,9 +182,9 @@ interface EntityGroup {
 /**
  * The UI builder of one frontend (qits-1951), at `/projects/<slug>/repositories/<repo>/ui-builder`:
  * the frontend's routes as a tree, the selected route's frozen states as tabs with the selected
- * state's frozen page, and the calls the route makes, each with its provider and provider state.
- * Everything comes from the frontend's published `@routes/` bundle (`RoutesBundleStore`, qits-1947
- * and qits-1948); the page is a viewer and changes nothing.
+ * state's frozen page, and the calls that screenshot answered, each with its provider and provider
+ * state. Everything comes from the frontend's published `@routes/` bundle (`RoutesBundleStore`,
+ * qits-1947 and qits-1948); the page is a viewer and changes nothing.
  *
  * - Tree (left): `routeTree` of the manifest. Each route shows its state count. A segment without a
  *   route is greyed and disabled; a redirect and `**` are shown and not selectable. It opens on the
@@ -190,13 +212,20 @@ interface EntityGroup {
  *   `state` and keeps `viewport`, which is DESKTOP when absent or unknown.
  * - Forwards (qits-2076): a route that renders nothing (`rendersNothing`) has no row; its address
  *   folds into its parent's row (`routeTree`), which a `route` naming it selects (`answeringRow`),
- *   whose main panel says "Also answers /…", and whose states and calls include the folded
- *   addresses' freezes. A route that only forwards (`forward`) is marked "↪" (labelled "Forwards")
- *   in the tree; its main panel lists "Forwards to:" above the states, each exit declared on its
+ *   whose main panel says "Also answers /…", and whose states include the folded addresses'
+ *   freezes. A route that only forwards (`forward`) is marked "↪" (labelled "Forwards") in the
+ *   tree; its main panel lists "Forwards to:" above the states, each exit declared on its
  *   full path (`forwardExits`) with its target as an outcome row has it, a button selecting that
  *   route; its PENDING state is chipped "while it forwards", and it names no missing screenshot
  *   test. A bundle without the fields shows as before.
- * - Calls (right): `routeCalls`, the union of the freezes' calls, filtered to the scope.
+ * - The selected freeze (qits-2080): the right panel's Calls and states and Outcomes are the
+ *   screenshot's, the selected state at the selected viewport (`freeze`), not the route's; they
+ *   follow the URL's `state` and `viewport`, so the state list, the switch, Back and Forward move
+ *   them. Entities, the left tabs and the tree's outcome marks stay the route's.
+ * - Calls (right, qits-2080): the selected freeze's `records` (`freezeCalls`), filtered to the
+ *   scope; none when no freeze is selected. The app-wide ones (`appWideCalls`: a provider
+ *   operation the freezes of more than half of the routes with freezes record) follow its own in
+ *   an "N app-wide calls" group, collapsed by default (a toggle with `aria-expanded`).
  * - Scope (owner rule in qits-1951): `<project slug>-landing-app` covers every service; any other
  *   frontend only its own component, by the `component` its repository declares (the project's
  *   repositories, `RepositoriesStore`), and the calls panel says how many calls it hid. A frontend
@@ -221,8 +250,9 @@ interface EntityGroup {
  *   `routeEntity`; epic qits-2000).
  * - Outcomes (qits-2006): below the calls and above the entities, the route's page outcomes
  *   (`routeOutcomes` of the manifest's `outcomes`, which `@qits/angular` writes from 2026.1109.225625
- *   on), each with its kind, the tests that reach it, and a gap chip when no test reaches it or no
- *   screenshot shows its trigger. An exit's target is a button that selects that route as a frame
+ *   on) whose trigger the selected freeze shows (its `triggers`, qits-2080), each with its kind,
+ *   the tests that reach it, and a gap chip when no test reaches it or no screenshot shows its
+ *   trigger. An exit's target is a button that selects that route as a frame
  *   link does, its folded ancestors unfolded; a target no route matches is named. A stay's "Show
  *   result" opens the freeze shot after it fired. A return and an external (qits-2044) have no
  *   target: their line says where they lead (`outcomeLeads`). A `triggered: false` outcome (a guard,
@@ -233,8 +263,16 @@ interface EntityGroup {
  *   do (qits-2045, `outcomeProgress`).
  * - Shared outcomes (qits-2049): under the route's own outcomes, a "Shared" group, collapsed by
  *   default (a toggle with `aria-expanded`), holds the layouts' and app-wide outcomes whose scope
- *   takes the route (`sharedOutcomes`, filtered by `inOutcomeScope`), by layout, then app-wide, with
- *   the same rows.
+ *   takes the route (`sharedOutcomes`, filtered by `inOutcomeScope`) and whose trigger the selected
+ *   freeze shows (qits-2080), by layout, then app-wide, with the same rows.
+ * - Per screenshot (qits-2080): above the outcomes, "This screenshot shows the result of
+ *   `<mark>`" for each outcome a test fired before shooting the selected freeze (`freezeResults`).
+ *   Below them, collapsed by default, "N more outcomes of this route are not visible here": the
+ *   route's page and shared outcomes the selected freeze does not show, each with a "Shown in
+ *   <state> · <width>" button selecting a state of the route that does, as the state list and the
+ *   switch select one (the URL's `state` and `viewport`; one at the chosen width first), or its gap
+ *   line when none does or it is untriggered. A freeze without `triggers` (an older bundle) shows
+ *   the whole route's outcomes, saying so; a route without freezes shows them without the line.
  * - The Outcomes tab (qits-2049; before it, the shared list of qits-2006): how each route is
  *   reached, the inverse of the right panel. `inboundExits` lists the routes the library's
  *   reachability check looks at (no children, no redirect, not `**`); a route no declared exit
@@ -252,12 +290,13 @@ interface EntityGroup {
  *   returns and externals with their source and where they lead, clicked the same way.
  * - Highlight (qits-2006): clicking an outcome (not its target or result) highlights its trigger in
  *   the frame, the element whose `data-qits-outcome` names it, and clicking it again clears it, as
- *   does choosing another route. The shown state is switched to the first freeze that shows the
- *   trigger when it does not. The highlight is drawn from this page into the same-origin frame, a
- *   `<style data-qits-builder>` in its head and an attribute on the element (see `drawHighlight`),
- *   again after each load of a freeze's document; nothing runs inside the frame. A freeze that
- *   lists the trigger without the element is said so on the line above the frame, which is always
- *   there, so no notice moves the frame (qits-2072).
+ *   do choosing another route and selecting a freeze that does not show it (qits-2080). The shown
+ *   state is switched to the first freeze that shows the trigger when it does not (reachable only
+ *   where the panel shows the whole route's outcomes, qits-2080). The highlight is drawn from this
+ *   page into the same-origin frame, a `<style data-qits-builder>` in its head and an attribute on
+ *   the element (see `drawHighlight`), again after each load of a freeze's document; nothing runs
+ *   inside the frame. A freeze that lists the trigger without the element is said so on the line
+ *   above the frame, which is always there, so no notice moves the frame (qits-2072).
  *
  * - Columns (qits-2050): from 1280px up the three panels sit side by side and each scrolls on its
  *   own, so a long tree, a tall frozen page or a long list of calls never moves the other two. The
@@ -802,23 +841,44 @@ interface EntityGroup {
                     <h3 class="m-0 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase">
                       Calls and states
                     </h3>
-                    <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+                    <ul class="own-calls m-0 flex list-none flex-col gap-1.5 p-0">
                       @for (call of calls().shown; track $index) {
-                        <li class="call">
-                          <app-call-details
-                            [call]="call"
-                            [site]="siteOf(call.provider)"
-                            [entities]="callEntities(call)"
-                            [project]="slug() ?? null"
-                            (entityPicked)="pickEntity($event)"
-                          />
-                        </li>
+                        <ng-container
+                          [ngTemplateOutlet]="callRow"
+                          [ngTemplateOutletContext]="{ $implicit: call }"
+                        />
                       } @empty {
-                        @if (!calls().hidden) {
+                        @if (calls().appWide.length) {
+                          <li class="only-app-wide text-charcoal-brown-600">
+                            No call but the app-wide ones.
+                          </li>
+                        } @else if (!calls().hidden) {
                           <li class="text-charcoal-brown-600">Its spec answers no request.</li>
                         }
                       }
                     </ul>
+                    @if (calls().appWide.length; as count) {
+                      <button
+                        type="button"
+                        class="app-wide-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                        [attr.aria-expanded]="appWideOpen()"
+                        (click)="appWideOpen.set(!appWideOpen())"
+                      >
+                        <span aria-hidden="true">{{ appWideOpen() ? '▾' : '▸' }}</span>
+                        <span class="tabular-nums">{{ count }}</span>
+                        <span>app-wide call{{ count === 1 ? '' : 's' }}</span>
+                      </button>
+                      @if (appWideOpen()) {
+                        <ul class="app-wide-calls m-0 mt-1 flex list-none flex-col gap-1.5 p-0">
+                          @for (call of calls().appWide; track $index) {
+                            <ng-container
+                              [ngTemplateOutlet]="callRow"
+                              [ngTemplateOutletContext]="{ $implicit: call }"
+                            />
+                          }
+                        </ul>
+                      }
+                    }
                     @if (calls().hidden; as hidden) {
                       <p class="hidden-calls m-0 mt-2 text-xs text-charcoal-brown-600">
                         Hid {{ hidden }} call{{ hidden === 1 ? '' : 's' }} to providers outside
@@ -832,22 +892,39 @@ interface EntityGroup {
                       Outcomes
                     </h3>
                     @if (outcomeStatus() === 'declared') {
+                      @for (mark of shownResults(); track mark) {
+                        <p class="shown-result m-0 mb-1 text-xs text-charcoal-brown-700">
+                          This screenshot shows the result of
+                          <span class="font-mono">{{ mark }}</span>
+                        </p>
+                      }
+                      @if (predatesTriggers()) {
+                        <p class="predates m-0 mb-1 text-xs text-charcoal-brown-600">
+                          This bundle predates per-screenshot outcomes; showing the whole route.
+                        </p>
+                      }
                       <ul class="route-outcomes m-0 flex list-none flex-col gap-1.5 p-0">
-                        @for (outcome of pageOutcomes(); track outcome.key) {
+                        @for (outcome of shownOutcomes(); track outcome.key) {
                           <ng-container
                             [ngTemplateOutlet]="outcomeRow"
                             [ngTemplateOutletContext]="{ $implicit: outcome }"
                           />
                         } @empty {
-                          <li class="no-outcomes text-charcoal-brown-600">
-                            Not declared yet: {{ outcomeProgress().declaring }} of
-                            {{ outcomeProgress().pages }} pages
-                            {{ outcomeProgress().declaring === 1 ? 'declares' : 'declare' }}
-                            outcomes.
-                          </li>
+                          @if (pageOutcomes().length) {
+                            <li class="none-shown text-charcoal-brown-600">
+                              This screenshot shows no trigger of this route’s outcomes.
+                            </li>
+                          } @else {
+                            <li class="no-outcomes text-charcoal-brown-600">
+                              Not declared yet: {{ outcomeProgress().declaring }} of
+                              {{ outcomeProgress().pages }} pages
+                              {{ outcomeProgress().declaring === 1 ? 'declares' : 'declare' }}
+                              outcomes.
+                            </li>
+                          }
                         }
                       </ul>
-                      @if (scopedShared().count; as count) {
+                      @if (shownShared().count; as count) {
                         <button
                           type="button"
                           class="shared-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
@@ -859,7 +936,7 @@ interface EntityGroup {
                           <span class="tabular-nums opacity-70">{{ count }}</span>
                         </button>
                         @if (sharedOpen()) {
-                          @for (group of scopedShared().groups; track group.route) {
+                          @for (group of shownShared().groups; track group.route) {
                             <h4
                               class="shared-group m-0 mt-2 mb-1 px-1 text-xs font-semibold text-charcoal-brown-600"
                             >
@@ -874,6 +951,62 @@ interface EntityGroup {
                               }
                             </ul>
                           }
+                        }
+                      }
+                      @if (unseenOutcomes().length; as count) {
+                        <button
+                          type="button"
+                          class="unseen-toggle mt-2 flex cursor-pointer items-start gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                          [attr.aria-expanded]="unseenOpen()"
+                          (click)="unseenOpen.set(!unseenOpen())"
+                        >
+                          <span aria-hidden="true">{{ unseenOpen() ? '▾' : '▸' }}</span>
+                          <span>
+                            {{ count }} more
+                            {{
+                              count === 1
+                                ? 'outcome of this route is not visible here'
+                                : 'outcomes of this route are not visible here'
+                            }}
+                          </span>
+                        </button>
+                        @if (unseenOpen()) {
+                          <ul class="unseen-outcomes m-0 mt-1 flex list-none flex-col gap-1.5 p-0">
+                            @for (unseen of unseenOutcomes(); track unseen.outcome.key) {
+                              <li class="unseen-outcome flex flex-col gap-0.5">
+                                <span class="flex flex-wrap items-center gap-1 px-1">
+                                  <span class="font-mono text-xs">{{ unseen.outcome.mark }}</span>
+                                  <ui-chip
+                                    class="kind ml-auto"
+                                    [label]="unseen.outcome.declared.kind"
+                                  />
+                                </span>
+                                @if (unseen.shownIn; as link) {
+                                  <button
+                                    type="button"
+                                    class="shown-in cursor-pointer self-start rounded px-1 text-left text-xs text-charcoal-brown-700 underline hover:bg-charcoal-brown-50"
+                                    [title]="
+                                      'Open the state that shows the trigger of ' +
+                                      unseen.outcome.mark
+                                    "
+                                    (click)="pickShownIn(link)"
+                                  >
+                                    Shown in {{ link.label }}
+                                  </button>
+                                } @else if (
+                                  unseen.outcome.triggered && unseen.outcome.triggerFreezes.length
+                                ) {
+                                  <p class="not-on-route m-0 px-1 text-xs text-charcoal-brown-600">
+                                    No screenshot of this route shows its trigger.
+                                  </p>
+                                }
+                                <ng-container
+                                  [ngTemplateOutlet]="outcomeGaps"
+                                  [ngTemplateOutletContext]="{ $implicit: unseen.outcome }"
+                                />
+                              </li>
+                            }
+                          </ul>
                         }
                       }
                     } @else {
@@ -1069,20 +1202,44 @@ interface EntityGroup {
             {{ test.test }}
           </p>
         }
-        @if (!outcome.reachedBy.length || (outcome.triggered && !outcome.triggerFreezes.length)) {
-          <div class="flex flex-wrap gap-1 px-1">
-            @if (!outcome.reachedBy.length) {
-              <ui-chip class="gap no-test" tone="waiting" label="No test reaches this" />
-            }
-            @if (outcome.triggered && !outcome.triggerFreezes.length) {
-              <ui-chip
-                class="gap no-trigger"
-                tone="waiting"
-                label="No screenshot shows its trigger"
-              />
-            }
-          </div>
-        }
+        <ng-container
+          [ngTemplateOutlet]="outcomeGaps"
+          [ngTemplateOutletContext]="{ $implicit: outcome }"
+        />
+      </li>
+    </ng-template>
+
+    <!--
+      An outcome's gap line (qits-2006): no test reaches it, or no screenshot shows its trigger. An
+      outcome row's, and one not visible in the selected screenshot's (qits-2080).
+    -->
+    <ng-template #outcomeGaps let-outcome>
+      @if (!outcome.reachedBy.length || (outcome.triggered && !outcome.triggerFreezes.length)) {
+        <div class="flex flex-wrap gap-1 px-1">
+          @if (!outcome.reachedBy.length) {
+            <ui-chip class="gap no-test" tone="waiting" label="No test reaches this" />
+          }
+          @if (outcome.triggered && !outcome.triggerFreezes.length) {
+            <ui-chip
+              class="gap no-trigger"
+              tone="waiting"
+              label="No screenshot shows its trigger"
+            />
+          }
+        </div>
+      }
+    </ng-template>
+
+    <!-- One call of the selected screenshot: its own, or an app-wide one (qits-2080). -->
+    <ng-template #callRow let-call>
+      <li class="call">
+        <app-call-details
+          [call]="call"
+          [site]="siteOf(call.provider)"
+          [entities]="callEntities(call)"
+          [project]="slug() ?? null"
+          (entityPicked)="pickEntity($event)"
+        />
       </li>
     </ng-template>
   `,
@@ -1354,18 +1511,35 @@ export class UiBuilderPage {
     return scope.all ? 'Scope: all services' : `Scope: ${scope.component}`;
   });
 
-  /** The selected route's calls in scope, and how many the scope hid. */
-  protected readonly calls = computed(() => {
+  /** The bundle's app-wide calls (`appWideCalls`, qits-2080), by `callKey`: read once per bundle. */
+  private readonly appWide = computed((): ReadonlySet<string> => {
     const bundle = this.loaded();
-    const path = this.selectedPath();
-    const all: readonly FreezeRecord[] =
-      bundle && path !== null ? routeCalls(bundle.manifest, path, this.selectedAlso()) : [];
-    const scope = this.scope();
-    if (!scope || scope.all) return { shown: all, hidden: 0 };
-    const components = this.componentOf();
-    const shown = all.filter((call) => components.get(call.provider) === scope.component);
-    return { shown, hidden: all.length - shown.length };
+    return bundle ? appWideCalls(bundle.manifest) : new Set();
   });
+
+  /**
+   * The selected freeze's calls in scope (`freezeCalls`, qits-2080): its own (`shown`), its app-wide
+   * ones (`appWide`), and how many the scope hid. None when no freeze is selected.
+   */
+  protected readonly calls = computed(() => {
+    const freeze = this.freeze();
+    const all: readonly FreezeRecord[] = freeze ? freezeCalls(freeze) : [];
+    const scope = this.scope();
+    const components = this.componentOf();
+    const inScope =
+      !scope || scope.all
+        ? all
+        : all.filter((call) => components.get(call.provider) === scope.component);
+    const appWide = this.appWide();
+    return {
+      shown: inScope.filter((call) => !appWide.has(callKey(call))),
+      appWide: inScope.filter((call) => appWide.has(callKey(call))),
+      hidden: all.length - inScope.length,
+    };
+  });
+
+  /** Whether the selected freeze's app-wide calls are open (qits-2080); collapsed until asked. */
+  protected readonly appWideOpen = signal(false);
 
   protected readonly leftTabs: readonly { readonly id: LeftTab; readonly label: string }[] = [
     { id: 'routes', label: 'Routes' },
@@ -1437,6 +1611,101 @@ export class UiBuilderPage {
 
   /** Whether the right panel's "Shared" group is open (qits-2049); collapsed until asked. */
   protected readonly sharedOpen = signal(false);
+
+  /**
+   * The marks the selected freeze shows the triggers of (qits-2080), which scope the right panel's
+   * outcomes; null when no freeze is selected or its bundle predates `triggers`, which shows the
+   * whole route's.
+   */
+  private readonly shownTriggers = computed(
+    (): readonly string[] | null => this.freeze()?.triggers ?? null,
+  );
+
+  /** Whether the selected freeze's bundle predates per-screenshot outcomes (qits-2080). */
+  protected readonly predatesTriggers = computed(() => {
+    const freeze = this.freeze();
+    return !!freeze && freeze.triggers === undefined;
+  });
+
+  /** Whether `outcome`'s trigger is in the selected freeze (qits-2080); any is without triggers. */
+  private readonly visible = computed((): ((outcome: JoinedOutcome) => boolean) => {
+    const triggers = this.shownTriggers();
+    return (outcome) => triggers === null || triggers.includes(outcome.mark);
+  });
+
+  /** The selected route's page outcomes whose trigger the selected freeze shows (qits-2080). */
+  protected readonly shownOutcomes = computed(() => this.pageOutcomes().filter(this.visible()));
+
+  /** The "Shared" group (`scopedShared`) narrowed to the selected freeze's triggers (qits-2080). */
+  protected readonly shownShared = computed(() => {
+    const visible = this.visible();
+    const groups = this.scopedShared()
+      .groups.map((group) => ({ route: group.route, outcomes: group.outcomes.filter(visible) }))
+      .filter((group) => group.outcomes.length);
+    return { groups, count: groups.reduce((sum, group) => sum + group.outcomes.length, 0) };
+  });
+
+  /**
+   * The route's page and shared outcomes the selected freeze does not show the trigger of
+   * (qits-2080), each with a state of this route that does (`shownIn`); none when the panel shows
+   * the whole route's.
+   */
+  protected readonly unseenOutcomes = computed((): readonly UnseenOutcome[] => {
+    if (this.shownTriggers() === null) return [];
+    const visible = this.visible();
+    return [...this.pageOutcomes(), ...this.scopedShared().groups.flatMap((g) => g.outcomes)]
+      .filter((outcome) => !visible(outcome))
+      .map((outcome) => ({ outcome, shownIn: this.shownIn(outcome) }));
+  });
+
+  /** Whether the "not visible here" group is open (qits-2080); collapsed until asked. */
+  protected readonly unseenOpen = signal(false);
+
+  /**
+   * The state of the selected route that shows `outcome`'s trigger (qits-2080): of its
+   * `triggerFreezes` that are this route's (or an address it also answers), one the state list and
+   * the viewport switch draw (`stateFreeze`), at the chosen viewport when one is, else the first;
+   * null for an untriggered outcome or when none is.
+   */
+  private shownIn(outcome: JoinedOutcome): StateLink | null {
+    if (!outcome.triggered) return null;
+    const states = this.states();
+    const current = this.viewport();
+    const links = outcome.triggerFreezes.flatMap((freeze): StateLink[] => {
+      const state = states.find((s) => s.freezes.some((f) => f.file === freeze.file));
+      const at = freeze.viewport ?? current;
+      if (!state || stateFreeze(state, at).file !== freeze.file) return [];
+      const width = VIEWPORT_CHOICES.find((choice) => choice.id === freeze.viewport);
+      return [
+        {
+          state: state.name,
+          viewport: width?.query ?? null,
+          at,
+          label: width ? `${state.name} · ${width.label}` : state.name,
+        },
+      ];
+    });
+    return links.find((link) => link.at === current) ?? links[0] ?? null;
+  }
+
+  /**
+   * Selects the state and viewport `link` names (qits-2080), through the URL as the state list and
+   * the viewport switch do; a freeze at the test's own viewport keeps the chosen one.
+   */
+  protected pickShownIn(link: StateLink): void {
+    this.linkNotice.set(null);
+    void this.navigate({
+      state: link.state,
+      ...(link.viewport ? { viewport: link.viewport } : {}),
+    });
+  }
+
+  /** The outcomes whose result the selected freeze shows (`freezeResults`, qits-2080). */
+  protected readonly shownResults = computed((): readonly string[] => {
+    const bundle = this.loaded();
+    const freeze = this.freeze();
+    return bundle && freeze ? freezeResults(bundle.manifest, freeze) : [];
+  });
 
   /** Where a declaration is scoped, as a source says it (qits-2049). */
   protected scopeOf(route: string | null, global: boolean): string {
@@ -1693,6 +1962,16 @@ export class UiBuilderPage {
       // Another freeze is shown: its srcdoc load judges it again (qits-2072).
       this.shownFile();
       untracked(() => this.highlightNotice.set(null));
+    });
+    effect(() => {
+      // Another freeze is selected (qits-2080): a highlight whose trigger it does not show goes.
+      const triggers = this.shownTriggers();
+      untracked(() => {
+        const mark = this.highlightedOutcome()?.mark;
+        if (triggers !== null && mark !== undefined && !triggers.includes(mark)) {
+          this.highlighted.set(null);
+        }
+      });
     });
     effect(() => {
       const sites = this.sitesInScope();

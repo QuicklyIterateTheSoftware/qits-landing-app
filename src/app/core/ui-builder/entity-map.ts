@@ -218,7 +218,7 @@ const operationKey = (repository: string, operationId: string) =>
 /**
  * Joins the manifest's route-bound freezes with the maps, on (record's provider, operationId) =
  * (site's `git.repository.name`, operation's `operationId`). A route's entities are the union over
- * its freezes (`byRoute`, as `routeCalls` makes it); a freeze without a route is not in `byRoute`,
+ * its freezes (`byRoute`, as `routeFreezes` reads it); a freeze without a route is not in `byRoute`,
  * so it is ignored. Only `domain` entities count. A record whose provider `inScope` refuses is
  * skipped, neither matched nor counted.
  */
