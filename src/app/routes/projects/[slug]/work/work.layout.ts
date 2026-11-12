@@ -129,10 +129,12 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
       <nav class="mx-auto max-w-[72rem] px-6 max-md:hidden md:pt-2" aria-label="Work">
         <ul class="m-0 flex list-none flex-wrap gap-1 border-b border-gray-200 p-0">
           @for (tab of tabs(); track tab.segment) {
-            <li class="flex shrink-0 items-center">
+            <li
+              class="-mb-px flex shrink-0 items-center border-b-2 border-transparent has-[[aria-current=page]]:border-charcoal-brown-900"
+            >
               <a
                 #active="qitsExit"
-                class="-mb-px flex items-center gap-2 border-b-2 border-transparent px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:border-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
+                class="flex items-center gap-2 px-3 py-2 text-sm text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900 aria-[current=page]:font-semibold aria-[current=page]:text-charcoal-brown-900"
                 [qitsExit]="tab.exit"
                 [exitParams]="{ slug: slug() }"
                 >{{ tab.label }}
@@ -146,7 +148,7 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
                 <!-- Hidden by class, never by @if: the link is marked active only after the first
                      render, and a block the server drew that the browser drops at hydration stays
                      until hydration's clean-up. -->
-                <div [class]="active.isActive() ? '-ml-1 flex' : 'hidden'">
+                <div [class]="active.isActive() ? '-ml-1 flex pr-2' : 'hidden'">
                   <ng-container *ngTemplateOutlet="gear; context: { group: 'in-progress-view' }" />
                 </div>
               }
