@@ -407,7 +407,9 @@ token by its role, not by its light value. Never a palette step (`bg-cinnabar-60
 qits-ui-components-jslib, with a light and a dark value, never here. `qits/theme-colors` is
 `error` in `eslint.config.mjs`; it does not read the global `src/styles.css` or a hex inside a plain
 TS string, so keep those clean by hand. The one computed colour is `tagColour()`
-(`ui/components/tag/tag-colour.ts`), a hashed hue written as `light-dark(…)`.
+(`ui/components/tag/tag-colour.ts`), a hashed hue written as `light-dark(…)`. The one `dark:` variant is the xterm terminal's box
+(`ui/components/terminal-screen`), which stays dark in both schemes because xterm's ANSI palette
+assumes a dark background.
 
 **Light, dark or System** is the reader's choice, from the theme menu in the top bar
 (`$core/appearance/theme-preference`, `localStorage` key `qits.appearance.theme`): it sets

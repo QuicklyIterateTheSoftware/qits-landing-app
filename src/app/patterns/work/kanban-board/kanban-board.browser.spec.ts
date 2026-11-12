@@ -154,10 +154,10 @@ describe('KanbanBoard (screenshots)', () => {
       selection.addRange(range);
     });
     const card = title.closest('ui-board-card')!;
-    expect(card.classList.contains('outline-accent')).toBe(true);
+    expect(card.classList.contains('outline-focus-ring')).toBe(true);
     // No selection colour in the shot; the highlight stays until it fades.
     select((selection) => selection.removeAllRanges());
-    expect(card.classList.contains('outline-accent')).toBe(true);
+    expect(card.classList.contains('outline-focus-ring')).toBe(true);
     await expect.element(locator).toMatchScreenshot('selection-highlight', { kind: 'DATA' });
   });
 });

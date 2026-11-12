@@ -65,7 +65,7 @@ let nextLaneId = 0;
         reaches into the chin (the negative margin), and keeps the chin above the id too.
       -->
       <div
-        class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex w-6 items-end justify-center justify-self-start rounded-tl-xl bg-surface-inverse/40 pt-(--lane-chin) pb-(--lane-chin) text-fg-on-inverse [&_a]:text-inherit [&_a]:no-underline"
+        class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex w-6 items-end justify-center justify-self-start rounded-tl-xl bg-surface-inverse/40 pt-(--lane-chin) pb-(--lane-chin) text-fg [&_a]:text-inherit [&_a]:no-underline"
       >
         <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
           <ng-content select="[lane-gutter]" />
@@ -76,7 +76,7 @@ let nextLaneId = 0;
       class="col-span-full flex items-center gap-2 px-2 py-1 text-xs wrap-anywhere [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
       [class]="
         onBoard
-          ? 'row-start-1 ml-6 justify-end bg-surface-inverse/40 text-fg-on-inverse [&>a]:after:rounded-tl-xl'
+          ? 'row-start-1 ml-6 justify-end bg-surface-inverse/40 text-fg [&>a]:after:rounded-tl-xl'
           : muted()
             ? 'relative bg-surface-muted text-fg-soft'
             : 'relative bg-surface-inverse font-semibold text-fg-on-inverse'

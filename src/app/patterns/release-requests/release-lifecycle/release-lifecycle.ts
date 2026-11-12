@@ -93,10 +93,13 @@ const RAIL: Readonly<Record<StepState, string>> = {
       <h2 class="m-0 mb-2 text-base font-semibold">Release lifecycle</h2>
       <ol class="m-0 list-none p-0">
         @for (stage of stages(); track stage.key) {
-          <li class="relative pb-3 pl-6" [class.opacity-50]="stage.future">
+          <!-- A stage still to come is greyed by its ink (fg-muted), not by opacity, which would
+               take its text below AA contrast; its rail dot alone is faded. -->
+          <li class="relative pb-3 pl-6" [class.text-fg-muted]="stage.future">
             <span
               class="absolute top-1.5 left-1 size-3 rounded-full ring-2 ring-surface"
               [class]="rail(stage.state)"
+              [class.opacity-50]="stage.future"
               aria-hidden="true"
             ></span>
             @if (!$last) {

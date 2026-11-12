@@ -43,7 +43,7 @@ import { WrapperClosingsStore } from '$core/work/wrapper-closings.store';
   template: `
     @let l = line();
     <span
-      [class]="l.warning ? 'text-warning-strong' : 'text-fg-muted'"
+      [class]="l.warning ? 'text-warning' : 'text-fg-muted'"
       [attr.data-warning]="l.warning || null"
       >{{ l.before
       }}<a

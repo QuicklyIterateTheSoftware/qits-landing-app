@@ -49,14 +49,14 @@ let nextListLaneId = 0;
       above the id too.
     -->
     <div
-      class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex items-end justify-center rounded-tl-xl bg-surface-inverse/40 pt-(--lane-chin) pb-(--lane-chin) text-fg-on-inverse [&_a]:text-inherit [&_a]:no-underline"
+      class="col-start-1 row-span-3 row-start-1 -mb-(--lane-chin) flex items-end justify-center rounded-tl-xl bg-surface-inverse/40 pt-(--lane-chin) pb-(--lane-chin) text-fg [&_a]:text-inherit [&_a]:no-underline"
     >
       <span class="rotate-180 text-[0.6875rem] whitespace-nowrap [writing-mode:vertical-rl]">
         <ng-content select="[lane-gutter]" />
       </span>
     </div>
     <div
-      class="col-start-2 row-start-1 flex items-center justify-end gap-2 bg-surface-inverse/40 px-2 py-1 text-xs wrap-anywhere text-fg-on-inverse [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
+      class="col-start-2 row-start-1 flex items-center justify-end gap-2 bg-surface-inverse/40 px-2 py-1 text-xs wrap-anywhere text-fg [&>*]:min-w-0 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:rounded-tl-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md"
     >
       <ng-content select="[lane-header]" />
     </div>
