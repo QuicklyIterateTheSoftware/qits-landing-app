@@ -20,41 +20,41 @@ import {
   host: { class: 'block' },
   template: `
     @if (conflict(); as conflict) {
-      <section class="mt-3 rounded border border-sunflower-gold-300 bg-sunflower-gold-50 px-3 py-2">
-        <p class="m-0 text-sm font-semibold text-sunflower-gold-900">
+      <section class="mt-3 rounded border border-warning-line bg-warning-soft px-3 py-2">
+        <p class="m-0 text-sm font-semibold text-warning-strong">
           These sources cannot be folded onto
           <span class="font-mono">{{ name(conflict.target) }}</span>
         </p>
         <ul class="m-0 mt-1 flex list-none flex-col gap-0.5 p-0">
           @for (path of conflict.conflicts ?? []; track identity(path)) {
             <li class="flex flex-wrap items-baseline gap-2 text-sm">
-              <span class="font-mono break-all text-charcoal-brown-950">{{ path.path }}</span>
+              <span class="font-mono break-all text-fg">{{ path.path }}</span>
               @if (isGitlink(path)) {
                 <span
-                  class="font-mono text-sunflower-gold-900"
+                  class="font-mono text-warning-strong"
                   [title]="conflict.target + ' at ' + path.ours"
                   >{{ pin(conflict.target, path.ours) }}</span
                 >
                 <span
-                  class="font-mono text-sunflower-gold-900"
+                  class="font-mono text-warning-strong"
                   [title]="path.head + ' at ' + path.theirs"
                   >{{ pin(path.head, path.theirs) }}</span
                 >
-                <span class="text-sunflower-gold-900">submodule</span>
+                <span class="text-warning-strong">submodule</span>
               } @else {
                 <span
-                  class="font-mono text-sunflower-gold-900"
+                  class="font-mono text-warning-strong"
                   [title]="path.head + ' at ' + path.headSha"
                   >{{ pin(path.head, path.headSha) }}</span
                 >
                 @if (path.reason) {
-                  <span class="text-sunflower-gold-900">{{ path.reason }}</span>
+                  <span class="text-warning-strong">{{ path.reason }}</span>
                 }
               }
             </li>
           }
         </ul>
-        <p class="mt-1 mb-0 text-sm text-sunflower-gold-900">
+        <p class="mt-1 mb-0 text-sm text-warning-strong">
           These are what an automatic resolution could not answer. Resolve them on the source that
           introduced them and push — the request re-folds itself and carries on.
         </p>

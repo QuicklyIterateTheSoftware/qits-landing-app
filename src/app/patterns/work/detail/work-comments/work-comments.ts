@@ -56,23 +56,19 @@ type CommentWrite = 'add' | 'save';
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-3" aria-label="Comments">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Comments</h2>
+      <h2 class="m-0 text-base font-semibold text-fg">Comments</h2>
       <ol class="m-0 flex list-none flex-col gap-3 p-0">
         @for (comment of comments(); track comment.id) {
           <li
             class="scroll-mt-6 rounded-md border px-4 py-3"
             [class]="
-              targeted() === comment.id
-                ? 'border-ocean-deep-500 ring-2 ring-ocean-deep-200'
-                : 'border-charcoal-brown-200'
+              targeted() === comment.id ? 'border-accent ring-2 ring-accent-soft' : 'border-line'
             "
             [id]="anchor(comment)"
           >
             <div class="mb-1 flex items-start justify-between gap-2">
-              <p class="m-0 text-xs text-charcoal-brown-600">
-                <span class="font-semibold text-charcoal-brown-900">{{
-                  authorLabel(comment)
-                }}</span>
+              <p class="m-0 text-xs text-fg-soft">
+                <span class="font-semibold text-fg">{{ authorLabel(comment) }}</span>
                 · {{ comment.createdAt | date: 'd MMM y, HH:mm' : 'UTC' }}
               </p>
               @if (editing() !== comment.id && comment.editable) {
@@ -81,7 +77,7 @@ type CommentWrite = 'add' | 'save';
             </div>
             @if (editing() === comment.id) {
               <textarea
-                class="block min-h-24 w-full rounded-md border border-charcoal-brown-300 px-2 py-1.5 text-sm"
+                class="block min-h-24 w-full rounded-md border border-line-strong px-2 py-1.5 text-sm"
                 rows="4"
                 aria-label="Edit the comment"
                 [value]="draft()"
@@ -97,12 +93,10 @@ type CommentWrite = 'add' | 'save';
           </li>
         }
       </ol>
-      <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="comments().length">
-        No comments yet
-      </p>
+      <p class="m-0 text-sm text-fg-muted" [class.hidden]="comments().length">No comments yet</p>
       <div class="flex flex-col gap-2">
         <textarea
-          class="block min-h-20 w-full rounded-md border border-charcoal-brown-300 px-2 py-1.5 text-sm"
+          class="block min-h-20 w-full rounded-md border border-line-strong px-2 py-1.5 text-sm"
           rows="3"
           aria-label="Add a comment"
           [placeholder]="placeholder()"
@@ -114,7 +108,7 @@ type CommentWrite = 'add' | 'save';
         </div>
       </div>
       @if (failure(); as failure) {
-        <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ failure }}</p>
+        <p class="m-0 text-sm text-danger" role="alert">{{ failure }}</p>
       }
     </section>
   `,

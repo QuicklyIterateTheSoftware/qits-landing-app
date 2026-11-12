@@ -23,6 +23,8 @@ import {
   routeStates,
   routeTree,
   hasViewports,
+  colorSchemesOf,
+  freezeShot,
   sharedOutcomes,
   stateFreeze,
   type DeclaredOutcome,
@@ -672,6 +674,127 @@ describe('routeStates and stateFreeze (qits-2047)', () => {
     // An absent field stays absent: an older bundle reads as it is.
     expect(asManifest(RECORDED)?.freezes[0]).not.toHaveProperty('kind');
     expect(asManifest(RECORDED)?.freezes[0]).not.toHaveProperty('viewport');
+  });
+});
+
+describe('colour schemes (qits-2086)', () => {
+  const ROUTE = 'projects/:slug/work';
+
+  /** A freeze of `name` on the work route, at `viewport`, in `scheme`, as the library names it. */
+  const freeze = (
+    name: string,
+    viewport?: Freeze['viewport'],
+    scheme?: Freeze['colorScheme'],
+  ): Freeze => ({
+    file: `work/${name}${viewport ? `-${viewport.toLowerCase()}` : ''}${scheme ? `-${scheme.toLowerCase()}` : ''}.html`,
+    name,
+    route: ROUTE,
+    records: [],
+    kind: 'DATA',
+    ...(viewport === undefined ? {} : { viewport }),
+    ...(scheme === undefined ? {} : { colorScheme: scheme }),
+  });
+
+  const manifestOf = (
+    freezes: readonly Freeze[],
+    colorSchemes?: RoutesManifest['colorSchemes'],
+  ): RoutesManifest => ({
+    routes: [{ path: ROUTE, fullPath: ROUTE }],
+    freezes,
+    byRoute: { [ROUTE]: freezes.map((f) => f.file) },
+    ...(colorSchemes ? { colorSchemes } : {}),
+  });
+
+  const BOTH = (['PHONE', 'DESKTOP'] as const).flatMap((viewport) => [
+    freeze('loaded', viewport, 'LIGHT'),
+    freeze('loaded', viewport, 'DARK'),
+  ]);
+
+  it('reads the manifest’s colorSchemes and each freeze’s colorScheme', () => {
+    const manifest = asManifest(manifestOf(BOTH, ['LIGHT', 'DARK']));
+    expect(manifest?.colorSchemes).toEqual(['LIGHT', 'DARK']);
+    expect(manifest?.freezes.map((f) => [f.viewport, f.colorScheme])).toEqual([
+      ['PHONE', 'LIGHT'],
+      ['PHONE', 'DARK'],
+      ['DESKTOP', 'LIGHT'],
+      ['DESKTOP', 'DARK'],
+    ]);
+    expect(colorSchemesOf(manifest!)).toEqual(['LIGHT', 'DARK']);
+    // One state for a shot's widths and schemes.
+    expect(routeStates(manifest!, ROUTE).map((state) => state.freezes.length)).toEqual([4]);
+  });
+
+  it('reads a bundle without schemes as one unschemed freeze per shot', () => {
+    expect(asManifest(RECORDED)).not.toHaveProperty('colorSchemes');
+    expect(asManifest(RECORDED)?.freezes[0]).not.toHaveProperty('colorScheme');
+    expect(colorSchemesOf(RECORDED)).toEqual([]);
+    const [legacy] = routeStates(RECORDED, REPOSITORIES);
+    expect(stateFreeze(legacy, 'DESKTOP', 'DARK').name).toBe('error');
+  });
+
+  it('drops unknown schemes, and reads an unknown colorScheme as null', () => {
+    const manifest = asManifest({
+      ...manifestOf([freeze('loaded', 'PHONE', 'LIGHT')]),
+      colorSchemes: ['SEPIA', 'DARK', 'LIGHT'],
+      freezes: [
+        { ...freeze('odd', 'PHONE'), colorScheme: 'SEPIA' },
+        freeze('loaded', 'PHONE', 'LIGHT'),
+      ],
+    });
+    expect(manifest?.colorSchemes).toEqual(['LIGHT', 'DARK']);
+    expect(manifest?.freezes.map((f) => f.colorScheme)).toEqual([null, 'LIGHT']);
+    expect(asManifest({ ...manifestOf([]), colorSchemes: ['SEPIA'] })).not.toHaveProperty(
+      'colorSchemes',
+    );
+    expect(asManifest({ ...manifestOf([]), colorSchemes: 'LIGHT' })).not.toHaveProperty(
+      'colorSchemes',
+    );
+  });
+
+  it('knows the schemes a freeze names when the manifest lists none', () => {
+    expect(colorSchemesOf(manifestOf([freeze('loaded', 'PHONE', 'DARK')]))).toEqual(['DARK']);
+  });
+
+  it('draws the freeze in the scheme at the width, else what the width has', () => {
+    const [state] = routeStates(manifestOf(BOTH, ['LIGHT', 'DARK']), ROUTE);
+    expect(stateFreeze(state, 'PHONE', 'DARK').file).toBe('work/loaded-phone-dark.html');
+    expect(stateFreeze(state, 'PHONE', 'LIGHT').file).toBe('work/loaded-phone-light.html');
+    expect(stateFreeze(state, 'DESKTOP', 'DARK').file).toBe('work/loaded-desktop-dark.html');
+    // TABLET was not shot: DESKTOP's, in the scheme.
+    expect(stateFreeze(state, 'TABLET', 'DARK').file).toBe('work/loaded-desktop-dark.html');
+    // No scheme asked: the first of the width.
+    expect(stateFreeze(state, 'PHONE').file).toBe('work/loaded-phone-light.html');
+
+    // A shot that opted out of DARK draws its LIGHT freeze.
+    const [lightOnly] = routeStates(
+      manifestOf([freeze('menu', 'PHONE', 'LIGHT')], ['LIGHT', 'DARK']),
+      ROUTE,
+    );
+    expect(stateFreeze(lightOnly, 'PHONE', 'DARK').file).toBe('work/menu-phone-light.html');
+  });
+
+  it('names the shot a freeze is one scheme of', () => {
+    expect(freezeShot(freeze('loaded', 'PHONE', 'DARK'))).toBe('work/loaded-phone.html');
+    expect(freezeShot(freeze('loaded', 'PHONE', 'LIGHT'))).toBe('work/loaded-phone.html');
+    expect(freezeShot(freeze('loaded', 'PHONE'))).toBe('work/loaded-phone.html');
+    // A file without the suffix its scheme names stays as it is.
+    expect(freezeShot({ ...freeze('x'), colorScheme: 'DARK' })).toBe('work/x.html');
+  });
+
+  it('finds a result on the other scheme’s freeze of the shot the record links', () => {
+    const light = freeze('refused', 'DESKTOP', 'LIGHT');
+    const dark = freeze('refused', 'DESKTOP', 'DARK');
+    const other = freeze('form', 'DESKTOP', 'DARK');
+    const manifest: RoutesManifest = {
+      ...manifestOf([light, dark, other], ['LIGHT', 'DARK']),
+      outcomes: {
+        declared: [],
+        fired: [fire('refuses', 'create-work-item', 'refused', ROUTE, light.file)],
+      },
+    };
+    expect(freezeResults(manifest, light)).toEqual(['create-work-item:refused']);
+    expect(freezeResults(manifest, dark)).toEqual(['create-work-item:refused']);
+    expect(freezeResults(manifest, other)).toEqual([]);
   });
 });
 

@@ -30,7 +30,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
       [workProject]="slug()"
     />
     <section class="flex flex-col gap-4" aria-label="Features">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Features</h2>
+      <h2 class="m-0 text-base font-semibold text-fg">Features</h2>
       @if (boarded()) {
         <app-epic-board [node]="node()" [header]="false" />
       } @else {
@@ -45,9 +45,7 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
             <app-feature-list-row [node]="feature" />
           }
         </div>
-        <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="features().length">
-          Nothing here
-        </p>
+        <p class="m-0 text-sm text-fg-muted" [class.hidden]="features().length">Nothing here</p>
       }
     </section>
     <app-work-dossier [pages]="detail()?.pages ?? []" [figures]="detail()?.figures ?? {}" />

@@ -26,14 +26,14 @@ export interface WorkField {
   template: `
     <dl class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1.5 text-sm">
       @for (field of fields(); track field.label) {
-        <dt class="text-charcoal-brown-600">{{ field.label }}</dt>
+        <dt class="text-fg-soft">{{ field.label }}</dt>
         <dd
-          class="m-0 min-w-0 text-charcoal-brown-900"
+          class="m-0 min-w-0 text-fg"
           [class.font-mono]="field.code"
           [class.text-xs]="field.code"
           [class.leading-5]="field.code"
           [class.font-semibold]="field.alert"
-          [class.text-cinnabar-700]="field.alert"
+          [class.text-danger]="field.alert"
         >
           @if (field.workProject) {
             <span

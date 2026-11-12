@@ -48,18 +48,16 @@ interface Pane {
   template: `
     <div [class]="panes().length > 1 ? 'grid gap-3 sm:grid-cols-2' : 'grid gap-3'">
       @for (pane of panes(); track pane.label) {
-        <figure class="m-0 min-w-0 rounded border border-charcoal-brown-200 p-2">
-          <figcaption class="mb-2 text-xs font-semibold text-charcoal-brown-600">
+        <figure class="m-0 min-w-0 rounded border border-line p-2">
+          <figcaption class="mb-2 text-xs font-semibold text-fg-soft">
             {{ pane.label }}
           </figcaption>
           @if (pane.side.status === 'error') {
-            <p class="m-0 text-sm text-charcoal-brown-500" role="status">
+            <p class="m-0 text-sm text-fg-muted" role="status">
               {{ pane.side.message }}
             </p>
           } @else if (pane.url && broken()[pane.url]) {
-            <p class="m-0 text-sm text-charcoal-brown-500" role="status">
-              The image could not be shown.
-            </p>
+            <p class="m-0 text-sm text-fg-muted" role="status">The image could not be shown.</p>
           } @else {
             <ui-spinner [state]="pane.url ? 'loaded' : 'loading'" class="min-h-24">
               @if (pane.url) {
@@ -70,7 +68,7 @@ interface Pane {
                   (load)="measured($event, pane.url)"
                   (error)="failed(pane.url)"
                 />
-                <p class="m-0 mt-1 text-xs text-charcoal-brown-500">
+                <p class="m-0 mt-1 text-xs text-fg-muted">
                   {{ sizes()[pane.url] ?? '' }}
                 </p>
               }

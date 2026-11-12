@@ -115,14 +115,14 @@ describe('AgentsMenu', () => {
       agent(3),
     ]);
     expect(badge().textContent?.trim()).toBe('2');
-    expect(badge().className).toContain('bg-cinnabar-600');
+    expect(badge().className).toContain('bg-danger');
     expect(badge().classList.contains('hidden')).toBe(false);
   });
 
   it('badges the active agents in amber when none needs a person', async () => {
     const { badge } = await render([agent(1), agent(2), agent(3)]);
     expect(badge().textContent?.trim()).toBe('3');
-    expect(badge().className).toContain('bg-sunflower-gold-500');
+    expect(badge().className).toContain('bg-warning-soft');
     expect(badge().classList.contains('hidden')).toBe(false);
   });
 
@@ -368,7 +368,7 @@ describe('AgentsMenu', () => {
     ).toEqual([`Blocked since ${clockTime(at)}`, 'Blocked']);
   });
 
-  it('gives each attention its reason in cinnabar and its action', async () => {
+  it('gives each attention its reason in the danger tone and its action', async () => {
     const { fixture, panel, open } = await render([
       agent(1, attention('IDLE_NO_WAIT')),
       agent(2, {
@@ -392,7 +392,7 @@ describe('AgentsMenu', () => {
     const byReason = (code: string) =>
       blocks.filter((b) => b.textContent?.includes(`because ${code}`));
     for (const block of blocks) {
-      expect(block.querySelector('span')!.className).toContain('text-cinnabar-600');
+      expect(block.querySelector('span')!.className).toContain('text-danger');
     }
     const action = (block: HTMLElement) => block.querySelector<HTMLAnchorElement>('[data-action]')!;
 

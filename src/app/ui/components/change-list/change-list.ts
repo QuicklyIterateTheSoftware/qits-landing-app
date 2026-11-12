@@ -31,10 +31,10 @@ const LETTERS: Readonly<Record<string, string>> = {
 };
 
 const LETTER_CLASSES: Readonly<Record<string, string>> = {
-  A: 'text-mint-leaf-700',
-  D: 'text-cinnabar-700',
-  R: 'text-ocean-deep-700',
-  C: 'text-ocean-deep-700',
+  A: 'text-success',
+  D: 'text-danger',
+  R: 'text-accent',
+  C: 'text-accent',
 };
 
 /** A change type as one letter: A, M, D, R, C, or `?`. */
@@ -63,10 +63,10 @@ export function changeLetter(changeType: string | undefined): string {
         <li [attr.data-depth]="entry.depth ? entry.depth : null">
           <button
             type="button"
-            class="flex w-full cursor-pointer items-baseline gap-2 rounded py-0.5 pr-2 text-left font-mono text-xs hover:bg-charcoal-brown-100"
+            class="flex w-full cursor-pointer items-baseline gap-2 rounded py-0.5 pr-2 text-left font-mono text-xs hover:bg-surface-muted"
             [class.pl-2]="!entry.depth"
             [class.pl-6]="entry.depth"
-            [class.bg-ocean-deep-50]="entry.path === selected()"
+            [class.bg-accent-soft]="entry.path === selected()"
             [attr.aria-current]="entry.path === selected() ? 'true' : null"
             [title]="entry.changeType ?? ''"
             (click)="select.emit(entry.path ?? '')"
@@ -76,7 +76,7 @@ export function changeLetter(changeType: string | undefined): string {
             }}</span>
             <span class="min-w-0 break-all">
               @if (shownOldLabel && shownOldLabel !== shownLabel) {
-                <span class="text-charcoal-brown-500">{{ shownOldLabel }} → </span>
+                <span class="text-fg-muted">{{ shownOldLabel }} → </span>
               }
               {{ shownLabel }}
             </span>
@@ -97,6 +97,6 @@ export class ChangeList {
   protected readonly letterOf = changeLetter;
 
   protected letterClass(letter: string): string {
-    return LETTER_CLASSES[letter] ?? 'text-charcoal-brown-600';
+    return LETTER_CLASSES[letter] ?? 'text-fg-soft';
   }
 }

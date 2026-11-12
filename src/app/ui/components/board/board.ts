@@ -11,9 +11,9 @@ import { BOARD_CONTEXT, type BoardContext } from './board-context';
 export interface BoardColumnSpec {
   readonly label: string;
   readonly count?: number;
-  /** The column body's background, e.g. `bg-ocean-deep-300`. */
+  /** The column body's background, e.g. `bg-accent-soft`. */
   readonly body: string;
-  /** The heading's background and text, e.g. `bg-ocean-deep-400 text-ocean-deep-950`. */
+  /** The heading's background and text, e.g. `bg-accent-line text-accent`. */
   readonly header: string;
 }
 
@@ -47,7 +47,7 @@ export interface BoardColumnSpec {
   providers: [{ provide: BOARD_CONTEXT, useExisting: Board }],
   template: `
     <div
-      class="z-30 grid bg-white"
+      class="z-30 grid bg-surface"
       [class]="
         pinned() ? 'sticky top-[calc(var(--app-pin-top,0px)_+_var(--page-actions-h,0px))]' : ''
       "

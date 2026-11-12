@@ -38,22 +38,30 @@ export interface ScreenSize {
  * plain text instead. The screen fills the room down to the foot of its scrolling pane, and fits
  * its rows and columns to its box whenever that changes (`FitAddon`, a `ResizeObserver`, the
  * window's `resize`). Input is off while `attached` is false.
+ *
+ * The box is dark in both schemes (qits-2086): the inverse surface in the light one, the dark
+ * scheme's subtle surface in the dark one, since xterm.js's ANSI palette is made for a dark
+ * background. xterm.js paints its own colours, read from the box when it mounts, so it reads them again
+ * whenever the scheme changes: `data-theme` on `<html>` (a `MutationObserver`) or the OS's
+ * `prefers-color-scheme` (its media query's `change`).
  */
 @Component({
   selector: 'ui-terminal-screen',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
+  // The app's one `dark:` variant: the terminal stays dark in both schemes (inverse turns light).
   template: `
     <div
       #screen
-      class="box-border h-[min(40rem,70vh)] font-mono max-h-[95vh] min-h-48 overflow-hidden rounded-md border border-gray-800 bg-gray-900 px-2 text-gray-200 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-ocean-deep-300"
+      class="box-border h-[min(40rem,70vh)] font-mono max-h-[95vh] min-h-48 overflow-hidden rounded-md border border-surface-inverse bg-surface-inverse px-2 text-fg-on-inverse dark:border-line dark:bg-surface-subtle dark:text-fg focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-focus-ring"
       role="group"
       [attr.aria-label]="label()"
     >
       @if (!ready()) {
-        <pre class="m-0 font-mono text-xs/5 whitespace-pre-wrap text-gray-200" role="log">{{
-          pendingText()
-        }}</pre>
+        <pre
+          class="m-0 font-mono text-xs/5 whitespace-pre-wrap text-fg-on-inverse dark:text-fg"
+          role="log"
+          >{{ pendingText() }}</pre>
       }
     </div>
   `,
@@ -112,7 +120,8 @@ export class TerminalScreen {
     if (this.destroyed) return;
 
     // xterm.js paints its own colours and font: the box's, from its Tailwind classes.
-    const box = host.ownerDocument.defaultView.getComputedStyle(host);
+    const view = host.ownerDocument.defaultView;
+    const box = view.getComputedStyle(host);
     const terminal = new Terminal({
       cursorBlink: true,
       disableStdin: !this.attached(),
@@ -121,11 +130,7 @@ export class TerminalScreen {
       fontSize: 13,
       screenReaderMode: true,
       scrollback: 6000,
-      theme: {
-        background: box.backgroundColor,
-        foreground: box.color,
-        cursor: box.color,
-      },
+      theme: this.colours(),
     });
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
@@ -148,19 +153,43 @@ export class TerminalScreen {
       this.observer.observe(host);
     }
     // A host whose height is a measured pixel value does not resize with the window by itself.
-    const view = host.ownerDocument.defaultView;
-    if (view) {
-      const onViewportResize = () => this.relayout();
-      view.addEventListener('resize', onViewportResize);
-      this.disposables.push({
-        dispose: () => view.removeEventListener('resize', onViewportResize),
-      });
-    }
+    const onViewportResize = () => this.relayout();
+    view.addEventListener('resize', onViewportResize);
+    this.disposables.push({
+      dispose: () => view.removeEventListener('resize', onViewportResize),
+    });
+    this.followScheme(view);
     this.relayout();
     this.fit();
     this.ready.set(true);
     // Tell the PTY the fitted size even when fitting changed nothing (xterm then fires no resize).
     this.resized.emit({ cols: terminal.cols, rows: terminal.rows });
+  }
+
+  /** The box's colours, as xterm.js's theme: its background, and its text for the text and cursor. */
+  private colours(): { background: string; foreground: string; cursor: string } {
+    const host = this.screen().nativeElement;
+    const box = host.ownerDocument.defaultView!.getComputedStyle(host);
+    return { background: box.backgroundColor, foreground: box.color, cursor: box.color };
+  }
+
+  /**
+   * Repaints the terminal in the box's colours whenever the scheme may have changed: `data-theme`
+   * on `<html>` set or removed, or the OS's scheme switched (which only matters while no
+   * `data-theme` forces one, but reading the colours again is cheap).
+   */
+  private followScheme(view: Window): void {
+    const repaint = () => {
+      if (this.terminal) this.terminal.options.theme = this.colours();
+    };
+    if (typeof MutationObserver !== 'undefined') {
+      const themes = new MutationObserver(repaint);
+      themes.observe(view.document.documentElement, { attributeFilter: ['data-theme'] });
+      this.disposables.push({ dispose: () => themes.disconnect() });
+    }
+    const scheme = view.matchMedia('(prefers-color-scheme: dark)');
+    scheme.addEventListener('change', repaint);
+    this.disposables.push({ dispose: () => scheme.removeEventListener('change', repaint) });
   }
 
   /**

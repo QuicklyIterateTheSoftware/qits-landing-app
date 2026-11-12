@@ -89,14 +89,14 @@ describe('Breadcrumbs', () => {
       [...item.querySelectorAll('span[aria-hidden="true"]')].map((separator) => classes(separator)),
     );
     expect(separators).toEqual([
-      ['px-2 shrink-0 text-gray-400'],
-      ['px-2 shrink-0 text-gray-400'],
+      ['px-2 shrink-0 text-fg-faint'],
+      ['px-2 shrink-0 text-fg-faint'],
       // The parent: its leading separator only from md up, its trailing one only below.
       [
-        'hidden md:inline px-2 shrink-0 text-gray-400',
-        "after:content-['›'] md:hidden px-2 shrink-0 text-gray-400",
+        'hidden md:inline px-2 shrink-0 text-fg-faint',
+        "after:content-['›'] md:hidden px-2 shrink-0 text-fg-faint",
       ],
-      ['hidden md:inline px-2 shrink-0 text-gray-400'],
+      ['hidden md:inline px-2 shrink-0 text-fg-faint'],
     ]);
     // The parent's trailing separator comes after its label, so it clips with the parent; it is
     // generated content, so the trail's text has one "›" between the parent and the current page.
@@ -164,7 +164,7 @@ describe('Breadcrumbs', () => {
     expect(items).toHaveLength(1);
     expect(classes(items[0])).toBe('flex items-center max-md:-order-1 min-w-0 overflow-hidden');
     expect(classes(items[0].querySelector('span[aria-hidden="true"]'))).toBe(
-      'hidden md:inline px-2 shrink-0 text-gray-400',
+      'hidden md:inline px-2 shrink-0 text-fg-faint',
     );
     expect(items[0].querySelectorAll('span[aria-hidden="true"]')).toHaveLength(1);
     expect(button.getAttribute('aria-label')).toBe('Show the full path: qits');

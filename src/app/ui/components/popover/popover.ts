@@ -89,7 +89,7 @@ type PointerKind = 'fine' | 'coarse';
       <div
         [id]="panelId()"
         role="tooltip"
-        class="w-max max-w-xs rounded-lg border border-charcoal-brown-200 bg-white px-3 py-2 text-left text-sm font-normal whitespace-normal text-charcoal-brown-900 shadow-lg"
+        class="w-max max-w-xs rounded-lg border border-line bg-surface px-3 py-2 text-left text-sm font-normal whitespace-normal text-fg shadow-lg"
       >
         <ng-content select="[popover-content]" />
       </div>

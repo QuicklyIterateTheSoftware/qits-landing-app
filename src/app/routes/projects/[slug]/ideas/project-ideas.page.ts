@@ -64,7 +64,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Ideas" [actions]="actions()">
-        <div class="mb-4 flex flex-wrap items-center gap-4 text-sm text-charcoal-brown-800">
+        <div class="mb-4 flex flex-wrap items-center gap-4 text-sm text-fg">
           <div class="flex gap-1" role="group" aria-label="Status">
             @for (option of filters; track option.label) {
               <button
@@ -72,8 +72,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 class="h-7 cursor-pointer rounded-md border px-2 text-xs font-semibold"
                 [class]="
                   status() === option.value
-                    ? 'border-ocean-deep-600 bg-ocean-deep-50 text-ocean-deep-800'
-                    : 'border-charcoal-brown-200 bg-white text-charcoal-brown-700'
+                    ? 'border-accent-line bg-accent-soft text-accent'
+                    : 'border-line bg-surface text-fg-soft'
                 "
                 [attr.aria-pressed]="status() === option.value"
                 (click)="status.set(option.value)"
@@ -97,7 +97,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
           [class.hidden]="state() !== 'error'"
           (retry)="retry()"
         />
-        <p role="alert" class="m-0 mb-4 text-sm text-cinnabar-700" [class.hidden]="!refusal()">
+        <p role="alert" class="m-0 mb-4 text-sm text-danger" [class.hidden]="!refusal()">
           {{ refusal() }}
         </p>
         <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="state() === 'error'">
@@ -110,7 +110,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
           >
             @for (idea of shown(); track idea.id) {
               <li
-                class="relative flex flex-wrap items-baseline gap-2 rounded-md border border-gray-200 bg-white px-3 py-2"
+                class="relative flex flex-wrap items-baseline gap-2 rounded-md border border-line bg-surface px-3 py-2"
                 uiReorderItem
                 [reorderItemLabel]="idea.title ?? ''"
               >
@@ -119,7 +119,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   <ui-chip label="archived" />
                 }
                 <a
-                  class="font-semibold break-words text-ocean-deep-700 no-underline hover:underline"
+                  class="font-semibold break-words text-accent no-underline hover:underline"
                   [qitsExit]="listed.open"
                   [exitParams]="{ slug: slug(), ideaId: idea.id ?? '' }"
                   >{{ idea.title }}</a
@@ -129,7 +129,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             }
           </ul>
           <p
-            class="m-0 px-3 py-8 text-center text-sm text-gray-500"
+            class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
             [class]="state() === 'loaded' && shown().length === 0 ? 'block' : 'hidden'"
           >
             {{ emptyText() }}

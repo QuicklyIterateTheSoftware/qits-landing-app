@@ -78,7 +78,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Release Requests">
-        <p class="mt-0 mb-4 text-sm text-gray-600">
+        <p class="mt-0 mb-4 text-sm text-fg-soft">
           The open requests plus the last finalized ones, across all of this project’s repositories.
           A request stays open until its release is finalized.
         </p>
@@ -96,8 +96,8 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                 class="rounded-md border px-3 py-2"
                 [class]="
                   needs.length
-                    ? 'border-sunflower-gold-400 bg-sunflower-gold-50 ring-1 ring-sunflower-gold-400'
-                    : 'border-gray-200 bg-white'
+                    ? 'border-warning-line bg-warning-soft ring-1 ring-warning-line'
+                    : 'border-line bg-surface'
                 "
               >
                 <div class="flex flex-wrap items-baseline gap-2">
@@ -127,7 +127,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                     >
                   }
                   <a
-                    class="font-semibold break-all text-ocean-deep-700 no-underline hover:underline"
+                    class="font-semibold break-all text-accent no-underline hover:underline"
                     [qitsExit]="opening.request"
                     [exitParams]="{ slug: slug(), requestId: ref(request) }"
                     >{{ request.qualifiedId ?? request.repoName }}</a
@@ -137,7 +137,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                       <span class="inline-flex min-w-0 items-baseline gap-1" data-item>
                         @if (item.qualifiedId) {
                           <a
-                            class="font-mono text-sm whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
+                            class="font-mono text-sm whitespace-nowrap text-accent no-underline hover:underline"
                             [qitsExit]="opening.workItem"
                             [exitParams]="{ slug: slug(), id: item.qualifiedId }"
                             data-work-item
@@ -145,7 +145,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                           >
                         }
                         <a
-                          class="wrap-anywhere text-gray-900 no-underline hover:underline"
+                          class="wrap-anywhere text-fg no-underline hover:underline"
                           [qitsExit]="opening.request"
                           [exitParams]="{ slug: slug(), requestId: ref(request) }"
                           >{{ item.text }}</a
@@ -155,17 +155,17 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   </span>
                   @if (count(request); as counted) {
                     <span
-                      class="text-xs whitespace-nowrap text-gray-400"
+                      class="text-xs whitespace-nowrap text-fg-faint"
                       title="Counted branches of the feature freeze's threshold: at the threshold, new asks queue behind this request"
                       >{{ counted }}</span
                     >
                   }
-                  <span class="text-xs whitespace-nowrap text-gray-500">{{
+                  <span class="text-xs whitespace-nowrap text-fg-muted">{{
                     when(request.updatedAt)
                   }}</span>
                 </div>
                 <div
-                  class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-gray-500"
+                  class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-fg-muted"
                 >
                   <span [class]="request.version ? 'inline' : 'hidden'"
                     >version <span class="font-mono">{{ request.version }}</span></span
@@ -179,7 +179,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   <ui-lifecycle-line [points]="summary(request)" />
                   @if (needs[0]; as first) {
                     <a
-                      class="inline-flex items-center gap-1 font-semibold text-sunflower-gold-900 no-underline hover:underline"
+                      class="inline-flex items-center gap-1 font-semibold text-warning no-underline hover:underline"
                       [qitsExit]="opening.attention"
                       [exitParams]="{ slug: slug(), requestId: ref(request) }"
                       [exitFragment]="first.anchor"
@@ -203,7 +203,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
                   <app-release-withdraw class="ml-auto" [request]="request" />
                 </div>
                 <p
-                  class="mt-1 mb-0 text-sm break-words text-gray-700"
+                  class="mt-1 mb-0 text-sm break-words text-fg-soft"
                   [class]="request.detail ? 'block' : 'hidden'"
                 >
                   {{ request.detail }}
@@ -212,7 +212,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
             }
           </ul>
           <p
-            class="m-0 px-3 py-8 text-center text-sm text-gray-500"
+            class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
             [class]="state() === 'loaded' && requests().length === 0 ? 'block' : 'hidden'"
           >
             Nothing is open in this project, and no release has been finalized recently.

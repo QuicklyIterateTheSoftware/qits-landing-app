@@ -42,32 +42,30 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
   imports: [Chip, QitsExit],
   host: { class: 'block' },
   template: `
-    <div
-      class="flex flex-col gap-1 rounded-md border border-charcoal-brown-200 px-4 py-2.5 text-sm"
-    >
+    <div class="flex flex-col gap-1 rounded-md border border-line px-4 py-2.5 text-sm">
       <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         @if (link(); as params) {
           <a
-            class="font-semibold text-ocean-deep-700 no-underline hover:underline"
+            class="font-semibold text-accent no-underline hover:underline"
             [qitsExit]="opening.open"
             [exitParams]="params"
             >{{ name() }}</a
           >
         } @else {
-          <span class="font-semibold text-charcoal-brown-900">{{ name() }}</span>
+          <span class="font-semibold text-fg">{{ name() }}</span>
         }
         @if (agent().entityTitle; as title) {
-          <span class="min-w-0 text-charcoal-brown-800">{{ title }}</span>
+          <span class="min-w-0 text-fg">{{ title }}</span>
         }
       </div>
-      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-brown-600">
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-fg-soft">
         <ui-chip [label]="state()" [tone]="stateTone()" />
         <span>{{ runState() }}</span>
         @if (doing(); as doing) {
           <span aria-hidden="true">·</span>
           <span
             [class.font-semibold]="doing === 'waiting on you'"
-            [class.text-cinnabar-700]="doing === 'waiting on you'"
+            [class.text-danger]="doing === 'waiting on you'"
             >{{ doing }}</span
           >
         }
@@ -80,10 +78,10 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
         }
       </div>
       @if (wait(); as wait) {
-        <p class="m-0 text-sunflower-gold-800" role="status">{{ wait }}</p>
+        <p class="m-0 text-warning" role="status">{{ wait }}</p>
       }
       @if (agent().wrapperBranch; as branch) {
-        <code class="font-mono text-xs text-charcoal-brown-600">{{ branch }}</code>
+        <code class="font-mono text-xs text-fg-soft">{{ branch }}</code>
       }
       <ng-content />
     </div>

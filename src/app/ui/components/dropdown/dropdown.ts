@@ -130,14 +130,14 @@ export class Dropdown {
   readonly isOpen = this.open.asReadonly();
 
   protected readonly iconButton =
-    'relative inline-flex size-9 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-900 aria-expanded:bg-gray-100 aria-expanded:text-gray-900';
+    'relative inline-flex size-9 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-fg-muted hover:bg-surface-muted hover:text-fg aria-expanded:bg-surface-muted aria-expanded:text-fg';
 
   protected readonly panelClasses = computed(() => {
     const start = this.align() === 'start';
     const edge = start ? 'left-0' : 'right-0';
     const frame =
       this.panelClass() ??
-      `rounded-xl border border-gray-200 bg-white shadow-lg ${start ? 'w-max max-w-[calc(100vw-4rem)]' : 'w-80'}`;
+      `rounded-xl border border-line bg-surface shadow-lg ${start ? 'w-max max-w-[calc(100vw-4rem)]' : 'w-80'}`;
     return `${edge} ${frame}`;
   });
 

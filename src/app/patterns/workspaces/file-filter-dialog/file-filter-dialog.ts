@@ -22,7 +22,7 @@ export interface GeneratedSet {
 
 /** A small bordered button, written out in full so Tailwind finds it. */
 const SMALL =
-  'cursor-pointer rounded border border-charcoal-brown-200 bg-white px-1.5 py-0.5 font-sans text-xs text-charcoal-brown-600 disabled:cursor-default disabled:text-charcoal-brown-300';
+  'cursor-pointer rounded border border-line bg-surface px-1.5 py-0.5 font-sans text-xs text-fg-control disabled:cursor-default disabled:text-fg-faint';
 
 /**
  * The Files tab's advanced filter (epic qits-1230), ported from qits-workspaces-frontend's: an
@@ -39,16 +39,16 @@ const SMALL =
   host: { class: 'block' },
   template: `
     <section
-      class="flex flex-col gap-2 rounded-md border border-charcoal-brown-300 bg-charcoal-brown-50 p-3 text-sm"
+      class="flex flex-col gap-2 rounded-md border border-line-strong bg-surface-subtle p-3 text-sm"
       role="dialog"
       aria-label="Advanced file filter"
     >
       <header class="flex items-baseline justify-between gap-3">
-        <h3 class="m-0 text-sm font-semibold text-charcoal-brown-900">Filter rules</h3>
+        <h3 class="m-0 text-sm font-semibold text-fg">Filter rules</h3>
         <button type="button" [class]="small" (click)="closed.emit()">Done</button>
       </header>
 
-      <p class="m-0 text-xs text-charcoal-brown-600">
+      <p class="m-0 text-xs text-fg-muted">
         Rules run top to bottom and the <strong>last one that matches wins</strong>, the way a
         <code>.gitignore</code> does. The generated sets below run first (framework, then ignore
         list), so a <em>show</em> rule up here can always bring back a file they hid.
@@ -64,7 +64,7 @@ const SMALL =
               (change)="patch(index, { enabled: !rule.enabled })"
             />
             <select
-              class="rounded border border-charcoal-brown-300 bg-white px-1 py-0.5 text-xs"
+              class="rounded border border-line-strong bg-surface px-1 py-0.5 text-xs"
               [attr.aria-label]="'Rule ' + (index + 1) + ' mode'"
               [value]="rule.mode"
               (change)="patch(index, { mode: modeOf($event) })"
@@ -73,7 +73,7 @@ const SMALL =
               <option value="hide">hide</option>
             </select>
             <select
-              class="rounded border border-charcoal-brown-300 bg-white px-1 py-0.5 text-xs"
+              class="rounded border border-line-strong bg-surface px-1 py-0.5 text-xs"
               [attr.aria-label]="'Rule ' + (index + 1) + ' match'"
               [value]="rule.kind"
               (change)="patch(index, { kind: kindOf($event) })"
@@ -84,7 +84,7 @@ const SMALL =
             </select>
             <input
               type="text"
-              class="min-w-24 grow rounded border border-charcoal-brown-300 bg-white px-1.5 py-0.5 text-xs"
+              class="min-w-24 grow rounded border border-line-strong bg-surface px-1.5 py-0.5 text-xs"
               autocomplete="off"
               spellcheck="false"
               placeholder="a name, or a path with a /"
@@ -126,7 +126,7 @@ const SMALL =
       </div>
 
       @if (frameworkSets().length > 0 || ignoreSets().length > 0) {
-        <h4 class="m-0 mt-2 text-xs font-semibold tracking-wide text-charcoal-brown-600 uppercase">
+        <h4 class="m-0 mt-2 text-xs font-semibold tracking-wide text-fg-muted uppercase">
           Generated sets
         </h4>
         @for (set of frameworkSets(); track set.id) {
@@ -139,9 +139,9 @@ const SMALL =
                 (change)="toggleFramework.emit(set.id)"
               />
               <span class="font-semibold">{{ set.name }}</span>
-              <span class="text-charcoal-brown-600">framework · {{ set.note }}</span>
+              <span class="text-fg-muted">framework · {{ set.note }}</span>
             </summary>
-            <ul class="my-1 ml-6 list-none p-0 font-mono text-charcoal-brown-700">
+            <ul class="my-1 ml-6 list-none p-0 font-mono text-fg-soft">
               @for (line of set.rules; track $index) {
                 <li>{{ line }}</li>
               }
@@ -158,11 +158,11 @@ const SMALL =
                 (change)="toggleIgnore.emit(set.id)"
               />
               <span class="font-semibold">{{ set.name }}</span>
-              <span class="text-charcoal-brown-600">ignore list · {{ set.note }}</span>
+              <span class="text-fg-muted">ignore list · {{ set.note }}</span>
             </summary>
-            <ul class="my-1 ml-6 list-none p-0 font-mono text-charcoal-brown-700">
+            <ul class="my-1 ml-6 list-none p-0 font-mono text-fg-soft">
               @if (set.on && set.rules.length === 0) {
-                <li class="font-sans text-charcoal-brown-600">Reading the ignore files…</li>
+                <li class="font-sans text-fg-muted">Reading the ignore files…</li>
               }
               @for (line of set.rules; track $index) {
                 <li>{{ line }}</li>
@@ -172,20 +172,18 @@ const SMALL =
         }
       }
 
-      <h4 class="m-0 mt-2 text-xs font-semibold tracking-wide text-charcoal-brown-600 uppercase">
-        Preview
-      </h4>
+      <h4 class="m-0 mt-2 text-xs font-semibold tracking-wide text-fg-muted uppercase">Preview</h4>
       <p class="m-0 text-xs" role="status">
         {{ preview().total }} {{ preview().total === 1 ? 'file' : 'files' }} visible.
         @if (preview().truncated) {
-          <span class="text-charcoal-brown-600">Showing the first {{ limit }}.</span>
+          <span class="text-fg-muted">Showing the first {{ limit }}.</span>
         }
       </p>
       @if (preview().total === 0) {
-        <p class="m-0 text-xs text-charcoal-brown-600">Nothing matches these rules.</p>
+        <p class="m-0 text-xs text-fg-muted">Nothing matches these rules.</p>
       } @else {
         <ul
-          class="m-0 max-h-48 list-none overflow-auto rounded border border-charcoal-brown-200 bg-white px-2 py-1 font-mono text-xs"
+          class="m-0 max-h-48 list-none overflow-auto rounded border border-line bg-surface px-2 py-1 font-mono text-xs"
         >
           @for (path of preview().paths; track path) {
             <li>{{ path }}</li>

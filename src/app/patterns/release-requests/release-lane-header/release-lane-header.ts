@@ -57,7 +57,7 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
         <!-- The chosen option carries "selected" rather than the select a bound value: a value
              bound on the select is written before its options exist. -->
         <select
-          class="mt-0.5 w-full rounded border border-charcoal-brown-300 bg-white px-0.5 text-xs disabled:opacity-60"
+          class="mt-0.5 w-full rounded border border-line-strong bg-surface px-0.5 text-xs disabled:opacity-60"
           [attr.aria-label]="'Priority of ' + source.name"
           [disabled]="!settable() || busy()"
           (change)="choose($event)"
@@ -89,7 +89,7 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
       @if (movable()) {
         @if (moving()) {
           <input
-            class="mt-0.5 w-full rounded border border-charcoal-brown-300 px-0.5 text-xs"
+            class="mt-0.5 w-full rounded border border-line-strong px-0.5 text-xs"
             type="text"
             [value]="reason()"
             (input)="reasonTyped($event)"
@@ -99,7 +99,7 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
           <div class="mt-0.5 flex flex-wrap gap-1">
             <button
               type="button"
-              class="cursor-pointer rounded border border-charcoal-brown-300 bg-white px-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+              class="cursor-pointer rounded border border-line-strong bg-surface px-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
               [disabled]="!reason().trim() || moving() === 'sending'"
               (click)="move()"
             >
@@ -107,7 +107,7 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
             </button>
             <button
               type="button"
-              class="cursor-pointer rounded border border-transparent px-1 text-xs text-charcoal-brown-600 disabled:cursor-not-allowed disabled:opacity-60"
+              class="cursor-pointer rounded border border-transparent px-1 text-xs text-fg-soft disabled:cursor-not-allowed disabled:opacity-60"
               [disabled]="moving() === 'sending'"
               (click)="cancelMove()"
             >
@@ -117,7 +117,7 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
         } @else {
           <button
             type="button"
-            class="mt-0.5 cursor-pointer border-0 bg-transparent p-0 text-left text-xs text-ocean-deep-700 hover:underline"
+            class="mt-0.5 cursor-pointer border-0 bg-transparent p-0 text-left text-xs text-accent hover:underline"
             title="Take this branch out of this request into the one queued after it, so the others release without it"
             (click)="openMove()"
           >
@@ -126,15 +126,15 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
         }
       }
     } @else {
-      <p class="m-0 mt-0.5 truncate text-xs text-charcoal-brown-500">{{ note() }}</p>
+      <p class="m-0 mt-0.5 truncate text-xs text-fg-muted">{{ note() }}</p>
     }
     @if (failure(); as failure) {
-      <p class="m-0 mt-0.5 text-xs break-words text-cinnabar-700" role="alert">
+      <p class="m-0 mt-0.5 text-xs break-words text-danger" role="alert">
         Not set — {{ failure }}.
       </p>
     }
     @if (moveFailure(); as failure) {
-      <p class="m-0 mt-0.5 text-xs break-words text-cinnabar-700" role="alert">
+      <p class="m-0 mt-0.5 text-xs break-words text-danger" role="alert">
         Not moved — {{ failure }}.
       </p>
     }

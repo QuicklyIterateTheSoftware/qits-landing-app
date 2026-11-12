@@ -19,6 +19,7 @@ import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
+import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
 import { joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
@@ -29,6 +30,7 @@ import {
   answeringRow,
   appWideCalls,
   callKey,
+  colorSchemesOf,
   forwardExits,
   freezeCalls,
   freezeResults,
@@ -51,6 +53,7 @@ import {
   unreachable,
   VIEWPORT_SIZES,
   type Freeze,
+  type FreezeColorScheme,
   type FreezeKind,
   type FreezeViewport,
   type FreezeRecord,
@@ -79,8 +82,14 @@ type OutcomeStatus = 'unrecorded' | 'invalid' | 'undeclared' | 'declared';
 /** The attribute the highlighted trigger carries in the frame (qits-2006). */
 const HIGHLIGHT = 'data-qits-builder-highlight';
 
-/** The frame's highlight style, injected as `<style data-qits-builder>` (cinnabar-500; qits-2006). */
-const HIGHLIGHT_CSS = `[${HIGHLIGHT}] { outline: 3px solid oklch(57.66% 0.21 28.2) !important; outline-offset: 2px !important; }`;
+/**
+ * The frame's highlight style, injected as `<style data-qits-builder>` (qits-2006): an outline in the
+ * theme's `--color-accent` (qits-2086). The freeze's own value of the token wins, so the outline
+ * follows the scheme the freeze was shot in; a freeze whose CSS does not define it (one frozen
+ * before the theme) falls back to `accent`, this page's value of the token read at run time.
+ */
+const highlightCss = (accent: string) =>
+  `[${HIGHLIGHT}] { outline: 3px solid var(--color-accent, ${accent || 'currentColor'}) !important; outline-offset: 2px !important; }`;
 
 /** `value` escaped for a double-quoted CSS attribute value (qits-2006). */
 const quoted = (value: string) => value.replace(/["\\]/g, '\\$&').replace(/\n/g, '\\a ');
@@ -105,6 +114,12 @@ const VIEWPORT_CHOICES: readonly {
   query: id.toLowerCase(),
   label: `${id.charAt(0)}${id.slice(1).toLowerCase()}`,
 }));
+
+/** The scheme switch's buttons (qits-2086), as the library shoots them: LIGHT, then DARK. */
+const SCHEME_CHOICES: readonly { readonly id: FreezeColorScheme; readonly label: string }[] = [
+  { id: 'LIGHT', label: 'Light' },
+  { id: 'DARK', label: 'Dark' },
+];
 
 /** The width the frame's border adds to its box (1px each side), kept out of the frozen width. */
 const FRAME_BORDER = 2;
@@ -205,6 +220,12 @@ interface EntityGroup {
  *   `ResizeObserver`), its box as tall as the scaled frame. The highlight and the link clicks live in
  *   the frame's own document, so the scale moves them with it. A freeze without one keeps the
  *   full-width, 32rem frame.
+ * - Colour schemes (qits-2086): when the bundle was frozen in schemes (`colorSchemesOf`: the
+ *   manifest's `colorSchemes`, or a freeze's `colorScheme`), a Light / Dark switch beside the
+ *   viewport switch picks the scheme the state is drawn in (`stateFreeze`: the freeze of that
+ *   scheme at the width, else the width's first). Until one is picked it is the app's own
+ *   (`ThemePreferenceStore.resolved`); a pick is kept for the visit, not in the URL. The frame
+ *   paints no background of its own: a freeze paints its scheme's.
  * - Selection: the URL's query, `route` (the route's full path), `state` (the state's name) and
  *   `viewport` (`phone`, `tablet`, `desktop`), so Back walks back through tree, tab, switch and link
  *   clicks. A `route` that is not a route of the tree opens the first route with states; a `state`
@@ -325,7 +346,7 @@ interface EntityGroup {
       <app-page-layout>
         <div slot="header" class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 class="m-0 text-3xl leading-[1.1] font-bold">UI builder</h1>
-          <span class="repo font-mono text-charcoal-brown-700">{{ repo() }}</span>
+          <span class="repo font-mono text-fg-soft">{{ repo() }}</span>
           @if (scopeLabel(); as label) {
             <ui-chip class="scope self-center" [label]="label" />
           }
@@ -333,7 +354,7 @@ interface EntityGroup {
         <ui-spinner [state]="state()" class="min-h-48">
           @switch (bundle()?.status) {
             @case ('none') {
-              <p class="none m-0 text-sm text-charcoal-brown-600">
+              <p class="none m-0 text-sm text-fg-soft">
                 No frozen routes published for {{ repo() }}.
               </p>
             }
@@ -351,8 +372,8 @@ interface EntityGroup {
                         class="panel-tab cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
                         [class]="
                           tab.id === leftTab()
-                            ? 'bg-charcoal-brown-800 text-white'
-                            : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
+                            ? 'bg-surface-inverse text-fg-on-inverse'
+                            : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
                         "
                         [attr.aria-selected]="tab.id === leftTab()"
                         (click)="leftTab.set(tab.id)"
@@ -368,10 +389,10 @@ interface EntityGroup {
                           class="route-row group flex w-full items-center rounded"
                           [class]="
                             row.kind === 'route' && row.fullPath === selectedPath()
-                              ? 'bg-charcoal-brown-800 text-white'
+                              ? 'bg-surface-inverse text-fg-on-inverse'
                               : row.kind === 'route'
-                                ? 'hover:bg-charcoal-brown-50'
-                                : 'text-charcoal-brown-500'
+                                ? 'hover:bg-surface-subtle'
+                                : 'text-fg-muted'
                           "
                         >
                           <button
@@ -409,7 +430,7 @@ interface EntityGroup {
                                 [class.gap]="mark.gaps > 0"
                                 [class]="
                                   mark.gaps > 0
-                                    ? 'bg-sunflower-gold-100 text-sunflower-gold-800'
+                                    ? 'bg-warning-soft text-warning-strong'
                                     : 'opacity-70'
                                 "
                                 role="img"
@@ -447,10 +468,10 @@ interface EntityGroup {
                     <section aria-label="Entities" class="text-[0.8125rem]">
                       @switch (entityState()) {
                         @case ('loading') {
-                          <p class="m-0 text-charcoal-brown-600">Reading the entity maps…</p>
+                          <p class="m-0 text-fg-soft">Reading the entity maps…</p>
                         }
                         @case ('error') {
-                          <p class="entities-error m-0 text-cinnabar-700">
+                          <p class="entities-error m-0 text-danger">
                             Could not read the entity maps.
                           </p>
                         }
@@ -460,30 +481,28 @@ interface EntityGroup {
                             entities have no route
                           </p>
                           @if (entityCounts().leftOut; as leftOut) {
-                            <p class="left-out m-0 mt-0.5 text-xs text-charcoal-brown-600">
+                            <p class="left-out m-0 mt-0.5 text-xs text-fg-soft">
                               {{ leftOut }} technical or projection
                               {{ leftOut === 1 ? 'entity' : 'entities' }} left out.
                             </p>
                           }
                           @for (group of entityGroups(); track group.key) {
-                            <h3
-                              class="group m-0 mt-3 mb-1 text-xs font-semibold text-charcoal-brown-700"
-                            >
+                            <h3 class="group m-0 mt-3 mb-1 text-xs font-semibold text-fg-soft">
                               {{ group.application }}
                             </h3>
                             @switch (group.status) {
                               @case ('none') {
-                                <p class="no-map m-0 text-xs text-charcoal-brown-600">
+                                <p class="no-map m-0 text-xs text-fg-soft">
                                   No entity map published
                                 </p>
                               }
                               @case ('error') {
-                                <p class="map-error m-0 text-xs text-cinnabar-700">
+                                <p class="map-error m-0 text-xs text-danger">
                                   Could not read its entity map
                                 </p>
                               }
                               @case ('loading') {
-                                <p class="m-0 text-xs text-charcoal-brown-600">Reading…</p>
+                                <p class="m-0 text-xs text-fg-soft">Reading…</p>
                               }
                               @default {
                                 @for (entity of group.entities; track entity.key) {
@@ -493,8 +512,8 @@ interface EntityGroup {
                                       class="entity flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left"
                                       [class]="
                                         entity.key === selectedEntity()?.key
-                                          ? 'bg-charcoal-brown-800 text-white'
-                                          : 'hover:bg-charcoal-brown-50'
+                                          ? 'bg-surface-inverse text-fg-on-inverse'
+                                          : 'hover:bg-surface-subtle'
                                       "
                                       [attr.aria-current]="
                                         entity.key === selectedEntity()?.key ? 'true' : null
@@ -519,7 +538,7 @@ interface EntityGroup {
                                     </button>
                                     @if (slug(); as project) {
                                       <a
-                                        class="entity-link shrink-0 px-1 text-xs text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
+                                        class="entity-link shrink-0 px-1 text-xs text-fg-soft no-underline hover:text-fg"
                                         [qitsExit]="entityPages.listedEntity"
                                         [exitParams]="{
                                           slug: project,
@@ -533,9 +552,7 @@ interface EntityGroup {
                                     }
                                   </div>
                                 } @empty {
-                                  <p class="m-0 text-xs text-charcoal-brown-600">
-                                    No domain entity.
-                                  </p>
+                                  <p class="m-0 text-xs text-fg-soft">No domain entity.</p>
                                 }
                               }
                             }
@@ -558,7 +575,7 @@ interface EntityGroup {
                             <li class="inbound-route">
                               <button
                                 type="button"
-                                class="inbound flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left hover:bg-charcoal-brown-50"
+                                class="inbound flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left hover:bg-surface-subtle"
                                 [class.unreachable]="route.unreachable"
                                 [attr.aria-expanded]="expandedInbound().has(route.fullPath)"
                                 (click)="toggleInbound(route.fullPath)"
@@ -596,7 +613,7 @@ interface EntityGroup {
                                       }"
                                     />
                                   } @empty {
-                                    <li class="no-sources px-2 text-xs text-charcoal-brown-600">
+                                    <li class="no-sources px-2 text-xs text-fg-soft">
                                       {{
                                         route.entry
                                           ? 'Entered from outside the app.'
@@ -609,9 +626,7 @@ interface EntityGroup {
                             </li>
                           }
                         </ul>
-                        <h3
-                          class="outcome-group m-0 mt-3 mb-1 text-xs font-semibold text-charcoal-brown-700"
-                        >
+                        <h3 class="outcome-group m-0 mt-3 mb-1 text-xs font-semibold text-fg-soft">
                           Leaves without a fixed target
                         </h3>
                         <ul class="unfixed m-0 flex list-none flex-col gap-0.5 p-0">
@@ -621,9 +636,7 @@ interface EntityGroup {
                               [ngTemplateOutletContext]="{ $implicit: source, target: null }"
                             />
                           } @empty {
-                            <li class="text-xs text-charcoal-brown-600">
-                              No return or external outcome.
-                            </li>
+                            <li class="text-xs text-fg-soft">No return or external outcome.</li>
                           }
                         </ul>
                       } @else {
@@ -637,7 +650,7 @@ interface EntityGroup {
                   @if (selectedPath(); as path) {
                     <h2 class="m-0 mb-2 font-mono text-base">/{{ path }}</h2>
                     @if (selectedRow()?.alsoAnswers; as also) {
-                      <p class="also-answers m-0 mb-2 text-xs text-charcoal-brown-600">
+                      <p class="also-answers m-0 mb-2 text-xs text-fg-soft">
                         Also answers
                         @for (address of also; track address; let last = $last) {
                           <span class="font-mono">/{{ address }}</span
@@ -647,9 +660,7 @@ interface EntityGroup {
                     }
                     @if (forward()) {
                       <section aria-label="Forwards to" class="forwards mb-3 text-[0.8125rem]">
-                        <h3 class="m-0 mb-1 text-xs font-semibold text-charcoal-brown-700">
-                          Forwards to:
-                        </h3>
+                        <h3 class="m-0 mb-1 text-xs font-semibold text-fg-soft">Forwards to:</h3>
                         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
                           @for (exit of forwards(); track exit.key) {
                             <li class="forward flex flex-wrap items-center gap-1">
@@ -664,7 +675,7 @@ interface EntityGroup {
                               />
                             </li>
                           } @empty {
-                            <li class="text-xs text-charcoal-brown-600">No exit declared.</li>
+                            <li class="text-xs text-fg-soft">No exit declared.</li>
                           }
                         </ul>
                       </section>
@@ -678,8 +689,8 @@ interface EntityGroup {
                             class="state cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
                             [class]="
                               i === stateIndex()
-                                ? 'bg-charcoal-brown-800 text-white'
-                                : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
+                                ? 'bg-surface-inverse text-fg-on-inverse'
+                                : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
                             "
                             [attr.aria-selected]="i === stateIndex()"
                             (click)="pickState(item.name)"
@@ -695,33 +706,61 @@ interface EntityGroup {
                           </button>
                         }
                       </div>
-                      @if (viewports()) {
-                        <div
-                          role="group"
-                          aria-label="Viewport"
-                          class="viewports mb-2 flex flex-wrap gap-1"
-                        >
-                          @for (choice of viewportChoices; track choice.id) {
-                            <button
-                              type="button"
-                              class="viewport cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
-                              [class]="
-                                choice.id === viewport()
-                                  ? 'bg-charcoal-brown-800 text-white'
-                                  : 'bg-charcoal-brown-100 text-charcoal-brown-700 hover:bg-charcoal-brown-200'
-                              "
-                              [attr.aria-pressed]="choice.id === viewport()"
-                              (click)="pickViewport(choice.query)"
+                      @if (viewports() || schemeChoices().length) {
+                        <div class="switches flex flex-wrap gap-x-3">
+                          @if (viewports()) {
+                            <div
+                              role="group"
+                              aria-label="Viewport"
+                              class="viewports mb-2 flex flex-wrap gap-1"
                             >
-                              {{ choice.label }}
-                            </button>
+                              @for (choice of viewportChoices; track choice.id) {
+                                <button
+                                  type="button"
+                                  class="viewport cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                                  [class]="
+                                    choice.id === viewport()
+                                      ? 'bg-surface-inverse text-fg-on-inverse'
+                                      : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                                  "
+                                  [attr.aria-pressed]="choice.id === viewport()"
+                                  (click)="pickViewport(choice.query)"
+                                >
+                                  {{ choice.label }}
+                                </button>
+                              }
+                            </div>
+                          }
+                          @if (schemeChoices().length) {
+                            <!-- Light / Dark (qits-2086): only for a bundle frozen in schemes. -->
+                            <div
+                              role="group"
+                              aria-label="Colour scheme"
+                              class="schemes mb-2 flex flex-wrap gap-1"
+                            >
+                              @for (choice of schemeChoices(); track choice.id) {
+                                <button
+                                  type="button"
+                                  class="scheme cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                                  [class]="
+                                    choice.id === scheme()
+                                      ? 'bg-surface-inverse text-fg-on-inverse'
+                                      : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                                  "
+                                  [attr.aria-pressed]="choice.id === scheme()"
+                                  (click)="pickScheme(choice.id)"
+                                >
+                                  {{ choice.label }}
+                                </button>
+                              }
+                            </div>
                           }
                         </div>
                       }
                       <!--
                         One line, always as tall, so a notice never moves the frame (qits-2072).
                       -->
-                      <p class="notice-line m-0 mb-2 h-4 truncate text-xs text-charcoal-brown-600">
+                      <p class="notice-line m-0 mb-2 h-4 truncate text-xs text-fg-soft">
                         @if (linkNotice() ?? highlightNotice(); as notice) {
                           <span class="link-notice">{{ notice }}</span>
                         }
@@ -740,7 +779,7 @@ interface EntityGroup {
                                 the frame's link clicks; nothing in the frame can run.
                               -->
                               <iframe
-                                class="block origin-top-left box-content rounded-md border border-charcoal-brown-200 bg-white"
+                                class="block origin-top-left box-content rounded-md border border-line"
                                 sandbox="allow-same-origin"
                                 [style.width.px]="size.width"
                                 [style.height.px]="size.height"
@@ -759,7 +798,7 @@ interface EntityGroup {
                               frame's link clicks; nothing in the frame can run.
                             -->
                             <iframe
-                              class="block h-[32rem] w-full rounded-md border border-charcoal-brown-200 bg-white"
+                              class="block h-[32rem] w-full rounded-md border border-line"
                               sandbox="allow-same-origin"
                               [srcdoc]="html"
                               [title]="'Frozen state ' + (freeze()?.name ?? '')"
@@ -768,7 +807,7 @@ interface EntityGroup {
                           }
                         } @else {
                           <div
-                            class="frame-placeholder flex h-[32rem] items-center justify-center rounded-md border border-charcoal-brown-200 bg-white text-sm text-charcoal-brown-600"
+                            class="frame-placeholder flex h-[32rem] items-center justify-center rounded-md border border-line bg-surface text-sm text-fg-soft"
                           >
                             {{
                               freezeFailed()
@@ -779,7 +818,7 @@ interface EntityGroup {
                         }
                       </div>
                     } @else if (!forward()) {
-                      <p class="no-states m-0 text-sm text-charcoal-brown-600">
+                      <p class="no-states m-0 text-sm text-fg-soft">
                         No screenshot test for this route, so nothing is frozen.
                       </p>
                     }
@@ -791,9 +830,7 @@ interface EntityGroup {
                     aria-label="Entity routes"
                     class="text-[0.8125rem] xl:min-h-0 xl:overflow-y-auto xl:pb-6"
                   >
-                    <h3 class="m-0 text-xs font-semibold text-charcoal-brown-700 uppercase">
-                      Routes showing
-                    </h3>
+                    <h3 class="m-0 text-xs font-semibold text-fg-soft uppercase">Routes showing</h3>
                     <p class="entity-heading m-0 mb-1">
                       @if (slug(); as project) {
                         <a
@@ -810,16 +847,14 @@ interface EntityGroup {
                       } @else {
                         <span class="font-mono">{{ entity.name }}</span>
                       }
-                      <span class="text-xs text-charcoal-brown-500">
-                        · {{ entity.application }}</span
-                      >
+                      <span class="text-xs text-fg-muted"> · {{ entity.application }}</span>
                     </p>
                     <ul class="m-0 flex list-none flex-col gap-1 p-0">
                       @for (route of entity.routes; track route.route) {
                         <li class="entity-route flex flex-wrap items-center gap-1">
                           <button
                             type="button"
-                            class="cursor-pointer rounded px-1 text-left font-mono text-xs hover:bg-charcoal-brown-50"
+                            class="cursor-pointer rounded px-1 text-left font-mono text-xs hover:bg-surface-subtle"
                             (click)="openRoute(route.route)"
                           >
                             /{{ route.route }}
@@ -829,7 +864,7 @@ interface EntityGroup {
                           }
                         </li>
                       } @empty {
-                        <li class="text-charcoal-brown-600">No route shows this.</li>
+                        <li class="text-fg-soft">No route shows this.</li>
                       }
                     </ul>
                   </aside>
@@ -838,7 +873,7 @@ interface EntityGroup {
                     aria-label="Calls"
                     class="text-[0.8125rem] xl:min-h-0 xl:overflow-y-auto xl:pb-6"
                   >
-                    <h3 class="m-0 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase">
+                    <h3 class="m-0 mb-1 text-xs font-semibold text-fg-soft uppercase">
                       Calls and states
                     </h3>
                     <ul class="own-calls m-0 flex list-none flex-col gap-1.5 p-0">
@@ -849,18 +884,16 @@ interface EntityGroup {
                         />
                       } @empty {
                         @if (calls().appWide.length) {
-                          <li class="only-app-wide text-charcoal-brown-600">
-                            No call but the app-wide ones.
-                          </li>
+                          <li class="only-app-wide text-fg-soft">No call but the app-wide ones.</li>
                         } @else if (!calls().hidden) {
-                          <li class="text-charcoal-brown-600">Its spec answers no request.</li>
+                          <li class="text-fg-soft">Its spec answers no request.</li>
                         }
                       }
                     </ul>
                     @if (calls().appWide.length; as count) {
                       <button
                         type="button"
-                        class="app-wide-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                        class="app-wide-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-fg-soft hover:bg-surface-subtle hover:text-fg"
                         [attr.aria-expanded]="appWideOpen()"
                         (click)="appWideOpen.set(!appWideOpen())"
                       >
@@ -880,26 +913,24 @@ interface EntityGroup {
                       }
                     }
                     @if (calls().hidden; as hidden) {
-                      <p class="hidden-calls m-0 mt-2 text-xs text-charcoal-brown-600">
+                      <p class="hidden-calls m-0 mt-2 text-xs text-fg-soft">
                         Hid {{ hidden }} call{{ hidden === 1 ? '' : 's' }} to providers outside
                         {{ scopeComponent() }}.
                       </p>
                     }
 
-                    <h3
-                      class="m-0 mt-4 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase"
-                    >
+                    <h3 class="m-0 mt-4 mb-1 text-xs font-semibold text-fg-soft uppercase">
                       Outcomes
                     </h3>
                     @if (outcomeStatus() === 'declared') {
                       @for (mark of shownResults(); track mark) {
-                        <p class="shown-result m-0 mb-1 text-xs text-charcoal-brown-700">
+                        <p class="shown-result m-0 mb-1 text-xs text-fg-soft">
                           This screenshot shows the result of
                           <span class="font-mono">{{ mark }}</span>
                         </p>
                       }
                       @if (predatesTriggers()) {
-                        <p class="predates m-0 mb-1 text-xs text-charcoal-brown-600">
+                        <p class="predates m-0 mb-1 text-xs text-fg-soft">
                           This bundle predates per-screenshot outcomes; showing the whole route.
                         </p>
                       }
@@ -911,11 +942,11 @@ interface EntityGroup {
                           />
                         } @empty {
                           @if (pageOutcomes().length) {
-                            <li class="none-shown text-charcoal-brown-600">
+                            <li class="none-shown text-fg-soft">
                               This screenshot shows no trigger of this route’s outcomes.
                             </li>
                           } @else {
-                            <li class="no-outcomes text-charcoal-brown-600">
+                            <li class="no-outcomes text-fg-soft">
                               Not declared yet: {{ outcomeProgress().declaring }} of
                               {{ outcomeProgress().pages }} pages
                               {{ outcomeProgress().declaring === 1 ? 'declares' : 'declare' }}
@@ -927,7 +958,7 @@ interface EntityGroup {
                       @if (shownShared().count; as count) {
                         <button
                           type="button"
-                          class="shared-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                          class="shared-toggle mt-2 flex cursor-pointer items-center gap-1 rounded px-1 text-left text-xs font-semibold text-fg-soft hover:bg-surface-subtle hover:text-fg"
                           [attr.aria-expanded]="sharedOpen()"
                           (click)="sharedOpen.set(!sharedOpen())"
                         >
@@ -938,7 +969,7 @@ interface EntityGroup {
                         @if (sharedOpen()) {
                           @for (group of shownShared().groups; track group.route) {
                             <h4
-                              class="shared-group m-0 mt-2 mb-1 px-1 text-xs font-semibold text-charcoal-brown-600"
+                              class="shared-group m-0 mt-2 mb-1 px-1 text-xs font-semibold text-fg-soft"
                             >
                               {{ scopeOf(group.route, true) }}
                             </h4>
@@ -956,7 +987,7 @@ interface EntityGroup {
                       @if (unseenOutcomes().length; as count) {
                         <button
                           type="button"
-                          class="unseen-toggle mt-2 flex cursor-pointer items-start gap-1 rounded px-1 text-left text-xs font-semibold text-charcoal-brown-700 hover:bg-charcoal-brown-50 hover:text-charcoal-brown-900"
+                          class="unseen-toggle mt-2 flex cursor-pointer items-start gap-1 rounded px-1 text-left text-xs font-semibold text-fg-soft hover:bg-surface-subtle hover:text-fg"
                           [attr.aria-expanded]="unseenOpen()"
                           (click)="unseenOpen.set(!unseenOpen())"
                         >
@@ -984,7 +1015,7 @@ interface EntityGroup {
                                 @if (unseen.shownIn; as link) {
                                   <button
                                     type="button"
-                                    class="shown-in cursor-pointer self-start rounded px-1 text-left text-xs text-charcoal-brown-700 underline hover:bg-charcoal-brown-50"
+                                    class="shown-in cursor-pointer self-start rounded px-1 text-left text-xs text-fg-soft underline hover:bg-surface-subtle"
                                     [title]="
                                       'Open the state that shows the trigger of ' +
                                       unseen.outcome.mark
@@ -996,7 +1027,7 @@ interface EntityGroup {
                                 } @else if (
                                   unseen.outcome.triggered && unseen.outcome.triggerFreezes.length
                                 ) {
-                                  <p class="not-on-route m-0 px-1 text-xs text-charcoal-brown-600">
+                                  <p class="not-on-route m-0 px-1 text-xs text-fg-soft">
                                     No screenshot of this route shows its trigger.
                                   </p>
                                 }
@@ -1013,9 +1044,7 @@ interface EntityGroup {
                       <ng-container [ngTemplateOutlet]="outcomesMissing" />
                     }
 
-                    <h3
-                      class="m-0 mt-4 mb-1 text-xs font-semibold text-charcoal-brown-700 uppercase"
-                    >
+                    <h3 class="m-0 mt-4 mb-1 text-xs font-semibold text-fg-soft uppercase">
                       Entities
                     </h3>
                     @if (routeEntities(); as found) {
@@ -1025,7 +1054,7 @@ interface EntityGroup {
                             <span class="font-mono text-xs">{{ entity.name }}</span>
                             @if (slug(); as project) {
                               <a
-                                class="entity-link text-xs text-charcoal-brown-600 no-underline hover:text-charcoal-brown-900"
+                                class="entity-link text-xs text-fg-soft no-underline hover:text-fg"
                                 [qitsExit]="entityPages.routeEntity"
                                 [exitParams]="{
                                   slug: project,
@@ -1037,31 +1066,27 @@ interface EntityGroup {
                                 >↗</a
                               >
                             }
-                            <span class="text-xs text-charcoal-brown-500">{{
-                              entity.application
-                            }}</span>
+                            <span class="text-xs text-fg-muted">{{ entity.application }}</span>
                             @for (verb of entity.verbs; track verb) {
                               <ui-chip class="verb" [label]="verb" />
                             }
                           </li>
                         } @empty {
-                          <li class="no-entities text-charcoal-brown-600">
+                          <li class="no-entities text-fg-soft">
                             This route touches no mapped entity.
                           </li>
                         }
                       </ul>
                       @if (found.unmatched; as unmatched) {
-                        <p class="unmatched m-0 mt-2 text-xs text-charcoal-brown-600">
+                        <p class="unmatched m-0 mt-2 text-xs text-fg-soft">
                           {{ unmatched }} {{ unmatched === 1 ? 'call touches' : 'calls touch' }} no
                           mapped entity.
                         </p>
                       }
                     } @else if (entityState() === 'error') {
-                      <p class="entities-error m-0 text-cinnabar-700">
-                        Could not read the entity maps.
-                      </p>
+                      <p class="entities-error m-0 text-danger">Could not read the entity maps.</p>
                     } @else {
-                      <p class="m-0 text-charcoal-brown-600">Reading the entity maps…</p>
+                      <p class="m-0 text-fg-soft">Reading the entity maps…</p>
                     }
                   </aside>
                 }
@@ -1076,19 +1101,17 @@ interface EntityGroup {
     <ng-template #outcomesMissing>
       @switch (outcomeStatus()) {
         @case ('unrecorded') {
-          <p class="no-outcomes m-0 text-charcoal-brown-600">
+          <p class="no-outcomes m-0 text-fg-soft">
             This bundle was frozen before outcomes were recorded.
           </p>
         }
         @case ('invalid') {
-          <p class="no-outcomes outcomes-error m-0 text-cinnabar-700">
+          <p class="no-outcomes outcomes-error m-0 text-danger">
             Could not read this bundle's outcomes.
           </p>
         }
         @case ('undeclared') {
-          <p class="no-outcomes m-0 text-charcoal-brown-600">
-            {{ repo() }} declares no outcomes yet.
-          </p>
+          <p class="no-outcomes m-0 text-fg-soft">{{ repo() }} declares no outcomes yet.</p>
         }
       }
     </ng-template>
@@ -1104,8 +1127,8 @@ interface EntityGroup {
           class="source flex w-full cursor-pointer flex-wrap items-center gap-x-1.5 rounded px-2 py-0.5 text-left"
           [class]="
             source.outcome.key === highlighted()
-              ? 'bg-charcoal-brown-800 text-white'
-              : 'hover:bg-charcoal-brown-50'
+              ? 'bg-surface-inverse text-fg-on-inverse'
+              : 'hover:bg-surface-subtle'
           "
           [attr.aria-pressed]="source.outcome.key === highlighted()"
           [title]="
@@ -1121,7 +1144,7 @@ interface EntityGroup {
           <span class="font-mono text-xs">{{ source.outcome.mark }}</span>
         </button>
         @if (target === null && leads(source.outcome); as line) {
-          <p class="outcome-leads m-0 px-2 text-xs text-charcoal-brown-600">{{ line }}</p>
+          <p class="outcome-leads m-0 px-2 text-xs text-fg-soft">{{ line }}</p>
         }
       </li>
     </ng-template>
@@ -1135,13 +1158,13 @@ interface EntityGroup {
         @if (target.kind === 'route') {
           <button
             type="button"
-            class="outcome-target cursor-pointer self-start rounded px-1 text-left font-mono text-xs hover:bg-charcoal-brown-50"
+            class="outcome-target cursor-pointer self-start rounded px-1 text-left font-mono text-xs hover:bg-surface-subtle"
             (click)="openRoute(target.fullPath)"
           >
             → /{{ target.fullPath }}
           </button>
         } @else {
-          <p class="outcome-unmatched m-0 px-1 text-xs text-charcoal-brown-600">
+          <p class="outcome-unmatched m-0 px-1 text-xs text-fg-soft">
             No route of this app matches /{{ outcome.declared.to ?? '' }}
           </p>
         }
@@ -1156,8 +1179,8 @@ interface EntityGroup {
           class="outcome-pick flex w-full cursor-pointer flex-wrap items-center gap-1 rounded px-1 py-0.5 text-left"
           [class]="
             outcome.key === highlighted()
-              ? 'bg-charcoal-brown-800 text-white'
-              : 'hover:bg-charcoal-brown-50'
+              ? 'bg-surface-inverse text-fg-on-inverse'
+              : 'hover:bg-surface-subtle'
           "
           [attr.aria-pressed]="outcome.key === highlighted()"
           [title]="'Highlight the trigger of ' + outcome.mark"
@@ -1174,20 +1197,17 @@ interface EntityGroup {
             [ngTemplateOutletContext]="{ $implicit: outcome }"
           />
         } @else if (leads(outcome); as line) {
-          <p class="outcome-leads m-0 px-1 text-xs text-charcoal-brown-600">{{ line }}</p>
+          <p class="outcome-leads m-0 px-1 text-xs text-fg-soft">{{ line }}</p>
         }
         @if (outcome.library) {
-          <p
-            class="outcome-library m-0 px-1 text-xs text-charcoal-brown-600"
-            [title]="outcome.declared.file"
-          >
+          <p class="outcome-library m-0 px-1 text-xs text-fg-soft" [title]="outcome.declared.file">
             Declared by &#64;qits/angular
           </p>
         }
         @if (outcome.result; as result) {
           <button
             type="button"
-            class="outcome-result cursor-pointer self-start rounded px-1 text-left text-xs text-charcoal-brown-700 underline hover:bg-charcoal-brown-50"
+            class="outcome-result cursor-pointer self-start rounded px-1 text-left text-xs text-fg-soft underline hover:bg-surface-subtle"
             [title]="'Open the state ' + result.name"
             (click)="showResult(result)"
           >
@@ -1195,10 +1215,7 @@ interface EntityGroup {
           </button>
         }
         @for (test of outcome.reachedBy; track $index) {
-          <p
-            class="reached-by m-0 truncate px-1 text-xs text-charcoal-brown-600"
-            [title]="testTitle(test)"
-          >
+          <p class="reached-by m-0 truncate px-1 text-xs text-fg-soft" [title]="testTitle(test)">
             {{ test.test }}
           </p>
         }
@@ -1254,6 +1271,7 @@ export class UiBuilderPage {
   private readonly route = inject(ActivatedRoute);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
+  private readonly theme = inject(ThemePreferenceStore);
 
   /** The open project's slug, for the links to the entity and contracts pages (qits-1994). */
   protected readonly slug = this.selected.slug;
@@ -1415,10 +1433,35 @@ export class UiBuilderPage {
       VIEWPORT_CHOICES.find((choice) => choice.query === this.query().viewport)?.id ?? 'DESKTOP',
   );
 
-  /** The freeze drawn: the selected state's at the chosen viewport (`stateFreeze`, qits-2047). */
+  /**
+   * The schemes the bundle was frozen in (qits-2086, `colorSchemesOf`), as the scheme switch's
+   * buttons; none for a bundle frozen without schemes, which shows no switch.
+   */
+  protected readonly schemeChoices = computed(() => {
+    const bundle = this.loaded();
+    const schemes = bundle ? colorSchemesOf(bundle.manifest) : [];
+    return SCHEME_CHOICES.filter((choice) => schemes.includes(choice.id));
+  });
+
+  /** The scheme the user picked on the switch (qits-2086); null until they pick one. */
+  private readonly pickedScheme = signal<FreezeColorScheme | null>(null);
+
+  /**
+   * The scheme the freezes are drawn in (qits-2086): the one picked on the switch, else the app's
+   * own (`ThemePreferenceStore.resolved`), so the frame matches the page around it until asked.
+   */
+  protected readonly scheme = computed(
+    (): FreezeColorScheme =>
+      this.pickedScheme() ?? (this.theme.resolved() === 'dark' ? 'DARK' : 'LIGHT'),
+  );
+
+  /**
+   * The freeze drawn: the selected state's at the chosen viewport (`stateFreeze`, qits-2047), in the
+   * chosen scheme when the shot has it (qits-2086).
+   */
   protected readonly freeze = computed((): Freeze | null => {
     const state = this.states()[this.stateIndex()];
-    return state ? stateFreeze(state, this.viewport()) : null;
+    return state ? stateFreeze(state, this.viewport(), this.scheme()) : null;
   });
 
   /** The window the drawn freeze was shot in (qits-2047); null for one at the test's own viewport. */
@@ -1674,7 +1717,7 @@ export class UiBuilderPage {
     const links = outcome.triggerFreezes.flatMap((freeze): StateLink[] => {
       const state = states.find((s) => s.freezes.some((f) => f.file === freeze.file));
       const at = freeze.viewport ?? current;
-      if (!state || stateFreeze(state, at).file !== freeze.file) return [];
+      if (!state || stateFreeze(state, at, this.scheme()).file !== freeze.file) return [];
       const width = VIEWPORT_CHOICES.find((choice) => choice.id === freeze.viewport);
       return [
         {
@@ -2009,6 +2052,15 @@ export class UiBuilderPage {
     void this.navigate({ state: name });
   }
 
+  /**
+   * Draws the selected state in `scheme` (qits-2086), from now on whatever the app's own scheme is.
+   * Not in the URL: the scheme is how the page is looked at, not what is selected.
+   */
+  protected pickScheme(scheme: FreezeColorScheme): void {
+    this.linkNotice.set(null);
+    this.pickedScheme.set(scheme);
+  }
+
   /** Draws the selected state at the viewport `query` names (`phone`, `tablet`, `desktop`). */
   protected pickViewport(query: string): void {
     this.linkNotice.set(null);
@@ -2102,7 +2154,10 @@ export class UiBuilderPage {
       const triggers = outcome.triggerFreezes;
       if (triggers.length && !triggers.some((freeze) => freeze.file === shown)) {
         const viewport = this.viewport();
-        const here = triggers.find((freeze) => (freeze.viewport ?? viewport) === viewport);
+        const scheme = this.scheme();
+        const atWidth = triggers.filter((freeze) => (freeze.viewport ?? viewport) === viewport);
+        const here =
+          atWidth.find((freeze) => (freeze.colorScheme ?? scheme) === scheme) ?? atWidth[0];
         this.showFreeze(here ?? triggers[0], true);
         return;
       }
@@ -2133,6 +2188,7 @@ export class UiBuilderPage {
     const selected = this.selectedPath();
     const near = target ?? selected;
     const viewport = this.viewport();
+    const scheme = this.scheme();
     const shown = this.freeze()?.file;
     const freeze = [...joinedOutcome(bundle.manifest, outcome.declared, selected).triggerFreezes]
       .map((candidate, order) => ({ candidate, order }))
@@ -2143,6 +2199,8 @@ export class UiBuilderPage {
           Number(b.candidate.route === near) - Number(a.candidate.route === near) ||
           Number((b.candidate.viewport ?? viewport) === viewport) -
             Number((a.candidate.viewport ?? viewport) === viewport) ||
+          Number((b.candidate.colorScheme ?? scheme) === scheme) -
+            Number((a.candidate.colorScheme ?? scheme) === scheme) ||
           a.order - b.order,
       )[0]?.candidate;
     if (freeze) {
@@ -2174,6 +2232,15 @@ export class UiBuilderPage {
     this.drawHighlight();
   }
 
+  /**
+   * This page's `--color-accent` as the theme resolves it now (qits-2086), the highlight's fallback
+   * for a freeze whose CSS does not define the token; empty without the theme.
+   */
+  private hostAccent(): string {
+    const root = this.host.nativeElement.ownerDocument.documentElement;
+    return getComputedStyle(root).getPropertyValue('--color-accent').trim();
+  }
+
   /** The frame's document when it is the shown freeze's (an `about:srcdoc` one, qits-2072). */
   private frameDocument(): Document | null {
     const doc = this.frame?.contentDocument;
@@ -2202,7 +2269,7 @@ export class UiBuilderPage {
     if (!doc.querySelector('style[data-qits-builder]')) {
       const style = doc.createElement('style');
       style.setAttribute('data-qits-builder', '');
-      style.textContent = HIGHLIGHT_CSS;
+      style.textContent = highlightCss(this.hostAccent());
       (doc.head ?? doc.documentElement).append(style);
     }
     const element = doc.querySelector(`[data-qits-outcome~="${quoted(outcome.mark)}"]`);

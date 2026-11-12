@@ -11,10 +11,7 @@ import { DragHandle } from './drag-handle';
   template: `
     <div uiReorderList class="flex flex-col gap-8">
       @for (id of ids; track id) {
-        <div
-          uiReorderItem
-          class="relative rounded-l-md border border-gray-200 bg-white p-3 text-sm"
-        >
+        <div uiReorderItem class="relative rounded-l-md border border-line bg-surface p-3 text-sm">
           {{ id }}
           <ui-drag-handle [label]="'Move ' + id" />
         </div>

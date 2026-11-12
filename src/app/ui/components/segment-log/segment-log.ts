@@ -24,9 +24,9 @@ export interface LogSegment {
 
 /** A badge's colours per status, written out in full so Tailwind finds them. */
 const BADGES: Readonly<Record<LogSegment['status'], string>> = {
-  running: 'bg-ocean-deep-100 text-ocean-deep-800',
-  ok: 'bg-mint-leaf-100 text-mint-leaf-800',
-  failed: 'bg-cinnabar-100 text-cinnabar-700',
+  running: 'bg-accent-soft text-accent',
+  ok: 'bg-success-soft text-success-strong',
+  failed: 'bg-danger-soft text-danger-strong',
 };
 
 /**
@@ -40,25 +40,22 @@ const BADGES: Readonly<Record<LogSegment['status'], string>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
   template: `
-    <p class="m-0 mb-2 text-sm text-charcoal-brown-600">{{ lede() }}</p>
-    <p
-      class="m-0 text-sm text-charcoal-brown-500 italic"
-      [class.hidden]="segments().length || !waiting()"
-    >
+    <p class="m-0 mb-2 text-sm text-fg-soft">{{ lede() }}</p>
+    <p class="m-0 text-sm text-fg-muted italic" [class.hidden]="segments().length || !waiting()">
       Waiting for the first line…
     </p>
     <ol class="m-0 list-none p-0">
       @for (segment of segments(); track segment.name) {
-        <li class="border-t border-charcoal-brown-200">
+        <li class="border-t border-line">
           <button
             type="button"
-            class="flex w-full cursor-pointer items-center gap-2 border-0 bg-transparent px-0 py-1.5 text-left text-sm text-charcoal-brown-900"
+            class="flex w-full cursor-pointer items-center gap-2 border-0 bg-transparent px-0 py-1.5 text-left text-sm text-fg"
             [attr.aria-expanded]="isOpen(segment)"
             (click)="toggle(segment)"
           >
             <span
               aria-hidden="true"
-              class="size-0 shrink-0 border-y-[0.32rem] border-l-[0.42rem] border-y-transparent border-l-charcoal-brown-500"
+              class="size-0 shrink-0 border-y-[0.32rem] border-l-[0.42rem] border-y-transparent border-l-fg-muted"
               [class.rotate-90]="isOpen(segment)"
             ></span>
             <span class="min-w-0 flex-1 wrap-anywhere">{{ segment.label }}</span>
@@ -71,11 +68,11 @@ const BADGES: Readonly<Record<LogSegment['status'], string>> = {
           @if (isOpen(segment)) {
             <pre
               #body
-              class="m-0 mb-2 ml-3.5 max-h-72 overflow-auto rounded bg-charcoal-brown-950 px-2.5 py-1.5 font-mono text-xs whitespace-pre-wrap text-charcoal-brown-100"
+              class="m-0 mb-2 ml-3.5 max-h-72 overflow-auto rounded bg-surface-inverse px-2.5 py-1.5 font-mono text-xs whitespace-pre-wrap text-fg-on-inverse"
               >{{ segment.lines.join('\\n') }}</pre>
           }
           @if (segment.note) {
-            <p class="m-0 mb-2 ml-3.5 text-sm text-cinnabar-700">{{ segment.note }}</p>
+            <p class="m-0 mb-2 ml-3.5 text-sm text-danger">{{ segment.note }}</p>
           }
         </li>
       }

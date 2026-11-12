@@ -36,9 +36,9 @@ describe('ActionButton', () => {
   });
 
   it.each([
-    ['success', 'bg-mint-leaf-700'],
-    ['danger', 'bg-cinnabar-600'],
-    ['muted', 'bg-white'],
+    ['success', 'bg-success'],
+    ['danger', 'bg-danger'],
+    ['muted', 'bg-surface'],
   ] as const)('colours the %s variant', (variant, colour) => {
     const { fixture, host, button } = render();
     host.action.set({ label: 'Go', variant, callback: () => undefined });

@@ -216,7 +216,7 @@ describe('AgentFilesPage', () => {
   it('opens a deep link at its range, and picks a range into the prompt’s context', async () => {
     await open(`?path=${encodeURIComponent(LOGIN)}&lines=4-6`);
     await answerLogin();
-    const anchored = [...element().querySelectorAll('[data-line].bg-sunflower-gold-100')];
+    const anchored = [...element().querySelectorAll('[data-line].bg-warning-soft')];
     expect(anchored.map((li) => li.getAttribute('data-line'))).toEqual(['4', '5', '6']);
     button('Pick lines')!.click();
     await rendered();

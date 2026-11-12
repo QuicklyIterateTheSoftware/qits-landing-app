@@ -48,9 +48,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             aria-label="Agents on earlier work"
             [class.hidden]="!before().length"
           >
-            <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">
-              Agents on earlier work
-            </h2>
+            <h2 class="m-0 text-base font-semibold text-fg">Agents on earlier work</h2>
             <app-work-list [tree]="before()" view="mixed" />
           </section>
           @if (epics()) {
@@ -78,9 +76,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
             aria-label="Agents on later work"
             [class.hidden]="!after().length"
           >
-            <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">
-              Agents on later work
-            </h2>
+            <h2 class="m-0 text-base font-semibold text-fg">Agents on later work</h2>
             <app-work-list [tree]="after()" view="mixed" />
           </section>
         </ui-spinner>

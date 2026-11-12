@@ -54,12 +54,10 @@ export const LANGUAGES_SHOWN = 4;
       (z-10), so no button is nested in a link. The hover ring is on the card itself.
     -->
     <div
-      class="relative rounded-xl has-[a.card-link:focus-visible]:ring-1 has-[a.card-link:focus-visible]:ring-gray-400 hover:ring-1 hover:ring-gray-400"
+      class="relative rounded-xl has-[a.card-link:focus-visible]:ring-1 has-[a.card-link:focus-visible]:ring-line-strong hover:ring-1 hover:ring-line-strong"
     >
       <ui-card-silent>
-        <card-header
-          class="bg-charcoal-brown-100 text-center text-[1.35rem] text-charcoal-brown-900"
-        >
+        <card-header class="bg-surface-muted text-center text-[1.35rem] text-fg">
           <a
             class="card-link text-inherit no-underline outline-none after:absolute after:inset-0 after:z-[1] after:rounded-xl"
             [qitsExit]="opening.project"
@@ -77,7 +75,7 @@ export const LANGUAGES_SHOWN = 4;
               </ui-spinner>
               <ui-spinner [state]="componentsState()">
                 <ui-stat
-                  class="components w-full [&_dt]:border-l-[0.5px] [&_dt]:border-black/40"
+                  class="components w-full [&_dt]:border-l-[0.5px] [&_dt]:border-line-strong"
                   label="Components"
                 >
                   {{ componentCount() ?? '–' }}
@@ -89,7 +87,7 @@ export const LANGUAGES_SHOWN = 4;
         <card-expandable (opened)="loadLines()">
           <ui-spinner [state]="linesState()">
             <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
-              <thead class="text-[0.5417rem] text-gray-500">
+              <thead class="text-[0.5417rem] text-fg-muted">
                 <tr>
                   <th
                     scope="col"
@@ -117,14 +115,14 @@ export const LANGUAGES_SHOWN = 4;
                   <tr>
                     <td
                       colspan="3"
-                      class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-gray-500"
+                      class="lines h-[calc(4*(1.21875rem+2px))] text-center align-middle text-fg-muted"
                     >
                       {{ linesState() === 'loaded' ? 'No lines yet' : '' }}
                     </td>
                   </tr>
                 } @else {
                   @for (row of languageRows(); track row.language) {
-                    <tr class="even:bg-gray-100">
+                    <tr class="even:bg-surface-muted">
                       <th scope="row" class="py-px pr-6 pl-2 text-left font-normal">
                         {{ row.language }}
                       </th>

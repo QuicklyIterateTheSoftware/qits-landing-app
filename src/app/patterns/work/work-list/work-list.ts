@@ -49,7 +49,7 @@ import type { WorkListView } from './work-list-view';
   template: `
     <p
       role="alert"
-      class="m-0 mb-4 text-sm text-cinnabar-700"
+      class="m-0 mb-4 text-sm text-danger"
       [class.hidden]="!reorderable() || !reorders.refusal()"
     >
       {{ reorders.refusal() }}
@@ -86,7 +86,7 @@ import type { WorkListView } from './work-list-view';
         }
       }
     </div>
-    <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="rows().length">Nothing here</p>
+    <p class="m-0 text-sm text-fg-muted" [class.hidden]="rows().length">Nothing here</p>
   `,
 })
 export class WorkList {

@@ -2,6 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- qits-2086: apply a forced scheme stored under qits.appearance.theme before the first paint. -->
+    <script>
+      try {
+        const theme = localStorage.getItem('qits.appearance.theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+    </script>
     <title>The qits platform</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

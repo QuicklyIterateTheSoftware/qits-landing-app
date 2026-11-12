@@ -37,11 +37,12 @@ const MID = ROW / 2;
 
 /** Lane colours, in turn. Written out so Tailwind keeps them. */
 const COLOURS = [
-  'var(--color-ocean-deep-600)',
-  'var(--color-mint-leaf-600)',
-  'var(--color-sunflower-gold-600)',
-  'var(--color-cinnabar-600)',
-  'var(--color-charcoal-brown-500)',
+  'var(--color-accent)',
+  'var(--color-success)',
+  'var(--color-warning)',
+  'var(--color-danger)',
+  'var(--color-special)',
+  'var(--color-fg-muted)',
 ];
 
 /** One row's drawing: straight lines, curves and the dot. */
@@ -111,7 +112,7 @@ interface Drawn {
         <li>
           <button
             type="button"
-            class="flex w-full cursor-pointer items-center gap-2 rounded pr-1 text-left text-sm hover:bg-charcoal-brown-50"
+            class="flex w-full cursor-pointer items-center gap-2 rounded pr-1 text-left text-sm hover:bg-surface-muted"
             [attr.aria-expanded]="open"
             (click)="toggle.emit(drawn.row.hash)"
           >
@@ -130,11 +131,11 @@ interface Drawn {
                 [attr.cy]="mid"
                 r="4"
                 [attr.fill]="drawn.dot.colour"
-                stroke="white"
+                stroke="var(--color-surface)"
                 stroke-width="1.5"
               />
             </svg>
-            <span class="shrink-0 font-mono text-charcoal-brown-600" [title]="drawn.entry.hash">{{
+            <span class="shrink-0 font-mono text-fg-soft" [title]="drawn.entry.hash">{{
               drawn.entry.shortHash
             }}</span>
             @if (drawn.entry.label) {
@@ -145,21 +146,15 @@ interface Drawn {
                 >{{ drawn.entry.label }}</span
               >
             }
-            <span
-              class="min-w-40 flex-1 truncate text-charcoal-brown-950"
-              [title]="drawn.entry.subject"
+            <span class="min-w-40 flex-1 truncate text-fg" [title]="drawn.entry.subject"
               ><qits-commit-message [message]="drawn.entry.subject" [project]="project()"
             /></span>
-            <span
-              class="max-w-32 truncate text-xs text-charcoal-brown-500"
-              [title]="drawn.entry.author"
-              >{{ drawn.entry.author }}</span
-            >
-            <span
-              class="text-xs whitespace-nowrap text-charcoal-brown-500"
-              [title]="drawn.entry.title"
-              >{{ drawn.entry.when }}</span
-            >
+            <span class="max-w-32 truncate text-xs text-fg-muted" [title]="drawn.entry.author">{{
+              drawn.entry.author
+            }}</span>
+            <span class="text-xs whitespace-nowrap text-fg-muted" [title]="drawn.entry.title">{{
+              drawn.entry.when
+            }}</span>
           </button>
           @if (drawn.entry.more) {
             <div class="flex">
@@ -179,7 +174,7 @@ interface Drawn {
               </div>
               <button
                 type="button"
-                class="my-0.5 ml-2 cursor-pointer rounded border border-dashed border-charcoal-brown-300 px-2 text-xs text-charcoal-brown-600 hover:bg-charcoal-brown-50"
+                class="my-0.5 ml-2 cursor-pointer rounded border border-dashed border-line-strong px-2 text-xs text-fg-soft hover:bg-surface-muted"
                 (click)="more.emit(drawn.row.hash)"
               >
                 {{ drawn.entry.more }}

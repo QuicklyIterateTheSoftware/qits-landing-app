@@ -30,12 +30,12 @@ import type { TreeRow } from '$core/workspaces/file-tree-model';
         >
           <button
             type="button"
-            class="flex w-full cursor-pointer items-center gap-1 rounded border-0 px-1.5 py-0.5 text-left font-sans text-sm hover:bg-charcoal-brown-100"
-            [class.bg-ocean-deep-50]="row.node.path === selected()"
+            class="flex w-full cursor-pointer items-center gap-1 rounded border-0 px-1.5 py-0.5 text-left font-sans text-sm hover:bg-surface-muted"
+            [class.bg-accent-soft]="row.node.path === selected()"
             [class.font-semibold]="row.node.path === selected()"
-            [class.text-ocean-deep-800]="row.node.path === selected() && !row.ignored"
-            [class.text-charcoal-brown-900]="row.node.path !== selected() && !row.ignored"
-            [class.text-charcoal-brown-400]="row.ignored"
+            [class.text-accent]="row.node.path === selected() && !row.ignored"
+            [class.text-fg]="row.node.path !== selected() && !row.ignored"
+            [class.text-fg-faint]="row.ignored"
             [class.bg-transparent]="row.node.path !== selected()"
             [attr.data-path]="row.node.path"
             [attr.data-kind]="row.node.kind"
@@ -58,7 +58,7 @@ import type { TreeRow } from '$core/workspaces/file-tree-model';
               </svg>
             }
             @if (row.prefix.length > 0) {
-              <span class="shrink-0 text-xs text-charcoal-brown-400">
+              <span class="shrink-0 text-xs text-fg-faint">
                 @for (segment of row.prefix; track $index) {
                   {{ segment }}<span class="mx-0.5" aria-hidden="true">/</span>
                 }
@@ -66,10 +66,10 @@ import type { TreeRow } from '$core/workspaces/file-tree-model';
             }
             <span class="truncate">{{ row.node.name }}</span>
             @if (row.node.kind === 'lazy') {
-              <span class="text-xs text-charcoal-brown-400">({{ row.node.childCount }})</span>
+              <span class="text-xs text-fg-faint">({{ row.node.childCount }})</span>
             }
             @if (loading().has(row.node.path)) {
-              <span class="text-xs text-charcoal-brown-500 italic">Loading…</span>
+              <span class="text-xs text-fg-muted italic">Loading…</span>
             }
           </button>
         </li>

@@ -16,18 +16,18 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class:
-      'relative flex flex-col gap-y-2 bg-white/50 pt-2 ring-1 ring-black/5 [&_ui-board-card]:self-stretch [&:has(>ui-drag-handle>button.flex)]:[--row-corner-inset:1rem]',
+      'relative flex flex-col gap-y-2 bg-surface/50 pt-2 ring-1 ring-line [&_ui-board-card]:self-stretch [&:has(>ui-drag-handle>button.flex)]:[--row-corner-inset:1rem]',
     'data-highlight-target': '',
   },
   template: `
     <span
-      class="absolute inset-y-0 left-full flex w-6 items-start justify-center rounded-br-xl bg-charcoal-brown-600/40 pt-(--lane-chin) text-[0.625rem] leading-none whitespace-nowrap text-charcoal-brown-950 [&>*]:rotate-180 [&>*]:[writing-mode:vertical-rl]"
+      class="absolute inset-y-0 left-full flex w-6 items-start justify-center rounded-br-xl bg-surface-inverse/40 pt-(--lane-chin) text-[0.625rem] leading-none whitespace-nowrap text-fg [&>*]:rotate-180 [&>*]:[writing-mode:vertical-rl]"
     >
       <ng-content select="[row-id]" />
     </span>
     <ng-content />
     <div
-      class="flex items-baseline justify-start gap-2 bg-charcoal-brown-600/40 py-1 pr-[calc(0.5rem_+_var(--row-corner-inset,0rem))] pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-charcoal-brown-950 [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
+      class="flex items-baseline justify-start gap-2 bg-surface-inverse/40 py-1 pr-[calc(0.5rem_+_var(--row-corner-inset,0rem))] pl-2 text-xs wrap-anywhere [&>*]:min-w-0 text-fg [&>a]:text-inherit [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0 [&>a]:after:-right-6 [&>a]:after:rounded-br-xl [&>a]:after:transition-shadow [&>a]:after:duration-150 [&>a]:hover:underline [&>a]:hover:after:shadow-md [&>[row-footer-end]]:ml-auto [&>[row-footer-end]]:shrink-0"
     >
       <ng-content select="[row-footer]" />
       <ng-content select="[row-footer-end]" />

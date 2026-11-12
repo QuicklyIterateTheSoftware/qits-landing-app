@@ -30,11 +30,11 @@ describe('IdeaForm', () => {
     expect(text('[data-characters]')).toBe('0/600 characters');
     type('Description', ' One.\n\nTwo.\n\n\nThree.\n\nFour. ');
     expect(text('[data-paragraphs]')).toBe('4/3 paragraphs');
-    expect(element.querySelector('[data-paragraphs]')!.classList).toContain('text-cinnabar-700');
+    expect(element.querySelector('[data-paragraphs]')!.classList).toContain('text-danger');
     expect(text('[data-characters]')).toBe('26/600 characters');
     type('Description', 'x'.repeat(601));
     expect(text('[data-characters]')).toBe('601/600 characters');
-    expect(element.querySelector('[data-characters]')!.classList).toContain('text-cinnabar-700');
+    expect(element.querySelector('[data-characters]')!.classList).toContain('text-danger');
   });
 
   it('hints what is wrong with the title, and keeps Create off while it is blank', () => {

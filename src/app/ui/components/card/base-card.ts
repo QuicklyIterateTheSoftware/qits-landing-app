@@ -19,7 +19,7 @@ import { HIGHLIGHT_TARGET, Highlighter } from '$ui/components/highlight/highligh
   // Only a header with content below it draws the dividing line.
   host: {
     class:
-      'block px-6 py-3 font-semibold not-last:border-b not-last:border-[var(--card-border,var(--color-gray-200))]',
+      'block px-6 py-3 font-semibold not-last:border-b not-last:border-[var(--card-border,var(--color-line))]',
   },
   template: `<ng-content />`,
 })
@@ -105,7 +105,7 @@ export class CardExpandable {
  * ```
  *
  * Its content is clipped to the rounded corners, so a coloured header or flush body fills them.
- * `--card-background` and `--card-border` set its colours (white and Tailwind's gray-200 when
+ * `--card-background` and `--card-border` set its colours (surface and the line token when
  * unset); variants such as `CardSilent` change only those.
  */
 @Component({
@@ -116,7 +116,7 @@ export class CardExpandable {
   host: { class: 'relative block rounded-xl', 'data-highlight-target': '' },
   template: `
     <div
-      class="overflow-hidden rounded-xl border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))]"
+      class="overflow-hidden rounded-xl border border-[var(--card-border,var(--color-line))] bg-[var(--card-background,var(--color-surface))]"
     >
       <ng-content select="card-header" />
       <ng-content select="card-body" />

@@ -124,7 +124,8 @@ describe('WorkAcceptancePage (screenshots)', () => {
     }
     // UNPROVEN alone is a warning.
     expect(root.querySelectorAll('app-wrapper-closing [data-warning]')).toHaveLength(1);
-    expect(lineOf('contract-00000001-5')?.classList.contains('text-sunflower-gold-800')).toBe(true);
+    // In the warning tone: the theme's `warning` text token (qits-2086).
+    expect(lineOf('contract-00000001-5')?.classList.contains('text-warning')).toBe(true);
     // The REFINED ticket is not in Acceptance.
     await expect.element(element).not.toMatchTextContent('Not verified yet');
     await expect.element(frame).toMatchScreenshot('wrapper-closings', { kind: 'DATA' });

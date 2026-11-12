@@ -41,7 +41,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
   host: { class: 'block' },
   template: `
     <section
-      class="flex flex-col gap-2 text-sm text-charcoal-brown-800"
+      class="flex flex-col gap-2 text-sm text-fg"
       aria-label="Inspiration"
       [class.hidden]="!shown()"
     >
@@ -50,14 +50,14 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           <span data-inspired-by
             >Inspired by
             <a
-              class="font-semibold text-ocean-deep-700 no-underline hover:underline"
+              class="font-semibold text-accent no-underline hover:underline"
               [qitsExit]="inspiring.open"
               [exitParams]="{ slug: slug(), ideaId }"
               >{{ ideaTitle() }}</a
             ></span
           >
         } @else {
-          <span class="text-charcoal-brown-500">Inspired by no idea.</span>
+          <span class="text-fg-muted">Inspired by no idea.</span>
         }
         @if (editable()) {
           <ui-action-button [action]="chooseAction()" />
@@ -69,7 +69,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
       @if (choosing()) {
         <div class="flex flex-wrap items-center gap-2">
           <select
-            class="h-8 w-full max-w-md rounded-md border border-charcoal-brown-300 px-2 text-sm"
+            class="h-8 w-full max-w-md rounded-md border border-line-strong px-2 text-sm"
             aria-label="Idea"
             [value]="picked()"
             (change)="picked.set(value($event))"
@@ -84,7 +84,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
         </div>
       }
       @if (failure(); as failure) {
-        <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ failure }}</p>
+        <p class="m-0 text-sm text-danger" role="alert">{{ failure }}</p>
       }
     </section>
   `,

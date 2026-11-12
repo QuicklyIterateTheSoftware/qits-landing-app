@@ -46,14 +46,14 @@ const TONES: Readonly<Record<StepState, ChipTone>> = {
 };
 
 const RAIL: Readonly<Record<StepState, string>> = {
-  passed: 'bg-mint-leaf-600',
-  running: 'bg-sunflower-gold-500',
-  pending: 'bg-charcoal-brown-300',
-  failed: 'bg-cinnabar-600',
-  cancelled: 'bg-cinnabar-600',
-  skipped: 'bg-charcoal-brown-200',
-  unknown: 'bg-sunflower-gold-500',
-  'not-reported': 'bg-charcoal-brown-200',
+  passed: 'bg-success',
+  running: 'bg-accent',
+  pending: 'bg-line-strong',
+  failed: 'bg-danger',
+  cancelled: 'bg-danger',
+  skipped: 'bg-line',
+  unknown: 'bg-accent',
+  'not-reported': 'bg-line',
 };
 
 /**
@@ -89,25 +89,28 @@ const RAIL: Readonly<Record<StepState, string>> = {
   ],
   host: { class: 'block' },
   template: `
-    <section class="rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
+    <section class="rounded-md border border-line bg-surface px-3 py-2">
       <h2 class="m-0 mb-2 text-base font-semibold">Release lifecycle</h2>
       <ol class="m-0 list-none p-0">
         @for (stage of stages(); track stage.key) {
-          <li class="relative pb-3 pl-6" [class.opacity-50]="stage.future">
+          <!-- A stage still to come is greyed by its ink (fg-muted), not by opacity, which would
+               take its text below AA contrast; its rail dot alone is faded. -->
+          <li class="relative pb-3 pl-6" [class.text-fg-muted]="stage.future">
             <span
-              class="absolute top-1.5 left-1 size-3 rounded-full ring-2 ring-white"
+              class="absolute top-1.5 left-1 size-3 rounded-full ring-2 ring-surface"
               [class]="rail(stage.state)"
+              [class.opacity-50]="stage.future"
               aria-hidden="true"
             ></span>
             @if (!$last) {
               <span
-                class="absolute top-5 bottom-0 left-[0.6875rem] w-0.5 bg-charcoal-brown-200"
+                class="absolute top-5 bottom-0 left-[0.6875rem] w-0.5 bg-line"
                 aria-hidden="true"
               ></span>
             }
             <div
               class="flex flex-wrap items-center gap-2 rounded px-1"
-              [class.bg-ocean-deep-50]="stage.current"
+              [class.bg-accent-soft]="stage.current"
             >
               @if (stage.key === 'fold' && cog(); as point) {
                 <ui-automation-cog
@@ -134,11 +137,11 @@ const RAIL: Readonly<Record<StepState, string>> = {
               }
               <ui-chip [label]="stageWord(stage.state)" [tone]="tone(stage.state)" />
               @if (stage.current) {
-                <span class="text-xs font-semibold text-ocean-deep-700">now</span>
+                <span class="text-xs font-semibold text-accent">now</span>
               }
             </div>
             @if (stage.note) {
-              <p class="m-0 mt-0.5 px-1 text-xs text-charcoal-brown-500">{{ stage.note }}</p>
+              <p class="m-0 mt-0.5 px-1 text-xs text-fg-muted">{{ stage.note }}</p>
             }
             <ul class="m-0 mt-1 flex list-none flex-col gap-1 p-0">
               @for (step of stage.steps; track step.key) {
@@ -146,8 +149,8 @@ const RAIL: Readonly<Record<StepState, string>> = {
                   class="scroll-mt-24 rounded border px-2 py-1 text-sm"
                   [class]="
                     step.attention
-                      ? 'border-sunflower-gold-400 bg-sunflower-gold-50 ring-1 ring-sunflower-gold-400'
-                      : 'border-charcoal-brown-100'
+                      ? 'border-warning-line bg-warning-soft ring-1 ring-warning-line'
+                      : 'border-line-subtle'
                   "
                   [id]="anchor(step.key)"
                 >
@@ -155,7 +158,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
                     @if (step.attention) {
                       <svg
                         viewBox="0 0 24 24"
-                        class="size-4 shrink-0 text-sunflower-gold-800"
+                        class="size-4 shrink-0 text-warning-strong"
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
@@ -173,18 +176,18 @@ const RAIL: Readonly<Record<StepState, string>> = {
                       <ui-chip [label]="step.word" [tone]="tone(step.state)" />
                     }
                     @if (runHref(step.runId); as href) {
-                      <a class="text-ocean-deep-700 no-underline hover:underline" [href]="href"
+                      <a class="text-accent no-underline hover:underline" [href]="href"
                         >the run in CI</a
                       >
                     }
                     @if (deploymentHref(step.deploymentRequestId); as href) {
-                      <a class="text-ocean-deep-700 no-underline hover:underline" [href]="href"
+                      <a class="text-accent no-underline hover:underline" [href]="href"
                         >the deployment</a
                       >
                     }
                     @if (step.phase === 'QA' && step.state === 'failed') {
                       <a
-                        class="text-cinnabar-700 no-underline hover:underline"
+                        class="text-danger no-underline hover:underline"
                         [routerLink]="[]"
                         fragment="failed-tests"
                         queryParamsHandling="preserve"
@@ -196,7 +199,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
                     }
                   </div>
                   @if (step.detail) {
-                    <p class="m-0 mt-0.5 break-words text-charcoal-brown-700">{{ step.detail }}</p>
+                    <p class="m-0 mt-0.5 break-words text-fg-soft">{{ step.detail }}</p>
                   }
                   @if (step.checks.length) {
                     <ul class="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 pl-3">
@@ -205,7 +208,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
                           <span>{{ check.name }}</span>
                           <ui-chip [label]="check.word" [tone]="tone(check.state)" />
                           @if (check.detail) {
-                            <span class="text-charcoal-brown-600">{{ check.detail }}</span>
+                            <span class="text-fg-soft">{{ check.detail }}</span>
                           }
                           @if (check.overridable) {
                             <app-upstream-override
@@ -220,12 +223,12 @@ const RAIL: Readonly<Record<StepState, string>> = {
                     </ul>
                   }
                   @if (mooted()?.key === step.key) {
-                    <p class="m-0 mt-0.5 text-sunflower-gold-900" role="alert">
+                    <p class="m-0 mt-0.5 text-warning" role="alert">
                       {{ noLongerBuilding }} ({{ mooted()?.upstream }}).
                     </p>
                   }
                   @if (refusal()?.phase === step.phase && step.phase) {
-                    <p class="m-0 mt-0.5 text-sunflower-gold-900" role="alert">
+                    <p class="m-0 mt-0.5 text-warning" role="alert">
                       {{ refusal()?.message }}
                     </p>
                   }

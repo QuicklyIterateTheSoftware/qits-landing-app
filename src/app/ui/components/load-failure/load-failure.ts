@@ -26,12 +26,12 @@ import type { Action } from '$ui/components/action-button/action';
   template: `
     <div
       role="alert"
-      class="flex flex-wrap items-center gap-3 rounded-md border border-cinnabar-200 bg-cinnabar-50 px-3 py-2 text-sm text-cinnabar-800"
+      class="flex flex-wrap items-center gap-3 rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger-strong"
     >
       <svg
         viewBox="0 0 24 24"
         aria-hidden="true"
-        class="block size-5 shrink-0 text-cinnabar-600"
+        class="block size-5 shrink-0 text-danger"
         fill="none"
         stroke="currentColor"
         stroke-width="2"

@@ -122,7 +122,7 @@ export class MouseDrag implements DragEngine {
     clone.classList.add('shadow-lg');
     // A see-through item would show the rows it passes over through its clone.
     if (this.window.getComputedStyle(item).backgroundColor === 'rgba(0, 0, 0, 0)') {
-      clone.classList.add('bg-white');
+      clone.classList.add('bg-surface');
     }
     Object.assign(clone.style, {
       position: 'fixed',

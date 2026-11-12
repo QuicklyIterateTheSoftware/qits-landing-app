@@ -73,13 +73,13 @@ export interface Crumb {
               <li>
                 @if (last || !row.exit) {
                   <span
-                    class="block px-3 py-1.5 font-medium whitespace-normal break-words text-gray-900"
+                    class="block px-3 py-1.5 font-medium whitespace-normal break-words text-fg"
                     [attr.aria-current]="last ? 'page' : null"
                     >{{ row.label }}</span
                   >
                 } @else {
                   <a
-                    class="block px-3 py-1.5 whitespace-normal break-words text-gray-600 no-underline hover:bg-gray-100 hover:text-gray-900 focus-visible:-outline-offset-2"
+                    class="block px-3 py-1.5 whitespace-normal break-words text-fg-soft no-underline hover:bg-surface-muted hover:text-fg focus-visible:-outline-offset-2"
                     [qitsExit]="row.exit"
                     [exitParams]="row.params"
                     [exitActiveExact]="true"
@@ -103,14 +103,14 @@ export interface Crumb {
         >
           @if (home().exit; as exit) {
             <a
-              class="font-bold text-gray-900 no-underline"
+              class="font-bold text-fg no-underline"
               [qitsExit]="exit"
               [exitParams]="home().params"
               [exitActiveExact]="true"
               >{{ home().label }}</a
             >
           } @else {
-            <span class="font-bold text-gray-900">{{ home().label }}</span>
+            <span class="font-bold text-fg">{{ home().label }}</span>
           }
         </li>
         @for (crumb of crumbs(); track $index; let index = $index) {
@@ -126,20 +126,20 @@ export interface Crumb {
             <!-- Below 768px nothing separates the "…" from the first crumb that shows. -->
             <span
               aria-hidden="true"
-              class="shrink-0 px-2 text-gray-400"
+              class="shrink-0 px-2 text-fg-faint"
               [class]="index >= crumbs().length - 2 ? 'hidden md:inline' : ''"
               >›</span
             >
             <!-- The current page (the last crumb) is text, not a link. -->
             @if (index === crumbs().length - 1 || !crumb.exit) {
               <span
-                class="min-w-0 truncate text-gray-600 aria-[current=page]:text-gray-900"
+                class="min-w-0 truncate text-fg-soft aria-[current=page]:text-fg"
                 [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
                 >{{ crumb.label }}</span
               >
             } @else {
               <a
-                class="min-w-0 truncate text-gray-600 focus-visible:-outline-offset-2 no-underline hover:text-gray-900"
+                class="min-w-0 truncate text-fg-soft focus-visible:-outline-offset-2 no-underline hover:text-fg"
                 [qitsExit]="crumb.exit"
                 [exitParams]="crumb.params"
                 [exitActiveExact]="true"
@@ -152,7 +152,7 @@ export interface Crumb {
             @if (index === crumbs().length - 2) {
               <span
                 aria-hidden="true"
-                class="shrink-0 px-2 text-gray-400 after:content-['›'] md:hidden"
+                class="shrink-0 px-2 text-fg-faint after:content-['›'] md:hidden"
               ></span>
             }
           </li>

@@ -16,7 +16,12 @@
  *   keeps its section (ticket qits-2056).
  * - Every passing screenshot is also frozen as HTML (`freezeScreenshots`, ticket qits-1947): the
  *   element with its CSS, the route it was on and the recorded answers its test showed, written to
- *   `src/testing/browser/freezes/` with the app's route tree in its `manifest.json`.
+ *   `src/testing/browser/freezes/` with the app's route tree in its `manifest.json`. Every shot is
+ *   taken twice, LIGHT then DARK (`colorSchemes`, qits-2086): `prefers-color-scheme` emulated and
+ *   `data-theme` set on `<html>`, so the theme's tokens switch; its PNGs and freezes end in
+ *   `-light` / `-dark`. The page's own background and text are the theme's `--color-surface` and
+ *   `--color-fg` (defined by `@qits/ui-components/theme.css`, which `src/styles.css` imports and the
+ *   test page loads as its global stylesheet), so a dark shot is dark to its edges.
  * - Every declared outcome a test reaches (`go()`, `reach()`, a `QitsExit` click) is recorded
  *   (`recordOutcomes`, epic qits-2000) and sent to the Node side, which links it to the test's
  *   screenshots in `manifest.json`; `qits-angular screenshots --check --enforce-outcomes` fails a
@@ -41,8 +46,15 @@ guardGoldenMasters({
 
 // Every passing screenshot, frozen as HTML beside the app's route tree (no lazy route is loaded).
 // Every toMatchScreenshot(...) must name its kind (lint qits/screenshot-kind backs this up at
-// review time), and every route spec (page/layout) shoots at PHONE/TABLET/DESKTOP by default.
-freezeScreenshots({ routes, requireKind: true, viewportSpecs: DEFAULT_ROUTE_SPECS });
+// review time), every route spec (page/layout) shoots at PHONE/TABLET/DESKTOP by default, and
+// every shot is taken in both colour schemes, LIGHT then DARK (qits-2086), unless it opts out with
+// `{ colorSchemes: ['LIGHT'], reason }`.
+freezeScreenshots({
+  routes,
+  requireKind: true,
+  viewportSpecs: DEFAULT_ROUTE_SPECS,
+  colorSchemes: ['LIGHT', 'DARK'],
+});
 
 // Every declared outcome each test reaches, for the manifest and the outcome check.
 recordOutcomes();
@@ -62,8 +74,8 @@ const CSS = `
   }
   html, body {
     margin: 0;
-    background: #ffffff;
-    color: #111827;
+    background: var(--color-surface);
+    color: var(--color-fg);
     font-family: 'Inter Test', sans-serif;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;

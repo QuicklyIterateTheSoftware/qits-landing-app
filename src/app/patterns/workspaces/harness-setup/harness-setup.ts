@@ -63,22 +63,20 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-2 text-sm" aria-labelledby="harness-setup">
-      <h2 id="harness-setup" class="m-0 text-base font-semibold text-charcoal-brown-900">
-        Harness
-      </h2>
+      <h2 id="harness-setup" class="m-0 text-base font-semibold text-fg">Harness</h2>
       <app-sign-in-notice [workspaceRowId]="workspaceRowId()" [harness]="harness()" />
       @if (signInCommand()) {
         <p
           class="m-0 flex items-center gap-3"
-          [class.text-charcoal-brown-600]="link() === 'open' || link() === 'connecting'"
-          [class.text-cinnabar-700]="link() !== 'open' && link() !== 'connecting'"
+          [class.text-fg-muted]="link() === 'open' || link() === 'connecting'"
+          [class.text-danger]="link() !== 'open' && link() !== 'connecting'"
           role="status"
         >
           The sign-in terminal. {{ linkLabel() }}
           @if (link() === 'lost') {
             <button
               type="button"
-              class="cursor-pointer border-0 bg-transparent p-0 text-sm text-ocean-deep-700 underline"
+              class="cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
               (click)="rearm()"
             >
               Try to attach again

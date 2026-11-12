@@ -49,19 +49,19 @@ export function eventTime(instant: string | undefined): string {
       <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
         <ul class="m-0 max-h-96 list-none overflow-y-auto p-0">
           @for (event of store.recent(); track event.id) {
-            <li class="flex flex-col gap-0.5 border-b border-gray-100 px-3 py-2 last:border-b-0">
+            <li class="flex flex-col gap-0.5 border-b border-line-subtle px-3 py-2 last:border-b-0">
               <div class="flex items-baseline justify-between gap-2">
-                <span class="truncate text-sm font-semibold text-gray-900">{{ event.name }}</span>
-                <span class="shrink-0 text-[0.6875rem] text-gray-500 tabular-nums">{{
+                <span class="truncate text-sm font-semibold text-fg">{{ event.name }}</span>
+                <span class="shrink-0 text-[0.6875rem] text-fg-muted tabular-nums">{{
                   time(event.occurredAt)
                 }}</span>
               </div>
-              <span class="truncate text-[0.8125rem] text-gray-600">{{ event.description }}</span>
+              <span class="truncate text-[0.8125rem] text-fg-soft">{{ event.description }}</span>
             </li>
           }
         </ul>
         <p
-          class="m-0 px-3 py-4 text-center text-sm text-gray-500"
+          class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
           [class.hidden]="state() !== 'loaded' || store.recent().length > 0"
         >
           No events yet

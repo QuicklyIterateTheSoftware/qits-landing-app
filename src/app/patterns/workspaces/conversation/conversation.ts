@@ -20,59 +20,55 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
     @for (item of items(); track $index) {
       @switch (item.kind) {
         @case ('user') {
-          <article class="border-l-4 border-ocean-deep-600 pl-3">
-            <p class="m-0 mb-0.5 text-xs font-semibold tracking-wide text-ocean-deep-700 uppercase">
-              You
-            </p>
+          <article class="border-l-4 border-accent pl-3">
+            <p class="m-0 mb-0.5 text-xs font-semibold tracking-wide text-accent uppercase">You</p>
             <pre
-              class="m-0 font-mono text-sm leading-normal wrap-anywhere whitespace-pre-wrap text-charcoal-brown-900"
+              class="m-0 font-mono text-sm leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
           </article>
         }
         @case ('assistant') {
-          <article class="border-l-4 border-charcoal-brown-200 pl-3">
+          <article class="border-l-4 border-line pl-3">
             <pre
-              class="m-0 font-sans text-sm leading-normal wrap-anywhere whitespace-pre-wrap text-charcoal-brown-900"
+              class="m-0 font-sans text-sm leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
           </article>
         }
         @case ('thinking') {
-          <details class="rounded-md border border-violet-200 bg-violet-50 px-2 py-1">
-            <summary class="cursor-pointer text-xs text-charcoal-brown-600">Thinking</summary>
+          <details class="rounded-md border border-special-line bg-special-soft px-2 py-1">
+            <summary class="cursor-pointer text-xs text-fg-soft">Thinking</summary>
             <pre
-              class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-charcoal-brown-800"
+              class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
           </details>
         }
         @case ('tool-call') {
-          <details
-            class="rounded-md border border-charcoal-brown-200 bg-charcoal-brown-50 px-2 py-1"
-          >
-            <summary class="cursor-pointer truncate text-xs text-charcoal-brown-600">
-              <span class="font-semibold text-charcoal-brown-800">{{ item.name }}</span>
+          <details class="rounded-md border border-line bg-surface-subtle px-2 py-1">
+            <summary class="cursor-pointer truncate text-xs text-fg-soft">
+              <span class="font-semibold text-fg">{{ item.name }}</span>
               <span class="ml-2 font-mono">{{ brief(item.input) }}</span>
             </summary>
             <pre
-              class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-charcoal-brown-800"
+              class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.input }}</pre>
           </details>
         }
         @case ('tool-result') {
           <details
             class="rounded-md border px-2 py-1"
-            [class.border-charcoal-brown-200]="!item.isError"
-            [class.bg-charcoal-brown-50]="!item.isError"
-            [class.border-cinnabar-200]="item.isError"
-            [class.bg-cinnabar-50]="item.isError"
+            [class.border-line]="!item.isError"
+            [class.bg-surface-subtle]="!item.isError"
+            [class.border-danger-line]="item.isError"
+            [class.bg-danger-soft]="item.isError"
           >
-            <summary class="cursor-pointer text-xs text-charcoal-brown-600">
+            <summary class="cursor-pointer text-xs text-fg-soft">
               {{ item.isError ? 'Tool failed' : 'Tool result' }}
             </summary>
             <pre
-              class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-charcoal-brown-800"
+              class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
             @if (item.truncatedFrom) {
-              <p class="m-0 mt-1 text-xs text-charcoal-brown-600 italic">
+              <p class="m-0 mt-1 text-xs text-fg-soft italic">
                 Shown to {{ limit }} characters of {{ item.truncatedFrom }}: the rest is in the
                 command’s log.
               </p>
@@ -80,17 +76,20 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
           </details>
         }
         @case ('error') {
-          <p class="m-0 rounded-md bg-cinnabar-50 px-2 py-1 text-sm text-cinnabar-700" role="alert">
+          <p
+            class="m-0 rounded-md bg-danger-soft px-2 py-1 text-sm text-danger-strong"
+            role="alert"
+          >
             {{ item.text }}
           </p>
         }
         @case ('side-chain') {
           <details
-            class="rounded-md border border-charcoal-brown-300 bg-charcoal-brown-100 px-2 py-1"
+            class="rounded-md border border-line-strong bg-surface-muted px-2 py-1"
             [class.border-dashed]="!item.anchored"
           >
-            <summary class="cursor-pointer truncate text-xs text-charcoal-brown-600">
-              <span class="font-semibold text-charcoal-brown-800"
+            <summary class="cursor-pointer truncate text-xs text-fg-soft">
+              <span class="font-semibold text-fg"
                 >Sub-agent{{ item.agentType ? ': ' + item.agentType : '' }}</span
               >
               @if (item.description) {
@@ -98,7 +97,7 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
               }
             </summary>
             @if (!item.anchored) {
-              <p class="m-0 mt-1 text-xs text-charcoal-brown-600 italic">
+              <p class="m-0 mt-1 text-xs text-fg-soft italic">
                 The tool call that started this one is no longer in the conversation, so it is shown
                 here rather than in its place.
               </p>

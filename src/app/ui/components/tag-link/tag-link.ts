@@ -65,8 +65,8 @@ export class TagLink {
 
   protected readonly linkClasses = computed(() =>
     this.variant() === 'corner'
-      ? 'rounded-tl-md bg-ocean-deep-50 px-[0.65rem] py-[0.1625rem] whitespace-nowrap text-ocean-deep-800'
-      : 'px-2.5 leading-4 font-medium wrap-anywhere text-charcoal-brown-950',
+      ? 'rounded-tl-md bg-accent-soft px-[0.65rem] py-[0.1625rem] whitespace-nowrap text-accent'
+      : 'px-2.5 leading-4 font-medium wrap-anywhere text-fg',
   );
 
   protected readonly colour = computed(() =>

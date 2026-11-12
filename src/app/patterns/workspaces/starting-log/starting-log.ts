@@ -41,7 +41,7 @@ export function segmentNote(segment: ProcessSegment): string | undefined {
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-2" aria-label="Starting">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Starting</h2>
+      <h2 class="m-0 text-base font-semibold text-fg">Starting</h2>
       <ui-segment-log [segments]="segments()" [lede]="lede()" [waiting]="running()" />
     </section>
   `,

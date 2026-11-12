@@ -54,7 +54,7 @@ interface ShownGroup {
  * there first. Once less than 12rem is left beside the actions, the header moves below them: the
  * actions keep line 1. The content clears both. A float's sticky box is bound by this component's
  * whole box, not by a row, which is why it is not a flex or grid row. Pinned, the actions keep a
- * white background.
+ * surface background.
  * Fallback content (`<ng-content>`'s own children) shows the inputs only when nothing is
  * projected, so the server and the browser render the same markup.
  *
@@ -68,7 +68,7 @@ interface ShownGroup {
   template: `
     <div
       #actionsBar
-      class="sticky top-[var(--app-pin-top,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-white py-1 pl-3 empty:hidden"
+      class="sticky top-[var(--app-pin-top,0px)] z-40 float-right flex min-h-10 max-w-full flex-wrap items-start justify-end-safe gap-x-4 gap-y-2 bg-surface py-1 pl-3 empty:hidden"
       data-page-actions
     >
       <ng-content select="[slot=actions], [uiPageActions]">
@@ -79,7 +79,7 @@ interface ShownGroup {
             [attr.aria-label]="group.group ? (group.title ?? null) : null"
           >
             <span
-              class="text-[0.525rem] leading-none font-semibold tracking-wide text-charcoal-brown-600 uppercase"
+              class="text-[0.525rem] leading-none font-semibold tracking-wide text-fg-soft uppercase"
               [class]="group.title ? 'block' : 'hidden'"
               aria-hidden="true"
               >{{ group.title }}</span

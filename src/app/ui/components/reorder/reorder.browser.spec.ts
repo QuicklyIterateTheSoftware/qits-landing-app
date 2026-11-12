@@ -27,13 +27,13 @@ import { REORDER, type ReorderMove } from './reorder';
       @for (row of rows(); track row; let i = $index) {
         <li
           uiReorderItem
-          class="flex h-10 items-center gap-2 border-b border-gray-200 bg-white px-2"
+          class="flex h-10 items-center gap-2 border-b border-line bg-surface px-2"
           [class.tall]="i === tall()"
         >
           <button
             type="button"
             uiReorderHandle
-            class="h-6 w-6 rounded bg-gray-200 text-xs"
+            class="h-6 w-6 rounded bg-surface-active text-xs"
             [attr.aria-label]="'Move ' + row"
           >
             ≡

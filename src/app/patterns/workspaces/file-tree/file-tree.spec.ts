@@ -39,7 +39,7 @@ describe('FileTree', () => {
     ]);
     expect(entry('node_modules').textContent).toContain('(2)');
     expect(entry('node_modules').textContent).toContain('Loading…');
-    expect(entry('node_modules').classList).toContain('text-charcoal-brown-400');
+    expect(entry('node_modules').classList).toContain('text-fg-faint');
     expect(entry('node_modules').title).toBe('node_modules — git ignores this');
   });
 

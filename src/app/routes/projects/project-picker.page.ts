@@ -24,7 +24,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
         <ui-spinner [state]="state()" class="mt-6 min-h-48">
           @if (store.status() === 'loaded') {
             @if (store.entities().length === 0) {
-              <p class="m-0 text-gray-500">There are no projects yet.</p>
+              <p class="m-0 text-fg-muted">There are no projects yet.</p>
             } @else {
               <ul
                 class="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-6 p-0"

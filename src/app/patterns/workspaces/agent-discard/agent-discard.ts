@@ -35,11 +35,11 @@ export type DiscardStep = 'closed' | 'confirm' | 'force';
   template: `
     @if (step() === 'force') {
       <div
-        class="flex flex-col gap-2 rounded-md border border-cinnabar-200 bg-cinnabar-50 px-3 py-2 text-sm"
+        class="flex flex-col gap-2 rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm"
         role="alert"
       >
-        <p class="m-0 font-semibold text-cinnabar-800">The service refused the discard.</p>
-        <p class="m-0 text-cinnabar-800">{{ refusal()?.message ?? refusalStatus() }}</p>
+        <p class="m-0 font-semibold text-danger-strong">The service refused the discard.</p>
+        <p class="m-0 text-danger-strong">{{ refusal()?.message ?? refusalStatus() }}</p>
         <div class="flex flex-wrap gap-2">
           <ui-action-button [action]="force()" />
           <ui-action-button [action]="cancel()" />
@@ -54,7 +54,7 @@ export type DiscardStep = 'closed' | 'confirm' | 'force';
       </div>
     }
     @if (problem(); as problem) {
-      <p class="m-0 mt-1 text-sm text-cinnabar-700" role="alert">{{ problem }}</p>
+      <p class="m-0 mt-1 text-sm text-danger" role="alert">{{ problem }}</p>
     }
   `,
 })

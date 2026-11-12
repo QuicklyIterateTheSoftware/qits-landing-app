@@ -139,7 +139,7 @@ const notBuiltYet = (): void => undefined;
         }
         <ui-spinner [state]="work.state()" class="min-h-48">
           <p
-            class="m-0 flex-wrap items-center gap-2 text-sm text-charcoal-brown-600"
+            class="m-0 flex-wrap items-center gap-2 text-sm text-fg-soft"
             [class]="entry() ? 'flex' : 'hidden'"
           >
             <span>{{ facts() }}</span>
@@ -149,7 +149,7 @@ const notBuiltYet = (): void => undefined;
             }
           </p>
           <p
-            class="m-0 text-sm text-charcoal-brown-600"
+            class="m-0 text-sm text-fg-soft"
             [class.hidden]="work.state() !== 'loaded' || !!entry()"
           >
             This project has no work item {{ id() }}.

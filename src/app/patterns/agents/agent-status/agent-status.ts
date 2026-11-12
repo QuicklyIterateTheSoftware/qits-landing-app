@@ -31,7 +31,7 @@ interface WaitLine {
  * What an agent waits on and what it needs a person for (epic qits-1681), as the Agents page's rows
  * and the agent page's header show it: a line per open wait (`waitSubject`: the subject, linked
  * where it has a page, and its state), then, when the agent needs a person, the attention's reason
- * in cinnabar with its action (`attentionAction`: Prompt agent → the agent page's Chat tab, Open
+ * in the danger tone with its action (`attentionAction`: Prompt agent → the agent page's Chat tab, Open
  * item → the item, or the overdue wait's subject). A STOPPED agent (epic qits-1667) says so first:
  * a person stopped it, and nothing starts it again until somebody restarts or prompts it. Shows
  * nothing for an agent with none of these.
@@ -53,21 +53,18 @@ interface WaitLine {
   host: { class: 'block' },
   template: `
     @if (agent().runState === 'STOPPED') {
-      <p class="m-0 text-sm text-charcoal-brown-600" data-stopped>
-        <strong class="font-semibold text-charcoal-brown-900">stopped</strong> by a person: it
-        starts again when somebody restarts or prompts it.
+      <p class="m-0 text-sm text-fg-soft" data-stopped>
+        <strong class="font-semibold text-fg">stopped</strong> by a person: it starts again when
+        somebody restarts or prompts it.
       </p>
     }
     @for (wait of waits(); track wait.id) {
-      <p
-        class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-charcoal-brown-600"
-        data-wait
-      >
+      <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm text-fg-soft" data-wait>
         <span>waits on</span>
         @switch (slug() && wait.subject.id ? wait.subject.kind : null) {
           @case ('RELEASE_REQUEST') {
             <a
-              class="text-ocean-deep-700"
+              class="text-accent"
               [qitsExit]="opening.releaseRequest"
               [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
               >{{ wait.subject.text }}</a
@@ -75,7 +72,7 @@ interface WaitLine {
           }
           @case ('WORK_ITEM') {
             <a
-              class="text-ocean-deep-700"
+              class="text-accent"
               [qitsExit]="opening.workItem"
               [exitParams]="{ slug: slug(), id: wait.subject.id! }"
               >{{ wait.subject.text }}</a
@@ -83,7 +80,7 @@ interface WaitLine {
           }
           @case ('COMMENTS') {
             <a
-              class="text-ocean-deep-700"
+              class="text-accent"
               [qitsExit]="opening.comments"
               [exitParams]="{ slug: slug(), id: wait.subject.id! }"
               >{{ wait.subject.text }}</a
@@ -91,9 +88,9 @@ interface WaitLine {
           }
           @default {
             @if (wait.subject.href; as href) {
-              <a class="text-ocean-deep-700" [href]="href">{{ wait.subject.text }}</a>
+              <a class="text-accent" [href]="href">{{ wait.subject.text }}</a>
             } @else {
-              <span class="text-charcoal-brown-900">{{ wait.subject.text }}</span>
+              <span class="text-fg">{{ wait.subject.text }}</span>
             }
           }
         }
@@ -104,12 +101,12 @@ interface WaitLine {
     }
     @if (action(); as action) {
       <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-sm" data-attention>
-        <span class="text-cinnabar-700">{{ agent().attention?.reason }}</span>
+        <span class="text-danger">{{ agent().attention?.reason }}</span>
         @switch (action.kind) {
           @case ('prompt') {
             @if (slug() && agent().agentId; as agentId) {
               <a
-                class="font-semibold text-charcoal-brown-900"
+                class="font-semibold text-fg"
                 [qitsExit]="acting.prompt"
                 [exitParams]="{ slug: slug(), agentId }"
                 data-action
@@ -120,7 +117,7 @@ interface WaitLine {
           @case ('open-item') {
             @if (slug() && action.itemId; as id) {
               <a
-                class="font-semibold text-charcoal-brown-900"
+                class="font-semibold text-fg"
                 [qitsExit]="acting.openItem"
                 [exitParams]="{ slug: slug(), id }"
                 data-action
@@ -134,16 +131,14 @@ interface WaitLine {
               as requestId
             ) {
               <a
-                class="font-semibold text-charcoal-brown-900"
+                class="font-semibold text-fg"
                 [qitsExit]="acting.overdueRequest"
                 [exitParams]="{ slug: slug(), requestId }"
                 data-action
                 >{{ action.label }}</a
               >
             } @else if (action.subject.href; as href) {
-              <a class="font-semibold text-charcoal-brown-900" [href]="href" data-action>{{
-                action.label
-              }}</a>
+              <a class="font-semibold text-fg" [href]="href" data-action>{{ action.label }}</a>
             }
           }
         }

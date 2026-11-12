@@ -95,8 +95,9 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
         class="absolute -top-0.5 -right-0.5 min-w-4 rounded-full px-1 text-[0.625rem] leading-4 font-semibold"
         [class]="
           (attentionCount()
-            ? 'bg-cinnabar-600 text-white'
-            : 'bg-sunflower-gold-500 text-charcoal-brown-950') + (count() ? '' : ' hidden')
+            ? 'bg-danger text-fg-on-accent'
+            : 'bg-warning-soft text-warning-strong ring-1 ring-warning-line') +
+          (count() ? '' : ' hidden')
         "
         aria-hidden="true"
         >{{ attentionCount() || count() }}</span
@@ -107,15 +108,13 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
           @for (row of rows(); track row.request.id) {
             @let request = row.request;
             <li
-              class="border-b border-gray-100 last:border-b-0"
+              class="border-b border-line-subtle last:border-b-0"
               [class]="
-                row.attention.length
-                  ? 'border-l-4 border-l-sunflower-gold-500 bg-sunflower-gold-50'
-                  : ''
+                row.attention.length ? 'border-l-4 border-l-warning-line bg-warning-soft' : ''
               "
             >
               <a
-                class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-gray-50"
+                class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-surface-muted"
                 [qitsExit]="opening.request"
                 [exitParams]="{ slug: slug(), requestId: ref(request) }"
                 [exitFragment]="row.attention[0]?.anchor"
@@ -125,7 +124,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
                 (click)="menu.close()"
               >
                 <div class="flex items-baseline justify-between gap-2">
-                  <span class="truncate text-sm font-semibold text-gray-900">{{
+                  <span class="truncate text-sm font-semibold text-fg">{{
                     request.qualifiedId ?? request.repoName
                   }}</span>
                   <span
@@ -134,7 +133,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
                     >{{ request.state }}</span
                   >
                 </div>
-                <span class="truncate text-[0.8125rem] text-gray-600">{{ title(request) }}</span>
+                <span class="truncate text-[0.8125rem] text-fg-soft">{{ title(request) }}</span>
                 <ui-lifecycle-line [points]="row.summary" [spread]="true" />
               </a>
               <app-active-runs class="-mt-1 px-3 pb-2" [runs]="row.active" />
@@ -142,7 +141,7 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
           }
         </ul>
         <p
-          class="m-0 px-3 py-4 text-center text-sm text-gray-500"
+          class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
           [class.hidden]="state() !== 'loaded' || pending().length > 0"
         >
           No pending release requests

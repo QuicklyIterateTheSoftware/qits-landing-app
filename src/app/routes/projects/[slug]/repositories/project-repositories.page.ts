@@ -63,20 +63,20 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
       <app-page-layout title="Repositories" [actions]="headerActions()">
         @if (needsSignIn() && !terminalRepoId()) {
           <div
-            class="mb-4 flex flex-col items-start gap-2 rounded-md border border-sunflower-gold-300 bg-sunflower-gold-50 px-3 py-2.5 text-sm"
+            class="mb-4 flex flex-col items-start gap-2 rounded-md border border-warning-line bg-warning-soft px-3 py-2.5 text-sm"
             role="alert"
           >
-            <p class="m-0 text-sunflower-gold-900">
+            <p class="m-0 text-warning-strong">
               The backup remote refused the platform’s credentials.
             </p>
-            <p class="m-0 text-sunflower-gold-800">
+            <p class="m-0 text-warning-strong">
               Sign in once and every repository’s backup works again: the credentials go to the
               platform’s shared store.
             </p>
             @if (signInAction(); as action) {
               <ui-action-button [action]="action" />
             } @else {
-              <p class="m-0 text-sunflower-gold-800">
+              <p class="m-0 text-warning-strong">
                 No repository of this project has a backup remote to sign in through.
               </p>
             }
@@ -91,7 +91,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
           />
         }
         @if (syncNote(); as note) {
-          <p class="m-0 mb-4 text-sm text-charcoal-brown-600" role="status">{{ note }}</p>
+          <p class="m-0 mb-4 text-sm text-fg-soft" role="status">{{ note }}</p>
         }
         <ui-spinner [state]="state()" class="min-h-48">
           <div class="flex flex-col gap-6">
@@ -135,10 +135,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
               aria-labelledby="repositories-other"
               [class]="tree().other.length ? 'block' : 'hidden'"
             >
-              <h2
-                id="repositories-other"
-                class="mt-0 mb-2 text-sm font-semibold text-charcoal-brown-700"
-              >
+              <h2 id="repositories-other" class="mt-0 mb-2 text-sm font-semibold text-fg-soft">
                 Not in the wrapper
               </h2>
               <div class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-x-4 gap-y-6">

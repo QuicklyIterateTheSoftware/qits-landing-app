@@ -21,20 +21,20 @@ const COLUMNS: readonly BoardColumnSpec[] = [
   {
     label: 'Refined',
     count: 3,
-    body: 'bg-ocean-deep-300',
-    header: 'bg-ocean-deep-400 text-ocean-deep-950',
+    body: 'bg-accent-soft',
+    header: 'bg-accent-line text-accent',
   },
   {
     label: 'Implemented',
     count: 2,
-    body: 'bg-sunflower-gold-300',
-    header: 'bg-sunflower-gold-400 text-sunflower-gold-950',
+    body: 'bg-warning-soft',
+    header: 'bg-warning-line text-warning',
   },
   {
     label: 'Verified',
     count: 1,
-    body: 'bg-mint-leaf-300',
-    header: 'bg-mint-leaf-400 text-mint-leaf-950',
+    body: 'bg-success-soft',
+    header: 'bg-success-line text-success',
   },
 ];
 
@@ -335,8 +335,8 @@ class LongWords {
     style: '--app-pin-top: 2.5rem; --page-actions-h: 2rem',
   },
   template: `
-    <div class="sticky top-0 z-50 h-10 bg-charcoal-brown-800"></div>
-    <div class="sticky top-10 z-40 h-8 bg-charcoal-brown-200"></div>
+    <div class="sticky top-0 z-50 h-10 bg-surface-inverse"></div>
+    <div class="sticky top-10 z-40 h-8 bg-surface-active"></div>
     <ui-board [columns]="columns" gutter>
       @for (card of cards; track card) {
         <ui-board-card [column]="card % 3" [code]="'qits-' + card" title="A card" kind="task" />

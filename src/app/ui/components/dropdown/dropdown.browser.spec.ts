@@ -22,8 +22,8 @@ import { Dropdown } from './dropdown';
         <circle cx="12" cy="12" r="8" />
       </svg>
       <ul dropdown-panel class="m-0 list-none p-0">
-        <li class="border-b border-gray-100 px-3 py-2 text-sm">First thing</li>
-        <li class="border-b border-gray-100 px-3 py-2 text-sm">Second thing</li>
+        <li class="border-b border-line-subtle px-3 py-2 text-sm">First thing</li>
+        <li class="border-b border-line-subtle px-3 py-2 text-sm">Second thing</li>
         <li class="px-3 py-2 text-sm">Third thing</li>
       </ul>
     </ui-dropdown>
@@ -53,7 +53,7 @@ describe('Dropdown (screenshots)', () => {
   template: `
     <div
       id="box"
-      class="fixed right-2 bottom-2 flex h-24 w-40 items-end justify-end overflow-y-auto border border-gray-300"
+      class="fixed right-2 bottom-2 flex h-24 w-40 items-end justify-end overflow-y-auto border border-line-strong"
     >
       <ui-dropdown label="Things" panelLabel="Recent things" panelId="things">
         <span dropdown-trigger>T</span>
@@ -76,7 +76,7 @@ class Scrolling {}
 @Component({
   imports: [Dropdown],
   template: `
-    <div class="fixed inset-x-0 top-0 z-50 h-14 bg-gray-800"></div>
+    <div class="fixed inset-x-0 top-0 z-50 h-14 bg-surface-inverse"></div>
     <div class="mt-[150px] ml-2 h-12 w-40 overflow-y-auto">
       <ui-dropdown align="start" label="Many" panelLabel="Many things" panelId="many">
         <span dropdown-trigger>M</span>

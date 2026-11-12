@@ -15,12 +15,14 @@ export type ToastTone = 'note' | 'error';
   template: `
     <div
       class="flex items-center gap-4 rounded-md py-2 pr-2 pl-3 text-sm shadow-lg"
-      [class]="tone() === 'error' ? 'bg-red-800 text-red-50' : 'bg-charcoal-brown-900 text-white'"
+      [class]="
+        tone() === 'error' ? 'bg-danger text-fg-on-accent' : 'bg-surface-inverse text-fg-on-inverse'
+      "
     >
       <span class="grow">{{ message() }}</span>
       <button
         type="button"
-        class="cursor-pointer rounded border-0 bg-transparent px-2 py-1 font-semibold text-inherit underline-offset-2 hover:underline focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none"
+        class="cursor-pointer rounded border-0 bg-transparent px-2 py-1 font-semibold text-inherit underline-offset-2 hover:underline focus-visible:ring-1 focus-visible:ring-fg-on-accent focus-visible:outline-none"
         [class]="action() ? 'inline-block' : 'hidden'"
         (click)="act.emit()"
       >

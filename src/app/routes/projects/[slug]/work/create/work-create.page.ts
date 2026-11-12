@@ -54,14 +54,14 @@ import { ActionButton } from '$ui/components/action-button/action-button';
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout [title]="heading()">
         <form
-          class="flex max-w-2xl flex-col gap-4 text-sm text-charcoal-brown-800"
+          class="flex max-w-2xl flex-col gap-4 text-sm text-fg"
           (submit)="$event.preventDefault(); create()"
         >
           @if (inspiredBy(); as ideaId) {
             <p class="m-0" data-inspired-by>
               Inspired by
               <a
-                class="font-semibold text-ocean-deep-700 no-underline hover:underline"
+                class="font-semibold text-accent no-underline hover:underline"
                 [qitsExit]="inspiring.open"
                 [exitParams]="{ slug: slug(), ideaId }"
                 >{{ ideaTitle() }}</a
@@ -71,7 +71,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           <label class="flex flex-col gap-1">
             Archetype
             <select
-              class="h-8 w-full max-w-xs rounded-md border border-charcoal-brown-300 px-2 text-sm"
+              class="h-8 w-full max-w-xs rounded-md border border-line-strong px-2 text-sm"
               aria-label="Archetype"
               [value]="archetype()"
               (change)="setArchetype(value($event))"
@@ -86,7 +86,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           <label class="flex flex-col gap-1">
             Title
             <input
-              class="h-8 w-full rounded-md border border-charcoal-brown-300 px-2 text-sm"
+              class="h-8 w-full rounded-md border border-line-strong px-2 text-sm"
               type="text"
               aria-label="Title"
               [value]="title()"
@@ -96,7 +96,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           <label class="flex flex-col gap-1">
             Description
             <textarea
-              class="min-h-32 w-full rounded-md border border-charcoal-brown-300 p-2 text-sm"
+              class="min-h-32 w-full rounded-md border border-line-strong p-2 text-sm"
               aria-label="Description"
               [value]="description()"
               (input)="description.set(value($event))"
@@ -106,7 +106,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
             <label class="flex flex-col gap-1">
               Kind
               <select
-                class="h-8 w-full max-w-xs rounded-md border border-charcoal-brown-300 px-2 text-sm"
+                class="h-8 w-full max-w-xs rounded-md border border-line-strong px-2 text-sm"
                 aria-label="Kind"
                 [value]="ticketType()"
                 (change)="ticketType.set(value($event))"
@@ -121,7 +121,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
             <label class="flex flex-col gap-1">
               Impetus
               <textarea
-                class="min-h-16 w-full rounded-md border border-charcoal-brown-300 p-2 text-sm"
+                class="min-h-16 w-full rounded-md border border-line-strong p-2 text-sm"
                 aria-label="Impetus"
                 [value]="impetus()"
                 (input)="impetus.set(value($event))"
@@ -133,7 +133,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
             <ui-action-button [action]="createAction()" />
           </div>
           @if (refusal(); as refusal) {
-            <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ refusal }}</p>
+            <p class="m-0 text-sm text-danger" role="alert">{{ refusal }}</p>
           }
         </form>
       </app-page-layout>

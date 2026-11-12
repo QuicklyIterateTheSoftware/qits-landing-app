@@ -50,23 +50,23 @@ interface ViewerLine {
   host: { class: 'block min-w-0' },
   template: `
     @if (!path()) {
-      <p class="m-0 text-sm text-charcoal-brown-600">Select a file to view its contents.</p>
+      <p class="m-0 text-sm text-fg-muted">Select a file to view its contents.</p>
     } @else {
       @switch (file()?.status) {
         @case ('loading') {
-          <p class="m-0 text-sm text-charcoal-brown-600" role="status">Loading {{ path() }}…</p>
+          <p class="m-0 text-sm text-fg-muted" role="status">Loading {{ path() }}…</p>
         }
         @case ('missing') {
-          <p class="m-0 text-sm text-charcoal-brown-600" role="status">
+          <p class="m-0 text-sm text-fg-muted" role="status">
             {{ path() }} is not in the worktree (any more).
           </p>
         }
         @case ('error') {
-          <p class="m-0 flex items-center gap-3 text-sm text-cinnabar-700" role="alert">
+          <p class="m-0 flex items-center gap-3 text-sm text-danger" role="alert">
             Could not read {{ path() }}.
             <button
               type="button"
-              class="cursor-pointer border-0 bg-transparent p-0 text-sm text-ocean-deep-700 underline"
+              class="cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
               (click)="retry.emit()"
             >
               Try again
@@ -75,31 +75,29 @@ interface ViewerLine {
         }
         @case ('loaded') {
           @if (file()?.binary) {
-            <p class="m-0 text-sm text-charcoal-brown-600" role="status">
+            <p class="m-0 text-sm text-fg-muted" role="status">
               This file is too large or binary: the workspace sends both the same way, so this page
               cannot tell which. The read limit is 2 MB.
             </p>
           } @else if (lines().length === 0) {
-            <p class="m-0 text-sm text-charcoal-brown-600" role="status">This file is empty.</p>
+            <p class="m-0 text-sm text-fg-muted" role="status">This file is empty.</p>
           } @else {
-            <div
-              class="max-h-[34rem] overflow-auto rounded-md border border-charcoal-brown-200 bg-white"
-            >
+            <div class="max-h-[34rem] overflow-auto rounded-md border border-line bg-surface">
               <ol class="m-0 list-none py-1.5 pl-0 font-mono text-xs leading-normal">
                 @for (line of lines(); track line.number) {
                   <li
                     class="flex items-start gap-2.5 px-2"
-                    [class.bg-sunflower-gold-100]="isAnchored(line.number)"
-                    [class.bg-ocean-deep-50]="!isAnchored(line.number) && isPicked(line.number)"
+                    [class.bg-warning-soft]="isAnchored(line.number)"
+                    [class.bg-accent-soft]="!isAnchored(line.number) && isPicked(line.number)"
                     [class.outline-dashed]="line.number === pendingFrom()"
                     [class.outline-1]="line.number === pendingFrom()"
-                    [class.outline-ocean-deep-600]="line.number === pendingFrom()"
+                    [class.outline-focus-ring]="line.number === pendingFrom()"
                     [attr.data-line]="line.number"
                   >
                     @if (picking()) {
                       <button
                         type="button"
-                        class="w-10 shrink-0 cursor-pointer border-0 bg-transparent p-0 text-right font-mono text-xs text-ocean-deep-700 select-none hover:underline"
+                        class="w-10 shrink-0 cursor-pointer border-0 bg-transparent p-0 text-right font-mono text-xs text-accent select-none hover:underline"
                         [attr.aria-label]="'Pick from line ' + line.number"
                         (click)="onGutter(line.number, $event)"
                       >
@@ -107,12 +105,12 @@ interface ViewerLine {
                       </button>
                     } @else {
                       <span
-                        class="w-10 shrink-0 text-right text-charcoal-brown-400 select-none"
+                        class="w-10 shrink-0 text-right text-fg-faint select-none"
                         aria-hidden="true"
                         >{{ line.number }}</span
                       >
                     }
-                    <code class="grow whitespace-pre text-charcoal-brown-900">{{ line.text }}</code>
+                    <code class="grow whitespace-pre text-fg">{{ line.text }}</code>
                   </li>
                 }
               </ol>

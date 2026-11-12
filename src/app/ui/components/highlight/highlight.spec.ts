@@ -31,9 +31,9 @@ describe('Highlighter', () => {
     const highlighter = TestBed.inject(Highlighter);
     const element = document.createElement('div');
     highlighter.highlight(element);
-    expect(element.classList.contains('outline-ocean-deep-600')).toBe(true);
+    expect(element.classList.contains('outline-focus-ring')).toBe(true);
     vi.advanceTimersByTime(HIGHLIGHT_MS);
-    expect(element.classList.contains('outline-ocean-deep-600')).toBe(false);
+    expect(element.classList.contains('outline-focus-ring')).toBe(false);
     expect(element.classList.contains('outline-transparent')).toBe(true);
     vi.advanceTimersByTime(HIGHLIGHT_FADE_MS);
     expect(element.className).toBe('');

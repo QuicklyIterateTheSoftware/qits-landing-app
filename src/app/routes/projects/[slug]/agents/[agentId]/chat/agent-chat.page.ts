@@ -62,18 +62,18 @@ export const TRANSCRIPT_POLL_MS = 3000;
   template: `
     <section class="flex flex-col gap-4 text-sm" aria-label="Chat">
       @if (agent(); as agent) {
-        <p class="m-0 text-charcoal-brown-600">{{ explanation() }}</p>
+        <p class="m-0 text-fg-soft">{{ explanation() }}</p>
         @if (rowId()) {
           @switch (transcriptState()) {
             @case ('loading') {
-              <p class="m-0 text-charcoal-brown-600">Reading the agent’s transcript…</p>
+              <p class="m-0 text-fg-soft">Reading the agent’s transcript…</p>
             }
             @case ('error') {
-              <p class="m-0 flex items-center gap-3 text-cinnabar-700">
+              <p class="m-0 flex items-center gap-3 text-danger">
                 Could not read the agent’s transcript.
                 <button
                   type="button"
-                  class="cursor-pointer border-0 bg-transparent p-0 text-sm text-ocean-deep-700 underline"
+                  class="cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
                   (click)="reload()"
                 >
                   Try again
@@ -82,12 +82,12 @@ export const TRANSCRIPT_POLL_MS = 3000;
             }
             @default {
               <section
-                class="rounded-md border border-charcoal-brown-200 bg-white p-3"
+                class="rounded-md border border-line bg-surface p-3"
                 aria-label="The transcript"
                 aria-live="polite"
               >
                 @if (transcript().items.length === 0) {
-                  <p class="m-0 text-charcoal-brown-600">The transcript has nothing in it yet.</p>
+                  <p class="m-0 text-fg-soft">The transcript has nothing in it yet.</p>
                 } @else {
                   <app-conversation [items]="transcript().items" />
                 }
@@ -96,7 +96,7 @@ export const TRANSCRIPT_POLL_MS = 3000;
           }
         }
         @if (lastSent(); as note) {
-          <p class="m-0 text-mint-leaf-800" role="status">{{ note }}</p>
+          <p class="m-0 text-success" role="status">{{ note }}</p>
         }
         <app-prompt-composer
           [agentId]="agent.agentId ?? ''"

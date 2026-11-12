@@ -17,6 +17,8 @@ import { NotificationsMenu } from '$patterns/events/notifications-menu/notificat
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
 import { AgentsMenu } from '$patterns/agents/agents-menu/agents-menu';
+import { ThemeChoices } from '$patterns/appearance/theme-choices/theme-choices';
+import { ThemeMenu } from '$patterns/appearance/theme-menu/theme-menu';
 import { Breadcrumbs, type Crumb } from '$ui/components/breadcrumbs/breadcrumbs';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 
@@ -94,7 +96,9 @@ export interface NavNote {
  *
  * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
  * "…" and the current page beside the burger and all five menus. The network-access link is the
- * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977).
+ * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977). The
+ * theme menu (qits-2086) is the seventh and shows from 768px only for the same reason; below
+ * 768px the same radios (`app-theme-choices`) sit at the foot of the burger's navigation.
  *
  * Who scrolls (qits-2050): from 768px up the shell is exactly the window's height and the window
  * never scrolls; the sidebar and the page (`<main>`) each scroll on their own, with their own
@@ -125,6 +129,8 @@ export interface NavNote {
     FinishToasts,
     NotificationsMenu,
     ReleaseMenu,
+    ThemeChoices,
+    ThemeMenu,
   ],
   // `--app-header-h`: the top bar's fixed height (what sits below the bar in the window reads it,
   // such as a menu's sheet on a phone). `--app-pin-top`: where what pins at the top of the scrolling
@@ -140,7 +146,7 @@ export interface NavNote {
            pinned over it; from 768px up the shell is the window's height and the bar stays put
            while the sidebar and the page below it scroll each on their own. -->
       <header
-        class="sticky top-0 z-50 col-span-full flex items-center gap-1 border-b border-gray-200 bg-white px-2 md:gap-3 md:px-4"
+        class="sticky top-0 z-50 col-span-full flex items-center gap-1 border-b border-line bg-surface px-2 md:gap-3 md:px-4"
       >
         <button
           type="button"
@@ -150,17 +156,18 @@ export interface NavNote {
           aria-label="Navigation"
           (click)="toggleNav()"
         >
-          <span class="block h-0.5 bg-gray-700"></span>
-          <span class="block h-0.5 bg-gray-700"></span>
-          <span class="block h-0.5 bg-gray-700"></span>
+          <span class="block h-0.5 bg-fg-control"></span>
+          <span class="block h-0.5 bg-fg-control"></span>
+          <span class="block h-0.5 bg-fg-control"></span>
         </button>
         <ui-breadcrumbs [home]="home" [crumbs]="crumbs()" />
         <!-- The menus at the right end: the platform's network access (from 768px), version bumps
-             and notifications (always), then the open project's agents, its release requests and its
-             settings (all three hidden, not removed, while no project is open). -->
+             and notifications (always), then the open project's agents and its release requests,
+             the theme (from 768px, qits-2086), and the open project's settings (agents, release
+             requests and settings hidden, not removed, while no project is open). -->
         <div class="ml-auto flex items-center gap-1">
           <a
-            class="hidden size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 md:inline-flex aria-[current=page]:text-gray-900"
+            class="hidden size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg md:inline-flex aria-[current=page]:text-fg"
             [qitsExit]="network.open"
             aria-label="Network access"
             title="Network access"
@@ -185,8 +192,9 @@ export interface NavNote {
           <app-notifications-menu />
           <app-agents-menu />
           <app-release-menu />
+          <app-theme-menu class="max-md:hidden" />
           <a
-            class="size-9 items-center justify-center rounded-md text-gray-500 no-underline hover:bg-gray-100 hover:text-gray-900 aria-[current=page]:text-gray-900"
+            class="size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:text-fg"
             [class]="slug() ? 'inline-flex' : 'hidden'"
             [qitsExit]="settings.open"
             [exitParams]="{ slug: slug() }"
@@ -213,7 +221,7 @@ export interface NavNote {
 
       <nav
         id="layout-nav"
-        class="z-1 col-start-1 row-start-2 border-r border-gray-200 bg-gray-50 md:block md:min-h-0 md:overflow-y-auto"
+        class="z-1 col-start-1 row-start-2 border-r border-line bg-surface-subtle md:block md:min-h-0 md:overflow-y-auto"
         [class.hidden]="!navOpen()"
         aria-label="qits"
       >
@@ -221,7 +229,7 @@ export interface NavNote {
           @for (link of links(); track link.key) {
             <li>
               <a
-                class="block rounded-md px-3 py-[0.4rem] text-gray-700 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900 aria-[current=true]:font-semibold aria-[current=true]:text-gray-900"
+                class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg aria-[current=true]:font-semibold aria-[current=true]:text-fg"
                 [qitsExit]="link.exit"
                 [exitParams]="{ slug: slug() }"
                 [exitCurrent]="currentOf(link)"
@@ -229,7 +237,7 @@ export interface NavNote {
                 >{{ link.label }}
                 <!-- The section's newest item, below the label; switched by class. -->
                 <span
-                  class="mt-0.5 items-center gap-1.5 text-xs font-normal text-gray-500"
+                  class="mt-0.5 items-center gap-1.5 text-xs font-normal text-fg-muted"
                   [class]="link.note ? 'flex' : 'hidden'"
                   [attr.title]="link.note?.title"
                 >
@@ -244,13 +252,13 @@ export interface NavNote {
               <!-- The open section's pages, indented below it; switched by class, so the server
                    render hydrates as is. -->
               <ul
-                class="m-0 mt-0.5 mb-1 ml-3 list-none border-l border-gray-200 pl-2"
+                class="m-0 mt-0.5 mb-1 ml-3 list-none border-l border-line pl-2"
                 [class.hidden]="!link.children?.length || link.path !== section()?.path"
               >
                 @for (child of link.children ?? []; track child.path) {
                   <li>
                     <a
-                      class="block rounded-md px-3 py-[0.3rem] text-sm text-gray-600 no-underline hover:bg-gray-100 aria-[current=page]:bg-gray-200 aria-[current=page]:font-semibold aria-[current=page]:text-gray-900"
+                      class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                       [qitsExit]="child.exit"
                       [exitParams]="{ slug: slug() }"
                       (click)="closeNav()"
@@ -262,6 +270,8 @@ export interface NavNote {
             </li>
           }
         </ul>
+        <!-- Below 768px the top bar has no room for the theme menu: its radios sit here instead. -->
+        <app-theme-choices class="border-t border-line px-5 py-3 md:hidden" name="theme-nav" />
       </nav>
 
       <main

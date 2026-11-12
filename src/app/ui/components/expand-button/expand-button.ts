@@ -14,7 +14,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   template: `
     <button
       type="button"
-      class="absolute -bottom-[0.8125rem] left-[calc(50%-0.8125rem)] z-20 flex size-6.5 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-gray-500 hover:text-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
+      class="absolute -bottom-[0.8125rem] left-[calc(50%-0.8125rem)] z-20 flex size-6.5 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-line))] bg-[var(--card-background,var(--color-surface))] text-fg-muted hover:text-fg focus-visible:ring-1 focus-visible:ring-focus-ring focus-visible:outline-none"
       [attr.aria-expanded]="open()"
       [attr.aria-controls]="controls()"
       [attr.aria-label]="open() ? 'Show less' : 'Show more'"

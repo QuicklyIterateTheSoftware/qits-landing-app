@@ -18,7 +18,7 @@ import { ReorderHandle } from '$ui/components/reorder/reorder';
     <button
       type="button"
       uiReorderHandle
-      class="absolute -right-[0.8125rem] -bottom-[0.8125rem] z-20 size-6.5 items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-charcoal-brown-500 hover:text-charcoal-brown-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none"
+      class="absolute -right-[0.8125rem] -bottom-[0.8125rem] z-20 size-6.5 items-center justify-center rounded-full border border-[var(--card-border,var(--color-line))] bg-[var(--card-background,var(--color-surface))] text-fg-muted hover:text-fg focus-visible:ring-1 focus-visible:ring-focus-ring focus-visible:outline-none"
       [class]="shown() ? 'flex' : 'hidden'"
       [attr.aria-label]="label()"
     >

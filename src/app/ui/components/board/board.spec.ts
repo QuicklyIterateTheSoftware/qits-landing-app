@@ -10,9 +10,9 @@ import { BoardRow } from './board-row';
 import { uiSpecExits } from '../../../../testing/ui-exits';
 
 const COLUMNS: readonly BoardColumnSpec[] = [
-  { label: 'One', count: 1, body: 'bg-ocean-deep-300', header: 'bg-ocean-deep-400' },
-  { label: 'Two', body: 'bg-sunflower-gold-300', header: 'bg-sunflower-gold-400' },
-  { label: 'Three', body: 'bg-mint-leaf-300', header: 'bg-mint-leaf-400' },
+  { label: 'One', count: 1, body: 'bg-accent-soft', header: 'bg-accent-line' },
+  { label: 'Two', body: 'bg-warning-soft', header: 'bg-warning-line' },
+  { label: 'Three', body: 'bg-success-soft', header: 'bg-success-line' },
 ];
 
 @Component({
@@ -97,9 +97,9 @@ describe('Board', () => {
     const stripes = [...element.querySelectorAll('ui-board [aria-hidden="true"] > div')];
     expect(stripes.map((s) => s.className)).toEqual([
       '',
-      'bg-ocean-deep-300',
-      'bg-sunflower-gold-300',
-      'bg-mint-leaf-300',
+      'bg-accent-soft',
+      'bg-warning-soft',
+      'bg-success-soft',
       '',
     ]);
   });
@@ -143,8 +143,8 @@ describe('Board', () => {
     expect(strip.textContent?.trim()).toBe('L-1');
     // The bar starts where the strip ends, in the same colour.
     expect(bar.classList).toContain('ml-6');
-    expect(bar.classList).toContain('bg-charcoal-brown-800/40');
-    expect(strip.classList).toContain('bg-charcoal-brown-800/40');
+    expect(bar.classList).toContain('bg-surface-inverse/40');
+    expect(strip.classList).toContain('bg-surface-inverse/40');
   });
 
   it('makes a card with a link a link', () => {

@@ -29,6 +29,8 @@ class Screen {
 }
 
 describe('TerminalScreen (screenshots)', () => {
+  afterEach(() => document.documentElement.removeAttribute('data-theme'));
+
   it('draws the session in xterm.js, fitted to its box', async () => {
     const fixture = TestBed.createComponent(Screen);
     fixture.detectChanges();
@@ -40,5 +42,28 @@ describe('TerminalScreen (screenshots)', () => {
     await expect
       .element(page.elementLocator(element))
       .toMatchScreenshot('session', { kind: 'DATA' });
+  });
+
+  it('repaints xterm.js in the box’s colours when the scheme changes (qits-2086)', async () => {
+    document.documentElement.setAttribute('data-theme', 'light');
+    const fixture = TestBed.createComponent(Screen);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    await expect
+      .poll(() => element.querySelector('.xterm-rows')?.textContent ?? '')
+      .toContain('working tree clean');
+    // xterm.js paints its theme's background on its scrollable element.
+    const painted = () =>
+      element.querySelector<HTMLElement>('.xterm-scrollable-element')?.style.backgroundColor;
+    const light = painted();
+    expect(light).toBeTruthy();
+
+    document.documentElement.setAttribute('data-theme', 'dark');
+    await expect.poll(painted).not.toBe(light);
+    const dark = painted();
+
+    document.documentElement.setAttribute('data-theme', 'light');
+    await expect.poll(painted).toBe(light);
+    expect(dark).not.toBe(light);
   });
 });

@@ -52,8 +52,8 @@ class TestPage {}
 class TallPage {
   readonly actions = [{ label: 'Act', variant: 'muted' as const, callback: () => undefined }];
   readonly columns = [
-    { label: 'Left', body: 'bg-ocean-deep-300', header: 'bg-ocean-deep-400 text-ocean-deep-950' },
-    { label: 'Right', body: 'bg-mint-leaf-300', header: 'bg-mint-leaf-400 text-mint-leaf-950' },
+    { label: 'Left', body: 'bg-accent-soft', header: 'bg-accent-line text-fg' },
+    { label: 'Right', body: 'bg-success-soft', header: 'bg-success-line text-fg' },
   ];
   readonly cards = Array.from({ length: 12 }, (_, i) => i + 1);
 }
@@ -144,6 +144,15 @@ describe('ShellLayout (screenshots)', () => {
   it('shows the sidebar beside the page on a wide screen', async () => {
     const { layout } = await render();
     await expect.element(layout).toMatchTextContent('Page content');
+    // The theme is the top bar's menu here; the navigation's own radios are for phones (qits-2086).
+    await expect.element(page.getByRole('button', { name: 'Theme', exact: true })).toBeVisible();
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('group', { name: 'Theme', includeHidden: true }),
+      )
+      .not.toBeVisible();
     await expect.element(layout).toMatchScreenshot('wide', { kind: 'DATA' });
   });
 
@@ -163,6 +172,20 @@ describe('ShellLayout (screenshots)', () => {
     expect(
       page.getByRole('navigation', { name: 'qits' }).getByRole('link').elements(),
     ).toHaveLength(0);
+    // The top bar has no room for the theme menu on a phone: its radios are at the navigation's
+    // foot instead, so System, Light and Dark are reachable at every width (qits-2086).
+    await expect
+      .element(page.getByRole('button', { name: 'Theme', exact: true, includeHidden: true }))
+      .not.toBeVisible();
+    const theme = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('group', { name: 'Theme' });
+    await expect.element(theme).toBeVisible();
+    await expect.element(theme.getByRole('radio', { name: 'System' })).toBeChecked();
+    await userEvent.click(theme.getByRole('radio', { name: 'Dark' }));
+    expect(document.documentElement.dataset['theme']).toBe('dark');
+    await userEvent.click(theme.getByRole('radio', { name: 'System' }));
+    expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
     await expect.element(layout).toMatchScreenshot('narrow-open', { kind: 'DATA' });
   });
 

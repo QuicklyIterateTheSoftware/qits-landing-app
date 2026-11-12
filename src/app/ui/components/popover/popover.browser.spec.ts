@@ -12,7 +12,7 @@ import { Popover } from './popover';
     <ui-popover #start>
       <button
         type="button"
-        class="rounded-md border border-charcoal-brown-300 px-3 py-1 text-sm"
+        class="rounded-md border border-line-strong px-3 py-1 text-sm"
         [attr.aria-describedby]="start.panelId()"
       >
         Start
@@ -22,7 +22,7 @@ import { Popover } from './popover';
     <ui-popover #end align="end">
       <button
         type="button"
-        class="rounded-md border border-charcoal-brown-300 px-3 py-1 text-sm"
+        class="rounded-md border border-line-strong px-3 py-1 text-sm"
         [attr.aria-describedby]="end.panelId()"
       >
         End
@@ -155,7 +155,7 @@ describe('Popover with tapToOpen (browser)', () => {
   imports: [Popover],
   template: `
     <div
-      class="fixed right-2 bottom-2 flex h-16 w-32 items-end overflow-y-auto border border-charcoal-brown-300"
+      class="fixed right-2 bottom-2 flex h-16 w-32 items-end overflow-y-auto border border-line-strong"
     >
       <ui-popover #popover>
         <button type="button" class="px-2 text-sm" [attr.aria-describedby]="popover.panelId()">
@@ -177,7 +177,7 @@ class Scrolling {}
 @Component({
   imports: [Popover],
   template: `
-    <div class="fixed inset-x-0 top-0 z-50 h-14 bg-gray-800"></div>
+    <div class="fixed inset-x-0 top-0 z-50 h-14 bg-surface-inverse"></div>
     <div class="pt-[80px] pl-4">
       <ui-popover #popover class="relative z-10">
         <button type="button" class="px-2 text-sm" [attr.aria-describedby]="popover.panelId()">

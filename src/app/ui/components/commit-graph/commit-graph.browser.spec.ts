@@ -109,7 +109,7 @@ describe('CommitGraphView (screenshots)', () => {
       <p class="m-0 truncate font-mono text-xs font-semibold" [title]="lane.label">
         {{ lane.label }}
       </p>
-      <p class="m-0 text-xs text-charcoal-brown-500">lane {{ index }}</p>
+      <p class="m-0 text-xs text-fg-muted">lane {{ index }}</p>
     </ng-template>
   `,
 })

@@ -36,7 +36,7 @@ export const NO_LONGER_BUILDING = 'The upstream is no longer building';
   template: `
     <div class="flex flex-wrap items-center gap-2">
       <input
-        class="h-8 min-w-48 flex-1 rounded-md border border-charcoal-brown-300 px-2 text-sm"
+        class="h-8 min-w-48 flex-1 rounded-md border border-line-strong px-2 text-sm"
         type="text"
         [value]="note()"
         (input)="noteTyped($event)"
@@ -46,7 +46,7 @@ export const NO_LONGER_BUILDING = 'The upstream is no longer building';
       <ui-action-button [action]="override()" />
     </div>
     @if (refusal(); as refusal) {
-      <p class="mt-1 mb-0 text-sm text-cinnabar-700" role="alert">{{ refusal }}</p>
+      <p class="mt-1 mb-0 text-sm text-danger" role="alert">{{ refusal }}</p>
     }
   `,
 })

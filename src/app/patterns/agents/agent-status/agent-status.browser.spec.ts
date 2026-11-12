@@ -38,10 +38,7 @@ const OVERDUE = 'a project with an agent overdue on a release request';
   host: { class: 'flex w-[40rem] flex-col gap-3 p-4' },
   template: `
     @for (agent of agents(); track agent.agentId) {
-      <div
-        class="rounded-md border border-charcoal-brown-200 p-2"
-        [attr.data-entity]="agent.entityId"
-      >
+      <div class="rounded-md border border-line p-2" [attr.data-entity]="agent.entityId">
         <app-agent-status [agent]="agent" />
       </div>
     }

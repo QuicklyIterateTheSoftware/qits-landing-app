@@ -26,9 +26,9 @@ import { TestResultsView } from '$ui/components/test-results/test-results';
 const FULL_KINDS: readonly string[] = [TEST_RESULTS_KIND, COVERAGE_KIND];
 
 const SEVERITY_CLASSES: Readonly<Record<string, string>> = {
-  good: 'text-mint-leaf-800',
-  bad: 'text-cinnabar-700',
-  warn: 'text-sunflower-gold-800',
+  good: 'text-success',
+  bad: 'text-danger',
+  warn: 'text-warning',
 };
 
 /**
@@ -47,25 +47,25 @@ const SEVERITY_CLASSES: Readonly<Record<string, string>> = {
   imports: [CoverageSummary, Spinner, TestResultsView],
   host: { class: 'block' },
   template: `
-    <section class="rounded-md border border-charcoal-brown-200 bg-white px-3 py-2">
+    <section class="rounded-md border border-line bg-surface px-3 py-2">
       <header class="mb-1 flex flex-wrap items-baseline gap-2">
         <h2 class="m-0 text-base font-semibold">{{ title() }}</h2>
         @if (runHref(); as href) {
-          <a class="text-sm text-ocean-deep-700 no-underline hover:underline" [href]="href"
+          <a class="text-sm text-accent no-underline hover:underline" [href]="href"
             >the run in CI</a
           >
         }
       </header>
       <ui-spinner [state]="run()?.status ?? 'loading'" class="min-h-8">
         <p
-          class="m-0 text-sm text-charcoal-brown-500"
+          class="m-0 text-sm text-fg-muted"
           [class]="run()?.status === 'loaded' && !sections().length ? 'block' : 'hidden'"
         >
           Not reported.
         </p>
         @for (section of sections(); track section.report.id) {
           <section
-            class="mt-2 scroll-mt-24 border-t border-charcoal-brown-100 pt-2 first:mt-0 first:border-t-0 first:pt-0"
+            class="mt-2 scroll-mt-24 border-t border-line-subtle pt-2 first:mt-0 first:border-t-0 first:pt-0"
             [attr.id]="section.anchor"
             [attr.data-kind]="section.report.kind"
           >
@@ -144,7 +144,7 @@ export class RunReports {
   });
 
   protected severity(highlight: ReportHighlight): string {
-    return SEVERITY_CLASSES[highlight.severity ?? ''] ?? 'text-charcoal-brown-600';
+    return SEVERITY_CLASSES[highlight.severity ?? ''] ?? 'text-fg-soft';
   }
 
   constructor() {

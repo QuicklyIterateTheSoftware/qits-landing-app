@@ -19,7 +19,7 @@ export type FinishButtonState = 'idle' | 'running' | 'error';
   template: `
     <button
       type="button"
-      class="absolute -right-[0.8125rem] -bottom-[0.8125rem] z-20 size-6.5 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-gray-200))] bg-[var(--card-background,var(--color-white))] text-mint-leaf-700 hover:text-mint-leaf-900 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-wait"
+      class="absolute -right-[0.8125rem] -bottom-[0.8125rem] z-20 size-6.5 cursor-pointer items-center justify-center rounded-full border border-[var(--card-border,var(--color-line))] bg-[var(--card-background,var(--color-surface))] text-success hover:text-success-strong focus-visible:ring-1 focus-visible:ring-focus-ring focus-visible:outline-none disabled:cursor-wait"
       [class]="shown() ? 'flex' : 'hidden'"
       [disabled]="state() === 'running'"
       [attr.aria-label]="label()"

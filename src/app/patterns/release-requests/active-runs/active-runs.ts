@@ -22,7 +22,7 @@ import { chipClass } from '$ui/components/chip/chip';
         data-active-run
         ><span
           aria-hidden="true"
-          class="size-1.5 rounded-full bg-sunflower-gold-600"
+          class="size-1.5 rounded-full bg-warning-fill"
           [class.animate-pulse]="run.status === 'RUNNING'"
         ></span
         >{{ run.label }}</a

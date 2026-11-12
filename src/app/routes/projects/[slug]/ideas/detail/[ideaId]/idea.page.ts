@@ -58,14 +58,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
       <app-page-layout [title]="title()" [actions]="actions()">
         @if (archiving()) {
           <div
-            class="mb-6 flex flex-col gap-3 rounded-md border border-cinnabar-200 bg-cinnabar-50 p-4"
+            class="mb-6 flex flex-col gap-3 rounded-md border border-danger-line bg-danger-soft p-4"
             role="group"
             aria-label="Archive the idea"
           >
-            <label class="flex flex-col gap-1 text-sm text-charcoal-brown-800">
+            <label class="flex flex-col gap-1 text-sm text-fg">
               Why is it archived?
               <textarea
-                class="min-h-16 w-full rounded-md border border-charcoal-brown-300 p-2 text-sm"
+                class="min-h-16 w-full rounded-md border border-line-strong p-2 text-sm"
                 aria-label="Reason"
                 [value]="reason()"
                 (input)="reason.set(text($event))"
@@ -78,7 +78,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
           </div>
         }
         @if (failure(); as failure) {
-          <p class="mt-0 mb-4 text-sm text-cinnabar-700" role="alert">{{ failure }}</p>
+          <p class="mt-0 mb-4 text-sm text-danger" role="alert">{{ failure }}</p>
         }
         <ui-load-failure
           message="This idea could not be read."
@@ -93,34 +93,34 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 @if (idea.archived) {
                   <ui-chip label="archived" data-archived />
                   @if (idea.archiveReason) {
-                    <span class="text-charcoal-brown-600">{{ idea.archiveReason }}</span>
+                    <span class="text-fg-soft">{{ idea.archiveReason }}</span>
                   }
                 }
               </div>
               @if (idea.description) {
                 <ui-markdown [text]="idea.description" />
               } @else {
-                <p class="m-0 text-sm text-charcoal-brown-500">No description.</p>
+                <p class="m-0 text-sm text-fg-muted">No description.</p>
               }
-              <section aria-label="Enabled by" class="text-sm text-charcoal-brown-800">
+              <section aria-label="Enabled by" class="text-sm text-fg">
                 <h2 class="mt-0 mb-1 text-sm font-semibold">Enabled by</h2>
                 @if (idea.enabledByIdea; as enabler) {
                   <a
-                    class="text-ocean-deep-700 no-underline hover:underline"
+                    class="text-accent no-underline hover:underline"
                     [qitsExit]="enabling.open"
                     [exitParams]="{ slug: slug(), ideaId: enabler.id ?? '' }"
                     >{{ enabler.title }}</a
                   >
                   @if (enabler.archived) {
-                    <span class="ml-2 text-sunflower-gold-800" data-enabler-archived
+                    <span class="ml-2 text-warning" data-enabler-archived
                       >That idea is archived.</span
                     >
                   }
                 } @else {
-                  <span class="text-charcoal-brown-500">No idea.</span>
+                  <span class="text-fg-muted">No idea.</span>
                 }
               </section>
-              <section aria-label="Enables" class="text-sm text-charcoal-brown-800">
+              <section aria-label="Enables" class="text-sm text-fg">
                 <h2 class="mt-0 mb-1 text-sm font-semibold">Enables</h2>
                 <ul class="m-0 flex list-none flex-col gap-1 p-0">
                   @for (enabled of idea.enables ?? []; track enabled.id) {
@@ -133,37 +133,37 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         <ui-chip label="archived" />
                       }
                       <a
-                        class="text-ocean-deep-700 no-underline hover:underline"
+                        class="text-accent no-underline hover:underline"
                         [qitsExit]="enabledIdeas.open"
                         [exitParams]="{ slug: slug(), ideaId: enabled.id ?? '' }"
                         >{{ enabled.title }}</a
                       >
                     </li>
                   } @empty {
-                    <li class="text-charcoal-brown-500">No idea.</li>
+                    <li class="text-fg-muted">No idea.</li>
                   }
                 </ul>
               </section>
-              <section aria-label="Inspired work" class="text-sm text-charcoal-brown-800">
+              <section aria-label="Inspired work" class="text-sm text-fg">
                 <h2 class="mt-0 mb-1 text-sm font-semibold">Inspired work</h2>
                 <ul class="m-0 flex list-none flex-col gap-1 p-0">
                   @for (work of idea.inspired ?? []; track work.id) {
                     <li class="flex flex-wrap items-baseline gap-2">
                       <a
-                        class="font-mono whitespace-nowrap text-ocean-deep-700 no-underline hover:underline"
+                        class="font-mono whitespace-nowrap text-accent no-underline hover:underline"
                         [qitsExit]="inspiredWork.open"
                         [exitParams]="{ slug: slug(), id: work.qualifiedId ?? '' }"
                         data-work-item
                         >{{ work.qualifiedId }}</a
                       >
-                      <span class="text-charcoal-brown-500"
+                      <span class="text-fg-muted"
                         >{{ (work.archetype ?? '').toLowerCase() }} ·
                         {{ (work.status ?? '').toLowerCase() }}</span
                       >
                       <span>{{ work.title }}</span>
                     </li>
                   } @empty {
-                    <li class="text-charcoal-brown-500">No work names this idea yet.</li>
+                    <li class="text-fg-muted">No work names this idea yet.</li>
                   }
                 </ul>
               </section>

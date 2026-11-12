@@ -15,22 +15,18 @@ import { Markdown } from '$ui/components/markdown/markdown';
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-3" aria-label="Dossier">
-      <h2 class="m-0 text-base font-semibold text-charcoal-brown-900">Dossier</h2>
+      <h2 class="m-0 text-base font-semibold text-fg">Dossier</h2>
       @for (page of pages(); track page.id) {
-        <details open class="group rounded-md border border-charcoal-brown-200">
-          <summary
-            class="cursor-pointer px-4 py-2 text-sm font-semibold text-charcoal-brown-900 select-none"
-          >
+        <details open class="group rounded-md border border-line">
+          <summary class="cursor-pointer px-4 py-2 text-sm font-semibold text-fg select-none">
             {{ page.title }}
           </summary>
-          <div class="border-t border-charcoal-brown-200 px-4 py-3">
+          <div class="border-t border-line px-4 py-3">
             <ui-markdown [text]="page.body ?? ''" [resolveUrl]="resolve()" />
           </div>
         </details>
       }
-      <p class="m-0 text-sm text-charcoal-brown-500" [class.hidden]="pages().length">
-        No pages yet
-      </p>
+      <p class="m-0 text-sm text-fg-muted" [class.hidden]="pages().length">No pages yet</p>
     </section>
   `,
 })

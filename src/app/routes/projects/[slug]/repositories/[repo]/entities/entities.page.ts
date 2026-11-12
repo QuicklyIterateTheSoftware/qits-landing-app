@@ -41,14 +41,12 @@ import { Chip } from '$ui/components/chip/chip';
       @let read = mapRead();
       @switch (read?.status) {
         @case ('error') {
-          <p class="map-error m-0 text-sm text-cinnabar-700">
+          <p class="map-error m-0 text-sm text-danger">
             Could not read the entity map of {{ siteLabel() }}.
           </p>
         }
         @case ('none') {
-          <p class="no-map m-0 text-sm text-charcoal-brown-600">
-            {{ siteLabel() }} publishes no entity map.
-          </p>
+          <p class="no-map m-0 text-sm text-fg-soft">{{ siteLabel() }} publishes no entity map.</p>
         }
         @case ('loaded') {
           <div class="flex flex-col gap-5 text-sm">
@@ -56,13 +54,11 @@ import { Chip } from '$ui/components/chip/chip';
               <section class="marking">
                 <h2 class="m-0 mb-1 text-base font-semibold capitalize">
                   {{ group.marking }}
-                  <span class="text-xs font-normal text-charcoal-brown-600">{{
-                    group.entities.length
-                  }}</span>
+                  <span class="text-xs font-normal text-fg-soft">{{ group.entities.length }}</span>
                 </h2>
                 <table class="w-full border-collapse text-left">
                   <thead>
-                    <tr class="border-b border-charcoal-brown-200 text-xs text-charcoal-brown-600">
+                    <tr class="border-b border-line text-xs text-fg-soft">
                       <th class="py-1 pr-3 font-semibold">Entity</th>
                       <th class="py-1 pr-3 font-semibold">Table</th>
                       <th class="py-1 text-right font-semibold">Operations</th>
@@ -70,7 +66,7 @@ import { Chip } from '$ui/components/chip/chip';
                   </thead>
                   <tbody>
                     @for (e of group.entities; track e.entity) {
-                      <tr class="entity border-b border-charcoal-brown-100 align-top">
+                      <tr class="entity border-b border-line-subtle align-top">
                         <td class="py-1 pr-3">
                           <span class="flex flex-wrap items-center gap-1.5">
                             <a
@@ -92,12 +88,12 @@ import { Chip } from '$ui/components/chip/chip';
                 </table>
               </section>
             } @empty {
-              <p class="m-0 text-charcoal-brown-600">The map lists no entity.</p>
+              <p class="m-0 text-fg-soft">The map lists no entity.</p>
             }
           </div>
         }
         @default {
-          <p class="m-0 text-sm text-charcoal-brown-600">Reading the entity map…</p>
+          <p class="m-0 text-sm text-fg-soft">Reading the entity map…</p>
         }
       }
     </app-contracts-frame>

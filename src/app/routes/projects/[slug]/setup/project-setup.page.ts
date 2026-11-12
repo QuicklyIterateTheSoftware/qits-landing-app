@@ -17,7 +17,7 @@ import { SelectedProject } from '$core/projects/selected-project';
     <div class="mx-auto max-w-[60rem] px-6 pt-16 pb-12">
       <ui-spinner [state]="state()" class="min-h-12">
         <h1 class="m-0 text-3xl leading-[1.1] font-bold">Setup</h1>
-        <p class="mt-2 mb-0 text-gray-500">{{ selected.project()?.name ?? '' }}</p>
+        <p class="mt-2 mb-0 text-fg-muted">{{ selected.project()?.name ?? '' }}</p>
       </ui-spinner>
     </div>
   `,

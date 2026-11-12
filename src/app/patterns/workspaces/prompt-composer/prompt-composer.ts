@@ -79,7 +79,7 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
   host: { class: 'flex flex-col gap-3' },
   template: `
     @if (restoredAt(); as at) {
-      <p class="m-0 flex items-center gap-3 text-sm text-charcoal-brown-600" role="status">
+      <p class="m-0 flex items-center gap-3 text-sm text-fg-muted" role="status">
         Restored draft from {{ ago(at) }}
         <ui-action-button [action]="discardAction()" />
       </p>
@@ -87,9 +87,9 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
 
     <section class="flex flex-col gap-2" aria-label="Rough notes">
       <label class="flex flex-col gap-1 text-sm">
-        <span class="font-semibold text-charcoal-brown-700">Rough notes</span>
+        <span class="font-semibold text-fg-soft">Rough notes</span>
         <textarea
-          class="rounded-md border border-charcoal-brown-300 bg-white px-2 py-1.5 font-sans text-sm text-charcoal-brown-900"
+          class="rounded-md border border-line-strong bg-surface px-2 py-1.5 font-sans text-sm text-fg"
           rows="3"
           placeholder="Rough words; refine them into a prompt, or use them as they are."
           [value]="notes()"
@@ -105,14 +105,14 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
         </div>
       }
       @if (refineProblem(); as problem) {
-        <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ problem }}</p>
+        <p class="m-0 text-sm text-danger" role="alert">{{ problem }}</p>
       }
     </section>
 
     <label class="flex flex-col gap-1 text-sm">
-      <span class="font-semibold text-charcoal-brown-700">The prompt</span>
+      <span class="font-semibold text-fg-soft">The prompt</span>
       <textarea
-        class="rounded-md border border-charcoal-brown-300 bg-white px-2 py-1.5 font-sans text-sm text-charcoal-brown-900"
+        class="rounded-md border border-line-strong bg-surface px-2 py-1.5 font-sans text-sm text-fg"
         rows="6"
         placeholder="Tell the agent what to do next."
         [value]="text()"
@@ -122,8 +122,8 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
 
     @if (picked.any()) {
       <section class="flex flex-col gap-1.5 text-sm" aria-label="Picked context">
-        <h3 class="m-0 text-sm font-semibold text-charcoal-brown-700">Picked context</h3>
-        <p class="m-0 text-xs text-charcoal-brown-600">
+        <h3 class="m-0 text-sm font-semibold text-fg-soft">Picked context</h3>
+        <p class="m-0 text-xs text-fg-muted">
           Press a row to put it in the prompt. Anything left unpressed is appended when it is sent.
         </p>
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
@@ -131,17 +131,15 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
             <li class="flex items-start gap-1.5">
               <button
                 type="button"
-                class="flex min-w-0 grow cursor-pointer flex-col items-start gap-0.5 rounded-md border border-charcoal-brown-200 bg-white px-2 py-1 text-left font-sans text-xs hover:border-ocean-deep-400"
+                class="flex min-w-0 grow cursor-pointer flex-col items-start gap-0.5 rounded-md border border-line bg-surface px-2 py-1 text-left font-sans text-xs hover:border-accent-line"
                 (click)="insert(reference)"
               >
-                <code class="font-mono text-ocean-deep-800">{{ label(reference) }}</code>
-                <span class="w-full truncate font-mono text-charcoal-brown-600">{{
-                  reference.excerpt
-                }}</span>
+                <code class="font-mono text-accent">{{ label(reference) }}</code>
+                <span class="w-full truncate font-mono text-fg-muted">{{ reference.excerpt }}</span>
               </button>
               <button
                 type="button"
-                class="cursor-pointer rounded border border-charcoal-brown-200 bg-white px-1.5 py-0.5 text-xs text-charcoal-brown-600"
+                class="cursor-pointer rounded border border-line bg-surface px-1.5 py-0.5 text-xs text-fg-control"
                 [attr.aria-label]="'Open ' + label(reference)"
                 title="Open these lines in the Files tab"
                 [qitsTriggers]="referenceOutcomes()"
@@ -151,7 +149,7 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
               </button>
               <button
                 type="button"
-                class="cursor-pointer rounded border border-charcoal-brown-200 bg-white px-1.5 py-0.5 text-xs text-charcoal-brown-600"
+                class="cursor-pointer rounded border border-line bg-surface px-1.5 py-0.5 text-xs text-fg-control"
                 [attr.aria-label]="'Remove ' + label(reference)"
                 (click)="drop(reference)"
               >
@@ -165,14 +163,14 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
 
     <div class="flex items-center gap-3">
       <ui-action-button [action]="sendAction()" />
-      <span class="text-sm text-charcoal-brown-600">{{ saveLabel() }}</span>
+      <span class="text-sm text-fg-muted">{{ saveLabel() }}</span>
     </div>
 
     @if (saveProblem(); as problem) {
-      <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ problem }}</p>
+      <p class="m-0 text-sm text-danger" role="alert">{{ problem }}</p>
     }
     @if (sendProblem(); as problem) {
-      <p class="m-0 text-sm text-cinnabar-700" role="alert">{{ problem }}</p>
+      <p class="m-0 text-sm text-danger" role="alert">{{ problem }}</p>
     }
   `,
 })

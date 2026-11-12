@@ -43,11 +43,11 @@ import { WrapperClosingsStore } from '$core/work/wrapper-closings.store';
   template: `
     @let l = line();
     <span
-      [class]="l.warning ? 'text-sunflower-gold-800' : 'text-charcoal-brown-500'"
+      [class]="l.warning ? 'text-warning' : 'text-fg-muted'"
       [attr.data-warning]="l.warning || null"
       >{{ l.before
       }}<a
-        class="relative z-10 text-ocean-deep-700 underline"
+        class="relative z-10 text-accent underline"
         [class.hidden]="!l.request"
         [qitsExit]="opening.open"
         [exitParams]="params()"

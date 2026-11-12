@@ -16,6 +16,9 @@ export default tseslint.config(
       // warning.
       'qits/navigation-through-outcomes': 'error',
       'qits/screenshot-kind': 'error',
+      // qits-2086: colours come from @qits/ui-components' semantic tokens, never a palette step or a
+      // literal.
+      'qits/theme-colors': 'error',
       // qits-2075: a route's screenshot is a state of that route, so it shows the whole page; the
       // library ships it as a warning.
       'qits/page-screenshot-whole-page': 'error',
