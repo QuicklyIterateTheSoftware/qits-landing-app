@@ -514,6 +514,16 @@ describe('the selected freeze’s calls and results (qits-2080)', () => {
     expect(appWideCalls(one).size).toBe(0);
   });
 
+  it('has no app-wide call in a bundle with fewer than three routes with freezes', () => {
+    const two = {
+      ...MANIFEST,
+      freezes: [freeze(CREATE, 'a', [PROJECTS]), freeze(DETAIL, 'b', [PROJECTS])],
+    };
+    expect(appWideCalls(two).size).toBe(0);
+    const three = { ...two, freezes: [...two.freezes, freeze(WORK, 'c', [PROJECTS])] };
+    expect(appWideCalls(three)).toEqual(new Set([callKey(PROJECTS)]));
+  });
+
   it('has no app-wide call without a freeze on a route', () => {
     expect(appWideCalls({ ...MANIFEST, freezes: [freeze(null, 'slots', [PROJECTS])] }).size).toBe(
       0,

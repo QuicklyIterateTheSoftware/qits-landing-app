@@ -587,11 +587,15 @@ export const callKey = ({
   operationId,
 }: Pick<FreezeRecord, 'provider' | 'operationId'>) => JSON.stringify([provider, operationId]);
 
+/** The fewest routes with freezes a bundle needs before any call counts as app-wide (qits-2080). */
+export const APP_WIDE_MIN_ROUTES = 3;
+
 /**
  * The calls the whole app makes (qits-2080), by {@link callKey}: a (provider, operationId) the
  * freezes of more than half of the routes with freezes record, in any state. A freeze without a
  * route (`route: null`, a shot outside a page spec) neither counts as a route nor records for one.
- * Exactly half is not app-wide. Empty when no freeze has a route.
+ * Exactly half is not app-wide. Empty below {@link APP_WIDE_MIN_ROUTES} routes with freezes, where
+ * "most routes" would take a page's own calls for the shell's.
  */
 export function appWideCalls(manifest: RoutesManifest): ReadonlySet<string> {
   const routesOf = new Map<string, Set<string>>();
@@ -606,6 +610,7 @@ export function appWideCalls(manifest: RoutesManifest): ReadonlySet<string> {
       routesOf.set(key, of);
     }
   }
+  if (routes.size < APP_WIDE_MIN_ROUTES) return new Set();
   return new Set([...routesOf].filter(([, of]) => of.size * 2 > routes.size).map(([key]) => key));
 }
 

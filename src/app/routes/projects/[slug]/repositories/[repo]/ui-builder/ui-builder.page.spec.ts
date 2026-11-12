@@ -344,21 +344,10 @@ describe('UiBuilderPage', () => {
     expect(texts('[aria-label="States"] [role="tab"]')).toEqual(['error', 'loaded']);
     expect(texts('[aria-label="Panels"] [role="tab"]')).toEqual(['Routes', 'Entities', 'Outcomes']);
     expect(element.querySelector('.frame-placeholder')?.textContent).toContain('Reading');
-    // The selected state's calls (qits-2080): `error` answers listProjects alone, which the one
-    // route with freezes records, so it is app-wide, in its group, collapsed.
-    expect(texts('li.call')).toEqual([]);
-    expect(element.querySelector('.only-app-wide')?.textContent?.trim()).toBe(
-      'No call but the app-wide ones.',
-    );
-    const appWide = element.querySelector<HTMLButtonElement>('aside .app-wide-toggle')!;
-    expect(words(appWide)).toBe('▸ 1 app-wide call');
-    expect(appWide.getAttribute('aria-expanded')).toBe('false');
-    appWide.click();
-    fixture.detectChanges();
-    expect(appWide.getAttribute('aria-expanded')).toBe('true');
-    expect(texts('aside .app-wide-calls li.call')).toEqual([
-      'listProjects qits-projects-service · “a project exists”',
-    ]);
+    // The selected state's calls (qits-2080): `error` answers listProjects, shown as the route's
+    // own call since the bundle has only one route with freezes, below APP_WIDE_MIN_ROUTES.
+    expect(texts('li.call')).toEqual(['listProjects qits-projects-service · “a project exists”']);
+    expect(element.querySelector('.app-wide-toggle')).toBeNull();
 
     await answerFreeze(ERROR_FREEZE, fixture);
     const frame = element.querySelector('iframe');
@@ -459,7 +448,9 @@ describe('UiBuilderPage', () => {
     );
     await answerFreeze(ERROR_FREEZE, fixture);
     expect(element.querySelector('.scope')?.textContent).toBe('Scope: all services');
-    expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+    // Below APP_WIDE_MIN_ROUTES (one route with freezes): shown as the route's own call.
+    expect(texts('li.call')).toEqual(['listProjects qits-projects-service · “a project exists”']);
+    expect(element.querySelector('.app-wide-toggle')).toBeNull();
     expect(element.querySelector('.hidden-calls')).toBeNull();
   });
 
@@ -505,11 +496,13 @@ describe('UiBuilderPage', () => {
   });
 
   it('keeps the page up when the entity maps cannot be read', async () => {
-    const { fixture, element } = await render('qits-landing-app', undefined, async () => {
+    const { fixture, element, texts } = await render('qits-landing-app', undefined, async () => {
       http.expectOne(SITES_URL).flush(null, { status: 500, statusText: 'Server Error' });
     });
     await answerFreeze(ERROR_FREEZE, fixture);
-    expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+    // Below APP_WIDE_MIN_ROUTES (one route with freezes): shown as the route's own call.
+    expect(texts('li.call')).toEqual(['listProjects qits-projects-service · “a project exists”']);
+    expect(element.querySelector('.app-wide-toggle')).toBeNull();
     expect(element.querySelector('aside .entities-error')?.textContent?.trim()).toBe(
       'Could not read the entity maps.',
     );
@@ -517,14 +510,16 @@ describe('UiBuilderPage', () => {
 
   describe('with a published entity map', () => {
     it('lists the route’s domain entities with their verbs', async () => {
-      const { fixture, element } = await render('qits-landing-app', undefined, recordedMap);
+      const { fixture, element, texts } = await render('qits-landing-app', undefined, recordedMap);
       await answerFreeze(ERROR_FREEZE, fixture);
       expect([...element.querySelectorAll('li.route-entity')].map(words)).toEqual([
         'Project ↗ qits-projects list',
         'Repository ↗ qits-projects list',
       ]);
       expect(element.querySelector('.unmatched')).toBeNull();
-      expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+      // Below APP_WIDE_MIN_ROUTES (one route with freezes): shown as the route's own call.
+      expect(texts('li.call')).toEqual(['listProjects qits-projects-service · “a project exists”']);
+      expect(element.querySelector('.app-wide-toggle')).toBeNull();
     });
 
     it('lists the entities by application, untouched first, and an entity’s routes', async () => {
@@ -602,7 +597,11 @@ describe('UiBuilderPage', () => {
           answerContracts((read) => read.flush(null, { status, statusText: 'x' })),
         );
         await answerFreeze(ERROR_FREEZE, fixture);
-        expect(words(element.querySelector('.app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+        // Below APP_WIDE_MIN_ROUTES (one route with freezes): shown as the route's own call.
+        expect(texts('li.call')).toEqual([
+          'listProjects qits-projects-service · “a project exists”',
+        ]);
+        expect(element.querySelector('.app-wide-toggle')).toBeNull();
         // The route's entities stay the route's: both its calls (qits-2080).
         expect(element.querySelector('.unmatched')?.textContent).toContain('2 calls touch');
         clickTab(element, 'Entities');
@@ -1117,20 +1116,33 @@ describe('UiBuilderPage', () => {
 
     it('scopes the calls and the outcomes to the selected state, through the URL (qits-2080)', async () => {
       // A second route with a freeze (after the repositories route in the tree, which still opens
-      // first): listProjects is recorded on both routes (app-wide), listProjectRepositories on one
-      // of two, exactly half (the route's own).
+      // first): listProjects is recorded on both, and a third (not a tree row, so it cannot steal
+      // the opening route) with no calls of its own brings the bundle to APP_WIDE_MIN_ROUTES, so
+      // listProjects (2 of 3) is app-wide; listProjectRepositories (1 of 3) stays the repositories
+      // route's own.
       const manifest = withOutcomes();
       const WORKSPACES = 'projects/:slug/workspaces';
+      const AGENTS = 'projects/:slug/agents';
       const shot: Freeze = {
         file: 'src/app/routes/projects/[slug]/workspaces/workspaces.page.browser.spec.ts/x.html',
         name: 'x',
         route: WORKSPACES,
         records: [manifest.freezes[1].records[0]],
       };
+      const third: Freeze = {
+        file: 'src/app/routes/projects/[slug]/agents/agents.page.browser.spec.ts/y.html',
+        name: 'y',
+        route: AGENTS,
+        records: [],
+      };
       const { fixture, element, texts, page } = await renderOutcomes(OUTCOMES, {
         ...manifest,
-        freezes: [...manifest.freezes, shot],
-        byRoute: { ...manifest.byRoute, [WORKSPACES]: [shot.file] },
+        freezes: [...manifest.freezes, shot, third],
+        byRoute: {
+          ...manifest.byRoute,
+          [WORKSPACES]: [shot.file],
+          [AGENTS]: [third.file],
+        },
       });
       const router = TestBed.inject(Router);
       const base = router.url.split('?')[0];
@@ -1213,7 +1225,7 @@ describe('UiBuilderPage', () => {
     });
 
     it('shows the whole route’s outcomes for a state without triggers, and says why (qits-2080)', async () => {
-      const { element } = await renderOutcomes(OUTCOMES, withoutTriggers());
+      const { element, texts } = await renderOutcomes(OUTCOMES, withoutTriggers());
       expect(element.querySelector('aside .predates')?.textContent?.trim()).toBe(
         'This bundle predates per-screenshot outcomes; showing the whole route.',
       );
@@ -1229,8 +1241,9 @@ describe('UiBuilderPage', () => {
       ]);
       expect(words(element.querySelector('aside .shared-toggle')!)).toBe('▸ Shared 2');
       expect(element.querySelector('aside .unseen-toggle')).toBeNull();
-      // Its calls are still the state's.
-      expect(words(element.querySelector('aside .app-wide-toggle')!)).toBe('▸ 1 app-wide call');
+      // Its calls are still the state's; below APP_WIDE_MIN_ROUTES, so its own.
+      expect(texts('li.call')).toEqual(['listProjects qits-projects-service · “a project exists”']);
+      expect(element.querySelector('aside .app-wide-toggle')).toBeNull();
     });
 
     it('says one more outcome is not visible, in the singular (qits-2080)', async () => {
