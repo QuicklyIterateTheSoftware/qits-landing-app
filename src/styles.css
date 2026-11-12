@@ -1,15 +1,12 @@
 @import 'tailwindcss';
-@import './theme.css';
+/* The one qits look: palette, semantic tokens and their dark values, the `dark:` variant (qits-2085). */
+@import '@qits/ui-components/theme.css';
 /* The terminal screen's own layout (xterm.js, ui/components/terminal-screen). */
 @import '@xterm/xterm/css/xterm.css';
 
-html {
-  color-scheme: light;
-}
-
 body {
-  background: #ffffff;
-  color: #111827;
+  background: var(--color-surface);
+  color: var(--color-fg);
   font-family:
     system-ui,
     -apple-system,
