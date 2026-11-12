@@ -149,6 +149,10 @@ const CASES: Case[] = [
       const { id, repoId } = recorded.request;
       const opened = await openRoute(
         (project) => `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}`,
+        // The sidebar's Release Requests note (qits-2086): a request, so the note under the
+        // current section renders and its contrast is checked, not left empty by the frame's
+        // default ('a project with no release requests').
+        { releaseRequests: 'a project with pending release requests' },
       );
       http
         .expectOne(`/projects/api/projects/${opened.project.id}/repositories`)
@@ -174,6 +178,16 @@ const CASES: Case[] = [
       }
       // qits-ci's runs and reports: an error, as the page's own spec answers them.
       await failTheRest(http, opened);
+      // The note renders below the current Release Requests entry: the coverage this case
+      // exists for cannot silently vanish (qits-2086).
+      await expect
+        .element(
+          page
+            .elementLocator(opened.frame)
+            .getByRole('link', { name: /^Release Requests/ })
+            .getByText('contract-service'),
+        )
+        .toBeVisible();
       return opened;
     },
   },
