@@ -229,7 +229,7 @@ export interface NavNote {
           @for (link of links(); track link.key) {
             <li>
               <a
-                class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg aria-[current=true]:font-semibold aria-[current=true]:text-fg"
+                class="group block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg aria-[current=true]:font-semibold aria-[current=true]:text-fg"
                 [qitsExit]="link.exit"
                 [exitParams]="{ slug: slug() }"
                 [exitCurrent]="currentOf(link)"
@@ -237,7 +237,7 @@ export interface NavNote {
                 >{{ link.label }}
                 <!-- The section's newest item, below the label; switched by class. -->
                 <span
-                  class="mt-0.5 items-center gap-1.5 text-xs font-normal text-fg-muted"
+                  class="mt-0.5 items-center gap-1.5 text-xs font-normal text-fg-muted group-aria-[current=page]:text-fg-soft"
                   [class]="link.note ? 'flex' : 'hidden'"
                   [attr.title]="link.note?.title"
                 >
