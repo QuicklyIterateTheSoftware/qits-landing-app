@@ -1055,7 +1055,7 @@ describe('UiBuilderPage', () => {
       const { fixture, element } = await renderOutcomes();
       const tab = inboundTab(fixture, element);
       expect(tab.querySelector('.inbound-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-        '1 of 2 routes no outcome leads to',
+        "1 of 2 routes can't be reached: no outcome leads to it.",
       );
       // The repositories route: nothing exits to it. `projects`: its page's exit and the shell's.
       expect([...tab.querySelectorAll('button.inbound')].map(leaves)).toEqual([
@@ -1084,9 +1084,7 @@ describe('UiBuilderPage', () => {
       const rendered = await render('qits-landing-app', undefined, undefined, '', entered);
       await answerFreeze(ERROR_FREEZE, rendered.fixture);
       const tab = inboundTab(rendered.fixture, rendered.element);
-      expect(tab.querySelector('.inbound-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-        '0 of 2 routes no outcome leads to',
-      );
+      expect(tab.querySelector('.inbound-summary')).toBeNull();
       expect([...tab.querySelectorAll('button.inbound')].map(leaves)).toEqual([
         '/projects 2',
         '/projects/:slug/repositories Entry point',
@@ -1096,6 +1094,20 @@ describe('UiBuilderPage', () => {
       rendered.fixture.detectChanges();
       expect(row.querySelector('.no-sources')?.textContent?.trim()).toBe(
         'Entered from outside the app.',
+      );
+    });
+
+    it('pluralizes the summary when every checked route is unreachable (qits-2073)', async () => {
+      // Drop the two exits to `projects` (the page's own and the shell's): nothing then leads
+      // to either checked route, and neither is an entry point.
+      const noExits = {
+        ...OUTCOMES,
+        declared: OUTCOMES.declared.filter((outcome) => outcome.to !== 'projects'),
+      };
+      const { fixture, element } = await renderOutcomes(noExits);
+      const tab = inboundTab(fixture, element);
+      expect(tab.querySelector('.inbound-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+        "2 of 2 routes can't be reached: no outcome leads to them.",
       );
     });
 

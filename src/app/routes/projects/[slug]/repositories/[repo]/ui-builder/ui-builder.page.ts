@@ -227,12 +227,15 @@ interface EntityGroup {
  *   the same rows.
  * - The Outcomes tab (qits-2049; before it, the shared list of qits-2006): how each route is
  *   reached, the inverse of the right panel. `inboundExits` lists the routes the library's
- *   reachability check looks at (no children, no redirect, not `**`), "N of M routes no outcome
- *   leads to" above them: a route no declared exit leads to (`to` its full path exactly, from any
- *   scope) and that is no entry point (`data: { qitsEntry: true }`) comes first, chipped "No outcome
- *   leads here", as the Entities tab chips "No route shows this"; an entry point is chipped "Entry
- *   point"; the rest show their inbound count. Expanding a row lists its sources: where each is
- *   declared (the route, "/x and below" for a layout, "App-wide") and its `interaction:outcome`.
+ *   reachability check looks at (no children, no redirect, not `**`); a route no declared exit
+ *   leads to (`to` its full path exactly, from any scope) and that is no entry point (`data: {
+ *   qitsEntry: true }`) comes first, chipped "No outcome leads here", as the Entities tab chips "No
+ *   route shows this"; an entry point is chipped "Entry point"; the rest show their inbound count.
+ *   When any route is unreachable, a summary sits above the list, "N of M routes can't be reached:
+ *   no outcome leads to it/them" (qits-2073, singular pronoun only at N = 1; plural "routes" either
+ *   way); no route unreachable renders no summary at all. Expanding a row lists its sources: where
+ *   each is declared (the route, "/x and below" for a layout, "App-wide") and its
+ *   `interaction:outcome`.
  *   Clicking one toggles its trigger's highlight as an outcome click does, showing the freeze that
  *   shows the trigger on the route nearest the row's (`pickSource`), else the declaring route, else
  *   keeping the route. A last group, "Leaves without a fixed target" (`unfixedOutcomes`), lists the
@@ -485,10 +488,13 @@ interface EntityGroup {
                   } @else {
                     <section aria-label="Inbound outcomes" class="text-[0.8125rem]">
                       @if (outcomeStatus() === 'declared') {
-                        <p class="inbound-summary m-0 font-semibold">
-                          {{ inboundCounts().unreachable }} of {{ inboundCounts().total }} routes no
-                          outcome leads to
-                        </p>
+                        @if (inboundCounts().unreachable > 0) {
+                          <p class="inbound-summary m-0 font-semibold">
+                            {{ inboundCounts().unreachable }} of {{ inboundCounts().total }} routes
+                            can't be reached: no outcome leads to
+                            {{ inboundCounts().unreachable === 1 ? 'it' : 'them' }}.
+                          </p>
+                        }
                         <ul class="m-0 mt-2 flex list-none flex-col gap-0.5 p-0">
                           @for (route of inboundRoutes(); track route.fullPath) {
                             <li class="inbound-route">
