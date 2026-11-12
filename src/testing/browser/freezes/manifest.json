@@ -17221,6 +17221,26 @@
       "records": [
         {
           "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
         },
@@ -17231,23 +17251,18 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17283,6 +17298,26 @@
       "records": [
         {
           "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
         },
@@ -17293,23 +17328,18 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17328,6 +17358,26 @@
       "records": [
         {
           "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
         },
@@ -17338,23 +17388,18 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17415,18 +17460,23 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "an implemented ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17487,18 +17537,23 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "an implemented ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17542,18 +17597,23 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "an implemented ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17599,8 +17659,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a ready for dev epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -17614,13 +17694,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17666,8 +17746,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a ready for dev epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -17681,13 +17781,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -17954,8 +18054,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a ready for dev epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -17969,13 +18089,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18021,8 +18141,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a ready for dev epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -18031,13 +18171,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18083,8 +18223,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a ready for dev epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -18093,13 +18253,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18128,8 +18288,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a ready for dev epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ready for dev epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -18138,13 +18318,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18190,8 +18370,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a refined epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -18200,13 +18400,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18252,8 +18452,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a refined epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -18262,13 +18482,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18297,8 +18517,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a refined epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a refined epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -18307,13 +18547,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18350,6 +18590,26 @@
         {
           "provider": "qits-projects-service",
           "state": "a dropped ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
           "operationId": "setWorkStatus"
         },
         {
@@ -18364,23 +18624,18 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18417,6 +18672,26 @@
         {
           "provider": "qits-projects-service",
           "state": "a dropped ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
           "operationId": "setWorkStatus"
         },
         {
@@ -18431,23 +18706,18 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18467,6 +18737,26 @@
         {
           "provider": "qits-projects-service",
           "state": "a dropped ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a dropped ticket",
           "operationId": "setWorkStatus"
         },
         {
@@ -18481,23 +18771,18 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
-          "operationId": "listProjectWork"
-        },
-        {
-          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18543,8 +18828,23 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a reported ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -18553,13 +18853,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18605,8 +18905,23 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a reported ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -18615,13 +18930,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18650,8 +18965,23 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a reported ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -18660,13 +18990,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18713,7 +19043,17 @@
         {
           "provider": "qits-projects-service",
           "state": "an epic with features and tasks",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an epic with features and tasks",
+          "operationId": "listWorkComments"
         },
         {
           "provider": "qits-projects-service",
@@ -18722,13 +19062,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18777,7 +19117,17 @@
         {
           "provider": "qits-projects-service",
           "state": "an epic with features and tasks",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an epic with features and tasks",
+          "operationId": "listWorkComments"
         },
         {
           "provider": "qits-projects-service",
@@ -18786,13 +19136,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18824,7 +19174,17 @@
         {
           "provider": "qits-projects-service",
           "state": "an epic with features and tasks",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an epic with features and tasks",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an epic with features and tasks",
+          "operationId": "listWorkComments"
         },
         {
           "provider": "qits-projects-service",
@@ -18833,13 +19193,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18892,8 +19252,23 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a verified ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -18902,13 +19277,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -18959,8 +19334,23 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a verified ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -18969,13 +19359,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -19009,8 +19399,23 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a project with work in every status",
+          "state": "a verified ticket",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -19019,13 +19424,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -19092,6 +19497,11 @@
         {
           "provider": "qits-projects-service",
           "state": "an implemented ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implemented ticket",
           "operationId": "setWorkStatus"
         },
         {
@@ -19101,13 +19511,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -19174,6 +19584,11 @@
         {
           "provider": "qits-projects-service",
           "state": "an implemented ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implemented ticket",
           "operationId": "setWorkStatus"
         },
         {
@@ -19183,13 +19598,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -19239,6 +19654,11 @@
         {
           "provider": "qits-projects-service",
           "state": "an implemented ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "an implemented ticket",
           "operationId": "setWorkStatus"
         },
         {
@@ -19248,13 +19668,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [

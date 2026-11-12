@@ -1031,6 +1031,30 @@
     {
       "provider": "qits-projects-service",
       "state": "a dropped ticket",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a dropped ticket",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a dropped ticket",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a dropped ticket",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a dropped ticket",
       "operationId": "setWorkStatus",
       "route": "projects/:slug/work/detail/:id"
     },
@@ -1115,13 +1139,97 @@
     {
       "provider": "qits-projects-service",
       "state": "a ready for dev epic",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ready for dev epic",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ready for dev epic",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ready for dev epic",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ready for dev epic",
+      "operationId": "listWorkDossierAssets",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ready for dev epic",
       "operationId": "setWorkStatus",
       "route": "projects/:slug/work/detail/:id"
     },
     {
       "provider": "qits-projects-service",
       "state": "a refined epic",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refined epic",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refined epic",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refined epic",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refined epic",
+      "operationId": "listWorkDossierAssets",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a refined epic",
       "operationId": "setWorkStatus",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a reported ticket",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a reported ticket",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a reported ticket",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a reported ticket",
+      "operationId": "listWorkDossier",
       "route": "projects/:slug/work/detail/:id"
     },
     {
@@ -1162,6 +1270,30 @@
     },
     {
       "provider": "qits-projects-service",
+      "state": "a verified ticket",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified ticket",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified ticket",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified ticket",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
       "state": "an epic in detail",
       "operationId": "getWork",
       "route": "projects/:slug/work/detail/:id"
@@ -1193,7 +1325,19 @@
     {
       "provider": "qits-projects-service",
       "state": "an epic with features and tasks",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic with features and tasks",
       "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an epic with features and tasks",
+      "operationId": "listWorkComments",
       "route": "projects/:slug/work/detail/:id"
     },
     {
@@ -1218,6 +1362,12 @@
       "provider": "qits-projects-service",
       "state": "an implemented ticket",
       "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "an implemented ticket",
+      "operationId": "listWorkDossier",
       "route": "projects/:slug/work/detail/:id"
     },
     {
