@@ -41,8 +41,8 @@ export interface ScreenSize {
  *
  * The box is dark in both schemes (qits-2086): the inverse surface in the light one, the dark
  * scheme's subtle surface in the dark one, since xterm.js's ANSI palette is made for a dark
- * background. xterm.js paints its own colours, read from the box when it mounts, so it reads them again
- * whenever the scheme changes: `data-theme` on `<html>` (a `MutationObserver`) or the OS's
+ * background. The box paints the background; xterm.js paints the text in the box's text colour, read
+ * when it mounts and again whenever the scheme changes: `data-theme` on `<html>` (a `MutationObserver`) or the OS's
  * `prefers-color-scheme` (its media query's `change`).
  */
 @Component({
@@ -130,6 +130,8 @@ export class TerminalScreen {
       fontSize: 13,
       screenReaderMode: true,
       scrollback: 6000,
+      // The box paints the background (its classes, so it switches with the scheme in CSS alone).
+      allowTransparency: true,
       theme: this.colours(),
     });
     const fitAddon = new FitAddon();
@@ -166,11 +168,16 @@ export class TerminalScreen {
     this.resized.emit({ cols: terminal.cols, rows: terminal.rows });
   }
 
-  /** The box's colours, as xterm.js's theme: its background, and its text for the text and cursor. */
+  /**
+   * xterm.js's theme: a transparent background, so the box's own shows through, and the box's text
+   * colour for the text and cursor. The background is never copied into xterm.js: xterm.js sets its
+   * viewport's background a frame after a theme change, so a copied one could lag the scheme a
+   * screenshot (and its freeze) is taken in (qits-2086).
+   */
   private colours(): { background: string; foreground: string; cursor: string } {
     const host = this.screen().nativeElement;
     const box = host.ownerDocument.defaultView!.getComputedStyle(host);
-    return { background: box.backgroundColor, foreground: box.color, cursor: box.color };
+    return { background: 'rgba(0, 0, 0, 0)', foreground: box.color, cursor: box.color };
   }
 
   /**

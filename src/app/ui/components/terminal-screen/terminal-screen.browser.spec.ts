@@ -44,7 +44,7 @@ describe('TerminalScreen (screenshots)', () => {
       .toMatchScreenshot('session', { kind: 'DATA' });
   });
 
-  it('repaints xterm.js in the box’s colours when the scheme changes (qits-2086)', async () => {
+  it('lets the box paint the background and repaints the text when the scheme changes (qits-2086)', async () => {
     document.documentElement.setAttribute('data-theme', 'light');
     const fixture = TestBed.createComponent(Screen);
     fixture.detectChanges();
@@ -52,18 +52,21 @@ describe('TerminalScreen (screenshots)', () => {
     await expect
       .poll(() => element.querySelector('.xterm-rows')?.textContent ?? '')
       .toContain('working tree clean');
-    // xterm.js paints its theme's background on its scrollable element.
-    const painted = () =>
-      element.querySelector<HTMLElement>('.xterm-scrollable-element')?.style.backgroundColor;
-    const light = painted();
-    expect(light).toBeTruthy();
+    // xterm.js paints no background of its own, so a scheme switch never waits on it.
+    const background = getComputedStyle(
+      element.querySelector<HTMLElement>('.xterm-scrollable-element')!,
+    ).backgroundColor;
+    expect(background).toBe('rgba(0, 0, 0, 0)');
+    // The text is xterm.js's own, in the box's text colour.
+    const text = () => getComputedStyle(element.querySelector<HTMLElement>('.xterm-rows')!).color;
+    const light = text();
 
     document.documentElement.setAttribute('data-theme', 'dark');
-    await expect.poll(painted).not.toBe(light);
-    const dark = painted();
+    await expect.poll(text).not.toBe(light);
+    const dark = text();
 
     document.documentElement.setAttribute('data-theme', 'light');
-    await expect.poll(painted).toBe(light);
+    await expect.poll(text).toBe(light);
     expect(dark).not.toBe(light);
   });
 });
