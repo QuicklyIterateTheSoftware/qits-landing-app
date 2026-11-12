@@ -13859,6 +13859,320 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
+      "name": "state-data",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-phone.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
+      "name": "state-data",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:project",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-tablet.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
+      "name": "state-data",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-error-desktop.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
+      "name": "state-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-error-phone.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
+      "name": "state-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:project",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-error-tablet.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
+      "name": "state-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle with kinds and viewports",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/viewport-picked-desktop.html",
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > draws the state at the viewport picked",
@@ -26136,6 +26450,12 @@
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none-desktop.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none-phone.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none-tablet.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-desktop.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-phone.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-tablet.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-error-desktop.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-error-phone.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-error-tablet.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/viewport-picked-desktop.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/viewport-picked-phone.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/viewport-picked-tablet.html"
