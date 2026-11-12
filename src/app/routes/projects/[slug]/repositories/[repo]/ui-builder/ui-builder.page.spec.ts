@@ -790,8 +790,20 @@ describe('UiBuilderPage', () => {
         `${SHOTS}/${name}-${viewport.toLowerCase()}-${scheme.toLowerCase()}.html`;
 
       /**
+       * A second route with states (qits-2087): `agents`, a tree row of its own added after
+       * `repositories` (so it never steals the opening route, qits-2047's `initialRoute`), shot the
+       * same way.
+       */
+      const AGENTS = 'projects/:slug/agents';
+      const AGENTS_SHOTS = 'src/app/routes/projects/[slug]/agents/agents.page.browser.spec.ts';
+      const agentsSchemedFile = (viewport: string, scheme: Scheme) =>
+        `${AGENTS_SHOTS}/listed-${viewport.toLowerCase()}-${scheme.toLowerCase()}.html`;
+
+      /**
        * The recorded manifest, the repositories route's freezes replaced by `states`, each shot at
-       * the three widths in `schemes`, the manifest listing LIGHT and DARK.
+       * the three widths in `schemes`, the manifest listing LIGHT and DARK. `agents` is added as a
+       * route of its own, after `repositories`, with one state shot the same way (qits-2087), so the
+       * tree has a second route with states to choose.
        */
       function shotInSchemes(schemes: readonly Scheme[] = ['LIGHT', 'DARK']): RoutesManifest {
         const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
@@ -808,11 +820,35 @@ describe('UiBuilderPage', () => {
             })),
           ),
         );
+        const agentsFreezes = WIDTHS.flatMap((viewport) =>
+          schemes.map((colorScheme): Freeze => ({
+            file: agentsSchemedFile(viewport, colorScheme),
+            name: 'listed',
+            route: AGENTS,
+            records: [],
+            kind: 'DATA',
+            viewport,
+            colorScheme,
+          })),
+        );
+        const withAgentsRoute = recorded.routes.map((root): ManifestRoute =>
+          root.path === ''
+            ? { ...root, children: [...(root.children ?? []), { path: AGENTS, fullPath: AGENTS }] }
+            : root,
+        );
         return {
           ...recorded,
+          routes: withAgentsRoute,
           colorSchemes: ['LIGHT', 'DARK'],
-          freezes: [...recorded.freezes.filter((f) => f.route !== REPOSITORIES), ...freezes],
-          byRoute: { [REPOSITORIES]: freezes.map((f) => f.file) },
+          freezes: [
+            ...recorded.freezes.filter((f) => f.route !== REPOSITORIES && f.route !== AGENTS),
+            ...freezes,
+            ...agentsFreezes,
+          ],
+          byRoute: {
+            [REPOSITORIES]: freezes.map((f) => f.file),
+            [AGENTS]: agentsFreezes.map((f) => f.file),
+          },
         };
       }
 
@@ -889,6 +925,39 @@ describe('UiBuilderPage', () => {
         await navigated(fixture);
         http.expectOne(fileUrl(schemedFile('error', 'PHONE', 'DARK'))).flush('<p>error</p>');
         await settle();
+      });
+
+      it('keeps the picked scheme and viewport when another route is chosen', async () => {
+        const { fixture, element } = await renderSchemes();
+        expect(schemePressed(element)).toBe('Light');
+        await answerFreeze(schemedFile('loaded', 'DESKTOP', 'LIGHT'), fixture);
+        schemeButton(element, 'Dark').click();
+        await navigated(fixture);
+        http.expectOne(fileUrl(schemedFile('loaded', 'DESKTOP', 'DARK'))).flush('<p>dark</p>');
+        await navigated(fixture);
+
+        viewportButton(element, 'Phone').click();
+        await navigated(fixture);
+        http.expectOne(fileUrl(schemedFile('loaded', 'PHONE', 'DARK'))).flush('<p>phone</p>');
+        await settle();
+        fixture.detectChanges();
+        expect(schemePressed(element)).toBe('Dark');
+        expect(pressed(element)).toBe('Phone');
+
+        // The tree picks `agents`, another route with a state: the picked scheme lives in the page,
+        // not the URL, and the URL keeps `viewport` (qits-2047), so its Dark Phone freeze is drawn.
+        [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+          .find((row) => row.textContent?.replace(/\s+/g, '') === 'agents1')!
+          .querySelector<HTMLButtonElement>('button.route')!
+          .click();
+        await navigated(fixture);
+        http
+          .expectOne(fileUrl(agentsSchemedFile('PHONE', 'DARK')))
+          .flush('<p>agents dark phone</p>');
+        await settle();
+        fixture.detectChanges();
+        expect(schemePressed(element)).toBe('Dark');
+        expect(pressed(element)).toBe('Phone');
       });
 
       it('draws the scheme a shot has when it lacks the chosen one', async () => {
