@@ -22,10 +22,11 @@ import {
  *
  * - each archetype (and each ticket type) from its own detail state ("an epic in detail", …): the
  *   page with the item's own reads (description, facts, dossier, comments);
- * - the actions for several statuses: the work of "a project with work in every status" and "an
- *   epic with features and tasks", whose states record no item reads (they answer 404: the page
- *   shows its actions and children only), and "an implemented ticket", in full. A press answers
- *   with the move or dispatch a move state recorded ("a refined epic", "a dropped ticket", …);
+ * - the actions for several statuses, each item from a state of its own that records its reads
+ *   ("a reported ticket", "a refined epic", "a dropped ticket", …, and "an epic with features and
+ *   tasks"' open feature): the page in full, its actions and its body. A press answers with the
+ *   move or dispatch the same state recorded; done work, whose page shows no action, comes from
+ *   "a project with work in every status", which records no item reads (they answer 404);
  * - a VERIFIED ticket's wrapper closing (qits-1873): the IN_FLIGHT ticket of "a project with
  *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings (the
  *   state records no thread or dossier: those answer 404);
@@ -51,6 +52,17 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 const PROJECTS = 'https://projects.test';
 const EVERY_STATUS = 'a project with work in every status';
 const IMPLEMENTED = 'an implemented ticket';
+const REPORTED = 'a reported ticket';
+const VERIFIED = 'a verified ticket';
+const DROPPED = 'a dropped ticket';
+const REFINED_EPIC = 'a refined epic';
+const READY_EPIC = 'a ready for dev epic';
+/** An epic, its features and their tasks; its `getWork` and thread are its open feature's. */
+const FEATURES = 'an epic with features and tasks';
+/** The title of the ticket each ticket status state records (but "a verified ticket"). */
+const TICKET = 'Database runs out of connection slots during deploys';
+/** The title of the epic each epic status state records. */
+const EPIC = 'Work item actions';
 /**
  * A READY_FOR_DEV ticket needing another ticket at VERIFIED, not met (epic qits-1899; recorded by
  * qits-projects from 2026.1106.140436 on).
@@ -58,9 +70,21 @@ const IMPLEMENTED = 'an implemented ticket';
 const NEEDS = 'a ticket that needs another';
 /**
  * States over a seed of their own, whose frozen ids may also be ids qits-workspaces' bound state
- * names: no item there has a workspace (`answerWorkspaces`).
+ * names: no item there has a workspace (`answerWorkspaces`). The action screenshots' status states
+ * are such states, and they do collide: each epic status state's epic has the bug ticket's id,
+ * whose history and open workspace the bound state records.
  */
-const UNBOUND: ReadonlySet<string> = new Set([WRAPPER_CLOSINGS, NEEDS]);
+const UNBOUND: ReadonlySet<string> = new Set([
+  WRAPPER_CLOSINGS,
+  NEEDS,
+  IMPLEMENTED,
+  REPORTED,
+  VERIFIED,
+  DROPPED,
+  REFINED_EPIC,
+  READY_EPIC,
+  FEATURES,
+]);
 /** qits-workspaces' states. */
 const BOUND = 'a project with workspaces bound to work items';
 const NONE = 'a work item with no workspaces';
@@ -131,10 +155,9 @@ describe('WorkItemPage (screenshots)', () => {
         .flush(await goldenMaster(state, 'listWorkDossierAssets'));
     }
     if (entity.archetype === 'TICKET') {
-      const dossier = http.expectOne(`/projects/api/work/${ref}/dossier`);
-      // "an implemented ticket" records no dossier: its body fails to load, its actions show.
-      if (state === IMPLEMENTED) dossier.flush(null, { status: 404, statusText: 'Not Found' });
-      else dossier.flush(await goldenMaster(state, 'listWorkDossier'));
+      http
+        .expectOne(`/projects/api/work/${ref}/dossier`)
+        .flush(await goldenMaster(state, 'listWorkDossier'));
     }
   }
 
@@ -473,7 +496,7 @@ describe('WorkItemPage (screenshots)', () => {
 
   describe('actions, as the registry serves them', () => {
     it('a reported ticket: every group', async () => {
-      const { element, frame, opened } = await render(EVERY_STATUS, 'Reported ticket');
+      const { element, frame, opened } = await render(REPORTED, TICKET, true);
       await agentButtons(element, ['Dispatch', 'Refine']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
@@ -488,7 +511,7 @@ describe('WorkItemPage (screenshots)', () => {
     // qits-150: qits-projects-service refuses every caller's move of a TICKET to DONE, so the
     // registry's "Mark done" move is held back for a ticket; only the platform uses it.
     it('a verified ticket: its moves only, with no Mark done', async () => {
-      const { element, frame, opened } = await render(EVERY_STATUS, 'Verified ticket');
+      const { element, frame, opened } = await render(VERIFIED, 'Verified ticket', true);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Back to verifying Drop');
@@ -510,10 +533,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a scheduled feature: its own moves, nothing to dispatch', async () => {
-      const { element, frame, opened } = await render(
-        'an epic with features and tasks',
-        'Open feature',
-      );
+      const { element, frame, opened } = await render(FEATURES, 'Open feature', true);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Mark implementing Skip to implemented Back to refined Drop');
@@ -523,11 +543,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an implemented ticket: the verify phase, its flow, and the move to VERIFYING', async () => {
-      const { element, frame, opened } = await render(
-        IMPLEMENTED,
-        'Database runs out of connection slots during deploys',
-        true,
-      );
+      const { element, frame, opened } = await render(IMPLEMENTED, TICKET, true);
       await agentButtons(element, ['Dispatch', 'Verify']);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
@@ -573,7 +589,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a refined epic offers Dispatch (qits-1075)', async () => {
-      const { element, frame, opened } = await render(EVERY_STATUS, 'Refined epic');
+      const { element, frame, opened } = await render(REFINED_EPIC, EPIC, true);
       // A person's Dispatch pre-approves the scheduling, running the whole flow in one press.
       await agentButtons(element, ['Dispatch']);
       await expect
@@ -581,14 +597,10 @@ describe('WorkItemPage (screenshots)', () => {
         .toMatchTextContent('Status Mark ready for dev Back to reported Drop Block');
       await fitWholePage(opened);
       await expect.element(frame).toMatchScreenshot('actions-refined-epic', { kind: 'DATA' });
-      const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
-      const ref = work.entities.find(
-        (e: { title: string }) => e.title === 'Refined epic',
-      ).qualifiedId;
+      const ref = (await goldenMaster(REFINED_EPIC, 'getWork')).qualifiedId;
       const moved = await press(element, 'Mark ready for dev', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'READY_FOR_DEV' });
-      // "a refined epic" records this move; its epic is another seed's, so only its status counts.
-      moved.flush(await goldenMaster('a refined epic', 'setWorkStatus'));
+      moved.flush(await goldenMaster(REFINED_EPIC, 'setWorkStatus'));
       await answered();
       await agentButtons(element, ['Dispatch', 'Implement']);
       await expect
@@ -597,19 +609,14 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a ready for dev epic: the implement phase, and the move to IMPLEMENTING', async () => {
-      const { element, frame, opened } = await render(EVERY_STATUS, 'Ready for dev epic');
+      const { element, frame, opened } = await render(READY_EPIC, EPIC, true);
       await agentButtons(element, ['Dispatch', 'Implement']);
       await fitWholePage(opened);
       await expect.element(frame).toMatchScreenshot('actions-ready-for-dev-epic', { kind: 'DATA' });
-      const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
-      const ref = work.entities.find(
-        (e: { title: string }) => e.title === 'Ready for dev epic',
-      ).qualifiedId;
+      const ref = (await goldenMaster(READY_EPIC, 'getWork')).qualifiedId;
       const moved = await press(element, 'Mark implementing', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'IMPLEMENTING' });
-      // "a ready for dev epic" records this move; its epic is another seed's, so only its status
-      // counts.
-      moved.flush(await goldenMaster('a ready for dev epic', 'setWorkStatus'));
+      moved.flush(await goldenMaster(READY_EPIC, 'setWorkStatus'));
       await answered();
       // IMPLEMENTING has no move back (qits-887).
       await expect
@@ -620,19 +627,16 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('a dropped ticket: Reopen, back to REPORTED', async () => {
-      const { element, frame, opened } = await render(EVERY_STATUS, 'Dropped ticket');
+      const { element, frame, opened } = await render(DROPPED, TICKET, true);
       await expect
         .element(element.getByRole('group', { name: 'Status' }))
         .toMatchTextContent('Status Reopen');
       await fitWholePage(opened);
       await expect.element(frame).toMatchScreenshot('actions-dropped-ticket', { kind: 'DATA' });
-      const work = await goldenMaster(EVERY_STATUS, 'listProjectWork');
-      const ref = work.entities.find(
-        (e: { title: string }) => e.title === 'Dropped ticket',
-      ).qualifiedId;
+      const ref = (await goldenMaster(DROPPED, 'getWork')).qualifiedId;
       const moved = await press(element, 'Reopen', `/projects/api/work/${ref}/status`);
       expect(moved.request.body).toEqual({ target: 'REPORTED' });
-      moved.flush(await goldenMaster('a dropped ticket', 'setWorkStatus'));
+      moved.flush(await goldenMaster(DROPPED, 'setWorkStatus'));
       await answered();
       await expect
         .element(element.getByRole('group', { name: 'Status' }))

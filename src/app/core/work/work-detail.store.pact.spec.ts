@@ -40,8 +40,9 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  * interactions, all by qualified id, in the same file as the other stores'
  * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
  *
- * One detail state per archetype and per ticket type, and "an implemented ticket" (whose page the
- * action screenshots show). Each test makes ONE of the reads `WorkDetailStore.load` makes, with the
+ * One detail state per archetype and per ticket type, and the status states whose pages the action
+ * screenshots show, each with the item's own reads (`ACTION_TICKETS`, `ACTION_EPICS`, and "an epic
+ * with features and tasks"' open feature). Each test makes ONE of the reads `WorkDetailStore.load` makes, with the
  * store's own `consumes`, against a pact mock server answering with qits-projects' golden master: a
  * path from a provider state matches any path, so one interaction per test keeps each answer to
  * its own request. `work-detail.store.spec.ts` drives `load` as a whole. A read binds the fields its
@@ -84,8 +85,19 @@ const TICKETS = [
   'an improvement ticket in detail',
   'a maintenance ticket in detail',
 ];
-const OTHERS = ['an implemented ticket'];
-const UNBLOCKABLE = ['a feature in detail', 'a task in detail'];
+/** The tickets of the action screenshots, one status state each. */
+const ACTION_TICKETS = [
+  'an implemented ticket',
+  'a reported ticket',
+  'a verified ticket',
+  'a dropped ticket',
+];
+/** The epics of the action screenshots, one status state each. */
+const ACTION_EPICS = ['a refined epic', 'a ready for dev epic'];
+const OTHERS = [...ACTION_TICKETS, ...ACTION_EPICS];
+/** The open feature of the action screenshots (the state's `qualifiedId` names it). */
+const OPEN_FEATURE = 'an epic with features and tasks';
+const UNBLOCKABLE = ['a feature in detail', 'a task in detail', OPEN_FEATURE];
 /**
  * States recording the item alone, no thread or dossier: the IN_FLIGHT ticket of the wrapper
  * closings (qits-1873), whose page says how its closing stands, and the epic an idea inspired
@@ -303,7 +315,30 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
       expect(data?.assets?.[0]?.id).toBeTruthy();
     }));
 
-  it.each(TICKETS)('show-work-item: the dossier pages of %s', (state) =>
+  // The action screenshots' epics: a dossier with no page and no figure.
+  it.each(ACTION_EPICS)('show-work-item: the dossier pages of %s', (state) =>
+    given(state, 'listWorkDossier', LIST_DOSSIER_PAGES).executeTest(async (server) => {
+      const qualifiedId = refOf(state, 'listWorkDossier');
+      const { data, error } = await at(server.url, () =>
+        consume(listWorkDossier({ path: { qualifiedId } }), LIST_DOSSIER_PAGES),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.pages).toBeDefined();
+    }),
+  );
+
+  it.each(ACTION_EPICS)('show-work-item: the dossier figures of %s', (state) =>
+    given(state, 'listWorkDossierAssets', LIST_WORK_DOSSIER_ASSETS).executeTest(async (server) => {
+      const qualifiedId = refOf(state, 'listWorkDossierAssets');
+      const { data, error } = await at(server.url, () =>
+        consume(listWorkDossierAssets({ path: { qualifiedId } }), LIST_WORK_DOSSIER_ASSETS),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.assets).toBeDefined();
+    }),
+  );
+
+  it.each([...TICKETS, ...ACTION_TICKETS])('show-work-item: the dossier pages of %s', (state) =>
     given(state, 'listWorkDossier', LIST_DOSSIER_PAGES).executeTest(async (server) => {
       const qualifiedId = refOf(state, 'listWorkDossier');
       const { data, error } = await at(server.url, () =>

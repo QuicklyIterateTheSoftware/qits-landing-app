@@ -372,8 +372,16 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       });
     }));
 
-  // The work item page reads each item's own state and its project's work (`work-item.page`).
-  it.each(['an implemented ticket'])('show-project-work-board: the work of %s', (state) =>
+  // The work item page reads each item's own state and its project's work (`work-item.page`): the
+  // status states of its action screenshots.
+  it.each([
+    'an implemented ticket',
+    'a reported ticket',
+    'a verified ticket',
+    'a dropped ticket',
+    'a refined epic',
+    'a ready for dev epic',
+  ])('show-project-work-board: the work of %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
       const store = storeAt(server.url);
       const projectId = projectOf(state);
