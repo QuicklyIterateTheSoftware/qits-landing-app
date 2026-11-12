@@ -139,18 +139,65 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
 [_nghost-c0] { display: inline; }
+@property --color-surface { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --color-surface-subtle { syntax: "<color>"; inherits: true; initial-value: #f9fafb; }
+@property --color-surface-muted { syntax: "<color>"; inherits: true; initial-value: #f3f4f6; }
+@property --color-surface-active { syntax: "<color>"; inherits: true; initial-value: #e5e7eb; }
+@property --color-surface-inverse { syntax: "<color>"; inherits: true; initial-value: #1f2937; }
+@property --color-surface-inverse-hover { syntax: "<color>"; inherits: true; initial-value: #374151; }
+@property --color-surface-tint { syntax: "<color>"; inherits: true; initial-value: rgba(31,41,55,.08); }
+@property --color-fg { syntax: "<color>"; inherits: true; initial-value: #111827; }
+@property --color-fg-soft { syntax: "<color>"; inherits: true; initial-value: #374151; }
+@property --color-fg-muted { syntax: "<color>"; inherits: true; initial-value: #6b7280; }
+@property --color-fg-faint { syntax: "<color>"; inherits: true; initial-value: #9ca3af; }
+@property --color-fg-control { syntax: "<color>"; inherits: true; initial-value: #1f2937; }
+@property --color-fg-on-accent { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --color-fg-on-inverse { syntax: "<color>"; inherits: true; initial-value: #f9fafb; }
+@property --color-line { syntax: "<color>"; inherits: true; initial-value: #e5e7eb; }
+@property --color-line-subtle { syntax: "<color>"; inherits: true; initial-value: #f3f4f6; }
+@property --color-line-strong { syntax: "<color>"; inherits: true; initial-value: #d1d5db; }
+@property --color-accent { syntax: "<color>"; inherits: true; initial-value: #1d4ed8; }
+@property --color-accent-soft { syntax: "<color>"; inherits: true; initial-value: #eff6ff; }
+@property --color-accent-line { syntax: "<color>"; inherits: true; initial-value: #bfdbfe; }
+@property --color-accent-muted { syntax: "<color>"; inherits: true; initial-value: #93a3c8; }
+@property --color-focus-ring { syntax: "<color>"; inherits: true; initial-value: #3b82f6; }
+@property --color-danger { syntax: "<color>"; inherits: true; initial-value: #b91c1c; }
+@property --color-danger-soft { syntax: "<color>"; inherits: true; initial-value: #fef2f2; }
+@property --color-danger-line { syntax: "<color>"; inherits: true; initial-value: #fecaca; }
+@property --color-danger-strong { syntax: "<color>"; inherits: true; initial-value: #991b1b; }
+@property --color-warning { syntax: "<color>"; inherits: true; initial-value: #b45309; }
+@property --color-warning-soft { syntax: "<color>"; inherits: true; initial-value: #fffbeb; }
+@property --color-warning-line { syntax: "<color>"; inherits: true; initial-value: #fde68a; }
+@property --color-warning-strong { syntax: "<color>"; inherits: true; initial-value: #92400e; }
+@property --color-warning-fill { syntax: "<color>"; inherits: true; initial-value: #d97706; }
+@property --color-success { syntax: "<color>"; inherits: true; initial-value: #047857; }
+@property --color-success-soft { syntax: "<color>"; inherits: true; initial-value: #ecfdf5; }
+@property --color-success-line { syntax: "<color>"; inherits: true; initial-value: #a7f3d0; }
+@property --color-success-strong { syntax: "<color>"; inherits: true; initial-value: #065f46; }
+@property --color-special { syntax: "<color>"; inherits: true; initial-value: #6d28d9; }
+@property --color-special-soft { syntax: "<color>"; inherits: true; initial-value: #f5f3ff; }
+@property --color-special-line { syntax: "<color>"; inherits: true; initial-value: #ddd6fe; }
+@property --color-code-keyword { syntax: "<color>"; inherits: true; initial-value: #7c3aed; }
+@property --color-code-string { syntax: "<color>"; inherits: true; initial-value: #047857; }
+@property --color-code-number { syntax: "<color>"; inherits: true; initial-value: #b45309; }
+@property --color-code-annotation { syntax: "<color>"; inherits: true; initial-value: #be185d; }
+@property --color-code-type { syntax: "<color>"; inherits: true; initial-value: #1d4ed8; }
+@property --color-code-punctuation { syntax: "<color>"; inherits: true; initial-value: #4b5563; }
+@property --color-shadow { syntax: "<color>"; inherits: true; initial-value: rgb(17 24 39 / 12%); }
+@property --color-shadow-near { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,.12); }
+@property --color-shadow-far { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,.08); }
 [_nghost-c1] { display: inline; }
 .qits-work-ref[_ngcontent-c1] { text-decoration: underline 1px dotted; text-underline-offset: 2px; cursor: help; border-radius: 2px; }
-.qits-work-ref[_ngcontent-c1]:focus-visible { outline: rgb(59, 130, 246) solid 2px; outline-offset: 1px; }
+.qits-work-ref[_ngcontent-c1]:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 1px; }
 .qits-work-ref-panel[_ngcontent-c1] { display: none; position: fixed; inset: 0px auto auto 0px; z-index: 1000; margin: 0px; border: 0px; background: transparent; overflow: visible; color: inherit; padding: 4px 0px 0px; width: max-content; height: auto; }
 .qits-work-ref-panel-open[_ngcontent-c1] { display: block; }
-.qits-work-ref-box[_ngcontent-c1] { display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; max-width: min(360px, -16px + 100vw); padding: 8px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); border-radius: 8px; box-shadow: rgba(17, 24, 39, 0.12) 0px 8px 24px; color: rgb(17, 24, 39); font-family: inherit; font-size: 13px; font-weight: 400; font-style: normal; line-height: 1.4; text-align: left; text-decoration: none; white-space: normal; cursor: auto; }
+.qits-work-ref-box[_ngcontent-c1] { display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; max-width: min(360px, -16px + 100vw); padding: 8px 10px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 8px; box-shadow: 0 8px 24px var(--color-shadow); color: var(--color-fg); font-family: inherit; font-size: 13px; font-weight: 400; font-style: normal; line-height: 1.4; text-align: left; text-decoration: none; white-space: normal; cursor: auto; }
 .qits-work-ref-head[_ngcontent-c1] { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-.qits-work-ref-link[_ngcontent-c1] { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: rgb(29, 78, 216); text-decoration: none; }
+.qits-work-ref-link[_ngcontent-c1] { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: var(--color-accent); text-decoration: none; }
 .qits-work-ref-link[_ngcontent-c1]:hover, .qits-work-ref-link[_ngcontent-c1]:focus-visible { text-decoration: underline; }
-.qits-work-ref-time[_ngcontent-c1] { font-size: 12px; color: rgb(107, 114, 128); }
+.qits-work-ref-time[_ngcontent-c1] { font-size: 12px; color: var(--color-fg-muted); }
 .qits-work-ref-title[_ngcontent-c1] { display: block; font-weight: 600; overflow-wrap: anywhere; }
 [_nghost-c2] { display: inline-block; }
 .qits-badge[_ngcontent-c2] { display: inline-block; font-style: inherit; font-variant: inherit; font-stretch: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-language-override: inherit; font-size: 12px; line-height: 1.4; font-weight: 600; letter-spacing: 0.02em; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
-.qits-badge-neutral[_ngcontent-c2] { background: rgb(243, 244, 246); color: rgb(55, 65, 81); border-color: rgb(229, 231, 235); }
+.qits-badge-neutral[_ngcontent-c2] { background: var(--color-surface-muted); color: var(--color-fg-soft); border-color: var(--color-line); }
 </style></head><body><div id="f0" class="block h-64 w-[40rem] p-4"><a id="f1" href="#f4" class="block"><ui-commit-graph class="block"><ol class="m-0 list-none p-0"><li><button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded pr-1 text-left text-sm hover:bg-charcoal-brown-50" aria-expanded="false"><svg aria-hidden="true" class="shrink-0" width="14" height="28" viewBox="0 0 14 28"><path stroke-width="2" fill="none" d="M7 14V28" stroke="var(--color-ocean-deep-600)"></path><circle r="4" stroke="white" stroke-width="1.5" cx="7" cy="14" fill="var(--color-ocean-deep-600)"></circle></svg><span class="shrink-0 font-mono text-charcoal-brown-600" title="b">b000000</span><span class="min-w-40 flex-1 truncate text-charcoal-brown-950" title="feat(contract-00000001-2): show the status beside the link"><qits-commit-message _nghost-c0="">feat(<qits-work-ref _ngcontent-c0="" _nghost-c1=""><span tabindex="0" class="qits-work-ref qits-work-ref-open" aria-describedby="f2" _ngcontent-c1="">contract-00000001-2</span><span popover="manual" class="qits-work-ref-panel qits-work-ref-panel-open" style="left: 136px; top: 38px;" _ngcontent-c1=""><span role="tooltip" class="qits-work-ref-box" id="f2" _ngcontent-c1=""><span class="qits-work-ref-head" _ngcontent-c1=""><a class="qits-work-ref-link" href="/projects/contract-00000001/work/detail/contract-00000001-2" _ngcontent-c1="">contract-00000001-2</a><qits-badge _ngcontent-c1="" _nghost-c2=""><span class="qits-badge qits-badge-neutral" _ngcontent-c2="">reported</span></qits-badge><time class="qits-work-ref-time" title="2026-01-01T00:00:00Z" datetime="2026-01-01T00:00:00Z" _ngcontent-c1="">1h ago</time></span><span class="qits-work-ref-title" _ngcontent-c1="">Show a referenced item's status beside its link</span></span></span></qits-work-ref>): show the status beside the link</qits-commit-message></span><span class="max-w-32 truncate text-xs text-charcoal-brown-500" title="dana.weber">dana.weber</span><span class="text-xs whitespace-nowrap text-charcoal-brown-500" title="9 Oct 2026 12:00:00Z">3h ago</span></button></li><li><button type="button" class="flex w-full cursor-pointer items-center gap-2 rounded pr-1 text-left text-sm hover:bg-charcoal-brown-50" aria-expanded="false"><svg aria-hidden="true" class="shrink-0" width="14" height="28" viewBox="0 0 14 28"><path stroke-width="2" fill="none" d="M7 0V14" stroke="var(--color-ocean-deep-600)"></path><circle r="4" stroke="white" stroke-width="1.5" cx="7" cy="14" fill="var(--color-ocean-deep-600)"></circle></svg><span class="shrink-0 font-mono text-charcoal-brown-600" title="a">a000000</span><span class="min-w-40 flex-1 truncate text-charcoal-brown-950" title="chore: start"><qits-commit-message _nghost-c0="">chore: start</qits-commit-message></span><span class="max-w-32 truncate text-xs text-charcoal-brown-500" title="dana.weber">dana.weber</span><span class="text-xs whitespace-nowrap text-charcoal-brown-500" title="9 Oct 2026 12:00:00Z">3h ago</span></button></li></ol></ui-commit-graph></a><p id="f3" class="m-0 mt-24 text-sm">Somewhere else on the page</p></div></body></html>

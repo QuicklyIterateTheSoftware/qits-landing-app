@@ -128,20 +128,67 @@ body { background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: syst
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: rgb(255, 255, 255); color: rgb(17, 24, 39); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
+@property --color-surface { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --color-surface-subtle { syntax: "<color>"; inherits: true; initial-value: #f9fafb; }
+@property --color-surface-muted { syntax: "<color>"; inherits: true; initial-value: #f3f4f6; }
+@property --color-surface-active { syntax: "<color>"; inherits: true; initial-value: #e5e7eb; }
+@property --color-surface-inverse { syntax: "<color>"; inherits: true; initial-value: #1f2937; }
+@property --color-surface-inverse-hover { syntax: "<color>"; inherits: true; initial-value: #374151; }
+@property --color-surface-tint { syntax: "<color>"; inherits: true; initial-value: rgba(31,41,55,.08); }
+@property --color-fg { syntax: "<color>"; inherits: true; initial-value: #111827; }
+@property --color-fg-soft { syntax: "<color>"; inherits: true; initial-value: #374151; }
+@property --color-fg-muted { syntax: "<color>"; inherits: true; initial-value: #6b7280; }
+@property --color-fg-faint { syntax: "<color>"; inherits: true; initial-value: #9ca3af; }
+@property --color-fg-control { syntax: "<color>"; inherits: true; initial-value: #1f2937; }
+@property --color-fg-on-accent { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --color-fg-on-inverse { syntax: "<color>"; inherits: true; initial-value: #f9fafb; }
+@property --color-line { syntax: "<color>"; inherits: true; initial-value: #e5e7eb; }
+@property --color-line-subtle { syntax: "<color>"; inherits: true; initial-value: #f3f4f6; }
+@property --color-line-strong { syntax: "<color>"; inherits: true; initial-value: #d1d5db; }
+@property --color-accent { syntax: "<color>"; inherits: true; initial-value: #1d4ed8; }
+@property --color-accent-soft { syntax: "<color>"; inherits: true; initial-value: #eff6ff; }
+@property --color-accent-line { syntax: "<color>"; inherits: true; initial-value: #bfdbfe; }
+@property --color-accent-muted { syntax: "<color>"; inherits: true; initial-value: #93a3c8; }
+@property --color-focus-ring { syntax: "<color>"; inherits: true; initial-value: #3b82f6; }
+@property --color-danger { syntax: "<color>"; inherits: true; initial-value: #b91c1c; }
+@property --color-danger-soft { syntax: "<color>"; inherits: true; initial-value: #fef2f2; }
+@property --color-danger-line { syntax: "<color>"; inherits: true; initial-value: #fecaca; }
+@property --color-danger-strong { syntax: "<color>"; inherits: true; initial-value: #991b1b; }
+@property --color-warning { syntax: "<color>"; inherits: true; initial-value: #b45309; }
+@property --color-warning-soft { syntax: "<color>"; inherits: true; initial-value: #fffbeb; }
+@property --color-warning-line { syntax: "<color>"; inherits: true; initial-value: #fde68a; }
+@property --color-warning-strong { syntax: "<color>"; inherits: true; initial-value: #92400e; }
+@property --color-warning-fill { syntax: "<color>"; inherits: true; initial-value: #d97706; }
+@property --color-success { syntax: "<color>"; inherits: true; initial-value: #047857; }
+@property --color-success-soft { syntax: "<color>"; inherits: true; initial-value: #ecfdf5; }
+@property --color-success-line { syntax: "<color>"; inherits: true; initial-value: #a7f3d0; }
+@property --color-success-strong { syntax: "<color>"; inherits: true; initial-value: #065f46; }
+@property --color-special { syntax: "<color>"; inherits: true; initial-value: #6d28d9; }
+@property --color-special-soft { syntax: "<color>"; inherits: true; initial-value: #f5f3ff; }
+@property --color-special-line { syntax: "<color>"; inherits: true; initial-value: #ddd6fe; }
+@property --color-code-keyword { syntax: "<color>"; inherits: true; initial-value: #7c3aed; }
+@property --color-code-string { syntax: "<color>"; inherits: true; initial-value: #047857; }
+@property --color-code-number { syntax: "<color>"; inherits: true; initial-value: #b45309; }
+@property --color-code-annotation { syntax: "<color>"; inherits: true; initial-value: #be185d; }
+@property --color-code-type { syntax: "<color>"; inherits: true; initial-value: #1d4ed8; }
+@property --color-code-punctuation { syntax: "<color>"; inherits: true; initial-value: #4b5563; }
+@property --color-shadow { syntax: "<color>"; inherits: true; initial-value: rgb(17 24 39 / 12%); }
+@property --color-shadow-near { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,.12); }
+@property --color-shadow-far { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,.08); }
 [_nghost-c0] { display: inline; }
 .qits-work-ref[_ngcontent-c0] { text-decoration: underline 1px dotted; text-underline-offset: 2px; cursor: help; border-radius: 2px; }
-.qits-work-ref[_ngcontent-c0]:focus-visible { outline: rgb(59, 130, 246) solid 2px; outline-offset: 1px; }
+.qits-work-ref[_ngcontent-c0]:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 1px; }
 .qits-work-ref-panel[_ngcontent-c0] { display: none; position: fixed; inset: 0px auto auto 0px; z-index: 1000; margin: 0px; border: 0px; background: transparent; overflow: visible; color: inherit; padding: 4px 0px 0px; width: max-content; height: auto; }
 .qits-work-ref-panel-open[_ngcontent-c0] { display: block; }
-.qits-work-ref-box[_ngcontent-c0] { display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; max-width: min(360px, -16px + 100vw); padding: 8px 10px; background: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); border-radius: 8px; box-shadow: rgba(17, 24, 39, 0.12) 0px 8px 24px; color: rgb(17, 24, 39); font-family: inherit; font-size: 13px; font-weight: 400; font-style: normal; line-height: 1.4; text-align: left; text-decoration: none; white-space: normal; cursor: auto; }
+.qits-work-ref-box[_ngcontent-c0] { display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; max-width: min(360px, -16px + 100vw); padding: 8px 10px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 8px; box-shadow: 0 8px 24px var(--color-shadow); color: var(--color-fg); font-family: inherit; font-size: 13px; font-weight: 400; font-style: normal; line-height: 1.4; text-align: left; text-decoration: none; white-space: normal; cursor: auto; }
 .qits-work-ref-head[_ngcontent-c0] { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-.qits-work-ref-link[_ngcontent-c0] { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: rgb(29, 78, 216); text-decoration: none; }
+.qits-work-ref-link[_ngcontent-c0] { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: var(--color-accent); text-decoration: none; }
 .qits-work-ref-link[_ngcontent-c0]:hover, .qits-work-ref-link[_ngcontent-c0]:focus-visible { text-decoration: underline; }
-.qits-work-ref-time[_ngcontent-c0] { font-size: 12px; color: rgb(107, 114, 128); }
+.qits-work-ref-time[_ngcontent-c0] { font-size: 12px; color: var(--color-fg-muted); }
 .qits-work-ref-title[_ngcontent-c0] { display: block; font-weight: 600; overflow-wrap: anywhere; }
 [_nghost-c1] { display: inline-block; }
 .qits-badge[_ngcontent-c1] { display: inline-block; font-style: inherit; font-variant: inherit; font-stretch: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-language-override: inherit; font-size: 12px; line-height: 1.4; font-weight: 600; letter-spacing: 0.02em; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
-.qits-badge-neutral[_ngcontent-c1] { background: rgb(243, 244, 246); color: rgb(55, 65, 81); border-color: rgb(229, 231, 235); }
+.qits-badge-neutral[_ngcontent-c1] { background: var(--color-surface-muted); color: var(--color-fg-soft); border-color: var(--color-line); }
 </style></head><body><div id="f0" class="block h-72 w-[40rem] p-4"><ui-markdown class="block min-w-0"><p class="m-0 text-sm whitespace-pre-line wrap-anywhere text-charcoal-brown-800 hidden"> ## Why
 The release request lists contract-00000001-2 without its status, so a reader opens it to know whether it is done. </p><div class="text-sm leading-relaxed text-charcoal-brown-800 [&amp;_a]:text-ocean-deep-700 [&amp;_a]:underline [&amp;_blockquote]:border-l-4 [&amp;_blockquote]:border-charcoal-brown-200 [&amp;_blockquote]:pl-3 [&amp;_code]:rounded [&amp;_code]:bg-charcoal-brown-50 [&amp;_code]:px-1 [&amp;_code]:font-mono [&amp;_code]:text-[0.8125rem] [&amp;_h1]:mt-4 [&amp;_h1]:mb-2 [&amp;_h1]:text-lg [&amp;_h1]:font-semibold [&amp;_h2]:mt-4 [&amp;_h2]:mb-2 [&amp;_h2]:text-base [&amp;_h2]:font-semibold [&amp;_h3]:mt-3 [&amp;_h3]:mb-1 [&amp;_h3]:text-sm [&amp;_h3]:font-semibold [&amp;_img]:my-2 [&amp;_img]:max-w-full [&amp;_img]:rounded [&amp;_img]:border [&amp;_img]:border-charcoal-brown-200 [&amp;_li]:my-0.5 [&amp;_ol]:my-2 [&amp;_ol]:list-decimal [&amp;_ol]:pl-5 [&amp;_p]:my-2 [&amp;_pre]:my-2 [&amp;_pre]:overflow-x-auto [&amp;_pre]:rounded [&amp;_pre]:bg-charcoal-brown-50 [&amp;_pre]:p-3 [&amp;_pre_code]:bg-transparent [&amp;_pre_code]:p-0 [&amp;_table]:my-2 [&amp;_table]:block [&amp;_table]:max-w-full [&amp;_table]:overflow-x-auto [&amp;_table]:border-collapse [&amp;_td]:border [&amp;_td]:border-charcoal-brown-200 [&amp;_td]:px-2 [&amp;_td]:py-1 [&amp;_th]:border [&amp;_th]:border-charcoal-brown-200 [&amp;_th]:bg-charcoal-brown-50 [&amp;_th]:px-2 [&amp;_th]:py-1 [&amp;_th]:text-left [&amp;_ul]:my-2 [&amp;_ul]:list-disc [&amp;_ul]:pl-5 [&amp;_:not(pre)&gt;code]:wrap-anywhere [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0"><h2>Why</h2>
 <p>The release request lists <qits-work-ref _nghost-c0=""><span tabindex="0" class="qits-work-ref qits-work-ref-open" aria-describedby="f1" _ngcontent-c0="">contract-00000001-2</span><span popover="manual" class="qits-work-ref-panel qits-work-ref-panel-open" style="left: 179px; top: 67px;" _ngcontent-c0=""><span role="tooltip" class="qits-work-ref-box" id="f1" _ngcontent-c0=""><span class="qits-work-ref-head" _ngcontent-c0=""><a class="qits-work-ref-link" href="/projects/contract-00000001/work/detail/contract-00000001-2" data-qits-outcome="open-work-ref:opened" _ngcontent-c0="">contract-00000001-2</a><qits-badge _ngcontent-c0="" _nghost-c1=""><span class="qits-badge qits-badge-neutral" _ngcontent-c1="">reported</span></qits-badge><time class="qits-work-ref-time" title="2026-01-01T00:00:00Z" datetime="2026-01-01T00:00:00Z" _ngcontent-c0="">1h ago</time></span><span class="qits-work-ref-title" _ngcontent-c0="">Show a referenced item's status beside its link</span></span></span></qits-work-ref> without its status, so a reader opens it to know whether it is done.</p>
