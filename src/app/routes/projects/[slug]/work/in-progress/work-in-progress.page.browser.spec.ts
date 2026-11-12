@@ -161,7 +161,12 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect.element(panel).toBeVisible();
     await expect.element(panel.getByRole('radio', { name: 'Epic boards' })).toBeChecked();
     await expect.element(panel.getByRole('radio', { name: 'Inline' })).not.toBeChecked();
-    await expect.element(frame).toMatchScreenshot('view-settings-data', { kind: 'DATA' });
+    // The row's gear: below md the row is the phone bar, whose gear the work layout's spec shows.
+    await expect.element(frame).toMatchScreenshot('view-settings-data', {
+      kind: 'DATA',
+      viewports: ['TABLET', 'DESKTOP'],
+      reason: 'the row and its gear show from md up only (qits-2077)',
+    });
     // Choosing applies at once, and is kept for the next visit.
     await panel.getByRole('radio', { name: 'Inline' }).click();
     await expect.poll(() => epicBoards(element.element())).toEqual([]);

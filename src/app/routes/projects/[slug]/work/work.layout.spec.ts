@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { filter, Subject } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
@@ -147,13 +147,28 @@ describe('WorkLayout', () => {
         'nav[aria-label=Work] button[aria-label="In Progress view settings"]',
       );
     /** Whether the gear shows: hidden by class (on its wrapper), so a server render hydrates. */
-    const shownGear = () =>
-      !gear()!.closest('ui-dropdown')!.parentElement!.classList.contains('hidden');
+    const shownGear = (button = gear()!) =>
+      !button.closest('ui-dropdown')!.parentElement!.classList.contains('hidden');
     const tab = gear()!.closest('li')!;
     expect(tab.querySelector('a')!.firstChild?.textContent?.trim()).toBe('In Progress');
     expect(gear()!.closest('a')).toBeNull();
     expect(shownGear()).toBe(true);
-    expect(element.querySelectorAll('nav[aria-label=Work] ui-dropdown')).toHaveLength(1);
+    // One gear in the row, one in the phone bar beside the page's name (each shown at its width).
+    const gears = [
+      ...element.querySelectorAll<HTMLButtonElement>(
+        'button[aria-label="In Progress view settings"]',
+      ),
+    ];
+    expect(gears).toHaveLength(2);
+    const barGear = gears.find((button) => !button.closest('nav'))!;
+    expect(
+      barGear
+        .closest('ui-dropdown')!
+        .parentElement!.previousElementSibling?.firstChild?.textContent?.trim(),
+    ).toBe('In Progress');
+    expect(shownGear(barGear)).toBe(true);
+    // Each its own radio group, or choosing in one would clear the other.
+    expect(new Set(radioNames(element))).toHaveProperty('size', 2);
     // Choosing a view applies it at once and keeps it.
     gear()!.click();
     harness.fixture.detectChanges();
@@ -173,6 +188,75 @@ describe('WorkLayout', () => {
     await settle();
     harness.fixture.detectChanges();
     expect(shownGear()).toBe(false);
+    expect(shownGear(barGear)).toBe(false);
+  });
+
+  /** The names of the gears' radios, one per radio. */
+  function radioNames(element: HTMLElement) {
+    return [...element.querySelectorAll<HTMLInputElement>('input[type=radio]')].map(
+      (radio) => radio.name,
+    );
+  }
+
+  /** The phone bar's burger, its panel's links and the page's name beside it. */
+  function phoneBar(element: HTMLElement) {
+    const burger = element.querySelector<HTMLButtonElement>('button[aria-label="Work views"]')!;
+    const panel = () =>
+      element.querySelector<HTMLElement>(`#${burger.getAttribute('aria-controls')}`)!;
+    const links = () => [...panel().querySelectorAll<HTMLAnchorElement>('a')];
+    const name = () => burger.closest('ui-dropdown')!.nextElementSibling!;
+    return { burger, panel, links, name };
+  }
+
+  // qits-2077: below md the tabs are a burger's list and the open page's name.
+  it('lists the five phases in the phone bar’s menu, each with its count, and marks the current one', async () => {
+    const { harness, answered } = await shown('schedule');
+    const { burger, links, name } = phoneBar(harness.routeNativeElement as HTMLElement);
+    expect(burger.closest('nav')).toBeNull();
+    expect(name().firstChild?.textContent?.trim()).toBe('Schedule');
+    expect(name().querySelector('span')!.classList.contains('hidden')).toBe(true);
+    await answered('a project with work in every status');
+    expect(
+      links().map((a) => [
+        a.firstChild?.textContent?.trim(),
+        a.getAttribute('href'),
+        a.querySelector('span')!.textContent,
+        a.getAttribute('aria-current'),
+      ]),
+    ).toEqual([
+      ['Refinement', `/projects/${project.slug}/work/refinement`, '2', null],
+      ['Schedule', `/projects/${project.slug}/work/schedule`, '4', 'page'],
+      ['In Progress', `/projects/${project.slug}/work/in-progress`, '9', null],
+      ['Acceptance', `/projects/${project.slug}/work/acceptance`, '2', null],
+      ['Archive', `/projects/${project.slug}/work/archive`, '4', null],
+    ]);
+    expect(links().every((a) => a.hasAttribute('data-qits-outcome'))).toBe(true);
+    expect(name().textContent?.replace(/\s+/g, ' ').trim()).toBe('Schedule 4');
+    expect(name().querySelector('span')!.classList.contains('hidden')).toBe(false);
+    // The phone bar's gear shows on In Progress only.
+    const barGear = name().nextElementSibling!;
+    expect(barGear.querySelector('button')!.getAttribute('aria-label')).toBe(
+      'In Progress view settings',
+    );
+    expect(barGear.classList.contains('hidden')).toBe(true);
+  });
+
+  it('closes the phone bar’s menu as one of its links opens its page', async () => {
+    const { harness, answered } = await shown('refinement');
+    await answered('a project with no work');
+    const { burger, panel, links, name } = phoneBar(harness.routeNativeElement as HTMLElement);
+    burger.click();
+    harness.fixture.detectChanges();
+    expect(burger.getAttribute('aria-expanded')).toBe('true');
+    expect(panel().classList.contains('hidden')).toBe(false);
+    links()[3].click();
+    await settle();
+    await harness.fixture.whenStable();
+    expect(burger.getAttribute('aria-expanded')).toBe('false');
+    expect(panel().classList.contains('hidden')).toBe(true);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${project.slug}/work/acceptance`);
+    expect(name().textContent?.replace(/\s+/g, ' ').trim()).toBe('Acceptance 0');
+    expect(links()[3].getAttribute('aria-current')).toBe('page');
   });
 
   it('asks for the work once while moving between the pages', async () => {
