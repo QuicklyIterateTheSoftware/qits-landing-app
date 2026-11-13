@@ -17,12 +17,6 @@
       "state": "an announced private edge",
       "operationId": "getPrivateEdge",
       "route": "network-access"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "network-access"
     }
   ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
@@ -372,6 +366,12 @@
     }
   ],
   "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "getProject",
+      "route": "projects/:slug"
+    },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
@@ -876,6 +876,12 @@
     }
   ],
   "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "getProject",
+      "route": "projects/:slug/setup"
+    },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
