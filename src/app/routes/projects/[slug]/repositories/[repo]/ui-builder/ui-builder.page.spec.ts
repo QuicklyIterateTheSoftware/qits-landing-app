@@ -12,6 +12,7 @@ import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
+import { forgetContractsFiles } from '$core/ui-builder/golden-masters.store';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import type {
   DeclaredOutcome,
@@ -2196,6 +2197,346 @@ describe('UiBuilderPage', () => {
       expect(
         element.querySelector('[aria-label="States"] [aria-selected="true"]')?.textContent?.trim(),
       ).toBe('loaded');
+    });
+  });
+
+  describe('data marks (qits-2144)', () => {
+    const PROJECTS = 'qits-projects-service';
+    const LIST = `${PROJECTS}#listProjects`;
+    const DETAIL = `${PROJECTS}#getProject`;
+    const STATE = 'a project exists';
+    const { site, version } = artifacts.operation(CONTRACTS, 'getDocsFile').params;
+    const GOLDEN = `${SITES_URL}/${site}/-/${version}/golden-masters`;
+
+    /** A projects list marked as qits-2141 marks it, with a joined read of one project. */
+    const HTML = `
+      <ul data-qits-source="${LIST}">
+        <li data-qits-item="id=p1">
+          <a href="/projects" data-qits-field="name">Qits</a>
+          <span data-qits-derived="slug repositoryCount">qits · 3</span>
+          <div data-qits-source="${DETAIL}" data-qits-item="id=p1">
+            <span data-qits-field="description">Joined</span>
+          </div>
+        </li>
+        <li data-qits-item="id=p2"><span data-qits-field="name">Other</span></li>
+      </ul>
+      <p class="copy">Design copy</p>`;
+
+    const mark = (
+      source: string,
+      item: string | null,
+      field: string | null = null,
+      derived: string[] = [],
+    ) => ({ source, item, field, derived });
+
+    /** The recorded manifest, `error` showing the marks above and also reading `getProject`. */
+    function marked(
+      recorded: RoutesManifest = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile'),
+    ): RoutesManifest {
+      return {
+        ...recorded,
+        freezes: recorded.freezes.map((freeze): Freeze =>
+          freeze.file === ERROR_FREEZE
+            ? {
+                ...freeze,
+                records: [
+                  ...freeze.records,
+                  { provider: PROJECTS, state: STATE, operationId: 'getProject' },
+                ],
+                dataMarks: [
+                  mark(LIST, null),
+                  mark(LIST, 'id=p1'),
+                  mark(LIST, 'id=p1', 'name'),
+                  mark(LIST, 'id=p1', null, ['slug', 'repositoryCount']),
+                  mark(LIST, 'id=p2'),
+                  mark(LIST, 'id=p2', 'name'),
+                  mark(DETAIL, 'id=p1'),
+                  mark(DETAIL, 'id=p1', 'description'),
+                ],
+              }
+            : freeze,
+        ),
+      };
+    }
+
+    /** The recorded entity map at format 2: list reads are collections, the rest single. */
+    const mapWithCardinality = answerContracts((read) => {
+      const map = artifacts.body<{ entities: { operations: { operationId: string }[] }[] }>(
+        CONTRACTS,
+        'getDocsFile',
+      );
+      read.flush({
+        ...map,
+        formatVersion: 2,
+        entities: map.entities.map((entity) => ({
+          ...entity,
+          operations: entity.operations.map((op) => ({
+            ...op,
+            cardinality: op.operationId.startsWith('list') ? 'collection' : 'single',
+          })),
+        })),
+      });
+    });
+
+    const INDEX = {
+      formatVersion: 1,
+      provider: 'qits-projects',
+      states: [
+        {
+          name: STATE,
+          slug: 'a-project-exists',
+          operations: ['listProjects', 'getProject'].map((operationId) => ({
+            operationId,
+            method: 'GET',
+            path: `/projects/api/${operationId}`,
+            status: 200,
+            file: `a-project-exists/${operationId}.json`,
+          })),
+        },
+      ],
+    };
+
+    beforeEach(() => forgetContractsFiles());
+
+    /** The builder on the marked freeze, its frame loaded with `html` (an `about:srcdoc` one). */
+    async function renderMarked(
+      manifest: RoutesManifest = marked(),
+      answer: () => Promise<void> = recordedMap,
+      html = HTML,
+    ) {
+      const rendered = await render('qits-landing-app', undefined, answer, '', manifest);
+      await answerFreeze(ERROR_FREEZE, rendered.fixture);
+      const doc = document.implementation.createHTMLDocument('freeze');
+      doc.body.innerHTML = html;
+      Object.defineProperty(doc, 'URL', { configurable: true, value: 'about:srcdoc' });
+      (rendered.page as unknown as { frameLoaded(e: Event): void }).frameLoaded({
+        target: { contentDocument: doc },
+      } as unknown as Event);
+      rendered.fixture.detectChanges();
+      /** Clicks what `selector` finds in the frame; says whether the click was cancelled. */
+      const click = (selector: string) => {
+        const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+        doc.querySelector(selector)!.dispatchEvent(event);
+        rendered.fixture.detectChanges();
+        return event.defaultPrevented;
+      };
+      const highlighted = () =>
+        [...doc.querySelectorAll('[data-qits-builder-highlight]')].map(
+          (e) =>
+            e.getAttribute('data-qits-field') ?? e.getAttribute('data-qits-derived') ?? e.tagName,
+        );
+      return { ...rendered, doc, click, highlighted };
+    }
+
+    /** The call row of `operationId`. */
+    const callRow = (element: HTMLElement, operationId: string) =>
+      [...element.querySelectorAll<HTMLElement>('li.call')].find(
+        (li) => li.querySelector('.call-trigger .font-mono')?.textContent?.trim() === operationId,
+      )!;
+
+    /** Turns Pick data on. */
+    function pickData(element: HTMLElement, fixture: { detectChanges(): void }) {
+      element.querySelector<HTMLButtonElement>('button.pick-data')!.click();
+      fixture.detectChanges();
+    }
+
+    /** Answers the golden index and the recorded answers of `operationIds`. */
+    async function answerGoldens(
+      fixture: { detectChanges(): void; whenStable(): Promise<unknown> },
+      operationIds: readonly string[],
+    ) {
+      await settle();
+      http.expectOne(`${GOLDEN}/index.json`).flush(INDEX);
+      for (let i = 0; i < 3; i++) await settle();
+      const bodies: Record<string, object> = {
+        listProjects: [
+          { id: 'p1', name: 'Qits', slug: 'qits' },
+          { id: 'p2', name: 'Other', slug: 'other' },
+        ],
+        getProject: { id: 'p1', name: 'Qits', description: 'Joined' },
+      };
+      for (const operationId of operationIds) {
+        http.expectOne(`${GOLDEN}/a-project-exists/${operationId}.json`).flush(bodies[operationId]);
+      }
+      for (let i = 0; i < 3; i++) await settle();
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    /** "Selected data"'s section. */
+    const selected = (element: HTMLElement) =>
+      element.querySelector<HTMLElement>('[aria-label="Selected data"]');
+
+    it('outlines every marked node of a call’s read with its toggle, and clears it again', async () => {
+      const { fixture, element, highlighted } = await renderMarked();
+      const toggle = callRow(element, 'listProjects').querySelector<HTMLButtonElement>(
+        '.call-data',
+      )!;
+      toggle.click();
+      fixture.detectChanges();
+      expect(toggle.getAttribute('aria-pressed')).toBe('true');
+      expect(highlighted()).toEqual(['UL', 'LI', 'name', 'slug repositoryCount', 'LI', 'name']);
+      toggle.click();
+      fixture.detectChanges();
+      expect(highlighted()).toEqual([]);
+      expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    });
+
+    it('lists a call’s marked items, and highlights exactly the field picked', async () => {
+      const { fixture, element, highlighted } = await renderMarked();
+      const row = callRow(element, 'listProjects');
+      row.querySelector<HTMLButtonElement>('.call-items-toggle')!.click();
+      fixture.detectChanges();
+      expect(
+        [...row.querySelectorAll('.call-item')].map((item) =>
+          [...item.querySelectorAll('.item-key, .data-mark')].map((e) => e.textContent?.trim()),
+        ),
+      ).toEqual([
+        ['id=p1', 'the item', 'name', 'derived: slug, repositoryCount'],
+        ['id=p2', 'the item', 'name'],
+      ]);
+      const name = row
+        .querySelectorAll<HTMLButtonElement>('.call-item')[0]
+        .querySelectorAll<HTMLButtonElement>('.data-mark')[1];
+      name.click();
+      fixture.detectChanges();
+      expect(highlighted()).toEqual(['name']);
+      expect(name.getAttribute('aria-pressed')).toBe('true');
+      // Picking it again clears it.
+      name.click();
+      fixture.detectChanges();
+      expect(highlighted()).toEqual([]);
+    });
+
+    it('keeps one selection: the data highlight and the outcome highlight clear each other', async () => {
+      const { fixture, element, highlighted, doc } = await renderMarked(
+        marked(withOutcomes()),
+        recordedMap,
+        `${HTML}<button data-qits-outcome="repositories:opened">open</button>`,
+      );
+      const outcome = [...element.querySelectorAll<HTMLButtonElement>('.outcome-pick')].find((b) =>
+        b.getAttribute('title')?.endsWith(' repositories:opened'),
+      )!;
+      const data = callRow(element, 'listProjects').querySelector<HTMLButtonElement>('.call-data')!;
+      data.click();
+      fixture.detectChanges();
+      expect(highlighted()).toHaveLength(6);
+
+      outcome.click();
+      fixture.detectChanges();
+      expect(data.getAttribute('aria-pressed')).toBe('false');
+      expect(outcome.getAttribute('aria-pressed')).toBe('true');
+      expect(highlighted()).toEqual(['BUTTON']);
+
+      data.click();
+      fixture.detectChanges();
+      expect(outcome.getAttribute('aria-pressed')).toBe('false');
+      expect(highlighted()).toHaveLength(6);
+      expect(doc.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(false);
+    });
+
+    it('shows a picked field’s read, state, recorded value and entities, without following its link', async () => {
+      const { fixture, element, click, highlighted } = await renderMarked();
+      pickData(element, fixture);
+      expect(element.querySelector('button.pick-data')?.getAttribute('aria-pressed')).toBe('true');
+      expect(click('a[data-qits-field="name"]')).toBe(true);
+      await answerGoldens(fixture, ['listProjects']);
+      await navigated(fixture);
+      expect(query()).toEqual({});
+      expect(highlighted()).toEqual(['name']);
+      const section = selected(element)!;
+      // The read, as its call row draws it: operation, provider and state.
+      expect(words(section.querySelector('.read .call-trigger')!)).toBe(
+        `listProjects ${PROJECTS} · “${STATE}”`,
+      );
+      const terms = [...section.querySelectorAll('dt')].map((dt) => [
+        dt.textContent?.trim(),
+        (dt.nextElementSibling?.textContent ?? '').replace(/\s+/g, ' ').trim(),
+      ]);
+      expect(terms).toEqual([
+        ['Item', 'id = p1'],
+        ['Field', 'name'],
+        ['Value', 'Qits'],
+      ]);
+      expect(
+        [...section.querySelectorAll('.data-entity')].map((b) => b.textContent?.trim()),
+      ).toEqual(['Project']);
+      // Its popover links the state's page and the entity's, as the call row's does.
+      section.querySelector<HTMLButtonElement>('.read .call-trigger')!.click();
+      fixture.detectChanges();
+      for (let i = 0; i < 3; i++) await settle();
+      fixture.detectChanges();
+      expect(section.querySelector('a.state-link')?.getAttribute('href')).toBe(
+        `/projects/${SLUG}/repositories/${PROJECTS}/contracts/a-project-exists`,
+      );
+      expect(section.querySelector('a.entity-link')?.getAttribute('href')).toBe(PROJECT_PAGE);
+      expect(callRow(element, 'listProjects').getAttribute('aria-current')).toBe('true');
+      expect(callRow(element, 'getProject').getAttribute('aria-current')).toBeNull();
+    });
+
+    it('shows a derived mark’s inputs with their recorded values, and says which are absent', async () => {
+      const { fixture, element, click } = await renderMarked();
+      pickData(element, fixture);
+      click('[data-qits-derived]');
+      await answerGoldens(fixture, ['listProjects']);
+      expect(
+        [...selected(element)!.querySelectorAll('li.derived')].map((li) =>
+          li.textContent?.replace(/\s+/g, ' ').trim(),
+        ),
+      ).toEqual(['slug: qits', 'repositoryCount: not in the recorded answer']);
+    });
+
+    it('shows a joined element’s own read, chipped joined', async () => {
+      const { fixture, element, click } = await renderMarked();
+      pickData(element, fixture);
+      click('[data-qits-field="description"]');
+      await answerGoldens(fixture, ['getProject']);
+      const section = selected(element)!;
+      expect(section.querySelector('.read .call-trigger .font-mono')?.textContent?.trim()).toBe(
+        'getProject',
+      );
+      expect(section.querySelector('.joined')).not.toBeNull();
+      expect(section.querySelector('.value')?.textContent?.trim()).toBe('Joined');
+      expect(callRow(element, 'getProject').getAttribute('aria-current')).toBe('true');
+    });
+
+    it('says a click on no marked element is design copy', async () => {
+      const { fixture, element, click } = await renderMarked();
+      pickData(element, fixture);
+      expect(click('p.copy')).toBe(true);
+      expect(selected(element)).toBeNull();
+      expect(element.querySelector('.link-notice')?.textContent).toContain('design copy');
+    });
+
+    it('chips each call list or detail from a format 2 entity map', async () => {
+      const { element } = await renderMarked(marked(), mapWithCardinality);
+      expect(callRow(element, 'listProjects').querySelector('.cardinality')?.textContent).toContain(
+        'list',
+      );
+      expect(callRow(element, 'getProject').querySelector('.cardinality')?.textContent).toContain(
+        'detail',
+      );
+    });
+
+    it('says a screenshot without marks marks no data, and disables Pick data', async () => {
+      const { element } = await renderMarked(artifacts.body(BUNDLE, 'getDocsFile'));
+      expect(element.querySelector('.no-marks')?.textContent?.trim()).toBe(
+        'This screenshot marks no data: every text is design copy as far as the builder knows.',
+      );
+      const pick = element.querySelector<HTMLButtonElement>('button.pick-data')!;
+      expect(pick.disabled).toBe(true);
+      expect(pick.title).toContain('marks no data');
+      expect(element.querySelector('.call-data')).toBeNull();
+      expect(element.querySelector('.cardinality')).toBeNull();
+    });
+
+    it('follows links in the frame as before while Pick data is off', async () => {
+      const { fixture, element, click } = await renderMarked();
+      expect(element.querySelector('.no-marks')).toBeNull();
+      expect(click('a[data-qits-field="name"]')).toBe(true);
+      await navigated(fixture);
+      expect(query()).toEqual({ route: 'projects' });
+      expect(selected(element)).toBeNull();
     });
   });
 });

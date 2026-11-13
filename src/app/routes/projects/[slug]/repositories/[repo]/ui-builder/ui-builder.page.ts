@@ -22,8 +22,22 @@ import { map } from 'rxjs';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoriesStore } from '$core/repositories/repositories.store';
-import { joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
+import { callCardinality, joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
 import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
+import {
+  itemIn,
+  markOf,
+  MARKED,
+  parseItem,
+  recordFor,
+  sameMark,
+  sourceOf,
+  valueAt,
+  type DataMark,
+  type ElementMark,
+  type MarkRead,
+} from '$core/ui-builder/data-marks';
+import { goldenCall, goldenResponse } from '$core/ui-builder/golden-masters.store';
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
 import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
 import {
@@ -78,6 +92,62 @@ type LeftTab = 'routes' | 'entities' | 'outcomes';
  * unreadable section, no declaration in the whole app, or declarations.
  */
 type OutcomeStatus = 'unrecorded' | 'invalid' | 'undeclared' | 'declared';
+
+/**
+ * The data highlighted in the frame (qits-2144): every marked element of a call's read (`call`),
+ * or the elements of exactly one mark (`mark`), picked in the frame (`picked`, the element's
+ * resolved mark, which opens "Selected data") or chosen among a call's items.
+ */
+type DataSelection =
+  | { readonly kind: 'call'; readonly source: string }
+  | { readonly kind: 'mark'; readonly mark: DataMark; readonly picked: ElementMark | null };
+
+/** A call's recorded answer, as read for "Selected data" (qits-2144). */
+type GoldenRead =
+  | { readonly status: 'loading' }
+  | {
+      readonly status: 'loaded';
+      /** The recorded JSON body; null when there is none (no state, no file, not JSON). */
+      readonly body: unknown;
+    };
+
+/** A recorded value as "Selected data" shows it (qits-2144). */
+interface ShownValue {
+  readonly path: string;
+  readonly text: string;
+  /** False for a fallback ("not in the recorded answer", "Reading…"): drawn muted. */
+  readonly found: boolean;
+}
+
+/** What "Selected data" shows of the mark picked in the frame (qits-2144). */
+interface SelectedData {
+  readonly mark: ElementMark;
+  readonly read: MarkRead;
+  /** The record the mark reads, when it is pinned to one (`marked` or `byItem`). */
+  readonly record: FreezeRecord | null;
+  readonly cardinality: string | null;
+  readonly entities: readonly CallEntity[];
+  readonly item: { readonly key: string; readonly value: string } | null;
+  readonly field: ShownValue | null;
+  readonly derived: readonly ShownValue[];
+}
+
+/** A call's marked items (qits-2144): the marks of one item of its read, in the freeze's order. */
+interface ItemGroup {
+  readonly item: string | null;
+  readonly marks: readonly DataMark[];
+}
+
+/** What the calls panel and Pick data say of a screenshot without marks (qits-2144). */
+const NO_MARKS =
+  'This screenshot marks no data: every text is design copy as far as the builder knows.';
+
+/** A call's words for its cardinality (qits-2144): a list or a detail read. */
+const CARDINALITY_LABELS = { collection: 'list', single: 'detail' } as const;
+
+/** A record's key among the answers read (qits-2144): provider, operation and state. */
+const recordKey = ({ provider, operationId, state }: FreezeRecord) =>
+  JSON.stringify([provider, operationId, state]);
 
 /** The attribute the highlighted trigger carries in the frame (qits-2006). */
 const HIGHLIGHT = 'data-qits-builder-highlight';
@@ -318,6 +388,24 @@ interface EntityGroup {
  *   the element (see `drawHighlight`), again after each load of a freeze's document; nothing runs
  *   inside the frame. A freeze that lists the trigger without the element is said so on the line
  *   above the frame, which is always there, so no notice moves the frame (qits-2072).
+ * - Data marks (qits-2144): the selected freeze's `dataMarks` (qits-2141, `data-marks.ts`) say which
+ *   read, item and attribute each marked part of the screenshot shows; everything else is design
+ *   copy. Each call row chips its cardinality, `list` or `detail`, from its operation's rows in the
+ *   provider's entity map (format 2, `callCardinality`). A call the screenshot marks has a toggle
+ *   (◎) outlining every marked element of its read in the frame, the first centred, and a ▸ listing
+ *   its marked items, each with its fields and derived marks; one of those outlines exactly its
+ *   elements. A **Pick data** switch beside the viewport switch turns a click in the frame into a
+ *   pick: cancelled, never a link, it selects the nearest element carrying a mark (`markOf`, by
+ *   qits-2141's rule), outlines it, and opens "Selected data" above the calls: the read
+ *   (`recordFor`: the record its source names, told apart by the item when the source is recorded
+ *   in several states) as the call row's popover, its cardinality, "joined" when a list of another
+ *   read is around it, the item, the field's recorded value and a derived mark's inputs with theirs
+ *   (`goldenCall`, `goldenResponse`, `itemIn`, `valueAt`), and the read's entities. What it cannot
+ *   pin says so: "ambiguous" (every candidate listed), "found by item, not marked", "no read
+ *   marked", "not in the recorded answer". The read's call row is marked as selected, the app-wide
+ *   group opening for it. The data highlight and the outcome highlight are one selection: either
+ *   clears the other, and another freeze that does not mark it clears it. A screenshot without
+ *   `dataMarks` says it marks no data, and Pick data is disabled.
  *
  * - Columns (qits-2050): from 1280px up the three panels sit side by side and each scrolls on its
  *   own, so a long tree, a tall frozen page or a long list of calls never moves the other two. The
@@ -706,57 +794,80 @@ interface EntityGroup {
                           </button>
                         }
                       </div>
-                      @if (viewports() || schemeChoices().length) {
-                        <div class="switches flex flex-wrap gap-x-3">
-                          @if (viewports()) {
-                            <div
-                              role="group"
-                              aria-label="Viewport"
-                              class="viewports mb-2 flex flex-wrap gap-1"
-                            >
-                              @for (choice of viewportChoices; track choice.id) {
-                                <button
-                                  type="button"
-                                  class="viewport cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
-                                  [class]="
-                                    choice.id === viewport()
-                                      ? 'bg-surface-inverse text-fg-on-inverse'
-                                      : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
-                                  "
-                                  [attr.aria-pressed]="choice.id === viewport()"
-                                  (click)="pickViewport(choice.query)"
-                                >
-                                  {{ choice.label }}
-                                </button>
-                              }
-                            </div>
-                          }
-                          @if (schemeChoices().length) {
-                            <!-- Light / Dark (qits-2086): only for a bundle frozen in schemes. -->
-                            <div
-                              role="group"
-                              aria-label="Colour scheme"
-                              class="schemes mb-2 flex flex-wrap gap-1"
-                            >
-                              @for (choice of schemeChoices(); track choice.id) {
-                                <button
-                                  type="button"
-                                  class="scheme cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
-                                  [class]="
-                                    choice.id === scheme()
-                                      ? 'bg-surface-inverse text-fg-on-inverse'
-                                      : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
-                                  "
-                                  [attr.aria-pressed]="choice.id === scheme()"
-                                  (click)="pickScheme(choice.id)"
-                                >
-                                  {{ choice.label }}
-                                </button>
-                              }
-                            </div>
-                          }
+                      <div class="switches flex flex-wrap gap-x-3">
+                        @if (viewports()) {
+                          <div
+                            role="group"
+                            aria-label="Viewport"
+                            class="viewports mb-2 flex flex-wrap gap-1"
+                          >
+                            @for (choice of viewportChoices; track choice.id) {
+                              <button
+                                type="button"
+                                class="viewport cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                                [class]="
+                                  choice.id === viewport()
+                                    ? 'bg-surface-inverse text-fg-on-inverse'
+                                    : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                                "
+                                [attr.aria-pressed]="choice.id === viewport()"
+                                (click)="pickViewport(choice.query)"
+                              >
+                                {{ choice.label }}
+                              </button>
+                            }
+                          </div>
+                        }
+                        @if (schemeChoices().length) {
+                          <!-- Light / Dark (qits-2086): only for a bundle frozen in schemes. -->
+                          <div
+                            role="group"
+                            aria-label="Colour scheme"
+                            class="schemes mb-2 flex flex-wrap gap-1"
+                          >
+                            @for (choice of schemeChoices(); track choice.id) {
+                              <button
+                                type="button"
+                                class="scheme cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                                [class]="
+                                  choice.id === scheme()
+                                    ? 'bg-surface-inverse text-fg-on-inverse'
+                                    : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                                "
+                                [attr.aria-pressed]="choice.id === scheme()"
+                                (click)="pickScheme(choice.id)"
+                              >
+                                {{ choice.label }}
+                              </button>
+                            }
+                          </div>
+                        }
+                        <!--
+                            Pick data (qits-2144): a click in the frame selects the data it shows
+                            instead of following a link. Off for a screenshot without marks.
+                          -->
+                        <div class="mb-2 flex gap-1">
+                          <button
+                            type="button"
+                            class="pick-data cursor-pointer rounded px-2 py-0.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                            [class]="
+                              pickActive()
+                                ? 'bg-surface-inverse text-fg-on-inverse'
+                                : 'bg-surface-muted text-fg-soft enabled:hover:bg-surface-active'
+                            "
+                            [attr.aria-pressed]="pickActive()"
+                            [disabled]="!hasMarks()"
+                            [title]="
+                              hasMarks()
+                                ? 'Click a part of the screenshot to see the data it shows'
+                                : noMarks
+                            "
+                            (click)="pickingData.set(!pickingData())"
+                          >
+                            Pick data
+                          </button>
                         </div>
-                      }
+                      </div>
                       <!--
                         One line, always as tall, so a notice never moves the frame (qits-2072).
                       -->
@@ -873,9 +984,18 @@ interface EntityGroup {
                     aria-label="Calls"
                     class="text-[0.8125rem] xl:min-h-0 xl:overflow-y-auto xl:pb-6"
                   >
+                    @if (selectedData(); as data) {
+                      <ng-container
+                        [ngTemplateOutlet]="selectedDataPanel"
+                        [ngTemplateOutletContext]="{ $implicit: data }"
+                      />
+                    }
                     <h3 class="m-0 mb-1 text-xs font-semibold text-fg-soft uppercase">
                       Calls and states
                     </h3>
+                    @if (freeze() && !hasMarks()) {
+                      <p class="no-marks m-0 mb-1.5 text-xs text-fg-soft">{{ noMarks }}</p>
+                    }
                     <ul class="own-calls m-0 flex list-none flex-col gap-1.5 p-0">
                       @for (call of calls().shown; track $index) {
                         <ng-container
@@ -1247,17 +1367,228 @@ interface EntityGroup {
       }
     </ng-template>
 
-    <!-- One call of the selected screenshot: its own, or an app-wide one (qits-2080). -->
+    <!--
+      One call of the selected screenshot: its own, or an app-wide one (qits-2080). Its cardinality,
+      and, when the screenshot marks its read, a toggle highlighting all of it and its marked items,
+      each field of which highlights alone (qits-2144).
+    -->
     <ng-template #callRow let-call>
-      <li class="call">
-        <app-call-details
-          [call]="call"
-          [site]="siteOf(call.provider)"
-          [entities]="callEntities(call)"
-          [project]="slug() ?? null"
-          (entityPicked)="pickEntity($event)"
-        />
+      @let marks = marksOf(call);
+      <li
+        class="call rounded"
+        [class]="isSelectedCall(call) ? 'selected-call bg-accent-soft' : ''"
+        [attr.aria-current]="isSelectedCall(call) ? 'true' : null"
+      >
+        <div class="flex items-center gap-1">
+          <app-call-details
+            class="min-w-0 flex-1"
+            [call]="call"
+            [site]="siteOf(call.provider)"
+            [entities]="callEntities(call)"
+            [project]="slug() ?? null"
+            (entityPicked)="pickEntity($event)"
+          />
+          @if (cardinalityOf(call); as cardinality) {
+            <ui-chip class="cardinality shrink-0" [label]="cardinality" />
+          }
+          @if (marks.length) {
+            <button
+              type="button"
+              class="call-data shrink-0 cursor-pointer rounded px-1 text-xs"
+              [class]="
+                isCallHighlighted(call)
+                  ? 'bg-surface-inverse text-fg-on-inverse'
+                  : 'text-fg-soft hover:bg-surface-subtle hover:text-fg'
+              "
+              [attr.aria-pressed]="isCallHighlighted(call)"
+              [attr.aria-label]="'Highlight the data of ' + call.operationId"
+              [title]="'Highlight the data of ' + call.operationId"
+              (click)="toggleCallData(call)"
+            >
+              ◎
+            </button>
+            <button
+              type="button"
+              class="call-items-toggle shrink-0 cursor-pointer rounded px-1 text-xs text-fg-soft hover:bg-surface-subtle hover:text-fg"
+              [attr.aria-expanded]="isExpanded(call)"
+              [attr.aria-label]="'Items of ' + call.operationId"
+              [title]="'Items of ' + call.operationId"
+              (click)="toggleItems(call)"
+            >
+              {{ isExpanded(call) ? '▾' : '▸' }}
+            </button>
+          }
+        </div>
+        @if (marks.length && isExpanded(call)) {
+          <ul
+            class="call-items m-0 mt-1 ml-2 flex list-none flex-col gap-1 border-l border-line p-0 pl-2"
+          >
+            @for (group of itemGroups(call); track group.item) {
+              <li class="call-item text-xs">
+                <span class="item-key block font-mono break-all text-fg-soft">{{
+                  group.item ?? 'no item'
+                }}</span>
+                <span class="flex flex-wrap gap-1">
+                  @for (mark of group.marks; track $index) {
+                    <button
+                      type="button"
+                      class="data-mark cursor-pointer rounded px-1 font-mono"
+                      [class]="
+                        isMarkHighlighted(mark)
+                          ? 'bg-surface-inverse text-fg-on-inverse'
+                          : 'bg-surface-muted hover:bg-surface-active'
+                      "
+                      [attr.aria-pressed]="isMarkHighlighted(mark)"
+                      (click)="toggleMark(mark)"
+                    >
+                      {{ dataMarkLabel(mark) }}
+                    </button>
+                  }
+                </span>
+              </li>
+            }
+          </ul>
+        }
       </li>
+    </ng-template>
+
+    <!--
+      What the mark picked in the frame shows (qits-2144): its read, the item, the field's recorded
+      value, a derived mark's inputs, and the entities of the read.
+    -->
+    <ng-template #selectedDataPanel let-data>
+      <section
+        aria-label="Selected data"
+        class="selected-data mb-4 flex flex-col gap-2 rounded-md border border-accent-line p-2 text-xs"
+      >
+        <div class="flex items-center gap-2">
+          <h3 class="m-0 font-semibold text-fg-soft uppercase">Selected data</h3>
+          <button
+            type="button"
+            class="clear-data ml-auto cursor-pointer rounded px-1 text-fg-soft hover:bg-surface-subtle hover:text-fg"
+            aria-label="Clear the selected data"
+            title="Clear the selected data"
+            (click)="clearData()"
+          >
+            ✕
+          </button>
+        </div>
+        @switch (data.read.kind) {
+          @case ('loading') {
+            <p class="read-loading m-0 text-fg-soft">Reading the recorded answers…</p>
+          }
+          @case ('none') {
+            <p class="read-none m-0 text-fg-soft">
+              No read marked: no single recorded answer of this screenshot holds it.
+            </p>
+          }
+          @case ('ambiguous') {
+            <div class="read-ambiguous">
+              <ui-chip class="ambiguous" tone="waiting" label="ambiguous" />
+              @if (data.read.records.length) {
+                <p class="m-0 mt-1 text-fg-soft">
+                  {{ data.mark.source }} is recorded in several states, and the item does not tell
+                  which one it shows:
+                </p>
+                <ul class="m-0 mt-0.5 list-none p-0">
+                  @for (record of data.read.records; track $index) {
+                    <li class="candidate font-mono">{{ recordLabel(record) }}</li>
+                  }
+                </ul>
+              } @else {
+                <p class="m-0 mt-1 text-fg-soft">
+                  No call of this screenshot answers {{ data.mark.source }}.
+                </p>
+              }
+            </div>
+          }
+          @default {
+            @if (data.record; as record) {
+              <!--
+                The read: its operation, provider and state, its popover linking the state's page
+                and its entities' pages as every call row's does (open-call-contract).
+              -->
+              <div class="read">
+                <app-call-details
+                  [call]="record"
+                  [site]="siteOf(record.provider)"
+                  [entities]="data.entities"
+                  [project]="slug() ?? null"
+                  (entityPicked)="pickEntity($event)"
+                />
+              </div>
+              @if (data.cardinality || data.mark.joinedFrom || data.read.kind === 'byItem') {
+                <div class="flex flex-wrap gap-1">
+                  @if (data.cardinality; as cardinality) {
+                    <ui-chip class="cardinality" [label]="cardinality" />
+                  }
+                  @if (data.mark.joinedFrom; as list) {
+                    <ui-chip class="joined" label="joined" [title]="'Joined into ' + list" />
+                  }
+                  @if (data.read.kind === 'byItem') {
+                    <ui-chip class="by-item" tone="waiting" label="found by item, not marked" />
+                  }
+                </div>
+              }
+            }
+          }
+        }
+        @if (data.item || data.field || data.derived.length) {
+          <dl class="values m-0 grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
+            @if (data.item; as item) {
+              <dt class="text-fg-muted">Item</dt>
+              <dd class="item m-0 font-mono break-all">{{ item.key }} = {{ item.value }}</dd>
+            }
+            @if (data.field; as field) {
+              <dt class="text-fg-muted">Field</dt>
+              <dd class="field m-0 font-mono break-all">{{ field.path }}</dd>
+              <dt class="text-fg-muted">Value</dt>
+              <dd
+                class="value m-0 break-all"
+                [class]="field.found ? 'font-mono' : 'text-fg-soft italic'"
+              >
+                {{ field.text }}
+              </dd>
+            }
+            @if (data.derived.length) {
+              <dt class="text-fg-muted">Derived from</dt>
+              <dd class="m-0">
+                <ul class="m-0 list-none p-0">
+                  @for (input of data.derived; track input.path) {
+                    <li class="derived break-all">
+                      <span class="font-mono">{{ input.path }}</span
+                      >:
+                      <span [class]="input.found ? 'font-mono' : 'text-fg-soft italic'">{{
+                        input.text
+                      }}</span>
+                    </li>
+                  }
+                </ul>
+              </dd>
+            }
+          </dl>
+        } @else if (!data.mark.field && !data.mark.derived.length && data.mark.source) {
+          <p class="m-0 text-fg-soft">The whole read: no item or field is marked here.</p>
+        }
+        @if (data.entities.length) {
+          <div>
+            <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Entities</h4>
+            <div class="flex flex-wrap gap-1">
+              @for (e of data.entities; track e.key) {
+                <span class="inline-flex items-center gap-0.5">
+                  <button
+                    type="button"
+                    class="data-entity cursor-pointer rounded bg-surface-muted px-1.5 font-mono font-semibold hover:bg-surface-active"
+                    (click)="pickEntity(e.key)"
+                  >
+                    {{ e.name }}
+                  </button>
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </section>
     </ng-template>
   `,
 })
@@ -1981,6 +2312,252 @@ export class UiBuilderPage {
     return this.join()?.entities.find((entity) => entity.key === key) ?? null;
   });
 
+  /** The selected freeze's data marks (qits-2144); none for a freeze without `dataMarks`. */
+  protected readonly freezeMarks = computed(
+    (): readonly DataMark[] => this.freeze()?.dataMarks ?? [],
+  );
+
+  /** Whether the selected freeze marks any data (qits-2144); Pick data needs it. */
+  protected readonly hasMarks = computed(() => this.freezeMarks().length > 0);
+
+  protected readonly noMarks = NO_MARKS;
+
+  /** The selected freeze's marks by source (qits-2144), for the call rows. */
+  private readonly marksBySource = computed(() => {
+    const bySource = new Map<string, DataMark[]>();
+    for (const mark of this.freezeMarks()) {
+      if (mark.source === null) continue;
+      const marks = bySource.get(mark.source) ?? [];
+      marks.push(mark);
+      bySource.set(mark.source, marks);
+    }
+    return bySource;
+  });
+
+  /** The data highlighted in the frame (qits-2144); one selection with `highlighted`. */
+  protected readonly dataSelection = signal<DataSelection | null>(null);
+
+  /** Whether Pick data was switched on (qits-2144); it acts only while the freeze has marks. */
+  protected readonly pickingData = signal(false);
+
+  /** Whether a click in the frame picks data instead of following links (qits-2144). */
+  protected readonly pickActive = computed(() => this.pickingData() && this.hasMarks());
+
+  /** The calls whose marked items are listed (qits-2144), by `recordKey`. */
+  protected readonly expandedCalls = signal<ReadonlySet<string>>(new Set());
+
+  /** The recorded answers read for "Selected data" (qits-2144), by `recordKey`. */
+  private readonly answers = signal<ReadonlyMap<string, GoldenRead>>(new Map());
+
+  /** `sourceOf` for the template: a call's `<provider>#<operationId>` (qits-2144). */
+  protected readonly sourceOf = sourceOf;
+
+  /** A call's marks in the selected freeze (qits-2144). */
+  protected marksOf(call: FreezeRecord): readonly DataMark[] {
+    return this.marksBySource().get(sourceOf(call)) ?? [];
+  }
+
+  /**
+   * A call's marks grouped by item (qits-2144), in the freeze's order; the mark of the list itself
+   * (no item, field or derived path) is left out. Items whose read cannot be pinned (one source
+   * recorded in several states) list under each of its calls.
+   */
+  protected itemGroups(call: FreezeRecord): readonly ItemGroup[] {
+    const groups = new Map<string | null, DataMark[]>();
+    for (const mark of this.marksOf(call)) {
+      if (mark.item === null && mark.field === null && !mark.derived.length) continue;
+      const marks = groups.get(mark.item) ?? [];
+      marks.push(mark);
+      groups.set(mark.item, marks);
+    }
+    return [...groups].map(([item, marks]) => ({ item, marks }));
+  }
+
+  /** A mark's words in a call's items (qits-2144): its field, its derived paths, or the item. */
+  protected dataMarkLabel(mark: DataMark): string {
+    if (mark.field !== null) return mark.field;
+    if (mark.derived.length) return `derived: ${mark.derived.join(', ')}`;
+    return 'the item';
+  }
+
+  /**
+   * A call's cardinality (qits-2144): `list` or `detail`, from its operation's rows in the
+   * provider's entity map (`callCardinality`); null when the map gives none.
+   */
+  protected cardinalityOf(call: Pick<FreezeRecord, 'provider' | 'operationId'>): string | null {
+    const site = this.siteOf(call.provider);
+    const read = site ? this.entityMaps.mapRead(site) : null;
+    if (read?.status !== 'loaded') return null;
+    const cardinality = callCardinality(read.map, call.operationId);
+    return cardinality ? CARDINALITY_LABELS[cardinality] : null;
+  }
+
+  protected isExpanded(call: FreezeRecord): boolean {
+    return this.expandedCalls().has(recordKey(call));
+  }
+
+  protected toggleItems(call: FreezeRecord): void {
+    const key = recordKey(call);
+    this.expandedCalls.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
+  }
+
+  /** Whether a call's data is highlighted (qits-2144): its whole read. */
+  protected isCallHighlighted(call: FreezeRecord): boolean {
+    const selection = this.dataSelection();
+    return selection?.kind === 'call' && selection.source === sourceOf(call);
+  }
+
+  /** Whether exactly `mark` is highlighted (qits-2144), picked or chosen. */
+  protected isMarkHighlighted(mark: DataMark): boolean {
+    const selection = this.dataSelection();
+    return selection?.kind === 'mark' && sameMark(selection.mark, mark);
+  }
+
+  /** Highlights every marked element of a call's read, or clears it when it is already (qits-2144). */
+  protected toggleCallData(call: FreezeRecord): void {
+    this.selectData(this.isCallHighlighted(call) ? null : { kind: 'call', source: sourceOf(call) });
+  }
+
+  /** Highlights exactly the elements of `mark`, or clears it when it is already (qits-2144). */
+  protected toggleMark(mark: DataMark): void {
+    this.selectData(this.isMarkHighlighted(mark) ? null : { kind: 'mark', mark, picked: null });
+  }
+
+  protected clearData(): void {
+    this.selectData(null);
+  }
+
+  /**
+   * Sets the data selection (qits-2144); it and the outcome highlight are one selection, so any
+   * data selected clears the highlighted outcome. Drawn into the frame at once.
+   */
+  private selectData(selection: DataSelection | null): void {
+    this.linkNotice.set(null);
+    if (selection) this.highlighted.set(null);
+    this.dataSelection.set(selection);
+    this.drawHighlight();
+  }
+
+  /** Picks the marked element of a click in the frame (qits-2144): its resolved mark. */
+  private pickElement(element: Element): void {
+    const picked = markOf(element);
+    const { source, item, field, derived } = picked;
+    this.selectData({ kind: 'mark', mark: { source, item, field, derived }, picked });
+  }
+
+  /** The records whose answers decide what a picked mark reads (qits-2144). */
+  private answerCandidates(freeze: Freeze, mark: ElementMark): readonly FreezeRecord[] {
+    if (mark.source !== null) return freeze.records.filter((r) => sourceOf(r) === mark.source);
+    return mark.item === null ? [] : freeze.records;
+  }
+
+  /**
+   * A record's recorded answer (qits-2144), for `recordFor`: undefined while it is read (or the
+   * contracts catalog is), null when there is none.
+   */
+  private readonly answerOf = (record: FreezeRecord): unknown => {
+    if (this.entityMaps.catalog()?.status === 'error') return null;
+    const read = this.answers().get(recordKey(record));
+    return read?.status === 'loaded' ? read.body : undefined;
+  };
+
+  /**
+   * Reads a record's recorded answer from its provider's contracts site
+   * (`goldenCall`, `goldenResponse`, cached there), once (qits-2144). A provider without a site, a
+   * state the site lacks, and a body that is not JSON all read as no answer.
+   */
+  private async readAnswer(record: FreezeRecord): Promise<void> {
+    const key = recordKey(record);
+    if (this.answers().has(key)) return;
+    const set = (read: GoldenRead) => this.answers.update((all) => new Map(all).set(key, read));
+    set({ status: 'loading' });
+    const site = this.siteOf(record.provider);
+    const found = site
+      ? await goldenCall(site, record.state, record.operationId).catch(() => null)
+      : null;
+    const body =
+      site && found?.operation
+        ? await goldenResponse(site, found.operation).catch(() => null)
+        : null;
+    set({ status: 'loaded', body: typeof body === 'string' ? null : body });
+  }
+
+  /**
+   * What "Selected data" shows (qits-2144): the read the picked mark resolves to (`recordFor`), its
+   * cardinality and entities, the item, and the field's and derived paths' recorded values
+   * (`itemIn`, `valueAt`), with the honest fallbacks while the read is ambiguous, unmarked or read.
+   */
+  protected readonly selectedData = computed((): SelectedData | null => {
+    const selection = this.dataSelection();
+    const freeze = this.freeze();
+    if (selection?.kind !== 'mark' || !selection.picked || !freeze) return null;
+    const mark = selection.picked;
+    const read = recordFor(freeze, mark, this.answerOf);
+    const record = read.kind === 'marked' || read.kind === 'byItem' ? read.record : null;
+    const answer = record ? this.answers().get(recordKey(record)) : undefined;
+    const body = answer?.status === 'loaded' ? answer.body : undefined;
+    const object =
+      body === undefined || body === null ? body : mark.item ? itemIn(body, mark) : body;
+    const shown = (path: string): ShownValue => {
+      if (record === null) {
+        const text = read.kind === 'loading' ? 'Reading…' : 'no single recorded answer';
+        return { path, text, found: false };
+      }
+      if (body === undefined) return { path, text: 'Reading…', found: false };
+      if (body === null) return { path, text: 'no recorded answer', found: false };
+      if (object === undefined) return { path, text: 'not in the recorded answer', found: false };
+      return { path, ...valueAt(object, path) };
+    };
+    return {
+      mark,
+      read,
+      record,
+      cardinality: record ? this.cardinalityOf(record) : null,
+      entities: record ? this.callEntities(record) : [],
+      item: mark.item === null ? null : parseItem(mark.item),
+      field: mark.field === null ? null : shown(mark.field),
+      derived: mark.derived.map(shown),
+    };
+  });
+
+  /**
+   * The calls "Selected data" names (qits-2144): its pinned record, or every candidate of an
+   * ambiguous read. Their rows are marked as selected.
+   */
+  private readonly selectedCalls = computed((): ReadonlySet<string> => {
+    const data = this.selectedData();
+    if (!data) return new Set();
+    const records =
+      data.read.kind === 'ambiguous' ? data.read.records : data.record ? [data.record] : [];
+    return new Set(records.map(recordKey));
+  });
+
+  protected isSelectedCall(call: FreezeRecord): boolean {
+    return this.selectedCalls().has(recordKey(call));
+  }
+
+  /** The words of an ambiguous read's candidate (qits-2144). */
+  protected recordLabel(record: FreezeRecord): string {
+    return `${record.operationId} · ${record.provider} · “${record.state}”`;
+  }
+
+  /**
+   * The elements of `doc` the data selection highlights (qits-2144): every element carrying a mark
+   * whose resolved source is the call's, or whose resolved mark is the selected one.
+   */
+  private dataElements(doc: Document, selection: DataSelection): readonly Element[] {
+    return [...doc.querySelectorAll(MARKED)].filter((element) => {
+      const mark = markOf(element);
+      return selection.kind === 'call'
+        ? mark.source === selection.source
+        : sameMark(mark, selection.mark);
+    });
+  }
+
   constructor() {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
@@ -2017,6 +2594,36 @@ export class UiBuilderPage {
       });
     });
     effect(() => {
+      // Another freeze is selected (qits-2144): data it does not mark is no longer selected.
+      const marks = this.freezeMarks();
+      untracked(() => {
+        const selection = this.dataSelection();
+        const kept =
+          selection === null ||
+          (selection.kind === 'call'
+            ? marks.some((mark) => mark.source === selection.source)
+            : marks.some((mark) => sameMark(mark, selection.mark)));
+        if (!kept) this.dataSelection.set(null);
+      });
+    });
+    effect(() => {
+      // Picked data (qits-2144): read the answers that decide its read, once the sites are known.
+      const selection = this.dataSelection();
+      const freeze = this.freeze();
+      if (!browser || selection?.kind !== 'mark' || !selection.picked || !freeze) return;
+      if (this.entityMaps.catalog()?.status !== 'loaded') return;
+      const records = this.answerCandidates(freeze, selection.picked);
+      untracked(() => records.forEach((record) => void this.readAnswer(record)));
+    });
+    effect(() => {
+      // A selected call in the collapsed app-wide group opens it (qits-2144).
+      const selected = this.selectedCalls();
+      const appWide = this.calls().appWide;
+      if (appWide.some((call) => selected.has(recordKey(call)))) {
+        untracked(() => this.appWideOpen.set(true));
+      }
+    });
+    effect(() => {
       const sites = this.sitesInScope();
       if (browser) untracked(() => sites.forEach((site) => this.entityMaps.readMap(site)));
     });
@@ -2037,11 +2644,12 @@ export class UiBuilderPage {
   /**
    * Selects the route at `fullPath` on its first state (its first DATA state when it has one), as a
    * new entry in the history; the viewport stays (qits-2047). It clears the highlighted outcome
-   * (qits-2006).
+   * (qits-2006) and the selected data (qits-2144).
    */
   protected select(fullPath: string): Promise<boolean> {
     this.linkNotice.set(null);
     this.highlighted.set(null);
+    this.dataSelection.set(null);
     this.drawHighlight();
     return this.navigate({ route: fullPath, state: null });
   }
@@ -2148,6 +2756,7 @@ export class UiBuilderPage {
    */
   protected toggleOutcome(outcome: JoinedOutcome): void {
     this.linkNotice.set(null);
+    this.dataSelection.set(null);
     this.highlighted.set(this.highlighted() === outcome.key ? null : outcome.key);
     if (this.highlighted() !== null) {
       const shown = this.freeze()?.file;
@@ -2203,6 +2812,7 @@ export class UiBuilderPage {
             Number((a.candidate.colorScheme ?? scheme) === scheme) ||
           a.order - b.order,
       )[0]?.candidate;
+    this.dataSelection.set(null);
     if (freeze) {
       this.highlighted.set(outcome.key);
       if (freeze.file !== shown) this.showFreeze(freeze, true);
@@ -2256,13 +2866,18 @@ export class UiBuilderPage {
    * (`allow-same-origin`), as for `holdLinks`; this page writes into it, and nothing runs inside.
    * Every draw judges `highlightNotice` anew (qits-2072): a freeze that lists the trigger while its
    * document has no such element says so above the frame; any other draw clears it.
+   *
+   * The selected data (qits-2144) is drawn the same way, the one selection with the outcome: every
+   * element `dataElements` finds carries the attribute, the first one centred; a frame with none
+   * says so on the same line.
    */
   private drawHighlight(): void {
     const doc = this.frameDocument();
     if (!doc) return;
     for (const marked of doc.querySelectorAll(`[${HIGHLIGHT}]`)) marked.removeAttribute(HIGHLIGHT);
     const outcome = this.highlightedOutcome();
-    if (!outcome) {
+    const data = this.dataSelection();
+    if (!outcome && !data) {
       this.highlightNotice.set(null);
       return;
     }
@@ -2272,6 +2887,16 @@ export class UiBuilderPage {
       style.textContent = highlightCss(this.hostAccent());
       (doc.head ?? doc.documentElement).append(style);
     }
+    if (data) {
+      const elements = this.dataElements(doc, data);
+      for (const element of elements) element.setAttribute(HIGHLIGHT, '');
+      if (elements.length) centre(doc, elements[0]);
+      this.highlightNotice.set(
+        elements.length ? null : 'This screenshot has no element for the selected data.',
+      );
+      return;
+    }
+    if (!outcome) return;
     const element = doc.querySelector(`[data-qits-outcome~="${quoted(outcome.mark)}"]`);
     if (element) {
       element.setAttribute(HIGHLIGHT, '');
@@ -2292,10 +2917,21 @@ export class UiBuilderPage {
    * app or to no route of it leaves the route as it is and says so above the frame (`linkNotice`); a
    * fragment does nothing. The frame is same-origin (`allow-same-origin`), so this page can reach
    * its document; the listener is this page's, the frame runs nothing of its own.
+   *
+   * While Pick data is on (qits-2144), a click selects data instead: it is cancelled, follows no
+   * link, and picks the nearest element carrying a mark of its own (`MARKED`, the element itself
+   * first); a click on no marked element says so above the frame.
    */
   protected holdLinks(event: Event): void {
     const frame = event.target as HTMLIFrameElement;
     frame.contentDocument?.addEventListener('click', (click) => {
+      if (this.pickActive()) {
+        click.preventDefault();
+        const marked = (click.target as Element | null)?.closest?.(MARKED);
+        if (marked) this.pickElement(marked);
+        else this.linkNotice.set('No data marked here: design copy, as far as the builder knows.');
+        return;
+      }
       const link = (click.target as Element | null)?.closest?.('a[href], area[href]');
       if (!link) return;
       click.preventDefault();
