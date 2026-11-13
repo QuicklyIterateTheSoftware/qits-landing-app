@@ -1,3 +1,5 @@
+import { readDataMarks, type DataMark } from './data-marks';
+
 /**
  * A frontend's frozen routes (qits-1947, published as the docs site `@routes/<app>` by qits-1948):
  * the `manifest.json` of the bundle, read as file content, and the pure functions the UI builder
@@ -108,6 +110,12 @@ export interface Freeze {
    * not know. Absent in a bundle frozen without the option, and in one older than the field.
    */
   readonly colorScheme?: FreezeColorScheme | null;
+  /**
+   * The data marks the shot shows (qits-2141; `data-marks.ts`): which read, item and attribute
+   * each marked part of the page shows. Absent in a freeze that shows no mark and in a bundle older
+   * than marks; read it as `[]`. {@link asManifest} drops a malformed entry (qits-2144).
+   */
+  readonly dataMarks?: readonly DataMark[];
 }
 
 /**
@@ -318,6 +326,9 @@ function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined 
  * manifest's `colorSchemes` (qits-2086): absent is an older bundle's (or one frozen without
  * schemes), a value this app does not know reads as null, and unknown schemes are dropped from
  * `colorSchemes` (which is left out when none is known).
+ *
+ * Nor do a freeze's `dataMarks` (qits-2144): a malformed entry is dropped, and anything but a list
+ * reads as none (`[]`); absent stays absent.
  */
 export function asManifest(value: unknown): RoutesManifest | null {
   if (!isObject(value)) return null;
@@ -337,6 +348,13 @@ export function asManifest(value: unknown): RoutesManifest | null {
   if (!freezes.every((freeze) => freeze.triggers === undefined || isStrings(freeze.triggers))) {
     outcomes = 'invalid';
     freezes = freezes.map(({ triggers: _dropped, ...freeze }) => freeze);
+  }
+  if (freezes.some((freeze) => freeze.dataMarks !== undefined)) {
+    freezes = freezes.map((freeze) =>
+      freeze.dataMarks === undefined
+        ? freeze
+        : { ...freeze, dataMarks: readDataMarks(freeze.dataMarks) },
+    );
   }
   const colorSchemes = readColorSchemes(value['colorSchemes']);
   return {

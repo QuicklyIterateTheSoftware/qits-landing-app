@@ -4,6 +4,7 @@ import {
 } from '../../../testing/golden-masters';
 import {
   asEntityMap,
+  callCardinality,
   joinEntities,
   sortVerbs,
   verbOf,
@@ -36,7 +37,7 @@ const entity = (
   projectionOf: null,
   knownGap: null,
   dtos: [],
-  operations: operations.map((op) => ({ ...op, dto: null, kind: null })),
+  operations: operations.map((op) => ({ ...op, dto: null, kind: null, cardinality: null })),
 });
 
 /**
@@ -70,6 +71,39 @@ const MAP: EntityMap = {
 };
 
 const SOURCES: readonly EntitySource[] = [{ repository: PROJECTS, map: MAP }];
+
+describe('callCardinality (qits-2144)', () => {
+  const op = (operationId: string, cardinality: 'single' | 'collection' | null) => ({
+    operationId,
+    method: 'GET',
+    path: '/x',
+    dto: null,
+    kind: null,
+    cardinality,
+  });
+  const map = (...rows: ReturnType<typeof op>[][]): EntityMap => ({
+    ...MAP,
+    formatVersion: 2,
+    entities: rows.map((operations, i) => ({ ...entity(`E${i}`, 'domain', []), operations })),
+  });
+
+  it('is the cardinality the operation’s rows agree on, in any entity', () => {
+    const agreeing = map([op('listAgents', 'collection')], [op('listAgents', 'collection')]);
+    expect(callCardinality(agreeing, 'listAgents')).toBe('collection');
+    expect(callCardinality(map([op('getAgent', 'single')]), 'getAgent')).toBe('single');
+  });
+
+  it('is null when the rows disagree, give none, or no row lists the operation', () => {
+    expect(
+      callCardinality(
+        map([op('listAgents', 'collection')], [op('listAgents', 'single')]),
+        'listAgents',
+      ),
+    ).toBeNull();
+    expect(callCardinality(map([op('listAgents', null)]), 'listAgents')).toBeNull();
+    expect(callCardinality(map([op('listAgents', 'collection')]), 'getAgent')).toBeNull();
+  });
+});
 
 describe('asEntityMap', () => {
   it('takes a map with the map’s shape, keeping the fields the app reads', () => {
@@ -123,7 +157,7 @@ describe('asEntityMap', () => {
   it('refuses anything else', () => {
     expect(asEntityMap(null)).toBeNull();
     expect(asEntityMap([])).toBeNull();
-    expect(asEntityMap({ ...MAP, formatVersion: 2 })).toBeNull();
+    expect(asEntityMap({ ...MAP, formatVersion: 3 })).toBeNull();
     expect(asEntityMap({ ...MAP, application: 1 })).toBeNull();
     expect(asEntityMap({ ...MAP, entities: {} })).toBeNull();
     expect(asEntityMap({ ...MAP, entities: [{ entity: 'X', marking: 'domain' }] })).toBeNull();
@@ -133,6 +167,41 @@ describe('asEntityMap', () => {
         entities: [{ entity: 'X', marking: 'domain', operations: [{ operationId: 'a' }] }],
       }),
     ).toBeNull();
+  });
+
+  it('takes format 2 with each operation’s cardinality (qits-2144)', () => {
+    const published = {
+      ...MAP,
+      formatVersion: 2,
+      entities: MAP.entities.map((e) => ({
+        ...e,
+        operations: e.operations.map((o) => ({
+          ...o,
+          cardinality: o.path.endsWith('}') ? 'single' : 'collection',
+          offline: true,
+        })),
+      })),
+    };
+    const read = asEntityMap(published)!;
+    expect(read.formatVersion).toBe(2);
+    expect(read.entities[1].operations.map((o) => [o.operationId, o.cardinality])).toEqual([
+      ['listProjects', 'collection'],
+      ['getProject', 'single'],
+    ]);
+    expect(read.entities[1].operations[0]).not.toHaveProperty('offline');
+  });
+
+  it('reads format 1, or a missing or unknown cardinality, as null (qits-2144)', () => {
+    expect(asEntityMap(MAP)!.entities[0].operations[0].cardinality).toBeNull();
+    const unknown = {
+      ...MAP,
+      formatVersion: 2,
+      entities: MAP.entities.map((e) => ({
+        ...e,
+        operations: e.operations.map((o, i) => (i ? { ...o, cardinality: 'many' } : o)),
+      })),
+    };
+    expect(asEntityMap(unknown)).toEqual({ ...MAP, formatVersion: 2 });
   });
 
   it('takes the recorded map', () => {

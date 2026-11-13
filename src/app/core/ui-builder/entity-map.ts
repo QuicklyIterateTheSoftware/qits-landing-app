@@ -19,7 +19,23 @@ export interface EntityOperation {
   readonly path: string;
   readonly dto: string | null;
   readonly kind: string | null;
+  /**
+   * Whether the operation answers one of the entity (`single`, a detail) or many (`collection`, a
+   * list), as format 2 writes it (qits-2140); null in a format 1 map, or when the row gives none or
+   * one this app does not know (qits-2144).
+   */
+  readonly cardinality: Cardinality | null;
 }
+
+/** How many of an entity an operation answers (qits-2140): one, or a list. */
+export type Cardinality = 'single' | 'collection';
+
+/** The formats of `entities.json` this app reads (qits-2144: format 2 adds `cardinality`). */
+const FORMAT_VERSIONS: readonly unknown[] = [1, 2];
+
+/** A row's `cardinality` when it is one this app knows, else null: it never rejects the map. */
+const cardinalityOf = (value: unknown): Cardinality | null =>
+  value === 'single' || value === 'collection' ? value : null;
 
 /**
  * One type an operation hands out that carries the entity, with its most direct link: `kind` is
@@ -85,17 +101,19 @@ const isEntity = (value: unknown): value is Record<string, unknown> & { operatio
   value['operations'].every(isOperation);
 
 /**
- * `value` as an entity map when it has the map's shape (format 1, `application`, and each entity's
- * `entity`, `marking` and `operations`), else null. Only the fields above are kept; an optional one
+ * `value` as an entity map when it has the map's shape (format 1 or 2, `application`, and each
+ * entity's `entity`, `marking` and `operations`), else null. Format 2 (qits-2140) adds each
+ * operation row's `cardinality` (and an optional `offline`, ignored here); a format 1 row reads as
+ * `cardinality: null` (qits-2144). Only the fields above are kept; an optional one
  * that is missing or of another type is null (or `[]` for `dtos`, which keeps its well-formed rows).
  */
 export function asEntityMap(value: unknown): EntityMap | null {
   if (!isObject(value)) return null;
   const { formatVersion, application, entities } = value;
-  if (formatVersion !== 1 || !isString(application)) return null;
+  if (!FORMAT_VERSIONS.includes(formatVersion) || !isString(application)) return null;
   if (!Array.isArray(entities) || !entities.every(isEntity)) return null;
   return {
-    formatVersion,
+    formatVersion: formatVersion as number,
     application,
     entities: entities.map((entity) => ({
       entity: entity['entity'] as string,
@@ -116,6 +134,7 @@ export function asEntityMap(value: unknown): EntityMap | null {
         path: op['path'] as string,
         dto: stringOrNull(op['dto']),
         kind: stringOrNull(op['kind']),
+        cardinality: cardinalityOf(op['cardinality']),
       })),
     })),
   };
@@ -311,4 +330,19 @@ export function joinEntities(
     untouched: entities.filter((e) => e.routes.length === 0),
     leftOut,
   };
+}
+
+/**
+ * The cardinality of a call (qits-2144): that of its operation's rows (same operationId) in every
+ * entity of the provider's map. Null when no row lists the operation, when no row gives one, or
+ * when the rows disagree.
+ */
+export function callCardinality(map: EntityMap, operationId: string): Cardinality | null {
+  const found = new Set(
+    map.entities.flatMap((entity) =>
+      entity.operations.filter((op) => op.operationId === operationId).map((op) => op.cardinality),
+    ),
+  );
+  if (found.size !== 1) return null;
+  return [...found][0];
 }
