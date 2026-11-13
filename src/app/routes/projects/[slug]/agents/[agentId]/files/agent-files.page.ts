@@ -11,7 +11,8 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import { QitsEntityList, QitsField, qitsResource, sourceMark } from '@qits/angular';
+import { valueMarks } from '$core/marks/value-marks';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { isMissing } from '$core/resources/resource-family';
 import type { FileDetection, FileListing } from '$core/workspaces/agent-files.consumes';
@@ -230,6 +231,7 @@ const CHIP =
                   [rows]="rows()"
                   [selected]="selectedPath()"
                   [loading]="pending()"
+                  [marks]="treeMarks"
                   (openFile)="open($event)"
                   (toggleDir)="toggleDir($event)"
                 />
@@ -257,6 +259,7 @@ const CHIP =
                       type="button"
                       [class]="chip"
                       [attr.aria-pressed]="activeFrameworks().has(framework.frameworkId)"
+                      data-qits-derived="frameworks"
                       (click)="toggleFramework(framework.frameworkId)"
                     >
                       {{ framework.label }}
@@ -339,6 +342,7 @@ const CHIP =
               <app-file-viewer
                 [path]="selectedPath()"
                 [file]="file()"
+                [marks]="fileMarks()"
                 [picking]="picking()"
                 [anchor]="anchor()"
                 [picks]="picksHere()"
@@ -389,6 +393,12 @@ export class AgentFilesPage {
 
   /** The whole eager tree (no `path`: a blank one would read as a directory called nothing). */
   protected readonly treeRead = qitsResource(WORKTREE_FILES, () => this.at('files'));
+  /** The tree's rows are made of the listings' paths and stubs (qits-2146): marked derived. */
+  protected readonly treeMarks = {
+    source: sourceMark(WORKTREE_FILES),
+    item: null,
+    derived: 'paths lazyDirs',
+  } as const;
 
   /** The frameworks and the source-to-test graph; a failed one only costs the footer. */
   protected readonly detection = qitsResource(WORKTREE_DETECTION, () => this.at('detection'));
@@ -432,6 +442,12 @@ export class AgentFilesPage {
   private readonly held = signal<FileDetection | null>(null);
 
   /** What the viewer shows of the open file. */
+  /** The open file's lines are cut from its `content` (qits-2146): marked derived, by its path. */
+  protected readonly fileMarks = computed(() => {
+    const value = this.fileRead.hasValue() ? this.fileRead.value() : undefined;
+    return value ? valueMarks(WORKTREE_FILE, value, 'path', { derived: ['content'] }) : undefined;
+  });
+
   protected readonly file = computed((): FileView | null => {
     if (!this.rowId() || !this.agentId() || !this.selectedPath()) return null;
     const read = this.fileRead;

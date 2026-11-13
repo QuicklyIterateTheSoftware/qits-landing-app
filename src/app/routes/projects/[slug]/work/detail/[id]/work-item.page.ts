@@ -33,7 +33,8 @@ import {
   WORK_DOSSIER,
   WORK_DOSSIER_ASSETS,
 } from '$core/work/work-detail.operations';
-import { WORK_MARKS } from '$core/work/work-marks';
+import { WORK_MARKS, WORK_SOURCE } from '$core/work/work-marks';
+import { valueMarks } from '$core/marks/value-marks';
 import { WorkMoves } from '$core/work/work-moves';
 import { WrapperClosings } from '$core/work/wrapper-closings';
 import type { Action, ActionGroup } from '$ui/components/action-button/action';
@@ -143,7 +144,7 @@ const notBuiltYet = (): void => undefined;
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout [title]="title()" [actions]="actions()">
+      <app-page-layout [title]="title()" [titleMarks]="titleMarks()" [actions]="actions()">
         @if (dropping(); as entry) {
           <app-work-drop
             class="mb-6"
@@ -366,6 +367,11 @@ export class WorkItemPage {
   protected readonly historyState = computed(() => loadState(this.history));
 
   protected readonly title = computed(() => this.entry()?.title ?? this.id());
+  /** The title's data marks (qits-2146): the item's title, once the project's work has it. */
+  protected readonly titleMarks = computed(() => {
+    const entry = this.entry();
+    return entry?.title != null ? valueMarks(WORK_SOURCE, entry, 'id', 'title') : undefined;
+  });
 
   protected readonly facts = computed(() => {
     const entry = this.entry();

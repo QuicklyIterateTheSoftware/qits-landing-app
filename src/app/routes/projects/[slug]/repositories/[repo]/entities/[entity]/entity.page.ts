@@ -15,6 +15,7 @@ import { exit, outcomes, QitsExit } from '@qits/angular';
 import { QitsMermaidDiagram } from '@qits/ui-components';
 import { map } from 'rxjs';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
+import { CONTRACTS_MARKS } from '$core/contracts/contracts-marks';
 import {
   bundleOf,
   byKind,
@@ -64,6 +65,7 @@ import { Chip } from '$ui/components/chip/chip';
   template: `
     <app-contracts-frame
       [heading]="entity() ? name(entity()!.entity) : 'Entity'"
+      [headingMarks]="headingMarks()"
       [slug]="slug()"
       [repo]="repo()"
       [lookup]="lookup()"
@@ -82,7 +84,8 @@ import { Chip } from '$ui/components/chip/chip';
           @if (entity(); as e) {
             <div
               class="flex flex-col gap-6 text-sm"
-              data-qits-source="qits-artifacts-service#getDocsFile"
+              [attr.data-qits-source]="marks.source"
+              [attr.data-qits-item]="marks.entity(e)"
             >
               <section class="flex flex-col gap-2">
                 <p class="m-0">
@@ -95,18 +98,20 @@ import { Chip } from '$ui/components/chip/chip';
                 </p>
                 <dl class="facts m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
                   <dt class="text-fg-muted">Class</dt>
-                  <dd class="fqn m-0 font-mono break-all">{{ e.entity }}</dd>
+                  <dd class="fqn m-0 font-mono break-all" data-qits-field="entity">
+                    {{ e.entity }}
+                  </dd>
                   <dt class="text-fg-muted">Table</dt>
-                  <dd class="m-0 font-mono">{{ e.table ?? '—' }}</dd>
+                  <dd class="m-0 font-mono" data-qits-field="table">{{ e.table ?? '—' }}</dd>
                   <dt class="text-fg-muted">Marking</dt>
-                  <dd class="marking m-0">{{ e.marking }}</dd>
+                  <dd class="marking m-0" data-qits-field="marking">{{ e.marking }}</dd>
                   @if (e.marking === 'technical') {
                     <dt class="text-fg-muted">Reason</dt>
-                    <dd class="reason m-0">{{ e.reason ?? '—' }}</dd>
+                    <dd class="reason m-0" data-qits-field="reason">{{ e.reason ?? '—' }}</dd>
                   }
                   @if (e.marking === 'projection') {
                     <dt class="text-fg-muted">Projection of</dt>
-                    <dd class="projection m-0 font-mono">
+                    <dd class="projection m-0 font-mono" data-qits-field="projectionOf">
                       @if (projection(); as p) {
                         <a
                           [qitsExit]="relating.projectionOf"
@@ -120,7 +125,9 @@ import { Chip } from '$ui/components/chip/chip';
                   }
                   @if (e.knownGap; as gap) {
                     <dt class="text-fg-muted">Known gap</dt>
-                    <dd class="m-0"><ui-chip class="gap" tone="waiting" [label]="gap" /></dd>
+                    <dd class="m-0" data-qits-field="knownGap">
+                      <ui-chip class="gap" tone="waiting" [label]="gap" />
+                    </dd>
                   }
                 </dl>
               </section>
@@ -157,7 +164,7 @@ import { Chip } from '$ui/components/chip/chip';
                 <h2 class="m-0 mb-1 text-base font-semibold">DTOs</h2>
                 @for (dto of dtos(); track dto.type) {
                   <div class="dto border-b border-line-subtle py-1.5">
-                    <p class="m-0 flex flex-wrap items-center gap-1.5">
+                    <p class="m-0 flex flex-wrap items-center gap-1.5" data-qits-derived="dtos">
                       <span class="font-mono text-xs font-semibold break-all">{{ dto.type }}</span>
                       <ui-chip class="kind" [label]="dto.kind" />
                       @if (dto.via; as via) {
@@ -170,7 +177,10 @@ import { Chip } from '$ui/components/chip/chip';
                       <p class="note m-0 text-xs text-fg-soft">{{ note }}</p>
                     }
                     @if (dto.site; as site) {
-                      <p class="m-0 font-mono text-xs break-all text-fg-muted">
+                      <p
+                        class="m-0 font-mono text-xs break-all text-fg-muted"
+                        data-qits-derived="dtos"
+                      >
                         {{ site }}
                       </p>
                     }
@@ -184,7 +194,10 @@ import { Chip } from '$ui/components/chip/chip';
                 <h2 class="m-0 mb-1 text-base font-semibold">Operations</h2>
                 @for (op of operations(); track op.operationId + op.method + op.path) {
                   <div class="operation border-b border-line-subtle py-1.5">
-                    <p class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs">
+                    <p
+                      class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs"
+                      data-qits-derived="operations"
+                    >
                       <span class="font-semibold">{{ op.operationId }}</span>
                       <span class="rounded bg-surface-muted px-1 font-semibold">{{
                         op.method
@@ -195,7 +208,10 @@ import { Chip } from '$ui/components/chip/chip';
                       }
                     </p>
                     @if (op.dto; as dto) {
-                      <p class="m-0 font-mono text-xs break-all text-fg-soft">
+                      <p
+                        class="m-0 font-mono text-xs break-all text-fg-soft"
+                        data-qits-derived="operations"
+                      >
                         {{ dto }}
                       </p>
                     }
@@ -210,6 +226,8 @@ import { Chip } from '$ui/components/chip/chip';
                         <span class="text-fg-muted">Recorded in</span>
                         @for (s of recorded; track s.slug) {
                           <a
+                            [attr.data-qits-item]="marks.state(s)"
+                            data-qits-field="name"
                             [qitsExit]="relating.recordedIn"
                             [exitParams]="{ slug: slug(), repo: repo(), state: s.slug }"
                             >{{ s.name }}</a
@@ -286,6 +304,17 @@ export class EntityPage {
   protected readonly mapRead = computed(() => {
     const site = this.site();
     return site ? this.entityMaps.mapRead(site) : undefined;
+  });
+
+  /** The data marks of the entity shown (qits-2146; `contracts-marks.ts`). */
+  protected readonly marks = CONTRACTS_MARKS;
+
+  /** The heading's marks: the entity's simple name, once the map has it. */
+  protected readonly headingMarks = computed(() => {
+    const entity = this.entity();
+    return entity
+      ? { source: this.marks.source, item: this.marks.entity(entity), derived: 'entity' }
+      : undefined;
   });
 
   protected readonly entity = computed(() => {

@@ -91,7 +91,8 @@ const whyNot = (error: unknown) => why(runRefusal(error).status);
  *
  * The restored draft is the person's own text in a box they edit, so it carries no field marks; the
  * restored line and the prompt box name the draft's read as their source (`data-qits-source`,
- * qits-2141).
+ * qits-2141), and the restored line's age is marked derived from the draft's `draft.updatedAt`
+ * (qits-2146).
  *
  * In the browser only.
  */
@@ -107,7 +108,7 @@ const whyNot = (error: unknown) => why(runRefusal(error).status);
         role="status"
         [attr.data-qits-source]="draftSource"
       >
-        Restored draft from {{ ago(at) }}
+        <span data-qits-derived="draft.updatedAt">Restored draft from {{ ago(at) }}</span>
         <ui-action-button [action]="discardAction()" />
       </p>
     }

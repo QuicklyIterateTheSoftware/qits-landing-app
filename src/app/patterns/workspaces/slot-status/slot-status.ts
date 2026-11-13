@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import type { ValueMarks } from '$ui/dom/value-marks';
 import { QitsEntity, QitsField } from '@qits/angular';
 import type { SlotDetail } from '$core/workspaces/agents.consumes';
 import {
@@ -30,7 +31,8 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
  * A later change adds the execution target back from the lease.
  *
  * It marks what it shows (qits-2141): the strip is the slot (`qitsEntity`, by `id`), each value its
- * field or the fields its words are derived from. The agents' count is the page's, not the slot's.
+ * field or the fields its words are derived from. The agents' count is the page's, not the slot's:
+ * it carries the marks the page hands in (`hostedMarks`, qits-2146).
  */
 @Component({
   selector: 'app-slot-status',
@@ -101,7 +103,14 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
 
       @if (hosted() !== undefined) {
         <dt class="font-semibold text-fg-soft">Agents</dt>
-        <dd class="m-0 text-fg">{{ hostedLabel() }}</dd>
+        <dd
+          class="m-0 text-fg"
+          [attr.data-qits-source]="hostedMarks()?.source"
+          [attr.data-qits-item]="hostedMarks()?.item"
+          [attr.data-qits-derived]="hostedMarks()?.derived"
+        >
+          {{ hostedLabel() }}
+        </dd>
       }
 
       @if (slot().admin) {
@@ -123,6 +132,11 @@ export class SlotStatus {
   readonly slot = input.required<SlotDetail>();
   /** How many agents the slot hosts; the row is left out while unknown. */
   readonly hosted = input<number | undefined>(undefined);
+  /**
+   * The count's data marks (qits-2146): it is the page's read of the slot's agents, counted, which
+   * the page marks (`valueMarks`) and the strip sets on the count as is.
+   */
+  readonly hostedMarks = input<ValueMarks | undefined>(undefined);
 
   protected readonly runtime = computed(() => runtimeLabel(this.slot().runtimeStatus));
   protected readonly tone = computed(

@@ -11,7 +11,7 @@ import {
   untracked,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { exit, outcomes, QitsEntityList, qitsResource } from '@qits/angular';
+import { exit, outcomes, QitsEntityList, qitsResource, sourceMark } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { projectSlugOf } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
@@ -98,7 +98,7 @@ export const TRANSCRIPT_POLL_MS = 3000;
                 @if (transcript().items.length === 0) {
                   <p class="m-0 text-fg-soft">The transcript has nothing in it yet.</p>
                 } @else {
-                  <app-conversation [items]="transcript().items" />
+                  <app-conversation [items]="transcript().items" [marks]="transcriptMarks" />
                 }
               </section>
             }
@@ -189,6 +189,16 @@ export class AgentChatPage {
       },
     },
   );
+
+  /**
+   * What the conversation shows is made of the transcript's lines (`buildConversation`), marked
+   * derived from them (qits-2146); the section names the read.
+   */
+  protected readonly transcriptMarks = {
+    source: sourceMark(AGENT_TRANSCRIPT),
+    item: null,
+    derived: 'lines',
+  } as const;
 
   /** The transcript's read: a read again that fails keeps the lines on screen. */
   protected readonly transcriptState = computed(() => loadState(this.log));

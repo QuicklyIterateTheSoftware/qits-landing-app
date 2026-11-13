@@ -14,6 +14,7 @@ import { exit, outcomes, QitsExit } from '@qits/angular';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
+import { CONTRACTS_MARKS } from '$core/contracts/contracts-marks';
 import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
 import type { GoldenOperation, GoldenState } from '$core/ui-builder/golden-masters';
 import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
@@ -79,8 +80,18 @@ const PREVIEW_CHARS = 12_000;
       panelClass="w-[28rem] max-w-[calc(100vw-2rem)] rounded-lg border border-line bg-surface shadow-lg"
       (opened)="onOpened()"
     >
-      <span dropdown-trigger class="block font-mono text-xs">{{ c.operationId }}</span>
-      <span dropdown-trigger class="block text-xs text-fg-muted"
+      <span
+        dropdown-trigger
+        class="block font-mono text-xs"
+        [attr.data-qits-source]="marks.source"
+        data-qits-field="operationId"
+        >{{ c.operationId }}</span
+      >
+      <span
+        dropdown-trigger
+        class="block text-xs text-fg-muted"
+        [attr.data-qits-source]="marks.source"
+        data-qits-derived="provider state"
         >{{ c.provider }} · “{{ c.state }}”</span
       >
 
@@ -88,7 +99,7 @@ const PREVIEW_CHARS = 12_000;
         <div
           dropdown-panel
           class="call-popover flex flex-col gap-3 p-3 text-xs"
-          data-qits-source="qits-artifacts-service#getDocsFile"
+          [attr.data-qits-source]="marks.source"
         >
           @let d = details();
           @switch (d.status) {
@@ -112,7 +123,11 @@ const PREVIEW_CHARS = 12_000;
                 <section>
                   <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Operation</h4>
                   @if (l.operation; as op) {
-                    <p class="m-0 flex flex-wrap items-center gap-1.5 font-mono">
+                    <p
+                      class="m-0 flex flex-wrap items-center gap-1.5 font-mono"
+                      [attr.data-qits-item]="marks.state(l.state)"
+                      data-qits-derived="operations"
+                    >
                       <span class="rounded bg-surface-muted px-1 font-semibold">{{
                         op.method
                       }}</span>
@@ -132,20 +147,24 @@ const PREVIEW_CHARS = 12_000;
                   }
                 </section>
 
-                <section>
+                <section [attr.data-qits-item]="marks.state(l.state)">
                   <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">State</h4>
                   @if (stateParams(); as params) {
                     <a
                       class="state-link m-0 block font-semibold"
+                      data-qits-field="name"
                       [qitsExit]="opening.state"
                       [exitParams]="params"
                       >{{ l.state.name }}</a
                     >
                   } @else {
-                    <p class="m-0">{{ l.state.name }}</p>
+                    <p class="m-0" data-qits-field="name">{{ l.state.name }}</p>
                   }
                   @if (params().length) {
-                    <dl class="m-0 mt-1 grid grid-cols-[auto_1fr] gap-x-2 font-mono">
+                    <dl
+                      class="m-0 mt-1 grid grid-cols-[auto_1fr] gap-x-2 font-mono"
+                      data-qits-derived="params"
+                    >
                       @for (p of params(); track p.key) {
                         <dt class="text-fg-muted">{{ p.key }}</dt>
                         <dd class="m-0 break-all">{{ p.value }}</dd>
@@ -153,7 +172,9 @@ const PREVIEW_CHARS = 12_000;
                     </dl>
                   }
                   @if (dependsOn().length) {
-                    <p class="m-0 mt-1 text-fg-soft">Depends on: {{ dependsOn().join(', ') }}</p>
+                    <p class="m-0 mt-1 text-fg-soft" data-qits-derived="dependsOn">
+                      Depends on: {{ dependsOn().join(', ') }}
+                    </p>
                   }
                 </section>
               }
@@ -169,6 +190,8 @@ const PREVIEW_CHARS = 12_000;
                     <button
                       type="button"
                       class="cursor-pointer rounded bg-surface-muted px-1.5 font-mono font-semibold hover:bg-surface-active"
+                      [attr.data-qits-item]="marks.entity(e)"
+                      data-qits-derived="entity"
                       (click)="pickEntity(e.key)"
                     >
                       {{ e.name }}
@@ -225,6 +248,7 @@ const PREVIEW_CHARS = 12_000;
                   }
                   @case ('loaded') {
                     <pre
+                      data-qits-derived="operations"
                       class="json m-0 max-h-72 overflow-auto rounded bg-surface-subtle p-2 font-mono text-[0.6875rem] leading-4"
                       >{{ preview() }}</pre>
                   }
@@ -245,6 +269,13 @@ export class CallDetails {
   /** The open project's slug, for the links to the contracts and entity pages (qits-1994). */
   readonly project = input<string | null>(null);
   readonly entityPicked = output<string>();
+
+  /**
+   * The data marks of what it shows (qits-2146; `contracts-marks.ts`): the call is a record of the
+   * routes manifest, the popover the provider's index and recording, the entities the entity maps,
+   * all `getDocsFile` reads.
+   */
+  protected readonly marks = CONTRACTS_MARKS;
 
   private readonly origins = inject(PlatformOrigins);
   private readonly dropdown = viewChild.required(Dropdown);
