@@ -68,8 +68,8 @@ open project's work again after `EntityTransitioned` naming it (`entities[].proj
 item page its own data when the event names the item (`entities[].entityId`), and again after
 `EntityCommented` naming it (`entityId`; qits-1660). A request's CI runs and
 each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) by `repoId` and
-`runId` (the resources' `refreshOn`: `buildOfRepository`, `buildOfRun`; qits-2146). `WorkspacesStore` follows
-qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
+`runId` (the resources' `refreshOn`: `buildOfRepository`, `buildOfRun`; qits-2146). `WorkspaceActivity` (the work
+pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
 counts.
@@ -82,7 +82,7 @@ rules live (`idea-rules.ts`: paragraphs x/3, characters x/600) and shows a 400's
 They read again after `IDEA_EVENTS` (`IdeaCreated`, `IdeaUpdated`, `IdeaArchived`,
 `IdeaUnarchived`) whose `projectId` is the open project (each resource's `refreshOn`, narrowed by
 `aboutProjectIdeas`). An idea's Create epic / Create ticket open `work/create` (`WorkCreatePage`,
-`WorkWritesStore.create`) filled from the query and sending `inspiredBy`; the work item page shows
+`CREATE_WORK`, `work-writes.operations.ts`) filled from the query and sending `inspiredBy`; the work item page shows
 and sets an item's inspiration (`patterns/ideas/work-inspiration/`, `SET_WORK_INSPIRATION` in
 `core/work/work.operations.ts`, a `patchWork` of `inspiredBy` alone, which no recording holds yet,
 so it has no pact interaction).
@@ -96,7 +96,7 @@ badge while `n` needs are not met (`patterns/work/work-needs/work-needs-badge.ts
 ocean blue, dashed), its tooltip listing them (`qits-1897 at VERIFIED (now REFINED)`), apart from
 the Blocked fact and an agent's wait; the word "waiting" is never used for a need. The item page's
 Needs panel (`work-needs-panel.ts`, every archetype but ISSUE) lists them and adds or removes one;
-each write is a `patchWork` of the whole `needs` list (`WorkWritesStore.setNeeds`, `[]` clears it),
+each write is a `patchWork` of the whole `needs` list (`SET_WORK_NEEDS`, `[]` clears it),
 after which the page reads the item and the project's work again (no event follows the edit, and
 the answer omits the needs). A needed item's move is an `EntityTransitioned`, so the badges follow
 it with the project's work. Campaigns, their members and milestones, and `dependsOn` are retired:
@@ -122,7 +122,7 @@ given the project's `slug` as `project`) and a pin's commits on the Changes tab
 so every `<slug>-<n>` in it is a work reference with the item's brief in a popover (hover or focus;
 on a finger or a pen a tap, which neither presses the row nor follows a link around it). The briefs
 come through this app's own projects client, not the library's default read (which needs a
-`/main-navigation`): `workBriefSource` (`core/work/work-briefs.store.ts`, `listProjectWorkBriefs`,
+`/main-navigation`): `workBriefSource` (`core/work/work-briefs.ts`, `listProjectWorkBriefs`,
 the ids comma-separated in one `id`, `LIST_PROJECT_WORK_BRIEFS`), provided with `QITS_WORK_LINK` (`workLink`:
 the exit `open-work-ref:opened` to `projects/:slug/work/detail/:id`, rendered through `QitsExit`,
 so the link has a real `href`, records the outcome and carries `data-qits-outcome`; qits-2042) by
@@ -137,8 +137,8 @@ after every ranked one, then by number: `byPriority` in `core/work/work-tree.ts`
 tickets only) an open item carries a drag handle (`ui-drag-handle`, the finish button's twin on the
 same corner); a drop is sent as `reprioritizeWork` with the sibling now directly below it
 (`above`), or, dropped last, the one directly above it (`below`) (`reorderAnchor`, `WorkReorders`
-in `core/work/work-reorder.ts`, `WorkWritesStore.reprioritize`), and the answered priorities go
-into `WorkStore` at once (`applyPriorities`); a refusal reads the work again. Every work card, lane
+in `core/work/work-reorder.ts`, `REPRIORITIZE_WORK`), and the answered priorities go
+into `SelectedWork`'s read at once (`putPriorities`); a refusal reads the work again. Every work card, lane
 and row the work patterns draw is a `uiReorderItem`, which needs a `[uiReorderList]` around it:
 where the order is not the page's job (Acceptance, the Archive, the In Progress page's agents' lists, a work item's page) the
 list is there and `reorderDisabled`, and a spec host drawing one item alone gives itself
@@ -172,8 +172,7 @@ after `AGENT_STATUS_EVENTS` about the project (debounced 1 s): `ProjectActiveAge
 (`core/workspaces/`, qits-2146), a root service holding that `qitsResource`, which the shell hands
 the menu as an input (the trail names an agent from it too). Its waits' requests and items, like
 `app-agent-status`'s, come from `OpenProjectWaits` (`ProjectReleaseRequests`, and the work
-`WorkStore` already holds, never loaded there: the one store the status lines still reach until
-the work routes move).
+`SelectedWork`'s resource already holds once a work page wanted it, never read for the lines).
 The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was Workspaces):
 `projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
 `agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
@@ -195,8 +194,8 @@ The workspace pages (the Agents page's slots, a slot, an agent; epic qits-1230) 
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
 name their wrapper, slot, item or agent, at most once a second (each resource's `refreshOn`,
 narrowed by `concerns`; since qits-2146 every workspace page reads through `qitsResource` over
-`core/workspaces/*.operations.ts` and writes through `qitsMutation`, and no workspace store but
-`WorkspacesStore`, the work pages', is left). A project's
+`core/workspaces/*.operations.ts` and writes through `qitsMutation`, and no workspace store is
+left). A project's
 ACTIVE agents with their waits and attention (epic qits-1681, `ProjectActiveAgents`,
 `listAgents?projectId=&state=ACTIVE`; the pure `core/workspaces/agent-attention.ts` turns a wait into
 its subject's line and an attention into its action) read again after `AGENT_STATUS_EVENTS` (the
@@ -540,6 +539,21 @@ operations' part of the file (`assertPactPart`).
   full reports are a `ResourceFamily` in the component; changed images a root `RawImages`. Inside
   an `@for` over a helper's rows, the rule reads each row as an entity root, so a mark over values a
   helper computes is a class constant (`marks.x`), which the rule trusts.
+  Group 6 (the work routes, the last) leaves no store that calls a client. The open project's work
+  is `SelectedWork`'s root `qitsResource` over `PROJECT_WORK` (`project-work.operations.ts`), read
+  once a work page `want()`s it (`OpenProjectWaits` reads what it holds without asking); the moves,
+  dispatches and the Acceptance list's delayed finishes are `WorkMoves` (root, `qitsMutation` over
+  `MOVE_WORK` and `DISPATCH_WORK`, the pending finishes UI state in `PendingFinishes`), which write
+  the answered status into that read (`put`). The wrapper closings, the archetype registry and the
+  open workspaces and ACTIVE agents are root services too (`WrapperClosings`, `Archetypes`,
+  `WorkspaceActivity`), each read once wanted. A root resource whose events matter only while a page
+  shows it is followed by that page (`followTransitions`, `follow`: `refreshOn` from
+  `core/events/` calling `owedReload`, which reads once more after a read still on its way),
+  not by its own `refreshOn`, which would subscribe for the app's life. The work item page reads
+  the item, its thread and its dossier itself (`work-detail.operations.ts`) and hands each read to
+  the body's patterns, which mark what they show; the Schedule tab's criteria are a root
+  `ResourceFamily` (`WorkCriteriaReads`). The board's cards draw `WorkNode`s of `SelectedWork`'s
+  graph, which the rule does not trace, so they carry no marks yet.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in

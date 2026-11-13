@@ -46,62 +46,69 @@ export const INTERACTIONS = {
    */
   'show-project-work': 'A project card shows how much work the project has',
   /**
-   * The work section's pages (`routes/projects/[slug]/work/`) via `SelectedWork`: they lay the
-   * project's work out on the board, the backlog, Acceptance and the archive, nested, each item
-   * with the needs it has not met yet (epic qits-1899).
+   * The work section's pages (`routes/projects/[slug]/work/`) via `SelectedWork` (`PROJECT_WORK`,
+   * qits-2146): they lay the project's work out on the board, the backlog, Acceptance and the
+   * archive, nested, each item with the needs it has not met yet (epic qits-1899).
    */
   'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
   /**
-   * `wrapper-closing.ts` via `WrapperClosingsStore`: a VERIFIED ticket's line, in the lists and on
-   * its page, says how its wrapper closing stands (qits-1873).
+   * `wrapper-closing.ts` via `WrapperClosings` (`WRAPPER_CLOSINGS`, qits-2146): a VERIFIED ticket's
+   * line, in the lists and on its page, says how its wrapper closing stands (qits-1873).
    */
   'show-wrapper-closings': 'A verified ticket says how its wrapper release request will close it',
   /**
-   * `epic-list-item.ts`: the finish button on a VERIFIED epic in Acceptance moves it to DONE. A
-   * ticket has no such button: qits-projects-service refuses any caller's move of a TICKET to
-   * DONE (qits-150), and the platform sets it itself.
+   * `epic-list-item.ts` via `WorkMoves` (`MOVE_WORK`, qits-2146): the finish button on a VERIFIED
+   * epic in Acceptance moves it to DONE. A ticket has no such button: qits-projects-service refuses
+   * any caller's move of a TICKET to DONE (qits-150), and the platform sets it itself.
    */
   'finish-epic': 'The finish button marks a verified epic done',
   /**
-   * `work-item.page.ts`: the work item page reads the archetype registry, which says the moves and
-   * the dispatch phases its actions offer.
+   * `work-item.page.ts` via `Archetypes` (`WORK_ARCHETYPES`, qits-2146): the work item page reads
+   * the archetype registry, which says the moves and the dispatch phases its actions offer.
    */
   'show-work-item-actions': 'The work item page offers the moves and phases the registry serves',
   /**
-   * `work-item.page.ts` via `WorkDetailStore`: the work item page reads the item, its comments and
-   * its dossier (an epic's pages and figures, a ticket's pages).
+   * `work-item.page.ts` via `WORK_DETAIL`, `WORK_COMMENTS`, `WORK_DOSSIER` and
+   * `WORK_DOSSIER_ASSETS` (qits-2146): the work item page reads the item, its comments and its
+   * dossier (an epic's pages and figures, a ticket's pages).
    */
   'show-work-item': 'The work item page shows the item’s description, dossier and comments',
   /**
-   * `work-comments.ts` via `WorkDetailStore.addComment`: Comment under the item's thread. The Desk's
-   * open issues write the same comment through `ADD_WORK_COMMENT` (`open-issues.ts`, qits-2146).
+   * `work-comments.ts` via `ADD_WORK_COMMENT` (qits-2146): Comment under the item's thread. The
+   * Desk's open issues write the same comment through `ADD_WORK_COMMENT` (`open-issues.ts`,
+   * qits-2146).
    */
   'comment-on-work-item': 'Comment on the work item page adds a comment to the item’s thread',
-  /** `work-comments.ts` via `WorkDetailStore.editComment`: Save on a comment being edited. */
+  /** `work-comments.ts` via `EDIT_WORK_COMMENT` (qits-2146): Save on a comment being edited. */
   'edit-comment': 'Save on an edited comment rewrites its text',
   /**
-   * `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). The Desk's
-   * Resolve sends the same move through `MOVE_WORK` (`open-issues.ts`, qits-2146).
+   * `work-item.page.ts` via `WorkMoves` (`MOVE_WORK`, qits-2146): a Status action (Mark …, Skip to
+   * …, Back to …, Drop, Reopen). The Desk's Resolve sends the same move through `MOVE_WORK`
+   * (`open-issues.ts`, qits-2146).
    */
   'move-work-item': 'A status action on the work item page moves the item',
   /**
-   * `work-item.page.ts` via `app-work-drop`: Confirm drop on the Drop form sends the move with its
-   * outcome (and, where the outcome needs one, its reference) — qits-248.
+   * `work-item.page.ts` via `app-work-drop` (`WorkMoves.drop`, `MOVE_WORK`): Confirm drop on the
+   * Drop form sends the move with its outcome (and, where the outcome needs one, its reference) —
+   * qits-248.
    */
   'drop-work-item': 'Confirm drop on the work item page moves the item to DROPPED with its outcome',
   /**
-   * `work-schedule.page.ts` via `WorkDetailStore.loadCriteria`: the Schedule tab reads each listed
-   * epic's and ticket's acceptance criteria.
+   * `work-schedule.page.ts` via `WorkCriteriaReads` (`WORK_CRITERIA`, qits-2146): the Schedule tab
+   * reads each listed epic's and ticket's acceptance criteria.
    */
   'show-schedule-criteria': 'The Schedule tab shows each item’s acceptance criteria',
   /**
-   * `work-schedule.page.ts`: "Schedule" moves the ticked REFINED epics and tickets to
-   * READY_FOR_DEV, with the viewer's session (a person's approval).
+   * `work-schedule.page.ts` via `WorkMoves` (`MOVE_WORK`): "Schedule" moves the ticked REFINED
+   * epics and tickets to READY_FOR_DEV, with the viewer's session (a person's approval).
    */
   'schedule-work': 'Schedule on the Schedule tab marks the ticked work ready for dev',
   /** `work-schedule.page.ts`: "Unschedule" moves a READY_FOR_DEV epic or ticket back to REFINED. */
   'unschedule-work': 'Unschedule on the Schedule tab takes scheduled work back to refined',
-  /** `work-item.page.ts`: Dispatch (the whole flow) or the next phase's button. */
+  /**
+   * `work-item.page.ts` via `WorkMoves` (`DISPATCH_WORK`): Dispatch (the whole flow) or the next
+   * phase's button.
+   */
   'dispatch-work-item': 'Dispatch or the next phase on the work item page starts an agent',
   /**
    * `lines-of-code.ts` via `LOC_LIST` (qits-2146), once a card's languages first open: every
@@ -321,15 +328,19 @@ export const INTERACTIONS = {
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
-   * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspacesStore`: the ACTIVE
-   * workspaces bound to work items, one request per page, for the Workspace links on the cards.
+   * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspaceActivity`
+   * (`OPEN_WORKSPACES`, qits-2146): the ACTIVE workspaces bound to work items, one request per
+   * page, for the Workspace links on the cards.
    */
   'show-open-workspaces': 'The work pages link each work item that has an active workspace',
-  /** `work-item.page.ts` via `WorkspacesStore`: the item's workspaces in every state. */
+  /**
+   * `work-item.page.ts` via `WORK_ITEM_WORKSPACES` (qits-2146): the item's workspaces in every
+   * state.
+   */
   'show-work-item-workspaces': 'The work item page lists the item’s workspaces, newest first',
   /**
-   * `work-in-progress.page.ts` via `WorkspacesStore.loadAgents`: the ACTIVE agents, so the In
-   * Progress tab shows every work item an agent is on, whatever its status.
+   * `work-in-progress.page.ts` via `WorkspaceActivity` (`ACTIVE_AGENT_WORK`, qits-2146): the ACTIVE
+   * agents, so the In Progress tab shows every work item an agent is on, whatever its status.
    */
   'show-agent-work': 'The In Progress tab shows every work item an active agent is on',
   /**
@@ -584,7 +595,7 @@ export const INTERACTIONS = {
    */
   'create-work-from-idea': 'Create epic or Create ticket on an idea’s page opens the work form',
   /**
-   * The work create form (`routes/projects/[slug]/work/create/`) via `WorkWritesStore.create`: a
+   * The work create form (`routes/projects/[slug]/work/create/`) via `CREATE_WORK` (qits-2146): a
    * root epic or ticket, inspired by an idea when opened from one (epic qits-888).
    */
   'create-work-item': 'Create on the work form files an epic or a ticket',
@@ -606,12 +617,13 @@ export const INTERACTIONS = {
   'set-work-inspiration': 'The work item page sets or clears the idea inspiring the item',
   /**
    * A drop of a dragged work item in the Backlog or on the board (`WorkReorders`) via
-   * `WorkWritesStore.reprioritize`: puts it directly above or below a sibling (qits-753).
+   * `WorkReorders` (`REPRIORITIZE_WORK`, qits-2146): puts it directly above or below a sibling
+   * (qits-753).
    */
   'reprioritize-work-item': 'Dragging a work item among its siblings sets its priority',
   /**
-   * Add or Remove on the work item page's Needs panel (`work-needs-panel.ts`) via
-   * `WorkWritesStore.setNeeds`: writes the whole list of what the item waits for (epic qits-1899).
+   * Add or Remove on the work item page's Needs panel (`work-needs-panel.ts`) via `SET_WORK_NEEDS`
+   * (qits-2146): writes the whole list of what the item waits for (epic qits-1899).
    */
   'edit-work-needs':
     'Add or Remove on the work item page’s Needs panel rewrites what the item needs',
