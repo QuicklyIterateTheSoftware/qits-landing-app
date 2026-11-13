@@ -651,6 +651,27 @@ it do the same). A freeze is drawn in `<iframe sandbox="allow-same-origin" [srcd
 type only; a path from a provider state matches any path, so its spec makes one docs read per test
 (`docs.operations.pact.spec.ts`, one part per reader).
 
+An app that opts in to offline shots (qits-2153, `freezeScreenshots({ offline: true })` in its own
+`vitest-browser.config.ts`) publishes a manifest with `offline: true` and a `connectivity` on each
+freeze: the `network` it was shot on (`ONLINE` or `OFFLINE`), its `outbox` (each queued mutation's
+`operation`, `state` PENDING / SENDING / CONFLICT / FAILED, `recordId` and, on a conflict, the
+server's `currentVersion`), and the reads it answered from the cache (`cached`, with `cachedAt`).
+`asManifest` keeps them typed (`FreezeConnectivity`); a malformed `connectivity` reads as absent and a
+malformed outbox or cached entry is dropped. The builder then shows an **Online / Offline** switch
+beside Light / Dark, only for such a bundle (this app's own has none): it narrows the route's state
+tabs to the freezes shot on that network (`stateNetwork`; a freeze without `connectivity` is ONLINE),
+is Online by default, follows the network of a state the URL or a tab opens, opens the other
+network's first state when switched, is disabled for a network the route has no state on, and is
+carried in the URL as `network=offline` while Offline only. A data mark whose `source` the shown
+freeze answered from the cache says **from cache, as of** `<instant>` (`formatInstant`) in Selected
+data, on the line above the frame while its data is highlighted, and in the tooltips of its
+highlight buttons (◎ and the item's marks). A freeze with an outbox lists it, oldest first, in a
+**Sync** section above Calls and states: the entry's state as a chip, its mutation (the call row's
+popover when the freeze records it, else its provider's contracts in qits-docs), its record and,
+on a conflict, the server's version. No qits-artifacts recording holds an offline bundle, so plain
+specs cover it with a hand-built manifest; the browser specs' bundles have no `connectivity` and draw
+as before.
+
 The builder's entities (qits-1950) come from the services' entity maps through `ContractsCatalog`
 (`core/ui-builder/contracts-catalog.ts`): every `@contracts/` site whose newest version's
 `git.repository.name` is in the page's scope, its `entities.json` (a 404 is "No entity map
