@@ -146,10 +146,14 @@ and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that proj
 (`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a
 wrapper's READY → RELEASED → FINALIZED sends; deployment events name no project, and count only
 while a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
-notifications menu puts every new event at the top of its list once it is loaded. The bumps menu
-(the lighthouse, `patterns/maintenance/bumps-menu/`) fetches qits-maintenance's pending bumps
-(`listPendingBumps`) on its first opening and again after `BUMP_EVENTS` (`ReleaseRequestStateChanged`
-among them), at most once a second.
+shell's own copy of the open project's requests (the sidebar's line, the trail, the agents' waits)
+is `ProjectReleaseRequests` (`core/projects/`, qits-2146), a `qitsResource` over the same request
+with the same events as its `refreshOn`; until the lightning menu moves over, the request is made
+twice. The notifications menu reads the newest events through its own `qitsResource` on its first
+opening and puts every new event at the top of its list once it is loaded. The bumps menu (the
+lighthouse, `patterns/maintenance/bumps-menu/`) reads qits-maintenance's pending bumps
+(`listPendingBumps`) through its own `qitsResource` on its first opening and again after
+`BUMP_EVENTS` (`ReleaseRequestStateChanged` among them), at most once a second.
 The lightning menu's top line (`patterns/system/runner-slots/`, `TargetsStore`) reads qits-system's
 targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
 `TargetLoginChanged`). qits-system sends no event when a runner connects or drops. A person whose
@@ -159,9 +163,13 @@ read qits-ci's active runs (`CiRunsStore.loadActive`, `/ci/api/runs/active`) on 
 they load, and again after `BUILD_EVENTS` of a pending request's repository (`followActive`). The
 release request page draws the same chips from its repository's runs.
 The agents menu (the robot beside the lightning, `patterns/agents/agents-menu/`; epic qits-1681)
-reads the open project's ACTIVE agents when the project opens and on each opening, and again after
-`AGENT_STATUS_EVENTS` about the project (`AgentsStore.followProject`, debounced 1 s); its waits'
-requests and items come from what `ProjectsStore` and `WorkStore` already hold.
+shows the open project's ACTIVE agents, read when the project opens and on each opening, and again
+after `AGENT_STATUS_EVENTS` about the project (debounced 1 s): `ProjectActiveAgents`
+(`core/workspaces/`, qits-2146), a root service holding that `qitsResource`, which the shell hands
+the menu as an input (the trail names an agent from it too). Its waits' requests and items, like
+`app-agent-status`'s, come from `OpenProjectWaits` (`ProjectReleaseRequests`, and the work
+`WorkStore` already holds, never loaded there: the one store the status lines still reach until
+the work routes move).
 The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was Workspaces):
 `projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
 `agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
@@ -313,7 +321,8 @@ dropping it.
 
 The Network access pane (epic qits-1977): `network-access` (`NetworkAccessPage`), under the shell
 with no project open, reached by the top bar's Network access link (beside the bumps menu, always
-shown). `PeersStore` (`core/network-access/`) reads qits-network-access' peers (`getPeers`), nodes
+shown). The page reads through `qitsResource` and writes through `qitsMutation` (qits-2146), over
+`core/network-access/peers.operations.ts`: qits-network-access' peers (`getPeers`), nodes
 (`getNodes`, naming a NODE peer's target) and private edge (`getPrivateEdge`; its 404 is "No private
 edge has announced itself yet."). The filters All, Devices, Nodes and Revoked narrow the one list;
 Mine reads `getPeers?owner=me`, which no recording holds, so it has no pact interaction yet. Revoke
@@ -467,11 +476,17 @@ operations' part of the file (`assertPactPart`).
   (`qitsOperation`: provider, operationId, method, the client function and its `consumes` from the
   `*.consumes.ts` beside it), with its own `<x>.operations.pact.spec.ts` (`addGoldenInteraction`
   with the operation's `operationId` and `consumes`; the provider as a literal, which
-  `qits/pact-names` can read, checked against the operation's). Only the Agents page reads this way
-  so far (`agents.operations.ts`, `repositories.operations.ts`); `eslint.config.mjs`'s
-  `dataMarksPilot()` turns `qits/reads-through-resources` on for it, and `qits/data-through-fields`
-  for it and its rows (`agent-row`, `agent-status`), whose templates carry the data marks
-  (`QitsEntityList`, `QitsEntity`, `QitsField`). A route moving over adds its files there. A
+  `qits/pact-names` can read, checked against the operation's). The Agents page was the pilot;
+  qits-2146 moves the routes group by group (the shell and the projects routes first: the menus,
+  the picker, a project's page and Setup, Network access). Data the shell or several routes share
+  is one `qitsResource` in a root service in `core/<domain>/` (`SelectedProject`,
+  `ProjectReleaseRequests`, `ProjectActiveAgents`), never a store. `eslint.config.mjs`'s
+  `dataMarks()` turns `qits/reads-through-resources` on for the moved files, and
+  `qits/data-through-fields` for the moved components, whose templates carry the data marks
+  (`QitsEntityList`, `QitsEntity`, `QitsField`); a group moving over appends its files there. What
+  a component shows of a shared service is data the rule cannot trace, so the shell marks it with
+  plain attributes (`sourceMark`, `itemMark`; a crumb's `CrumbMarks`), and the agents menu takes
+  the service's resource as an input. A
   resource's `refreshOn` needs `QITS_DOMAIN_EVENTS`, which `app.config.ts` (and the browser specs'
   `provideAppRoute()`) provide as `DomainEvents`. A loading resource is a pending task, so
   `openRoute`'s `settled()` stops waiting for stability while a request is open.

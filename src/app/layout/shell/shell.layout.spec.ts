@@ -28,6 +28,12 @@ describe('agentSubpage', () => {
     expect(agentSubpage(`${project}/agents/${agentId}`, project, agents)).toEqual({
       label: 'qits-111',
       path: `${project}/agents/${agentId}`,
+      // The label is the agent's item, from the project's ACTIVE agents (qits-2141).
+      marks: {
+        source: 'qits-workspaces-service#listAgents',
+        item: `agentId=${agentId}`,
+        field: 'entityId',
+      },
     });
     expect(agentSubpage(`${project}/agents/${agentId}/terminal?x=1`, project, agents)?.path).toBe(
       `${project}/agents/${agentId}`,
@@ -35,7 +41,9 @@ describe('agentSubpage', () => {
   });
 
   it('names an agent it does not list by its id’s first eight characters', () => {
-    expect(agentSubpage(`${project}/agents/${agentId}/chat`, project)?.label).toBe('00000000');
+    const page = agentSubpage(`${project}/agents/${agentId}/chat`, project);
+    expect(page?.label).toBe('00000000');
+    expect(page?.marks).toBeUndefined();
   });
 
   it('is undefined for the list itself and anywhere else', () => {
@@ -89,13 +97,21 @@ describe('releaseRequestSubpage', () => {
   const requests = [{ id, qualifiedId: 'contract-service-rr-2' }, { id: `${id.slice(0, -1)}3` }];
 
   it('names a request by its logical id, opened by uuid or by logical id', () => {
+    // The label is the request's logical id, from the project's release requests (qits-2141).
+    const marks = {
+      source: 'qits-projects-service#listProjectReleaseRequests',
+      item: `id=${id}`,
+      field: 'qualifiedId',
+    };
     expect(releaseRequestSubpage(`${list}/${id}?x=1`, project, requests)).toEqual({
       label: 'contract-service-rr-2',
       path: `${list}/${id}`,
+      marks,
     });
     expect(releaseRequestSubpage(`${list}/contract-service-rr-2#x`, project, requests)).toEqual({
       label: 'contract-service-rr-2',
       path: `${list}/contract-service-rr-2`,
+      marks,
     });
   });
 

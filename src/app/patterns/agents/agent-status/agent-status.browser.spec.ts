@@ -3,11 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Component, input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import type { ProjectStatusAgent } from '$core/workspaces/agents.consumes';
@@ -27,8 +28,8 @@ const OVERDUE = 'a project with an agent overdue on a release request';
  * item and on its comments, not overdue) and "a project with an agent overdue on a release
  * request" (qits-2040: the request unchanged for hours → the request; and a wait on the item's
  * comments). The open project is qits-projects' "a project exists" (slug `contract-00000001`),
- * which the states' entity ids name; no release request or work is loaded, so a subject falls back
- * to what the wait names.
+ * which the states' entity ids name; it has no release requests and no work is loaded, so a subject
+ * falls back to what the wait names.
  *
  * Its links are declared exits (epic qits-2000), each followed once to a stub of its page:
  * `open-agent-wait` (`releaseRequest`, `workItem`, `comments`) and `act-on-agent-attention`
@@ -72,6 +73,8 @@ describe('AgentStatus (screenshots)', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The open project's release requests follow that stream (`ProjectReleaseRequests`).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -87,9 +90,19 @@ describe('AgentStatus (screenshots)', () => {
     fixture.componentRef.setInput('agents', listed.agents);
     fixture.detectChanges();
     await settle();
-    // In the browser the store loads the project list on its own; answer it as recorded.
+    // In the browser `SelectedProject` reads the project list on its own; answer it as recorded.
     for (const request of http.match('/projects/api/projects')) {
       request.flush(await goldenMaster('a project exists', 'listProjects'));
+    }
+    // Then `ProjectReleaseRequests` the open project's release requests (the status lines'
+    // context, qits-2146): none, so a subject falls back to what the wait names.
+    await settle();
+    TestBed.tick();
+    await settle();
+    for (const request of http.match((req) => req.url.endsWith('/release-requests'))) {
+      request.flush(
+        await goldenMaster('a project with no release requests', 'listProjectReleaseRequests'),
+      );
     }
     await settle();
     await fixture.whenStable();

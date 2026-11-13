@@ -9,7 +9,6 @@ import {
   untracked,
 } from '@angular/core';
 import { injectRefreshOn, REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
-import { ProjectsStore } from '$core/projects/projects.store';
 import { WorkGraph, withoutHidden } from './work-tree';
 import { WorkStore } from './work.store';
 import type { LoadState } from '$ui/components/spinner/spinner';
@@ -31,7 +30,6 @@ export const WORK_REFRESH_DEBOUNCE_MS = REFRESH_DEBOUNCE_MS;
 @Injectable({ providedIn: 'root' })
 export class SelectedWork {
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(ProjectsStore);
   private readonly workStore = inject(WorkStore);
   private readonly refreshOn = injectRefreshOn();
 
@@ -49,10 +47,11 @@ export class SelectedWork {
 
   /** Loading until the project is known and its work answered; an error if either failed. */
   readonly state = computed((): LoadState => {
-    if (this.store.status() === 'error') return 'error';
+    const list = this.selected.listState();
+    if (list === 'error') return 'error';
     const status = this.work()?.status;
     if (status === 'loaded' || status === 'error') return status;
-    if (this.store.status() === 'loaded' && !this.selected.project()) return 'error';
+    if (list === 'loaded' && !this.selected.project()) return 'error';
     return 'loading';
   });
 

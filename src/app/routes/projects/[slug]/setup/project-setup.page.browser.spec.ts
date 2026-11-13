@@ -6,8 +6,9 @@ import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-r
 
 /**
  * Screenshots of a project's Setup page inside the shell (`openRoute`), which names the project
- * under its heading: answered with qits-projects' recorded project list ("a project exists"),
- * failed, and for a slug that list does not hold.
+ * under its heading: answered with qits-projects' recorded project list and project ("a project
+ * exists"; the page reads the project by the id the list gives its slug, qits-2146), failed, and
+ * for a slug that list does not hold.
  */
 
 describe('ProjectSetupPage (screenshots)', () => {
@@ -41,6 +42,11 @@ describe('ProjectSetupPage (screenshots)', () => {
   it('names the project', async () => {
     const { opened, recorded, answer } = await render();
     await answer(recorded);
+    // Then the page's own read of the project, by the id the list gives its slug (qits-2146).
+    http
+      .expectOne(`/projects/api/projects/${opened.project.id}`)
+      .flush(await goldenMaster('a project exists', 'getProject'));
+    await opened.settled();
     const element = page.elementLocator(opened.page);
     await expect.element(element.getByRole('heading', { name: 'Setup' })).toBeVisible();
     await expect

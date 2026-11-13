@@ -1,32 +1,14 @@
-import { isPlatformBrowser } from '@angular/common';
-import { computed, inject, PLATFORM_ID } from '@angular/core';
-import {
-  patchState,
-  signalStore,
-  type,
-  withComputed,
-  withHooks,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
-import { setAllEntities, setEntity, withEntities } from '@ngrx/signals/entities';
-import { listProjects, getProject, listProjectReleaseRequests } from '../../api/projects';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { listProjectReleaseRequests } from '../../api/projects';
 import { consume } from '@qits/angular';
 import {
-  GET_PROJECT,
   isPendingRelease,
   LIST_PROJECT_RELEASE_REQUESTS,
-  LIST_PROJECTS,
-  type FetchedProject,
-  type ListedProject,
   type ReleaseRequestEntry,
 } from './projects.consumes';
 
-/**
- * A project as the store keeps it: only the fields it reads (`projects.consumes.ts`), and an `id`,
- * which the spec leaves optional.
- */
-export type Project = ListedProject & { readonly id: string };
+/** A project as the app keeps it (`SelectedProject`'s list). */
+export type { Project } from './selected-project';
 
 type Status = 'idle' | 'loading' | 'loaded' | 'error';
 
@@ -40,24 +22,16 @@ export interface ProjectReleaseRequests {
 }
 
 interface ProjectsState {
-  /** The state of the list. A detail fetch does not change it. */
-  readonly status: Status;
-  readonly selectedId: string | null;
   /** Each project's release requests, by project id. Not asked for yet: no key. */
   readonly releaseRequests: Readonly<Record<string, ProjectReleaseRequests>>;
 }
 
-function withId(project: ListedProject | FetchedProject | undefined): project is Project {
-  return !!project?.id;
-}
-
 /**
- * Every project the app has seen, from qits-projects.
+ * A project's release requests, from qits-projects, for the release request pages and the
+ * lightning menu, until they read through `qitsResource` too (qits-2146's release request group).
+ * The projects themselves are `SelectedProject`'s `qitsResource` now, and the shell's and the agents
+ * menu's release requests `ProjectReleaseRequests`' (qits-2146), over the same request.
  *
- * - `load()` fetches the list once. The `onInit` hook calls it, in the browser only: the server
- *   render holds no token to send.
- * - `refresh()` fetches the list again.
- * - `refresh(id)` selects that project, and fetches its detail if the store does not hold it.
  * - `loadReleaseRequests(projectId)` fetches a project's release requests once, when a project
  *   opens, and keeps all of them and, apart, the pending ones (`isPendingRelease`);
  *   `refreshReleaseRequests(projectId)` fetches them again when a domain event says they changed.
@@ -72,48 +46,16 @@ function withId(project: ListedProject | FetchedProject | undefined): project is
  *   (`ReleaseMenu`), which the shell keeps mounted while any project page is open; the sidebar
  *   note and the Release Requests page read the same answer. The list answer is the only read
  *   this store has, so a row-only event (`ReleaseRequestChanged`) reads the whole list too.
- * - The projects (the list, a project's name and slug): no event. qits-projects emits none for a
- *   project created, renamed or deleted, so they are read once (and again only by `refresh()`).
  *
- * The store is the only user of the generated qits-projects client, so its pact
- * (`projects.store.pact.spec.ts`), with `WorkStore`'s and `RepositoriesStore`'s, is what this app
- * relies on from qits-projects. Every
+ * Its pact (`projects.store.pact.spec.ts`), with the operations' (`projects.operations.pact.spec.ts`),
+ * `WorkStore`'s and `RepositoriesStore`'s, is what this app relies on from qits-projects. Every
  * call goes through `consume(...)` with its list from `projects.consumes.ts`: the store can read
  * only those fields, and the pact binds exactly them.
  */
 export const ProjectsStore = signalStore(
   { providedIn: 'root' },
-  withEntities({ entity: type<Project>() }),
-  withState<ProjectsState>({
-    status: 'idle',
-    selectedId: null,
-    releaseRequests: {},
-  }),
-  withComputed(({ entityMap, selectedId }) => ({
-    selected: computed(() => {
-      const id = selectedId();
-      return id === null ? undefined : entityMap()[id];
-    }),
-  })),
+  withState<ProjectsState>({ releaseRequests: {} }),
   withMethods((store) => {
-    async function refreshList(): Promise<void> {
-      patchState(store, { status: 'loading' });
-      const { data, error } = await consume(listProjects(), LIST_PROJECTS);
-      if (error !== undefined || !data) {
-        patchState(store, { status: 'error' });
-        return;
-      }
-      const projects = (data.entries ?? []).map((entry) => entry.project).filter(withId);
-      patchState(store, setAllEntities(projects), { status: 'loaded' });
-    }
-
-    async function select(id: string): Promise<void> {
-      patchState(store, { selectedId: id });
-      if (store.entityMap()[id]) return;
-      const { data } = await consume(getProject({ path: { id } }), GET_PROJECT);
-      if (withId(data?.project)) patchState(store, setEntity(data.project));
-    }
-
     function setReleaseRequests(projectId: string, value: ProjectReleaseRequests): void {
       patchState(store, { releaseRequests: { ...store.releaseRequests(), [projectId]: value } });
     }
@@ -170,12 +112,6 @@ export const ProjectsStore = signalStore(
     }
 
     return {
-      async load(): Promise<void> {
-        if (store.status() === 'idle' || store.status() === 'error') await refreshList();
-      },
-      refresh(id?: string): Promise<void> {
-        return id === undefined ? refreshList() : select(id);
-      },
       /**
        * Fetches a project's release requests if nothing is loaded for it yet (or the last fetch
        * failed); otherwise this means "load if not loaded", so it just waits for whichever fetch
@@ -198,14 +134,6 @@ export const ProjectsStore = signalStore(
        */
       refreshReleaseRequests(projectId: string): Promise<void> {
         return runReleaseRequestsFetch(projectId);
-      },
-    };
-  }),
-  withHooks((store) => {
-    const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    return {
-      onInit(): void {
-        if (browser) void store.load();
       },
     };
   }),

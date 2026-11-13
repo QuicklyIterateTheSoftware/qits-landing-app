@@ -29,7 +29,17 @@ import {
  *   `agents.store.pact.spec.ts` with `AgentsStore.loadProject`, unchanged;
  * - "a project with agents needing attention" (`show-project-agents`): the project's ACTIVE agents
  *   with their open waits and attention, the same request and state as the agents menu's
- *   `agents-menu` interaction, under the page's own trigger.
+ *   `agents-menu` interaction, under the page's own trigger;
+ * - `agents-menu` (qits-2146: the agents menu reads `LIST_PROJECT_ACTIVE_AGENTS` through
+ *   `ProjectActiveAgents`; moved here from `agents.store.pact.spec.ts` unchanged, where the agent
+ *   page's `AgentsStore.loadProjectAgents` makes the same request): "a project with agents needing
+ *   attention", the project's ACTIVE agents with their open waits and attention; "a project with an
+ *   agent overdue on a release request" (qits-2040), one agent whose release request has not moved
+ *   for hours (`WAIT_OVERDUE` on a `RELEASE_REQUEST` wait) and which also waits on its item's
+ *   comments, which the agent status links (epic qits-2000); "a project with agents starting up"
+ *   (qits-2007), the agents as they come up, one per start-up `phase` (QUEUED with no slot,
+ *   PROVISIONING, STARTING) and two READY (IDLE, BUSY), each with its `phaseSince`, which the
+ *   menu's chip reads.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), so the pact and what the page reads cannot drift
@@ -41,10 +51,24 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const PROJECT = 'a project with workspace slots hosting agents';
 const NEEDING_ATTENTION = 'a project with agents needing attention';
+const STARTING_UP = 'a project with agents starting up';
+const OVERDUE = 'a project with an agent overdue on a release request';
+
+/**
+ * `PROJECT_AGENTS` as "a project with agents starting up" can bind it: no agent there waits on
+ * anything or needs a person, so its body holds no wait's or attention's fields
+ * (`NEEDING_ATTENTION` binds those).
+ */
+const STARTING_UP_AGENTS = LIST_PROJECT_ACTIVE_AGENTS.consumes.filter(
+  (path) => !path.startsWith('agents[].waits[].') && !path.startsWith('agents[].attention.'),
+);
 
 const OPERATIONS: readonly OwnedOperation[] = [
   'listWorkspaces',
-  { operationId: 'listAgents', interactions: ['show-project-workspaces', 'show-project-agents'] },
+  {
+    operationId: 'listAgents',
+    interactions: ['show-project-workspaces', 'show-project-agents', 'agents-menu'],
+  },
 ];
 
 /** `state`'s param `name`, as the golden masters froze it. */
@@ -65,14 +89,16 @@ function at<T>(url: string, call: () => Promise<T>): Promise<T> {
 }
 
 /**
- * The interaction for the operation `op` in `state`, triggered by `interaction`. The provider is
- * named as the literal `qits/pact-names` can check (it cannot read `op.provider`), and `op` must
- * name the same one.
+ * The interaction for the operation `op` in `state`, triggered by `interaction`, binding
+ * `op.consumes` (or `consumes`, as far as a state holds them). The provider is named as the
+ * literal `qits/pact-names` can check (it cannot read `op.provider`), and `op` must name the same
+ * one.
  */
 const given = (
   op: QitsOperationIdentity & { readonly consumes: readonly string[] },
   state: string,
   interaction: InteractionSlug,
+  consumes: readonly string[] = op.consumes,
 ) => {
   if (op.provider !== PROVIDER) throw new Error(`${op.operationId} is ${op.provider}'s`);
   return addGoldenInteraction(pact, masters, {
@@ -80,7 +106,7 @@ const given = (
     state,
     operationId: op.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction },
-    consumes: op.consumes,
+    consumes,
   });
 };
 
@@ -132,6 +158,57 @@ describe('qits-landing-app → qits-workspaces-service pact: the Agents page’s
         expect(agents).toHaveLength(5);
         expect(agents.some((a) => a.attention?.code === 'BLOCKED_NO_DESK')).toBe(true);
         expect(agents.every((a) => !!a.harness && !!a.wrapperBranch)).toBe(true);
+      },
+    ));
+
+  it('agents-menu: the project’s ACTIVE agents, with their waits and attention', () =>
+    given(LIST_PROJECT_ACTIVE_AGENTS, NEEDING_ATTENTION, 'agents-menu').executeTest(
+      async (server) => {
+        const projectId = param(NEEDING_ATTENTION, 'listAgents', 'projectId');
+        const { data } = await at(server.url, () =>
+          LIST_PROJECT_ACTIVE_AGENTS.fetch({ query: { projectId, state: 'ACTIVE' } }),
+        );
+        const agents = data?.agents ?? [];
+        expect(agents).toHaveLength(5);
+        const blocked = agents.find((a) => a.attention?.code === 'BLOCKED_NO_DESK');
+        expect(blocked?.blockedAt).toBeTruthy();
+        const overdue = agents.find((a) => a.attention?.code === 'WAIT_OVERDUE');
+        expect(overdue?.waits?.[0]?.subjectKind).toBe('CI_RUN');
+        expect(overdue?.waits?.[0]?.targetStates).toContain('SUCCESS');
+        const noAttention = agents.find((a) => !a.attention);
+        expect(noAttention?.waits?.length).toBeGreaterThan(0);
+      },
+    ));
+
+  it('agents-menu: an agent overdue on a release request, which also waits on comments', () =>
+    given(LIST_PROJECT_ACTIVE_AGENTS, OVERDUE, 'agents-menu').executeTest(async (server) => {
+      const projectId = param(OVERDUE, 'listAgents', 'projectId');
+      const { data } = await at(server.url, () =>
+        LIST_PROJECT_ACTIVE_AGENTS.fetch({ query: { projectId, state: 'ACTIVE' } }),
+      );
+      const [agent] = data?.agents ?? [];
+      expect(agent?.attention?.code).toBe('WAIT_OVERDUE');
+      const overdue = agent?.waits?.find((w) => w.id === agent.attention?.waitId);
+      expect(overdue?.subjectKind).toBe('RELEASE_REQUEST');
+      expect(overdue?.subjectQualifiedId).toBeTruthy();
+      const comments = agent?.waits?.find((w) => w.subjectKind === 'COMMENTS');
+      expect(comments?.subjectQualifiedId).toBeTruthy();
+    }));
+
+  it('agents-menu: the project’s ACTIVE agents starting up, each with its phase', () =>
+    given(LIST_PROJECT_ACTIVE_AGENTS, STARTING_UP, 'agents-menu', STARTING_UP_AGENTS).executeTest(
+      async (server) => {
+        const projectId = param(STARTING_UP, 'listAgents', 'projectId');
+        const { data } = await at(server.url, () =>
+          LIST_PROJECT_ACTIVE_AGENTS.fetch({ query: { projectId, state: 'ACTIVE' } }),
+        );
+        const agents = data?.agents ?? [];
+        // The agents differ in which fields are null, so the pact holds one of each shape (the
+        // queued one with no slot, the coming-up ones with no activity, the READY ones with one).
+        expect(agents.length).toBeGreaterThan(0);
+        expect(agents.every((a) => !!a.phase && !!a.phaseSince)).toBe(true);
+        expect(agents.some((a) => a.phase === 'QUEUED' && a.workspaceRowId == null)).toBe(true);
+        expect(agents.some((a) => a.phase === 'READY' && !!a.activity)).toBe(true);
       },
     ));
 });

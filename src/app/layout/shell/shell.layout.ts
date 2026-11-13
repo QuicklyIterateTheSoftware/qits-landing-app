@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
-import { ProjectsStore } from '$core/projects/projects.store';
+import { exit, itemMark, outcomes, QitsExit, sourceMark, type ExitOutcome } from '@qits/angular';
+import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
+import { PROJECT_LIST, PROJECT_RELEASE_REQUESTS } from '$core/projects/projects.operations';
 import {
+  findReleaseRequest,
   latestReleaseRequest,
   releaseRequestName,
   requestBadge,
@@ -10,8 +12,10 @@ import {
 } from '$core/projects/release-requests';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { SelectedProject } from '$core/projects/selected-project';
+import { loadState } from '$core/resources/load-state';
 import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import { LIST_PROJECT_ACTIVE_AGENTS } from '$core/workspaces/agents.operations';
+import { ProjectActiveAgents } from '$core/workspaces/project-active-agents';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
@@ -19,7 +23,7 @@ import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-men
 import { AgentsMenu } from '$patterns/agents/agents-menu/agents-menu';
 import { ThemeChoices } from '$patterns/appearance/theme-choices/theme-choices';
 import { ThemeMenu } from '$patterns/appearance/theme-menu/theme-menu';
-import { Breadcrumbs, type Crumb } from '$ui/components/breadcrumbs/breadcrumbs';
+import { Breadcrumbs, type Crumb, type CrumbMarks } from '$ui/components/breadcrumbs/breadcrumbs';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 
 /** A page of the trail or the sidebar: its label and its URL, which says where the user is. */
@@ -27,6 +31,8 @@ export interface NavPage {
   readonly label: string;
   /** The page's URL (absolute, `/projects/…`), matched against the router's. */
   readonly path: string;
+  /** Where a label that is data comes from (qits-2141): a request's or an agent's crumb. */
+  readonly marks?: CrumbMarks;
 }
 
 /** The shell's sections: one per sidebar entry, and Setup from the gear. */
@@ -81,6 +87,8 @@ export interface NavNote {
   readonly tone: ChipTone;
   /** The full story, on hover. */
   readonly title: string;
+  /** Where the line comes from (qits-2141): the read, the record, the fields it is derived from. */
+  readonly marks: CrumbMarks;
 }
 
 /**
@@ -116,6 +124,15 @@ export interface NavNote {
  * work page are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true`
  * while one of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]`
  * through `[exitCurrent]` (qits-2064).
+ *
+ * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
+ * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
+ * its release requests (`ProjectReleaseRequests`: the sidebar's Release Requests line, a request's
+ * crumb) and its ACTIVE agents (`ProjectActiveAgents`: an agent's crumb, and the agents menu, which
+ * the shell hands that resource). Their staleness is each resource's `refreshOn` (see each
+ * service). What it shows of them is data the template cannot trace to a resource of its own, so
+ * it carries its data marks (qits-2141) as plain attributes: the trail's crumbs (`CrumbMarks`) and
+ * the sidebar's line (`data-qits-source`, `data-qits-item`, `data-qits-derived`).
  */
 @Component({
   selector: 'app-shell-layout',
@@ -190,7 +207,7 @@ export interface NavNote {
           </a>
           <app-bumps-menu />
           <app-notifications-menu />
-          <app-agents-menu />
+          <app-agents-menu [agents]="activeAgents.resource" [state]="agentsState()" />
           <app-release-menu />
           <app-theme-menu class="max-md:hidden" />
           <a
@@ -240,6 +257,9 @@ export interface NavNote {
                   class="mt-0.5 items-center gap-1.5 text-xs font-normal text-fg-muted group-aria-[current=page]:text-fg-soft"
                   [class]="link.note ? 'flex' : 'hidden'"
                   [attr.title]="link.note?.title"
+                  [attr.data-qits-source]="link.note?.marks?.source"
+                  [attr.data-qits-item]="link.note?.marks?.item"
+                  [attr.data-qits-derived]="link.note?.marks?.derived"
                 >
                   <span class="min-w-0 truncate">{{ link.note?.text }}</span>
                   <span
@@ -286,8 +306,11 @@ export interface NavNote {
 })
 export class ShellLayout {
   private readonly selected = inject(SelectedProject);
-  private readonly projects = inject(ProjectsStore);
-  private readonly agents = inject(AgentsStore);
+  private readonly releaseRequests = inject(ProjectReleaseRequests);
+  protected readonly activeAgents = inject(ProjectActiveAgents);
+
+  /** The agents menu's spinner: the agents' read, as the menu's own read was. */
+  protected readonly agentsState = computed(() => loadState(this.activeAgents.resource));
 
   /** The sidebar's sections, one exit each (epic qits-2000). */
   private readonly sections = outcomes('open-sidebar-section', {
@@ -358,17 +381,14 @@ export class ShellLayout {
   /**
    * The open project's newest release request (`latestReleaseRequest`), as the line below the
    * sidebar's Release Requests entry: its repository and version, and its state. The requests are
-   * the ones the top bar's release menu fetches when the project opens (`ProjectsStore`); until
-   * they are there, and for a project without any, there is no line.
+   * `ProjectReleaseRequests`', read when the project opens; until they are there, and for a project
+   * without any, there is no line.
    *
-   * Staleness (qits-1270): the release menu's `RELEASE_REQUEST_EVENTS` subscription refreshes
-   * that answer (`ProjectsStore.refreshReleaseRequests`), so a request FINALIZED by
-   * `ReleaseRequestStateChanged` moves this line too.
+   * Staleness (qits-1270): that resource's `RELEASE_REQUEST_EVENTS` `refreshOn` reads the answer
+   * again, so a request FINALIZED by `ReleaseRequestStateChanged` moves this line too.
    */
   private readonly latestRelease = computed((): NavNote | undefined => {
-    const id = this.selected.project()?.id;
-    const requests = id === undefined ? undefined : this.projects.releaseRequests()[id];
-    const latest = latestReleaseRequest(requests?.requests ?? []);
+    const latest = latestReleaseRequest(this.releaseRequests.requests());
     if (!latest) return undefined;
     const badge = requestBadge(latest);
     const text = [latest.repoName, latest.version].filter(Boolean).join(' ');
@@ -377,6 +397,11 @@ export class ShellLayout {
       chip: badge.label,
       tone: badge.tone,
       title: `${text}: ${requestTitle(latest)} (${badge.label})`,
+      marks: {
+        source: sourceMark(PROJECT_RELEASE_REQUESTS),
+        item: itemMark('id', latest.id),
+        derived: 'repoName version state approvalRequired approvalState updatedAt',
+      },
     };
   });
 
@@ -431,7 +456,16 @@ export class ShellLayout {
     const params = { slug };
     const crumbs: Crumb[] = [
       projects,
-      { label: project.name ?? slug, exit: this.trail.project, params },
+      {
+        label: project.name ?? slug,
+        exit: this.trail.project,
+        params,
+        marks: {
+          source: sourceMark(PROJECT_LIST),
+          item: itemMark('id', project.id),
+          field: 'name',
+        },
+      },
     ];
     const found = this.section();
     if (!found) return crumbs;
@@ -443,14 +477,16 @@ export class ShellLayout {
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
     // Release Requests › <request id>.
     const url = this.selected.url();
-    const requests = this.projects.releaseRequests()[project.id ?? '']?.requests ?? [];
-    const agents = this.agents.projectAgents()[project.id ?? '']?.agents ?? [];
+    const requests = this.releaseRequests.requests();
+    const agents = this.activeAgents.agents();
     const sub =
       workSubpage(url, `/projects/${slug}`) ??
       releaseRequestSubpage(url, `/projects/${slug}`, requests) ??
       slotSubpage(url, `/projects/${slug}`) ??
       agentSubpage(url, `/projects/${slug}`, agents);
-    return sub ? [...crumbs, section, { label: sub.label }] : [...crumbs, section];
+    return sub
+      ? [...crumbs, section, { label: sub.label, marks: sub.marks }]
+      : [...crumbs, section];
   });
 
   /**
@@ -541,7 +577,7 @@ export function slotSubpage(url: string, project: string): NavPage | undefined {
 /**
  * The crumb of one agent below the project at `project` (`/projects/<slug>`):
  * `<project>/agents/<agent id>` (and its tabs below) names the agent by its work item's qualified
- * id, found in `agents` (the project's ACTIVE agents, as `AgentsStore` holds them); an agent not
+ * id, found in `agents` (the project's ACTIVE agents, as `ProjectActiveAgents` holds them); an agent not
  * among them by its id's first eight characters. Undefined for the list itself and anything outside
  * it.
  */
@@ -556,7 +592,17 @@ export function agentSubpage(
   if (!id) return undefined;
   const agentId = decodeURIComponent(id);
   const item = agents.find((agent) => agent.agentId === agentId)?.entityId;
-  return { label: item ?? agentId.slice(0, 8), path: `${prefix}${id}` };
+  return {
+    label: item ?? agentId.slice(0, 8),
+    path: `${prefix}${id}`,
+    marks: item
+      ? {
+          source: sourceMark(LIST_PROJECT_ACTIVE_AGENTS),
+          item: itemMark('agentId', agentId),
+          field: 'entityId',
+        }
+      : undefined,
+  };
 }
 
 /**
@@ -594,7 +640,18 @@ export function releaseRequestSubpage(
   const prefix = `${project}/${RELEASE_REQUESTS}/`;
   if (!url.startsWith(prefix)) return undefined;
   const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
-  return id
-    ? { label: releaseRequestName(requests, decodeURIComponent(id)), path: `${prefix}${id}` }
-    : undefined;
+  if (!id) return undefined;
+  const requestId = decodeURIComponent(id);
+  const request = findReleaseRequest(requests, requestId);
+  return {
+    label: releaseRequestName(requests, requestId),
+    path: `${prefix}${id}`,
+    marks: request?.qualifiedId
+      ? {
+          source: sourceMark(PROJECT_RELEASE_REQUESTS),
+          item: itemMark('id', request.id),
+          field: 'qualifiedId',
+        }
+      : undefined,
+  };
 }

@@ -1,32 +1,21 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  untracked,
-} from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
-import { PlatformOrigins } from '$core/platform/platform-origins';
-import { ProjectsStore } from '$core/projects/projects.store';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { exit, outcomes, QitsEntity, QitsEntityList, QitsExit, QitsField } from '@qits/angular';
+import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
-import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { requestTone } from '$core/projects/release-requests';
 import { lifecycleSummary, type SummaryPoint } from '$core/release-requests/release-lifecycle';
-import { WorkStore } from '$core/work/work.store';
 import {
   attentionAction,
   attentionCount,
   needsAttention,
   waitSubject,
   type AttentionAction,
-  type WaitContext,
   type WaitSubject,
 } from '$core/workspaces/agent-attention';
-import type { ProjectStatusAgent } from '$core/workspaces/agents.consumes';
+import type { AgentWait, ProjectStatusAgent } from '$core/workspaces/agents.consumes';
 import { itemDoneLabel } from '$core/workspaces/agent-labels';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import { OpenProjectWaits } from '$core/workspaces/open-project-waits';
+import type { ProjectActiveAgents } from '$core/workspaces/project-active-agents';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
@@ -122,13 +111,37 @@ function stateTone(state: string | undefined): ChipTone {
   }
 }
 
-/** One wait's line, with the request's lifecycle line when the store holds the request. */
+/** One wait's line, with the request's lifecycle line when the project's requests hold it. */
 interface WaitLine {
   readonly id: string;
+  /** The wait as qits-workspaces listed it: the entity the line marks. */
+  readonly wait: AgentWait;
   readonly subject: WaitSubject;
   readonly tone: ChipTone;
   readonly lifecycle?: readonly SummaryPoint[];
 }
+
+/**
+ * The data marks of what a row shows (qits-2141), each derived from the fields of the agent or the
+ * wait it marks. Bound as constants: what the template shows is the row's view of them
+ * (`AgentMenuRow`, `WaitLine`), which names other paths than the agent's and the wait's own.
+ */
+const MARKS = {
+  activity: {
+    derived: ['activity', 'waits', 'entityStatus', 'phase', 'phaseSince', 'waitingSince'],
+  },
+  subject: {
+    derived: ['subjectKind', 'subjectQualifiedId', 'subjectId', 'subjectRef', 'label'],
+  },
+  run: { derived: ['subjectKind', 'subjectId', 'subjectRef', 'label'] },
+  subjectState: { derived: ['subjectKind', 'subjectState'] },
+  request: { derived: ['subjectKind', 'subjectId', 'subjectQualifiedId', 'subjectRef'] },
+  prompt: { derived: ['attention.code', 'attention.waitId', 'waits'] },
+  openItem: { derived: ['attention.code', 'entityId'] },
+} as const;
+
+/** The agents' answer, as `LIST_PROJECT_ACTIVE_AGENTS` cuts it. */
+type ActiveAgentsAnswer = NonNullable<ReturnType<ProjectActiveAgents['resource']['value']>>;
 
 /** One agent's row. */
 interface AgentMenuRow {
@@ -141,7 +154,8 @@ interface AgentMenuRow {
 
 /**
  * The top bar's agents menu (epic qits-1681), beside the lightning menu: the open project's ACTIVE
- * agents (`AgentsStore.loadProjectAgents`), each with its item linked to the agent's page
+ * agents (`agents`, the shell's `ProjectActiveAgents.resource`, qits-2146), each with its item
+ * linked to the agent's page
  * (`agents/<agent id>`), an
  * activity chip (Queued / Starting while it comes up, with the minutes in that phase (qits-2007),
  * Working, Waiting, Done, awaiting acceptance / Done (qits-1776), Idle since HH:mm, Ended), a line
@@ -156,16 +170,24 @@ interface AgentMenuRow {
  * counts the agents needing a person, in red; with none, the active agents, in amber; it is hidden
  * at none. The footer links "All agents" to the project's Agents page.
  *
- * The agents are read as soon as a project opens, and again on each opening. A start-up chip's
- * minutes are counted when the agents are read (no timer: the lint rule keeps refresh timers in
- * `core/events/`), so they move on the next read, an opening or a status event. A wait's request comes
- * from `ProjectsStore`'s release requests, which the lightning menu reads; an item's status from
- * the open project's work in `WorkStore`, when something has read it (else the wait's last known
- * state). Staleness (qits-1270): `AGENT_STATUS_EVENTS` about the open project (its start-up's
- * `AgentStarted` and `WorkspaceStarted` among them, qits-2007) → its agents
- * (`AgentsStore.followProject`, debounced 1 s); a request's gates follow `RELEASE_REQUEST_EVENTS`
- * through the lightning menu's `ProjectsStore` reads, an item's status `WORK_EVENTS` wherever the
- * work is followed. Every link closes the panel.
+ * The agents are read as soon as a project opens (`ProjectActiveAgents`, a root service: the
+ * shell's trail names an agent from the same read), and again on each opening (`reload()`). The
+ * shell hands the menu that service's resource and its load state; the menu reads nothing on its
+ * own. A start-up chip's minutes are counted when the agents are read (no timer: the lint rule
+ * keeps refresh timers in `core/events/`), so they move on the next read, an opening or a status
+ * event. A wait's request comes from the project's release requests (`ProjectReleaseRequests`); an
+ * item's status from the open project's work, when something has read it (else the wait's last
+ * known state), both through `OpenProjectWaits`. Staleness (qits-1270): `AGENT_STATUS_EVENTS`
+ * about the open project (its start-up's `AgentStarted` and `WorkspaceStarted` among them,
+ * qits-2007) → its agents (the resource's `refreshOn`, debounced 1 s, see `ProjectActiveAgents`);
+ * a request's gates follow `RELEASE_REQUEST_EVENTS` through `ProjectReleaseRequests`, an item's
+ * status `WORK_EVENTS` wherever the work is followed. Every link closes the panel.
+ *
+ * What it shows carries the data marks (qits-2141): each row its agent (`qitsEntity`, by
+ * `agentId`, from `agents`' read), each wait's line its wait (by `id`), each value its field or the
+ * fields it is derived from (`qitsField`); the badge is derived from the list's `agents`. A wait's
+ * state, its request's lifecycle and gates, and an item's words, may come from the project's
+ * release requests or its work rather than the wait: the marks name the wait's fields only.
  *
  * Its links are declared exits (epic qits-2000), declared here rather than handed down from the
  * shell that draws the menu: like the shell's, a pattern's declarations are app-wide. The agent's
@@ -178,7 +200,7 @@ interface AgentMenuRow {
 @Component({
   selector: 'app-agents-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, LifecycleLine, QitsExit, Spinner],
+  imports: [Dropdown, LifecycleLine, QitsEntity, QitsEntityList, QitsExit, QitsField, Spinner],
   // One display class or the other: a static display class would beat `hidden`.
   host: {
     '[class]': "projectId() ? 'inline-flex' : 'hidden'",
@@ -219,15 +241,20 @@ interface AgentMenuRow {
           (count() ? '' : ' hidden')
         "
         aria-hidden="true"
+        [qitsEntityList]="agents()"
+        [fieldOf]="answer()"
+        [qitsField]="{ derived: ['agents'] }"
         >{{ attention() || count() }}</span
       >
       <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
-        <ul class="m-0 list-none p-0">
+        <ul class="m-0 list-none p-0" [qitsEntityList]="agents()">
           @for (row of rows(); track row.agent.agentId) {
             @let agent = row.agent;
             <li
               class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0"
               [class]="row.action ? 'border-l-4 border-l-danger bg-danger-soft' : ''"
+              [qitsEntity]="agent"
+              entityKey="agentId"
             >
               <div class="flex items-baseline justify-between gap-2">
                 @if (slug() && agent.agentId; as agentId) {
@@ -236,11 +263,18 @@ interface AgentMenuRow {
                     [qitsExit]="opening.agent"
                     [exitParams]="{ slug: slug(), agentId }"
                     (click)="menu.close()"
-                    ><span class="font-semibold">{{ agent.entityId }}</span>
+                    [fieldOf]="agent"
+                    [qitsField]="{ derived: ['entityId', 'entityTitle'] }"
+                    ><span class="font-semibold" [fieldOf]="agent" qitsField="entityId">{{
+                      agent.entityId
+                    }}</span>
                     {{ agent.entityTitle }}</a
                   >
                 } @else {
-                  <span class="min-w-0 truncate text-sm text-fg"
+                  <span
+                    class="min-w-0 truncate text-sm text-fg"
+                    [fieldOf]="agent"
+                    [qitsField]="{ derived: ['entityId', 'agentId', 'entityTitle'] }"
                     ><span class="font-semibold">{{ agent.entityId ?? agent.agentId }}</span>
                     {{ agent.entityTitle }}</span
                   >
@@ -249,11 +283,19 @@ interface AgentMenuRow {
                   class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap"
                   [class]="chip(row.activity.tone)"
                   data-activity
+                  [fieldOf]="agent"
+                  [qitsField]="marks.activity"
                   >{{ row.activity.label }}</span
                 >
               </div>
               @for (wait of row.waits; track wait.id) {
-                <div class="flex flex-col gap-0.5 text-[0.8125rem] text-fg-soft" data-wait>
+                @let source = wait.wait;
+                <div
+                  class="flex flex-col gap-0.5 text-[0.8125rem] text-fg-soft"
+                  data-wait
+                  [qitsEntity]="source"
+                  entityKey="id"
+                >
                   <div class="flex items-baseline justify-between gap-2">
                     <span class="min-w-0 truncate">
                       <span class="text-fg-muted">waits on </span>
@@ -264,6 +306,8 @@ interface AgentMenuRow {
                             [qitsExit]="waiting.releaseRequest"
                             [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
                             (click)="menu.close()"
+                            [fieldOf]="source"
+                            [qitsField]="marks.subject"
                             >{{ wait.subject.text }}</a
                           >
                         }
@@ -273,6 +317,8 @@ interface AgentMenuRow {
                             [qitsExit]="waiting.workItem"
                             [exitParams]="{ slug: slug(), id: wait.subject.id! }"
                             (click)="menu.close()"
+                            [fieldOf]="source"
+                            [qitsField]="marks.subject"
                             >{{ wait.subject.text }}</a
                           >
                         }
@@ -282,16 +328,25 @@ interface AgentMenuRow {
                             [qitsExit]="waiting.comments"
                             [exitParams]="{ slug: slug(), id: wait.subject.id! }"
                             (click)="menu.close()"
+                            [fieldOf]="source"
+                            [qitsField]="marks.subject"
                             >{{ wait.subject.text }}</a
                           >
                         }
                         @default {
                           @if (wait.subject.href; as href) {
-                            <a class="text-fg" [href]="href" (click)="menu.close()">{{
-                              wait.subject.text
-                            }}</a>
+                            <a
+                              class="text-fg"
+                              [href]="href"
+                              (click)="menu.close()"
+                              [fieldOf]="source"
+                              [qitsField]="marks.run"
+                              >{{ wait.subject.text }}</a
+                            >
                           } @else {
-                            <span class="text-fg">{{ wait.subject.text }}</span>
+                            <span class="text-fg" [fieldOf]="source" [qitsField]="marks.run">{{
+                              wait.subject.text
+                            }}</span>
                           }
                         }
                       }
@@ -300,14 +355,25 @@ interface AgentMenuRow {
                       <span
                         class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap"
                         [class]="chip(wait.tone)"
+                        [fieldOf]="source"
+                        [qitsField]="marks.subjectState"
                         >{{ state }}</span
                       >
                     }
                   </div>
                   @if (wait.lifecycle; as points) {
-                    <ui-lifecycle-line [points]="points" [spread]="true" />
+                    <ui-lifecycle-line
+                      [points]="points"
+                      [spread]="true"
+                      [fieldOf]="source"
+                      [qitsField]="marks.request"
+                    />
                   } @else if (wait.subject.gates?.length) {
-                    <span class="flex flex-wrap gap-1">
+                    <span
+                      class="flex flex-wrap gap-1"
+                      [fieldOf]="source"
+                      [qitsField]="marks.request"
+                    >
                       @for (gate of wait.subject.gates; track $index) {
                         <span
                           class="rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
@@ -320,13 +386,19 @@ interface AgentMenuRow {
                 </div>
               }
               @if (row.blockedAt !== undefined) {
-                <span class="text-[0.8125rem] text-fg-soft" data-blocked>{{
-                  row.blockedAt ? 'Blocked since ' + row.blockedAt : 'Blocked'
-                }}</span>
+                <span
+                  class="text-[0.8125rem] text-fg-soft"
+                  data-blocked
+                  [fieldOf]="agent"
+                  [qitsField]="{ derived: ['entityBlocked', 'blockedAt'] }"
+                  >{{ row.blockedAt ? 'Blocked since ' + row.blockedAt : 'Blocked' }}</span
+                >
               }
               @if (row.action; as action) {
                 <div class="flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]" data-attention>
-                  <span class="text-danger">{{ agent.attention?.reason }}</span>
+                  <span class="text-danger" [fieldOf]="agent" qitsField="attention.reason">{{
+                    agent.attention?.reason
+                  }}</span>
                   @switch (action.kind) {
                     @case ('prompt') {
                       @if (slug() && agent.agentId; as agentId) {
@@ -335,6 +407,8 @@ interface AgentMenuRow {
                           [qitsExit]="acting.prompt"
                           [exitParams]="{ slug: slug(), agentId }"
                           (click)="menu.close()"
+                          [fieldOf]="agent"
+                          [qitsField]="marks.prompt"
                           data-action
                           >{{ action.label }}</a
                         >
@@ -347,6 +421,8 @@ interface AgentMenuRow {
                           [qitsExit]="acting.openItem"
                           [exitParams]="{ slug: slug(), id }"
                           (click)="menu.close()"
+                          [fieldOf]="agent"
+                          [qitsField]="marks.openItem"
                           data-action
                           >{{ action.label }}</a
                         >
@@ -362,6 +438,8 @@ interface AgentMenuRow {
                           [qitsExit]="acting.overdueRequest"
                           [exitParams]="{ slug: slug(), requestId }"
                           (click)="menu.close()"
+                          [fieldOf]="agent"
+                          [qitsField]="marks.prompt"
                           data-action
                           >{{ action.label }}</a
                         >
@@ -370,6 +448,8 @@ interface AgentMenuRow {
                           class="font-semibold text-fg"
                           [href]="href"
                           (click)="menu.close()"
+                          [fieldOf]="agent"
+                          [qitsField]="marks.prompt"
                           data-action
                           >{{ action.label }}</a
                         >
@@ -399,11 +479,17 @@ interface AgentMenuRow {
   `,
 })
 export class AgentsMenu {
-  private readonly agentsStore = inject(AgentsStore);
-  private readonly projects = inject(ProjectsStore);
-  private readonly work = inject(WorkStore);
+  /** The open project's ACTIVE agents: the shell's `ProjectActiveAgents.resource`. */
+  readonly agents = input.required<ProjectActiveAgents['resource']>();
+
+  /** How the agents' read stands, as the shell's resource says it. */
+  readonly state = input<LoadState>('loading');
+
+  protected readonly marks = MARKS;
+
   private readonly selected = inject(SelectedProject);
-  private readonly origins = inject(PlatformOrigins);
+  private readonly releaseRequests = inject(ProjectReleaseRequests);
+  private readonly waits = inject(OpenProjectWaits);
 
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);
@@ -435,35 +521,22 @@ export class AgentsMenu {
     agents: exit('projects/:slug/agents'),
   });
 
-  private readonly listed = computed(() => {
-    const id = this.projectId();
-    return id === undefined ? undefined : this.agentsStore.projectAgents()[id];
+  /** The agents' answer, once read; an empty one before. */
+  protected readonly answer = computed((): ActiveAgentsAnswer => {
+    const read = this.agents();
+    return (read.hasValue() ? read.value() : undefined) ?? { agents: [] };
   });
 
-  private readonly agents = computed(() => this.listed()?.agents ?? []);
-
-  /** The project's release requests, as the lightning menu's reads left them. */
-  private readonly requests = computed((): readonly ReleaseRequestEntry[] => {
-    const id = this.projectId();
-    return (id === undefined ? undefined : this.projects.releaseRequests()[id]?.requests) ?? [];
-  });
-
-  private readonly context = computed((): WaitContext => {
-    const id = this.projectId();
-    return {
-      slug: this.slug(),
-      ciOrigin: this.origins.page('ci') || undefined,
-      releaseRequests: this.requests(),
-      work: (id === undefined ? undefined : this.work.byProject()[id]?.entries) ?? [],
-    };
-  });
+  private readonly listed = computed(
+    (): readonly ProjectStatusAgent[] => this.answer().agents ?? [],
+  );
 
   /** The agents needing a person first, then by their last activity, newest first. */
   protected readonly rows = computed((): readonly AgentMenuRow[] => {
-    const ctx = this.context();
-    const requests = this.requests();
+    const ctx = this.waits.context();
+    const requests = this.releaseRequests.requests();
     const time = (agent: ProjectStatusAgent) => Date.parse(agent.lastActivityAt ?? '') || 0;
-    const sorted = [...this.agents()].sort(
+    const sorted = [...this.listed()].sort(
       (a, b) => Number(needsAttention(b)) - Number(needsAttention(a)) || time(b) - time(a),
     );
     return sorted.map((agent) => {
@@ -484,6 +557,7 @@ export class AgentsMenu {
               : undefined;
           return {
             id: wait.id ?? String(index),
+            wait,
             subject,
             tone:
               subject.kind === 'RELEASE_REQUEST'
@@ -499,19 +573,12 @@ export class AgentsMenu {
   });
 
   /** How many agents need a person: the badge shows these, in red, when there are any. */
-  protected readonly attention = computed(() => attentionCount(this.agents()));
+  protected readonly attention = computed(() => attentionCount(this.listed()));
 
   /** How many agents are active, once read; undefined before. */
   protected readonly count = computed(() =>
-    this.listed()?.status === 'loaded' ? this.agents().length : undefined,
+    this.state() === 'loaded' ? this.listed().length : undefined,
   );
-
-  protected readonly state = computed((): LoadState => {
-    const status = this.listed()?.status;
-    if (status === 'loaded' || status === 'error') return status;
-    if (status === 'missing') return 'error';
-    return 'loading';
-  });
 
   protected chip(tone: ChipTone): string {
     return chipClass(tone);
@@ -521,17 +588,8 @@ export class AgentsMenu {
     return stateTone(state);
   }
 
-  constructor() {
-    effect(() => {
-      const id = this.projectId();
-      if (id !== undefined) untracked(() => void this.agentsStore.loadProjectAgents(id));
-    });
-    this.agentsStore.followProject(inject(DestroyRef), () => this.projectId());
-  }
-
   /** On each opening: the open project's agents again. */
   protected load(): void {
-    const id = this.projectId();
-    if (id !== undefined) void this.agentsStore.loadProjectAgents(id);
+    if (this.projectId() !== undefined) this.agents().reload();
   }
 }

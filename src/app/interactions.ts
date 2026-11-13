@@ -13,9 +13,15 @@
  * The value is a one-line title, for people.
  */
 export const INTERACTIONS = {
-  /** `projects.store.ts`, `load()` from the store's `onInit`: the picker's list. */
+  /**
+   * `project-picker.page.ts` and `selected-project.ts` via `PROJECT_LIST` (qits-2146): the picker's
+   * list, and the list `SelectedProject` finds the URL's project in.
+   */
   'list-projects': 'The project picker lists every project',
-  /** `projects.store.ts`, `refresh(id)`: a project the store does not hold yet. */
+  /**
+   * `project.page.ts` and `project-setup.page.ts` via `PROJECT_DETAIL` (qits-2146): the open
+   * project, by the id the list gives its slug.
+   */
   'open-project': 'Opening a project fetches its detail',
   /** `project-card.ts`: each card counts the project's components from its repositories. */
   'show-project-repositories': 'A project card shows how many components the project has',
@@ -87,7 +93,8 @@ export const INTERACTIONS = {
   /**
    * `release-menu.ts`: the top bar's lightning menu, for the open project — fetched when the
    * project opens, and again when domain events say its requests changed. The sidebar's Release
-   * Requests entry shows the newest request from the same answer.
+   * Requests entry shows the newest request from the same request, `ProjectReleaseRequests`'
+   * `PROJECT_RELEASE_REQUESTS` (qits-2146), whose operations pact spec binds it.
    */
   'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
   /**
@@ -278,9 +285,15 @@ export const INTERACTIONS = {
    * chosen on the Changes tab or in an opened commit, shows as the image before and after.
    */
   'show-changed-image': 'Choosing a changed image on a release request shows it as an image',
-  /** `notifications-menu.ts`: the top bar's notifications menu, on its first opening. */
+  /**
+   * `notifications-menu.ts` via `RECENT_EVENTS_LIST` (qits-2146): the top bar's notifications
+   * menu, on its first opening.
+   */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
-  /** `bumps-menu.ts`: the top bar's bumps menu (a lighthouse), on its first opening. */
+  /**
+   * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
+   * on its first opening.
+   */
   'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
   /** `runner-slots.ts` via `TargetsStore`: the lightning menu's runners and slots line, on opening. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
@@ -472,8 +485,9 @@ export const INTERACTIONS = {
   /** `plugins-section.ts` via `AgentPluginsStore.install`: Install on a plugin not installed yet. */
   'install-agent-plugin': 'Install on a plugin installs it on the shared agent home',
   /**
-   * `agents-menu.ts` via `AgentsStore.loadProjectAgents`: the top bar's agents menu lists the
-   * project's agents with what they wait on and what needs attention (epic qits-1681).
+   * `agents-menu.ts` via `ProjectActiveAgents` (`LIST_PROJECT_ACTIVE_AGENTS`, qits-2146): the top
+   * bar's agents menu lists the project's agents with what they wait on and what needs attention
+   * (epic qits-1681). The agent page reads the same through `AgentsStore.loadProjectAgents`.
    */
   'agents-menu':
     'The top bar’s agents menu lists the project’s agents with what they wait on and what needs attention',
@@ -706,20 +720,20 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact (epic qits-2000).
    */
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
-  /** `network-access.page.ts` via `PeersStore.load`: the Network access pane's peers table. */
+  /** `network-access.page.ts` via `PEER_LIST`: the Network access pane's peers table. */
   'show-network-peers': 'The Network access page lists every peer of the platform network',
   /**
-   * `network-access.page.ts` via `PeersStore.loadMine`: the "mine" filter (`owner=me`). No
+   * `network-access.page.ts` via `PEER_LIST` with `owner=me`: the "mine" filter. No
    * recording holds that query yet, so no pact interaction names this slug.
    */
   'show-my-network-peers': 'The Network access page’s Mine filter lists the visitor’s own peers',
-  /** `network-access.page.ts` via `PeersStore.load`: the nodes, naming a NODE peer's target. */
+  /** `network-access.page.ts` via `NODE_LIST`: the nodes, naming a NODE peer's target. */
   'show-network-nodes': 'The Network access page names each node peer by its joined node',
-  /** `network-access.page.ts` via `PeersStore.load`: the private edge card. */
+  /** `network-access.page.ts` via `PRIVATE_EDGE`: the private edge card. */
   'show-private-edge': 'The Network access page shows the announced private edge',
-  /** `network-access.page.ts` via `PeersStore.revoke`: Revoke on an ACTIVE row, confirmed. */
+  /** `network-access.page.ts` via `PEER_REVOKE`: Revoke on an ACTIVE row, confirmed. */
   'revoke-network-peer': 'Revoking a peer on the Network access page',
-  /** `network-access.page.ts` via `PeersStore.config`: a DEVICE row's WireGuard config download. */
+  /** `network-access.page.ts` via `PEER_CONFIG`: a DEVICE row's WireGuard config download. */
   'download-wireguard-config': 'Downloading a device peer’s WireGuard config',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,

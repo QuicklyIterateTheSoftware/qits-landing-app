@@ -63,8 +63,9 @@ describe('ProjectAgentsPage', () => {
   });
 
   afterEach(() => {
-    // The project list, which the stores behind the status lines' context read; not this page's.
-    http.match('/projects/api/projects');
+    // The open project's release requests, which the status lines' context reads
+    // (`OpenProjectWaits`, `ProjectReleaseRequests`, qits-2146); not this page's.
+    http.match(`/projects/api/projects/${PROJECT_ID}/release-requests`);
     http.verify();
   });
 

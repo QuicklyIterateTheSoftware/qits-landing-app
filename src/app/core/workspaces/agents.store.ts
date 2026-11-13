@@ -122,7 +122,8 @@ const failedWith = (status: number | undefined): ReadStatus =>
  *   agent page asks nothing of the slot itself): the agent page and its tabs.
  * - `loadProjectAgents(projectId)` (epic qits-1681): the project's ACTIVE agents
  *   (`listAgents?projectId=&state=ACTIVE`) with their open waits, their activity and their
- *   attention; `followProject` keeps them current (its comment has the mapping).
+ *   attention, for the agent page; `followProject` keeps them current (its comment has the
+ *   mapping). The shell and its agents menu read the same through `ProjectActiveAgents` (qits-2146).
  *
  * Every load reads again when called again (a page calls it on arrival and on every relevant
  * lifecycle event), keeping the last good answer when a read again fails, and without going back
@@ -216,7 +217,7 @@ export const AgentsStore = signalStore(
        * `AgentNudged` and `ACTIVE_AGENT_EVENTS`, which name no project, by an agent or a repository
        * of the agents already listed. So an agent placed in a repository of the project none of
        * whose agents is listed yet shows on the next status event or visit. A wait's request gates
-       * follow `RELEASE_REQUEST_EVENTS` through `ProjectsStore`, an item's status and block
+       * follow `RELEASE_REQUEST_EVENTS` through `ProjectReleaseRequests`, an item's status and block
        * `WORK_EVENTS` through `SelectedWork`, not this. No timer and no second stream.
        */
       followProject(destroy: DestroyRef, projectId: () => string | undefined): void {

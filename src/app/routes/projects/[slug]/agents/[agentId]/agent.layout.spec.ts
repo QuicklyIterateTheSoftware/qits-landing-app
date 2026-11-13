@@ -6,7 +6,8 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../../../api/workspaces/client/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { SelectedProject } from '$core/projects/selected-project';
 import {
   workspacesGoldenMaster,
@@ -55,6 +56,9 @@ describe('AgentLayout', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The status line's context, the project's release requests (`ProjectReleaseRequests`,
+        // qits-2146), follows the app's one stream, as `app.config.ts` provides it.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -63,6 +67,8 @@ describe('AgentLayout', () => {
   afterEach(() => {
     // The project list, which the stores behind the status lines' context read; not this page's.
     http.match('/projects/api/projects');
+    // The open project's release requests, the status line's context (qits-2146).
+    http.match(`/projects/api/projects/${PROJECT_ID}/release-requests`);
     http.verify();
   });
 

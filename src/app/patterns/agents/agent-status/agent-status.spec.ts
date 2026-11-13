@@ -3,6 +3,8 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { EMPTY } from 'rxjs';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import type { ProjectStatusAgent } from '$core/workspaces/agents.consumes';
 import { AgentStatus } from './agent-status';
@@ -24,6 +26,9 @@ describe('AgentStatus', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideTestPlatformOrigins(),
+        // The open project's release requests follow the app's stream (`ProjectReleaseRequests`);
+        // no project is open here, so nothing is read.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
       ],
     });
   });

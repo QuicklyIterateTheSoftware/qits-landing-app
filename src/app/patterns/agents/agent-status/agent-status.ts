@@ -1,16 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { exit, outcomes, QitsEntity, QitsExit, QitsField } from '@qits/angular';
-import { PlatformOrigins } from '$core/platform/platform-origins';
-import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
-import { WorkStore } from '$core/work/work.store';
-import {
-  attentionAction,
-  waitSubject,
-  type WaitContext,
-  type WaitSubject,
-} from '$core/workspaces/agent-attention';
+import { attentionAction, waitSubject, type WaitSubject } from '$core/workspaces/agent-attention';
 import type { AgentWait, ProjectStatusAgent } from '$core/workspaces/agents.consumes';
+import { OpenProjectWaits } from '$core/workspaces/open-project-waits';
 
 /**
  * What an agent waits on and what it needs a person for (epic qits-1681), as the Agents page's rows
@@ -28,16 +21,17 @@ import type { AgentWait, ProjectStatusAgent } from '$core/workspaces/agents.cons
  * link. qits-workspaces calls a wait overdue only on a release request or a run, so no other
  * subject has an overdue action.
  *
- * The context is what the app already holds: the open project's slug, its release requests
- * (`ProjectsStore`) and its work (`WorkStore`), and qits-ci's page origin; it reads nothing itself.
+ * The context is what the app already holds (`OpenProjectWaits`, qits-2146): the open project's
+ * slug, its release requests (`ProjectReleaseRequests`) and its work, and qits-ci's page origin; it
+ * reads nothing itself.
  *
  * Its agent is one of the project's ACTIVE agents as `PROJECT_AGENTS` cuts it (the Agents page's
  * rows, the agent page's header), and it marks what it shows (qits-2141): the agent
  * (`qitsEntity`, by `agentId`) around every line, each wait's line its wait (by `id`), each
  * subject's words and state derived from the wait's own fields, the attention's reason its field
  * and its action derived from the attention. A subject's state, and a release request's or an
- * item's words, may come from `ProjectsStore` or `WorkStore` rather than the wait: the marks name
- * the wait's fields only.
+ * item's words, may come from the project's release requests or its work rather than the wait: the
+ * marks name the wait's fields only.
  */
 @Component({
   selector: 'app-agent-status',
@@ -217,9 +211,7 @@ export class AgentStatus {
   readonly agent = input.required<ProjectStatusAgent>();
 
   private readonly selected = inject(SelectedProject);
-  private readonly projects = inject(ProjectsStore);
-  private readonly work = inject(WorkStore);
-  private readonly origins = inject(PlatformOrigins);
+  private readonly waits = inject(OpenProjectWaits);
 
   /** A wait's subject, one exit per kind that has a page here (epic qits-2000). */
   protected readonly opening = outcomes('open-agent-wait', {
@@ -238,21 +230,10 @@ export class AgentStatus {
   /** The open project's slug, the exits' param. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
-  private readonly context = computed((): WaitContext => {
-    const id = this.selected.project()?.id;
-    return {
-      slug: this.selected.slug() ?? '',
-      ciOrigin: this.origins.page('ci') || undefined,
-      releaseRequests:
-        (id === undefined ? undefined : this.projects.releaseRequests()[id]?.requests) ?? [],
-      work: (id === undefined ? undefined : this.work.byProject()[id]?.entries) ?? [],
-    };
-  });
-
   /** What the wait `wait` waits on, as its line says it (`waitSubject`, in the open project). */
   protected subjectOf(wait: AgentWait): WaitSubject {
-    return waitSubject(wait, this.context());
+    return waitSubject(wait, this.waits.context());
   }
 
-  protected readonly action = computed(() => attentionAction(this.agent(), this.context()));
+  protected readonly action = computed(() => attentionAction(this.agent(), this.waits.context()));
 }
