@@ -25,6 +25,8 @@ import {
   hasViewports,
   colorSchemesOf,
   freezeShot,
+  freezeNetwork,
+  stateNetwork,
   sharedOutcomes,
   stateFreeze,
   type DeclaredOutcome,
@@ -795,6 +797,118 @@ describe('colour schemes (qits-2086)', () => {
     expect(freezeResults(manifest, light)).toEqual(['create-work-item:refused']);
     expect(freezeResults(manifest, dark)).toEqual(['create-work-item:refused']);
     expect(freezeResults(manifest, other)).toEqual([]);
+  });
+});
+
+describe('connectivity (qits-2153)', () => {
+  const ROUTE = 'projects/:slug/notes';
+
+  /** A freeze of `name` on the notes route, its `connectivity` as the manifest writes it. */
+  const freeze = (name: string, connectivity?: unknown): Freeze =>
+    ({
+      file: `notes/${name}.html`,
+      name,
+      route: ROUTE,
+      records: [],
+      ...(connectivity === undefined ? {} : { connectivity }),
+    }) as Freeze;
+
+  const manifestOf = (freezes: readonly Freeze[], extra: object = { offline: true }) => ({
+    routes: [{ path: ROUTE, fullPath: ROUTE }],
+    freezes,
+    byRoute: { [ROUTE]: freezes.map((f) => f.file) },
+    ...extra,
+  });
+
+  const OFFLINE = {
+    network: 'OFFLINE',
+    outbox: [
+      {
+        operation: 'qits-notes-service#renameNote',
+        state: 'CONFLICT',
+        recordId: 'n1',
+        currentVersion: '2',
+      },
+      { operation: 'qits-notes-service#renameNote', state: 'PENDING', recordId: 'n2' },
+    ],
+    cacheResources: ['qits-notes-service#getNote'],
+    cached: [{ operation: 'qits-notes-service#getNote', cachedAt: '2026-01-01T00:00:00.000Z' }],
+    queueMutations: ['qits-notes-service#renameNote'],
+  };
+
+  it('keeps the manifest’s offline and each freeze’s connectivity', () => {
+    const manifest = asManifest(
+      manifestOf([freeze('offline', OFFLINE), freeze('online', { ...OFFLINE, network: 'ONLINE' })]),
+    );
+    expect(manifest?.offline).toBe(true);
+    expect(manifest?.freezes[0].connectivity).toEqual(OFFLINE);
+    expect(manifest?.freezes.map(freezeNetwork)).toEqual(['OFFLINE', 'ONLINE']);
+  });
+
+  it('keeps offline as `true` only, and leaves it out otherwise', () => {
+    expect(asManifest(manifestOf([]))?.offline).toBe(true);
+    expect(asManifest(manifestOf([], { offline: 'yes' }))).not.toHaveProperty('offline');
+    expect(asManifest(manifestOf([], {}))).not.toHaveProperty('offline');
+    expect(asManifest(RECORDED)).not.toHaveProperty('offline');
+    expect(asManifest(RECORDED)?.freezes[0]).not.toHaveProperty('connectivity');
+  });
+
+  it('reads an absent, null or malformed connectivity as absent: the freeze is ONLINE', () => {
+    const malformed = [
+      null,
+      'OFFLINE',
+      { ...OFFLINE, network: 'FLAKY' },
+      { ...OFFLINE, outbox: 'none' },
+      { ...OFFLINE, cacheResources: [1] },
+      { ...OFFLINE, queueMutations: undefined },
+    ];
+    const manifest = asManifest(
+      manifestOf([freeze('plain'), ...malformed.map((c, i) => freeze(`bad${i}`, c))]),
+    );
+    expect(manifest?.freezes).toHaveLength(7);
+    for (const read of manifest!.freezes) {
+      expect(read).not.toHaveProperty('connectivity');
+      expect(freezeNetwork(read)).toBe('ONLINE');
+    }
+  });
+
+  it('drops malformed outbox and cached entries, and reads an absent cached as none', () => {
+    const { cached: _absent, ...older } = OFFLINE;
+    const manifest = asManifest(
+      manifestOf([
+        freeze('mixed', {
+          ...OFFLINE,
+          outbox: [
+            { operation: 'a#b', state: 'SENDING' },
+            { operation: 'a#b', state: 'LOST', recordId: 'x' },
+            { state: 'PENDING', recordId: 'x' },
+            { operation: 'a#b', state: 'FAILED', recordId: 3 },
+            { operation: 'a#b', state: 'CONFLICT', recordId: 'r' },
+            { operation: 'a#b', state: 'PENDING', recordId: 'r', currentVersion: '9', extra: 1 },
+          ],
+          cached: [{ operation: 'a#c' }, { operation: 'a#d', cachedAt: '2026-01-01T00:00:00Z' }],
+        }),
+        freeze('older', older),
+        freeze('odd', { ...OFFLINE, cached: 'yesterday' }),
+      ]),
+    );
+    const [mixed, old, odd] = manifest!.freezes.map((f) => f.connectivity!);
+    expect(mixed.outbox).toEqual([
+      { operation: 'a#b', state: 'SENDING', recordId: null },
+      { operation: 'a#b', state: 'CONFLICT', recordId: 'r', currentVersion: null },
+      { operation: 'a#b', state: 'PENDING', recordId: 'r' },
+    ]);
+    expect(mixed.cached).toEqual([{ operation: 'a#d', cachedAt: '2026-01-01T00:00:00Z' }]);
+    expect(old.cached).toEqual([]);
+    expect(odd.cached).toEqual([]);
+  });
+
+  it('takes a state’s network from its freezes, ONLINE without connectivity', () => {
+    const manifest = asManifest(manifestOf([freeze('offline', OFFLINE), freeze('plain')]))!;
+    expect(routeStates(manifest, ROUTE).map((s) => [s.name, stateNetwork(s)])).toEqual([
+      ['offline', 'OFFLINE'],
+      ['plain', 'ONLINE'],
+    ]);
   });
 });
 

@@ -78,6 +78,54 @@ export const VIEWPORT_SIZES: Readonly<
   DESKTOP: { width: 1440, height: 900 },
 };
 
+/**
+ * Whether a shot was taken online or offline (qits-2153; `@qits/angular`'s
+ * `freezeScreenshots({ offline: true })`). A freeze without `connectivity` counts as ONLINE.
+ */
+export type FreezeNetwork = 'ONLINE' | 'OFFLINE';
+
+/** The networks in the order the builder's switch shows them: ONLINE, then OFFLINE. */
+export const FREEZE_NETWORKS: readonly FreezeNetwork[] = ['ONLINE', 'OFFLINE'];
+
+/** Where a queued mutation stands in the outbox (qits-2153). */
+export type OutboxState = 'PENDING' | 'SENDING' | 'CONFLICT' | 'FAILED';
+
+/** The outbox states this app knows. */
+export const OUTBOX_STATES: readonly OutboxState[] = ['PENDING', 'SENDING', 'CONFLICT', 'FAILED'];
+
+/** One mutation in the outbox when the shot was taken (qits-2153). */
+export interface OutboxEntry {
+  /** The mutation, `<provider>#<operationId>`: the spelling of a data mark's `source`. */
+  readonly operation: string;
+  readonly state: OutboxState;
+  /** The record it changes; null when it names none (and in a manifest older than the field). */
+  readonly recordId: string | null;
+  /** The server's version of the record, on a CONFLICT only; null when the server gave none. */
+  readonly currentVersion?: string | null;
+}
+
+/** A read answered from the offline cache (qits-2153), and when it was cached. */
+export interface CachedRead {
+  /** The read, `<provider>#<operationId>`: the spelling of a data mark's `source`. */
+  readonly operation: string;
+  /** An ISO instant. */
+  readonly cachedAt: string;
+}
+
+/**
+ * What a shot of an offline-ready app says about its connectivity (qits-2153): the network it was
+ * taken on, the outbox oldest first, the reads it caches and those it answered from the cache, and
+ * the mutations it queues.
+ */
+export interface FreezeConnectivity {
+  readonly network: FreezeNetwork;
+  readonly outbox: readonly OutboxEntry[];
+  readonly cacheResources: readonly string[];
+  /** Absent in an older manifest: read as `[]`. */
+  readonly cached: readonly CachedRead[];
+  readonly queueMutations: readonly string[];
+}
+
 /** One frozen screenshot: its HTML file in the bundle, its name, its route and its calls. */
 export interface Freeze {
   /** The path of its HTML in the bundle. */
@@ -116,6 +164,12 @@ export interface Freeze {
    * than marks; read it as `[]`. {@link asManifest} drops a malformed entry (qits-2144).
    */
   readonly dataMarks?: readonly DataMark[];
+  /**
+   * Its connectivity (qits-2153), in a bundle frozen with `freezeScreenshots({ offline: true })`.
+   * Absent on a freeze without one, in any other bundle, and when the manifest's is malformed
+   * ({@link asManifest}); such a freeze counts as ONLINE.
+   */
+  readonly connectivity?: FreezeConnectivity;
 }
 
 /**
@@ -195,6 +249,11 @@ export interface RoutesManifest {
    * routes readable.
    */
   readonly outcomes?: ManifestOutcomes | 'invalid';
+  /**
+   * Whether the app opted in to offline shots (qits-2153, the manifest's `offline: true`): its
+   * freezes carry `connectivity`, and the builder shows the Online / Offline switch. Absent otherwise.
+   */
+  readonly offline?: true;
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -304,6 +363,48 @@ function readColorSchemes(value: unknown): readonly FreezeColorScheme[] | undefi
   return schemes.length ? schemes : undefined;
 }
 
+const isOutboxEntry = (value: unknown): value is Record<string, unknown> & { operation: string } =>
+  isObject(value) &&
+  isString(value['operation']) &&
+  OUTBOX_STATES.includes(value['state'] as OutboxState) &&
+  (value['recordId'] === undefined || isStringOrNull(value['recordId'])) &&
+  (value['currentVersion'] === undefined || isStringOrNull(value['currentVersion']));
+
+const isCachedRead = (value: unknown): value is CachedRead =>
+  isObject(value) && isString(value['operation']) && isString(value['cachedAt']);
+
+/**
+ * A freeze's `connectivity` as read (qits-2153): undefined when it is absent, null or malformed (not
+ * an object, an unknown `network`, an `outbox` that is no list, a `cacheResources` or
+ * `queueMutations` that is no list of strings), so the freeze counts as ONLINE. A malformed outbox or
+ * cached entry is dropped; `cached` that is absent or no list reads as `[]`. An entry keeps its own
+ * fields only: `recordId` (null when absent) and, on a CONFLICT, `currentVersion` (null when absent).
+ */
+function readConnectivity(value: unknown): FreezeConnectivity | undefined {
+  if (!isObject(value)) return undefined;
+  const { network, outbox, cacheResources, cached, queueMutations } = value;
+  if (!FREEZE_NETWORKS.includes(network as FreezeNetwork)) return undefined;
+  if (!Array.isArray(outbox) || !isStrings(cacheResources) || !isStrings(queueMutations)) {
+    return undefined;
+  }
+  return {
+    network: network as FreezeNetwork,
+    outbox: outbox.filter(isOutboxEntry).map((entry): OutboxEntry => {
+      const state = entry['state'] as OutboxState;
+      const recordId = (entry['recordId'] as string | null | undefined) ?? null;
+      const currentVersion = (entry['currentVersion'] as string | null | undefined) ?? null;
+      return state === 'CONFLICT'
+        ? { operation: entry.operation, state, recordId, currentVersion }
+        : { operation: entry.operation, state, recordId };
+    }),
+    cacheResources: [...cacheResources],
+    cached: Array.isArray(cached)
+      ? cached.filter(isCachedRead).map(({ operation, cachedAt }) => ({ operation, cachedAt }))
+      : [],
+    queueMutations: [...queueMutations],
+  };
+}
+
 /** The `outcomes` section as read (qits-2006): absent, `invalid`, or with its shape. */
 function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined {
   if (value === undefined) return undefined;
@@ -329,6 +430,10 @@ function readOutcomes(value: unknown): ManifestOutcomes | 'invalid' | undefined 
  *
  * Nor do a freeze's `dataMarks` (qits-2144): a malformed entry is dropped, and anything but a list
  * reads as none (`[]`); absent stays absent.
+ *
+ * Nor does a freeze's `connectivity` (qits-2153, `readConnectivity`): a malformed one reads as
+ * absent, a malformed outbox or cached entry is dropped. The manifest's `offline` is kept only as
+ * `true`.
  */
 export function asManifest(value: unknown): RoutesManifest | null {
   if (!isObject(value)) return null;
@@ -356,6 +461,14 @@ export function asManifest(value: unknown): RoutesManifest | null {
         : { ...freeze, dataMarks: readDataMarks(freeze.dataMarks) },
     );
   }
+  if (freezes.some((freeze) => 'connectivity' in freeze)) {
+    freezes = freezes.map((freeze) => {
+      if (!('connectivity' in freeze)) return freeze;
+      const { connectivity: raw, ...rest } = freeze;
+      const connectivity = readConnectivity(raw);
+      return connectivity ? { ...rest, connectivity } : rest;
+    });
+  }
   const colorSchemes = readColorSchemes(value['colorSchemes']);
   return {
     routes,
@@ -363,6 +476,7 @@ export function asManifest(value: unknown): RoutesManifest | null {
     byRoute: byRoute as RoutesManifest['byRoute'],
     ...(colorSchemes === undefined ? {} : { colorSchemes }),
     ...(outcomes === undefined ? {} : { outcomes }),
+    ...(value['offline'] === true ? { offline: true as const } : {}),
   };
 }
 
@@ -643,6 +757,17 @@ export const colorSchemesOf = (manifest: RoutesManifest): readonly FreezeColorSc
       !!manifest.colorSchemes?.includes(scheme) ||
       manifest.freezes.some((freeze) => freeze.colorScheme === scheme),
   );
+
+/** The network a freeze was shot on (qits-2153): its `connectivity`'s, ONLINE without one. */
+export const freezeNetwork = (freeze: Freeze): FreezeNetwork =>
+  freeze.connectivity?.network ?? 'ONLINE';
+
+/**
+ * The network a state was shot on (qits-2153): its first freeze with `connectivity`, ONLINE when
+ * none has one (the library shoots every freeze of one name on one network).
+ */
+export const stateNetwork = (state: FreezeState): FreezeNetwork =>
+  state.freezes.find((freeze) => freeze.connectivity)?.connectivity?.network ?? 'ONLINE';
 
 /**
  * The shot a freeze is one scheme of (qits-2086): its file without the `-light` / `-dark` suffix the
