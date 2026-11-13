@@ -38,7 +38,35 @@ export default tseslint.config(
   },
   ...climbBans(),
   ...stalenessBans(),
+  ...dataMarksPilot(),
 );
+
+/**
+ * qits-2143: the Agents page is the pilot of reading through `qitsResource` (qits-2145) and of
+ * marking what a page shows (qits-2141). The page reads no store that calls a client
+ * (`qits/reads-through-resources`), and every API value it, its agent rows and their status lines
+ * render sits under a `qitsField` inside a `qitsEntity` / `qitsEntityList`
+ * (`qits/data-through-fields`, which needs typed linting to find the `input()`s holding API data).
+ * Neither rule is on anywhere else yet: each route turns them on as it moves over.
+ */
+function dataMarksPilot() {
+  const page = 'src/app/routes/projects/[[]slug]/agents/project-agents.page.ts';
+  return [
+    { files: [page], rules: { 'qits/reads-through-resources': 'error' } },
+    {
+      files: [
+        page,
+        'src/app/patterns/workspaces/agent-row/agent-row.ts',
+        'src/app/patterns/agents/agent-status/agent-status.ts',
+      ],
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      },
+      rules: { 'qits/data-through-fields': 'error' },
+    },
+  ];
+}
 
 /**
  * qits-1270: platform state goes stale only through the one qits-events subscription

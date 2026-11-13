@@ -297,10 +297,19 @@ export const INTERACTIONS = {
    */
   'show-agent-work': 'The In Progress tab shows every work item an active agent is on',
   /**
-   * `project-agents.page.ts` via `AgentsStore.loadProject`: the project's Agents page lists, under
-   * its Workspaces heading, the wrapper's slots and how many agents each hosts (epic qits-1230).
+   * `project-agents.page.ts` via its `qitsResource`s (qits-2143): the project's Agents page lists,
+   * under its Workspaces heading, the wrapper's slots and how many agents each hosts (epic
+   * qits-1230), once qits-projects named the wrapper (`LIST_PROJECT_WRAPPER`, `LIST_WRAPPER_SLOTS`,
+   * `LIST_WRAPPER_AGENTS`).
    */
   'show-project-workspaces': 'The Agents page lists the project’s slots and their agents',
+  /**
+   * `project-agents.page.ts` via its `qitsResource` (`LIST_PROJECT_ACTIVE_AGENTS`, qits-2143): the
+   * project's Agents page lists its ACTIVE agents with what each waits on and what needs a person
+   * (epic qits-1681). The same request as `agents-menu`'s, made by the page on its own.
+   */
+  'show-project-agents':
+    'The Agents page lists the project’s active agents with what they wait on and what needs attention',
   /**
    * `workspace-slot.page.ts` via `AgentsStore.loadSlot`: one slot, its status strip (container,
    * daemon), the start running against it, and the agents it hosts (`listWorkspaceAgents`).

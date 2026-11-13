@@ -1,6 +1,7 @@
 import { assertInInjectionContext, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { buffer, connect, debounceTime, filter, type Subscription } from 'rxjs';
+import type { QitsDomainEvent } from '@qits/angular';
 import { DomainEvents, type DomainEvent } from './domain-events';
 
 /** How long a burst of domain events waits before a subscriber reads again: at most once a second. */
@@ -39,9 +40,16 @@ export interface PayloadIds {
   readonly projectIds: readonly string[];
 }
 
+/**
+ * What the payload readers take: a `DomainEvent`, or the same event as a `qitsResource`'s
+ * `refreshOn.when` sees it (`QitsDomainEvent`, whose `payload` is `unknown`: the library keeps it
+ * loose, and `app.config.ts` hands it `DomainEvents`, so it is the JSON string all the same).
+ */
+export type WithPayload = DomainEvent | QitsDomainEvent;
+
 /** An event's payload as an object; undefined when it has none, or it is not a JSON object. */
-export function payloadOf(event: DomainEvent): Readonly<Record<string, unknown>> | undefined {
-  if (!event.payload) return undefined;
+export function payloadOf(event: WithPayload): Readonly<Record<string, unknown>> | undefined {
+  if (typeof event.payload !== 'string' || !event.payload) return undefined;
   try {
     const payload: unknown = JSON.parse(event.payload);
     return payload && typeof payload === 'object' && !Array.isArray(payload)
@@ -57,12 +65,12 @@ const idOf = (value: unknown): string | undefined =>
   typeof value === 'string' || typeof value === 'number' ? String(value) : undefined;
 
 /** One top-level field of an event's payload: a string or a number, as a string; else undefined. */
-export function payloadField(event: DomainEvent, key: string): string | undefined {
+export function payloadField(event: WithPayload, key: string): string | undefined {
   return idOf(payloadOf(event)?.[key]);
 }
 
 /** The ids `event`'s payload names ({@link PayloadIds}); none when it names none, or is not JSON. */
-export function payloadIds(event: DomainEvent): PayloadIds {
+export function payloadIds(event: WithPayload): PayloadIds {
   return idsOf(payloadOf(event) ?? {});
 }
 

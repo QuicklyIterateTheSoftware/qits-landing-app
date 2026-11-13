@@ -4,14 +4,15 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
-import { AgentStatus, type AgentStatusData } from './agent-status';
+import type { ProjectStatusAgent } from '$core/workspaces/agents.consumes';
+import { AgentStatus } from './agent-status';
 
 @Component({
   imports: [AgentStatus],
   template: `<app-agent-status [agent]="agent()" />`,
 })
 class Host {
-  readonly agent = signal<AgentStatusData>({});
+  readonly agent = signal<ProjectStatusAgent>({});
 }
 
 /** `AgentStatus`'s run state line (epic qits-1667); its waits and attention are the pages' specs'. */
@@ -27,7 +28,7 @@ describe('AgentStatus', () => {
     });
   });
 
-  function render(agent: AgentStatusData) {
+  function render(agent: ProjectStatusAgent) {
     const fixture = TestBed.createComponent(Host);
     fixture.componentInstance.agent.set(agent);
     fixture.detectChanges();
@@ -42,7 +43,7 @@ describe('AgentStatus', () => {
   });
 
   it('says nothing about an agent that is not stopped', () => {
-    for (const runState of ['RUNNING', 'YIELDED', 'QUEUED', null]) {
+    for (const runState of ['RUNNING', 'YIELDED', 'QUEUED', undefined] as const) {
       const element = render({ agentId: 'a-1', runState });
       expect(element.querySelector('[data-stopped]')).toBeNull();
       expect(element.textContent?.trim()).toBe('');

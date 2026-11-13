@@ -16,7 +16,6 @@ import {
   getWorkspaceActiveProcess,
   listAgents,
   listWorkspaceAgents,
-  listWorkspaces,
 } from '../../api/workspaces';
 import type { InteractionSlug } from '../../interactions';
 import { workspacesGoldenMasters } from '../../../testing/golden-masters';
@@ -27,21 +26,18 @@ import {
   GET_AGENT_ACTIVE_PROCESS,
   GET_SLOT,
   LIST_ITEM_AGENTS,
-  LIST_PROJECT_AGENTS,
-  LIST_PROJECT_SLOTS,
   LIST_SLOT_AGENTS,
   PROJECT_AGENTS,
 } from './agents.consumes';
 
 /**
- * qits-landing-app's pact with qits-workspaces-service, the part the workspace pages make (epic
- * qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside
- * `workspaces.store.pact.spec.ts`'s part:
+ * qits-landing-app's pact with qits-workspaces-service, the part the workspace pages make through
+ * `AgentsStore` (epic qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside
+ * `workspaces.store.pact.spec.ts`'s part and `agents.operations.pact.spec.ts`'s (the Agents page's
+ * own reads, its slots and their agents among them, since qits-2143):
  *
- * - "a project with workspace slots hosting agents": the Agents page's slots and their agents — one
- *   slot RUNNING on runner `localhost`, the bug ticket's agent holding it and waiting on a release
- *   request, the epic's agent yielded in it, the improvement ticket's agent QUEUED;
- * - "a workspace slot hosting agents": the same, read by the slot (no start is running), with the
+ * - "a workspace slot hosting agents": one slot RUNNING, the bug ticket's agent holding it and
+ *   waiting on a release request, the epic's agent yielded in it, read by the slot (no start is running), with the
  *   agents it hosts (`listWorkspaceAgents`, epic qits-1667); and the agent page's start, asked of
  *   the agent (`getAgentActiveProcess`): none is running;
  * - "an agent whose workspace is starting": the bug ticket's ACTIVE agent, which its old agent
@@ -52,8 +48,8 @@ import {
  * - "an agent with a saved prompt draft" and "no agent with that id": the agent page's agent, read
  *   by its id, and one the service does not know;
  * - "a project with agents needing attention": the project's ACTIVE agents with their open waits
- *   and attention (`listAgents?projectId=&state=ACTIVE`), read by the agents menu, the Agents page
- *   and the agent page alike;
+ *   and attention (`listAgents?projectId=&state=ACTIVE`), read by the agents menu and the agent page
+ *   alike (the Agents page's own read of it is `agents.operations.pact.spec.ts`'s);
  * - "a project with an agent overdue on a release request" (qits-2040): the same read, one agent
  *   whose release request has not moved for hours (`WAIT_OVERDUE` on a `RELEASE_REQUEST` wait) and
  *   which also waits on its item's comments, which the agent status links (epic qits-2000);
@@ -68,7 +64,6 @@ const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-workspaces-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
-const PROJECT = 'a project with workspace slots hosting agents';
 const SLOT = 'a workspace slot hosting agents';
 const STARTING = 'an agent whose workspace is starting';
 const NO_WORKSPACES = 'a work item with no workspaces';
@@ -88,7 +83,6 @@ const STARTING_UP_AGENTS = PROJECT_AGENTS.filter(
 );
 
 const OPERATIONS: readonly OwnedOperation[] = [
-  'listWorkspaces',
   'getWorkspace',
   'getWorkspaceActiveProcess',
   'getAgent',
@@ -96,7 +90,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'listWorkspaceAgents',
   {
     operationId: 'listAgents',
-    interactions: ['show-project-workspaces', 'show-work-item-agent', 'agents-menu'],
+    interactions: ['show-work-item-agent', 'agents-menu'],
   },
 ];
 
@@ -155,29 +149,6 @@ describe('qits-landing-app → qits-workspaces-service pact: workspace pages', (
       rmSync(dir, { recursive: true, force: true });
     }
   });
-
-  it('show-project-workspaces: the wrapper’s slots', () =>
-    given(PROJECT, 'listWorkspaces', 'show-project-workspaces', LIST_PROJECT_SLOTS).executeTest(
-      async (server) => {
-        const repositoryId = param(PROJECT, 'listWorkspaces', 'repositoryId');
-        const { data } = await at(server.url, () =>
-          consume(listWorkspaces({ query: { repositoryId } }), LIST_PROJECT_SLOTS),
-        );
-        const slot = data?.entries?.[0]?.workspace;
-        expect(slot?.placement).toBe('TARGET');
-      },
-    ));
-
-  it('show-project-workspaces: every agent, the wrapper’s among them', () =>
-    given(PROJECT, 'listAgents', 'show-project-workspaces', LIST_PROJECT_AGENTS).executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () => consume(listAgents(), LIST_PROJECT_AGENTS));
-        const agents = data?.agents ?? [];
-        // One shape per null pattern: the queued agent (no slot), the waiting one, the yielded one.
-        expect(agents.some((a) => a.runState === 'QUEUED' && a.workspaceRowId === null)).toBe(true);
-        expect(agents.some((a) => !!a.waitingOn && !!a.waitingOnSince)).toBe(true);
-      },
-    ));
 
   it('show-workspace-slot: the slot', () =>
     given(SLOT, 'getWorkspace', 'show-workspace-slot', GET_SLOT).executeTest(async (server) => {

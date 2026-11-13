@@ -1,28 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+import { exit, outcomes, QitsEntity, QitsExit, QitsField } from '@qits/angular';
 import {
   activityLabel,
   agentName,
   agentWaitLabel,
   runStateLabel,
 } from '$core/workspaces/agent-labels';
+import type { ProjectStatusAgent, SlotAgent } from '$core/workspaces/agents.consumes';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 
-/** What a row reads of an agent: what every agent read of the workspace pages holds. */
-export interface AgentRowData {
-  readonly agentId?: string;
-  readonly entityId?: string;
-  readonly entityTitle?: string;
-  readonly entityStatus?: string;
-  readonly state?: string;
-  readonly runState?: string;
-  readonly admin?: boolean;
-  readonly harness?: string;
-  readonly activity?: string;
-  readonly waitingOn?: string;
-  readonly waitingOnSince?: string;
-  readonly wrapperBranch?: string;
-}
+/**
+ * The agents a row shows, as their reads cut them (qits-2143): the Agents page's ACTIVE agents
+ * (`PROJECT_AGENTS`) and a slot's hosted agents (`LIST_SLOT_AGENTS`). Typed from the consumed client
+ * answers, so a field the row shows is one those reads, and their pacts, hold.
+ */
+export type AgentRowAgent = ProjectStatusAgent | SlotAgent;
 
 /** A lifecycle state's chip tone. */
 const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE: 'neutral' };
@@ -35,60 +27,103 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
  * declared no wait: a wait on a release request, a CI run or a work item is not a person's.
  * `wrapperBranch` and `harness` show when given. Projected content (the Agents page's waits and
  * attention, `app-agent-status`) goes last.
+ *
+ * It marks what it shows (qits-2141): the row is the agent (`qitsEntity`, by `agentId`), its title
+ * and branch are fields, and every label computed from fields (the name, the state, the run state,
+ * the activity, the wait, the harness, the docker socket chip) is marked derived from those fields.
  */
 @Component({
   selector: 'app-agent-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, QitsExit],
+  imports: [Chip, QitsEntity, QitsExit, QitsField],
   host: { class: 'block' },
   template: `
-    <div class="flex flex-col gap-1 rounded-md border border-line px-4 py-2.5 text-sm">
+    <div
+      class="flex flex-col gap-1 rounded-md border border-line px-4 py-2.5 text-sm"
+      [qitsEntity]="agent()"
+      entityKey="agentId"
+    >
       <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         @if (link(); as params) {
           <a
             class="font-semibold text-accent no-underline hover:underline"
             [qitsExit]="opening.open"
             [exitParams]="params"
+            [fieldOf]="agent()"
+            [qitsField]="{ derived: ['entityId', 'agentId'] }"
             >{{ name() }}</a
           >
         } @else {
-          <span class="font-semibold text-fg">{{ name() }}</span>
+          <span
+            class="font-semibold text-fg"
+            [fieldOf]="agent()"
+            [qitsField]="{ derived: ['entityId', 'agentId'] }"
+            >{{ name() }}</span
+          >
         }
         @if (agent().entityTitle; as title) {
-          <span class="min-w-0 text-fg">{{ title }}</span>
+          <span class="min-w-0 text-fg" [fieldOf]="agent()" qitsField="entityTitle">{{
+            title
+          }}</span>
         }
       </div>
       <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-fg-soft">
-        <ui-chip [label]="state()" [tone]="stateTone()" />
-        <span>{{ runState() }}</span>
+        <ui-chip
+          [label]="state()"
+          [tone]="stateTone()"
+          [fieldOf]="agent()"
+          [qitsField]="{ derived: ['state'] }"
+        />
+        <span [fieldOf]="agent()" [qitsField]="{ derived: ['runState'] }">{{ runState() }}</span>
         @if (doing(); as doing) {
           <span aria-hidden="true">·</span>
           <span
             [class.font-semibold]="doing === 'waiting on you'"
             [class.text-danger]="doing === 'waiting on you'"
+            [fieldOf]="agent()"
+            [qitsField]="{ derived: ['activity', 'waitingOn', 'entityStatus'] }"
             >{{ doing }}</span
           >
         }
         @if (agent().harness; as harness) {
           <span aria-hidden="true">·</span>
-          <span>{{ harness.toLowerCase() }}</span>
+          <span [fieldOf]="agent()" [qitsField]="{ derived: ['harness'] }">{{
+            harness.toLowerCase()
+          }}</span>
         }
         @if (agent().admin) {
-          <ui-chip label="docker socket" tone="waiting" />
+          <ui-chip
+            label="docker socket"
+            tone="waiting"
+            [fieldOf]="agent()"
+            [qitsField]="{ derived: ['admin'] }"
+          />
         }
       </div>
       @if (wait(); as wait) {
-        <p class="m-0 text-warning" role="status">{{ wait }}</p>
+        <p
+          class="m-0 text-warning"
+          role="status"
+          [fieldOf]="agent()"
+          [qitsField]="{ derived: ['waitingOn', 'waitingOnSince'] }"
+        >
+          {{ wait }}
+        </p>
       }
       @if (agent().wrapperBranch; as branch) {
-        <code class="font-mono text-xs text-fg-soft">{{ branch }}</code>
+        <code
+          class="font-mono text-xs text-fg-soft"
+          [fieldOf]="agent()"
+          qitsField="wrapperBranch"
+          >{{ branch }}</code
+        >
       }
       <ng-content />
     </div>
   `,
 })
 export class AgentRow {
-  readonly agent = input.required<AgentRowData>();
+  readonly agent = input.required<AgentRowAgent>();
   /** The open project's slug, for the link to the agent's page; no link without it. */
   readonly slug = input<string | undefined>(undefined);
 

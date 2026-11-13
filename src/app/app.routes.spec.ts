@@ -3,9 +3,9 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { qitsAuthCallbackRoute } from '@qits/angular';
+import { QITS_DOMAIN_EVENTS, qitsAuthCallbackRoute } from '@qits/angular';
 import { routes } from './app.routes';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { WorkAcceptancePage } from './routes/projects/[slug]/work/acceptance/work-acceptance.page';
 import { WorkArchivePage } from './routes/projects/[slug]/work/archive/work-archive.page';
 import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-item.page';
@@ -102,6 +102,8 @@ describe('agents and workspaces routes', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The Agents page's resources follow the app's one stream, as `app.config.ts` provides it.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     }),
   );

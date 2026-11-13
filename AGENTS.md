@@ -174,9 +174,13 @@ its verbs, a Workspace field (`ws-<slot id>` → `workspaces/<slot id>`) and the
 still where the Workspace links on cards and the item page lead, as they know no agent id) finds
 the item's ACTIVE agent (`AgentsStore.loadItem`) and replaces itself with its page on the same tab,
 or with the item. `workspaces/<slot id>` stays, its agents linking `agents/<agent id>`.
+The Agents page is the pilot of reading through `qitsResource` and of the data marks (qits-2143,
+see "Reading through resources" below): it injects no store, and its staleness is its resources'
+`refreshOn` (the same events and narrowing as below; its doc comment has the mapping).
 The workspace pages (the Agents page's slots, a slot, an agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
-name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`). A project's
+name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`; the Agents
+page's resources narrow by the same `concerns`). A project's
 ACTIVE agents with their waits and attention (epic qits-1681, `AgentsStore.loadProjectAgents`,
 `listAgents?projectId=&state=ACTIVE`; the pure `core/workspaces/agent-attention.ts` turns a wait into
 its subject's line and an attention into its action) read again after `AGENT_STATUS_EVENTS` (the
@@ -454,9 +458,23 @@ operations' part of the file (`assertPactPart`).
   frontend and backend stay distinct: consumer `qits-landing-app`, provider
   `qits-projects-service`, file `pacts/<consumer>_<provider>.json`. The same names go into
   `comments.references` (`qits-call.app`, `qits-trigger.app`).
-- **Stores are the only users of a generated client.** A guard or component asks a store; it never
-  calls `src/app/api/` itself. So the pact spec next to the store is the whole of what this app
-  relies on from that provider: `src/app/core/projects/projects.store.pact.spec.ts`.
+- **Stores and operations are the only users of a generated client.** A guard or component asks a
+  store, or reads a `qitsOperation` through `qitsResource` (below); it never calls `src/app/api/`
+  itself. So the pact specs next to the stores and the operations files are the whole of what this
+  app relies on from that provider: `src/app/core/projects/projects.store.pact.spec.ts`.
+- **Reading through resources (qits-2143, the pilot).** `@qits/angular`'s `qitsResource` reads one
+  backend operation per signal, declared once in a `core/<domain>/<x>.operations.ts`
+  (`qitsOperation`: provider, operationId, method, the client function and its `consumes` from the
+  `*.consumes.ts` beside it), with its own `<x>.operations.pact.spec.ts` (`addGoldenInteraction`
+  with the operation's `operationId` and `consumes`; the provider as a literal, which
+  `qits/pact-names` can read, checked against the operation's). Only the Agents page reads this way
+  so far (`agents.operations.ts`, `repositories.operations.ts`); `eslint.config.mjs`'s
+  `dataMarksPilot()` turns `qits/reads-through-resources` on for it, and `qits/data-through-fields`
+  for it and its rows (`agent-row`, `agent-status`), whose templates carry the data marks
+  (`QitsEntityList`, `QitsEntity`, `QitsField`). A route moving over adds its files there. A
+  resource's `refreshOn` needs `QITS_DOMAIN_EVENTS`, which `app.config.ts` (and the browser specs'
+  `provideAppRoute()`) provide as `DomainEvents`. A loading resource is a pending task, so
+  `openRoute`'s `settled()` stops waiting for stability while a request is open.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in

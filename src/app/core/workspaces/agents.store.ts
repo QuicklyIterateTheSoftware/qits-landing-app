@@ -8,7 +8,6 @@ import {
   getWorkspaceActiveProcess,
   listAgents,
   listWorkspaceAgents,
-  listWorkspaces,
 } from '../../api/workspaces';
 import type { DomainEvent } from '$core/events/domain-events';
 import { injectRefreshOn } from '$core/events/refresh-on';
@@ -18,19 +17,16 @@ import {
   GET_AGENT_ACTIVE_PROCESS,
   GET_SLOT,
   LIST_ITEM_AGENTS,
-  LIST_PROJECT_AGENTS,
-  LIST_PROJECT_SLOTS,
   LIST_SLOT_AGENTS,
   PROJECT_AGENTS,
   type AgentDetail,
   type ItemAgent,
-  type ProjectAgent,
-  type ProjectSlot,
   type ProjectStatusAgent,
   type SlotAgent,
   type SlotDetail,
 } from './agents.consumes';
 import {
+  aboutProjectAgents,
   AGENT_STATUS_EVENTS,
   concerns,
   WORKSPACE_EVENTS,
@@ -40,15 +36,6 @@ import {
 
 /** How far a read got. `missing`: the service answered 404 (a slot that resolved, or none). */
 export type ReadStatus = 'loading' | 'loaded' | 'error' | 'missing';
-
-/** A project's slots (the Agents page's Workspaces heading) and the wrapper's agents, as `loadProject` left them. */
-export interface ProjectWorkspaces {
-  readonly status: ReadStatus;
-  /** The wrapper's ACTIVE slots. */
-  readonly slots: readonly ProjectSlot[];
-  /** The wrapper's agents that are not removed, newest first. */
-  readonly agents: readonly ProjectAgent[];
-}
 
 /** A project's ACTIVE agents with their waits and attention, as `loadProjectAgents` left them. */
 export interface ProjectAgentsStatus {
@@ -87,8 +74,6 @@ export interface AgentRead {
 }
 
 interface AgentsState {
-  /** By the wrapper repository's id. */
-  readonly projects: Readonly<Record<string, ProjectWorkspaces>>;
   /** By the project's id (qits-projects' uuid). */
   readonly projectAgents: Readonly<Record<string, ProjectAgentsStatus>>;
   /** By the slot's row id. */
@@ -101,8 +86,10 @@ interface AgentsState {
   readonly agents: Readonly<Record<string, AgentRead>>;
 }
 
-const notRemoved = <T extends { readonly state?: string }>(agents: readonly T[] | undefined) =>
-  (agents ?? []).filter((agent) => agent.state !== 'REMOVED');
+/** The agents of `agents` that are not removed, in their order. */
+export const notRemoved = <T extends { readonly state?: string }>(
+  agents: readonly T[] | undefined,
+): T[] => (agents ?? []).filter((agent) => agent.state !== 'REMOVED');
 
 /**
  * Whether a work item's qualified id (`<slug>-<n>`) is one of the project `slug`'s. Exact: `qits-12`
@@ -120,11 +107,10 @@ const failedWith = (status: number | undefined): ReadStatus =>
 
 /**
  * The workspace pages' reads from qits-workspaces (epic qits-1230): what
- * qits-workspaces-frontend's overview, slot and agent pages read, without their writes.
+ * qits-workspaces-frontend's slot and agent pages read, without their writes. The Agents page's
+ * slots and their agents are no longer read here: the page reads them through `qitsResource`
+ * (`agents.operations.ts`, qits-2143), with this file's `notRemoved` and `ofProject`.
  *
- * - `loadProject(repositoryId, slug)`: the wrapper's slots (`listWorkspaces?repositoryId=`) and
- *   the project's agents (`listAgents`, every agent, of which it keeps those not removed that work
- *   in the wrapper or on one of the project's items, `<slug>-<n>`).
  * - `loadSlot(id)`: one slot's status (`loadSlotStatus`) and the agents it hosts
  *   (`listWorkspaceAgents`, epic qits-1667).
  * - `loadSlotStatus(id)`: the slot (`getWorkspace`) and the process starting its container, if one
@@ -157,7 +143,6 @@ const failedWith = (status: number | undefined): ReadStatus =>
 export const AgentsStore = signalStore(
   { providedIn: 'root' },
   withState<AgentsState>({
-    projects: {},
     projectAgents: {},
     slots: {},
     slotAgents: {},
@@ -167,8 +152,6 @@ export const AgentsStore = signalStore(
   withMethods((store) => {
     const refreshOn = injectRefreshOn();
 
-    const setProject = (id: string, value: ProjectWorkspaces) =>
-      patchState(store, { projects: { ...store.projects(), [id]: value } });
     const setProjectAgents = (id: string, value: ProjectAgentsStatus) =>
       patchState(store, { projectAgents: { ...store.projectAgents(), [id]: value } });
     const setSlot = (id: number, value: SlotStatus) =>
@@ -242,14 +225,7 @@ export const AgentsStore = signalStore(
             names: AGENT_STATUS_EVENTS,
             when: (_event, ids) => {
               const id = projectId();
-              if (!id) return false;
-              if (ids.projectId) return ids.projectId === id;
-              const listed = store.projectAgents()[id]?.agents ?? [];
-              return listed.some(
-                (agent) =>
-                  (!!ids.agentId && agent.agentId === ids.agentId) ||
-                  (!!ids.repositoryId && agent.repositoryId === ids.repositoryId),
-              );
+              return aboutProjectAgents(ids, id, (id && store.projectAgents()[id]?.agents) || []);
             },
             debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
             refresh: () => {
@@ -259,29 +235,6 @@ export const AgentsStore = signalStore(
           },
           destroy,
         );
-      },
-      async loadProject(repositoryId: string, slug?: string): Promise<void> {
-        if (!repositoryId) return;
-        if (!store.projects()[repositoryId]) {
-          setProject(repositoryId, { status: 'loading', slots: [], agents: [] });
-        }
-        const [slots, agents] = await Promise.all([
-          consume(listWorkspaces({ query: { repositoryId } }), LIST_PROJECT_SLOTS),
-          consume(listAgents(), LIST_PROJECT_AGENTS),
-        ]);
-        if (slots.error !== undefined || agents.error !== undefined) {
-          if (store.projects()[repositoryId]?.status !== 'loaded') {
-            setProject(repositoryId, { status: 'error', slots: [], agents: [] });
-          }
-          return;
-        }
-        setProject(repositoryId, {
-          status: 'loaded',
-          slots: (slots.data?.entries ?? []).flatMap((e) => (e.workspace ? [e.workspace] : [])),
-          agents: notRemoved(agents.data?.agents).filter(
-            (a) => a.repositoryId === repositoryId || ofProject(a.entityId, slug),
-          ),
-        });
       },
       loadSlotStatus,
       async loadSlot(id: number): Promise<void> {
@@ -343,9 +296,6 @@ export const AgentsStore = signalStore(
       },
       agentOf(agentId: string): AgentRead | undefined {
         return store.agents()[agentId];
-      },
-      projectOf(repositoryId: string): ProjectWorkspaces | undefined {
-        return store.projects()[repositoryId];
       },
       slotOf(id: number): SlotStatus | undefined {
         return store.slots()[id];

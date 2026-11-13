@@ -22121,6 +22121,181 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "listProjectRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-workspaces",
+            "kind": "ui",
+            "route": "projects/:slug/agents, projects/:slug/repositories, projects/:slug/repositories/:repo/ui-builder"
+          }
+        }
+      },
+      "description": "show-project-workspaces: listProjectRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with repositories in components",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
+                }
+              },
+              {
+                "repository": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
+                }
+              }
+            ],
+            "wrapper": {
+              "repositoryId": "00000000-0000-4000-8000-000000000004"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.entries[*].repository.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].repository.mainBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.wrapper.repositoryId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "getReleaseRequestChangeDiff"
           },
           "qits-trigger": {

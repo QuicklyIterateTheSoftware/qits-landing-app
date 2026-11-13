@@ -11,7 +11,7 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
-import { assertPactPart } from '../../../testing/pact-part';
+import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import {
   BACKUP_SYNC_PROJECT,
   LIST_PROJECT_REPOSITORIES,
@@ -32,7 +32,14 @@ import { RepositoriesStore } from './repositories.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS = ['listProjectRepositories', 'backupSyncProject'];
+/** The Agents page's own read of the list (`show-project-workspaces`) is `repositories.operations.pact.spec.ts`'s. */
+const OPERATIONS: readonly OwnedOperation[] = [
+  {
+    operationId: 'listProjectRepositories',
+    interactions: ['show-project-repositories', 'show-project-repositories-tree'],
+  },
+  'backupSyncProject',
+];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-repositories-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });

@@ -1,8 +1,7 @@
 import type { DestroyRef } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { consume } from '@qits/angular';
-import { injectRefreshOn, payloadField } from '$core/events/refresh-on';
-import type { DomainEvent } from '$core/events/domain-events';
+import { injectRefreshOn, payloadField, type WithPayload } from '$core/events/refresh-on';
 import {
   listProjectRepositories,
   postProjectsApiProjectsByProjectIdRepositoriesBackupSync,
@@ -122,10 +121,28 @@ export const RepositoriesStore = signalStore(
   }),
 );
 
-/** Whether `event` is a commit to the main branch of the wrapper `repositories` names. */
-function movesWrapper(event: DomainEvent, repositories: ProjectRepositories | undefined): boolean {
+/**
+ * What `movesWrapper` reads of a project's repositories: which one is the wrapper, and its main
+ * branch. `ProjectRepositories` holds it, and so does a read of `PROJECT_WRAPPER` (the Agents page's
+ * `LIST_PROJECT_WRAPPER`, qits-2143).
+ */
+export interface WrapperBranches {
+  readonly entries?: readonly {
+    readonly repository?: { readonly id?: string; readonly mainBranch?: string };
+  }[];
+  readonly wrapper?: { readonly repositoryId?: string };
+}
+
+/**
+ * Whether `event` (a `SCMPublishCommit`) is a commit to the main branch of the wrapper
+ * `repositories` names (`main` when its entry names none).
+ */
+export function movesWrapper(
+  event: WithPayload,
+  repositories: WrapperBranches | undefined,
+): boolean {
   const wrapperId = repositories?.wrapper?.repositoryId;
   if (!wrapperId || payloadField(event, 'repoId') !== wrapperId) return false;
-  const wrapper = repositories.entries.find((entry) => entry.repository?.id === wrapperId);
+  const wrapper = repositories.entries?.find((entry) => entry.repository?.id === wrapperId);
   return payloadField(event, 'branch') === (wrapper?.repository?.mainBranch || 'main');
 }

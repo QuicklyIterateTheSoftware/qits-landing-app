@@ -1,7 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { outcomeRecords } from '@qits/angular/testing/browser';
+import { outcomeRecords, visibleDataMarks } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import {
@@ -25,6 +25,10 @@ import {
  *
  * The clock is pinned four minutes after the recordings' instants, so a wait reads "4m ago". The
  * event stream never connects.
+ *
+ * The page reads through its own `qitsResource`s (qits-2143): its ACTIVE agents are a request of
+ * their own beside the agents menu's identical one, and `openRoute` answers both. Its lists and rows
+ * carry the data marks (qits-2141), which the first test reads back (`visibleDataMarks`).
  *
  * A slot's row is a declared exit (`open-agents-slot` `slot`, epic qits-2000), shown by
  * `slots-and-agents` and followed once. The slot's page it leaves for is its own spec's: its reads
@@ -102,6 +106,29 @@ describe('ProjectAgentsPage (screenshots)', () => {
       .element(view.getByRole('link', { name: /ws-contract/ }))
       .toHaveAttribute('href', `/projects/${project.slug}/workspaces/1`);
     await expect.element(view).toMatchTextContent('placed on a runner');
+
+    // The data marks (qits-2141): each list names its read, each row its record.
+    const marks = visibleDataMarks(opened.page, document);
+    const rows = (source: string, key: string) =>
+      new Set(
+        marks
+          .filter((mark) => mark.source === source && mark.item?.startsWith(`${key}=`))
+          .map((mark) => mark.item),
+      );
+    expect(rows('qits-workspaces-service#listAgents', 'agentId')).toEqual(
+      new Set(agents.agents.map((a: { agentId: string }) => `agentId=${a.agentId}`)),
+    );
+    const slots = await goldenMaster(WORKSPACES, 'listWorkspaces', 'qits-workspaces');
+    expect(rows('qits-workspaces-service#listWorkspaces', 'id')).toEqual(
+      new Set(slots.entries.map((e: { workspace: { id: number } }) => `id=${e.workspace.id}`)),
+    );
+    expect(marks).toContainEqual({
+      source: 'qits-workspaces-service#listWorkspaces',
+      item: `id=${slots.entries[0].workspace.id}`,
+      field: 'workspaceId',
+      derived: [],
+    });
+
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('slots-and-agents', { kind: 'DATA' });

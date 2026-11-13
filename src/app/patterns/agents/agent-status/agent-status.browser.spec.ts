@@ -10,7 +10,8 @@ import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
-import { AgentStatus, type AgentStatusData } from './agent-status';
+import type { ProjectStatusAgent } from '$core/workspaces/agents.consumes';
+import { AgentStatus } from './agent-status';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -45,7 +46,7 @@ const OVERDUE = 'a project with an agent overdue on a release request';
   `,
 })
 class Statuses {
-  readonly agents = input.required<readonly AgentStatusData[]>();
+  readonly agents = input.required<readonly ProjectStatusAgent[]>();
 }
 
 describe('AgentStatus (screenshots)', () => {
@@ -167,7 +168,7 @@ describe('AgentStatus (screenshots)', () => {
 
   it('act-on-agent-attention prompt: Prompt agent opens the agent’s Chat tab', async () => {
     const { agent, agents } = await shown(NEEDING_ATTENTION);
-    const idle = agents.find((a: AgentStatusData) => a.attention?.code === 'IDLE_NO_WAIT');
+    const idle = agents.find((a: ProjectStatusAgent) => a.attention?.code === 'IDLE_NO_WAIT');
     const { url, reached } = await follow(
       agent(idle.entityId).getByRole('link', { name: 'Prompt agent' }),
     );

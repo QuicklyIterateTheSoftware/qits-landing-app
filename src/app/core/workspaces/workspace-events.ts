@@ -1,4 +1,4 @@
-import type { DomainEvent } from '$core/events/domain-events';
+import { payloadOf, type PayloadIds, type WithPayload } from '$core/events/refresh-on';
 
 /**
  * qits-workspaces' lifecycle events (qits-1236, its `qits-workspaces-events` vocabulary): an agent
@@ -110,25 +110,19 @@ export interface WorkspaceEventIds {
 }
 
 /** The ids `event`'s payload names; none when it names none, or is not JSON. */
-export function workspaceEventIds(event: DomainEvent): WorkspaceEventIds {
-  if (!event.payload) return {};
-  try {
-    const payload: unknown = JSON.parse(event.payload);
-    if (!payload || typeof payload !== 'object') return {};
-    const record = payload as Record<string, unknown>;
-    const id = (key: string) => {
-      const value = record[key];
-      return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined;
-    };
-    return {
-      agentId: id('agentId'),
-      workId: id('workId'),
-      workspaceId: id('workspaceId'),
-      repositoryId: id('repositoryId'),
-    };
-  } catch {
-    return {};
-  }
+export function workspaceEventIds(event: WithPayload): WorkspaceEventIds {
+  const record = payloadOf(event);
+  if (!record) return {};
+  const id = (key: string) => {
+    const value = record[key];
+    return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined;
+  };
+  return {
+    agentId: id('agentId'),
+    workId: id('workId'),
+    workspaceId: id('workspaceId'),
+    repositoryId: id('repositoryId'),
+  };
 }
 
 /**
@@ -137,7 +131,7 @@ export function workspaceEventIds(event: DomainEvent): WorkspaceEventIds {
  * scopes (the wrapper and each agent it lists); an event that names none of them is somebody else's.
  */
 export function concerns(
-  event: DomainEvent,
+  event: WithPayload,
   scope: WorkspaceEventIds | readonly WorkspaceEventIds[],
 ): boolean {
   const ids = workspaceEventIds(event);
@@ -151,5 +145,27 @@ function matches(ids: WorkspaceEventIds, scope: WorkspaceEventIds): boolean {
     (!!scope.workspaceId && ids.workspaceId === scope.workspaceId) ||
     (!!scope.agentId && ids.agentId === scope.agentId) ||
     (!!scope.workId && ids.workId === scope.workId)
+  );
+}
+
+/**
+ * Whether an `AGENT_STATUS_EVENTS` event (its payload's `ids`) is about the ACTIVE agents of the
+ * project `projectId` while `listed` are the ones shown: the five status events by their
+ * `projectId`; `AgentNudged` and `ACTIVE_AGENT_EVENTS`, which name no project, by an agent or a
+ * repository of the agents already listed. So an agent placed in a repository of the project none
+ * of whose agents is listed yet shows on the next status event or visit. Nothing is about no
+ * project. `AgentsStore.followProject` and the Agents page's `qitsResource` (qits-2143) narrow by it.
+ */
+export function aboutProjectAgents(
+  ids: PayloadIds,
+  projectId: string | undefined,
+  listed: readonly { readonly agentId?: string; readonly repositoryId?: string }[],
+): boolean {
+  if (!projectId) return false;
+  if (ids.projectId) return ids.projectId === projectId;
+  return listed.some(
+    (agent) =>
+      (!!ids.agentId && agent.agentId === ids.agentId) ||
+      (!!ids.repositoryId && agent.repositoryId === ids.repositoryId),
   );
 }

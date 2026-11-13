@@ -39,6 +39,20 @@ export const LIST_PROJECT_REPOSITORIES = [
  */
 export const PROJECT_CARD_REPOSITORIES = ['entries[].repository.id'] as const;
 
+/**
+ * `LIST_PROJECT_WRAPPER` (`repositories.operations.ts`, qits-2143), the Agents page's own read of
+ * the project's repositories: which repository is the wrapper (`wrapper.repositoryId`), whose slots
+ * and agents the page then reads, and that repository's main branch (`entries[].repository.id`,
+ * `mainBranch`), the branch a commit to which reads the list again (`SCMPublishCommit`, as
+ * `RepositoriesStore.follow` does). A part of `LIST_PROJECT_REPOSITORIES`, so its pact interaction
+ * binds only these.
+ */
+export const PROJECT_WRAPPER = [
+  'entries[].repository.id',
+  'entries[].repository.mainBranch',
+  'wrapper.repositoryId',
+] as const satisfies readonly (typeof LIST_PROJECT_REPOSITORIES)[number][];
+
 type Answer = Consumed<ListProjectRepositoriesResponses[200], typeof LIST_PROJECT_REPOSITORIES>;
 
 /** One repository entry, cut to what the store reads. */

@@ -4,7 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
-import { AgentRow, type AgentRowData } from './agent-row';
+import { AgentRow, type AgentRowAgent } from './agent-row';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -33,7 +33,7 @@ const NOW = new Date('2026-01-01T00:04:00Z');
   `,
 })
 class Rows {
-  readonly agents = input.required<readonly AgentRowData[]>();
+  readonly agents = input.required<readonly AgentRowAgent[]>();
   readonly slug = input.required<string>();
 }
 
@@ -71,8 +71,8 @@ describe('AgentRow (screenshots)', () => {
   it('open-agent-row open: the agent’s name opens the agent’s page', async () => {
     const { locator, listed } = await shown();
     const agent = listed.agents.find(
-      (a: AgentRowData) => a.entityId === 'contract-00000001-9',
-    ) as AgentRowData;
+      (a: AgentRowAgent) => a.entityId === 'contract-00000001-9',
+    ) as AgentRowAgent;
     await userEvent.click(locator.getByRole('link', { name: 'contract-00000001-9' }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/agents/${agent.agentId}`);

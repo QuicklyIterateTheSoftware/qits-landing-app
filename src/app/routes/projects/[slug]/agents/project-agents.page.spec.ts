@@ -4,10 +4,13 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { filter, Subject } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../../api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
+import { WORKSPACE_REFRESH_DEBOUNCE_MS } from '$core/workspaces/workspace-events';
 import { SelectedProject } from '$core/projects/selected-project';
 import { goldenMaster, workspacesGoldenMaster } from '../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../testing/platform-origins';
@@ -23,12 +26,16 @@ const PROJECT_ID = 'p-1';
 /**
  * `ProjectAgentsPage`: the project's ACTIVE agents (inline, with the waits and attention no
  * published state records yet), then its wrapper's slots under "Workspaces" (qits-projects' and
- * qits-workspaces' recordings), with the Targets link.
+ * qits-workspaces' recordings), with the Targets link and the data marks (qits-2141); and its
+ * `qitsResource`s read again after the domain events about them (qits-1270, qits-2143).
  */
 describe('ProjectAgentsPage', () => {
   let http: HttpTestingController;
+  /** The app's one stream, as the page's resources read it (`QITS_DOMAIN_EVENTS`). */
+  let events: Subject<DomainEvent>;
 
   beforeEach(() => {
+    events = new Subject<DomainEvent>();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([{ path: 'projects/:slug/agents', component: ProjectAgentsPage }]),
@@ -41,10 +48,15 @@ describe('ProjectAgentsPage', () => {
           provide: SelectedProject,
           useValue: { slug: signal(SLUG), project: signal({ id: PROJECT_ID }) },
         },
+        // The app's one stream, faked; the page's resources read it as `app.config.ts` provides it.
         {
-          provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+          provide: DomainEvents,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
         },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -114,6 +126,45 @@ describe('ProjectAgentsPage', () => {
       a.getAttribute('href')?.startsWith(`/projects/${SLUG}/workspaces/`),
     );
     expect(slot?.textContent).toContain('agents');
+
+    // The data marks (qits-2141): each list names its read, each row its record.
+    const sources = [...element.querySelectorAll('[data-qits-source]')].map((e) =>
+      e.getAttribute('data-qits-source'),
+    );
+    expect(sources).toEqual([
+      'qits-workspaces-service#listAgents',
+      'qits-workspaces-service#listWorkspaces',
+    ]);
+    expect(element.querySelector('li[data-qits-item="agentId=a-1"]')).not.toBeNull();
+    expect(slot?.closest('li')?.getAttribute('data-qits-item')).toMatch(/^id=\d+$/);
+    expect(slot?.querySelector('[data-qits-field="workspaceId"]')?.textContent).toContain('ws-');
+  });
+
+  it('reads the active agents again after a status event about the project, not another’s', async () => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl(`/projects/${SLUG}/agents`);
+    await settle();
+    const active = `/workspaces/api/agents?projectId=${PROJECT_ID}&state=ACTIVE`;
+    http.expectOne(active).flush({ agents: [] });
+    http
+      .expectOne(`/projects/api/projects/${PROJECT_ID}/repositories`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    await answered(harness);
+
+    const status = (projectId: string): DomainEvent => ({
+      name: 'AgentWaitOpened',
+      payload: JSON.stringify({ projectId, agentId: 'a-9' }),
+    });
+    events.next(status('another-project'));
+    await new Promise((resolve) => setTimeout(resolve, WORKSPACE_REFRESH_DEBOUNCE_MS + 100));
+    await answered(harness);
+    http.expectNone(active);
+
+    events.next(status(PROJECT_ID));
+    events.next(status(PROJECT_ID));
+    await new Promise((resolve) => setTimeout(resolve, WORKSPACE_REFRESH_DEBOUNCE_MS + 100));
+    await answered(harness);
+    http.expectOne(active).flush({ agents: [] });
   });
 
   it('says when the project has no active agents', async () => {

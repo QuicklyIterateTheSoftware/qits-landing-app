@@ -10,13 +10,14 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `AgentsStore` reads from qits-workspaces' answers for the workspace pages (epic qits-1230).
- * The store passes each list to `consume(...)`, so it cannot read any other field, and its pact spec
- * passes the same lists as `consumes`. To read another field, add it here.
+ * What `AgentsStore` and the Agents page's operations (`agents.operations.ts`, qits-2143) read from
+ * qits-workspaces' answers for the workspace pages (epic qits-1230). The store passes each list to
+ * `consume(...)`, an operation declares it as its `consumes`, so neither can read any other field,
+ * and their pact specs pass the same lists as `consumes`. To read another field, add it here.
  */
 
 /**
- * `AgentsStore.loadProject(repositoryId)`, the Agents page's Workspaces: the wrapper's slots
+ * `LIST_WRAPPER_SLOTS` (`agents.operations.ts`), the Agents page's Workspaces: the wrapper's slots
  * (`listWorkspaces`, ACTIVE only), each with its label, container state and placement.
  *
  * No longer reads `workspace.runner` (epic qits-1481, ahead of qits-workspaces-service dropping
@@ -31,7 +32,7 @@ export const LIST_PROJECT_SLOTS = [
   'entries[].workspace.admin',
 ] as const;
 
-/** One slot of the project's list, cut to what the store reads. */
+/** One slot of the project's list, cut to what the page reads. */
 export type ProjectSlot = NonNullable<
   NonNullable<
     Consumed<ListWorkspacesResponses[200], typeof LIST_PROJECT_SLOTS>['entries']
@@ -39,9 +40,11 @@ export type ProjectSlot = NonNullable<
 >;
 
 /**
- * `AgentsStore.loadProject(repositoryId)`: every agent (`listAgents`, unfiltered, newest first),
- * of which the page keeps the wrapper's that are not removed — as qits-workspaces-frontend's
- * overview did. Each with its item, its slot, its run state and what it waits on (qits-1229).
+ * `LIST_WRAPPER_AGENTS` (`agents.operations.ts`), the Agents page: every agent (`listAgents`,
+ * unfiltered, newest first), of which the page keeps the wrapper's that are not removed — as
+ * qits-workspaces-frontend's overview did — to count those each slot hosts (`workspaceRowId`) and to
+ * follow their lifecycle events (`agentId`). Each with its item, its slot, its run state and what it
+ * waits on (qits-1229).
  */
 export const LIST_PROJECT_AGENTS = [
   'agents[].agentId',
@@ -58,7 +61,7 @@ export const LIST_PROJECT_AGENTS = [
   'agents[].waitingOnSince',
 ] as const;
 
-/** One agent of the project's list, cut to what the store reads. */
+/** One agent of the project's list, cut to what the page reads. */
 export type ProjectAgent = NonNullable<
   Consumed<ListAgentsResponses[200], typeof LIST_PROJECT_AGENTS>['agents']
 >[number];
@@ -179,12 +182,16 @@ export const GET_AGENT = [
 export type AgentDetail = Consumed<GetAgentResponses[200], typeof GET_AGENT>;
 
 /**
- * `AgentsStore.loadProjectAgents(projectId)`, the project's agents with what each waits on and what
- * it needs a person for (epic qits-1681): `listAgents?projectId=&state=ACTIVE`, every ACTIVE agent
- * whose repository is one of the project's. Each with its item (and the item's status and block),
- * its slot, how it runs, its activity, its open waits with their subjects, and its attention; and
- * its start-up phase (qits-2007: `phase` QUEUED, PROVISIONING, STARTING or READY, null once yielded
- * or stopped, and `phaseSince`, when it entered it), which the agents menu's chip reads.
+ * `AgentsStore.loadProjectAgents(projectId)` (the agents menu, the agent page) and
+ * `LIST_PROJECT_ACTIVE_AGENTS` (`agents.operations.ts`, the Agents page), the project's agents with
+ * what each waits on and what it needs a person for (epic qits-1681):
+ * `listAgents?projectId=&state=ACTIVE`, every ACTIVE agent whose repository is one of the project's.
+ * Each with its item (and the item's status and block), its slot, how it runs, its activity, its
+ * open waits with their subjects, and its attention; and its start-up phase (qits-2007: `phase`
+ * QUEUED, PROVISIONING, STARTING or READY, null once yielded or stopped, and `phaseSince`, when it
+ * entered it), which the agents menu's chip reads. Its harness and its branch in the wrapper, which
+ * the Agents page's rows show (`app-agent-row`): read since qits-2143, when the row's input took
+ * this type; until then the rows showed them from the answer without the pact binding them.
  *
  * A list of its own, beside `LIST_PROJECT_AGENTS`, until the pinned `@qits/workspaces-golden-masters`
  * holds state `a project with agents needing attention`: the pact binds every field listed here, and
@@ -226,6 +233,8 @@ export const PROJECT_AGENTS = [
   'agents[].deskAskedAt',
   'agents[].phase',
   'agents[].phaseSince',
+  'agents[].harness',
+  'agents[].wrapperBranch',
 ] as const;
 
 /** One of the project's ACTIVE agents, with its waits and attention, cut to what the store reads. */

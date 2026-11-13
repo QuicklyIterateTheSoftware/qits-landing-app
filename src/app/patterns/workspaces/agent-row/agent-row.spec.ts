@@ -1,19 +1,19 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { AgentRow, type AgentRowData } from './agent-row';
+import { AgentRow, type AgentRowAgent } from './agent-row';
 
 @Component({
   imports: [AgentRow],
   template: `<app-agent-row [agent]="agent()" [slug]="slug()" />`,
 })
 class Host {
-  readonly agent = signal<AgentRowData>({});
+  readonly agent = signal<AgentRowAgent>({});
   readonly slug = signal<string | undefined>('qits');
 }
 
 describe('AgentRow', () => {
-  function render(agent: AgentRowData, slug: string | undefined = 'qits') {
+  function render(agent: AgentRowAgent, slug: string | undefined = 'qits') {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(Host);
     fixture.componentInstance.agent.set(agent);

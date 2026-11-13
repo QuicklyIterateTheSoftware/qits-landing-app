@@ -17,8 +17,15 @@
  * then answers each, `http.match`). The shell is shown in one settled state: the
  * viewport the spec sets, its menus closed. Its own states are `shell.layout.browser.spec.ts`'s.
  */
-import { EnvironmentProviders, Provider, reflectComponentType, Type } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import {
+  EnvironmentProviders,
+  inject,
+  Injectable,
+  Provider,
+  reflectComponentType,
+  Type,
+} from '@angular/core';
+import { provideHttpClient, withInterceptors, type HttpInterceptorFn } from '@angular/common/http';
 import {
   HttpTestingController,
   provideHttpClientTesting,
@@ -27,7 +34,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { QitsSession } from '@qits/angular';
+import { QITS_DOMAIN_EVENTS, QitsSession } from '@qits/angular';
 import { routes } from '../../app/app.routes';
 import { client as artifactsClient } from '../../app/api/artifacts/client.gen';
 import { client as ciClient } from '../../app/api/ci/client.gen';
@@ -40,12 +47,26 @@ import { provideHeyApiClient } from '../../app/api/projects/client/client.gen';
 import { client as systemClient } from '../../app/api/system/client.gen';
 import { client as workspaceDaemonClient } from '../../app/api/workspace-daemon/client.gen';
 import { client as workspacesClient } from '../../app/api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { provideTestPlatformOrigins } from '../platform-origins';
+import { finalize } from 'rxjs';
 import { goldenMaster } from './golden-master';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
+
+/** How many requests are sent and not answered yet: the frame's, the page's, any. */
+@Injectable()
+class OpenRequests {
+  count = 0;
+}
+
+/** Counts each request as open from its sending until its answer (or its cancelling). */
+const countOpenRequests: HttpInterceptorFn = (request, next) => {
+  const open = inject(OpenRequests);
+  open.count++;
+  return next(request).pipe(finalize(() => open.count--));
+};
 
 /**
  * The providers a spec opening the app's routes needs, before its own. Configuration only: every
@@ -54,7 +75,8 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
   return [
     provideRouter(routes),
-    provideHttpClient(),
+    OpenRequests,
+    provideHttpClient(withInterceptors([countOpenRequests])),
     provideHttpClientTesting(),
     provideHeyApiClient(projectsClient),
     provideHeyApiClient(githostClient),
@@ -72,6 +94,8 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
       provide: EVENT_SOURCE,
       useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
     },
+    // A page's `qitsResource` follows the same stream, as `app.config.ts` provides it.
+    { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
     // Signed in, so `qitsSignedInGuard` passes; no sign-in ever starts.
     { provide: QitsSession, useValue: { ensure: async () => true } },
   ];
@@ -226,8 +250,28 @@ async function runToStable(
     await settle();
     if (!(await answerRound()) && round >= 2) break;
   }
-  await harness.fixture.whenStable();
+  await stableOrAwaitingAnswers(harness);
   harness.fixture.detectChanges();
+}
+
+/**
+ * Waits until the app is stable, or as stable as it gets while a request waits for the spec's
+ * answer: a `qitsResource` that is loading is a pending task (Angular's `resource()`), so while its
+ * request is open, stability never comes (qits-2143, the Agents page). With a request open, a few
+ * turns of the event loop end the wait instead; the spec answers it and calls `settled()` again.
+ * With none open, it waits for stability, as before (a lazy page's chunk, a navigation).
+ */
+async function stableOrAwaitingAnswers(harness: RouterTestingHarness): Promise<void> {
+  const open = TestBed.inject(OpenRequests);
+  let stable = false;
+  const awaitingAnswers = async () => {
+    for (let turn = 0; !stable; turn++) {
+      await settle();
+      if (turn >= 5 && open.count > 0) return;
+    }
+  };
+  await Promise.race([harness.fixture.whenStable().then(() => (stable = true)), awaitingAnswers()]);
+  stable = true;
 }
 
 /**

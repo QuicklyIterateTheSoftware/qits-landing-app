@@ -10,6 +10,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import {
   provideQitsBearerSignIn,
   provideQitsIntegration,
+  QITS_DOMAIN_EVENTS,
   qitsBearerInterceptor,
 } from '@qits/angular';
 import { provideQitsMermaid } from '@qits/ui-components/mermaid';
@@ -25,6 +26,7 @@ import { client as workspacesClient } from './api/workspaces/client.gen';
 import { client as workspaceDaemonClient } from './api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { routes } from './app.routes';
+import { DomainEvents } from '$core/events/domain-events';
 import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
 import { provideAppUpdates } from '$core/updates/app-updates';
 import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
@@ -100,6 +102,9 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(networkAccessClient),
     provideBackendOrigins(),
+    // A `qitsResource`'s `refreshOn` (qits-2145) reads the app's one live stream (qits-1270): the
+    // library opens none of its own.
+    { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
     // Work ids in commit subjects (`<qits-commit-message>`, qits-1897): their briefs through the
     // projects client above (`provideQitsWorkBriefs`), their links to this app's work item page.
     provideWorkReferences(),

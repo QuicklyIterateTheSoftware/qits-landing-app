@@ -7,7 +7,7 @@ import { client as workspacesClient } from '../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../api/workspaces/client/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { workspacesGoldenMaster, workspacesGoldenMasters } from '../../../testing/golden-masters';
-import { AgentsStore, ofProject } from './agents.store';
+import { AgentsStore, notRemoved, ofProject } from './agents.store';
 import { HARNESS_EVENTS, WORKSPACE_REFRESH_DEBOUNCE_MS } from './workspace-events';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -51,51 +51,10 @@ describe('AgentsStore', () => {
 
   afterEach(() => http.verify());
 
-  async function answerProject(repositoryId: string) {
-    const done = store.loadProject(repositoryId);
-    await settle();
-    http
-      .expectOne(`${API}/workspaces?repositoryId=${repositoryId}`)
-      .flush(workspacesGoldenMaster(PROJECT, 'listWorkspaces'));
-    http.expectOne(`${API}/agents`).flush(workspacesGoldenMaster(PROJECT, 'listAgents'));
-    await done;
-  }
-
-  it('holds the wrapper’s slots, and its agents that are not removed', async () => {
-    const repositoryId = params(PROJECT)['repositoryId'];
-    await answerProject(repositoryId);
-    const project = store.projectOf(repositoryId)!;
-    expect(project.status).toBe('loaded');
-    expect(project.slots.map((s) => s.workspaceId)).toEqual(['ws-contract']);
-    expect(project.agents.map((a) => a.entityId)).toEqual([
-      'contract-00000001-10',
-      'contract-00000001-9',
-      'contract-00000001-1',
-    ]);
-  });
-
-  it('leaves out another wrapper’s agents, and keeps the last good answer when a read fails', async () => {
-    await answerProject('another-wrapper');
-    expect(store.projectOf('another-wrapper')?.agents).toEqual([]);
-    const again = store.loadProject('another-wrapper');
-    await settle();
-    http
-      .expectOne(`${API}/workspaces?repositoryId=another-wrapper`)
-      .flush(null, { status: 500, statusText: 'Server Error' });
-    http.expectOne(`${API}/agents`).flush(workspacesGoldenMaster(PROJECT, 'listAgents'));
-    await again;
-    expect(store.projectOf('another-wrapper')?.status).toBe('loaded');
-  });
-
-  it('keeps the agents on the project’s items, whatever wrapper the page names', async () => {
-    const done = store.loadProject('another-wrapper', 'contract-00000001');
-    await settle();
-    http
-      .expectOne(`${API}/workspaces?repositoryId=another-wrapper`)
-      .flush(workspacesGoldenMaster(PROJECT, 'listWorkspaces'));
-    http.expectOne(`${API}/agents`).flush(workspacesGoldenMaster(PROJECT, 'listAgents'));
-    await done;
-    expect(store.projectOf('another-wrapper')?.agents).toHaveLength(3);
+  it('leaves out the removed agents, keeping the order', () => {
+    const agents = [{ state: 'ACTIVE' }, { state: 'REMOVED' }, { state: 'OBSOLETE' }, {}];
+    expect(notRemoved(agents)).toEqual([{ state: 'ACTIVE' }, { state: 'OBSOLETE' }, {}]);
+    expect(notRemoved(undefined)).toEqual([]);
   });
 
   it('tells a project’s items by their qualified id, exactly', () => {
