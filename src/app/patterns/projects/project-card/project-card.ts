@@ -3,18 +3,27 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
-  effect,
   inject,
   input,
   PLATFORM_ID,
-  untracked,
 } from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
-import { LocStore, type LanguageLines } from '$core/loc/loc.store';
-import type { Project } from '$core/projects/projects.store';
-import { RepositoriesStore } from '$core/repositories/repositories.store';
-import { WorkStore } from '$core/work/work.store';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+  type QitsDomainEvent,
+} from '@qits/angular';
+import { LinesOfCode, type LanguageLines } from '$core/loc/lines-of-code';
+import type { Project } from '$core/projects/selected-project';
+import { LIST_PROJECT_WRAPPER } from '$core/repositories/repositories.operations';
+import { movesWrapper } from '$core/repositories/repositories.store';
+import { loadState } from '$core/resources/load-state';
+import { countsAsWork } from '$core/work/work.consumes';
+import { PROJECT_CARD_WORK } from '$core/work/work.operations';
 import { CardBody, CardExpandable, CardHeader } from '$ui/components/card/base-card';
 import { CardSilent } from '$ui/components/card/card-silent';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -33,19 +42,37 @@ export const LANGUAGES_SHOWN = 4;
  *   the project's wrapper in a field of its own, so it is not counted.
  * - Its lines of code per language, summed over its repositories, main and test lines apart,
  *   largest first: the first {@link LANGUAGES_SHOWN} by name, and the rest summed as "Other"
- *   (`LocStore`, one request for all cards). No grand total: the rows say it.
+ *   (`LinesOfCode`, one request for all cards). No grand total: the rows say it.
  * - A repository qits-githost counts only at an older commit (`STALE`) shows that count; one never
  *   counted is left out. The table shows its loading spinner only while nothing at all is counted.
  *
- * Staleness (qits-1270): "Components" → `RepositoriesStore.follow` (a commit to the project's
- * wrapper on its main branch reads its repositories again). The lines of code are read once
- * (`LocStore`): qits-githost emits no event when it has counted a commit, so none can say they
- * moved. "Work" is `WorkStore`'s, which keeps its own mapping.
+ * It reads through `qitsResource` (qits-2146): the project's repositories (`LIST_PROJECT_WRAPPER`)
+ * and its planning tree (`PROJECT_CARD_WORK`), in the browser only (the server render has no
+ * session to send); the lines of code are `LinesOfCode`'s, shared by every card. It marks what it
+ * shows (qits-2141): the card is the project, its title the project's name, each tile the read it
+ * counts, the language rows derived from the repositories' ids (their lines are qits-githost's
+ * `listLoc`, which the table names as its source).
+ *
+ * Staleness (qits-1270): "Components" → the repositories' `refreshOn` (a commit to the project's
+ * wrapper on its main branch reads them again, `movesWrapper`, as `RepositoriesStore.follow` did).
+ * The lines of code are read once (`LinesOfCode`): qits-githost emits no event when it has counted
+ * a commit, so none can say they moved. "Work" is read once, as `WorkStore` read a card's.
  */
 @Component({
   selector: 'app-project-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [QitsExit, CardSilent, CardHeader, CardBody, CardExpandable, Spinner, Stat],
+  imports: [
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    CardSilent,
+    CardHeader,
+    CardBody,
+    CardExpandable,
+    Spinner,
+    Stat,
+  ],
   host: { class: 'block' },
   template: `
     <!--
@@ -55,6 +82,8 @@ export const LANGUAGES_SHOWN = 4;
     -->
     <div
       class="relative rounded-xl has-[a.card-link:focus-visible]:ring-1 has-[a.card-link:focus-visible]:ring-line-strong hover:ring-1 hover:ring-line-strong"
+      [qitsEntity]="project()"
+      entityKey="id"
     >
       <ui-card-silent>
         <card-header class="bg-surface-muted text-center text-[1.35rem] text-fg">
@@ -62,21 +91,31 @@ export const LANGUAGES_SHOWN = 4;
             class="card-link text-inherit no-underline outline-none after:absolute after:inset-0 after:z-[1] after:rounded-xl"
             [qitsExit]="opening.project"
             [exitParams]="{ slug: project().slug ?? '' }"
+            [fieldOf]="project()"
+            qitsField="name"
             >{{ project().name }}</a
           >
         </card-header>
         <card-body flush>
           <div class="w-full">
             <div class="grid grid-cols-2">
-              <ui-spinner [state]="workState()">
-                <ui-stat class="work w-full" label="Work" mirrored>
+              <ui-spinner [state]="workState()" [qitsEntityList]="work">
+                <ui-stat
+                  class="work w-full"
+                  label="Work"
+                  mirrored
+                  [fieldOf]="workShown()"
+                  [qitsField]="{ derived: ['entities'] }"
+                >
                   {{ workCount() ?? '–' }}
                 </ui-stat>
               </ui-spinner>
-              <ui-spinner [state]="componentsState()">
+              <ui-spinner [state]="componentsState()" [qitsEntityList]="repositories">
                 <ui-stat
                   class="components w-full [&_dt]:border-l-[0.5px] [&_dt]:border-line-strong"
                   label="Components"
+                  [fieldOf]="repositoriesShown()"
+                  [qitsField]="{ derived: ['entries'] }"
                 >
                   {{ componentCount() ?? '–' }}
                 </ui-stat>
@@ -85,8 +124,16 @@ export const LANGUAGES_SHOWN = 4;
           </div>
         </card-body>
         <card-expandable (opened)="loadLines()">
-          <ui-spinner [state]="linesState()">
-            <table class="languages w-full border-collapse text-[0.8125rem] tabular-nums">
+          <ui-spinner
+            [state]="linesState()"
+            [qitsEntityList]="repositories"
+            [fieldOf]="repositoriesShown()"
+            [qitsField]="{ derived: ['entries'] }"
+          >
+            <table
+              class="languages w-full border-collapse text-[0.8125rem] tabular-nums"
+              data-qits-source="qits-githost-service#listLoc"
+            >
               <thead class="text-[0.5417rem] text-fg-muted">
                 <tr>
                   <th
@@ -122,12 +169,29 @@ export const LANGUAGES_SHOWN = 4;
                   </tr>
                 } @else {
                   @for (row of languageRows(); track row.language) {
-                    <tr class="even:bg-surface-muted">
-                      <th scope="row" class="py-px pr-6 pl-2 text-left font-normal">
+                    <tr class="even:bg-surface-muted" [qitsEntity]="row" entityKey="language">
+                      <th
+                        scope="row"
+                        class="py-px pr-6 pl-2 text-left font-normal"
+                        [fieldOf]="row"
+                        qitsField="language"
+                      >
                         {{ row.language }}
                       </th>
-                      <td class="px-2 py-px text-right">{{ format(row.main) }}</td>
-                      <td class="py-px pr-2 pl-4 text-right">{{ format(row.test) }}</td>
+                      <td
+                        class="px-2 py-px text-right"
+                        [fieldOf]="row"
+                        [qitsField]="{ derived: ['main'] }"
+                      >
+                        {{ format(row.main) }}
+                      </td>
+                      <td
+                        class="py-px pr-2 pl-4 text-right"
+                        [fieldOf]="row"
+                        [qitsField]="{ derived: ['test'] }"
+                      >
+                        {{ format(row.test) }}
+                      </td>
                     </tr>
                   }
                 }
@@ -145,49 +209,60 @@ export class ProjectCard {
   /** The card's title opens the project (`open-project-card`, epic qits-2000). */
   protected readonly opening = outcomes('open-project-card', { project: exit('projects/:slug') });
 
-  private readonly repositoriesStore = inject(RepositoriesStore);
-  private readonly workStore = inject(WorkStore);
-  private readonly loc = inject(LocStore);
+  private readonly loc = inject(LinesOfCode);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  protected readonly repositories = computed(() => {
-    const projectId = this.project().id;
-    return projectId ? this.repositoriesStore.byProject()[projectId] : undefined;
+  /** The project's id, in the browser only: the reads wait for it. */
+  private readonly projectId = computed(() => (this.browser ? this.project().id : undefined));
+
+  /** The project's repositories, read again after a commit to its wrapper's main branch. */
+  protected readonly repositories = qitsResource(
+    LIST_PROJECT_WRAPPER,
+    () => {
+      const projectId = this.projectId();
+      return projectId ? { path: { projectId } } : undefined;
+    },
+    { refreshOn: { names: ['SCMPublishCommit'], when: (event) => this.commitsToWrapper(event) } },
+  );
+
+  /** The project's planning tree, read once. */
+  protected readonly work = qitsResource(PROJECT_CARD_WORK, () => {
+    const project = this.projectId();
+    return project ? { path: { project } } : undefined;
   });
 
-  protected readonly work = computed(() => {
-    const projectId = this.project().id;
-    return projectId ? this.workStore.byProject()[projectId] : undefined;
-  });
+  /** The repositories read; an empty one until it answered. */
+  protected readonly repositoriesShown = computed(
+    () => (this.repositories.hasValue() ? this.repositories.value() : undefined) ?? NO_ANSWER,
+  );
 
-  protected readonly workState = computed((): LoadState => {
-    const status = this.work()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
+  /** The planning tree read; an empty one until it answered. */
+  protected readonly workShown = computed(
+    () => (this.work.hasValue() ? this.work.value() : undefined) ?? NO_ANSWER,
+  );
+
+  protected readonly workState = computed((): LoadState => loadState(this.work));
 
   /** How many of the project's work entities count as work (`countsAsWork`), once loaded. */
-  protected readonly workCount = computed(() => {
-    const work = this.work();
-    return work?.status === 'loaded' ? work.count : undefined;
-  });
+  protected readonly workCount = computed(() =>
+    this.work.hasValue()
+      ? (this.work.value()?.entities ?? []).filter(countsAsWork).length
+      : undefined,
+  );
 
-  /** True until the repositories answer (or fail). */
-  protected readonly componentsState = computed((): LoadState => {
-    const status = this.repositories()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
+  /** Loading until the repositories answer (or fail). */
+  protected readonly componentsState = computed((): LoadState => loadState(this.repositories));
 
-  protected readonly componentCount = computed(() => {
-    const repositories = this.repositories();
-    return repositories?.status === 'loaded' ? repositories.entries.length : undefined;
-  });
+  protected readonly componentCount = computed(() =>
+    this.repositories.hasValue() ? (this.repositories.value()?.entries ?? []).length : undefined,
+  );
 
   /** The project's lines of code, 'error' when qits-githost failed, undefined until known. */
   protected readonly lines = computed(() => {
     if (this.loc.status() === 'error') return 'error' as const;
-    const repositories = this.repositories();
-    if (repositories?.status !== 'loaded') return undefined;
-    const ids = repositories.entries.flatMap((entry) => entry.repository?.id ?? []);
-    return this.loc.totals(ids);
+    if (!this.repositories.hasValue()) return undefined;
+    const entries = this.repositories.value()?.entries ?? [];
+    return this.loc.totals(entries.flatMap((entry) => entry.repository?.id ?? []));
   });
 
   /** Loading until something is counted; an error when qits-githost failed. */
@@ -217,7 +292,7 @@ export class ProjectCard {
 
   /** The lines are loaded on first opening only (one request for every card, then shared). */
   protected loadLines(): void {
-    void this.loc.load();
+    this.loc.load();
   }
 
   /** Thousands separated with commas, the same on every machine. */
@@ -225,19 +300,14 @@ export class ProjectCard {
     return value.toLocaleString('en-US');
   }
 
-  constructor() {
-    // In the browser only: the server render holds no token to send. Only the
-    // project id is tracked: the loads read the store's state, and tracking that would
-    // fetch again every time an answer lands, without end after an error.
-    const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    effect(() => {
-      const projectId = this.project().id;
-      if (!browser || !projectId) return;
-      untracked(() => {
-        void this.workStore.load(projectId);
-        void this.repositoriesStore.load(projectId);
-      });
-    });
-    this.repositoriesStore.follow(() => this.project().id, inject(DestroyRef));
+  /** Whether a commit is to the wrapper's main branch, as the repositories read names them. */
+  private commitsToWrapper(event: QitsDomainEvent): boolean {
+    return movesWrapper(
+      event,
+      this.repositories.hasValue() ? this.repositories.value() : undefined,
+    );
   }
 }
+
+/** What a tile's mark reads before its read answered: nothing. */
+const NO_ANSWER: { readonly entries?: readonly unknown[] } = {};

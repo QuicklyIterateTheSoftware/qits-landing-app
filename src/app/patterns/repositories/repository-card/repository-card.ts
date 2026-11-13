@@ -1,9 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+import { exit, outcomes, QitsEntity, QitsExit, QitsField } from '@qits/angular';
 import type { RepositoryEntry } from '$core/repositories/repositories.consumes';
 import { CardBody, CardExpandable, CardHeader } from '$ui/components/card/base-card';
 import { CardSilent } from '$ui/components/card/card-silent';
 import { Stat } from '$ui/components/stat/stat';
+
+/** A repository as the card shows it: the entry's, cut to what `PROJECT_REPOSITORIES` reads. */
+type Repository = NonNullable<RepositoryEntry['repository']>;
+
+/** What the card shows before (or without) a repository: nothing. */
+const NO_REPOSITORY: Repository = {};
 
 /** How a repository's last backup reads on its card, and the colour it reads in. */
 interface Backup {
@@ -25,35 +31,60 @@ interface Backup {
  * builder at the bottom of the body (qits-1951). A SERVICE links its contracts (provider states)
  * and its entity map there instead (qits-1994). Each link is a declared exit of the open project
  * (`slug`): `open-repository-pages` `uiBuilder`, `contracts` and `entities` (epic qits-2000).
+ *
+ * It marks what it shows (qits-2146): the card is the repository (`qitsEntity`, by `id`), its
+ * name, clone URL, backup URL and main branch are fields, and the backup state and the archetype
+ * are marked derived from the fields they read. The entry is typed from the consumed client
+ * answer (`RepositoryEntry`, `PROJECT_REPOSITORIES`).
  */
 @Component({
   selector: 'app-repository-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardSilent, CardHeader, CardBody, CardExpandable, Stat, QitsExit],
+  imports: [
+    CardSilent,
+    CardHeader,
+    CardBody,
+    CardExpandable,
+    Stat,
+    QitsEntity,
+    QitsExit,
+    QitsField,
+  ],
   host: { class: 'block' },
   template: `
-    <ui-card-silent>
-      <card-header class="bg-surface-muted text-center font-mono text-fg">{{ name() }}</card-header>
+    @let repository = shown();
+    <ui-card-silent [qitsEntity]="repository" entityKey="id">
+      <card-header
+        class="bg-surface-muted text-center font-mono text-fg"
+        [fieldOf]="repository"
+        qitsField="name"
+        >{{ repository.name ?? '' }}</card-header
+      >
       <card-body flush>
         <div class="grid grid-cols-2">
           <ui-stat class="backup w-full" label="Backup" mirrored>
+            @let backup = backupOf(repository);
             <span
               class="whitespace-nowrap"
               [class]="
-                backup().tone === 'ok'
+                backup.tone === 'ok'
                   ? 'text-success'
-                  : backup().tone === 'failed'
+                  : backup.tone === 'failed'
                     ? 'text-danger'
                     : 'text-fg-soft'
               "
-              >{{ backup().label }}</span
+              [fieldOf]="repository"
+              [qitsField]="{ derived: ['backupUrl', 'lastBackup.outcome'] }"
+              >{{ backup.label }}</span
             >
           </ui-stat>
           <ui-stat
             class="archetype w-full [&_dt]:border-l-[0.5px] [&_dt]:border-line-strong"
             label="Archetype"
           >
-            {{ archetype() }}
+            <span [fieldOf]="repository" [qitsField]="{ derived: ['archetype'] }">{{
+              archetypeOf(repository)
+            }}</span>
           </ui-stat>
         </div>
         @if (frontend()) {
@@ -86,16 +117,28 @@ interface Backup {
       <card-expandable>
         <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pt-2 text-[0.8125rem]">
           <dt class="text-fg-soft">Clone</dt>
-          <dd class="clone m-0 font-mono break-all select-all">
-            {{ entry().repository?.cloneUrl ?? '–' }}
+          <dd
+            class="clone m-0 font-mono break-all select-all"
+            [fieldOf]="repository"
+            qitsField="cloneUrl"
+          >
+            {{ repository.cloneUrl ?? '–' }}
           </dd>
           <dt class="text-fg-soft">Backup</dt>
-          <dd class="backup-url m-0 font-mono break-all select-all">
-            {{ entry().repository?.backupUrl ?? '–' }}
+          <dd
+            class="backup-url m-0 font-mono break-all select-all"
+            [fieldOf]="repository"
+            qitsField="backupUrl"
+          >
+            {{ repository.backupUrl ?? '–' }}
           </dd>
           <dt class="text-fg-soft">Main branch</dt>
-          <dd class="main-branch m-0 font-mono select-all">
-            {{ entry().repository?.mainBranch ?? '–' }}
+          <dd
+            class="main-branch m-0 font-mono select-all"
+            [fieldOf]="repository"
+            qitsField="mainBranch"
+          >
+            {{ repository.mainBranch ?? '–' }}
           </dd>
         </dl>
       </card-expandable>
@@ -107,7 +150,11 @@ export class RepositoryCard {
   /** The open project's slug, for the links to the repository's pages. */
   readonly slug = input.required<string>();
 
-  protected readonly name = computed(() => this.entry().repository?.name ?? '');
+  /** The repository the entry holds; an empty one without. */
+  protected readonly shown = computed(() => this.entry().repository ?? NO_REPOSITORY);
+
+  /** The repository's name, for its pages' links. */
+  private readonly name = computed(() => this.entry().repository?.name ?? '');
 
   protected readonly pages = outcomes('open-repository-pages', {
     uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
@@ -119,10 +166,10 @@ export class RepositoryCard {
   protected readonly params = computed(() => ({ slug: this.slug(), repo: this.name() }));
 
   /** The archetype, as a word: SERVICE reads "Service". */
-  protected readonly archetype = computed(() => {
-    const archetype = this.entry().repository?.archetype;
+  protected archetypeOf(repository: Repository): string {
+    const archetype = repository.archetype;
     return archetype ? archetype.charAt(0) + archetype.slice(1).toLowerCase() : '–';
-  });
+  }
 
   /** Whether the repository declares itself a frontend, whose routes the UI builder shows. */
   protected readonly frontend = computed(() => {
@@ -133,9 +180,9 @@ export class RepositoryCard {
   /** Whether the repository declares itself a service, whose contracts and entities have pages. */
   protected readonly service = computed(() => this.entry().repository?.archetype === 'SERVICE');
 
-  protected readonly backup = computed((): Backup => {
-    const repository = this.entry().repository;
-    if (!repository?.backupUrl) return { label: 'No twin', tone: 'neutral' };
+  /** How the repository's last backup reads. */
+  protected backupOf(repository: Repository): Backup {
+    if (!repository.backupUrl) return { label: 'No twin', tone: 'neutral' };
     switch (repository.lastBackup?.outcome) {
       case undefined:
         return { label: 'Never', tone: 'neutral' };
@@ -148,5 +195,5 @@ export class RepositoryCard {
       case 'AUTH_REQUIRED':
         return { label: 'Auth needed', tone: 'failed' };
     }
-  });
+  }
 }

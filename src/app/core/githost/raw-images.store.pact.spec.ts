@@ -15,7 +15,7 @@ import { RawImagesStore } from './raw-images.store';
 
 /**
  * `RawImagesStore`'s part of qits-landing-app's pact with qits-githost-service (qits-734), in
- * `pacts/qits-landing-app_qits-githost-service.json` beside `loc.store.pact.spec.ts`'s.
+ * `pacts/qits-landing-app_qits-githost-service.json` beside `loc.operations.pact.spec.ts`'s.
  *
  * One interaction: an image's bytes, from qits-githost's state `a repository with an image on
  * main` (a 1x1 PNG at `docs/screenshot.png`). The answer is no JSON, so it binds the status, the

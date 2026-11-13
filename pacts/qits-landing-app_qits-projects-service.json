@@ -15909,25 +15909,32 @@
             "entries": [
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000002"
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
                 }
               },
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000002"
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
                 }
               },
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000002"
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
                 }
               },
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000002"
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
                 }
               }
-            ]
+            ],
+            "wrapper": {
+              "repositoryId": "00000000-0000-4000-8000-000000000002"
+            }
           },
           "contentType": "application/json",
           "encoded": false
@@ -15964,6 +15971,32 @@
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].repository.mainBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.wrapper.repositoryId": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
@@ -16038,15 +16071,20 @@
             "entries": [
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000002"
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
                 }
               },
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000002"
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main"
                 }
               }
-            ]
+            ],
+            "wrapper": {
+              "repositoryId": "00000000-0000-4000-8000-000000000002"
+            }
           },
           "contentType": "application/json",
           "encoded": false
@@ -16075,6 +16113,26 @@
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].repository.mainBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.wrapper.repositoryId": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
@@ -16150,20 +16208,26 @@
             "entries": [
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000003"
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "mainBranch": "main"
                 }
               },
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000003"
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "mainBranch": "main"
                 }
               },
               {
                 "repository": {
-                  "id": "00000000-0000-4000-8000-000000000003"
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "mainBranch": "main"
                 }
               }
-            ]
+            ],
+            "wrapper": {
+              "repositoryId": "00000000-0000-4000-8000-000000000003"
+            }
           },
           "contentType": "application/json",
           "encoded": false
@@ -16196,6 +16260,29 @@
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].repository.mainBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.wrapper.repositoryId": {
+              "combine": "AND",
+              "matchers": [
                 {
                   "match": "regex",
                   "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"

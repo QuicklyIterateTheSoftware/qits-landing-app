@@ -36,6 +36,23 @@ export const LIST_PROJECT_WORK = [
   'entities[].unmetNeeds',
 ] as const;
 
+/**
+ * `PROJECT_CARD_WORK` (`work.operations.ts`, qits-2146): a project card's read of the same
+ * planning tree, which counts the entries that count as work ({@link countsAsWork}: `status`,
+ * `archetype`). Its pact interactions bind what `WorkStore`'s bound for the card, the list without
+ * the needs' rows (bound in one state of the work section's only), so the pact is unchanged.
+ */
+export const PROJECT_CARD_WORK = [
+  'entities[].id',
+  'entities[].qualifiedId',
+  'entities[].title',
+  'entities[].archetype',
+  'entities[].status',
+  'entities[].parent',
+  'entities[].priority',
+  'entities[].unmetNeeds',
+] as const satisfies readonly (typeof LIST_PROJECT_WORK)[number][];
+
 /** One work entity, cut to what the store reads. */
 export type WorkEntry = NonNullable<
   Consumed<ListProjectWorkResponses[200], typeof LIST_PROJECT_WORK>['entities']
@@ -70,7 +87,7 @@ export type WrapperClosing = NonNullable<
  * is a stand-in the user will replace with a better representation; change it here and nowhere
  * else.
  */
-export function countsAsWork(entry: WorkEntry): boolean {
+export function countsAsWork(entry: Pick<WorkEntry, 'status' | 'archetype'>): boolean {
   return entry.status === 'REFINED' && entry.archetype !== 'FEATURE' && entry.archetype !== 'TASK';
 }
 

@@ -2,6 +2,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { EMPTY } from 'rxjs';
 import { client as githostClient } from '../../api/githost/client.gen';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
@@ -18,6 +20,8 @@ describe('ProjectPickerPage', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(githostClient),
+        // The cards' repositories follow the wrapper's commits (qits-2146): a stream that never delivers.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
       ],
     }).compileComponents();
   });
@@ -77,6 +81,7 @@ describe('ProjectPickerPage', () => {
     (fixture.nativeElement as HTMLElement)
       .querySelectorAll<HTMLButtonElement>('card-expandable button')
       .forEach((button) => button.click());
+    TestBed.tick();
     await new Promise((resolve) => setTimeout(resolve));
     http.expectOne('/githost/api/loc').flush(loc);
     // The store sets the answers after its own awaits; then the cards render them.
@@ -156,6 +161,7 @@ describe('ProjectPickerPage', () => {
     (fixture.nativeElement as HTMLElement)
       .querySelectorAll<HTMLButtonElement>('card-expandable button')
       .forEach((button) => button.click());
+    TestBed.tick();
     await new Promise((resolve) => setTimeout(resolve));
     http.expectOne('/githost/api/loc').flush({ entries: [first, second, third] });
     await new Promise((resolve) => setTimeout(resolve));

@@ -19,7 +19,7 @@ import { PROJECT_DETAIL, PROJECT_LIST, PROJECT_RELEASE_REQUESTS } from './projec
 /**
  * The project operations' part of qits-landing-app's pact with qits-projects-service
  * (`projects.operations.ts`, qits-2146), in `pacts/qits-landing-app_qits-projects-service.json`
- * beside `ProjectsStore`'s, `WorkStore`'s, `RepositoriesStore`'s and the repositories operations'
+ * beside `ProjectsStore`'s, `WorkStore`'s and the repository and work operations'
  * parts (see `src/testing/pact-part.ts`):
  *
  * - `list-projects` (`PROJECT_LIST`): the picker's and `SelectedProject`'s list, of one, two and no

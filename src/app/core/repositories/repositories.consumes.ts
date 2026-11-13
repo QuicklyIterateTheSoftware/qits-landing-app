@@ -5,14 +5,14 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `RepositoriesStore` reads from qits-projects' answer (epic qits-112). The store passes this
- * to `consume(...)`, so it cannot read any other field, and its pact spec passes the same list as
- * `consumes`. To read another field, add it here.
+ * What the app reads from qits-projects' repositories answer (epic qits-112). Each operation of
+ * `repositories.operations.ts` (and `RepositoriesStore`, until the release request page moves)
+ * reads its list through `consume(...)`, so it cannot read any other field, and
+ * `repositories.operations.pact.spec.ts` binds the same lists. To read another field, add it here.
  *
- * `RepositoriesStore.load(projectId)`, one request per project shared by the project card and the
- * Repositories page:
- * - the card counts the entries and sums their lines of code by repository id (`LocStore`);
- * - the page shows each repository as a card (name, archetype, backup state; clone URL, backup URL
+ * `PROJECT_REPOSITORIES` (`repositories.operations.ts`, qits-2146), and `RepositoriesStore` for the
+ * release request page:
+ * - the Repositories page shows each repository as a card (name, archetype, backup state; clone URL, backup URL
  *   and main branch in its expandable section), placed in a tree by the wrapper's paths
  *   (`components/<component>/<name>`), the wrapper itself at the top;
  * - the UI builder (qits-1951) reads each repository's `component`: a frontend other than the
@@ -33,19 +33,15 @@ export const LIST_PROJECT_REPOSITORIES = [
 ] as const;
 
 /**
- * The part of that answer the project card relies on: the entries' ids (it counts them and joins
- * them with their lines of code). Its pact interaction binds only these; the store still reads the
- * whole list above.
- */
-export const PROJECT_CARD_REPOSITORIES = ['entries[].repository.id'] as const;
-
-/**
  * `LIST_PROJECT_WRAPPER` (`repositories.operations.ts`, qits-2143), the Agents page's own read of
  * the project's repositories: which repository is the wrapper (`wrapper.repositoryId`), whose slots
  * and agents the page then reads, and that repository's main branch (`entries[].repository.id`,
  * `mainBranch`), the branch a commit to which reads the list again (`SCMPublishCommit`, as
  * `RepositoriesStore.follow` does). A part of `LIST_PROJECT_REPOSITORIES`, so its pact interaction
  * binds only these.
+ *
+ * A project card reads the same (qits-2146): it counts the entries and sums their lines of code by
+ * repository id, and reads its count again after a commit to the wrapper's main branch.
  */
 export const PROJECT_WRAPPER = [
   'entries[].repository.id',
@@ -62,7 +58,7 @@ export type RepositoryEntry = NonNullable<Answer['entries']>[number];
 export type WrapperView = NonNullable<Answer['wrapper']>;
 
 /**
- * `RepositoriesStore.syncBackups(projectId)` (qits-projects' `backupSyncProject`): the Repositories
+ * `BACKUP_SYNC` (qits-projects' `backupSyncProject`, qits-2146): the Repositories
  * page nudges every repository's backup after the backup sign-in ends, and reads how many were
  * scheduled. A refusal (404 for a project it does not know, 403 without the role) binds the status
  * only.

@@ -2,12 +2,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
+import { EMPTY } from 'rxjs';
 import { commands, page, userEvent } from 'vitest/browser';
 import { client as githostClient } from '../../../api/githost/client.gen';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import type { Project } from '$core/projects/projects.store';
+import type { Project } from '$core/projects/selected-project';
 import { ProjectCard } from './project-card';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 
@@ -43,6 +45,8 @@ describe('ProjectCard (screenshots)', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(githostClient),
+        // The repositories' `refreshOn` (qits-2146): a stream that never delivers.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -83,14 +87,20 @@ describe('ProjectCard (screenshots)', () => {
     return { fixture, work, repositories };
   }
 
-  async function answered(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
-    await settle();
-    await fixture.whenStable();
+  /**
+   * Lets the answers land and draws them. Not `whenStable()`: a `qitsResource` still loading is a
+   * pending task (qits-2146), and the lines are requested but not answered yet when it is called.
+   */
+  async function answered(fixture: { detectChanges(): void }) {
+    for (let i = 0; i < 3; i++) {
+      await settle();
+      TestBed.tick();
+    }
     fixture.detectChanges();
   }
 
   /** Opens the card's expandable section (the languages table), which requests the lines. */
-  async function expand(fixture: { whenStable(): Promise<unknown>; detectChanges(): void }) {
+  async function expand(fixture: { detectChanges(): void }) {
     await page.getByRole('button', { name: 'Show more' }).click();
     // The click leaves the pointer on the card, whose hover ring would land in the screenshot.
     await commands.parkPointer();
