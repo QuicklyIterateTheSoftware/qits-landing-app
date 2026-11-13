@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import type { ValueMarks } from '$ui/dom/value-marks';
 
 /**
  * One directory of a tree: a heading with a folder icon and the directory's name, and its contents
@@ -23,6 +24,10 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     <div
       role="heading"
       [attr.aria-level]="level()"
+      [attr.data-qits-source]="nameMarks()?.source"
+      [attr.data-qits-item]="nameMarks()?.item"
+      [attr.data-qits-field]="nameMarks()?.field"
+      [attr.data-qits-derived]="nameMarks()?.derived"
       class="flex items-center gap-2 py-1 font-mono text-sm font-semibold text-fg"
     >
       <svg
@@ -45,6 +50,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class TreeFolder {
   /** The directory's name, shown with a trailing slash. */
   readonly name = input.required<string>();
+
+  /** The name's data marks, when it is data (qits-2146), set on the heading as is. */
+  readonly nameMarks = input<ValueMarks | undefined>(undefined);
 
   /** The heading level, so nested folders read as nested sections. */
   readonly level = input(2);

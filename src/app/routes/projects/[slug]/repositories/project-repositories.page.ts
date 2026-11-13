@@ -7,7 +7,13 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { QitsEntityList, qitsMutation, qitsResource, type QitsDomainEvent } from '@qits/angular';
+import {
+  QitsEntityList,
+  qitsMutation,
+  qitsResource,
+  sourceMark,
+  type QitsDomainEvent,
+} from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { needsBackupSignIn, signInRepositoryId } from '$core/repositories/remote-login';
 import { BACKUP_SYNC, PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
@@ -126,7 +132,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
               </div>
               @for (node of nodes; track $index) {
                 @if (node.kind === 'folder') {
-                  <ui-tree-folder [name]="node.name" [level]="level">
+                  <ui-tree-folder [name]="node.name" [nameMarks]="folderMarks" [level]="level">
                     <ng-container
                       *ngTemplateOutlet="
                         branch;
@@ -192,6 +198,16 @@ export class ProjectRepositoriesPage {
 
   /** The open project's slug, for the cards' links. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /**
+   * A folder's name is a segment of the wrapper's mount paths (qits-2146): marked derived from the
+   * read's `wrapper.entries`, as `repositoryTree` makes the folders of them.
+   */
+  protected readonly folderMarks = {
+    source: sourceMark(PROJECT_REPOSITORIES),
+    item: null,
+    derived: 'wrapper.entries',
+  } as const;
 
   protected readonly tree = computed(() => {
     const repositories = this.answer();
