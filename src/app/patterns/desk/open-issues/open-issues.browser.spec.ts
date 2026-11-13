@@ -92,6 +92,9 @@ describe('OpenIssues (screenshots)', () => {
     const { locator, issue } = await shown();
     await userEvent.click(locator.getByRole('link', { name: issue.qualifiedId, exact: true }));
     await settle();
+    // The issue's URL names a project, so `SelectedProject` reads the project list (qits-2146);
+    // the stub page shows nothing of it, so it is left unanswered.
+    http.expectOne('/projects/api/projects');
     expect(TestBed.inject(Router).url).toBe(
       `/projects/contract-00000001/work/detail/${issue.qualifiedId}`,
     );
