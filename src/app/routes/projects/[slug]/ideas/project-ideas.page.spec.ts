@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { filter, Subject } from 'rxjs';
@@ -35,6 +36,8 @@ describe('ProjectIdeasPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // The resources' `refreshOn` (qits-2146) follows the same stream.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: DomainEvents,
           useValue: {
@@ -158,7 +161,8 @@ describe('ProjectIdeasPage', () => {
     } finally {
       vi.useRealTimers();
     }
-    await settle();
+    // The resource's reload starts its read on the next tick (qits-2146).
+    await ticked();
     const reads = listReads();
     expect(reads).toHaveLength(1);
     reads[0].flush(goldenMaster(IDEAS, 'listIdeas'));
@@ -307,8 +311,9 @@ describe('ProjectIdeasPage', () => {
         { message: 'The idea is archived or DONE' },
         { status: 409, statusText: 'Conflict' },
       );
-      await settle();
-      await harness.fixture.whenStable();
+      // Not `whenStable()`: the list's read again is a pending task until it is answered.
+      await ticked();
+      harness.fixture.detectChanges();
       const alert = element.querySelector('p[role=alert]') as HTMLElement;
       expect(alert.classList.contains('hidden')).toBe(false);
       expect(alert.textContent?.trim()).toBe('The idea is archived or DONE');

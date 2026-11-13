@@ -3,10 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
 import {
+  DomainEvents,
   EVENT_SOURCE,
   REOPEN_DEBOUNCE_MS,
   type DomainEvent,
@@ -81,6 +83,8 @@ describe('WorkItemPage', () => {
             return source;
           },
         },
+        // The inspiration's resources (qits-2146) follow the app's one stream.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);

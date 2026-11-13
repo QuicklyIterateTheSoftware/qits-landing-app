@@ -7,9 +7,10 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `IdeasStore` reads from qits-projects' `/ideas` doors (epic qits-888). The store passes each
- * list to `consume(...)`, so it cannot read any other field, and its pact spec passes the same lists
- * as `consumes`. To read another field, add it here.
+ * What the idea pages read from qits-projects' `/ideas` doors (epic qits-888), through the
+ * operations in `ideas.operations.ts` (qits-2146). Each operation passes its list to `consume(...)`,
+ * so a page cannot read any other field, and its pact spec passes the same list as `consumes`. To
+ * read another field, add it here.
  */
 
 /**
@@ -26,7 +27,7 @@ export const LIST_IDEAS = [
   'ideas[].priority',
 ] as const;
 
-/** One idea of the list, cut to what the store reads. */
+/** One idea of the list, cut to what the pages read. */
 export type IdeaEntry = NonNullable<
   Consumed<ListIdeasResponses[200], typeof LIST_IDEAS>['ideas']
 >[number];
@@ -59,7 +60,7 @@ export const GET_IDEA = [
   'inspired[].archetype',
 ] as const;
 
-/** The idea's page, cut to what the store reads. */
+/** The idea's page, cut to what the pages read. */
 export type IdeaDetail = Consumed<GetIdeaResponses[200], typeof GET_IDEA>;
 
 /**
@@ -68,16 +69,16 @@ export type IdeaDetail = Consumed<GetIdeaResponses[200], typeof GET_IDEA>;
  */
 export const IDEA_WRITTEN = ['id', 'title', 'status', 'archived'] as const;
 
-/** A written idea, cut to what the store reads. */
+/** A written idea, cut to what the pages read. */
 export type WrittenIdea = Consumed<CreateIdeaResponses[201], typeof IDEA_WRITTEN>;
 
 /**
  * `reprioritizeIdea` (qits-1791): the ideas a drop renumbered (the moved one and every rankable idea
- * above it), each with the priority it now holds, which the store writes into the cached lists.
+ * above it), each with the priority it now holds, which the Ideas page writes into its list.
  */
 export const REPRIORITIZE_IDEA = ['items[].id', 'items[].priority'] as const;
 
-/** A drop's renumbered ideas, cut to what the store reads. */
+/** A drop's renumbered ideas, cut to what the pages read. */
 export type IdeaPriorities = Consumed<ReprioritizeIdeaResponses[200], typeof REPRIORITIZE_IDEA>;
 
 /** A refusal (400, 404, 409): the service's own words, shown as they are. */

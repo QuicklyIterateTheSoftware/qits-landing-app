@@ -5,13 +5,11 @@ import { createWork, patchWork, reprioritizeWork } from '../../api/projects';
 import type { ReorderAnchor } from '$core/reorder/reorder-anchor';
 import {
   CREATE_WORK,
-  PATCH_WORK_INSPIRATION,
   PATCH_WORK_NEEDS,
   REPRIORITIZE_WORK,
   WORK_REFUSAL,
   type CreatedWork,
   type PatchedNeeds,
-  type PatchedWork,
   type WorkPriorities,
 } from './work-writes.consumes';
 import { WorkStore } from './work.store';
@@ -88,9 +86,8 @@ export function workWriteRefusal(error: unknown, httpStatus: number | undefined)
  * - `create(draft)` files a root epic or ticket of a project (`createWork`), with the
  *   idea inspiring it (`inspiredBy`) when the form was opened from an idea. Blank optional fields
  *   are not sent. Answers the new item's qualified id.
- * - `setInspiredBy(qualifiedId, ideaId)` names an idea as the item's inspiration, or clears it with
- *   `null` (`patchWork`, a JSON merge patch of `inspiredBy` alone). Accepted on every archetype
- *   (qits-1792).
+ * - The inspiration's patch (`patchWork` of `inspiredBy`) is `SET_WORK_INSPIRATION` in
+ *   `work.operations.ts` (qits-2146), which the work item page's inspiration writes through.
  * - `setNeeds(qualifiedId, needs)` writes what the item waits for (epic qits-1899): `patchWork` with
  *   `needs` alone, the whole list (`[]` clears it). The answer does not carry the needs, so the
  *   page reads the item again afterwards.
@@ -128,20 +125,6 @@ export const WorkWritesStore = signalStore(
         WORK_REFUSAL,
       );
       if (error !== undefined || !data?.qualifiedId) {
-        return { ok: false, refusal: workWriteRefusal(error, response?.status) };
-      }
-      return { ok: true, value: data };
-    },
-    async setInspiredBy(
-      qualifiedId: string,
-      ideaId: string | null,
-    ): Promise<WorkWriteOutcome<PatchedWork>> {
-      const { data, error, response } = await consume(
-        patchWork({ path: { qualifiedId }, body: { inspiredBy: ideaId } }),
-        PATCH_WORK_INSPIRATION,
-        WORK_REFUSAL,
-      );
-      if (error !== undefined || !data) {
         return { ok: false, refusal: workWriteRefusal(error, response?.status) };
       }
       return { ok: true, value: data };

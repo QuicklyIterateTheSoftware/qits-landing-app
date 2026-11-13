@@ -2,12 +2,13 @@ import { Component, input } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { provideRouter, Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { WorkInspiration } from './work-inspiration';
@@ -63,6 +64,8 @@ describe('WorkInspiration (screenshots)', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The idea's `refreshOn` (qits-2146) follows that stream.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);

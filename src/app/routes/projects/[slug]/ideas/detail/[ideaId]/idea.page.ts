@@ -3,19 +3,33 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
-  effect,
   inject,
   PLATFORM_ID,
   signal,
-  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsExit,
+  QitsField,
+  qitsMutation,
+  qitsResource,
+  type QitsMutation,
+} from '@qits/angular';
 import { map } from 'rxjs';
+import { aboutProjectIdeas, IDEA_EVENTS } from '$core/ideas/idea-events';
 import { ideaStatusTone } from '$core/ideas/idea-path';
-import { IdeasStore } from '$core/ideas/ideas.store';
+import {
+  archiveIdeaParams,
+  ideaRefusal,
+  ideaRunRefusal,
+  unarchiveIdeaParams,
+} from '$core/ideas/idea-writes';
+import { ARCHIVE_IDEA, IDEA, UNARCHIVE_IDEA } from '$core/ideas/ideas.operations';
+import { loadState } from '$core/resources/load-state';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
@@ -27,13 +41,13 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /**
  * One idea's page (epic qits-888), at `/projects/<slug>/ideas/detail/<idea id>`
- * (`IdeasStore.loadIdea`): its derived status, whether it is archived (and why), its description
+ * (`IDEA`): its derived status, whether it is archived (and why), its description
  * (Markdown), the idea enabling it (a link, with a hint when that idea is archived), the ideas it
  * enables, and the work naming it as its inspiration, each linked to its page
  * (`/projects/<slug>/work/detail/<qualified id>`).
  *
  * Its actions: Edit (`detail/<id>/edit`); Archive, which asks for the reason the service requires
- * before it sends `IdeasStore.archive`, or Unarchive on an archived idea; and Create epic / Create
+ * before it sends `ARCHIVE_IDEA`, or Unarchive on an archived idea; and Create epic / Create
  * ticket, which open the work create form (`work/create`) filled with the idea's title and
  * description and naming it as the inspiration (`inspiredBy`). A refused write shows the service's
  * words; a write that went through reads the idea again.
@@ -44,14 +58,30 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * `epic` / `ticket`, the form's query naming the archetype, the idea's title and description and
  * the idea as `inspiredBy`).
  *
- * Staleness (qits-1270): `IDEA_EVENTS` whose `projectId` is the open project → this idea
- * (`IdeasStore.refreshIdea`, through `IdeasStore.follow`): any of the project's ideas can be the
- * one enabling it or one it enables, and its own status follows its work as an `IdeaUpdated`.
+ * It reads the idea through its own `qitsResource` over `IDEA` and writes through `qitsMutation`
+ * (`ARCHIVE_IDEA`, `UNARCHIVE_IDEA`, qits-2146), in the browser only, and marks what it shows
+ * (qits-2141): the page's root is the idea, the idea enabling it, each idea it enables and each work
+ * item it inspired an entity of their own.
+ *
+ * Staleness (qits-1270): `IDEA_EVENTS` whose `projectId` is the open project → this idea (the
+ * resource's `refreshOn`, narrowed by `aboutProjectIdeas`, as `IdeasStore.follow` was): any of
+ * the project's ideas can be the one enabling it or one it enables, and its own status follows its
+ * work as an `IdeaUpdated`.
  */
 @Component({
   selector: 'app-idea-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, Chip, LoadFailure, Markdown, PageLayoutComponent, QitsExit, Spinner],
+  imports: [
+    ActionButton,
+    Chip,
+    LoadFailure,
+    Markdown,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsExit,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -87,18 +117,35 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
         />
         <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="state() === 'error'">
           @if (idea(); as idea) {
-            <div class="flex flex-col gap-6">
+            <div
+              class="flex flex-col gap-6"
+              [qitsEntity]="idea"
+              entityKey="id"
+              [entitySource]="read"
+            >
               <div class="flex flex-wrap items-baseline gap-2 text-sm">
-                <ui-chip [label]="(idea.status ?? '').toLowerCase()" [tone]="tone(idea.status)" />
+                <ui-chip
+                  [label]="(idea.status ?? '').toLowerCase()"
+                  [tone]="tone(idea.status)"
+                  [fieldOf]="idea"
+                  [qitsField]="{ derived: ['status'] }"
+                />
                 @if (idea.archived) {
-                  <ui-chip label="archived" data-archived />
+                  <ui-chip
+                    label="archived"
+                    data-archived
+                    [fieldOf]="idea"
+                    [qitsField]="{ derived: ['archived'] }"
+                  />
                   @if (idea.archiveReason) {
-                    <span class="text-fg-soft">{{ idea.archiveReason }}</span>
+                    <span class="text-fg-soft" [fieldOf]="idea" qitsField="archiveReason">{{
+                      idea.archiveReason
+                    }}</span>
                   }
                 }
               </div>
               @if (idea.description) {
-                <ui-markdown [text]="idea.description" />
+                <ui-markdown [text]="idea.description" [fieldOf]="idea" qitsField="description" />
               } @else {
                 <p class="m-0 text-sm text-fg-muted">No description.</p>
               }
@@ -109,10 +156,20 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                     class="text-accent no-underline hover:underline"
                     [qitsExit]="enabling.open"
                     [exitParams]="{ slug: slug(), ideaId: enabler.id ?? '' }"
+                    [qitsEntity]="enabler"
+                    entityKey="id"
+                    [fieldOf]="enabler"
+                    qitsField="title"
                     >{{ enabler.title }}</a
                   >
                   @if (enabler.archived) {
-                    <span class="ml-2 text-warning" data-enabler-archived
+                    <span
+                      class="ml-2 text-warning"
+                      data-enabler-archived
+                      [qitsEntity]="enabler"
+                      entityKey="id"
+                      [fieldOf]="enabler"
+                      [qitsField]="{ derived: ['archived'] }"
                       >That idea is archived.</span
                     >
                   }
@@ -124,18 +181,30 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 <h2 class="mt-0 mb-1 text-sm font-semibold">Enables</h2>
                 <ul class="m-0 flex list-none flex-col gap-1 p-0">
                   @for (enabled of idea.enables ?? []; track enabled.id) {
-                    <li class="flex flex-wrap items-baseline gap-2">
+                    <li
+                      class="flex flex-wrap items-baseline gap-2"
+                      [qitsEntity]="enabled"
+                      entityKey="id"
+                    >
                       <ui-chip
                         [label]="(enabled.status ?? '').toLowerCase()"
                         [tone]="tone(enabled.status)"
+                        [fieldOf]="enabled"
+                        [qitsField]="{ derived: ['status'] }"
                       />
                       @if (enabled.archived) {
-                        <ui-chip label="archived" />
+                        <ui-chip
+                          label="archived"
+                          [fieldOf]="enabled"
+                          [qitsField]="{ derived: ['archived'] }"
+                        />
                       }
                       <a
                         class="text-accent no-underline hover:underline"
                         [qitsExit]="enabledIdeas.open"
                         [exitParams]="{ slug: slug(), ideaId: enabled.id ?? '' }"
+                        [fieldOf]="enabled"
+                        qitsField="title"
                         >{{ enabled.title }}</a
                       >
                     </li>
@@ -148,19 +217,28 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 <h2 class="mt-0 mb-1 text-sm font-semibold">Inspired work</h2>
                 <ul class="m-0 flex list-none flex-col gap-1 p-0">
                   @for (work of idea.inspired ?? []; track work.id) {
-                    <li class="flex flex-wrap items-baseline gap-2">
+                    <li
+                      class="flex flex-wrap items-baseline gap-2"
+                      [qitsEntity]="work"
+                      entityKey="id"
+                    >
                       <a
                         class="font-mono whitespace-nowrap text-accent no-underline hover:underline"
                         [qitsExit]="inspiredWork.open"
                         [exitParams]="{ slug: slug(), id: work.qualifiedId ?? '' }"
                         data-work-item
+                        [fieldOf]="work"
+                        qitsField="qualifiedId"
                         >{{ work.qualifiedId }}</a
                       >
-                      <span class="text-fg-muted"
+                      <span
+                        class="text-fg-muted"
+                        [fieldOf]="work"
+                        [qitsField]="{ derived: ['archetype', 'status'] }"
                         >{{ (work.archetype ?? '').toLowerCase() }} ·
                         {{ (work.status ?? '').toLowerCase() }}</span
                       >
-                      <span>{{ work.title }}</span>
+                      <span [fieldOf]="work" qitsField="title">{{ work.title }}</span>
                     </li>
                   } @empty {
                     <li class="text-fg-muted">No work names this idea yet.</li>
@@ -176,7 +254,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class IdeaPage {
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(IdeasStore);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /** The "Enabled by" link: the idea enabling this one. */
   protected readonly enabling = outcomes('open-enabling-idea', {
@@ -206,13 +284,27 @@ export class IdeaPage {
     { initialValue: '' },
   );
 
-  private readonly view = computed(() => this.store.ideaOf(this.id()));
-  protected readonly idea = computed(() => this.view()?.idea);
+  /** The idea, in the browser only; read again on its project's idea events. */
+  protected readonly read = qitsResource(
+    IDEA,
+    () => {
+      const id = this.id();
+      return this.browser && id ? { path: { id } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: IDEA_EVENTS,
+        when: (event) => aboutProjectIdeas(event, this.selected.project()?.id),
+      },
+    },
+  );
 
-  protected readonly state = computed((): LoadState => {
-    const status = this.view()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
+  private readonly archiving$ = qitsMutation(ARCHIVE_IDEA, { affects: () => [this.read] });
+  private readonly unarchiving = qitsMutation(UNARCHIVE_IDEA, { affects: () => [this.read] });
+
+  protected readonly idea = computed(() => (this.read.hasValue() ? this.read.value() : undefined));
+
+  protected readonly state = computed((): LoadState => loadState(this.read));
 
   protected readonly title = computed(() => this.idea()?.title ?? 'Idea');
   protected readonly tone = ideaStatusTone;
@@ -280,29 +372,12 @@ export class IdeaPage {
     callback: () => this.archiving.set(false),
   }));
 
-  constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-    effect(() => {
-      const id = this.id();
-      if (id) untracked(() => void this.store.loadIdea(id));
-    });
-    this.store.follow(
-      inject(DestroyRef),
-      () => this.selected.project()?.id,
-      () => {
-        const id = this.id();
-        if (id) void this.store.refreshIdea(id);
-      },
-    );
-  }
-
   protected text(event: Event): string {
     return (event.target as HTMLTextAreaElement).value;
   }
 
   protected retry(): void {
-    const id = this.id();
-    if (id) void this.store.loadIdea(id);
+    this.read.reload();
   }
 
   /** The work create form, filled with the idea and naming it as the inspiration. */
@@ -331,28 +406,35 @@ export class IdeaPage {
 
   private async archive(): Promise<void> {
     if (this.writing()) return;
-    this.writing.set(true);
-    this.failure.set(null);
-    const outcome = await this.store.archive(this.id(), this.reason());
-    this.writing.set(false);
-    if (!outcome.ok) {
-      this.failure.set(outcome.refusal);
+    if (!this.reason().trim()) {
+      this.failure.set('Archiving needs a reason.');
       return;
     }
-    this.archiving.set(false);
-    await this.store.refreshIdea(this.id());
+    if (await this.write(this.archiving$, archiveIdeaParams(this.id(), this.reason()))) {
+      this.archiving.set(false);
+    }
   }
 
   private async unarchive(): Promise<void> {
     if (this.writing()) return;
+    await this.write(this.unarchiving, unarchiveIdeaParams(this.id()));
+  }
+
+  /**
+   * Runs a write; the idea is read again once it landed (the mutation's `affects`). Answers whether
+   * it went through; a refusal shows in the service's words.
+   */
+  private async write<P>(
+    mutation: QitsMutation<P, { readonly id?: string }>,
+    params: P,
+  ): Promise<boolean> {
     this.writing.set(true);
     this.failure.set(null);
-    const outcome = await this.store.unarchive(this.id());
+    const refusal = await mutation
+      .run(params)
+      .then((idea) => (idea?.id ? null : ideaRefusal(undefined, 200)), ideaRunRefusal);
     this.writing.set(false);
-    if (!outcome.ok) {
-      this.failure.set(outcome.refusal);
-      return;
-    }
-    await this.store.refreshIdea(this.id());
+    this.failure.set(refusal);
+    return refusal === null;
   }
 }

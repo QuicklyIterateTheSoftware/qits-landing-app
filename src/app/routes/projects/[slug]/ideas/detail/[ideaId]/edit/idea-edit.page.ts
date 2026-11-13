@@ -3,17 +3,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   PLATFORM_ID,
   signal,
-  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { exit, outcomes, stay } from '@qits/angular';
+import { exit, outcomes, QitsEntityList, qitsMutation, qitsResource, stay } from '@qits/angular';
 import { map } from 'rxjs';
-import { IdeasStore, type IdeaPatch } from '$core/ideas/ideas.store';
+import {
+  ideaRefusal,
+  ideaRunRefusal,
+  patchIdeaParams,
+  type IdeaPatch,
+} from '$core/ideas/idea-writes';
+import { EDIT_IDEA, IDEA, IDEA_LIST } from '$core/ideas/ideas.operations';
+import { loadState } from '$core/resources/load-state';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { IdeaForm, type IdeaFormValue } from '$patterns/ideas/idea-form/idea-form';
@@ -36,10 +41,10 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
 
 /**
  * An idea's edit (epic qits-888), at `/projects/<slug>/ideas/detail/<idea id>/edit`: the idea
- * form (`app-idea-form`) filled with the idea (`IdeasStore.loadIdea`), offering the project's other
+ * form (`app-idea-form`) filled with the idea (`IDEA`), offering the project's other
  * ideas that are not archived as the one enabling it. Save sends a JSON merge patch of what changed
- * (`IdeasStore.update`; a cleared description or enabling idea as `null`), then goes back to the
- * idea's page, read again; a refusal shows the service's 400 `message` under the form. Cancel goes
+ * (`EDIT_IDEA`; a cleared description or enabling idea as `null`), then goes back to the
+ * idea's page, which reads it again; a refusal shows the service's 400 `message` under the form. Cancel goes
  * back without a write.
  *
  * Where it leads is declared (epic qits-2000), and the buttons carry the marks: Save reaches
@@ -47,19 +52,24 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
  * send) or `refused` (the form kept, with the service's words); Cancel reaches `cancel-idea-edit`
  * `back` (the idea's page).
  *
+ * It reads the idea and the project's ideas through `qitsResource`s over `IDEA` and `IDEA_LIST`, and
+ * saves through `qitsMutation(EDIT_IDEA)` (qits-2146), in the browser only; the form's options are
+ * the list read, marked as such (qits-2141).
+ *
  * Staleness (qits-1270): reads the idea and the project's ideas once, as the form opens; it
  * follows no event, as a re-read would overwrite what is being typed.
  */
 @Component({
   selector: 'app-idea-edit-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IdeaForm, PageLayoutComponent, Spinner],
+  imports: [IdeaForm, PageLayoutComponent, QitsEntityList, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout [title]="title()">
         <ui-spinner [state]="state()" class="min-h-48">
           <app-idea-form
+            [qitsEntityList]="ideas"
             submitLabel="Save"
             [initial]="initial()"
             [options]="options()"
@@ -77,7 +87,7 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
 })
 export class IdeaEditPage {
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(IdeasStore);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /** Save: the idea's page after the write, or with nothing to send; the form kept on a refusal. */
   protected readonly editing = outcomes('edit-idea', {
@@ -95,18 +105,21 @@ export class IdeaEditPage {
     { initialValue: '' },
   );
 
-  private readonly view = computed(() => this.store.ideaOf(this.id()));
-
-  protected readonly state = computed((): LoadState => {
-    const status = this.view()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
+  /** The idea as it is now, which the form starts from; in the browser only. */
+  private readonly read = qitsResource(IDEA, () => {
+    const id = this.id();
+    return this.browser && id ? { path: { id } } : undefined;
   });
 
-  protected readonly title = computed(() => `Edit ${this.view()?.idea?.title ?? 'idea'}`);
+  private readonly idea = computed(() => (this.read.hasValue() ? this.read.value() : undefined));
+
+  protected readonly state = computed((): LoadState => loadState(this.read));
+
+  protected readonly title = computed(() => `Edit ${this.idea()?.title ?? 'idea'}`);
 
   /** The form's starting value: the idea as read. */
   protected readonly initial = computed((): IdeaFormValue => {
-    const idea = this.view()?.idea;
+    const idea = this.idea();
     return {
       title: idea?.title ?? '',
       description: idea?.description ?? '',
@@ -116,30 +129,22 @@ export class IdeaEditPage {
 
   private readonly projectId = computed(() => this.selected.project()?.id);
 
-  protected readonly options = computed(() => {
-    const id = this.projectId();
-    const list = id ? this.store.listOf(id)?.ideas : undefined;
-    return (list ?? []).filter((idea) => !idea.archived && idea.id !== this.id());
+  /** The project's ideas, for the "Enabled by" choice; in the browser only. */
+  protected readonly ideas = qitsResource(IDEA_LIST, () => {
+    const project = this.projectId();
+    return this.browser && project ? { query: { project } } : undefined;
   });
+
+  private readonly editing$ = qitsMutation(EDIT_IDEA);
+
+  protected readonly options = computed(() =>
+    (this.ideas.hasValue() ? (this.ideas.value()?.ideas ?? []) : []).filter(
+      (idea) => !idea.archived && idea.id !== this.id(),
+    ),
+  );
 
   protected readonly busy = signal(false);
   protected readonly refusal = signal<string | null>(null);
-
-  constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-    effect(() => {
-      const id = this.id();
-      // Read afresh: the form starts from the idea as it is now.
-      if (id)
-        untracked(
-          () => void (this.store.ideaOf(id) ? this.store.refreshIdea(id) : this.store.loadIdea(id)),
-        );
-    });
-    effect(() => {
-      const id = this.projectId();
-      if (id) untracked(() => void this.store.loadList(id));
-    });
-  }
 
   /** The idea's page's params. */
   private ideaParams() {
@@ -159,14 +164,15 @@ export class IdeaEditPage {
     }
     this.busy.set(true);
     this.refusal.set(null);
-    const outcome = await this.store.update(this.id(), patch);
+    const refusal = await this.editing$
+      .run(patchIdeaParams(this.id(), patch))
+      .then((idea) => (idea?.id ? null : ideaRefusal(undefined, 200)), ideaRunRefusal);
     this.busy.set(false);
-    if (!outcome.ok) {
+    if (refusal !== null) {
       this.editing.refused.reach();
-      this.refusal.set(outcome.refusal);
+      this.refusal.set(refusal);
       return;
     }
-    void this.store.refreshIdea(this.id());
     void this.editing.saved.go(this.ideaParams());
   }
 }

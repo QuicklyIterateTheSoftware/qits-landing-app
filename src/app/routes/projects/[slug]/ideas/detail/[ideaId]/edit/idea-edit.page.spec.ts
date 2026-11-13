@@ -104,8 +104,7 @@ describe('IdeaEditPage', () => {
     expect(patch.request.method).toBe('PATCH');
     expect(patch.request.body).toEqual({ title: 'Faster builds for everyone' });
     patch.flush(goldenMaster(IDEAS, 'patchIdea'));
-    await ticked();
-    http.expectOne(`${API}/${ideaId}`).flush(goldenMaster(IDEAS, 'getIdea'));
+    // The idea's page reads the idea as it opens (qits-2146): the form reads nothing more.
     await ticked();
     expect(TestBed.inject(Router).url).toBe(`/projects/${project.slug}/ideas/detail/${ideaId}`);
   });

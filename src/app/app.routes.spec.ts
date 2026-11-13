@@ -152,6 +152,8 @@ describe('ideas routes', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The ideas pages' resources follow the app's one stream (qits-2146).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     }),
   );

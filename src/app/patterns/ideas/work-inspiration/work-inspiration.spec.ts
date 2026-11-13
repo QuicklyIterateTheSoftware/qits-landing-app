@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { provideRouter } from '@angular/router';
 import { filter, Subject } from 'rxjs';
 import { client as projectsClient } from '../../../api/projects/client.gen';
@@ -34,6 +35,8 @@ describe('WorkInspiration', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // The resources' `refreshOn` (qits-2146) follows the same stream.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: DomainEvents,
           useValue: {
@@ -172,6 +175,8 @@ describe('WorkInspiration', () => {
     } finally {
       vi.useRealTimers();
     }
+    // The resource's reload starts its read on the next tick (qits-2146).
+    TestBed.tick();
     await settle();
     http.expectOne(`/projects/api/ideas/${id}`).flush(goldenMaster(IDEAS, 'getIdea'));
   });

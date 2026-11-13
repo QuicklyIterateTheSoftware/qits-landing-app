@@ -8,7 +8,8 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import type { Outcome } from '@qits/angular';
+import { QitsEntity, QitsField, type Outcome } from '@qits/angular';
+import type { IdeaEntry } from '$core/ideas/ideas.consumes';
 import {
   descriptionLength,
   MAX_DESCRIPTION,
@@ -26,11 +27,8 @@ export interface IdeaFormValue {
   readonly enabledBy: string;
 }
 
-/** An idea the form offers as the one enabling this one. */
-export interface IdeaOption {
-  readonly id?: string;
-  readonly title?: string;
-}
+/** An idea the form offers as the one enabling this one: one of `listIdeas`' (`IDEA_LIST`). */
+export type IdeaOption = Pick<IdeaEntry, 'id' | 'title'>;
 
 const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
 
@@ -44,7 +42,8 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
  * 400's `message`, handed in as `refusal`) shows below the buttons with the typed form kept, to be
  * fixed and sent again.
  *
- * `initial` fills the form (the edit's idea), once it is given. `submitted` hands the typed value;
+ * `options` are ideas of the project's `listIdeas` (`IdeaOption`), each option marked as that idea
+ * (qits-2146); the read is the page's, which marks it. `initial` fills the form (the edit's idea), once it is given. `submitted` hands the typed value;
  * the page sends it and sets `busy` while it is on its way.
  *
  * Where its buttons lead is the page's to declare (epic qits-2000): the page hands in the outcomes
@@ -54,7 +53,7 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
 @Component({
   selector: 'app-idea-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton],
+  imports: [ActionButton, QitsEntity, QitsField],
   host: { class: 'block' },
   template: `
     <form class="flex max-w-2xl flex-col gap-4" (submit)="$event.preventDefault(); submit()">
@@ -104,7 +103,14 @@ const EMPTY: IdeaFormValue = { title: '', description: '', enabledBy: '' };
         >
           <option value="">No idea</option>
           @for (option of options(); track option.id) {
-            <option [value]="option.id" [selected]="option.id === enabledBy()">
+            <option
+              [value]="option.id"
+              [selected]="option.id === enabledBy()"
+              [qitsEntity]="option"
+              entityKey="id"
+              [fieldOf]="option"
+              qitsField="title"
+            >
               {{ option.title }}
             </option>
           }

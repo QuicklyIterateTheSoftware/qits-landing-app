@@ -105,24 +105,6 @@ describe('WorkWritesStore', () => {
     expect(await done).toEqual({ ok: false, refusal: 'impetus is required for a ticket' });
   });
 
-  it('sets and clears the inspiration as a merge patch of inspiredBy alone', async () => {
-    const set = store.setInspiredBy('qits-1', 'idea-1');
-    await settle();
-    const first = http.expectOne('/projects/api/work/qits-1');
-    expect(first.request.method).toBe('PATCH');
-    expect(first.request.body).toEqual({ inspiredBy: 'idea-1' });
-    // No recording holds an item with an inspiration: the answer is the recorded ticket.
-    first.flush(goldenMaster(NO_WORK, 'createWork'));
-    expect((await set).ok).toBe(true);
-
-    const cleared = store.setInspiredBy('qits-1', null);
-    await settle();
-    const second = http.expectOne('/projects/api/work/qits-1');
-    expect(second.request.body).toEqual({ inspiredBy: null });
-    second.flush(null, { status: 404, statusText: 'Not Found' });
-    expect(await cleared).toEqual({ ok: false, refusal: 'The service refused it (HTTP 404).' });
-  });
-
   it('writes the needs whole, as a merge patch of needs alone, and hands back a refusal', async () => {
     const set = store.setNeeds('qits-2', [{ item: 'qits-1', status: 'VERIFIED' }]);
     await settle();

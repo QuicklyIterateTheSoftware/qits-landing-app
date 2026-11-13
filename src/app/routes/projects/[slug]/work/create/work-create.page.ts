@@ -8,8 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { exit, outcomes, QitsExit, stay } from '@qits/angular';
-import { IdeasStore } from '$core/ideas/ideas.store';
+import { exit, outcomes, QitsExit, qitsResource, stay } from '@qits/angular';
+import { IDEA } from '$core/ideas/ideas.operations';
 import { SelectedProject } from '$core/projects/selected-project';
 import { WorkStore } from '$core/work/work.store';
 import {
@@ -30,7 +30,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  *
  * The query fills it: `archetype`, `title`, `description` and `inspiredBy`, an idea's id. An idea's
  * page opens it that way (Create epic, Create ticket), and the form then says which idea inspires
- * the item (its title from `IdeasStore.loadIdea`, linked) and sends it as `inspiredBy`.
+ * the item (its title from its `IDEA` read, a `qitsResource` in the browser only, qits-2146; linked) and sends it as `inspiredBy`.
  *
  * Where each interaction leads is declared (epic qits-2000), and the buttons and the link carry the
  * marks of the outcomes they trigger:
@@ -142,9 +142,9 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 })
 export class WorkCreatePage {
   private readonly selected = inject(SelectedProject);
+  private readonly platform = inject(PLATFORM_ID);
   private readonly writes = inject(WorkWritesStore);
   private readonly work = inject(WorkStore);
-  private readonly ideas = inject(IdeasStore);
 
   /** Create: the new item's page, or the form kept with the refusal. */
   private readonly creation = outcomes('create-work-item', {
@@ -185,9 +185,15 @@ export class WorkCreatePage {
 
   protected readonly heading = computed(() => `New ${this.archetype().toLowerCase()}`);
 
+  /** The inspiring idea, for its title; in the browser only. */
+  private readonly idea = qitsResource(IDEA, () => {
+    const id = this.inspiredBy();
+    return id && isPlatformBrowser(this.platform) ? { path: { id } } : undefined;
+  });
+
   protected readonly ideaTitle = computed(() => {
     const id = this.inspiredBy();
-    return this.ideas.ideaOf(id)?.idea?.title ?? id;
+    return (this.idea.hasValue() ? this.idea.value()?.title : undefined) ?? id;
   });
 
   protected readonly createAction = computed((): Action => ({
@@ -205,11 +211,6 @@ export class WorkCreatePage {
     callback: () => this.cancel(),
     outcomes: [this.inspiredBy() ? this.cancelling.toIdea : this.cancelling.toWork],
   }));
-
-  constructor() {
-    const id = this.inspiredBy();
-    if (id && isPlatformBrowser(inject(PLATFORM_ID))) void this.ideas.loadIdea(id);
-  }
 
   protected value(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value;
