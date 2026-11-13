@@ -20,7 +20,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { exit, outcomes, QitsExit, qitsResource, type QitsDomainEvent } from '@qits/angular';
 import { map } from 'rxjs';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
@@ -49,6 +51,7 @@ import {
   colorSchemesOf,
   forwardExits,
   freezeCalls,
+  freezeNetwork,
   freezeResults,
   FREEZE_VIEWPORTS,
   hasViewports,
@@ -65,18 +68,23 @@ import {
   routeTree,
   sharedOutcomes,
   stateFreeze,
+  stateNetwork,
   unfixedOutcomes,
   unreachable,
   VIEWPORT_SIZES,
   type Freeze,
   type FreezeColorScheme,
   type FreezeKind,
+  type FreezeNetwork,
+  type FreezeState,
   type FreezeViewport,
   type FreezeRecord,
   type DeclaredOutcome,
   type JoinedOutcome,
   type OutcomeMark,
   type OutcomeTest,
+  type OutboxEntry,
+  type OutboxState,
   type TreeRow,
 } from '$core/ui-builder/routes-manifest';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -202,6 +210,32 @@ const SCHEME_CHOICES: readonly { readonly id: FreezeColorScheme; readonly label:
   { id: 'DARK', label: 'Dark' },
 ];
 
+/**
+ * The connectivity switch's buttons (qits-2153): Online, then Offline. The URL's `network` is
+ * `offline` while Offline and absent while Online.
+ */
+const NETWORK_CHOICES: readonly { readonly id: FreezeNetwork; readonly label: string }[] = [
+  { id: 'ONLINE', label: 'Online' },
+  { id: 'OFFLINE', label: 'Offline' },
+];
+
+/** The URL's `network` for `network` (qits-2153): `offline`, or null (removed) for ONLINE. */
+const networkQuery = (network: FreezeNetwork): string | null =>
+  network === 'OFFLINE' ? 'offline' : null;
+
+/** An outbox entry's state in the Sync panel (qits-2153): its words and its chip's tone. */
+const OUTBOX_LABELS: Readonly<
+  Record<OutboxState, { readonly label: string; readonly tone: ChipTone }>
+> = {
+  PENDING: { label: 'Pending', tone: 'waiting' },
+  SENDING: { label: 'Sending', tone: 'neutral' },
+  CONFLICT: { label: 'Conflict', tone: 'failed' },
+  FAILED: { label: 'Failed', tone: 'failed' },
+};
+
+/** What a read answered from the offline cache says (qits-2153), its instant as the app writes one. */
+const cacheLine = (cachedAt: string) => `from cache, as of ${formatInstant(cachedAt)}`;
+
 /** The width the frame's border adds to its box (1px each side), kept out of the frozen width. */
 const FRAME_BORDER = 2;
 
@@ -307,8 +341,20 @@ interface EntityGroup {
  *   scheme at the width, else the width's first). Until one is picked it is the app's own
  *   (`ThemePreferenceStore.resolved`); a pick is kept for the visit, not in the URL. The frame
  *   paints no background of its own: a freeze paints its scheme's.
- * - Selection: the URL's query, `route` (the route's full path), `state` (the state's name) and
- *   `viewport` (`phone`, `tablet`, `desktop`), so Back walks back through tree, tab, switch and link
+ * - Connectivity (qits-2153): for a bundle whose app opted in to offline shots (the manifest's
+ *   `offline: true`), an Online / Offline switch beside the Light / Dark one narrows the route's
+ *   states to those shot on that network (`stateNetwork`: a freeze's `connectivity.network`, ONLINE
+ *   without one). Online by default; a state the URL or a tab opens sets it to its own network, and
+ *   switching to the other network opens that network's first state. A network without a state on
+ *   the route is disabled. The URL carries it as `network=offline` while Offline only.
+ * - Offline data (qits-2153): a data mark whose source the shown freeze answered from the cache
+ *   (`connectivity.cached`) says "from cache, as of <instant>" in Selected data, on the line above
+ *   the frame while it is highlighted, and in its highlight buttons' tooltips. A freeze with an
+ *   outbox lists it, oldest first, in a Sync section above Calls and states: each mutation's state,
+ *   its call (its row's popover when the freeze records it, else its provider's contracts in
+ *   qits-docs), its record and, on a conflict, the server's version.
+ * - Selection: the URL's query, `route` (the route's full path), `state` (the state's name),
+ *   `viewport` (`phone`, `tablet`, `desktop`) and `network` (`offline`, qits-2153), so Back walks back through tree, tab, switch and link
  *   clicks. A `route` that is not a route of the tree opens the first route with states; a `state`
  *   the route lacks its first DATA state, or its first state without one. Choosing a route clears
  *   `state` and keeps `viewport`, which is DESKTOP when absent or unknown.
@@ -853,6 +899,37 @@ interface EntityGroup {
                             }
                           </div>
                         }
+                        @if (networkChoices().length) {
+                          <!-- Online / Offline (qits-2153): only for a bundle with offline shots. -->
+                          <div
+                            role="group"
+                            aria-label="Connectivity"
+                            class="networks mb-2 flex flex-wrap gap-1"
+                          >
+                            @for (choice of networkChoices(); track choice.id) {
+                              <button
+                                type="button"
+                                class="network cursor-pointer rounded px-2 py-0.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                                [class]="
+                                  choice.id === network()
+                                    ? 'bg-surface-inverse text-fg-on-inverse'
+                                    : 'bg-surface-muted text-fg-soft enabled:hover:bg-surface-active'
+                                "
+                                [attr.aria-pressed]="choice.id === network()"
+                                [disabled]="!choice.available"
+                                [title]="
+                                  choice.available
+                                    ? 'States shot ' + choice.label.toLowerCase()
+                                    : 'No state of this route was shot ' +
+                                      choice.label.toLowerCase()
+                                "
+                                (click)="pickNetwork(choice.id)"
+                              >
+                                {{ choice.label }}
+                              </button>
+                            }
+                          </div>
+                        }
                         <!--
                             Pick data (qits-2144): a click in the frame selects the data it shows
                             instead of following a link. Off for a screenshot without marks.
@@ -885,6 +962,8 @@ interface EntityGroup {
                       <p class="notice-line m-0 mb-2 h-4 truncate text-xs text-fg-soft">
                         @if (linkNotice() ?? highlightNotice(); as notice) {
                           <span class="link-notice">{{ notice }}</span>
+                        } @else if (highlightedCache(); as cache) {
+                          <span class="cache-notice">Highlighted data {{ cache }}</span>
                         }
                       </p>
                       <div #frameBox class="frame-box">
@@ -1000,6 +1079,9 @@ interface EntityGroup {
                         [ngTemplateOutlet]="selectedDataPanel"
                         [ngTemplateOutletContext]="{ $implicit: data }"
                       />
+                    }
+                    @if (outbox().length) {
+                      <ng-container [ngTemplateOutlet]="syncPanel" />
                     }
                     <h3 class="m-0 mb-1 text-xs font-semibold text-fg-soft uppercase">
                       Calls and states
@@ -1413,7 +1495,7 @@ interface EntityGroup {
               "
               [attr.aria-pressed]="isCallHighlighted(call)"
               [attr.aria-label]="'Highlight the data of ' + call.operationId"
-              [title]="'Highlight the data of ' + call.operationId"
+              [title]="highlightTitle(call)"
               (click)="toggleCallData(call)"
             >
               ◎
@@ -1450,6 +1532,7 @@ interface EntityGroup {
                           : 'bg-surface-muted hover:bg-surface-active'
                       "
                       [attr.aria-pressed]="isMarkHighlighted(mark)"
+                      [attr.title]="cacheLabel(mark.source)"
                       (click)="toggleMark(mark)"
                     >
                       {{ dataMarkLabel(mark) }}
@@ -1544,6 +1627,9 @@ interface EntityGroup {
             }
           }
         }
+        @if (cacheLabel(data.mark.source); as cache) {
+          <p class="cache-label m-0 text-fg-soft">{{ cache }}</p>
+        }
         @if (data.item || data.field || data.derived.length) {
           <dl class="values m-0 grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
             @if (data.item; as item) {
@@ -1601,6 +1687,65 @@ interface EntityGroup {
         }
       </section>
     </ng-template>
+
+    <!--
+      The shown freeze's outbox (qits-2153), oldest first: each mutation's state, its call, its record
+      and, on a conflict, the server's version.
+    -->
+    <ng-template #syncPanel>
+      <section aria-label="Sync" class="sync mb-4 flex flex-col gap-1.5 text-xs">
+        <h3 class="m-0 font-semibold text-fg-soft uppercase">Sync</h3>
+        <ol class="m-0 flex list-none flex-col gap-1.5 p-0">
+          @for (entry of outbox(); track $index) {
+            <li class="outbox-entry flex flex-col gap-0.5">
+              <div class="flex items-center gap-1">
+                <ui-chip
+                  class="outbox-state shrink-0"
+                  [label]="outboxLabels[entry.state].label"
+                  [tone]="outboxLabels[entry.state].tone"
+                />
+                @if (mutationCall(entry); as call) {
+                  <app-call-details
+                    class="mutation min-w-0 flex-1"
+                    [call]="call"
+                    [site]="siteOf(call.provider)"
+                    [entities]="callEntities(call)"
+                    [project]="slug() ?? null"
+                    (entityPicked)="pickEntity($event)"
+                  />
+                } @else {
+                  @let op = mutationOf(entry);
+                  <span class="mutation min-w-0 flex-1 px-1 py-0.5">
+                    <span class="block font-mono">{{ op.operationId }}</span>
+                    <span class="block text-fg-muted">
+                      {{ op.provider }}
+                      @if (contractsUrl(op.provider); as url) {
+                        ·
+                        <a class="mutation-docs" [href]="url" target="_blank" rel="noopener"
+                          >contracts ↗</a
+                        >
+                      }
+                    </span>
+                  </span>
+                }
+              </div>
+              <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-2 px-1">
+                <dt class="text-fg-muted">Record</dt>
+                <dd class="record-id m-0 font-mono break-all">
+                  {{ entry.recordId ?? 'none named' }}
+                </dd>
+                @if (entry.state === 'CONFLICT') {
+                  <dt class="text-fg-muted">Server version</dt>
+                  <dd class="server-version m-0 font-mono break-all">
+                    {{ entry.currentVersion ?? 'not given' }}
+                  </dd>
+                }
+              </dl>
+            </li>
+          }
+        </ol>
+      </section>
+    </ng-template>
   `,
 })
 export class UiBuilderPage {
@@ -1614,6 +1759,7 @@ export class UiBuilderPage {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
   private readonly theme = inject(ThemePreferenceStore);
+  private readonly origins = inject(PlatformOrigins);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /**
@@ -1644,8 +1790,8 @@ export class UiBuilderPage {
   );
 
   /**
-   * The URL's `route`, `state` and `viewport`: what is selected, as asked (see `selectedPath`,
-   * `stateIndex`, `viewport`).
+   * The URL's `route`, `state`, `viewport` and `network` (qits-2153): what is selected, as asked
+   * (see `selectedPath`, `stateIndex`, `viewport`, `network`).
    */
   private readonly query = toSignal(
     this.route.queryParamMap.pipe(
@@ -1653,9 +1799,10 @@ export class UiBuilderPage {
         route: params.get('route'),
         state: params.get('state'),
         viewport: params.get('viewport'),
+        network: params.get('network'),
       })),
     ),
-    { initialValue: { route: null, state: null, viewport: null } },
+    { initialValue: { route: null, state: null, viewport: null, network: null } },
   );
 
   protected readonly bundle = computed(() => this.store.bundles()[this.repo()]);
@@ -1729,13 +1876,55 @@ export class UiBuilderPage {
   private readonly selectedAlso = computed(() => this.selectedRow()?.alsoAnswers ?? []);
 
   /**
-   * The selected route's states (`routeStates`, qits-2047): its freezes by name, DATA first, with
-   * those of the addresses it also answers (qits-2076).
+   * Every state of the selected route (`routeStates`, qits-2047): its freezes by name, DATA first,
+   * with those of the addresses it also answers (qits-2076), on either network (qits-2153).
    */
-  protected readonly states = computed(() => {
+  private readonly allStates = computed((): readonly FreezeState[] => {
     const bundle = this.loaded();
     const path = this.selectedPath();
     return bundle && path !== null ? routeStates(bundle.manifest, path, this.selectedAlso()) : [];
+  });
+
+  /** Whether the app opted in to offline shots (qits-2153, the manifest's `offline: true`). */
+  protected readonly offline = computed(() => this.loaded()?.manifest.offline === true);
+
+  /**
+   * The network whose states are shown (qits-2153); null for a bundle without offline shots, which
+   * shows every state. The URL's `state`'s own network when it names one of the route's states;
+   * else the URL's `network` (`offline`; ONLINE when absent), unless the route has no state on it
+   * and has one on the other.
+   */
+  protected readonly network = computed((): FreezeNetwork | null => {
+    if (!this.offline()) return null;
+    const all = this.allStates();
+    const named = all.find((state) => state.name === this.query().state);
+    if (named) return stateNetwork(named);
+    const asked: FreezeNetwork = this.query().network === 'offline' ? 'OFFLINE' : 'ONLINE';
+    if (!all.length || all.some((state) => stateNetwork(state) === asked)) return asked;
+    return stateNetwork(all[0]);
+  });
+
+  /**
+   * The selected route's states shown as tabs: all of them (`allStates`), or, for a bundle with
+   * offline shots, those of the chosen network (qits-2153).
+   */
+  protected readonly states = computed((): readonly FreezeState[] => {
+    const network = this.network();
+    const all = this.allStates();
+    return network === null ? all : all.filter((state) => stateNetwork(state) === network);
+  });
+
+  /**
+   * The connectivity switch's buttons (qits-2153), each available when the route has a state on
+   * its network; none for a bundle without offline shots, which shows no switch.
+   */
+  protected readonly networkChoices = computed(() => {
+    if (!this.offline()) return [];
+    const all = this.allStates();
+    return NETWORK_CHOICES.map((choice) => ({
+      ...choice,
+      available: all.some((state) => stateNetwork(state) === choice.id),
+    }));
   });
 
   /** Whether the selected route only forwards (qits-2076, the manifest's `forward`). */
@@ -1774,6 +1963,7 @@ export class UiBuilderPage {
   });
 
   protected readonly kindLabels = KIND_LABELS;
+  protected readonly outboxLabels = OUTBOX_LABELS;
   protected readonly viewportChoices = VIEWPORT_CHOICES;
   protected readonly frameBorder = FRAME_BORDER;
 
@@ -2066,7 +2256,7 @@ export class UiBuilderPage {
    */
   private shownIn(outcome: JoinedOutcome): StateLink | null {
     if (!outcome.triggered) return null;
-    const states = this.states();
+    const states = this.allStates();
     const current = this.viewport();
     const links = outcome.triggerFreezes.flatMap((freeze): StateLink[] => {
       const state = states.find((s) => s.freezes.some((f) => f.file === freeze.file));
@@ -2094,6 +2284,7 @@ export class UiBuilderPage {
     void this.navigate({
       state: link.state,
       ...(link.viewport ? { viewport: link.viewport } : {}),
+      ...this.networkOf(link.state),
     });
   }
 
@@ -2591,6 +2782,67 @@ export class UiBuilderPage {
     });
   }
 
+  /** The reads the shown freeze answered from the offline cache (qits-2153), by source. */
+  private readonly cachedReads = computed(
+    (): ReadonlyMap<string, string> =>
+      new Map(
+        (this.freeze()?.connectivity?.cached ?? []).map((read) => [read.operation, read.cachedAt]),
+      ),
+  );
+
+  /**
+   * "from cache, as of <instant>" for a mark whose source the shown freeze answered from the
+   * offline cache (qits-2153); null for any other source.
+   */
+  protected cacheLabel(source: string | null): string | null {
+    const cachedAt = source === null ? undefined : this.cachedReads().get(source);
+    return cachedAt === undefined ? null : cacheLine(cachedAt);
+  }
+
+  /** The tooltip of a call's highlight toggle (qits-2144), with its cache line (qits-2153). */
+  protected highlightTitle(call: FreezeRecord): string {
+    const cache = this.cacheLabel(sourceOf(call));
+    return `Highlight the data of ${call.operationId}${cache ? ` · ${cache}` : ''}`;
+  }
+
+  /** The cache line of the highlighted data's source (qits-2153), for the line above the frame. */
+  protected readonly highlightedCache = computed(() => {
+    const selection = this.dataSelection();
+    if (!selection) return null;
+    return this.cacheLabel(selection.kind === 'call' ? selection.source : selection.mark.source);
+  });
+
+  /** The shown freeze's outbox (qits-2153), oldest first; none without `connectivity`. */
+  protected readonly outbox = computed(
+    (): readonly OutboxEntry[] => this.freeze()?.connectivity?.outbox ?? [],
+  );
+
+  /** An outbox entry's provider and operation (qits-2153), split from `<provider>#<operationId>`. */
+  protected mutationOf(entry: OutboxEntry): { provider: string; operationId: string } {
+    const at = entry.operation.indexOf('#');
+    return at < 0
+      ? { provider: '', operationId: entry.operation }
+      : { provider: entry.operation.slice(0, at), operationId: entry.operation.slice(at + 1) };
+  }
+
+  /**
+   * The shown freeze's record of an outbox entry's mutation (qits-2153), drawn as a call row; null
+   * when the freeze records no call of it (a mutation still queued sent nothing).
+   */
+  protected mutationCall(entry: OutboxEntry): FreezeRecord | null {
+    return this.freeze()?.records.find((record) => sourceOf(record) === entry.operation) ?? null;
+  }
+
+  /**
+   * The provider's contracts in qits-docs' reader at the newest version (qits-2153), as a call's
+   * popover links them; null without a contracts site or a docs origin.
+   */
+  protected contractsUrl(provider: string): string | null {
+    const site = this.siteOf(provider);
+    const origin = this.origins.page('docs');
+    return site && origin ? `${origin}/read/${site.site}/-/${site.version}` : null;
+  }
+
   constructor() {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
@@ -2697,10 +2949,30 @@ export class UiBuilderPage {
     return this.navigate({ route: fullPath, state: null });
   }
 
-  /** Selects the route's state named `name`. */
+  /** Selects the route's state named `name`, on its own network (qits-2153). */
   protected pickState(name: string): void {
     this.linkNotice.set(null);
-    void this.navigate({ state: name });
+    void this.navigate({ state: name, ...this.networkOf(name) });
+  }
+
+  /**
+   * Shows the route's states shot on `network` (qits-2153), opening that network's first state
+   * (its first DATA one when it has one); the current state belongs to the other network.
+   */
+  protected pickNetwork(network: FreezeNetwork): void {
+    this.linkNotice.set(null);
+    if (network === this.network()) return;
+    void this.navigate({ network: networkQuery(network), state: null });
+  }
+
+  /**
+   * The URL's `network` for the selected route's state `name` (qits-2153): `offline` for an OFFLINE
+   * one, removed for an ONLINE one; nothing to set for a bundle without offline shots.
+   */
+  private networkOf(name: string): { network?: string | null } {
+    if (!this.offline()) return {};
+    const state = this.allStates().find((s) => s.name === name);
+    return state ? { network: networkQuery(stateNetwork(state)) } : {};
   }
 
   /**
@@ -2722,6 +2994,7 @@ export class UiBuilderPage {
     route?: string;
     state?: string | null;
     viewport?: string;
+    network?: string | null;
   }): Promise<boolean> {
     return this.router.navigate([], {
       relativeTo: this.route,
@@ -2761,10 +3034,13 @@ export class UiBuilderPage {
   private showFreeze(freeze: Freeze, atItsViewport = false): void {
     this.linkNotice.set(null);
     const route = freeze.route ?? '';
-    const viewport =
-      atItsViewport && freeze.viewport && freeze.viewport !== this.viewport()
+    const viewport = {
+      ...(atItsViewport && freeze.viewport && freeze.viewport !== this.viewport()
         ? { viewport: freeze.viewport.toLowerCase() }
-        : {};
+        : {}),
+      // Its own network (qits-2153), so the URL's switch says what is shown.
+      ...(this.offline() ? { network: networkQuery(freezeNetwork(freeze)) } : {}),
+    };
     if (route === this.selectedPath()) {
       void this.navigate({ state: freeze.name, ...viewport });
       return;
