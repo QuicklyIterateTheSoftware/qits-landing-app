@@ -21,10 +21,10 @@ import {
 } from '@qits/angular';
 import { payloadIds } from '$core/events/refresh-on';
 import { WORK_EVENTS, WORK_REFRESH_DEBOUNCE_MS } from '$core/work/selected-work';
-import { commentRefusal } from '$core/work/work-detail.store';
+import { commentRefusal } from '$core/work/work-detail';
 import { ADD_WORK_COMMENT, MOVE_WORK, OPEN_ISSUES } from '$core/work/work.operations';
 import { type WorkEntry } from '$core/work/work.consumes';
-import { refusalOf, workRef } from '$core/work/work.store';
+import { refusalOf, workRef } from '$core/work/moves';
 import { IssueDescription } from '$patterns/desk/issue-description/issue-description';
 
 /** An entry of the project's work, as the open issues read it (`OPEN_ISSUES`). */

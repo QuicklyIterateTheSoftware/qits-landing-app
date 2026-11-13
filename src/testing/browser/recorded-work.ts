@@ -7,7 +7,8 @@ import { outcomeRecords } from '@qits/angular/testing/browser';
 import { userEvent, type Locator } from 'vitest/browser';
 import { goldenMaster } from './golden-master';
 import type { WorkNode } from '$core/work/work-tree';
-import { WorkspacesStore } from '$core/workspaces/workspaces.store';
+import { SelectedWork } from '$core/work/selected-work';
+import { WorkspaceActivity } from '$core/workspaces/workspace-activity';
 
 /**
  * Helpers for the screenshot tests of the work patterns (`kanban-board`, `epic-card`,
@@ -20,7 +21,7 @@ import { WorkspacesStore } from '$core/workspaces/workspaces.store';
  * navigates there and answers every request with a recording: the project list from "a project
  * exists", the work from the case's state, and
  * the wrapper closings a VERIFIED ticket's line asks for ({@link answerWrapperClosings}). {@link openWorkspaces} then
- * loads the open workspaces, for the cards' Workspace links.
+ * reads the open workspaces, for the cards' Workspace links.
  *
  * The patterns' links are declared exits (epic qits-2000). {@link WORK_LINK_TARGETS} routes their
  * targets to nothing, before the host's route, so {@link follow} can click one and read where it
@@ -60,7 +61,8 @@ export async function openRecordedWork(
   await settle();
   http.expectOne('/projects/api/projects').flush(list);
   await navigated;
-  // SelectedWork's effect asks for the work once the project is known; let it run.
+  // SelectedWork reads the work once a page wants it and the project is known; let it run.
+  TestBed.inject(SelectedWork).want();
   TestBed.tick();
   await settle();
   TestBed.tick();
@@ -69,7 +71,10 @@ export async function openRecordedWork(
   http.expectOne(`/projects/api/projects/${project.id}/work`).flush(work);
   await settle();
   await settle();
-  await harness.fixture.whenStable();
+  // Not `whenStable()` yet: a VERIFIED ticket's line opens the wrapper closings' read, which keeps
+  // the app unstable until it is answered.
+  TestBed.tick();
+  await settle();
   harness.fixture.detectChanges();
   await answerWrapperClosings(http, project.id);
   await harness.fixture.whenStable();
@@ -104,7 +109,7 @@ export async function answerWrapperClosings(
 }
 
 /**
- * Loads the open workspaces (`WorkspacesStore.load()`, as the work pages do) and answers them from
+ * Reads the open workspaces (`WorkspaceActivity.wantOpen()`, as the work pages do) and answers them from
  * qits-workspaces' "a project with workspaces bound to work items", whose ids are those of
  * qits-projects' "… in detail" states: the epic, its PDF feature, a CSV task and the bug ticket of
  * that seed have an ACTIVE workspace.
@@ -113,7 +118,8 @@ export async function openWorkspaces(
   http: HttpTestingController,
   harness: RouterTestingHarness,
 ): Promise<void> {
-  const load = TestBed.inject(WorkspacesStore).load();
+  TestBed.inject(WorkspaceActivity).wantOpen();
+  TestBed.tick();
   await settle();
   http
     .expectOne('/workspaces/api/work/workspaces')
@@ -124,7 +130,7 @@ export async function openWorkspaces(
         'qits-workspaces',
       ),
     );
-  await load;
+  await settle();
   await harness.fixture.whenStable();
   harness.fixture.detectChanges();
 }

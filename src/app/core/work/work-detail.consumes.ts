@@ -76,6 +76,9 @@ export const LIST_WORK_COMMENTS = [
 ] as const;
 
 /** One comment, cut to what the store reads. */
+/** An item's thread, as `WORK_COMMENTS` answers it. */
+export type WorkThread = Consumed<ListWorkCommentsResponses[200], typeof LIST_WORK_COMMENTS>;
+
 export type CommentEntry = NonNullable<
   NonNullable<
     Consumed<ListWorkCommentsResponses[200], typeof LIST_WORK_COMMENTS>['entries']
@@ -103,6 +106,9 @@ export const WORK_COMMENT = [
 export const LIST_DOSSIER_PAGES = ['pages[].id', 'pages[].title', 'pages[].body'] as const;
 
 /** One dossier page, cut to what the store reads (the epic's and the ticket's are alike). */
+/** A dossier's pages, as `WORK_DOSSIER` answers them. */
+export type DossierPages = Consumed<ListWorkDossierResponses[200], typeof LIST_DOSSIER_PAGES>;
+
 export type DossierPage = NonNullable<
   Consumed<ListWorkDossierResponses[200], typeof LIST_DOSSIER_PAGES>['pages']
 >[number];

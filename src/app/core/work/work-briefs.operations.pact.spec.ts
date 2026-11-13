@@ -9,18 +9,21 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { LIST_PROJECT_WORK_BRIEFS } from './work-briefs.consumes';
-import { workBriefSource } from './work-briefs.store';
+import { workBriefSource } from './work-briefs';
+import { WORK_BRIEFS } from './work-briefs.operations';
 
 /**
- * `workBriefSource`'s part of qits-landing-app's pact with qits-projects-service (qits-1897): the
- * `listProjectWorkBriefs` interaction, in the same file as the other stores'
- * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
+ * `WORK_BRIEFS`' part of qits-landing-app's pact with qits-projects-service (qits-1897;
+ * `work-briefs.operations.ts`, qits-2146): the `listProjectWorkBriefs` interaction, in the same
+ * file as the other operations' (`pacts/qits-landing-app_qits-projects-service.json`, see
+ * `src/testing/pact-part.ts`). It moved here from `work-briefs.store.pact.spec.ts`, unchanged: the
+ * same description, state, request and bound fields.
  *
- * The test asks for the briefs of the golden master's ticket, epic and an id the project does not
- * know, in that order and as one comma-separated `id`, as `QitsWorkBriefs` batches the ids of one
- * view, against a pact mock server answering with qits-projects' golden master "a project with
- * work to brief", binding only the fields in `LIST_PROJECT_WORK_BRIEFS`.
+ * The test runs `workBriefSource` (`work-briefs.ts`), which runs the operation's `fetch`, and asks
+ * for the briefs of the golden master's ticket, epic and an id the project does not know, in that
+ * order and as one comma-separated `id`, as `QitsWorkBriefs` batches the ids of one view, against a
+ * pact mock server answering with qits-projects' golden master "a project with work to brief",
+ * binding only the fields in `LIST_PROJECT_WORK_BRIEFS` (the operation's `consumes`).
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
@@ -31,7 +34,7 @@ const STATE = 'a project with work to brief';
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-briefs-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
 
-describe('qits-landing-app → qits-projects-service pact: work briefs', () => {
+describe('qits-landing-app → qits-projects-service pact: the work briefs operation', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
@@ -46,13 +49,17 @@ describe('qits-landing-app → qits-projects-service pact: work briefs', () => {
     }
   });
 
+  it('declares the provider this spec binds', () => {
+    expect(WORK_BRIEFS.provider).toBe(PROVIDER);
+  });
+
   it('show-commit-work-briefs: the source reads the briefs of the ids a commit subject names', () =>
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: STATE,
-      operationId: 'listProjectWorkBriefs',
+      operationId: WORK_BRIEFS.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-commit-work-briefs' },
-      consumes: LIST_PROJECT_WORK_BRIEFS,
+      consumes: WORK_BRIEFS.consumes,
     }).executeTest(async (server) => {
       TestBed.configureTestingModule({
         providers: [provideHttpClient(withFetch()), provideHeyApiClient(projectsClient)],

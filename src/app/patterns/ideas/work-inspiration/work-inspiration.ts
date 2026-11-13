@@ -23,7 +23,7 @@ import {
 import { aboutProjectIdeas, IDEA_EVENTS } from '$core/ideas/idea-events';
 import { IDEA, IDEA_LIST } from '$core/ideas/ideas.operations';
 import { SET_WORK_INSPIRATION } from '$core/work/work.operations';
-import { inspirable, workWriteRefusal } from '$core/work/work-writes.store';
+import { inspirable, workWriteRefusal } from '$core/work/work-writes';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 

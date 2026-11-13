@@ -4,14 +4,7 @@ import { PactV4 } from '@pact-foundation/pact';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { consume } from '@qits/angular';
 import { addGoldenInteraction } from '@qits/angular/testing';
-import {
-  getWork,
-  listWorkComments,
-  listWorkDossier,
-  listWorkDossierAssets,
-} from '../../api/projects';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import {
@@ -21,44 +14,47 @@ import {
   projectsGoldenMasters as masters,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
+import { GET_WORK_UNBLOCKABLE } from './work-detail.consumes';
 import {
-  GET_WORK,
-  GET_WORK_CRITERIA,
-  GET_WORK_UNBLOCKABLE,
-  LIST_DOSSIER_PAGES,
-  LIST_WORK_COMMENTS,
-  LIST_WORK_DOSSIER_ASSETS,
-  WORK_COMMENT,
-} from './work-detail.consumes';
-import { WorkDetailStore } from './work-detail.store';
+  EDIT_WORK_COMMENT,
+  WORK_COMMENTS,
+  WORK_CRITERIA,
+  WORK_DETAIL,
+  WORK_DOSSIER,
+  WORK_DOSSIER_ASSETS,
+} from './work-detail.operations';
 import type { InteractionSlug } from '../../interactions';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /**
- * `WorkDetailStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
- * qits-965): the `getWork` (of the work item page and the Schedule tab), `listWorkComments`, `listWorkDossier` and `listWorkDossierAssets`
- * interactions, all by qualified id, in the same file as the other stores'
- * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
+ * The work detail operations' part of qits-landing-app's pact with qits-projects-service (epics
+ * qits-112, qits-965; `work-detail.operations.ts`, qits-2146): `WORK_DETAIL` and `WORK_CRITERIA`
+ * (`getWork`, of the work item page and the Schedule tab), `WORK_COMMENTS` (`listWorkComments`),
+ * `WORK_DOSSIER` (`listWorkDossier`), `WORK_DOSSIER_ASSETS` (`listWorkDossierAssets`) and
+ * `EDIT_WORK_COMMENT` (`editWorkComment`), all by qualified id, in the same file as the other
+ * operations' (`pacts/qits-landing-app_qits-projects-service.json`, see
+ * `src/testing/pact-part.ts`). The interactions moved here from `work-detail.store.pact.spec.ts` with `WorkDetailStore`
+ * (qits-2146), unchanged: the same descriptions, states, requests and bound fields.
  *
  * One detail state per archetype and per ticket type, and the status states whose pages the action
  * screenshots show, each with the item's own reads (`ACTION_TICKETS`, `ACTION_EPICS`, and "an epic
- * with features and tasks"' open feature). Each test makes ONE of the reads `WorkDetailStore.load` makes, with the
- * store's own `consumes`, against a pact mock server answering with qits-projects' golden master: a
- * path from a provider state matches any path, so one interaction per test keeps each answer to
- * its own request. `work-detail.store.spec.ts` drives `load` as a whole. A read binds the fields its
- * list names that the state's recording holds (`heldBy`), so a field a recording does not have yet
- * (`authorAgentOf`, `editable`: qits-1452, not yet in the installed golden-masters devDependency)
- * is simply left unbound there, rather than failing the test.
+ * with features and tasks"' open feature). Each test makes ONE of the reads the work item page
+ * makes, through the operation's own `fetch`, against a pact mock server answering with
+ * qits-projects' golden master: a path from a provider state matches any path, so one interaction
+ * per test keeps each answer to its own request. A read binds the fields its operation's
+ * `consumes` names that the state's recording holds (`heldBy`), so a field a recording does not
+ * have yet (`authorAgentOf`, `editable`: qits-1452, not yet in the installed golden-masters
+ * devDependency) is simply left unbound there, rather than failing the test.
  *
  * What the item needs (epic qits-1899, `needs[]`) is bound in `NEEDS_STATE` only, and open-ended
  * there (`openEndedNeeds`): every other state records it empty, which would pin it empty. No
  * interaction reads a campaign, a milestone or `dependsOn` any more (qits-1908 deletes them).
  *
- * The Schedule tab's criteria read (`loadCriteria`) is the same `getWork`, binding only the
+ * The Schedule tab's criteria read (`WORK_CRITERIA`) is the same `getWork`, binding only the
  * acceptance criteria, of an epic and of a REFINED ticket.
  *
- * The thread's edit, `editWorkComment`, drives the store's own `editComment` against "a ticket
- * with a comment", with the body the recording sent: the request qits-projects-frontend's thread
+ * The thread's edit, `EDIT_WORK_COMMENT`, runs against "a ticket with a comment", with the body the
+ * recording sent, trimmed, as the thread sends it: the request qits-projects-frontend's thread
  * made (a merge patch sent as plain `application/json`). Its other write, `addWorkComment`
  * (`comment-on-work-item`), and the Desk's `show-open-issues` read of an issue are
  * `work.operations.pact.spec.ts`'s (`ADD_WORK_COMMENT`, `WORK_ITEM`; qits-2146), unchanged.
@@ -162,14 +158,14 @@ function openEndedNeeds(generated: string): void {
   writeFileSync(generated, JSON.stringify(written, null, 2));
 }
 
-/** The Schedule tab's read of an item's acceptance criteria (`WorkDetailStore.loadCriteria`). */
+/** The Schedule tab's read of an item's acceptance criteria (`WORK_CRITERIA`). */
 const givenCriteria = (state: string) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId: 'getWork',
+    operationId: WORK_CRITERIA.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-schedule-criteria' },
-    consumes: GET_WORK_CRITERIA,
+    consumes: WORK_CRITERIA.consumes,
   });
 
 /** A comment write on the thread: Comment, or Save on an edited comment. */
@@ -179,7 +175,7 @@ const givenWrite = (slug: InteractionSlug, operationId: string) =>
     state: COMMENTED,
     operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: heldBy(masters, COMMENTED, operationId, WORK_COMMENT),
+    consumes: heldBy(masters, COMMENTED, operationId, EDIT_WORK_COMMENT.consumes),
   });
 
 /** What the recording of `operationId` sent as the comment's body. */
@@ -206,7 +202,7 @@ const param = (state: string, operationId: string, name: string) =>
 /** The reference a state reads the item by: its qualified id. */
 const refOf = (state: string, operationId: string) => param(state, operationId, 'qualifiedId');
 
-describe('qits-landing-app → qits-projects-service pact: work detail', () => {
+describe('qits-landing-app → qits-projects-service pact: the work detail operations', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
@@ -222,18 +218,29 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
     }
   });
 
+  it('declares the provider this spec binds', () => {
+    for (const op of [
+      WORK_DETAIL,
+      WORK_CRITERIA,
+      WORK_COMMENTS,
+      WORK_DOSSIER,
+      WORK_DOSSIER_ASSETS,
+      EDIT_WORK_COMMENT,
+    ]) {
+      expect(op.provider).toBe(PROVIDER);
+    }
+  });
+
   it.each([EPIC, ...TICKETS, ...OTHERS, ...UNBLOCKABLE, ...ITEM_ONLY])(
     'show-work-item: the item of %s',
     (state) =>
       given(
         state,
-        'getWork',
-        UNBLOCKABLE.includes(state) ? GET_WORK_UNBLOCKABLE : GET_WORK,
+        WORK_DETAIL.operationId,
+        UNBLOCKABLE.includes(state) ? GET_WORK_UNBLOCKABLE : WORK_DETAIL.consumes,
       ).executeTest(async (server) => {
         const qualifiedId = refOf(state, 'getWork');
-        const { data } = await at(server.url, () =>
-          consume(getWork({ path: { qualifiedId } }), GET_WORK),
-        );
+        const { data } = await at(server.url, () => WORK_DETAIL.fetch({ path: { qualifiedId } }));
         expect(data?.archetype).toBeTruthy();
       }),
   );
@@ -244,15 +251,15 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
   it.skipIf(!isRecorded(NEEDS_STATE, 'getWork'))(
     'show-work-item: the needs of a ticket that needs another',
     () =>
-      given(NEEDS_STATE, 'getWork', GET_WORK).executeTest(async (server) => {
-        const qualifiedId = refOf(NEEDS_STATE, 'getWork');
-        const { data } = await at(server.url, () =>
-          consume(getWork({ path: { qualifiedId } }), GET_WORK),
-        );
-        expect(data?.unmetNeeds).toBe(1);
-        expect(data?.needs?.[0]).toMatchObject({ status: 'VERIFIED', met: false });
-        expect(data?.needs?.[0]?.currentStatus).toBeTruthy();
-      }),
+      given(NEEDS_STATE, WORK_DETAIL.operationId, WORK_DETAIL.consumes).executeTest(
+        async (server) => {
+          const qualifiedId = refOf(NEEDS_STATE, 'getWork');
+          const { data } = await at(server.url, () => WORK_DETAIL.fetch({ path: { qualifiedId } }));
+          expect(data?.unmetNeeds).toBe(1);
+          expect(data?.needs?.[0]).toMatchObject({ status: 'VERIFIED', met: false });
+          expect(data?.needs?.[0]?.currentStatus).toBeTruthy();
+        },
+      ),
   );
 
   it.each([EPIC, 'an improvement ticket in detail'])(
@@ -260,9 +267,7 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
     (state) =>
       givenCriteria(state).executeTest(async (server) => {
         const qualifiedId = refOf(state, 'getWork');
-        const { data } = await at(server.url, () =>
-          consume(getWork({ path: { qualifiedId } }), GET_WORK_CRITERIA),
-        );
+        const { data } = await at(server.url, () => WORK_CRITERIA.fetch({ path: { qualifiedId } }));
         expect(data?.acceptanceCriteria?.length).toBeGreaterThan(0);
       }),
   );
@@ -270,41 +275,43 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
   it.each([EPIC, ...TICKETS, ...OTHERS, ...UNBLOCKABLE])(
     'show-work-item: the comments of %s',
     (state) =>
-      given(state, 'listWorkComments', LIST_WORK_COMMENTS).executeTest(async (server) => {
-        const qualifiedId = refOf(state, 'listWorkComments');
-        const { data, error } = await at(server.url, () =>
-          consume(listWorkComments({ path: { qualifiedId } }), LIST_WORK_COMMENTS),
-        );
-        expect(error).toBeUndefined();
-        expect(data?.entries).toBeDefined();
-      }),
+      given(state, WORK_COMMENTS.operationId, WORK_COMMENTS.consumes).executeTest(
+        async (server) => {
+          const qualifiedId = refOf(state, 'listWorkComments');
+          const { data, error } = await at(server.url, () =>
+            WORK_COMMENTS.fetch({ path: { qualifiedId } }),
+          );
+          expect(error).toBeUndefined();
+          expect(data?.entries).toBeDefined();
+        },
+      ),
   );
 
   it('show-work-item: the dossier pages of an epic', () =>
-    given(EPIC, 'listWorkDossier', LIST_DOSSIER_PAGES).executeTest(async (server) => {
+    given(EPIC, WORK_DOSSIER.operationId, WORK_DOSSIER.consumes).executeTest(async (server) => {
       const qualifiedId = refOf(EPIC, 'listWorkDossier');
-      const { data } = await at(server.url, () =>
-        consume(listWorkDossier({ path: { qualifiedId } }), LIST_DOSSIER_PAGES),
-      );
+      const { data } = await at(server.url, () => WORK_DOSSIER.fetch({ path: { qualifiedId } }));
       expect(data?.pages?.length).toBe(3);
     }));
 
   it('show-work-item: the dossier figures of an epic', () =>
-    given(EPIC, 'listWorkDossierAssets', LIST_WORK_DOSSIER_ASSETS).executeTest(async (server) => {
-      const qualifiedId = refOf(EPIC, 'listWorkDossierAssets');
-      const { data } = await at(server.url, () =>
-        consume(listWorkDossierAssets({ path: { qualifiedId } }), LIST_WORK_DOSSIER_ASSETS),
-      );
-      expect(data?.assets?.[0]?.url).toContain('/content');
-      expect(data?.assets?.[0]?.id).toBeTruthy();
-    }));
+    given(EPIC, WORK_DOSSIER_ASSETS.operationId, WORK_DOSSIER_ASSETS.consumes).executeTest(
+      async (server) => {
+        const qualifiedId = refOf(EPIC, 'listWorkDossierAssets');
+        const { data } = await at(server.url, () =>
+          WORK_DOSSIER_ASSETS.fetch({ path: { qualifiedId } }),
+        );
+        expect(data?.assets?.[0]?.url).toContain('/content');
+        expect(data?.assets?.[0]?.id).toBeTruthy();
+      },
+    ));
 
   // The action screenshots' epics: a dossier with no page and no figure.
   it.each(ACTION_EPICS)('show-work-item: the dossier pages of %s', (state) =>
-    given(state, 'listWorkDossier', LIST_DOSSIER_PAGES).executeTest(async (server) => {
+    given(state, WORK_DOSSIER.operationId, WORK_DOSSIER.consumes).executeTest(async (server) => {
       const qualifiedId = refOf(state, 'listWorkDossier');
       const { data, error } = await at(server.url, () =>
-        consume(listWorkDossier({ path: { qualifiedId } }), LIST_DOSSIER_PAGES),
+        WORK_DOSSIER.fetch({ path: { qualifiedId } }),
       );
       expect(error).toBeUndefined();
       expect(data?.pages).toBeDefined();
@@ -312,21 +319,23 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
   );
 
   it.each(ACTION_EPICS)('show-work-item: the dossier figures of %s', (state) =>
-    given(state, 'listWorkDossierAssets', LIST_WORK_DOSSIER_ASSETS).executeTest(async (server) => {
-      const qualifiedId = refOf(state, 'listWorkDossierAssets');
-      const { data, error } = await at(server.url, () =>
-        consume(listWorkDossierAssets({ path: { qualifiedId } }), LIST_WORK_DOSSIER_ASSETS),
-      );
-      expect(error).toBeUndefined();
-      expect(data?.assets).toBeDefined();
-    }),
+    given(state, WORK_DOSSIER_ASSETS.operationId, WORK_DOSSIER_ASSETS.consumes).executeTest(
+      async (server) => {
+        const qualifiedId = refOf(state, 'listWorkDossierAssets');
+        const { data, error } = await at(server.url, () =>
+          WORK_DOSSIER_ASSETS.fetch({ path: { qualifiedId } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.assets).toBeDefined();
+      },
+    ),
   );
 
   it.each([...TICKETS, ...ACTION_TICKETS])('show-work-item: the dossier pages of %s', (state) =>
-    given(state, 'listWorkDossier', LIST_DOSSIER_PAGES).executeTest(async (server) => {
+    given(state, WORK_DOSSIER.operationId, WORK_DOSSIER.consumes).executeTest(async (server) => {
       const qualifiedId = refOf(state, 'listWorkDossier');
       const { data, error } = await at(server.url, () =>
-        consume(listWorkDossier({ path: { qualifiedId } }), LIST_DOSSIER_PAGES),
+        WORK_DOSSIER.fetch({ path: { qualifiedId } }),
       );
       expect(error).toBeUndefined();
       expect(data?.pages).toBeDefined();
@@ -334,12 +343,19 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
   );
 
   it('edit-comment: rewrites a comment as a merge patch', () =>
-    givenWrite('edit-comment', 'editWorkComment').executeTest(async (server) => {
+    givenWrite('edit-comment', EDIT_WORK_COMMENT.operationId).executeTest(async (server) => {
       const ref = refOf(COMMENTED, 'editWorkComment');
       const commentId = param(COMMENTED, 'editWorkComment', 'commentId');
-      const outcome = await at(server.url, () =>
-        TestBed.inject(WorkDetailStore).editComment(ref, commentId, sentBody('editWorkComment')),
+      const text = sentBody('editWorkComment').trim();
+      // A JSON merge patch of the body alone, sent as plain `application/json`.
+      const { data, error } = await at(server.url, () =>
+        EDIT_WORK_COMMENT.fetch({
+          path: { qualifiedId: ref, commentId },
+          body: { body: text },
+          headers: { 'Content-Type': 'application/json' },
+        }),
       );
-      expect(outcome.refusal).toBeUndefined();
+      expect(error).toBeUndefined();
+      expect(data?.comment).toBeTruthy();
     }));
 });

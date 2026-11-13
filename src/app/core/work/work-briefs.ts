@@ -3,7 +3,7 @@ import {
   type EnvironmentProviders,
   type FactoryProvider,
 } from '@angular/core';
-import { consume, exit, outcomes } from '@qits/angular';
+import { exit, outcomes } from '@qits/angular';
 import {
   provideQitsWorkBriefs,
   QITS_WORK_LINK,
@@ -12,13 +12,13 @@ import {
   type QitsWorkBriefSource,
   type QitsWorkLinkFactory,
 } from '@qits/ui-components';
-import { listProjectWorkBriefs } from '../../api/projects';
-import { LIST_PROJECT_WORK_BRIEFS } from './work-briefs.consumes';
+import { WORK_BRIEFS } from './work-briefs.operations';
 
 /**
  * The briefs of the work items commit subjects name (qits-1897), for `@qits/ui-components`'
- * `<qits-commit-message>`: qits-projects' `listProjectWorkBriefs`, through this app's generated
- * client (so on qits-projects' origin from `PlatformOrigins`, with the bearer), instead of the
+ * `<qits-commit-message>`: qits-projects' `listProjectWorkBriefs` (`WORK_BRIEFS`, qits-2146: the
+ * library calls this function, not a resource, so it runs the operation's `fetch`), through this
+ * app's generated client (so on qits-projects' origin from `PlatformOrigins`, with the bearer), instead of the
  * library's default read, which looks qits-projects up in a `/main-navigation` this app does not
  * read.
  *
@@ -29,21 +29,18 @@ import { LIST_PROJECT_WORK_BRIEFS } from './work-briefs.consumes';
  * the answer; a failed read rejects, and the library leaves every id of the call plain text.
  *
  * The library's brief also names the item's `id` and `archetype`, which its popover does not show:
- * this app reads neither (`LIST_PROJECT_WORK_BRIEFS`), so they are filled with the qualified id and
+ * this app reads neither (`WORK_BRIEFS`' `consumes`), so they are filled with the qualified id and
  * `''`.
  *
  * Staleness (qits-1270): none. A brief is a hint beside a commit subject, kept for the life of the
  * app by the library; a status that moved shows on the next load.
  */
 export const workBriefSource: QitsWorkBriefSource = async (project, ids) => {
-  const { data, error } = await consume(
-    listProjectWorkBriefs({
-      path: { project },
-      query: { id: [...ids] },
-      querySerializer: { array: { explode: false, style: 'form' } },
-    }),
-    LIST_PROJECT_WORK_BRIEFS,
-  );
+  const { data, error } = await WORK_BRIEFS.fetch({
+    path: { project },
+    query: { id: [...ids] },
+    querySerializer: { array: { explode: false, style: 'form' } },
+  });
   if (error !== undefined || !data) throw new Error('The work briefs could not be read');
   return (data.briefs ?? []).map((brief): QitsWorkBrief => ({
     id: brief.qualifiedId,

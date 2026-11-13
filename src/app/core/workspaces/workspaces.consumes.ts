@@ -37,6 +37,12 @@ export const LIST_WORK_ITEM_WORKSPACES = [
 ] as const;
 
 /** One workspace of an item's history, cut to what the store reads. */
+/** One work item's workspaces, as `WORK_ITEM_WORKSPACES` answers them. */
+export type WorkItemWorkspaces = Consumed<
+  ListWorkItemWorkspacesResponses[200],
+  typeof LIST_WORK_ITEM_WORKSPACES
+>;
+
 export type WorkspaceHistoryEntry = NonNullable<
   NonNullable<
     Consumed<ListWorkItemWorkspacesResponses[200], typeof LIST_WORK_ITEM_WORKSPACES>['entries']

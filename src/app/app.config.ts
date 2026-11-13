@@ -31,7 +31,7 @@ import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origi
 import { provideAppUpdates } from '$core/updates/app-updates';
 import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
-import { provideWorkReferences } from '$core/work/work-briefs.store';
+import { provideWorkReferences } from '$core/work/work-briefs';
 import { environment } from '../environments/environment';
 
 /**

@@ -14,27 +14,32 @@ import {
   projectsGoldenMasters as masters,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
+import { CREATE_WORK, REPRIORITIZE_WORK, SET_WORK_NEEDS } from './work-writes.operations';
 import {
-  CREATE_WORK,
-  PATCH_WORK_NEEDS,
-  REPRIORITIZE_WORK,
-  WORK_REFUSAL,
-} from './work-writes.consumes';
-import { WorkWritesStore } from './work-writes.store';
+  createWorkParams,
+  needsParams,
+  reprioritizeParams,
+  workWriteRefusal,
+  type WorkDraft,
+} from './work-writes';
 
 /**
- * `WorkWritesStore`'s part of qits-landing-app's pact with qits-projects-service (epic qits-888),
- * in `pacts/qits-landing-app_qits-projects-service.json` beside the other stores' parts:
- * `createWork` from "a project with no work" (a bug ticket with its impetus), driven through the
- * store's `create` with what the recording sent, and from "a project with ideas" refused (400: a
- * ticket without its impetus), whose `message` the form shows (qits-2004, its `refused` outcome);
- * `reprioritizeWork` from "three reported tickets,
- * one with a priority" (qits-753: the third ticket dropped directly below the first), driven
- * through the store's `reprioritize`.
+ * The work write operations' part of qits-landing-app's pact with qits-projects-service (epic
+ * qits-888; `work-writes.operations.ts`, qits-2146), in
+ * `pacts/qits-landing-app_qits-projects-service.json` beside the other operations' parts:
+ * `CREATE_WORK` (`createWork`) from "a project with no work" (a bug ticket with its impetus), run
+ * with `createWorkParams` of what the recording sent, and from "a project with ideas" refused (400:
+ * a ticket without its impetus), whose `message` the form shows (qits-2004, its `refused`
+ * outcome); `REPRIORITIZE_WORK` (`reprioritizeWork`) from "three reported tickets, one with a
+ * priority" (qits-753: the third ticket dropped directly below the first), run with
+ * `reprioritizeParams`. The interactions moved here from `work-writes.store.pact.spec.ts` with
+ * `WorkWritesStore` (qits-2146), unchanged: the same descriptions, states, requests and bound
+ * fields; `work-writes.ts` builds the very params the store sent.
  *
- * `patchWork` of `needs` (epic qits-1899, `edit-work-needs`), from `NEEDS_STATE`: the Needs
- * panel's write. No golden master records a patch of `needs`, so it is composed from a recorded
- * patch (`needsPatch`), as the drop's move is in `work.store.pact.spec.ts`: the same door, method,
+ * `SET_WORK_NEEDS` (`patchWork` of `needs`, epic qits-1899, `edit-work-needs`), from
+ * `NEEDS_STATE`: the Needs panel's write, run with `needsParams`. No golden master records a patch
+ * of `needs`, so it is composed from a recorded patch (`needsPatch`), as the drop's move is in
+ * `project-work.operations.pact.spec.ts`: the same door, method,
  * path and status as "a reported ticket"'s patch, in `NEEDS_STATE` with its params, sending the
  * state's own need again (`neededQualifiedId` at VERIFIED, which the seed holds, so the provider
  * writes what it has), and binding the answer's `qualifiedId` alone (`PATCH_WORK_NEEDS`). The
@@ -88,7 +93,8 @@ const needsPatch: GoldenMasters = {
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-writes-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
 
-function storeAt(url: string) {
+/** Runs `call` against the mock server at `url`, in an injection context. */
+function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -97,10 +103,14 @@ function storeAt(url: string) {
     ],
   });
   projectsClient.setConfig({ baseUrl: url });
-  return TestBed.inject(WorkWritesStore);
+  return TestBed.runInInjectionContext(call);
 }
 
-describe('qits-landing-app → qits-projects-service pact: work writes', () => {
+/** A create of `draft`, as the create form sends it. */
+const create = (url: string, draft: WorkDraft) =>
+  at(url, () => CREATE_WORK.fetch(createWorkParams(draft)));
+
+describe('qits-landing-app → qits-projects-service pact: the work write operations', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
@@ -115,43 +125,50 @@ describe('qits-landing-app → qits-projects-service pact: work writes', () => {
     }
   });
 
+  it('declares the provider this spec binds', () => {
+    for (const op of [CREATE_WORK, SET_WORK_NEEDS, REPRIORITIZE_WORK]) {
+      expect(op.provider).toBe(PROVIDER);
+    }
+  });
+
   it('create-work-item: a bug ticket with its impetus', () =>
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: NO_WORK,
-      operationId: 'createWork',
+      operationId: CREATE_WORK.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'create-work-item' },
-      consumes: CREATE_WORK,
+      consumes: CREATE_WORK.consumes,
     }).executeTest(async (server) => {
       // The body as the recording sent it, its project included: the provider's verification fills
       // in `{projectId}` from the state's params.
       const sent = masters.operation(NO_WORK, 'createWork').body as Record<string, string>;
-      const outcome = await storeAt(server.url).create({
+      const { data, error } = await create(server.url, {
         archetype: 'TICKET',
         project: sent['project'],
         title: sent['title'],
         ticketType: sent['ticketType'],
         impetus: sent['impetus'],
       });
-      expect(outcome.ok && outcome.value.qualifiedId).toBeTruthy();
+      expect(error).toBeUndefined();
+      expect(data?.qualifiedId).toBeTruthy();
     }));
 
   it('create-work-item: a ticket without impetus is refused, in the service’s words', () =>
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: IDEAS,
-      operationId: 'createWork',
+      operationId: CREATE_WORK.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'create-work-item' },
-      consumes: WORK_REFUSAL,
+      consumes: CREATE_WORK.errorConsumes,
     }).executeTest(async (server) => {
       const sent = masters.operation(IDEAS, 'createWork').body as Record<string, string>;
-      const outcome = await storeAt(server.url).create({
+      const { error, response } = await create(server.url, {
         archetype: 'TICKET',
         project: sent['project'],
         title: sent['title'],
         ticketType: sent['ticketType'],
       });
-      expect(outcome).toEqual({ ok: false, refusal: 'impetus is required' });
+      expect(workWriteRefusal(error, response?.status)).toBe('impetus is required');
     }));
 
   it.skipIf(!isRecorded(NEEDS_STATE, 'getWork'))(
@@ -160,13 +177,16 @@ describe('qits-landing-app → qits-projects-service pact: work writes', () => {
       addGoldenInteraction(pact, needsPatch, {
         provider: PROVIDER,
         state: NEEDS_STATE,
-        operationId: 'patchWork',
+        operationId: SET_WORK_NEEDS.operationId,
         trigger: { kind: 'ui', app: CONSUMER, interaction: 'edit-work-needs' },
-        consumes: PATCH_WORK_NEEDS,
+        consumes: SET_WORK_NEEDS.consumes,
       }).executeTest(async (server) => {
         const { params, body } = needsWrite();
-        const outcome = await storeAt(server.url).setNeeds(params['qualifiedId'], body.needs);
-        expect(outcome.ok && outcome.value.qualifiedId).toBeTruthy();
+        const { data, error } = await at(server.url, () =>
+          SET_WORK_NEEDS.fetch(needsParams(params['qualifiedId'], body.needs)),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.qualifiedId).toBeTruthy();
       }),
   );
 
@@ -174,19 +194,20 @@ describe('qits-landing-app → qits-projects-service pact: work writes', () => {
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: RANKED,
-      operationId: 'reprioritizeWork',
+      operationId: REPRIORITIZE_WORK.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'reprioritize-work-item' },
-      consumes: REPRIORITIZE_WORK,
+      consumes: REPRIORITIZE_WORK.consumes,
     }).executeTest(async (server) => {
       // The anchor as the recording sent it: the provider's verification fills in `{anchor}` from
       // the state's params.
       const { params, body } = masters.operation(RANKED, 'reprioritizeWork');
       const sent = body as Record<string, string>;
-      const outcome = await storeAt(server.url).reprioritize(
-        params['projectId'],
-        params['qualifiedId'],
-        { below: sent['below'] },
+      const { data, error } = await at(server.url, () =>
+        REPRIORITIZE_WORK.fetch(
+          reprioritizeParams(params['qualifiedId'], { below: sent['below'] }),
+        ),
       );
-      expect(outcome.ok && outcome.value.items?.length).toBeGreaterThan(0);
+      expect(error).toBeUndefined();
+      expect(data?.items?.length).toBeGreaterThan(0);
     }));
 });

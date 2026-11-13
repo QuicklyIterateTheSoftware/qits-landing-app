@@ -10,16 +10,18 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { LIST_WORK_ARCHETYPES } from './archetypes.consumes';
-import { ArchetypesStore } from './archetypes.store';
+import { WORK_ARCHETYPES } from './archetypes.operations';
 
 /**
- * `ArchetypesStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
- * qits-965): the `listWorkArchetypes` interaction, in the same file as the other stores'
- * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`).
+ * `WORK_ARCHETYPES`' part of qits-landing-app's pact with qits-projects-service (epics qits-112,
+ * qits-965; `archetypes.operations.ts`, qits-2146): the `listWorkArchetypes` interaction, in the
+ * same file as the other operations' (`pacts/qits-landing-app_qits-projects-service.json`, see
+ * `src/testing/pact-part.ts`). It moved here from `archetypes.store.pact.spec.ts` with
+ * `ArchetypesStore` (qits-2146), unchanged: the same description, state, request and bound fields.
  *
- * The test drives `load()`, as the work item page does, against a pact mock server answering with
- * qits-projects' golden master, binding only the fields in `archetypes.consumes.ts`. The committed
+ * The test runs the operation's own `fetch`, as the work item page reads the registry, against a
+ * pact mock server answering with qits-projects' golden master, binding only the fields in
+ * `archetypes.consumes.ts` (the operation's `consumes`). The committed
  * pact names no CAMPAIGN entry (`withoutRetired`): campaigns are retired (epic qits-1899), and
  * qits-1908 deletes the archetype from the registry.
  */
@@ -83,7 +85,7 @@ const MAYBE_NULL: ReadonlySet<keyof DispatchPhase> = new Set(['enters']);
  *
  * Runs on the pact this spec just generated, between the mock server answering (with qits-projects'
  * real recording, unchanged) and `assertPactPart` comparing or committing the result: it only
- * loosens what the committed pact asks a provider to match, not what the store under test read.
+ * loosens what the committed pact asks a provider to match, not what the operation under test read.
  *
  * A `flow` recorded empty has no element to read a shape from, so it borrows `READY_FOR_DEV`'s first
  * one — the one status whose own flow never records a null field. The same borrow replaces a
@@ -115,8 +117,8 @@ function openEndedFlow(generated: string): void {
 /**
  * Leaves the {@link RETIRED} archetypes out of what the committed pact asks a provider for: their
  * entry and its `arrayContains` variant (one per archetype, by position), so a registry without
- * CAMPAIGN (qits-1908) still satisfies it. The store only looks up the archetypes it is asked for
- * (`of`), so a registry with more entries satisfies it too, as `arrayContains` lets it.
+ * CAMPAIGN (qits-1908) still satisfies it. The app only looks up the archetypes it is asked for,
+ * so a registry with more entries satisfies it too, as `arrayContains` lets it.
  */
 function withoutRetired(generated: string): void {
   const written = JSON.parse(readFileSync(generated, 'utf8')) as GeneratedPact;
@@ -148,7 +150,7 @@ function withoutRetired(generated: string): void {
  * `addGoldenInteraction` also pins every `transitions.<STATUS>` array whose moves share one shape
  * today (no move there carries `gates`) to the length qits-projects happened to record: `type`,
  * min = max = that length. qits-projects is about to add a CLOSE move to several statuses of EPIC
- * and FEATURE (qits-1757), and the store never relies on an exact move count (only
+ * and FEATURE (qits-1757), and the app never relies on an exact move count (only
  * on the moves it finds), so this drops the max and keeps the recorded count as a floor. A status
  * whose moves already differ in shape (REFINED everywhere; REPORTED for EPIC and TICKET, where one
  * move alone carries `gates`) is matched with `arrayContains` already, which pins no length, so it
@@ -194,7 +196,7 @@ function openEndedArchetype(archetype: DeclaredArchetype, rules: Rules): void {
   }
 }
 
-describe('qits-landing-app → qits-projects-service pact: archetypes', () => {
+describe('qits-landing-app → qits-projects-service pact: the archetypes operation', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
@@ -207,21 +209,25 @@ describe('qits-landing-app → qits-projects-service pact: archetypes', () => {
     }
   });
 
+  it('declares the provider this spec binds', () => {
+    expect(WORK_ARCHETYPES.provider).toBe(PROVIDER);
+  });
+
   it('show-work-item-actions: the store loads the archetype registry', () =>
     addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: STATE,
-      operationId: 'listWorkArchetypes',
+      operationId: WORK_ARCHETYPES.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-work-item-actions' },
-      consumes: LIST_WORK_ARCHETYPES,
+      consumes: WORK_ARCHETYPES.consumes,
     }).executeTest(async (server) => {
       TestBed.configureTestingModule({
         providers: [provideHttpClient(withFetch()), provideHeyApiClient(projectsClient)],
       });
       projectsClient.setConfig({ baseUrl: server.url });
-      const store = TestBed.inject(ArchetypesStore);
-      await store.load();
-      expect(store.status()).toBe('loaded');
-      expect(store.of('EPIC')?.transitions?.['REPORTED']?.length).toBeGreaterThan(0);
+      const { data, error } = await TestBed.runInInjectionContext(() => WORK_ARCHETYPES.fetch({}));
+      expect(error).toBeUndefined();
+      const epic = data?.archetypes?.find((a) => a.archetype === 'EPIC');
+      expect(epic?.transitions?.['REPORTED']?.length).toBeGreaterThan(0);
     }));
 });

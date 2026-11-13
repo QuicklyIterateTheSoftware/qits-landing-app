@@ -4,7 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { provideQitsWorkBriefs, type QitsWorkBrief } from '@qits/ui-components';
 import { commands, page, userEvent } from 'vitest/browser';
-import { workLink } from '$core/work/work-briefs.store';
+import { workLink } from '$core/work/work-briefs';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { Markdown } from './markdown';
 

@@ -6,7 +6,6 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { addGoldenInteraction, type GoldenMasters } from '@qits/angular/testing';
-import { listProjectWork } from '../../api/projects';
 import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
@@ -17,18 +16,25 @@ import {
   projectsGoldenMasters as masters,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { DISPATCH_WORK, LIST_PROJECT_WORK, SET_WORK_STATUS, type WorkEntry } from './work.consumes';
-import { WorkStore, type DispatchMode, type WorkStatus } from './work.store';
+import type { WorkEntry } from './work.consumes';
+import { workRef, type DispatchMode, type WorkStatus } from './moves';
+import type { DropMove, WorkOutcome } from './work-outcome';
+import { DISPATCH_WORK, PROJECT_WORK } from './project-work.operations';
+import { MOVE_WORK } from './work.operations';
 
 /**
- * `WorkStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
- * qits-965): the `listProjectWork`, `setWorkStatus` and `dispatchWork` interactions, in the same
- * file as the operations' (`pacts/qits-landing-app_qits-projects-service.json`, see
- * `src/testing/pact-part.ts`). Every entity is addressed by its qualified id.
+ * The project work operations' part of qits-landing-app's pact with qits-projects-service (epics
+ * qits-112, qits-965; `project-work.operations.ts`, qits-2146): `PROJECT_WORK` (`listProjectWork`),
+ * `DISPATCH_WORK` (`dispatchWork`) and the finish, drop and schedule moves through `MOVE_WORK`
+ * (`setWorkStatus`, `work.operations.ts`), in the same file as the other operations'
+ * (`pacts/qits-landing-app_qits-projects-service.json`, see `src/testing/pact-part.ts`). Every
+ * entity is addressed by its qualified id.
  *
- * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against
- * a pact mock server answering with qits-projects' golden master, binding only the fields in
- * `work.consumes.ts` that the state's recording holds (`heldBy`).
+ * The interactions moved here from `work.store.pact.spec.ts` with `WorkStore` (qits-2146),
+ * unchanged: the same descriptions, states, requests and bound fields. Each test runs the
+ * operation's own `fetch` with the params `WorkStore` passed its client call, against a pact mock
+ * server answering with qits-projects' golden master, binding only the fields in `work.consumes.ts`
+ * (the operations' `consumes`) that the state's recording holds (`heldBy`).
  *
  * Epic qits-1899 retires campaigns, milestones and dependsOn: no interaction reads a campaign's
  * members or description, a milestone, or a campaign state, and the "… in detail" states' work is
@@ -53,8 +59,11 @@ const OPERATIONS: readonly OwnedOperation[] = [
   'dispatchWork',
 ];
 
-/** {@link LIST_PROJECT_WORK} without the need rows: what a state that records no need binds. */
-const WITHOUT_NEED_ROWS = LIST_PROJECT_WORK.filter((path) => !path.includes('.needs[]'));
+/**
+ * `PROJECT_WORK`'s `consumes` (`LIST_PROJECT_WORK`) without the need rows: what a state that
+ * records no need binds.
+ */
+const WITHOUT_NEED_ROWS = PROJECT_WORK.consumes.filter((path) => !path.includes('.needs[]'));
 
 /** The work item page's states, one per archetype and ticket type, over one shared seed. */
 const DETAIL_STATES = [
@@ -176,13 +185,13 @@ const given = (slug: InteractionSlug, state: string) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId: 'listProjectWork',
+    operationId: PROJECT_WORK.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
     consumes: heldBy(
       masters,
       state,
-      'listProjectWork',
-      state === NEEDS_STATE ? LIST_PROJECT_WORK : WITHOUT_NEED_ROWS,
+      PROJECT_WORK.operationId,
+      state === NEEDS_STATE ? PROJECT_WORK.consumes : WITHOUT_NEED_ROWS,
     ),
   });
 
@@ -191,9 +200,9 @@ const givenMove = (slug: InteractionSlug, state: string) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId: 'setWorkStatus',
+    operationId: MOVE_WORK.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: SET_WORK_STATUS,
+    consumes: MOVE_WORK.consumes,
   });
 
 /**
@@ -204,10 +213,11 @@ const givenMove = (slug: InteractionSlug, state: string) =>
  * (`DROPPED`) in the answer.
  *
  * Only the REQUEST carries the new fields; the interaction's `consumes` (passed by the caller,
- * `SET_WORK_STATUS`) still binds `status` alone, so the provider deployed today — which ignores the
- * unknown body fields and answers the move as it always did — satisfies this interaction as well as
- * the next one. `supersededBy`, where given, is a param of `RECORDED_MOVE`'s own seed (never the
- * dropped item itself), so the provider's verification resolves it against an entity that exists.
+ * `MOVE_WORK.consumes`) still binds `status` alone, so the provider deployed today — which ignores
+ * the unknown body fields and answers the move as it always did — satisfies this interaction as
+ * well as the next one. `supersededBy`, where given, is a param of `RECORDED_MOVE`'s own seed
+ * (never the dropped item itself), so the provider's verification resolves it against an entity
+ * that exists.
  */
 const RECORDED_MOVE = 'a reported ticket';
 const dropOf = (state: string, body: Readonly<Record<string, string>>): GoldenMasters => ({
@@ -230,9 +240,9 @@ const givenDispatch = (state: string) =>
   addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId: 'dispatchWork',
+    operationId: DISPATCH_WORK.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: 'dispatch-work-item' },
-    consumes: DISPATCH_WORK,
+    consumes: DISPATCH_WORK.consumes,
   });
 
 /** The entity a move or dispatch state names: its id, its qualified id and its project. */
@@ -243,8 +253,8 @@ function movedIn(state: string, operationId: string) {
   return { id, qualifiedId, projectId: params['projectId'], body: body as Record<string, string> };
 }
 
-/** A store whose client talks to the mock server through a real HttpClient. */
-function storeAt(url: string) {
+/** Runs `call` against the mock server at `url`, in an injection context. */
+function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -253,23 +263,40 @@ function storeAt(url: string) {
     ],
   });
   projectsClient.setConfig({ baseUrl: url });
-  return TestBed.inject(WorkStore);
+  return TestBed.runInInjectionContext(call);
 }
 
 const projectOf = (state: string) =>
   masters.operation(state, 'listProjectWork').params['projectId'];
 
-/** `state`'s project work read on its own, as `load` makes it. */
+/** `state`'s project work, read as `WorkStore.load` read it. */
 async function workOf(url: string, state: string) {
-  storeAt(url);
   const project = projectOf(state);
-  const { data } = await TestBed.runInInjectionContext(() =>
-    listProjectWork({ path: { project } }),
-  );
+  const { data, error } = await at(url, () => PROJECT_WORK.fetch({ path: { project } }));
+  expect(error).toBeUndefined();
   return data?.entities ?? [];
 }
 
-describe('qits-landing-app → qits-projects-service pact: work', () => {
+/**
+ * `entry`'s move to `target` as `WorkStore`'s `move` sent it: by `workRef`, with `keepalive`, and a
+ * drop's `outcome` and `supersededBy` in the body. The answered status.
+ */
+async function moveAt(
+  url: string,
+  entry: Pick<WorkEntry, 'id' | 'qualifiedId'>,
+  target: WorkStatus,
+  extra?: { readonly outcome: WorkOutcome; readonly supersededBy?: string },
+) {
+  const qualifiedId = workRef(entry);
+  if (!qualifiedId) throw new Error('an entry without a reference');
+  const body: DropMove = { target, ...extra };
+  const { data, error } = await at(url, () =>
+    MOVE_WORK.fetch({ path: { qualifiedId }, body, keepalive: true }),
+  );
+  return error === undefined ? data?.status : undefined;
+}
+
+describe('qits-landing-app → qits-projects-service pact: the project work operations', () => {
   afterAll(() => {
     projectsClient.setConfig({ baseUrl: '' });
     try {
@@ -285,23 +312,21 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }
   });
 
+  it('declares the provider this spec binds', () => {
+    for (const op of [PROJECT_WORK, DISPATCH_WORK, MOVE_WORK]) expect(op.provider).toBe(PROVIDER);
+  });
+
   it('show-project-work-board: the Work page lays out work in every status', () =>
     given('show-project-work-board', 'a project with work in every status').executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const projectId = projectOf('a project with work in every status');
-        await store.load(projectId);
-        expect(store.byProject()[projectId]?.status).toBe('loaded');
+        expect(await workOf(server.url, 'a project with work in every status')).toBeDefined();
       },
     ));
 
   it('show-project-work-board: an epic with features and tasks', () =>
     given('show-project-work-board', 'an epic with features and tasks').executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const projectId = projectOf('an epic with features and tasks');
-        await store.load(projectId);
-        expect(store.byProject()[projectId]?.status).toBe('loaded');
+        expect(await workOf(server.url, 'an epic with features and tasks')).toBeDefined();
       },
     ));
 
@@ -316,20 +341,16 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     'an implementing epic with features in mixed statuses',
   ])('show-project-work-board: %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf(state);
-      await store.load(projectId);
-      expect(store.byProject()[projectId]?.status).toBe('loaded');
+      expect(await workOf(server.url, state)).toBeDefined();
     }),
   );
 
   it('show-project-work-board: work ranked by priority, and work nobody ranked', () =>
     given('show-project-work-board', 'three reported tickets, one with a priority').executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const projectId = projectOf('three reported tickets, one with a priority');
-        await store.load(projectId);
-        expect(store.byProject()[projectId]?.status).toBe('loaded');
+        expect(
+          await workOf(server.url, 'three reported tickets, one with a priority'),
+        ).toBeDefined();
       },
     ));
 
@@ -338,10 +359,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
   it('show-project-work-board: a project with VERIFIED tickets in every wrapper verdict', () => {
     const state = 'a project with VERIFIED tickets in every wrapper verdict';
     return given('show-project-work-board', state).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf(state);
-      await store.load(projectId);
-      expect(store.byProject()[projectId]?.status).toBe('loaded');
+      expect(await workOf(server.url, state)).toBeDefined();
     });
   });
 
@@ -356,10 +374,7 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     'a ready for dev epic',
   ])('show-project-work-board: the work of %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf(state);
-      await store.load(projectId);
-      expect(store.byProject()[projectId]?.status).toBe('loaded');
+      expect(await workOf(server.url, state)).toBeDefined();
     }),
   );
 
@@ -392,12 +407,10 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     '%s: the finish button moves %s to DONE',
     (slug, state, archetype) =>
       givenMove(slug, state).executeTest(async (server) => {
-        const store = storeAt(server.url);
-        const { id, qualifiedId, projectId } = movedIn(state, 'setWorkStatus');
+        const { id, qualifiedId } = movedIn(state, 'setWorkStatus');
         const entry = { id, qualifiedId, archetype, status: 'VERIFIED' } as WorkEntry;
-        await store.finish(projectId, entry);
-        // No finish state left means the answer carried a status.
-        expect(store.finishing()[id]).toBeUndefined();
+        // A finish is a move to DONE.
+        expect(await moveAt(server.url, entry, 'DONE')).toBeTruthy();
       }),
   );
 
@@ -411,14 +424,14 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       state: RECORDED_MOVE,
       operationId: 'setWorkStatus',
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'drop-work-item' },
-      consumes: SET_WORK_STATUS,
+      consumes: MOVE_WORK.consumes,
     }).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { id, qualifiedId, projectId } = movedIn(RECORDED_MOVE, 'setWorkStatus');
+      const { id, qualifiedId } = movedIn(RECORDED_MOVE, 'setWorkStatus');
       const entry = { id, qualifiedId } as WorkEntry;
-      const result = await store.drop(projectId, entry, 'WONT_DO');
-      expect(result.status).toBe('DROPPED');
-      expect(store.transitioning()[id]).toBeUndefined();
+      const outcome: WorkOutcome = 'WONT_DO';
+      expect(await moveAt(server.url, entry, 'DROPPED', { outcome, supersededBy: undefined })).toBe(
+        'DROPPED',
+      );
     });
   });
 
@@ -431,16 +444,16 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       state,
       operationId: 'setWorkStatus',
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'drop-work-item' },
-      consumes: SET_WORK_STATUS,
+      consumes: MOVE_WORK.consumes,
     }).executeTest(async (server) => {
-      const store = storeAt(server.url);
       const params = drop.operation(state, 'setWorkStatus').params;
       const entry = {
         id: params['improvementTicketId'],
         qualifiedId: params['qualifiedId'],
       } as WorkEntry;
-      const result = await store.drop(params['projectId'], entry, 'DUPLICATE', supersededBy);
-      expect(result.status).toBe('DROPPED');
+      expect(
+        await moveAt(server.url, entry, 'DROPPED', { outcome: 'DUPLICATE', supersededBy }),
+      ).toBe('DROPPED');
     });
   });
 
@@ -452,13 +465,14 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     ['a refined ticket', 'TICKET'],
   ] as const)('schedule-work: Schedule moves %s to READY_FOR_DEV', (state, archetype) =>
     givenMove('schedule-work', state).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { id, qualifiedId, projectId, body } = movedIn(state, 'setWorkStatus');
+      const { id, qualifiedId, body } = movedIn(state, 'setWorkStatus');
       expect(body['target']).toBe('READY_FOR_DEV');
-      const entry = { id, qualifiedId, archetype, status: 'REFINED' } as WorkEntry;
-      await store.transitionAll(projectId, [entry], 'READY_FOR_DEV');
-      expect(store.transitioning()[id]).toBeUndefined();
-      expect(store.refusals()).toEqual({});
+      const entries = [{ id, qualifiedId, archetype, status: 'REFINED' } as WorkEntry];
+      // A Schedule is a move per ticked entry, all at once.
+      const moved = await Promise.all(
+        entries.map((entry) => moveAt(server.url, entry, 'READY_FOR_DEV')),
+      );
+      expect(moved.every(Boolean)).toBe(true);
     }),
   );
 
@@ -469,11 +483,15 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     'an implemented ticket',
   ])('dispatch-work-item: a dispatch press for %s', (state) =>
     givenDispatch(state).executeTest(async (server) => {
-      const store = storeAt(server.url);
       const { id, qualifiedId, body } = movedIn(state, 'dispatchWork');
-      await store.dispatch({ id, qualifiedId } as WorkEntry, body['mode'] as DispatchMode);
-      expect(store.dispatching()[id]).toBeUndefined();
-      expect(store.dispatched()[id]).toBeTruthy();
+      const ref = workRef({ id, qualifiedId });
+      if (!ref) throw new Error(`${state}: no reference`);
+      const mode = body['mode'] as DispatchMode;
+      const { data, error } = await at(server.url, () =>
+        DISPATCH_WORK.fetch({ path: { qualifiedId: ref }, body: { mode } }),
+      );
+      expect(error).toBeUndefined();
+      expect(data && 'dispatch' in data ? data.dispatch?.phase : undefined).toBeTruthy();
     }),
   );
 });

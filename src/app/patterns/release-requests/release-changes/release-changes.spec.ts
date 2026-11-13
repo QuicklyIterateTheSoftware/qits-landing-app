@@ -8,7 +8,7 @@ import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { goldenMaster } from '../../../../testing/golden-masters';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
-import { provideWorkReferences } from '$core/work/work-briefs.store';
+import { provideWorkReferences } from '$core/work/work-briefs';
 import { ReleaseChangesView } from './release-changes';
 
 /** The generated client builds its request after a few awaits; let them run. */

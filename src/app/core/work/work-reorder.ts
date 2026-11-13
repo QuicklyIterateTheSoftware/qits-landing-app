@@ -1,9 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { SelectedProject } from '$core/projects/selected-project';
+import { qitsMutation } from '@qits/angular';
 import { reorderAnchor, type ReorderIndexMove } from '$core/reorder/reorder-anchor';
-import { workRef } from './work.store';
+import { workRef } from './moves';
+import { SelectedWork } from './selected-work';
 import type { WorkNode } from './work-tree';
-import { WorkWritesStore } from './work-writes.store';
+import { reprioritizeParams, workWriteRunRefusal } from './work-writes';
+import { REPRIORITIZE_WORK } from './work-writes.operations';
 
 /**
  * Prioritising work by dragging it (qits-753): in the Backlog, the roots, an epic's features and a
@@ -26,15 +28,20 @@ export function movable(node: WorkNode): boolean {
 }
 
 /**
- * The drops of the open project's reorder lists (`WorkWritesStore.reprioritize`): the service
- * renumbers, and its answer orders the trees at once; a refusal reads the work again, so the item
- * goes back, and is kept in `refusal` for the page to show. One for the app, so a refusal from any
- * list (the roots', an epic's features', a feature's tasks') shows in one place.
+ * The drops of the open project's reorder lists, through `qitsMutation(REPRIORITIZE_WORK)`
+ * (`reprioritizeWork`, qits-2146): the service renumbers, and its answered priorities go into the
+ * open project's work at once (`SelectedWork.putPriorities`), so the item stays where it was
+ * dropped; a refusal (400 for an anchor that is no open sibling, 409 for a DONE or DROPPED item)
+ * reads the work again (`SelectedWork.reload`), so the item goes back, and is kept in `refusal` for
+ * the page to show. One for the app, so a refusal from any list (the roots', an epic's features', a
+ * feature's tasks') shows in one place.
+ *
+ * Staleness (qits-1270): no event follows a priority change, so the drop's own answer is the update.
  */
 @Injectable({ providedIn: 'root' })
 export class WorkReorders {
-  private readonly writes = inject(WorkWritesStore);
-  private readonly selected = inject(SelectedProject);
+  private readonly work = inject(SelectedWork);
+  private readonly reprioritize = qitsMutation(REPRIORITIZE_WORK);
   private readonly refused = signal<string | undefined>(undefined);
 
   /** Why the last drop was refused, in the service's words; gone when the next one starts. */
@@ -45,11 +52,14 @@ export class WorkReorders {
     const ids = nodes.map((node) => workRef(node.entry) ?? '');
     const moved = ids[move.from];
     const anchor = reorderAnchor(ids, move);
-    const projectId = this.selected.project()?.id;
-    if (!moved || !anchor || !projectId || !Object.values(anchor)[0]) return;
+    if (!moved || !anchor || !this.work.projectId() || !Object.values(anchor)[0]) return;
     this.refused.set(undefined);
-    void this.writes.reprioritize(projectId, moved, anchor).then((outcome) => {
-      if (!outcome.ok) this.refused.set(outcome.refusal);
-    });
+    this.reprioritize.run(reprioritizeParams(moved, anchor)).then(
+      (answer) => this.work.putPriorities(answer?.items ?? []),
+      (error: unknown) => {
+        this.work.reload();
+        this.refused.set(workWriteRunRefusal(error));
+      },
+    );
   }
 }
