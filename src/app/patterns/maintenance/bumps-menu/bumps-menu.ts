@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { refreshOn } from '$core/events/refresh-on';
-import type { BumpEntry } from '$core/maintenance/maintenance.consumes';
-import { MaintenanceStore } from '$core/maintenance/maintenance.store';
+import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import { PENDING_BUMPS, type BumpEntry } from '$core/maintenance/maintenance.consumes';
+import { PENDING_BUMPS_LIST } from '$core/maintenance/maintenance.operations';
+import { loadState } from '$core/resources/load-state';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
@@ -21,7 +22,7 @@ export const BUMP_EVENTS = [
   'ReleaseRequestStateChanged',
 ] as const;
 
-/** How long a burst of domain events waits before the bumps are fetched again. */
+/** How long a burst of domain events waits before the bumps are read again. */
 export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 
 /** How many of a bump's changes a row names before it says how many more there are. */
@@ -65,11 +66,17 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
  * the platform — each one's repository, what it moves, its mode and how it stands. Always shown,
  * because bumps are the platform's, not a project's.
  *
- * The bumps are fetched the first time the menu opens, never before (`MaintenanceStore.load`), and
- * again after domain events that move them ({@link BUMP_EVENTS}), at most once a second. The button
- * and the panel are `ui-dropdown`'s; the list scrolls inside the panel. Staleness (qits-1270):
- * `BUMP_EVENTS`, any of them (bumps are the platform's, so none is narrowed) → the pending bumps
- * (`MaintenanceStore.refresh`).
+ * The bumps are read the first time the menu opens, never before, and again on an opening after a
+ * failure, and after domain events that move them ({@link BUMP_EVENTS}), at most once a second: its
+ * own `qitsResource` over `PENDING_BUMPS_LIST` (qits-2146; the menu is its one reader, mounted in
+ * the shell for the app's lifetime). A failed read again keeps the list shown. The button and the
+ * panel are `ui-dropdown`'s; the list scrolls inside the panel. Staleness (qits-1270): the
+ * resource's `refreshOn`, `BUMP_EVENTS`, any of them (bumps are the platform's, so none is
+ * narrowed) → the pending bumps; nothing is read before the first opening.
+ *
+ * What it shows of the bumps carries the data marks (qits-2141): the list its read
+ * (`qitsEntityList`), each row its bump (`qitsEntity`, by `id`), each value its field or the fields
+ * it is derived from (`qitsField`); each change line its change, by the dependency's `name`.
  *
  * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): fetched
  * fresh from `/upstream-pools` every time the panel opens. A non-2xx answer, a network error or an
@@ -79,7 +86,7 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
 @Component({
   selector: 'app-bumps-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, Spinner],
+  imports: [Dropdown, QitsEntity, QitsEntityList, QitsField, Spinner],
   host: { class: 'inline-flex' },
   template: `
     <ui-dropdown
@@ -107,35 +114,63 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
       </svg>
       <div dropdown-panel>
         <ui-spinner [state]="state()" class="min-h-16">
-          <ul class="m-0 max-h-96 list-none overflow-y-auto p-0">
-            @for (bump of store.pending(); track bump.id) {
-              <li class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0">
+          <ul class="m-0 max-h-96 list-none overflow-y-auto p-0" [qitsEntityList]="bumps">
+            @for (bump of pending(); track bump.id) {
+              <li
+                class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0"
+                [qitsEntity]="bump"
+                entityKey="id"
+              >
                 <div class="flex items-baseline justify-between gap-2">
-                  <span class="truncate text-sm font-semibold text-fg">{{ bump.repository }}</span>
+                  <span
+                    class="truncate text-sm font-semibold text-fg"
+                    [fieldOf]="bump"
+                    qitsField="repository"
+                    >{{ bump.repository }}</span
+                  >
                   <span class="flex shrink-0 gap-1">
                     <span
                       class="rounded bg-surface-muted px-1.5 text-[0.6875rem] leading-4 text-fg-soft"
+                      [fieldOf]="bump"
+                      qitsField="mode"
                       >{{ bump.mode }}</span
                     >
                     <span
                       class="rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
                       [class]="chip(bump)"
+                      [fieldOf]="bump"
+                      [qitsField]="{ derived: ['status', 'releaseState'] }"
                       >{{ label(bump) }}</span
                     >
                   </span>
                 </div>
                 <ul class="m-0 list-none p-0">
                   @for (change of shown(bump); track $index) {
-                    <li class="truncate text-[0.8125rem] text-fg-soft">
-                      <span class="text-fg">{{ change.name }}</span>
-                      {{ change.from }} → {{ change.to }}
-                      <span class="text-[0.6875rem] text-fg-muted">{{
-                        change.ecosystem?.toLowerCase()
+                    <li
+                      class="truncate text-[0.8125rem] text-fg-soft"
+                      [qitsEntity]="change"
+                      entityKey="name"
+                      [fieldOf]="change"
+                      [qitsField]="{ derived: ['from', 'to'] }"
+                    >
+                      <span class="text-fg" [fieldOf]="change" qitsField="name">{{
+                        change.name
                       }}</span>
+                      {{ change.from }} → {{ change.to }}
+                      <span
+                        class="text-[0.6875rem] text-fg-muted"
+                        [fieldOf]="change"
+                        [qitsField]="{ derived: ['ecosystem'] }"
+                        >{{ change.ecosystem?.toLowerCase() }}</span
+                      >
                     </li>
                   }
                 </ul>
-                <span class="text-[0.6875rem] text-fg-muted" [class.hidden]="!more(bump)"
+                <span
+                  class="text-[0.6875rem] text-fg-muted"
+                  [class.hidden]="!more(bump)"
+                  [fieldOf]="bump"
+                  [qitsField]="{ derived: ['changes'] }"
                   >+{{ more(bump) }} more</span
                 >
               </li>
@@ -143,7 +178,7 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
           </ul>
           <p
             class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
-            [class.hidden]="state() !== 'loaded' || store.pending().length > 0"
+            [class.hidden]="state() !== 'loaded' || pending().length > 0"
           >
             No pending version bumps
           </p>
@@ -165,24 +200,38 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
   `,
 })
 export class BumpsMenu {
-  protected readonly store = inject(MaintenanceStore);
   private readonly http = inject(HttpClient);
 
-  protected readonly state = computed((): LoadState => {
-    const status = this.store.status();
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
+  /** Whether the menu has been opened: nothing is read before. */
+  private readonly asked = signal(false);
+
+  /**
+   * The newest pending bumps, from the first opening on (in the browser only: nobody opens it on
+   * the server); read again after `BUMP_EVENTS`.
+   */
+  protected readonly bumps = qitsResource(
+    PENDING_BUMPS_LIST,
+    () => (this.asked() ? { query: { limit: PENDING_BUMPS } } : undefined),
+    { refreshOn: { names: BUMP_EVENTS } },
+  );
+
+  /** The pending bumps, newest first; none until read. */
+  protected readonly pending = computed((): readonly BumpEntry[] =>
+    this.bumps.hasValue() ? (this.bumps.value()?.bumps ?? []) : [],
+  );
+
+  protected readonly state = computed((): LoadState => loadState(this.bumps));
 
   /** The pools shown below the bumps; empty renders nothing (never an error of its own). */
   protected readonly pools = signal<readonly UpstreamPool[]>([]);
 
-  constructor() {
-    refreshOn({ names: BUMP_EVENTS, refresh: () => this.store.refresh() });
-  }
-
-  /** Each time the panel opens: the bumps, as before, and a fresh read of the pools. */
+  /**
+   * Each time the panel opens: the bumps (the first opening reads them, one after a failure reads
+   * them again), and a fresh read of the pools.
+   */
   protected opened(): void {
-    void this.store.load();
+    if (!this.asked()) this.asked.set(true);
+    else if (this.bumps.status() === 'error') this.bumps.reload();
     this.loadPools();
   }
 

@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { Subject } from 'rxjs';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
@@ -40,6 +41,8 @@ describe('BumpsMenu', () => {
             },
           },
         },
+        // The bumps' resource follows the app's one stream, as `app.config.ts` provides it.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -100,6 +103,10 @@ describe('BumpsMenu', () => {
     events.next({ id: '2', name: 'BuildSuccessful' });
     vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
     vi.useRealTimers();
+    // The resource reads again on its next turn (qits-2146): let it run, then its request build.
+    fixture.detectChanges();
+    await settle();
+    fixture.detectChanges();
     await settle();
     http.expectOne(LIST).flush(maintenanceGoldenMaster('no pending bumps', 'listPendingBumps'));
     await settle();
