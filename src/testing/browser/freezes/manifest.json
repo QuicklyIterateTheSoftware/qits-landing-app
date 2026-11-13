@@ -7952,6 +7952,48 @@
       ],
       "triggers": [
         "open-project-card:project"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        }
       ]
     },
     {
@@ -7978,6 +8020,48 @@
       ],
       "triggers": [
         "open-project-card:project"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        }
       ]
     },
     {
@@ -7993,6 +8077,54 @@
       "records": [],
       "triggers": [
         "open-project-card:project"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-githost-service#listLoc",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        }
       ]
     },
     {
@@ -8008,6 +8140,54 @@
       "records": [],
       "triggers": [
         "open-project-card:project"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-githost-service#listLoc",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        }
       ]
     },
     {
@@ -8023,6 +8203,54 @@
       "records": [],
       "triggers": [
         "open-project-card:project"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-githost-service#listLoc",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        }
       ]
     },
     {
@@ -8038,6 +8266,54 @@
       "records": [],
       "triggers": [
         "open-project-card:project"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-githost-service#listLoc",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        }
       ]
     },
     {
@@ -8359,6 +8635,66 @@
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        }
       ]
     },
     {
@@ -8376,6 +8712,66 @@
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        }
       ]
     },
     {
@@ -8398,6 +8794,14 @@
       "triggers": [
         "open-call-contract:entity",
         "open-call-contract:state"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
       ]
     },
     {
@@ -8420,6 +8824,14 @@
       "triggers": [
         "open-call-contract:entity",
         "open-call-contract:state"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
       ]
     },
     {
@@ -35952,6 +36364,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36027,6 +36453,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36091,6 +36531,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36154,6 +36608,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -36230,6 +36698,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36304,6 +36786,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -36689,6 +37185,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36747,6 +37251,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36794,6 +37306,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36840,6 +37360,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -36899,6 +37427,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -36956,6 +37492,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -37588,6 +38132,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -37657,6 +38215,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -37715,6 +38287,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -37772,6 +38358,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -37842,6 +38442,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -37911,6 +38525,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -37968,6 +38596,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -38027,6 +38663,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38074,6 +38718,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38120,6 +38772,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -38179,6 +38839,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38236,6 +38904,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -38301,6 +38977,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38365,6 +39055,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38418,6 +39122,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38470,6 +39188,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -38535,6 +39267,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38598,6 +39344,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -38679,6 +39439,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38759,6 +39533,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38828,6 +39616,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -38896,6 +39698,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -38977,6 +39793,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39057,6 +39887,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39131,6 +39975,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -39207,6 +40065,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39271,6 +40143,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39334,6 +40220,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -39410,6 +40310,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39485,6 +40399,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39548,6 +40476,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -39613,6 +40555,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39666,6 +40622,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39718,6 +40688,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -39783,6 +40767,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39846,6 +40844,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -39911,6 +40923,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -39975,6 +40995,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40028,6 +41056,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40080,6 +41116,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -40145,6 +41189,14 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40208,6 +41260,14 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -40273,6 +41333,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40337,6 +41411,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40390,6 +41478,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40442,6 +41544,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -40507,6 +41623,20 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40570,6 +41700,20 @@
         "switch-contracts-section:entities"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -40933,6 +42077,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -40999,6 +42149,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -41054,6 +42210,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -41108,6 +42270,12 @@
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -41175,6 +42343,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -41240,6 +42414,12 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45071,6 +46251,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45117,6 +46303,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45152,6 +46344,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45186,6 +46384,12 @@
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45233,6 +46437,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45278,6 +46488,12 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45325,6 +46541,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45371,6 +46593,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45406,6 +46634,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45440,6 +46674,12 @@
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45487,6 +46727,12 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45532,6 +46778,12 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45587,6 +46839,175 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "backupUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "cloneUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mainBranch",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45641,6 +47062,175 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "backupUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "cloneUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mainBranch",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45684,6 +47274,175 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "backupUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "cloneUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mainBranch",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45726,6 +47485,175 @@
         "open-repository-pages:uiBuilder"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "backupUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "cloneUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mainBranch",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45781,6 +47709,175 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "backupUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "cloneUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mainBranch",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45834,6 +47931,175 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "backupUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "cloneUrl",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mainBranch",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -45889,6 +48155,157 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45943,6 +48360,157 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -45986,6 +48554,157 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -46028,6 +48747,157 @@
         "open-repository-pages:uiBuilder"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -46083,6 +48953,157 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "name",
@@ -46136,6 +49157,157 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "archetype"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "backupUrl",
+            "lastBackup.outcome"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -73700,6 +76872,62 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": null,
           "field": null,
@@ -73713,8 +76941,20 @@
         },
         {
           "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000002",
           "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
           "derived": []
         }
       ]
@@ -73763,6 +77003,62 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": null,
           "field": null,
@@ -73776,8 +77072,20 @@
         },
         {
           "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000002",
           "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
           "derived": []
         }
       ]
@@ -73824,6 +77132,62 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": null,
           "field": null,
@@ -73837,8 +77201,20 @@
         },
         {
           "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000002",
           "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
           "derived": []
         }
       ]
@@ -73885,6 +77261,62 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": null,
           "field": null,
@@ -73898,8 +77330,20 @@
         },
         {
           "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000002",
           "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
           "derived": []
         }
       ]
@@ -73948,6 +77392,62 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": null,
           "field": null,
@@ -73961,8 +77461,20 @@
         },
         {
           "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000002",
           "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
           "derived": []
         }
       ]
@@ -74011,6 +77523,62 @@
       ],
       "dataMarks": [
         {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entries"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
           "source": "qits-projects-service#listProjects",
           "item": null,
           "field": null,
@@ -74024,8 +77592,20 @@
         },
         {
           "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000002",
           "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
           "derived": []
         }
       ]
