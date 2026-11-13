@@ -46,4 +46,34 @@ describe('WorkFields', () => {
     expect(value.textContent).toBe('qits-12');
     expect(asked).toEqual([]);
   });
+
+  it("sets a value's data marks on its <dd> and none on its label (qits-2146)", async () => {
+    const element = await render([
+      {
+        label: 'Assignee',
+        value: 'ada',
+        marks: { source: 'qits-projects-service#getWork', item: 'id=w1', field: 'assignee' },
+      },
+      {
+        label: 'Blocked',
+        value: 'No',
+        marks: { source: 's#op', item: 'id=w1', derived: 'blocked' },
+      },
+      { label: 'Plain', value: 'copy' },
+    ]);
+    const [assignee, blocked, plain] = [...element.querySelectorAll('dd')];
+    expect(assignee.getAttribute('data-qits-source')).toBe('qits-projects-service#getWork');
+    expect(assignee.getAttribute('data-qits-item')).toBe('id=w1');
+    expect(assignee.getAttribute('data-qits-field')).toBe('assignee');
+    expect(assignee.hasAttribute('data-qits-derived')).toBe(false);
+    expect(blocked.getAttribute('data-qits-derived')).toBe('blocked');
+    expect(blocked.hasAttribute('data-qits-field')).toBe(false);
+    expect(plain.getAttributeNames().filter((n) => n.startsWith('data-qits-'))).toEqual([]);
+    expect(
+      element
+        .querySelector('dt')!
+        .getAttributeNames()
+        .some((n) => n.startsWith('data-qits-')),
+    ).toBe(false);
+  });
 });

@@ -19,6 +19,7 @@ import {
 } from '$core/ideas/idea-writes';
 import { EDIT_IDEA, IDEA, IDEA_LIST } from '$core/ideas/ideas.operations';
 import { loadState } from '$core/resources/load-state';
+import { valueMarks } from '$core/marks/value-marks';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { IdeaForm, type IdeaFormValue } from '$patterns/ideas/idea-form/idea-form';
@@ -66,7 +67,7 @@ export function ideaPatchOf(before: IdeaFormValue, after: IdeaFormValue): IdeaPa
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout [title]="title()">
+      <app-page-layout [title]="title()" [titleMarks]="titleMarks()">
         <ui-spinner [state]="state()" class="min-h-48">
           <app-idea-form
             [qitsEntityList]="ideas"
@@ -116,6 +117,11 @@ export class IdeaEditPage {
   protected readonly state = computed((): LoadState => loadState(this.read));
 
   protected readonly title = computed(() => `Edit ${this.idea()?.title ?? 'idea'}`);
+  /** The title's data marks (qits-2146): the idea's title, once it is read. */
+  protected readonly titleMarks = computed(() => {
+    const idea = this.idea();
+    return idea?.title != null ? valueMarks(IDEA, idea, 'id', { derived: ['title'] }) : undefined;
+  });
 
   /** The form's starting value: the idea as read. */
   protected readonly initial = computed((): IdeaFormValue => {

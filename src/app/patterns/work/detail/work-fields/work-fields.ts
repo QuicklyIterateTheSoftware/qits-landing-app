@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { QitsCommitMessage } from '@qits/ui-components';
+import type { ValueMarks } from '$ui/dom/value-marks';
 
 /** One fact about a work item: a label and its value. */
 export interface WorkField {
@@ -15,6 +16,12 @@ export interface WorkField {
    * value that is not prose (an id, a status, a name), which stays plain text.
    */
   readonly workProject?: string;
+  /**
+   * The value's data marks (qits-2146), made where the row is built from the record (`valueMarks`):
+   * the value is handed in as text, which `qits/data-through-fields` cannot trace, so they are set
+   * on the value's `<dd>` as is. None for a value that is not data.
+   */
+  readonly marks?: ValueMarks;
 }
 
 /** A work item's facts as a two-column list: labels on the left, values on the right. */
@@ -34,6 +41,10 @@ export interface WorkField {
           [class.leading-5]="field.code"
           [class.font-semibold]="field.alert"
           [class.text-danger]="field.alert"
+          [attr.data-qits-source]="field.marks?.source"
+          [attr.data-qits-item]="field.marks?.item"
+          [attr.data-qits-field]="field.marks?.field"
+          [attr.data-qits-derived]="field.marks?.derived"
         >
           @if (field.workProject) {
             <span

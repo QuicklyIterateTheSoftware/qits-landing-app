@@ -29,6 +29,7 @@ import {
   unarchiveIdeaParams,
 } from '$core/ideas/idea-writes';
 import { ARCHIVE_IDEA, IDEA, UNARCHIVE_IDEA } from '$core/ideas/ideas.operations';
+import { valueMarks } from '$core/marks/value-marks';
 import { loadState } from '$core/resources/load-state';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -85,7 +86,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout [title]="title()" [actions]="actions()">
+      <app-page-layout [title]="title()" [titleMarks]="titleMarks()" [actions]="actions()">
         @if (archiving()) {
           <div
             class="mb-6 flex flex-col gap-3 rounded-md border border-danger-line bg-danger-soft p-4"
@@ -307,6 +308,11 @@ export class IdeaPage {
   protected readonly state = computed((): LoadState => loadState(this.read));
 
   protected readonly title = computed(() => this.idea()?.title ?? 'Idea');
+  /** The title's data marks (qits-2146): the idea's title, once it is read. */
+  protected readonly titleMarks = computed(() => {
+    const idea = this.idea();
+    return idea?.title != null ? valueMarks(IDEA, idea, 'id', 'title') : undefined;
+  });
   protected readonly tone = ideaStatusTone;
 
   protected readonly archiving = signal(false);

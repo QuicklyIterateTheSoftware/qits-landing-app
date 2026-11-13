@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, viewChild } from '@angular/core';
 import { QitsExit, type ExitOutcome } from '@qits/angular';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
+import type { ValueMarks } from '$ui/dom/value-marks';
 
 /**
  * One step of the trail. A step before the current page leads to `exit` (a declared exit of the
@@ -21,12 +22,7 @@ export interface Crumb {
  * `data-qits-item`, `data-qits-field` and `data-qits-derived` attribute values its layout made of
  * the read, the record and the field the label shows. The trail only sets them.
  */
-export interface CrumbMarks {
-  readonly source: string;
-  readonly item: string | null;
-  readonly field?: string;
-  readonly derived?: string;
-}
+export type CrumbMarks = ValueMarks;
 
 /**
  * The breadcrumb trail: the brand (`home`, the bold link home), then one link per crumb, the last
