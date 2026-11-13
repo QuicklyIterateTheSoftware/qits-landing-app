@@ -553,7 +553,9 @@ operations' part of the file (`assertPactPart`).
   the item, its thread and its dossier itself (`work-detail.operations.ts`) and hands each read to
   the body's patterns, which mark what they show; the Schedule tab's criteria are a root
   `ResourceFamily` (`WorkCriteriaReads`). The board's cards draw `WorkNode`s of `SelectedWork`'s
-  graph, which the rule does not trace, so they carry no marks yet.
+  graph, which the rule does not trace, so they write their marks as plain attributes
+  (`core/work/work-marks.ts`: `data-qits-source` `PROJECT_WORK`, `data-qits-item` by id, each value
+  its `data-qits-field` or `data-qits-derived`), as the shell does.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in
