@@ -60,6 +60,25 @@ class TallPage {
 }
 
 /**
+ * A page with raised content, as the work section's is (qits-2224): a bar pinned below the shell's
+ * top bar at the work tabs' `z-45`, then a raised link (`z-10`) and a raised button (`z-20`), as a
+ * list row's drag handle and tags are. Fixed text, as `TestPage`.
+ */
+@Component({
+  selector: 'app-pinned-page',
+  template: `
+    <div class="sticky top-[var(--app-pin-top,0px)] z-45 h-12 bg-surface">Pinned</div>
+    <div class="relative">
+      <a class="relative z-10 block h-64 bg-accent-soft" href="#">Raised link</a>
+      <button class="absolute inset-x-0 top-64 z-20 h-64 bg-success-soft" type="button">
+        Raised button
+      </button>
+    </div>
+  `,
+})
+class PinnedPage {}
+
+/**
  * Screenshots of the layout in a real browser: the wide sidebar, and the narrow burger closed and
  * open, with no project open; and the sidebar of an open project. The open project is qits-projects'
  * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu and
@@ -86,7 +105,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
-          { path: 'projects/:slug/work/refinement', component: TestPage },
+          { path: 'projects/:slug/work/refinement', component: PinnedPage },
           { path: 'projects/:slug/work/schedule', component: TestPage },
           { path: 'projects/:slug/work/in-progress', component: TallPage },
           { path: 'projects/:slug/work/acceptance', component: TestPage },
@@ -467,6 +486,33 @@ describe('ShellLayout (screenshots)', () => {
     }
     expect(inWindow(current)).toBe(true);
     expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  });
+
+  it('opens the sidebar over the page’s pinned content on a phone', async () => {
+    await page.viewport(390, 844);
+    const { fixture, layout } = await renderProject('/work/refinement');
+    await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const nav = root.querySelector<HTMLElement>('#layout-nav')!;
+    await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
+    /** What the browser hits at the centre of `element`. */
+    const atCentre = (element: Element) => {
+      const box = element.getBoundingClientRect();
+      return document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+    };
+    // Work lies where the page's pinned bar (z-45) pins, Refinement and Events over its raised
+    // content: the sidebar is drawn over all of it (qits-2224).
+    const links = [...nav.querySelectorAll('a')];
+    for (const label of ['Work', 'Refinement', 'Events']) {
+      const link = links.find((a) => a.textContent?.trim() === label)!;
+      expect(link, label).toBeDefined();
+      expect(nav.contains(atCentre(link)), label).toBe(true);
+    }
+    // The top bar stays above the sidebar: the burger closes it.
+    const burger = root.querySelector<HTMLElement>('button[aria-controls="layout-nav"]')!;
+    expect(burger.contains(atCentre(burger))).toBe(true);
+    await expect.element(layout).toMatchScreenshot('narrow-open-over-page', { kind: 'DATA' });
   });
 
   /** The outcomes the test reached, as `<interaction>:<outcome>`. */

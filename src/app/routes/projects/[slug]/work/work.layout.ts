@@ -51,11 +51,11 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
  *
  * Either stays at the top of the box that scrolls the page, at `--app-pin-top` (the shell's: its top
  * bar's height where the document scrolls, 0 on `<main>` from 768px up), above the page's pinned
- * actions (`z-40`) and below the shell's top bar (`z-50`). What pins inside the page (its actions,
- * the board's headings, a drag's scroll margin) reads `--app-pin-top` too, so the outlet's box moves
- * it below the tabs: the host keeps the shell's value as `--work-pin-base`, and the box around the
- * outlet (and the page the outlet renders beside it) sets `--app-pin-top` to that plus the tabs'
- * height, measured in the browser (0 on the server).
+ * actions (`z-40`) and below the shell's top bar (`z-50`) and, on a phone, its open sidebar (`z-48`,
+ * qits-2224). What pins inside the page (its actions, the board's headings, a drag's scroll margin)
+ * reads `--app-pin-top` too, so the outlet's box moves it below the tabs: the host keeps the shell's
+ * value as `--work-pin-base`, and the box around the outlet (and the page the outlet renders beside
+ * it) sets `--app-pin-top` to that plus the tabs' height, measured in the browser (0 on the server).
  *
  * The pages share the open project's work (`SelectedWork`, one root `qitsResource`, one request
  * per project), so moving between them fetches nothing. The layout keeps that work current while

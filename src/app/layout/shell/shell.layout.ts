@@ -112,8 +112,11 @@ export interface NavNote {
  * never scrolls; the sidebar and the page (`<main>`) each scroll on their own, with their own
  * scrollbar, so a long page does not carry the sidebar away and a long sidebar does not move the
  * page. Below 768px the document scrolls, as on any phone page: the top bar stays pinned to the
- * top of the window and the sidebar lies over the page. What pins at the top of the scrolling box
- * (the page's actions, the board's headings) reads `--app-pin-top`, which covers both cases.
+ * top of the window and the sidebar lies over the page. There it sits at `z-48`, above every layer
+ * the page pins or raises (up to the work section's tabs, `z-45`) and below the top bar (`z-50`), so
+ * nothing of the page shows through it and the burger still closes it (qits-2224). What pins at the
+ * top of the scrolling box (the page's actions, the board's headings) reads `--app-pin-top`, which
+ * covers both cases.
  *
  * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
  * sidebar's sections (`open-sidebar-section`) and the work pages below Work
@@ -242,7 +245,7 @@ export interface NavNote {
 
       <nav
         id="layout-nav"
-        class="z-1 col-start-1 row-start-2 border-r border-line bg-surface-subtle md:block md:min-h-0 md:overflow-y-auto"
+        class="z-1 col-start-1 row-start-2 border-r border-line bg-surface-subtle max-md:z-48 md:block md:min-h-0 md:overflow-y-auto"
         [class.hidden]="!navOpen()"
         aria-label="qits"
       >
