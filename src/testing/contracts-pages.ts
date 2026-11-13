@@ -4,7 +4,8 @@ import { PLATFORM_ID, type EnvironmentProviders, type Provider, type Type } from
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, type Routes } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { artifactsGoldenMasters as masters, ENTITY_MAP_STATE } from './golden-masters';
 import { provideTestPlatformOrigins } from './platform-origins';
 
@@ -49,15 +50,16 @@ export function configureContractsPage(
         provide: EVENT_SOURCE,
         useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
       },
+      // The services' resources read the app's one stream, as `app.config.ts` provides it.
+      { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
     ],
   });
   return TestBed.inject(HttpTestingController);
 }
 
 /**
- * The recorded versions of the contracts site, its version renamed `version`: the docs reads are
- * cached module-wide by site and version, so a case that must see a read of its own (a failure)
- * reads a version no other case reads.
+ * The recorded versions of the contracts site, its version renamed `version`: a case that must see
+ * a read of its own (a failure) reads a version no other case reads.
  */
 export function versionsAt(version: string) {
   const body = masters.body<{ versions: { version: string }[] }>(CONTRACTS, 'listDocsVersions');
@@ -90,8 +92,7 @@ export async function openContractsPage(
   await update();
   const element = harness.routeNativeElement as HTMLElement;
   /**
-   * Answers every open read of `file` in the site's version with `body`, or with `status`; a read
-   * an earlier case made is cached module-wide and makes no request.
+   * Answers every open read of `file` in the site's version with `body`, or with `status`.
    */
   const answer = async (file: string, body: unknown, at = VERSION, status = 200) => {
     for (const req of http.match(`${VERSIONS_URL}/-/${at}/${file}`)) {

@@ -1,5 +1,5 @@
 import { projectsGoldenIndex } from '../../../testing/golden-masters';
-import { asGoldenIndex, safeRecordedFile } from './golden-masters.store';
+import { asGoldenIndex, safeRecordedFile } from './golden-masters';
 
 describe('safeRecordedFile', () => {
   it('takes a recorded file in its state’s directory', () => {

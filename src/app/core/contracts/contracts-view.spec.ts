@@ -1,6 +1,6 @@
 import { asEntityMap, type EntityMap } from '$core/ui-builder/entity-map';
-import type { ContractsSite, EntityMapRead } from '$core/ui-builder/entity-map.store';
-import { asGoldenIndex, type GoldenIndex } from '$core/ui-builder/golden-masters.store';
+import type { ContractsSite, EntityMapRead } from '$core/ui-builder/contracts-catalog';
+import { asGoldenIndex, type GoldenIndex } from '$core/ui-builder/golden-masters';
 import {
   artifactsGoldenMasters as masters,
   ENTITY_MAP_STATE as CONTRACTS,

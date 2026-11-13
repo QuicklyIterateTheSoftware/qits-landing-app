@@ -2,20 +2,22 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
-import type { ContractsSite } from '$core/ui-builder/entity-map.store';
-import type { GoldenIndex } from '$core/ui-builder/golden-masters.store';
+import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
+import type { GoldenIndex } from '$core/ui-builder/golden-masters';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../api/artifacts/client.gen';
 import { goldenMaster, projectsGoldenIndex } from '../../../testing/golden-masters';
-import { ContractsBundleStore } from './contracts-bundle.store';
+import { ContractsBundles } from './contracts-bundles';
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/** The generated client builds its request after a few awaits; let them run, and the effects. */
+const settle = async () => {
+  TestBed.tick();
+  await new Promise((resolve) => setTimeout(resolve));
+  TestBed.tick();
+  await new Promise((resolve) => setTimeout(resolve));
+};
 
-/**
- * Each test reads its own version, so the reads' cache (`golden-masters.store.ts`, module-wide)
- * never answers across tests.
- */
+/** Each test reads its own version, as the module-wide cache the reads once had asked. */
 let version = 0;
 const site = (): ContractsSite => ({
   site: '@contracts/qits-projects',
@@ -30,9 +32,9 @@ const EXISTS = INDEX.states!.find((s) => s.slug === 'a-project-exists')!;
 const LIST = EXISTS.operations.find((op) => op.operationId === 'listProjects')!;
 const IMAGE = INDEX.states!.flatMap((s) => s.operations).find((op) => op.file === null)!;
 
-describe('ContractsBundleStore', () => {
+describe('ContractsBundles', () => {
   let http: HttpTestingController;
-  let store: InstanceType<typeof ContractsBundleStore>;
+  let store: ContractsBundles;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -46,7 +48,7 @@ describe('ContractsBundleStore', () => {
       artifactsClient.interceptors.request.use(literalDocsPaths);
     }
     http = TestBed.inject(HttpTestingController);
-    store = TestBed.inject(ContractsBundleStore);
+    store = TestBed.inject(ContractsBundles);
   });
 
   afterEach(() => http.verify());

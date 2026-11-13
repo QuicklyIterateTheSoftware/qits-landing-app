@@ -5,18 +5,13 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
-import type { ContractsSite } from '$core/ui-builder/entity-map.store';
+import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import { expectUnclipped } from '../../../../testing/browser/unclipped';
-import {
-  GITHOST,
-  INDEX,
-  PROJECTION,
-  forgetBundleReads,
-} from '../../../../testing/browser/contracts-bundles';
+import { GITHOST, INDEX, PROJECTION } from '../../../../testing/browser/contracts-bundles';
 import { provideHeyApiClient } from '../../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../../api/artifacts/client.gen';
 import { CallDetails, type CallEntity } from './call-details';
@@ -90,7 +85,6 @@ describe('CallDetails (screenshots)', () => {
   let slug: string;
 
   beforeEach(async () => {
-    forgetBundleReads();
     slug = (await goldenMaster('a project exists', 'getProject')).project.slug;
     TestBed.configureTestingModule({
       providers: [

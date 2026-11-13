@@ -2,15 +2,23 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import type { ContractsSite } from '$core/ui-builder/entity-map.store';
+import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { provideHeyApiClient } from '../../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../../api/artifacts/client.gen';
 import { CallDetails, type CallEntity } from './call-details';
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/**
+ * The generated client builds its request after a few awaits; let them run, and the effects that
+ * start the next read (`ContractsBundles`' resources, qits-2146).
+ */
+const settle = async () => {
+  for (let i = 0; i < 2; i++) {
+    TestBed.tick();
+    await new Promise((resolve) => setTimeout(resolve));
+  }
+};
 
 const CALL = {
   provider: 'qits-ci-service',
@@ -18,7 +26,7 @@ const CALL = {
   operationId: 'listActiveRuns',
 };
 
-/** Each test reads its own version, so the reads' cache never answers across tests. */
+/** Each test reads its own version, as the module-wide cache the reads once had asked. */
 let version = 0;
 const site = (): ContractsSite => ({
   site: '@contracts/qits-ci',

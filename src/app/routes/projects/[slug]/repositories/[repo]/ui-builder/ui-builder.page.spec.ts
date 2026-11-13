@@ -9,10 +9,10 @@ import { provideHeyApiClient as provideArtifactsClient } from '../../../../../..
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
-import { forgetContractsFiles } from '$core/ui-builder/golden-masters.store';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import type {
   DeclaredOutcome,
@@ -29,7 +29,21 @@ import {
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { UiBuilderPage } from './ui-builder.page';
 
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/**
+ * What `fixture.whenStable()` waited for: a loading `qitsResource` is a pending task (qits-2146), so
+ * a read the case leaves open would keep the page unstable for good; a few turns settle the rest.
+ */
+const stable = async () => {
+  for (let i = 0; i < 5; i++) await settle();
+};
+
+const settle = async () => {
+  // The services' resources start their next reads from root effects (qits-2146): run them.
+  for (let i = 0; i < 2; i++) {
+    TestBed.tick();
+    await new Promise((resolve) => setTimeout(resolve));
+  }
+};
 
 /** The recorded project's id: every state seeds its project under this frozen id. */
 const ID = '00000000-0000-4000-8000-000000000001';
@@ -205,6 +219,7 @@ describe('UiBuilderPage', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: SelectedProject,
           useValue: { project: signal({ id: ID }), slug: signal(SLUG), url: signal('') },
@@ -253,7 +268,7 @@ describe('UiBuilderPage', () => {
     await settle();
     await answerEntities();
     for (let i = 0; i < 5; i++) await settle();
-    await fixture.whenStable();
+    await stable();
     fixture.detectChanges();
     const element = harness.routeNativeElement as HTMLElement;
     // An element's text, its non-empty parts (spans, or the whole) joined by single spaces.
@@ -303,14 +318,14 @@ describe('UiBuilderPage', () => {
       .expectOne(fileUrl('assets/inter-latin-400-normal.woff2'))
       .flush(new Blob([], { type: 'font/woff2' }));
     for (let i = 0; i < 10; i++) await settle();
-    await fixture.whenStable();
+    await stable();
     fixture.detectChanges();
   }
 
   /** Lets a navigation the page started finish, and draws its outcome. */
   async function navigated(fixture: { detectChanges(): void; whenStable(): Promise<unknown> }) {
     for (let i = 0; i < 3; i++) await settle();
-    await fixture.whenStable();
+    await stable();
     fixture.detectChanges();
   }
 
@@ -988,7 +1003,7 @@ describe('UiBuilderPage', () => {
     const { harness, fixture } = await open('contract-frontend');
     http.expectOne(SITES_URL).flush(artifacts.body('a published docs site', 'listDocsSites'));
     await settle();
-    await fixture.whenStable();
+    await stable();
     fixture.detectChanges();
     const element = harness.routeNativeElement as HTMLElement;
     expect(element.querySelector('.none')?.textContent?.trim()).toBe(
@@ -2296,8 +2311,6 @@ describe('UiBuilderPage', () => {
       ],
     };
 
-    beforeEach(() => forgetContractsFiles());
-
     /** The builder on the marked freeze, its frame loaded with `html` (an `about:srcdoc` one). */
     async function renderMarked(
       manifest: RoutesManifest = marked(),
@@ -2359,7 +2372,7 @@ describe('UiBuilderPage', () => {
         http.expectOne(`${GOLDEN}/a-project-exists/${operationId}.json`).flush(bodies[operationId]);
       }
       for (let i = 0; i < 3; i++) await settle();
-      await fixture.whenStable();
+      await stable();
       fixture.detectChanges();
     }
 

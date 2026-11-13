@@ -37,7 +37,12 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               }
             </nav>
             @if (site(); as s) {
-              <span class="site font-mono text-xs text-fg-soft">{{ s.site }} {{ s.version }}</span>
+              <span
+                class="site font-mono text-xs text-fg-soft"
+                data-qits-source="qits-artifacts-service#listDocsVersions"
+                data-qits-derived="versions"
+                >{{ s.site }} {{ s.version }}</span
+              >
               @if (docs(); as url) {
                 <a class="docs text-xs font-semibold" [href]="url" target="_blank" rel="noopener"
                   >Docs ↗</a
