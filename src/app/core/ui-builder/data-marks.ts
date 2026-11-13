@@ -106,10 +106,23 @@ export function markOf(element: Element): ElementMark {
     item: itemed?.getAttribute(ITEM_ATTRIBUTE) ?? null,
     field: element.getAttribute(FIELD_ATTRIBUTE),
     derived: derivedOf(element),
-    outerItem:
-      itemed?.parentElement?.closest(`[${ITEM_ATTRIBUTE}]`)?.getAttribute(ITEM_ATTRIBUTE) ?? null,
+    outerItem: outerItemOf(itemed),
     joinedFrom: aboveSource !== null && aboveSource !== source ? aboveSource : null,
   };
+}
+
+/**
+ * The item around `itemed`'s item: the nearest ancestor marking another record. An ancestor marking
+ * the same record (a component's root `[qitsEntity]` inside the page's row for that record, as the
+ * Agents route's `AgentRow` sits in its `<li>`) is the same item, not an outer one (qits-2144).
+ */
+function outerItemOf(itemed: Element | null): string | null {
+  const own = itemed?.getAttribute(ITEM_ATTRIBUTE) ?? null;
+  let above = itemed?.parentElement?.closest(`[${ITEM_ATTRIBUTE}]`);
+  while (above && above.getAttribute(ITEM_ATTRIBUTE) === own) {
+    above = above.parentElement?.closest(`[${ITEM_ATTRIBUTE}]`);
+  }
+  return above?.getAttribute(ITEM_ATTRIBUTE) ?? null;
 }
 
 /** An item mark split at its first `=`: `agentId=a=b` is `agentId` and `a=b`; null without `=`. */
@@ -122,7 +135,8 @@ export function parseItem(item: string): { readonly key: string; readonly value:
  * The first object, depth first, whose `key` reads `value` as a string (`id=1` finds `{ id: 1 }`);
  * undefined when none does. Responses are wrapped (`{ agents: [...] }`, `{ entries: [{ workspace:
  * {...} }] }`), so the whole body is searched. With `within` (the item around it), the object of
- * that outer item is searched first, then the whole body.
+ * that outer item is searched first, then the whole body; a `within` naming the item itself is
+ * ignored, or a nested object sharing its key (an agent's wait carries its `agentId`) would win.
  */
 export function findItem(
   json: unknown,
@@ -130,7 +144,7 @@ export function findItem(
   value: string,
   within?: { readonly key: string; readonly value: string } | null,
 ): Record<string, unknown> | undefined {
-  if (within) {
+  if (within && (within.key !== key || within.value !== value)) {
     const outer = findItem(json, within.key, within.value);
     const inner = outer === undefined ? undefined : findIn(outer, key, value, true);
     if (inner !== undefined) return inner;
