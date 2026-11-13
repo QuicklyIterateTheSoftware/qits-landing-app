@@ -494,17 +494,16 @@ operations' part of the file (`assertPactPart`).
   (`qitsOperation`: provider, operationId, method, the client function and its `consumes` from the
   `*.consumes.ts` beside it), with its own `<x>.operations.pact.spec.ts` (`addGoldenInteraction`
   with the operation's `operationId` and `consumes`; the provider as a literal, which
-  `qits/pact-names` can read, checked against the operation's). The Agents page was the pilot;
-  qits-2146 moves the routes group by group (the shell and the projects routes first: the menus,
-  the picker, a project's page and Setup, Network access). Data the shell or several routes share
-  is one `qitsResource` in a root service in `core/<domain>/` (`SelectedProject`,
-  `ProjectReleaseRequests`, `ProjectActiveAgents`), never a store. `eslint.config.mjs`'s
-  `dataMarks()` turns `qits/reads-through-resources` on for the moved files, and
-  `qits/data-through-fields` for the moved components, whose templates carry the data marks
-  (`QitsEntityList`, `QitsEntity`, `QitsField`); a group moving over appends its files there. What
-  a component shows of a shared service is data the rule cannot trace, so the shell marks it with
-  plain attributes (`sourceMark`, `itemMark`; a crumb's `CrumbMarks`), and the agents menu takes
-  the service's resource as an input. A
+  `qits/pact-names` can read, checked against the operation's). The Agents page was the pilot
+  (qits-2143); qits-2146 then moved every route over, group by group. Data the shell or several
+  routes share is one `qitsResource` in a root service in `core/<domain>/` (`SelectedProject`,
+  `ProjectReleaseRequests`, `ProjectActiveAgents`), never a store. Both rules now hold for all of
+  `src/app/**/*.ts`: `eslint.config.mjs`'s `dataMarks()` turns on `qits/reads-through-resources`
+  app-wide, and `qits/data-through-fields` for every component, whose templates carry the data
+  marks (`QitsEntityList`, `QitsEntity`, `QitsField`). What a component shows of a shared service
+  is data the rule cannot trace, so the shell marks it with plain attributes (`sourceMark`,
+  `itemMark`; a crumb's `CrumbMarks`), and the agents menu takes the service's resource as an
+  input. A
   resource's `refreshOn` needs `QITS_DOMAIN_EVENTS`, which `app.config.ts` (and the browser specs'
   `provideAppRoute()`) provide as `DomainEvents`. A loading resource is a pending task, so
   `openRoute`'s `settled()` stops waiting for stability while a request is open.
