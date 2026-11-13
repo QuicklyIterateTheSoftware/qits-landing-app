@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import { ContractsBundles, type RecordingRead } from '$core/contracts/contracts-bundles';
+import { CONTRACTS_MARKS } from '$core/contracts/contracts-marks';
 import {
   bundleOf,
   dependencyRows,
@@ -51,6 +52,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
   template: `
     <app-contracts-frame
       [heading]="state()?.name ?? 'Provider state'"
+      [headingMarks]="headingMarks()"
       [slug]="slug()"
       [repo]="repo()"
       [lookup]="lookup()"
@@ -66,7 +68,8 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
           @if (state(); as s) {
             <div
               class="flex flex-col gap-6 text-sm"
-              data-qits-source="qits-artifacts-service#getDocsFile"
+              [attr.data-qits-source]="marks.source"
+              [attr.data-qits-item]="marks.state(s)"
             >
               <section class="flex flex-col gap-2">
                 <p class="m-0">
@@ -79,7 +82,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                 </p>
                 <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
                   <dt class="text-fg-muted">Slug</dt>
-                  <dd class="slug m-0 font-mono break-all">{{ s.slug }}</dd>
+                  <dd class="slug m-0 font-mono break-all" data-qits-field="slug">{{ s.slug }}</dd>
                 </dl>
               </section>
 
@@ -89,7 +92,10 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                   <table class="params border-collapse font-mono text-xs">
                     <tbody>
                       @for (p of params(); track p.key) {
-                        <tr class="border-b border-line-subtle align-top">
+                        <tr
+                          class="border-b border-line-subtle align-top"
+                          data-qits-derived="params"
+                        >
                           <th class="py-0.5 pr-3 text-left font-normal text-fg-muted">
                             {{ p.key }}
                           </th>
@@ -108,7 +114,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                 @if (dependencies().length) {
                   <ul class="depends m-0 list-none p-0">
                     @for (d of dependencies(); track d.label) {
-                      <li>
+                      <li data-qits-derived="dependsOn">
                         @if (d.link; as l) {
                           <a
                             [qitsExit]="following.dependency"
@@ -132,7 +138,10 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                   <article
                     class="operation flex min-w-0 flex-col gap-2 rounded-lg border border-line p-3"
                   >
-                    <h3 class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs">
+                    <h3
+                      class="m-0 flex flex-wrap items-center gap-1.5 font-mono text-xs"
+                      data-qits-derived="operations"
+                    >
                       <span class="font-semibold">{{ op.operationId }}</span>
                       <span class="rounded bg-surface-muted px-1 font-semibold">{{
                         op.method
@@ -151,7 +160,10 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     @if (op.query; as query) {
                       <div>
                         <h4 class="m-0 text-xs font-semibold text-fg-soft uppercase">Query</h4>
-                        <dl class="query m-0 grid grid-cols-[auto_1fr] gap-x-2 font-mono text-xs">
+                        <dl
+                          class="query m-0 grid grid-cols-[auto_1fr] gap-x-2 font-mono text-xs"
+                          data-qits-derived="operations"
+                        >
                           @for (q of entries(query); track q.key) {
                             <dt class="text-fg-muted">{{ q.key }}</dt>
                             <dd class="m-0 break-all">{{ q.value }}</dd>
@@ -162,13 +174,14 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     @if (op.body !== undefined) {
                       <ui-json-block
                         class="request-body"
+                        data-qits-derived="operations"
                         heading="Request body"
                         [json]="pretty(op.body)"
                       />
                     }
                     @if (op.file === null) {
                       <div class="bytes text-xs">
-                        <p class="m-0 text-fg-soft">
+                        <p class="m-0 text-fg-soft" data-qits-derived="operations">
                           Status {{ op.status }}{{ op.contentType ? ', ' + op.contentType : '' }};
                           no JSON body is recorded.
                         </p>
@@ -176,7 +189,10 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                           <h4 class="m-0 mt-1 text-xs font-semibold text-fg-soft uppercase">
                             Response headers
                           </h4>
-                          <dl class="headers m-0 grid grid-cols-[auto_1fr] gap-x-2 font-mono">
+                          <dl
+                            class="headers m-0 grid grid-cols-[auto_1fr] gap-x-2 font-mono"
+                            data-qits-derived="operations"
+                          >
                             @for (h of entries(headers); track h.key) {
                               <dt class="text-fg-muted">{{ h.key }}</dt>
                               <dd class="m-0 break-all">{{ h.value }}</dd>
@@ -189,7 +205,11 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                       @switch (r?.status) {
                         @case ('loaded') {
                           @if (r?.status === 'loaded') {
-                            <ui-json-block class="response" [json]="r.json" />
+                            <ui-json-block
+                              class="response"
+                              data-qits-derived="operations"
+                              [json]="r.json"
+                            />
                           }
                         }
                         @case ('error') {
@@ -281,6 +301,17 @@ export class ContractStatePage {
   protected readonly application = computed(
     () => this.index()?.provider ?? this.site()?.site ?? '',
   );
+
+  /** The data marks of the state shown (qits-2146; `contracts-marks.ts`). */
+  protected readonly marks = CONTRACTS_MARKS;
+
+  /** The heading's marks: the state's name, once the index has it. */
+  protected readonly headingMarks = computed(() => {
+    const state = this.state();
+    return state
+      ? { source: this.marks.source, item: this.marks.state(state), field: 'name' }
+      : undefined;
+  });
 
   protected readonly state = computed(() => {
     const index = this.index();

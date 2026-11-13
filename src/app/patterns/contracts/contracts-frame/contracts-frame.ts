@@ -4,6 +4,7 @@ import { docsUrl, type BundleLookup } from '$core/contracts/contracts-view';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
+import type { ValueMarks } from '$ui/dom/value-marks';
 
 /**
  * The frame of a repository's contracts and entities pages (qits-1994): the page's heading, the
@@ -22,7 +23,15 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
       <app-page-layout>
         <div slot="header" class="flex flex-col gap-1">
           <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h1 class="m-0 text-3xl leading-[1.1] font-bold break-all">{{ heading() }}</h1>
+            <h1
+              class="m-0 text-3xl leading-[1.1] font-bold break-all"
+              [attr.data-qits-source]="headingMarks()?.source"
+              [attr.data-qits-item]="headingMarks()?.item"
+              [attr.data-qits-field]="headingMarks()?.field"
+              [attr.data-qits-derived]="headingMarks()?.derived"
+            >
+              {{ heading() }}
+            </h1>
             <span class="repo font-mono text-fg-soft">{{ repo() }}</span>
           </div>
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
@@ -78,6 +87,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class ContractsFrame {
   readonly heading = input.required<string>();
+  /**
+   * The heading's data marks, when it shows data (a state's name, an entity's class; qits-2146),
+   * set on the `<h1>` as is. None (the default) means the heading is design copy.
+   */
+  readonly headingMarks = input<ValueMarks | undefined>(undefined);
   readonly slug = input.required<string>();
   readonly repo = input.required<string>();
   readonly lookup = input.required<BundleLookup>();
