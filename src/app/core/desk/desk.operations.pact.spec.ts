@@ -14,8 +14,8 @@ import { DESK_TRIGGER_MESSAGES } from './desk.operations';
 /**
  * The desk operations' part of qits-landing-app's pact with qits-projects-service (epic
  * qits-1604, `desk.operations.ts`), in `pacts/qits-landing-app_qits-projects-service.json` — the same shared file
- * `projects.store.pact.spec.ts` and `release-request.store.pact.spec.ts` own other operations of
- * (see that file's comment for the convention; `assertPactPart` below is what lets several specs
+ * `projects.operations.pact.spec.ts` and `release-request.operations.pact.spec.ts` own other
+ * operations of (see that file's comment for the convention; `assertPactPart` below is what lets several specs
  * share one committed pact).
  *
  * Two states: a window with a work item's line and a release request's (`a project whose desk

@@ -209,8 +209,8 @@ describe('ShellLayout (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    // Read twice until the lightning menu moves over too (qits-2146): by `ProjectReleaseRequests`
-    // for the sidebar and the trail, and by `ProjectsStore` for the lightning menu.
+    // Read once (qits-2146), by `ProjectReleaseRequests`, for the sidebar, the trail and the
+    // lightning menu; the rounds let its read start and settle.
     const answer = await goldenMaster(requests, 'listProjectReleaseRequests');
     for (let round = 0; round < 2; round++) {
       for (const read of http.match(`/projects/api/projects/${project.id}/release-requests`)) {

@@ -1,22 +1,26 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as systemClient } from '../../../api/system/client.gen';
 import { client as ciClient } from '../../../api/ci/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
+import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { ReleaseMenu } from './release-menu';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 
 /**
  * Screenshots of the top bar's release menu, its answers qits-projects', qits-system's and
- * qits-ci's golden masters. The open project is the recorded one ("a project exists"): the URL names its slug, and the store finds it
- * in the recorded project list.
+ * qits-ci's golden masters. The open project is the recorded one ("a project exists"): the URL
+ * names its slug, and `SelectedProject` finds it in the recorded project list. The menu is drawn as
+ * the shell draws it, handed the shell's release requests (`ProjectReleaseRequests`, qits-2146).
  *
  * A request's row is a declared exit (`open-menu-release-request:request`, epic qits-2000), followed
  * once to a stub of the request's page, at the anchor of the check that needs a person.
@@ -26,8 +30,20 @@ import { goldenMaster } from '../../../../testing/browser/golden-master';
 @Component({ selector: 'app-test-page', template: `` })
 class TestPage {}
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/** The menu as the shell draws it: handed the shell's release requests. */
+@Component({
+  imports: [ReleaseMenu],
+  template: `<app-release-menu [requests]="shared.resource" [state]="shared.state()" />`,
+})
+class Host {
+  protected readonly shared = inject(ProjectReleaseRequests);
+}
+
+/** Runs the effects a read starts on, then the generated client's few awaits. */
+const settle = () => {
+  TestBed.tick();
+  return new Promise((resolve) => setTimeout(resolve));
+};
 
 describe('ReleaseMenu (screenshots)', () => {
   let http: HttpTestingController;
@@ -54,6 +70,7 @@ describe('ReleaseMenu (screenshots)', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -67,13 +84,17 @@ describe('ReleaseMenu (screenshots)', () => {
    */
   async function render() {
     await TestBed.inject(Router).navigateByUrl(`/projects/${slug}`);
-    const fixture = TestBed.createComponent(ReleaseMenu);
-    const element = fixture.nativeElement as HTMLElement;
-    element.parentElement!.style.cssText =
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
+    // The host box takes no room, so the menu sits in the frame as it did on its own.
+    const host = fixture.nativeElement as HTMLElement;
+    host.style.display = 'contents';
+    const element = host.parentElement!;
+    element.style.cssText =
       'display:flex; justify-content:flex-end; width:25rem; height:26rem; padding:0.5rem; align-items:flex-start';
     fixture.detectChanges();
     await settle();
-    // In the browser the store loads the project list on its own; answer it as recorded.
+    // In the browser `SelectedProject` reads the project list on its own; answer it as recorded.
     http
       .expectOne('/projects/api/projects')
       .flush(await goldenMaster('a project exists', 'listProjects'));
@@ -81,7 +102,7 @@ describe('ReleaseMenu (screenshots)', () => {
     fixture.detectChanges();
     await settle();
     const requests = http.expectOne(`/projects/api/projects/${projectId}/release-requests`);
-    return { fixture, frame: page.elementLocator(element.parentElement!), requests };
+    return { fixture, frame: page.elementLocator(element), requests };
   }
 
   /**

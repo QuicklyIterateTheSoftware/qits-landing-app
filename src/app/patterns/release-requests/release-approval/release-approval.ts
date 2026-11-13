@@ -1,10 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
 import type { ApprovalOffer } from '$core/release-requests/approval-requirements';
 import { requestTitle } from '$core/projects/release-requests';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal, shortShaOrNone } from '$core/release-requests/release-request-model';
+import {
+  APPROVE_RELEASE,
+  DECLINE_RELEASE,
+} from '$core/release-requests/release-request.operations';
+import {
+  addressOf,
+  changeOutcome,
+  decisionParams,
+} from '$core/release-requests/release-request-writes';
 import { movedFold } from '$core/release-requests/release-pipeline';
-import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -17,7 +27,8 @@ type Decision = 'approve' | 'decline';
  *
  * The fold the reader saw travels with the decision. A push that lands first is refused (409)
  * naming the fold the request is on now, and the panel says the fold changed rather than calling
- * it a failure. The answered request takes the shown one's place (`ReleaseRequestStore`).
+ * it a failure. Each is sent through `qitsMutation` (`APPROVE_RELEASE`, `DECLINE_RELEASE`,
+ * qits-2146); the answered request takes the shown one's place (`OPEN_RELEASE_REQUEST`).
  *
  * Which of the two it offers is `offer` (epic qits-1038): Approve only while the viewer may satisfy
  * an open requirement, Decline only while they may satisfy any; both when nothing says otherwise.
@@ -25,7 +36,7 @@ type Decision = 'approve' | 'decline';
 @Component({
   selector: 'app-release-approval',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton],
+  imports: [ActionButton, QitsEntity, QitsField],
   host: { class: 'block' },
   template: `
     @if (offer().note; as note) {
@@ -49,8 +60,11 @@ type Decision = 'approve' | 'decline';
             <ui-action-button [action]="decline()" [join]="offer().approve ? 'end' : 'none'" />
           }
         </div>
-        <span class="text-xs text-fg-muted"
-          >of <span class="font-mono">{{ fold() }}</span></span
+        <span class="text-xs text-fg-muted" [qitsEntity]="request()" entityKey="id"
+          >of
+          <span class="font-mono" [fieldOf]="request()" [qitsField]="{ derived: ['mergedSha'] }">{{
+            fold()
+          }}</span></span
         >
       </div>
     }
@@ -65,7 +79,9 @@ type Decision = 'approve' | 'decline';
   `,
 })
 export class ReleaseApproval {
-  private readonly store = inject(ReleaseRequestStore);
+  private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
+  private readonly approval = qitsMutation(APPROVE_RELEASE);
+  private readonly declining = qitsMutation(DECLINE_RELEASE);
 
   readonly request = input.required<ReleaseRequest>();
   /** Which decisions the viewer is offered (`approvalOffer`); both unless something says otherwise. */
@@ -113,15 +129,15 @@ export class ReleaseApproval {
     const fold = request.mergedSha ?? '';
     this.pending.set(null);
     this.inFlight.set(decision);
-    const repoId = request.repoId ?? '';
-    const requestId = request.id ?? '';
-    const outcome =
-      decision === 'approve'
-        ? await this.store.approve(repoId, requestId, fold, this.note())
-        : await this.store.decline(repoId, requestId, fold, this.note());
+    const params = decisionParams(addressOf(request), fold, this.note());
+    const outcome = await changeOutcome(
+      decision === 'approve' ? this.approval : this.declining,
+      params,
+    );
     this.inFlight.set(null);
     if (outcome.request) {
       this.note.set('');
+      this.open?.put(outcome.request);
       return;
     }
     const moved = movedFold(

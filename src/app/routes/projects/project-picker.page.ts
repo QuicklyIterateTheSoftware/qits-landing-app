@@ -12,7 +12,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * The start page: every project, one card each.
  *
  * It reads the list through its own `qitsResource` over `PROJECT_LIST` (qits-2146; it was
- * `ProjectsStore`'s), in the browser only: the server render holds no token to send, so it renders
+ * a store's), in the browser only: the server render holds no token to send, so it renders
  * the heading and a loading state. Loading and failure are shown by `ui-spinner` over the list's
  * place, never as text. The list marks its read and each card its project (qits-2141); what a card
  * shows of it is the card's own business.

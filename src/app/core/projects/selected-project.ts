@@ -29,7 +29,7 @@ const withId = (project: ListedProject | undefined): project is Project => !!pro
  * here.
  *
  * The list is this root service's own `qitsResource` over `PROJECT_LIST` (qits-2146; it was
- * `ProjectsStore`'s): the shell and every project page share it, one request. It is read once a URL
+ * a store's): the shell and every project page share it, one request. It is read once a URL
  * names a project, and kept from then on, in the browser only (the server render has no session to
  * send). The picker reads the list on its own, so a visit to the picker alone reads it once.
  *

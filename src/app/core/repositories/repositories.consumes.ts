@@ -6,12 +6,11 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * What the app reads from qits-projects' repositories answer (epic qits-112). Each operation of
- * `repositories.operations.ts` (and `RepositoriesStore`, until the release request page moves)
- * reads its list through `consume(...)`, so it cannot read any other field, and
- * `repositories.operations.pact.spec.ts` binds the same lists. To read another field, add it here.
+ * `repositories.operations.ts` reads its list through `consume(...)`, so it cannot read any other
+ * field, and `repositories.operations.pact.spec.ts` binds the same lists. To read another field,
+ * add it here.
  *
- * `PROJECT_REPOSITORIES` (`repositories.operations.ts`, qits-2146), and `RepositoriesStore` for the
- * release request page:
+ * `PROJECT_REPOSITORIES` (`repositories.operations.ts`, qits-2146; the release request page too):
  * - the Repositories page shows each repository as a card (name, archetype, backup state; clone URL, backup URL
  *   and main branch in its expandable section), placed in a tree by the wrapper's paths
  *   (`components/<component>/<name>`), the wrapper itself at the top;
@@ -36,8 +35,8 @@ export const LIST_PROJECT_REPOSITORIES = [
  * `LIST_PROJECT_WRAPPER` (`repositories.operations.ts`, qits-2143), the Agents page's own read of
  * the project's repositories: which repository is the wrapper (`wrapper.repositoryId`), whose slots
  * and agents the page then reads, and that repository's main branch (`entries[].repository.id`,
- * `mainBranch`), the branch a commit to which reads the list again (`SCMPublishCommit`, as
- * `RepositoriesStore.follow` does). A part of `LIST_PROJECT_REPOSITORIES`, so its pact interaction
+ * `mainBranch`), the branch a commit to which reads the list again (`SCMPublishCommit`,
+ * `movesWrapper`). A part of `LIST_PROJECT_REPOSITORIES`, so its pact interaction
  * binds only these.
  *
  * A project card reads the same (qits-2146): it counts the entries and sums their lines of code by

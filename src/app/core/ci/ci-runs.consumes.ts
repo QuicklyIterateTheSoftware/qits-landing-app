@@ -2,8 +2,9 @@ import type { ListActiveRunsResponses, ListRunsResponses } from '../../api/ci';
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `CiRunsStore` reads from qits-ci's answers. The store passes these to `consume(...)`, so it
- * cannot read any other field, and its pact spec binds exactly these fields.
+ * What the app reads from qits-ci's run lists: `REPOSITORY_RUNS` and `ACTIVE_RUNS`
+ * (`ci.operations.ts`) declare these as `consumes`, so nothing else can be read, and their pact
+ * spec binds exactly these fields.
  */
 
 /**

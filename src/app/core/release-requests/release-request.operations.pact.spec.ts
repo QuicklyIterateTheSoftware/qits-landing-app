@@ -9,32 +9,52 @@ import { client as projectsClient } from '../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { addGoldenInteraction } from '@qits/angular/testing';
-import { consume, NOTHING } from '@qits/angular';
-import {
-  getReleaseRequest,
-  getReleaseRequestArtifacts,
-  listCommitBuilds,
-  listReleaseRequestCommits,
-} from '../../api/projects';
+import { consume } from '@qits/angular';
+import { getReleaseRequest } from '../../api/projects';
 import { assertPactPart } from '../../../testing/pact-part';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
-  CHANGED_RELEASE_REQUEST,
-  GET_APPROVAL_ELIGIBILITY,
-  GET_PROJECT_RELEASE_REQUEST,
-  GET_RELEASE_ARTIFACTS,
   GET_RELEASE_REQUEST,
-  LIST_COMMIT_BUILDS,
-  LIST_RELEASE_REQUEST_COMMITS,
-  MOVED_RELEASE_REQUEST_SOURCE,
   UNBOUND_RELEASE_REQUEST,
   type ReleaseRequest,
 } from './release-request.consumes';
-import { ReleaseRequestStore } from './release-request.store';
+import {
+  APPROVAL_ELIGIBILITY,
+  APPROVE_RELEASE,
+  COMMIT_BUILDS,
+  DECLINE_RELEASE,
+  MOVE_SOURCE,
+  OVERRIDE_UPSTREAM,
+  RELEASE_ARTIFACTS,
+  RELEASE_COMMITS,
+  RELEASE_REQUEST,
+  RERUN_AUTOMATION,
+  RERUN_PHASE,
+  SET_SOURCE_PRIORITY,
+  WAIVE_AUTOMATIONS,
+  WITHDRAW_RELEASE,
+} from './release-request.operations';
+import {
+  decisionParams,
+  moveParams,
+  overrideParams,
+  priorityParams,
+  rerunAutomationParams,
+  rerunPhaseParams,
+  waiveParams,
+  withdrawParams,
+} from './release-request-writes';
 
 /**
- * `ReleaseRequestStore`'s part of qits-landing-app's pact with qits-projects-service, in
- * `pacts/qits-landing-app_qits-projects-service.json` (see `projects.store.pact.spec.ts`).
+ * The release request operations' part of qits-landing-app's pact with qits-projects-service
+ * (`release-request.operations.ts`), in `pacts/qits-landing-app_qits-projects-service.json` beside
+ * the other parts (see `src/testing/pact-part.ts`).
+ *
+ * Moved here from `ReleaseRequestStore`'s pact spec when the store went (qits-2146), unchanged: the
+ * same descriptions, states, requests and bound fields. Each test runs the operation's own `fetch`
+ * (a write with the params `release-request-writes.ts` builds, as the patterns send them) against a
+ * pact mock server answering with qits-projects' golden master; each interaction's `operationId`
+ * and `consumes` are the operation's (its provider checked against this spec's literal).
  *
  * The page's reads are pacted once per state the screenshot specs show, so each body they flush is
  * one the provider verifies. A read binds the fields its list names that the state's recording
@@ -153,24 +173,39 @@ function openEndedGrowingArrays(generated: string): void {
   writeFileSync(generated, JSON.stringify(written, null, 2));
 }
 
-const given = (
-  slug: InteractionSlug,
-  state: string,
-  operationId: string,
-  consumes: readonly string[],
-) =>
-  addGoldenInteraction(pact, masters, {
+/** What an interaction takes of an operation: its provider, operationId and `consumes`. */
+interface Bound {
+  readonly provider: string;
+  readonly operationId: string;
+  readonly consumes: readonly string[];
+}
+
+const given = (slug: InteractionSlug, state: string, op: Bound) => {
+  if (op.provider !== PROVIDER) throw new Error(`${op.operationId} is not ${PROVIDER}'s`);
+  return addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId,
+    operationId: op.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
-    consumes: heldBy(masters, state, operationId, bindable(consumes)),
+    consumes: heldBy(masters, state, op.operationId, bindable(op.consumes)),
   });
+};
+
+/**
+ * `getReleaseRequest`, which the app no longer calls (the page reads the request through its
+ * project), kept for the screenshot specs' states (see the per-state block below).
+ */
+const GET_REQUEST: Bound = {
+  provider: PROVIDER,
+  operationId: 'getReleaseRequest',
+  consumes: GET_RELEASE_REQUEST,
+};
 
 let dir = '';
 let pact: PactV4;
 
-function storeAt(url: string) {
+/** Runs `call` with the client pointed at the mock server at `url`, in an injection context. */
+function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -179,7 +214,7 @@ function storeAt(url: string) {
     ],
   });
   projectsClient.setConfig({ baseUrl: url });
-  return TestBed.inject(ReleaseRequestStore);
+  return TestBed.runInInjectionContext(call);
 }
 
 /** The repository and request of `state`, and what its recorded `operationId` sent. */
@@ -205,12 +240,6 @@ function isRecorded(state: string, operationId: string): boolean {
   }
 }
 
-/** One read the store makes after the request, made on its own against the mock server. */
-function readOnItsOwn<T>(url: string, call: () => Promise<T>): Promise<T> {
-  storeAt(url);
-  return TestBed.runInInjectionContext(call);
-}
-
 describe('qits-landing-app → qits-projects-service pact: one release request', () => {
   beforeAll(() => {
     dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
@@ -233,35 +262,27 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
   });
 
   it('show-release-request: the request, read through its project by its logical id', () =>
-    given(
-      'show-release-request',
-      STATES.everyState,
-      'getProjectReleaseRequest',
-      GET_PROJECT_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { params } = masters.operation(STATES.everyState, 'getProjectReleaseRequest');
-      const ref = params['requestQualifiedId'];
-      await store.load(params['projectId'], ref);
-      const view = store.of(ref);
-      expect(view?.request.value?.id).toBe(params['requestId']);
-      expect(view?.request.value?.repoId).toBe(params['repositoryId']);
-      expect(view?.qualifiedId).toBe(ref);
-    }));
+    given('show-release-request', STATES.everyState, RELEASE_REQUEST).executeTest(
+      async (server) => {
+        const { params } = masters.operation(STATES.everyState, 'getProjectReleaseRequest');
+        const ref = params['requestQualifiedId'];
+        const { data } = await at(server.url, () =>
+          RELEASE_REQUEST.fetch({ path: { projectId: params['projectId'], ref } }),
+        );
+        expect(data?.request?.id).toBe(params['requestId']);
+        expect(data?.request?.repoId).toBe(params['repositoryId']);
+        expect(data?.request?.qualifiedId).toBe(ref);
+      },
+    ));
 
   // Epic qits-1580, the soft feature freeze. qits-projects records two requests of one repository
   // here: rr-1, frozen at its threshold with rr-2 queued behind it (getReleaseRequest), and rr-2,
   // queued behind rr-1 (getProjectReleaseRequest, by rr-2's logical id). So each queue id the page
   // links is bound where it is set, not only as a recorded null.
   it('show-release-request: a frozen request, with the one queued behind it', () =>
-    given(
-      'show-release-request',
-      STATES.frozen,
-      'getReleaseRequest',
-      GET_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
+    given('show-release-request', STATES.frozen, GET_REQUEST).executeTest(async (server) => {
       const { repoId, requestId } = recorded(STATES.frozen, 'getReleaseRequest');
-      const { data } = await readOnItsOwn(server.url, () =>
+      const { data } = await at(server.url, () =>
         consume(getReleaseRequest({ path: { repoId, requestId } }), GET_RELEASE_REQUEST),
       );
       const { params } = masters.operation(STATES.frozen, 'getReleaseRequest');
@@ -275,17 +296,13 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
     }));
 
   it('show-release-request: a queued request, read through its project by its logical id', () =>
-    given(
-      'show-release-request',
-      STATES.frozen,
-      'getProjectReleaseRequest',
-      GET_PROJECT_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
+    given('show-release-request', STATES.frozen, RELEASE_REQUEST).executeTest(async (server) => {
       const { params } = masters.operation(STATES.frozen, 'getProjectReleaseRequest');
       const ref = params['queuedRequestQualifiedId'];
-      await store.load(params['projectId'], ref);
-      const request = store.of(ref)?.request.value;
+      const { data } = await at(server.url, () =>
+        RELEASE_REQUEST.fetch({ path: { projectId: params['projectId'], ref } }),
+      );
+      const request = data?.request;
       expect(request?.id).toBe(params['queuedRequestId']);
       expect(request?.queuedBehind).toBe(params['requestId']);
       expect(request?.queuedBehindQualifiedId).toBeTruthy();
@@ -295,17 +312,13 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
   // An obsolete request (qits-2039): taken over mid-publish by a later request, which it names
   // (`supersededBy`), and carrying a work item. The page links both (epic qits-2000).
   it('show-release-request: an obsolete request, read through its project by its logical id', () =>
-    given(
-      'show-release-request',
-      STATES.obsolete,
-      'getProjectReleaseRequest',
-      GET_PROJECT_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
+    given('show-release-request', STATES.obsolete, RELEASE_REQUEST).executeTest(async (server) => {
       const { params } = masters.operation(STATES.obsolete, 'getProjectReleaseRequest');
       const ref = params['requestQualifiedId'];
-      await store.load(params['projectId'], ref);
-      const request = store.of(ref)?.request.value;
+      const { data } = await at(server.url, () =>
+        RELEASE_REQUEST.fetch({ path: { projectId: params['projectId'], ref } }),
+      );
+      const request = data?.request;
       expect(request?.state).toBe('OBSOLETE');
       // An item's work item is read unbound (UNBOUND_RELEASE_REQUEST), so the mock server does
       // not answer it; the page's spec shows it from the recording.
@@ -330,65 +343,45 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
     // getReleaseRequest's interaction per state, made on its own. Drop it once qits-projects
     // records getProjectReleaseRequest in these states.
     it('the request', () =>
-      given('show-release-request', state, 'getReleaseRequest', GET_RELEASE_REQUEST).executeTest(
-        async (server) => {
-          const { repoId, requestId } = recorded(state, 'getReleaseRequest');
-          const { data } = await readOnItsOwn(server.url, () =>
-            consume(getReleaseRequest({ path: { repoId, requestId } }), GET_RELEASE_REQUEST),
-          );
-          expect(data?.request?.state).toBe(expected);
-          if (state === STATES.awaitingApproval) {
-            const request = data?.request as ReleaseRequest | undefined;
-            expect(request?.approvalRequirements?.[0]?.admits).toEqual(['person']);
-          }
-        },
-      ));
+      given('show-release-request', state, GET_REQUEST).executeTest(async (server) => {
+        const { repoId, requestId } = recorded(state, 'getReleaseRequest');
+        const { data } = await at(server.url, () =>
+          consume(getReleaseRequest({ path: { repoId, requestId } }), GET_RELEASE_REQUEST),
+        );
+        expect(data?.request?.state).toBe(expected);
+        if (state === STATES.awaitingApproval) {
+          const request = data?.request as ReleaseRequest | undefined;
+          expect(request?.approvalRequirements?.[0]?.admits).toEqual(['person']);
+        }
+      }));
 
     it('the commits its fold brought in, with their parents and the sources’ tips', () =>
-      given(
-        'show-release-request',
-        state,
-        'listReleaseRequestCommits',
-        LIST_RELEASE_REQUEST_COMMITS,
-      ).executeTest(async (server) => {
+      given('show-release-request', state, RELEASE_COMMITS).executeTest(async (server) => {
         const { repoId, requestId } = recorded(state, 'listReleaseRequestCommits');
-        const { data } = await readOnItsOwn(server.url, () =>
-          consume(
-            listReleaseRequestCommits({ path: { repoId, requestId } }),
-            LIST_RELEASE_REQUEST_COMMITS,
-          ),
+        const { data } = await at(server.url, () =>
+          RELEASE_COMMITS.fetch({ path: { repoId, requestId } }),
         );
         expect(data?.commits?.every((commit) => Array.isArray(commit.parents))).toBe(true);
       }));
 
     if (folded)
       it('the CI verdicts on its fold', () =>
-        given('show-release-request', state, 'listCommitBuilds', LIST_COMMIT_BUILDS).executeTest(
-          async (server) => {
-            const op = masters.operation(state, 'listCommitBuilds');
-            const repoId = op.params['repositoryId'];
-            const commitHash = op.params['mergedSha'];
-            const { data } = await readOnItsOwn(server.url, () =>
-              consume(listCommitBuilds({ path: { repoId, commitHash } }), LIST_COMMIT_BUILDS),
-            );
-            expect(Array.isArray(data?.builds)).toBe(true);
-          },
-        ));
+        given('show-release-request', state, COMMIT_BUILDS).executeTest(async (server) => {
+          const op = masters.operation(state, 'listCommitBuilds');
+          const repoId = op.params['repositoryId'];
+          const commitHash = op.params['mergedSha'];
+          const { data } = await at(server.url, () =>
+            COMMIT_BUILDS.fetch({ path: { repoId, commitHash } }),
+          );
+          expect(Array.isArray(data?.builds)).toBe(true);
+        }));
 
     if (released)
       it('what it published', () =>
-        given(
-          'show-release-request',
-          state,
-          'getReleaseRequestArtifacts',
-          GET_RELEASE_ARTIFACTS,
-        ).executeTest(async (server) => {
+        given('show-release-request', state, RELEASE_ARTIFACTS).executeTest(async (server) => {
           const { repoId, requestId } = recorded(state, 'getReleaseRequestArtifacts');
-          const { data } = await readOnItsOwn(server.url, () =>
-            consume(
-              getReleaseRequestArtifacts({ path: { repoId, requestId } }),
-              GET_RELEASE_ARTIFACTS,
-            ),
+          const { data } = await at(server.url, () =>
+            RELEASE_ARTIFACTS.fetch({ path: { repoId, requestId } }),
           );
           expect(Array.isArray(data?.artifacts)).toBe(true);
         }));
@@ -398,184 +391,158 @@ describe('qits-landing-app → qits-projects-service pact: one release request',
   // qits-projects records for the door from 2026.1022.75745 on: the requirement ids under the
   // answer's `eligibility` envelope.
   it('show-release-request: what the viewer may approve', () =>
-    given(
-      'show-release-request',
-      STATES.awaitingApproval,
-      ELIGIBILITY,
-      GET_APPROVAL_ELIGIBILITY,
-    ).executeTest(async (server) => {
-      const { repoId, requestId } = recorded(STATES.awaitingApproval, ELIGIBILITY);
-      const store = storeAt(server.url);
-      const read = await store.approvalEligibility(repoId, requestId);
-      expect(read.status).toBe('loaded');
-      const { eligibility } = masters.body(STATES.awaitingApproval, ELIGIBILITY);
-      expect(read.value?.eligibleRequirementIds).toEqual(eligibility.eligibleRequirementIds);
-    }));
+    given('show-release-request', STATES.awaitingApproval, APPROVAL_ELIGIBILITY).executeTest(
+      async (server) => {
+        const { repoId, requestId } = recorded(STATES.awaitingApproval, ELIGIBILITY);
+        const { data } = await at(server.url, () =>
+          APPROVAL_ELIGIBILITY.fetch({ path: { repoId, requestId } }),
+        );
+        const { eligibility } = masters.body(STATES.awaitingApproval, ELIGIBILITY);
+        expect(data?.eligibility?.eligibleRequirementIds).toEqual(
+          eligibility.eligibleRequirementIds,
+        );
+      },
+    ));
 
   it('set-release-source-priority: a branch’s priority changes', () =>
-    given(
-      'set-release-source-priority',
-      STATES.awaitingApproval,
-      'setReleaseSourcePriority',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, body } = recorded(
-        STATES.awaitingApproval,
-        'setReleaseSourcePriority',
-      );
-      const outcome = await store.setSourcePriority(
-        repoId,
-        requestId,
-        body['branch'],
-        body['priority'],
-      );
-      expect(outcome.request?.id).toBe(requestId);
-    }));
+    given('set-release-source-priority', STATES.awaitingApproval, SET_SOURCE_PRIORITY).executeTest(
+      async (server) => {
+        const { repoId, requestId, body } = recorded(
+          STATES.awaitingApproval,
+          'setReleaseSourcePriority',
+        );
+        const { data } = await at(server.url, () =>
+          SET_SOURCE_PRIORITY.fetch(
+            priorityParams({ repoId, requestId }, body['branch'], body['priority']),
+          ),
+        );
+        expect(data?.request?.id).toBe(requestId);
+      },
+    ));
 
   it('approve-release-request: a person approves the fold', () =>
-    given(
-      'approve-release-request',
-      STATES.buildRuns,
-      'approveReleaseRequest',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, body } = recorded(STATES.buildRuns, 'approveReleaseRequest');
-      const outcome = await store.approve(repoId, requestId, body['mergedSha'], body['note']);
-      expect(outcome.request?.approvalState).toBe('APPROVED');
-    }));
+    given('approve-release-request', STATES.buildRuns, APPROVE_RELEASE).executeTest(
+      async (server) => {
+        const { repoId, requestId, body } = recorded(STATES.buildRuns, 'approveReleaseRequest');
+        const { data } = await at(server.url, () =>
+          APPROVE_RELEASE.fetch(
+            decisionParams({ repoId, requestId }, body['mergedSha'], body['note']),
+          ),
+        );
+        expect(data?.request?.approvalState).toBe('APPROVED');
+      },
+    ));
 
   it('decline-release-request: a person declines the fold', () =>
-    given(
-      'decline-release-request',
-      STATES.awaitingApproval,
-      'declineReleaseRequest',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, body } = recorded(
-        STATES.awaitingApproval,
-        'declineReleaseRequest',
-      );
-      const outcome = await store.decline(repoId, requestId, body['mergedSha'], body['note']);
-      expect(outcome.request?.approvalState).toBe('DECLINED');
-    }));
+    given('decline-release-request', STATES.awaitingApproval, DECLINE_RELEASE).executeTest(
+      async (server) => {
+        const { repoId, requestId, body } = recorded(
+          STATES.awaitingApproval,
+          'declineReleaseRequest',
+        );
+        const { data } = await at(server.url, () =>
+          DECLINE_RELEASE.fetch(
+            decisionParams({ repoId, requestId }, body['mergedSha'], body['note']),
+          ),
+        );
+        expect(data?.request?.approvalState).toBe('DECLINED');
+      },
+    ));
 
   it('withdraw-release-request: a person calls the ask off', () =>
-    given(
-      'withdraw-release-request',
-      STATES.awaitingApproval,
-      'withdrawReleaseRequest',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, body } = recorded(
-        STATES.awaitingApproval,
-        'withdrawReleaseRequest',
-      );
-      const outcome = await store.withdraw(repoId, requestId, body['reason']);
-      expect(outcome.request?.state).toBe('WITHDRAWN');
-    }));
+    given('withdraw-release-request', STATES.awaitingApproval, WITHDRAW_RELEASE).executeTest(
+      async (server) => {
+        const { repoId, requestId, body } = recorded(
+          STATES.awaitingApproval,
+          'withdrawReleaseRequest',
+        );
+        const { data } = await at(server.url, () =>
+          WITHDRAW_RELEASE.fetch(withdrawParams({ repoId, requestId }, body['reason'])),
+        );
+        expect(data?.request?.state).toBe('WITHDRAWN');
+      },
+    ));
 
   it.skipIf(!isRecorded(STATES.frozen, MOVE))(
     'move-release-request-source: a branch leaves the frozen request for the one queued after it',
     () =>
-      given(
-        'move-release-request-source',
-        STATES.frozen,
-        MOVE,
-        MOVED_RELEASE_REQUEST_SOURCE,
-      ).executeTest(async (server) => {
-        const store = storeAt(server.url);
-        const { repoId, requestId, body } = recorded(STATES.frozen, MOVE);
-        const outcome = await store.moveSource(repoId, requestId, body['branch'], body['reason']);
-        // The mock server answers each array's elements from the recorded first one, so which
-        // branches each side holds is the plain spec's to check (`release-request.store.spec.ts`).
-        expect(outcome.from?.id).toBe(requestId);
-        expect(outcome.to?.id).toBeTruthy();
-        expect(outcome.to?.id).not.toBe(requestId);
-        expect(outcome.to?.queuedBehind).toBe(requestId);
-      }),
+      given('move-release-request-source', STATES.frozen, MOVE_SOURCE).executeTest(
+        async (server) => {
+          const { repoId, requestId, body } = recorded(STATES.frozen, MOVE);
+          const { data: outcome } = await at(server.url, () =>
+            MOVE_SOURCE.fetch(moveParams({ repoId, requestId }, body['branch'], body['reason'])),
+          );
+          // The mock server answers each array's elements from the recorded first one, so which
+          // branches each side holds is the plain spec's to check (`release-lane-header.spec.ts`).
+          expect(outcome?.from?.id).toBe(requestId);
+          expect(outcome?.to?.id).toBeTruthy();
+          expect(outcome?.to?.id).not.toBe(requestId);
+          expect(outcome?.to?.queuedBehind).toBe(requestId);
+        },
+      ),
   );
 
   it('override-release-upstream: a person lets the request start QA past one upstream', () =>
-    given(
-      'override-release-upstream',
-      STATES.heldByUpstream,
-      'overrideReleaseRequestUpstream',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, body } = recorded(
-        STATES.heldByUpstream,
-        'overrideReleaseRequestUpstream',
-      );
-      const outcome = await store.overrideUpstream(
-        repoId,
-        requestId,
-        body['upstreamRequestId'],
-        body['note'],
-      );
-      const gate = outcome.request?.qualityGates?.find(
-        (entry) => entry.kind === 'upstream-in-flight',
-      );
-      expect(gate?.checks?.[0]?.state).toBe('PASSED');
-      expect(gate?.checks?.[0]?.detail).toMatch(/^Overridden by /);
-    }));
+    given('override-release-upstream', STATES.heldByUpstream, OVERRIDE_UPSTREAM).executeTest(
+      async (server) => {
+        const { repoId, requestId, body } = recorded(
+          STATES.heldByUpstream,
+          'overrideReleaseRequestUpstream',
+        );
+        const { data } = await at(server.url, () =>
+          OVERRIDE_UPSTREAM.fetch(
+            overrideParams({ repoId, requestId }, body['upstreamRequestId'], body['note']),
+          ),
+        );
+        const gate = data?.request?.qualityGates?.find(
+          (entry) => entry.kind === 'upstream-in-flight',
+        );
+        expect(gate?.checks?.[0]?.state).toBe('PASSED');
+        expect(gate?.checks?.[0]?.detail).toMatch(/^Overridden by /);
+      },
+    ));
 
   // Skipped: qits-projects recorded these two calls with a `{}` body, but neither operation takes a
   // body and the client sends none, so the mock server refuses the call. Unskip once the provider
   // records them without a body.
   it.skip('rerun-release-phase: a failed test run runs again', () =>
-    given(
-      'rerun-release-phase',
-      STATES.rejected,
-      'rerunReleasePipelinePhase',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
+    given('rerun-release-phase', STATES.rejected, RERUN_PHASE).executeTest(async (server) => {
       const { repoId, requestId, path } = recorded(STATES.rejected, 'rerunReleasePipelinePhase');
       const phase = /\/pipeline\/([^/]+)\/rerun$/.exec(path)![1];
-      const outcome = await store.rerunPhase(repoId, requestId, phase);
-      expect(outcome.request?.id).toBe(requestId);
+      const { data } = await at(server.url, () =>
+        RERUN_PHASE.fetch(rerunPhaseParams({ repoId, requestId }, phase)),
+      );
+      expect(data?.request?.id).toBe(requestId);
     }));
 
   it.skip('rerun-release-automation: a failed automation runs again', () =>
-    given(
-      'rerun-release-automation',
-      STATES.failedAutomation,
-      'rerunReleaseRequestAutomation',
-      NOTHING,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, path } = recorded(
-        STATES.failedAutomation,
-        'rerunReleaseRequestAutomation',
-      );
-      const kind = /\/automations\/([^/]+)\/runs$/.exec(path)![1];
-      const outcome = await store.rerunAutomation(repoId, requestId, kind);
-      expect(outcome.status).toBe(202);
-    }));
+    given('rerun-release-automation', STATES.failedAutomation, RERUN_AUTOMATION).executeTest(
+      async (server) => {
+        const { repoId, requestId, path } = recorded(
+          STATES.failedAutomation,
+          'rerunReleaseRequestAutomation',
+        );
+        const kind = /\/automations\/([^/]+)\/runs$/.exec(path)![1];
+        const { response } = await at(server.url, () =>
+          RERUN_AUTOMATION.fetch(rerunAutomationParams({ repoId, requestId }, kind)),
+        );
+        expect(response?.status).toBe(202);
+      },
+    ));
 
   it('waive-release-automations: a person waives the automations gate for the fold', () =>
-    given(
-      'waive-release-automations',
-      STATES.failedAutomation,
-      'waiveReleaseRequestAutomations',
-      CHANGED_RELEASE_REQUEST,
-    ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { repoId, requestId, body } = recorded(
-        STATES.failedAutomation,
-        'waiveReleaseRequestAutomations',
-      );
-      const outcome = await store.waiveAutomations(
-        repoId,
-        requestId,
-        body['foldSha'],
-        body['reason'],
-      );
-      expect(outcome.request?.id).toBe(requestId);
-    }));
+    given('waive-release-automations', STATES.failedAutomation, WAIVE_AUTOMATIONS).executeTest(
+      async (server) => {
+        const { repoId, requestId, body } = recorded(
+          STATES.failedAutomation,
+          'waiveReleaseRequestAutomations',
+        );
+        const { data } = await at(server.url, () =>
+          WAIVE_AUTOMATIONS.fetch(
+            waiveParams({ repoId, requestId }, body['foldSha'], body['reason']),
+          ),
+        );
+        expect(data?.request?.id).toBe(requestId);
+      },
+    ));
 });

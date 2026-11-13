@@ -7,9 +7,16 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { qitsMutation } from '@qits/angular';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal } from '$core/release-requests/release-request-model';
-import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
+import { OVERRIDE_UPSTREAM } from '$core/release-requests/release-request.operations';
+import {
+  addressOf,
+  changeOutcome,
+  overrideParams,
+} from '$core/release-requests/release-request-writes';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -21,11 +28,11 @@ export const NO_LONGER_BUILDING = 'The upstream is no longer building';
  * lets the request start QA although the upstream request `upstream` (the check's name, its
  * qualified id) is still building. Built like `app-release-approval`: an optional note, then a
  * button that asks once ("Confirm override?") and acts on the second press, through
- * `ReleaseRequestStore.overrideUpstream`.
+ * `qitsMutation(OVERRIDE_UPSTREAM)` (qits-2146).
  *
- * The answered request takes the shown one's place, so the check turns PASSED and names who
- * overrode. A 403 (only a person may) shows the service's sentence. A 409 (the override is moot)
- * emits `moot`, and the store reads the request again: the check is likely gone by then, and this
+ * The answered request takes the shown one's place (`OPEN_RELEASE_REQUEST`), so the check turns
+ * PASSED and names who overrode. A 403 (only a person may) shows the service's sentence. A 409 (the
+ * override is moot) emits `moot`, and the page reads the request again: the check is likely gone by then, and this
  * component with it, so the row that holds the gate says the upstream is no longer building.
  */
 @Component({
@@ -51,7 +58,8 @@ export const NO_LONGER_BUILDING = 'The upstream is no longer building';
   `,
 })
 export class UpstreamOverride {
-  private readonly store = inject(ReleaseRequestStore);
+  private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
+  private readonly overriding = qitsMutation(OVERRIDE_UPSTREAM);
 
   readonly request = input.required<ReleaseRequest>();
   /** The upstream request to stop waiting for: the check's name, its qualified id. */
@@ -93,18 +101,18 @@ export class UpstreamOverride {
     this.pending.set(false);
     this.inFlight.set(true);
     const request = this.request();
-    const outcome = await this.store.overrideUpstream(
-      request.repoId ?? '',
-      request.id ?? '',
-      this.upstream(),
-      this.note(),
+    const outcome = await changeOutcome(
+      this.overriding,
+      overrideParams(addressOf(request), this.upstream(), this.note()),
     );
     this.inFlight.set(false);
     if (outcome.request) {
       this.note.set('');
+      this.open?.put(outcome.request);
       return;
     }
     if (outcome.status === 409) {
+      this.open?.reload();
       this.moot.emit(this.upstream());
       return;
     }

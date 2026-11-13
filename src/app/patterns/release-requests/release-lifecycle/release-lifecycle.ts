@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import {
   lifecycleSummary,
@@ -22,7 +24,12 @@ import {
 import { ApprovalRequirements } from '$patterns/release-requests/approval-requirements/approval-requirements';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal } from '$core/release-requests/release-request-model';
-import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
+import { RERUN_PHASE } from '$core/release-requests/release-request.operations';
+import {
+  addressOf,
+  changeOutcome,
+  rerunPhaseParams,
+} from '$core/release-requests/release-request-writes';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
@@ -71,11 +78,19 @@ const RAIL: Readonly<Record<StepState, string>> = {
  * (`approvalOffer`, epic qits-1038). A check that
  * needs a person is marked and ringed; each row has an id (`stepAnchor`), so a link can open the
  * page at it. P1's header carries the automations' cog, P3's and P6's their gates' shield.
+ *
+ * Each change is sent through `qitsMutation` (qits-2146; "run again" here, `RERUN_PHASE`, the others
+ * in their patterns), and the answered request takes the shown one's place (`OPEN_RELEASE_REQUEST`).
+ * Marks (qits-2141): the lifecycle is the request (`qitsEntity` by `id`), every stage, step and
+ * check derived from its pipeline, gates, automations, approval and release
+ * (`releaseLifecycle`).
  */
 @Component({
   selector: 'app-release-lifecycle',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    QitsEntity,
+    QitsField,
     RouterLink,
     ActionButton,
     AutomationCog,
@@ -89,9 +104,13 @@ const RAIL: Readonly<Record<StepState, string>> = {
   ],
   host: { class: 'block' },
   template: `
-    <section class="rounded-md border border-line bg-surface px-3 py-2">
+    <section
+      class="rounded-md border border-line bg-surface px-3 py-2"
+      [qitsEntity]="request()"
+      entityKey="id"
+    >
       <h2 class="m-0 mb-2 text-base font-semibold">Release lifecycle</h2>
-      <ol class="m-0 list-none p-0">
+      <ol class="m-0 list-none p-0" [fieldOf]="request()" [qitsField]="marks.lifecycle">
         @for (stage of stages(); track stage.key) {
           <!-- A stage still to come is greyed by its ink (fg-muted), not by opacity, which would
                take its text below AA contrast; its rail dot alone is faded. -->
@@ -254,7 +273,8 @@ const RAIL: Readonly<Record<StepState, string>> = {
   `,
 })
 export class ReleaseLifecycle {
-  private readonly store = inject(ReleaseRequestStore);
+  private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
+  private readonly rerunningPhase = qitsMutation(RERUN_PHASE);
   private readonly origins = inject(PlatformOrigins);
 
   readonly request = input.required<ReleaseRequest>();
@@ -280,6 +300,7 @@ export class ReleaseLifecycle {
   );
 
   protected readonly shield = shieldOf;
+  protected readonly marks = MARKS;
   protected readonly anchor = stepAnchor;
 
   protected cogState(state: StepState): AutomationCogState {
@@ -338,9 +359,15 @@ export class ReleaseLifecycle {
     this.refusal.set(null);
     this.rerunning.set(phase);
     const request = this.request();
-    const outcome = await this.store.rerunPhase(request.repoId ?? '', request.id ?? '', phase);
+    const outcome = await changeOutcome(
+      this.rerunningPhase,
+      rerunPhaseParams(addressOf(request), phase),
+    );
     this.rerunning.set(null);
-    if (outcome.request) return;
+    if (outcome.request) {
+      this.open?.put(outcome.request);
+      return;
+    }
     this.refusal.set({
       phase,
       message:
@@ -353,3 +380,23 @@ export class ReleaseLifecycle {
 }
 
 export type { Step };
+
+/** What `releaseLifecycle` derives the stages, steps and checks from. */
+const MARKS = {
+  lifecycle: {
+    derived: [
+      'state',
+      'mergedSha',
+      'conflict',
+      'automations',
+      'pipeline',
+      'qualityGates',
+      'gates',
+      'approvalRequired',
+      'approvalState',
+      'approvalRequirements',
+      'version',
+      'mergedToMainAt',
+    ],
+  },
+} as const;

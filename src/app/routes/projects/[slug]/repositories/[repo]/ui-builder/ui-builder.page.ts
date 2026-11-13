@@ -22,7 +22,7 @@ import { map } from 'rxjs';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
-import { movesWrapper } from '$core/repositories/repositories.store';
+import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
 import { callCardinality, joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
 import { ContractsCatalog, type ContractsSite } from '$core/ui-builder/contracts-catalog';

@@ -6,9 +6,9 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `ProjectsStore` reads from each qits-projects answer (epic qits-546). The store passes
- * these to `consume(...)`, so it cannot read any other field, and its pact spec passes the same
- * lists as `consumes`, so the pact binds exactly these fields. To read another field, add it here.
+ * What the app reads from each qits-projects answer about projects (epic qits-546):
+ * `projects.operations.ts` declares these lists as its operations' `consumes`, so nothing else can
+ * be read, and their pact spec binds exactly these fields. To read another field, add it here.
  */
 
 /** `load()` / `refresh()`: the picker's cards show each project's name and link to its slug. */
@@ -101,9 +101,9 @@ export const LIST_PROJECT_RELEASE_REQUESTS = [
 ] as const;
 
 /**
- * The paths of {@link LIST_PROJECT_RELEASE_REQUESTS} the pact never binds, although the store reads
+ * The paths of {@link LIST_PROJECT_RELEASE_REQUESTS} the pact never binds, although the app reads
  * them: an item's `workItem` is null where its branch names no work item, and pact cannot match "an
- * object or null" (see `projects.store.pact.spec.ts`).
+ * object or null" (see `release-requests-pact.ts`).
  */
 export const UNBOUND_RELEASE_REQUESTS = [
   'requests[].items[].workItem.qualifiedId',

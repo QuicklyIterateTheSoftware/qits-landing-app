@@ -1,13 +1,16 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, signal } from '@angular/core';
+import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as systemClient } from '../../../api/system/client.gen';
 import { client as ciClient } from '../../../api/ci/client.gen';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
+import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import {
   ciGoldenMaster,
@@ -20,8 +23,20 @@ import { isPendingRelease, type ReleaseRequestEntry } from '$core/projects/proje
 import { attentionOf } from '$core/release-requests/release-lifecycle';
 import { ReleaseMenu, REFRESH_DEBOUNCE_MS } from './release-menu';
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/** Runs the effects a read starts on, then the generated client's few awaits. */
+const settle = () => {
+  TestBed.tick();
+  return new Promise((resolve) => setTimeout(resolve));
+};
+
+/** The menu as the shell draws it: handed the shell's release requests. */
+@Component({
+  imports: [ReleaseMenu],
+  template: `<app-release-menu [requests]="shared.resource" [state]="shared.state()" />`,
+})
+class Host {
+  protected readonly shared = inject(ProjectReleaseRequests);
+}
 
 describe('ReleaseMenu', () => {
   let http: HttpTestingController;
@@ -35,8 +50,8 @@ describe('ReleaseMenu', () => {
     project.set(recorded);
     TestBed.configureTestingModule({
       providers: [
-        // A server platform: the store does not load the project list by itself.
-        { provide: PLATFORM_ID, useValue: 'server' },
+        // The browser: the shell's requests are read there only (the project list is a stub).
+        { provide: PLATFORM_ID, useValue: 'browser' },
         // A clicked request link goes nowhere, but goes somewhere the router knows.
         provideRouter([{ path: '**', children: [] }]),
         provideHttpClient(),
@@ -46,6 +61,7 @@ describe('ReleaseMenu', () => {
         provideHeyApiClient(ciClient),
         provideTestPlatformOrigins({}, { ci: 'https://ci.example' }),
         { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: SelectedProject,
           useValue: { project, slug: signal(recorded.slug), url: signal('') },
@@ -70,9 +86,10 @@ describe('ReleaseMenu', () => {
   });
 
   function render() {
-    const fixture = TestBed.createComponent(ReleaseMenu);
+    const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const element = fixture.nativeElement as HTMLElement;
+    const element = fixture.debugElement.query(By.directive(ReleaseMenu))
+      .nativeElement as HTMLElement;
     const button = element.querySelector('button')!;
     const panel = element.querySelector<HTMLElement>('#release-menu')!;
     return { fixture, element, button, panel };
@@ -100,7 +117,7 @@ describe('ReleaseMenu', () => {
     // would count all five pending ones.
     expect(button.textContent?.trim()).toBe('2');
 
-    button.click(); // opens, from what the store holds
+    button.click(); // opens, from what the shell's read holds
     fixture.detectChanges();
     await settle();
     http.expectNone(`/projects/api/projects/${recorded.id}/release-requests`);

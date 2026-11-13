@@ -11,7 +11,7 @@ import { QitsEntityList, qitsMutation, qitsResource, type QitsDomainEvent } from
 import { SelectedProject } from '$core/projects/selected-project';
 import { needsBackupSignIn, signInRepositoryId } from '$core/repositories/remote-login';
 import { BACKUP_SYNC, PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
-import { movesWrapper } from '$core/repositories/repositories.store';
+import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { loadState } from '$core/resources/load-state';
 import { repositoryTree } from '$core/repositories/repository-tree';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -44,8 +44,8 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
  * marks them (qits-2141): the tree lists that read, each card marks its repository.
  *
  * Staleness (qits-1270): `SCMPublishCommit` to the open project's wrapper on its main branch → the
- * project's repositories (the resource's `refreshOn`, narrowed by `movesWrapper` as
- * `RepositoriesStore.follow` is; see the store for the gaps: no event for a repository created,
+ * project's repositories (the resource's `refreshOn`, narrowed by `movesWrapper`; see
+ * `wrapper-commits.ts` for the gaps: no event for a repository created,
  * renamed or deleted, nor for a backup's outcome). The cards show no branch,
  * commit or version, so `SCMPublishCommit` on other repositories, `SCMPublishTag`,
  * `SCMDeleteBranch` and `SCMRelease` change nothing here.

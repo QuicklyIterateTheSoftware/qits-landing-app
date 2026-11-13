@@ -128,8 +128,9 @@ export interface NavNote {
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
  * its release requests (`ProjectReleaseRequests`: the sidebar's Release Requests line, a request's
- * crumb) and its ACTIVE agents (`ProjectActiveAgents`: an agent's crumb, and the agents menu, which
- * the shell hands that resource). Their staleness is each resource's `refreshOn` (see each
+ * crumb, and the lightning menu, which the shell hands that resource) and its ACTIVE agents
+ * (`ProjectActiveAgents`: an agent's crumb, and the agents menu, which the shell hands that
+ * resource). Their staleness is each resource's `refreshOn` (see each
  * service). What it shows of them is data the template cannot trace to a resource of its own, so
  * it carries its data marks (qits-2141) as plain attributes: the trail's crumbs (`CrumbMarks`) and
  * the sidebar's line (`data-qits-source`, `data-qits-item`, `data-qits-derived`).
@@ -208,7 +209,10 @@ export interface NavNote {
           <app-bumps-menu />
           <app-notifications-menu />
           <app-agents-menu [agents]="activeAgents.resource" [state]="agentsState()" />
-          <app-release-menu />
+          <app-release-menu
+            [requests]="releaseRequests.resource"
+            [state]="releaseRequests.state()"
+          />
           <app-theme-menu class="max-md:hidden" />
           <a
             class="size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:text-fg"
@@ -306,7 +310,7 @@ export interface NavNote {
 })
 export class ShellLayout {
   private readonly selected = inject(SelectedProject);
-  private readonly releaseRequests = inject(ProjectReleaseRequests);
+  protected readonly releaseRequests = inject(ProjectReleaseRequests);
   protected readonly activeAgents = inject(ProjectActiveAgents);
 
   /** The agents menu's spinner: the agents' read, as the menu's own read was. */

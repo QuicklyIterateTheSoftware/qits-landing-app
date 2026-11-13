@@ -7,6 +7,7 @@ import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../../testing/golden-masters';
 import type { BranchLane } from '$core/release-requests/branch-graph';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import { ReleaseLaneHeader } from './release-lane-header';
 
 /**
@@ -29,11 +30,15 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 describe('ReleaseLaneHeader', () => {
   let http: HttpTestingController;
+  /** The page the header sits on, which shows what a change answered. */
+  let open: { put: ReturnType<typeof vi.fn>; reload: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
+    open = { put: vi.fn(), reload: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'server' },
+        { provide: OPEN_RELEASE_REQUEST, useValue: open },
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
@@ -154,6 +159,9 @@ describe('ReleaseLaneHeader', () => {
       await settled(view);
       expect(view.element.querySelector('[role="alert"]')).toBeNull();
       expect(view.button('Move')).toBeUndefined();
+      // Both requests the answer names go to the page, which shows the one on show.
+      expect(open.put.mock.calls.map(([request]) => request.id)).toEqual([frozen.id, queued.id]);
+      expect(open.put.mock.calls[0][0].sources).toHaveLength((frozen.sources ?? []).length - 1);
     });
 
     it('says why a move was refused, in the service’s words', async () => {

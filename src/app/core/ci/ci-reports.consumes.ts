@@ -2,8 +2,8 @@ import type { GetRunReportResponses, ListRunReportsResponses } from '../../api/c
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `CiReportsStore` reads from qits-ci's run reports. The store passes these to `consume(...)`,
- * and its pact spec binds exactly them.
+ * What the app reads from qits-ci's run reports: `RUN_REPORTS` and `RUN_REPORT`
+ * (`ci.operations.ts`) declare these as `consumes`, and their pact spec binds exactly them.
  */
 
 /** A run's reports: each one's kind and highlights, and the baseline they compare with. */

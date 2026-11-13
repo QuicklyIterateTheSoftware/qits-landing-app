@@ -11,7 +11,7 @@ import {
 
 /**
  * qits-projects' repository reads and writes declared as operations (qits-2145), for the pages
- * that read through `qitsResource` instead of `RepositoriesStore` (qits-2143, qits-2146);
+ * that read through `qitsResource` (qits-2143, qits-2146);
  * `repositories.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`.
  */

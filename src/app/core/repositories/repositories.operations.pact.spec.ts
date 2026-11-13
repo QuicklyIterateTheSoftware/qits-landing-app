@@ -17,7 +17,7 @@ import { BACKUP_SYNC, LIST_PROJECT_WRAPPER, PROJECT_REPOSITORIES } from './repos
 /**
  * The repository operations' part of qits-landing-app's pact with qits-projects-service
  * (`repositories.operations.ts`, qits-2143, qits-2146), in
- * `pacts/qits-landing-app_qits-projects-service.json` beside `ProjectsStore`'s, `WorkStore`'s and
+ * `pacts/qits-landing-app_qits-projects-service.json` beside `WorkStore`'s and
  * the other operations' parts (see `src/testing/pact-part.ts`):
  *
  * - `show-project-workspaces` (`LIST_PROJECT_WRAPPER`): the Agents page's read of the wrapper and
@@ -27,7 +27,7 @@ import { BACKUP_SYNC, LIST_PROJECT_WRAPPER, PROJECT_REPOSITORIES } from './repos
  *   what `LIST_PROJECT_WRAPPER` consumes, the wrapper and its main branch too, which its
  *   `refreshOn` narrows by (`movesWrapper`), as the store's `follow` did over its whole list;
  * - `show-project-repositories-tree` (`PROJECT_REPOSITORIES`): the Repositories page's tree, the
- *   whole list (the UI builder and the release request page's `RepositoriesStore` read the same);
+ *   whole list (the UI builder and the release request page read the same);
  * - `sync-backups-after-sign-in` (`BACKUP_SYNC`): the nudge after the backup sign-in, and a
  *   project qits-projects does not know (a 404, binding the status only).
  *

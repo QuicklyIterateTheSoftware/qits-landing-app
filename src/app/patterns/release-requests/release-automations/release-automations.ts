@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import { requestTitle } from '$core/projects/release-requests';
 import type {
   ReleaseAutomation,
@@ -13,7 +15,17 @@ import {
   failureLine,
   movedFold,
 } from '$core/release-requests/release-pipeline';
-import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
+import {
+  RERUN_AUTOMATION,
+  WAIVE_AUTOMATIONS,
+} from '$core/release-requests/release-request.operations';
+import {
+  acceptedOutcome,
+  addressOf,
+  changeOutcome,
+  rerunAutomationParams,
+  waiveParams,
+} from '$core/release-requests/release-request-writes';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -41,7 +53,7 @@ export const ASKED =
 @Component({
   selector: 'app-release-automations',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton],
+  imports: [ActionButton, QitsEntity, QitsField],
   host: { class: 'block' },
   template: `
     @if (rows().length === 0) {
@@ -50,6 +62,8 @@ export const ASKED =
       <ul class="m-0 flex list-none flex-col gap-1 p-0">
         @for (row of rows(); track row.kind) {
           <li
+            [qitsEntity]="row"
+            entityKey="kind"
             class="rounded border px-2 py-1 text-sm"
             [class]="
               row.state === 'FAILED'
@@ -60,23 +74,45 @@ export const ASKED =
             "
           >
             <div class="flex flex-wrap items-center gap-2">
-              <span class="font-semibold">{{ row.label }}</span>
-              <span class="text-fg-soft">{{ sentence(row) }}</span>
+              <span class="font-semibold" [fieldOf]="row" qitsField="label">{{ row.label }}</span>
+              <span
+                class="text-fg-soft"
+                [fieldOf]="row"
+                [qitsField]="{ derived: ['state', 'detail'] }"
+                >{{ sentence(row) }}</span
+              >
               @if (runHref(row); as href) {
                 <a class="text-accent no-underline hover:underline" [href]="href">the run in CI</a>
               }
               @if (rerunnable(row)) {
-                <ui-action-button [action]="rerunAction(row)" />
+                <ui-action-button
+                  [action]="rerunAction(row)"
+                  [fieldOf]="row"
+                  [qitsField]="{ derived: ['kind'] }"
+                />
               }
               @if (messages()[row.kind ?? '']; as message) {
-                <span class="text-xs text-fg-soft">{{ message }}</span>
+                <span
+                  class="text-xs text-fg-soft"
+                  [fieldOf]="row"
+                  [qitsField]="{ derived: ['kind'] }"
+                  >{{ message }}</span
+                >
               }
             </div>
             @if (row.state === 'FAILED' && row.failure; as failure) {
-              <p class="mt-1 mb-0 font-mono text-xs text-danger-strong">{{ failed(failure) }}</p>
+              <p
+                class="mt-1 mb-0 font-mono text-xs text-danger-strong"
+                [fieldOf]="row"
+                [qitsField]="{ derived: ['state', 'failure'] }"
+              >
+                {{ failed(failure) }}
+              </p>
               @if (failure.excerpt) {
                 <pre
                   class="mt-1 mb-0 max-h-48 overflow-auto rounded bg-surface-inverse p-2 text-xs whitespace-pre-wrap text-fg-on-inverse"
+                  [fieldOf]="row"
+                  [qitsField]="{ derived: ['state', 'failure'] }"
                   >{{ failure.excerpt }}</pre>
               }
             }
@@ -102,8 +138,14 @@ export const ASKED =
             <ui-action-button [action]="confirmWaive()" join="start" />
             <ui-action-button [action]="cancelWaive()" join="end" />
           </div>
-          <span class="text-xs text-fg-muted"
-            >of <span class="font-mono">{{ fold() }}</span></span
+          <span class="text-xs text-fg-muted" [qitsEntity]="request()" entityKey="id"
+            >of
+            <span
+              class="font-mono"
+              [fieldOf]="request()"
+              [qitsField]="{ derived: ['mergedSha'] }"
+              >{{ fold() }}</span
+            ></span
           >
         }
       </div>
@@ -119,7 +161,9 @@ export const ASKED =
   `,
 })
 export class ReleaseAutomations {
-  private readonly store = inject(ReleaseRequestStore);
+  private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
+  private readonly rerunning_ = qitsMutation(RERUN_AUTOMATION);
+  private readonly waiver = qitsMutation(WAIVE_AUTOMATIONS);
   private readonly origins = inject(PlatformOrigins);
 
   readonly request = input.required<ReleaseRequest>();
@@ -161,7 +205,10 @@ export class ReleaseAutomations {
     const request = this.request();
     this.rerunning.set(kind);
     this.setMessage(kind, null);
-    const outcome = await this.store.rerunAutomation(request.repoId ?? '', request.id ?? '', kind);
+    const outcome = await acceptedOutcome(
+      this.rerunning_,
+      rerunAutomationParams(addressOf(request), kind),
+    );
     this.rerunning.set(null);
     if (outcome.status >= 200 && outcome.status < 300) {
       this.setMessage(kind, ASKED);
@@ -228,16 +275,12 @@ export class ReleaseAutomations {
     this.waiveBusy.set(true);
     this.waiveMoved.set(null);
     this.waiveFailure.set(null);
-    const outcome = await this.store.waiveAutomations(
-      request.repoId ?? '',
-      request.id ?? '',
-      fold,
-      reason,
-    );
+    const outcome = await changeOutcome(this.waiver, waiveParams(addressOf(request), fold, reason));
     this.waiveBusy.set(false);
     if (outcome.request) {
       this.waiving.set(false);
       this.reason.set('');
+      this.open?.put(outcome.request);
       return;
     }
     if (outcome.status === 403) this.admin.set(false);

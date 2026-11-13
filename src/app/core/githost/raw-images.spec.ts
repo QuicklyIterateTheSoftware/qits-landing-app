@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHeyApiClient } from '../../api/githost/client/client.gen';
 import { client as githostClient } from '../../api/githost/client.gen';
 import { githostGoldenMasters } from '../../../testing/golden-masters';
-import { rawImageKey, RawImagesStore } from './raw-images.store';
+import { rawImageKey, RawImages } from './raw-images';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -21,9 +21,9 @@ const PNG = new Blob([Uint8Array.from(atob(params['body']), (c) => c.charCodeAt(
 /** A JSON error body, as the client hands it over: as a Blob, because the call asks for one. */
 const errorBody = (body: object) => new Blob([JSON.stringify(body)], { type: 'application/json' });
 
-describe('RawImagesStore', () => {
+describe('RawImages', () => {
   let http: HttpTestingController;
-  let store: InstanceType<typeof RawImagesStore>;
+  let store: RawImages;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,13 +34,14 @@ describe('RawImagesStore', () => {
       ],
     });
     http = TestBed.inject(HttpTestingController);
-    store = TestBed.inject(RawImagesStore);
+    store = TestBed.inject(RawImages);
   });
 
   afterEach(() => http.verify());
 
   /** The one raw read in flight, checked for its address and its Blob response type. */
   async function pending() {
+    TestBed.tick();
     await settle();
     const request = http.expectOne((req) =>
       req.urlWithParams.startsWith(`/githost/api/repositories/${REPO}/raw?`),
@@ -53,12 +54,20 @@ describe('RawImagesStore', () => {
   }
 
   async function answered(key: string) {
-    for (let i = 0; i < 10 && store.read(key)?.status === 'loading'; i++) await settle();
+    for (let i = 0; i < 10; i++) {
+      TestBed.tick();
+      const read = store.read(key);
+      if (read?.status === 'loaded' || (read?.status === 'error' && read.reason !== 'too-large'))
+        return read;
+      if (read?.status === 'error' && read.size !== undefined) return read;
+      await settle();
+    }
     return store.read(key);
   }
 
   it('reads an image once per repository, commit and path, keyed by them', async () => {
     const key = store.image(REPO, SHA, PATH);
+    TestBed.tick();
     expect(key).toBe(`${REPO}@${SHA}#${PATH}`);
     expect(rawImageKey(REPO, SHA, PATH)).toBe(key);
     expect(store.read(key)).toEqual({ status: 'loading' });

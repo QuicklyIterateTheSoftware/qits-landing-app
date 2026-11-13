@@ -1,13 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { Subject } from 'rxjs';
 import { client as systemClient } from '../../../api/system/client.gen';
 import { provideHeyApiClient } from '../../../api/system/client/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import type { TargetEntry } from '$core/system/targets.consumes';
-import { TargetsStore } from '$core/system/targets.store';
 import { systemGoldenMaster } from '../../../../testing/golden-masters';
 import { RunnerSlots } from './runner-slots';
 
@@ -31,6 +31,7 @@ describe('RunnerSlots', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(systemClient),
         { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -38,17 +39,20 @@ describe('RunnerSlots', () => {
 
   afterEach(() => http.verify());
 
-  /** The line with the store loading; `answer` settles the read. */
+  /** The line with the menu opened, its read on the way; `answer` settles the read. */
   async function render(answer: (request: ReturnType<HttpTestingController['expectOne']>) => void) {
     const fixture = TestBed.createComponent(RunnerSlots);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
-    const loading = TestBed.inject(TargetsStore).load();
+    await settle();
+    http.expectNone(LIST); // nothing until the menu opens
+    fixture.componentInstance.load();
+    TestBed.tick();
     await settle();
     fixture.detectChanges();
     expect(element.textContent?.trim()).toBe(''); // hidden while loading
     answer(http.expectOne(LIST));
-    await loading;
+    await settle();
     fixture.detectChanges();
     return { fixture, element };
   }
@@ -107,12 +111,25 @@ describe('RunnerSlots', () => {
     expect(rows(element)).toEqual(['ci: 1/2', 'workspaces: 1/2', 'desk: 0/1']);
   });
 
-  it('stays hidden when the read is refused', async () => {
-    const { element } = await render((request) =>
+  it('stays hidden when the read is refused, and reads again on the next opening', async () => {
+    const { fixture, element } = await render((request) =>
       request.flush(null, { status: 403, statusText: 'Forbidden' }),
     );
     expect(element.querySelector('[data-testid="runner-slots"]')).toBeNull();
     expect(element.textContent?.trim()).toBe('');
+    fixture.componentInstance.load();
+    TestBed.tick();
+    await settle();
+    http.expectOne(LIST).flush(recorded);
+    await settle();
+    fixture.detectChanges();
+    expect(element.textContent).toContain('runners: 1');
+  });
+
+  it('marks the line as the targets’ list, its figures derived from it', async () => {
+    const { element } = await render((request) => request.flush(recorded));
+    const line = element.querySelector('[data-testid="runner-slots"]')!;
+    expect(line.getAttribute('data-qits-source')).toBe('qits-system-service#listTargets');
   });
 
   it('reads the targets again after a lease changes', async () => {
@@ -121,6 +138,7 @@ describe('RunnerSlots', () => {
     events.next({ id: '1', name: 'TargetLeaseChanged', payload: '{}' });
     vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
     vi.useRealTimers();
+    TestBed.tick();
     await settle();
     http.expectOne(LIST).flush(recorded);
     await settle();
@@ -132,6 +150,7 @@ describe('RunnerSlots', () => {
     events.next({ id: '1', name: 'TargetConnectionChanged', payload: '{}' });
     vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
     vi.useRealTimers();
+    TestBed.tick();
     await settle();
     http.expectOne(LIST).flush(recorded);
     await settle();

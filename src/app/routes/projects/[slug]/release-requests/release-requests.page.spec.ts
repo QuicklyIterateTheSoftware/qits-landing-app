@@ -3,6 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { EMPTY } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
 import { goldenMaster } from '../../../../../testing/golden-masters';
@@ -30,6 +32,8 @@ describe('ReleaseRequestsPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // The shell's requests (`ProjectReleaseRequests`) follow the domain events; none here.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
       ],
     });
     http = TestBed.inject(HttpTestingController);

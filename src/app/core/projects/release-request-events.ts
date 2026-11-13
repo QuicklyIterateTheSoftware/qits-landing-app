@@ -47,7 +47,7 @@ export function affectsReleaseRequests(
  * The release request `event` is about (`releaseRequestId`, the request's id); undefined when it
  * names none: a deployment, a `SoftwareRelease`, a build of a branch that is not a request's.
  */
-export function releaseRequestIdOf(event: DomainEvent): string | undefined {
+export function releaseRequestIdOf(event: WithPayload): string | undefined {
   return payloadField(event, 'releaseRequestId');
 }
 
@@ -104,7 +104,7 @@ const BUILD_EVENTS = new Set(['BuildSuccessful', 'BuildFailed']);
  * - a deployment names an application and a version, not a project or a repository: it counts
  *   while the request is RELEASED and, once the request has a version, only for that version.
  */
-export function affectsReleaseRequest(event: DomainEvent, request: ShownReleaseRequest): boolean {
+export function affectsReleaseRequest(event: WithPayload, request: ShownReleaseRequest): boolean {
   const named = releaseRequestIdOf(event);
   if (named !== undefined) return !!request.id && named === request.id;
   const name = event.name ?? '';

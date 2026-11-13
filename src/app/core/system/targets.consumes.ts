@@ -2,15 +2,15 @@ import type { ListTargetsResponses } from '../../api/system';
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `TargetsStore` reads from qits-system's answer (epic qits-112). The store passes this to
- * `consume(...)`, so it cannot read any other field, and its pact spec passes the same list as
- * `consumes`. To read another field, add it here.
+ * What the app reads from qits-system's answer (epic qits-112): `TARGET_LIST`
+ * (`targets.operations.ts`) declares it as `consumes`, so nothing else can be read, and its pact
+ * spec binds the same list. To read another field, add it here.
  */
 
 /**
- * `TargetsStore.load()`: every execution target, for the runners and slots line of the lightning
- * menu. `used` and `reservations` are read whole, so a new slot type shows without a code change.
- * `TargetsStore` maps `reservations` to `reserved`.
+ * `TARGET_LIST`: every execution target, for the runners and slots line of the lightning menu.
+ * `used` and `reservations` are read whole, so a new slot type shows without a code change.
+ * `targetOf` maps `reservations` to `reserved`.
  */
 export const LIST_TARGETS = [
   '[].connected',

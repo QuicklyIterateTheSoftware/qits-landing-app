@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
 import type { BranchLane } from '$core/release-requests/branch-graph';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import {
   canMoveSource,
@@ -12,7 +14,17 @@ import {
   sourceMarks,
   sourceTitle,
 } from '$core/release-requests/release-request-model';
-import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
+import {
+  MOVE_SOURCE,
+  SET_SOURCE_PRIORITY,
+} from '$core/release-requests/release-request.operations';
+import {
+  addressOf,
+  changeOutcome,
+  moveOutcome,
+  moveParams,
+  priorityParams,
+} from '$core/release-requests/release-request-writes';
 import { Chip } from '$ui/components/chip/chip';
 
 /** What a lane that is not a source says under its name. */
@@ -31,14 +43,14 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
  * chip; the backing branch, "other" and guessed lanes say what they are. Under a source, its
  * soft-feature-freeze markers (epic qits-1580): `counted` toward the freeze, `joined` past it.
  *
- * A change goes to qits-projects at once (`ReleaseRequestStore.setSourcePriority`); the answered
- * request takes the shown one's place. A refusal is said under the select, which goes back.
+ * A change goes to qits-projects at once (`qitsMutation(SET_SOURCE_PRIORITY)`, qits-2146); the
+ * answered request takes the shown one's place (`OPEN_RELEASE_REQUEST`). A refusal is said under the select, which goes back.
  *
  * "Move to next request" (qits-1665), under a source that alone may hold the request back: shown
  * where `canMoveSource` holds (a named branch that is not the repository's default `mainBranch`,
  * on an open request that is not queued and keeps another branch). The first press asks for the
- * reason, which is required; Move sends it (`ReleaseRequestStore.moveSource`), and both requests
- * the answer names take the shown ones' place. A refusal is said under it in the service's words.
+ * reason, which is required; Move sends it (`qitsMutation(MOVE_SOURCE)`), and the request the
+ * answer names that is on show takes its place. A refusal is said under it in the service's words.
  * The app reads no roles of its own, so who may move (qits:admin, qits:admin-agent, the project's
  * delivery desk) is the service's to say: a 403 hides the action for the rest of the visit, as the
  * automations waiver does.
@@ -46,85 +58,103 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
 @Component({
   selector: 'app-release-lane-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip],
+  imports: [Chip, QitsEntity, QitsField],
   host: { class: 'block min-w-0' },
   template: `
     <p class="m-0 truncate font-mono text-xs font-semibold" [title]="title()">
       {{ lane().label }}
     </p>
     @if (source(); as source) {
-      @if (prioritisable(source)) {
-        <!-- The chosen option carries "selected" rather than the select a bound value: a value
-             bound on the select is written before its options exist. -->
-        <select
-          class="mt-0.5 w-full rounded border border-line-strong bg-surface px-0.5 text-xs disabled:opacity-60"
-          [attr.aria-label]="'Priority of ' + source.name"
-          [disabled]="!settable() || busy()"
-          (change)="choose($event)"
-        >
-          @if (!source.priority) {
-            <option value="" selected>unset</option>
-          }
-          @for (option of options(); track option) {
-            <option [value]="option" [selected]="option === source.priority">
-              {{ option.toLowerCase() }}
-            </option>
-          }
-        </select>
-      } @else {
-        <div class="mt-0.5 flex flex-wrap gap-1">
-          <ui-chip label="tag" />
-          @if (badge(); as chip) {
-            <ui-chip [label]="chip.label" [tone]="chip.tone" />
-          }
-        </div>
-      }
-      @if (marks().length) {
-        <div class="mt-0.5 flex flex-wrap gap-1">
-          @for (mark of marks(); track mark.label) {
-            <ui-chip [label]="mark.label" [tone]="mark.tone" [title]="mark.title" />
-          }
-        </div>
-      }
-      @if (movable()) {
-        @if (moving()) {
-          <input
-            class="mt-0.5 w-full rounded border border-line-strong px-0.5 text-xs"
-            type="text"
-            [value]="reason()"
-            (input)="reasonTyped($event)"
-            placeholder="Why (required)"
-            [attr.aria-label]="'Reason for moving ' + source.name + ' to the next request'"
-          />
-          <div class="mt-0.5 flex flex-wrap gap-1">
-            <button
-              type="button"
-              class="cursor-pointer rounded border border-line-strong bg-surface px-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
-              [disabled]="!reason().trim() || moving() === 'sending'"
-              (click)="move()"
-            >
-              Move
-            </button>
-            <button
-              type="button"
-              class="cursor-pointer rounded border border-transparent px-1 text-xs text-fg-soft disabled:cursor-not-allowed disabled:opacity-60"
-              [disabled]="moving() === 'sending'"
-              (click)="cancelMove()"
-            >
-              Cancel
-            </button>
-          </div>
-        } @else {
-          <button
-            type="button"
-            class="mt-0.5 cursor-pointer border-0 bg-transparent p-0 text-left text-xs text-accent hover:underline"
-            title="Take this branch out of this request into the one queued after it, so the others release without it"
-            (click)="openMove()"
+      <div class="contents" [qitsEntity]="source" entityKey="name">
+        @if (prioritisable(source)) {
+          <!-- The chosen option carries "selected" rather than the select a bound value: a value
+               bound on the select is written before its options exist. -->
+          <select
+            class="mt-0.5 w-full rounded border border-line-strong bg-surface px-0.5 text-xs disabled:opacity-60"
+            [attr.aria-label]="'Priority of ' + source.name"
+            [disabled]="!settable() || busy()"
+            (change)="choose($event)"
           >
-            Move to next request
-          </button>
+            @if (!source.priority) {
+              <option value="" selected>unset</option>
+            }
+            @for (option of options(); track option) {
+              <option
+                [value]="option"
+                [selected]="option === source.priority"
+                [fieldOf]="source"
+                [qitsField]="{ derived: ['priority'] }"
+              >
+                {{ option.toLowerCase() }}
+              </option>
+            }
+          </select>
+        } @else {
+          <div class="mt-0.5 flex flex-wrap gap-1">
+            <ui-chip label="tag" />
+            @if (badgeOf(source.priority); as chip) {
+              <ui-chip
+                [label]="chip.label"
+                [tone]="chip.tone"
+                [fieldOf]="source"
+                [qitsField]="{ derived: ['priority'] }"
+              />
+            }
+          </div>
         }
-      }
+        @if (marks().length) {
+          <div class="mt-0.5 flex flex-wrap gap-1">
+            @for (mark of marks(); track mark.label) {
+              <ui-chip
+                [label]="mark.label"
+                [tone]="mark.tone"
+                [title]="mark.title"
+                [fieldOf]="source"
+                [qitsField]="freezeMark"
+              />
+            }
+          </div>
+        }
+        @if (movable()) {
+          @if (moving()) {
+            <input
+              class="mt-0.5 w-full rounded border border-line-strong px-0.5 text-xs"
+              type="text"
+              [value]="reason()"
+              (input)="reasonTyped($event)"
+              placeholder="Why (required)"
+              [attr.aria-label]="'Reason for moving ' + source.name + ' to the next request'"
+            />
+            <div class="mt-0.5 flex flex-wrap gap-1">
+              <button
+                type="button"
+                class="cursor-pointer rounded border border-line-strong bg-surface px-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="!reason().trim() || moving() === 'sending'"
+                (click)="move()"
+              >
+                Move
+              </button>
+              <button
+                type="button"
+                class="cursor-pointer rounded border border-transparent px-1 text-xs text-fg-soft disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="moving() === 'sending'"
+                (click)="cancelMove()"
+              >
+                Cancel
+              </button>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="mt-0.5 cursor-pointer border-0 bg-transparent p-0 text-left text-xs text-accent hover:underline"
+              title="Take this branch out of this request into the one queued after it, so the others release without it"
+              (click)="openMove()"
+            >
+              Move to next request
+            </button>
+          }
+        }
+      </div>
     } @else {
       <p class="m-0 mt-0.5 truncate text-xs text-fg-muted">{{ note() }}</p>
     }
@@ -141,7 +171,9 @@ const KIND_NOTES: Readonly<Record<BranchLane['kind'], string>> = {
   `,
 })
 export class ReleaseLaneHeader {
-  private readonly store = inject(ReleaseRequestStore);
+  private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
+  private readonly prioritising = qitsMutation(SET_SOURCE_PRIORITY);
+  private readonly moving_ = qitsMutation(MOVE_SOURCE);
 
   readonly lane = input.required<BranchLane>();
   readonly request = input.required<ReleaseRequest>();
@@ -156,9 +188,11 @@ export class ReleaseLaneHeader {
   );
 
   protected readonly prioritisable = canPrioritiseSource;
+  /** A source's freeze markers are derived from whether it counts toward the freeze or joined it. */
+  protected readonly freezeMark = { derived: ['feature', 'explicitJoin'] } as const;
   protected readonly settable = computed(() => isChangeable(this.request()));
   protected readonly options = computed(() => priorityOptions(this.source()?.priority));
-  protected readonly badge = computed(() => priorityBadge(this.source()?.priority));
+  protected readonly badgeOf = priorityBadge;
   protected readonly note = computed(() => KIND_NOTES[this.lane().kind]);
 
   /** The source's freeze markers (epic qits-1580): counted toward it, or joined past it. */
@@ -213,15 +247,17 @@ export class ReleaseLaneHeader {
     const request = this.request();
     this.moving.set('sending');
     this.moveFailure.set(null);
-    const outcome = await this.store.moveSource(
-      request.repoId ?? '',
-      request.id ?? '',
-      source.name,
-      reason,
+    const outcome = await moveOutcome(
+      this.moving_,
+      moveParams(addressOf(request), source.name, reason),
     );
     this.moving.set(false);
     this.reason.set('');
-    if (outcome.from) return;
+    if (outcome.from) {
+      this.open?.put(outcome.from);
+      this.open?.put(outcome.to);
+      return;
+    }
     if (outcome.status === 403) this.forbidden.set(true);
     this.moveFailure.set(describeRefusal(outcome.status, outcome.message));
   }
@@ -234,16 +270,16 @@ export class ReleaseLaneHeader {
     const request = this.request();
     this.busy.set(true);
     this.failure.set(null);
-    const outcome = await this.store.setSourcePriority(
-      request.repoId ?? '',
-      request.id ?? '',
-      source.name,
-      priority,
+    const outcome = await changeOutcome(
+      this.prioritising,
+      priorityParams(addressOf(request), source.name, priority),
     );
     this.busy.set(false);
     if (!outcome.request) {
       this.failure.set(describeRefusal(outcome.status, outcome.message));
       select.value = source.priority ?? '';
+      return;
     }
+    this.open?.put(outcome.request);
   }
 }

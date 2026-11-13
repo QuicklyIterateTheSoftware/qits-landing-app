@@ -21,7 +21,7 @@ import {
  * recording of it ({@link EVERY_STATE}). qits-projects records that read in that one state only,
  * so the specs of a request in a given state (pending, refolded, released, conflicted) answer it
  * with that state's getReleaseRequest recording, as it is: the same `{ request }` shape, and pacted
- * per state for this reason (`release-request.store.pact.spec.ts`), with the state's commits,
+ * per state for this reason (`release-request.operations.pact.spec.ts`), with the state's commits,
  * verdicts and artifacts recorded beside it.
  *
  * A request carrying approval requirements ("a release request awaiting approval") is also read

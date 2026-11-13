@@ -20,7 +20,7 @@ import {
 import { LinesOfCode, type LanguageLines } from '$core/loc/lines-of-code';
 import type { Project } from '$core/projects/selected-project';
 import { LIST_PROJECT_WRAPPER } from '$core/repositories/repositories.operations';
-import { movesWrapper } from '$core/repositories/repositories.store';
+import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { loadState } from '$core/resources/load-state';
 import { countsAsWork } from '$core/work/work.consumes';
 import { PROJECT_CARD_WORK } from '$core/work/work.operations';
@@ -54,7 +54,7 @@ export const LANGUAGES_SHOWN = 4;
  * `listLoc`, which the table names as its source).
  *
  * Staleness (qits-1270): "Components" → the repositories' `refreshOn` (a commit to the project's
- * wrapper on its main branch reads them again, `movesWrapper`, as `RepositoriesStore.follow` did).
+ * wrapper on its main branch reads them again, `movesWrapper`).
  * The lines of code are read once (`LinesOfCode`): qits-githost emits no event when it has counted
  * a commit, so none can say they moved. "Work" is read once, as `WorkStore` read a card's.
  */

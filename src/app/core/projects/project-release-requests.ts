@@ -15,13 +15,12 @@ import { SelectedProject } from './selected-project';
  * over `PROJECT_RELEASE_REQUESTS`, read once the open project is known, in the browser only (the
  * server render has no session to send). A failed read again keeps the requests shown.
  *
- * The lightning menu and the Release Requests pages still read the same answer through
- * `ProjectsStore`, until they move over too (qits-2146's release request group); until then the
- * two reads are made apart.
+ * The lightning menu (handed `resource` by the shell) and the Release Requests page read the same
+ * answer from here: one request for all of them.
  *
  * Staleness (qits-1270): the resource's `refreshOn`, `RELEASE_REQUEST_EVENTS` about the open
  * project (`affectsReleaseRequests`: its `projectId`; a deployment while one of its requests is
- * RELEASED) → the requests, debounced 1 s, as the lightning menu reads `ProjectsStore`'s again.
+ * RELEASED) → the requests, debounced 1 s.
  */
 @Injectable({ providedIn: 'root' })
 export class ProjectReleaseRequests {

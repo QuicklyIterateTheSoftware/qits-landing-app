@@ -18,12 +18,12 @@ import { LOC_LIST } from './loc.operations';
  * `pacts/qits-landing-app_qits-githost-service.json`: the lines-of-code operation's part
  * (`LOC_LIST`, `loc.operations.ts`, qits-2146; moved here unchanged from `LocStore`'s pact spec).
  *
- * This spec owns the file's `listLoc` interactions; `raw-images.store.pact.spec.ts` owns the raw
+ * This spec owns the file's `listLoc` interactions; `raw-images.operations.pact.spec.ts` owns the raw
  * read's (qits-734). It has one interaction per kind of list the cards meet, each from its own provider state: a repository
  * counted, one counted at an older commit (STALE), one never counted, one without a commit, and a
  * list mixing counted and never counted.
  * Each binds only `LOC_LIST.consumes`, the list the read narrows its answer to. See
- * `projects.store.pact.spec.ts` for how the file is written and compared.
+ * `src/testing/pact-part.ts` for how the file is written and compared.
  *
  * The mock server answers from the matchers' examples (a language list is its first recorded
  * language, repeated), not the recorded body itself, so these tests check what kind of total the

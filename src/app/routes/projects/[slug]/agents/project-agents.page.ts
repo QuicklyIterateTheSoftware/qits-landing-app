@@ -15,7 +15,7 @@ import { payloadIds } from '$core/events/refresh-on';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { LIST_PROJECT_WRAPPER } from '$core/repositories/repositories.operations';
-import { movesWrapper } from '$core/repositories/repositories.store';
+import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { placementNote, runtimeLabel } from '$core/workspaces/agent-labels';
 import {
   LIST_PROJECT_ACTIVE_AGENTS,
@@ -78,8 +78,8 @@ function loadState(read: { status(): string; hasValue(): boolean }): LoadState {
  *   menu's;
  * - `WORKSPACE_EVENTS` naming the wrapper (`repositoryId`) or a listed wrapper agent's `agentId`
  *   (`concerns`) → `slots` and `wrapperAgents`;
- * - `SCMPublishCommit` to the wrapper's main branch (`movesWrapper`) → `repositories`, as
- *   `RepositoriesStore.follow` reads the Repositories page's.
+ * - `SCMPublishCommit` to the wrapper's main branch (`movesWrapper`) → `repositories`, as the
+ *   Repositories page reads its own.
  * Not announced: a queued agent's creation, a slot's runtime leaving RUNNING.
  */
 @Component({

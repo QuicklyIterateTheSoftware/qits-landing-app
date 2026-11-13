@@ -1,4 +1,4 @@
-import type { Target } from './targets.store';
+import type { Target } from './targets';
 
 /** One slot type's row: the slots it uses, and the slots reserved for it. Summed over targets. */
 export interface SlotTypeRow {

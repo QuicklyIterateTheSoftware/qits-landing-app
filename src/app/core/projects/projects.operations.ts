@@ -3,8 +3,8 @@ import { getProject, listProjectReleaseRequests, listProjects } from '../../api/
 import { GET_PROJECT, LIST_PROJECT_RELEASE_REQUESTS, LIST_PROJECTS } from './projects.consumes';
 
 /**
- * qits-projects' project reads declared as operations (qits-2145), for the shell and the project
- * pages, which read through `qitsResource` instead of `ProjectsStore` (qits-2146);
+ * qits-projects' project reads declared as operations (qits-2145), for the shell, the project
+ * pages and the release request pages, which read through `qitsResource` (qits-2146);
  * `projects.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`.
  */

@@ -10,9 +10,9 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `ReleaseRequestStore` reads from each qits-projects answer about one release request. The
- * store passes these lists to `consume(...)`, so it cannot read any other field, and its pact spec
- * binds exactly these fields. To read another field, add it here.
+ * What the app reads from each qits-projects answer about one release request:
+ * `release-request.operations.ts` declares these lists as its operations' `consumes`, so nothing
+ * else can be read, and their pact spec binds exactly these fields. To read another field, add it here.
  */
 
 /**
@@ -135,7 +135,7 @@ export const GET_RELEASE_REQUEST = [
 /**
  * The paths of {@link GET_RELEASE_REQUEST} the pact never binds, although the page reads them: an
  * item's `workItem` is null where its branch names no work item, and pact cannot match "an object
- * or null" (see `projects.store.pact.spec.ts`), so binding the shape of one recorded item would
+ * or null" (see `release-requests-pact.ts`), so binding the shape of one recorded item would
  * fail every answer whose item has none. The page treats a missing work item as the label.
  */
 export const UNBOUND_RELEASE_REQUEST = [

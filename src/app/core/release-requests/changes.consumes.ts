@@ -7,9 +7,9 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `ChangesStore` reads from qits-projects' answers about changed files: a release request's
- * fold, a submodule pin it moves, and a single commit. The store passes these lists to
- * `consume(...)`, and its pact spec binds exactly them.
+ * What the app reads from qits-projects' answers about changed files: a release request's fold, a
+ * submodule pin it moves, and a single commit. `changes.operations.ts` declares these lists as its
+ * operations' `consumes`, and their pact spec binds exactly them.
  */
 
 /**

@@ -23,7 +23,7 @@ import { WorkStore, type DispatchMode, type WorkStatus } from './work.store';
 /**
  * `WorkStore`'s part of qits-landing-app's pact with qits-projects-service (epics qits-112,
  * qits-965): the `listProjectWork`, `setWorkStatus` and `dispatchWork` interactions, in the same
- * file as `ProjectsStore`'s (`pacts/qits-landing-app_qits-projects-service.json`, see
+ * file as the operations' (`pacts/qits-landing-app_qits-projects-service.json`, see
  * `src/testing/pact-part.ts`). Every entity is addressed by its qualified id.
  *
  * Each test drives `load(projectId)`, as the UI interaction named in `interactions.ts` does, against

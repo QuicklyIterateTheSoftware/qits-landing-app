@@ -3,18 +3,27 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { client as projectsClient } from '../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../api/projects/client/client.gen';
 import { client as ciClient } from '../../../../../api/ci/client.gen';
-import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS, type EventSourceLike } from '$core/events/domain-events';
+import {
+  DomainEvents,
+  EVENT_SOURCE,
+  REOPEN_DEBOUNCE_MS,
+  type EventSourceLike,
+} from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { ciGoldenMaster, goldenMaster } from '../../../../../../testing/golden-masters';
 import { type AttributionFields, requestItems } from '$core/projects/release-requests';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ReleaseRequestPage } from './release-request.page';
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/** Runs the effects a read starts on, then the generated client's few awaits. */
+const settle = () => {
+  TestBed.tick();
+  return new Promise((resolve) => setTimeout(resolve));
+};
 
 /** The "not found" note: always rendered, hidden by class unless the project has no such one. */
 const notFound = (element: HTMLElement) =>
@@ -81,6 +90,8 @@ describe('ReleaseRequestPage', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(ciClient),
+        // The page's resources (qits-2146) follow the one stream through their `refreshOn`.
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: EVENT_SOURCE,
           useValue: (url: string) => {
@@ -115,9 +126,11 @@ describe('ReleaseRequestPage', () => {
     await settle();
     http.expectOne('/projects/api/projects').flush(projects);
     await navigated;
+    // Not `whenStable()`: a resource's read in flight keeps the app unstable until it is answered.
     const answered = async () => {
       await settle();
-      await harness.fixture.whenStable();
+      harness.fixture.detectChanges();
+      await settle();
       harness.fixture.detectChanges();
       await settle();
     };

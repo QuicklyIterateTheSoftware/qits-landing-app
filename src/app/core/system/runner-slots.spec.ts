@@ -1,5 +1,5 @@
 import { runnerSlots, type RunnerSlots } from './runner-slots';
-import type { Target } from './targets.store';
+import type { Target } from './targets';
 
 describe('runnerSlots', () => {
   /** A connected target with these slots. */

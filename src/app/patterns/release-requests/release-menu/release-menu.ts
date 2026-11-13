@@ -2,20 +2,27 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
-  effect,
   inject,
+  input,
+  signal,
   untracked,
+  viewChild,
 } from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
-import { activeRunsOf } from '$core/ci/active-runs';
-import { CiRunsStore } from '$core/ci/ci-runs.store';
-import { refreshOn } from '$core/events/refresh-on';
 import {
-  affectsReleaseRequests,
-  RELEASE_REQUEST_EVENTS,
-} from '$core/projects/release-request-events';
-import { ProjectsStore } from '$core/projects/projects.store';
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
+import { activeRunsOf } from '$core/ci/active-runs';
+import { buildOfRepository, BUILD_EVENTS } from '$core/ci/build-events';
+import { ACTIVE_RUNS } from '$core/ci/ci.operations';
+import type { ProjectReleaseRequests } from '$core/projects/project-release-requests';
+import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
+import { isPendingRelease } from '$core/projects/projects.consumes';
 import { SelectedProject } from '$core/projects/selected-project';
 import { releaseRequestRef, requestTitle, requestTone } from '$core/projects/release-requests';
 import { attentionOf, lifecycleSummary } from '$core/release-requests/release-lifecycle';
@@ -23,7 +30,6 @@ import { LifecycleLine } from '$ui/components/lifecycle-line/lifecycle-line';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
-import { TargetsStore } from '$core/system/targets.store';
 import { RunnerSlots } from '$patterns/system/runner-slots/runner-slots';
 import { ActiveRuns } from '$patterns/release-requests/active-runs/active-runs';
 
@@ -41,19 +47,24 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
  * opens the request's page at that check, whose name is in the link's tooltip. The button's badge counts those requests, in red; with none, it counts the
  * pending requests, in amber.
  *
- * The requests are fetched as soon as a project opens (`loadReleaseRequests`), so the button
- * carries their count right away (none when nothing is pending). They are fetched again when a
- * domain event says they may have changed ({@link RELEASE_REQUEST_EVENTS}, filtered to the open
- * project by `affectsReleaseRequests`), at most once a second, since one release sends several.
- * Staleness (qits-1270): `RELEASE_REQUEST_EVENTS` about the open project → its pending requests
- * (`ProjectsStore.refreshReleaseRequests`; the list answer is the only read, so a row change reads
- * it too).
- * The panel starts with the runners and slots line (`RunnerSlots`), fetched on each opening until
- * it loads.
+ * The requests are the shell's (`ProjectReleaseRequests`, qits-2146), which hands the menu its
+ * `qitsResource` (`requests`): read as soon as a project opens, so the button carries their count
+ * right away (none when nothing is pending), one request for the shell, the menu and the Release
+ * Requests page. An opening after a failed read reads them again.
+ * Staleness (qits-1270): `RELEASE_REQUEST_EVENTS` about the open project → its requests, the
+ * shell's resource's `refreshOn` (see `ProjectReleaseRequests`; the list answer is the only read,
+ * so a row change reads it too), at most once a second, since one release sends several.
+ * The panel starts with the runners and slots line (`RunnerSlots`), read on each opening until it
+ * loads (`load()`).
  * Below a request with a queued or running CI run (`activeRunsOf`: its QA, release and gate runs,
  * its automations), a chip per kind links to the run in qits-ci (`ActiveRuns`). The active runs
- * are read on each opening until they load (`CiRunsStore.loadActive`), and again after a build
- * event of a pending request's repository (`followActive`). A refused read shows no chip.
+ * are the menu's own `qitsResource` over `ACTIVE_RUNS` (`/ci/api/runs/active`), read on the first
+ * opening and again on an opening after a failure, and again after `BUILD_EVENTS` of a pending
+ * request's repository (`buildOfRepository`, the resource's `refreshOn`) once read. A refused read
+ * shows no chip.
+ * What it shows carries the data marks (qits-2141): the list is the requests' read, each row its
+ * request (`qitsEntity` by `id`) with each value its field or the fields it is derived from; the
+ * badge is derived from the answer's `requests`.
  * The button and the panel are `ui-dropdown`'s. Each request links to its page
  * (`/projects/<slug>/release-requests/<requestId>`); following the link closes the panel. The link
  * is a declared exit (`open-menu-release-request`, epic qits-2000), declared here rather than
@@ -63,7 +74,17 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 @Component({
   selector: 'app-release-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActiveRuns, Dropdown, LifecycleLine, QitsExit, RunnerSlots, Spinner],
+  imports: [
+    ActiveRuns,
+    Dropdown,
+    LifecycleLine,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    RunnerSlots,
+    Spinner,
+  ],
   // One display class or the other: a static display class would beat `hidden`. `ml-auto` pushes
   // the menu and the settings gear after it to the right end of the top bar.
   host: {
@@ -100,11 +121,14 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
           (count() ? '' : ' hidden')
         "
         aria-hidden="true"
+        [qitsEntityList]="requests()"
+        [fieldOf]="answer()"
+        [qitsField]="marks.badge"
         >{{ attentionCount() || count() }}</span
       >
       <app-runner-slots dropdown-panel />
       <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
-        <ul class="m-0 list-none p-0">
+        <ul class="m-0 list-none p-0" [qitsEntityList]="requests()">
           @for (row of rows(); track row.request.id) {
             @let request = row.request;
             <li
@@ -112,6 +136,8 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
               [class]="
                 row.attention.length ? 'border-l-4 border-l-warning-line bg-warning-soft' : ''
               "
+              [qitsEntity]="request"
+              entityKey="id"
             >
               <a
                 class="flex flex-col gap-1 px-3 py-2 no-underline hover:bg-surface-muted"
@@ -124,17 +150,32 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
                 (click)="menu.close()"
               >
                 <div class="flex items-baseline justify-between gap-2">
-                  <span class="truncate text-sm font-semibold text-fg">{{
-                    request.qualifiedId ?? request.repoName
-                  }}</span>
+                  <span
+                    class="truncate text-sm font-semibold text-fg"
+                    [fieldOf]="request"
+                    [qitsField]="{ derived: ['qualifiedId', 'repoName'] }"
+                    >{{ request.qualifiedId ?? request.repoName }}</span
+                  >
                   <span
                     class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
                     [class]="chip(requestTone(request.state))"
+                    [fieldOf]="request"
+                    qitsField="state"
                     >{{ request.state }}</span
                   >
                 </div>
-                <span class="truncate text-[0.8125rem] text-fg-soft">{{ title(request) }}</span>
-                <ui-lifecycle-line [points]="row.summary" [spread]="true" />
+                <span
+                  class="truncate text-[0.8125rem] text-fg-soft"
+                  [fieldOf]="request"
+                  [qitsField]="marks.title"
+                  >{{ title(request) }}</span
+                >
+                <ui-lifecycle-line
+                  [points]="row.summary"
+                  [spread]="true"
+                  [fieldOf]="request"
+                  [qitsField]="marks.lifecycle"
+                />
               </a>
               <app-active-runs class="-mt-1 px-3 pb-2" [runs]="row.active" />
             </li>
@@ -151,13 +192,18 @@ export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
   `,
 })
 export class ReleaseMenu {
-  private readonly store = inject(ProjectsStore);
+  /** The open project's release requests: the shell's `ProjectReleaseRequests.resource`. */
+  readonly requests = input.required<ProjectReleaseRequests['resource']>();
+
+  /** How the requests' read stands, as the shell's resource says it. */
+  readonly state = input<LoadState>('loading');
+
   private readonly selected = inject(SelectedProject);
-  private readonly targets = inject(TargetsStore);
-  private readonly ci = inject(CiRunsStore);
+  private readonly slots = viewChild(RunnerSlots);
   protected readonly requestTone = requestTone;
   protected readonly ref = releaseRequestRef;
   protected readonly title = requestTitle;
+  protected readonly marks = MARKS;
 
   /** The open project's id, once the list holds it. */
   protected readonly projectId = computed(() => this.selected.project()?.id);
@@ -170,19 +216,41 @@ export class ReleaseMenu {
     request: exit('projects/:slug/release-requests/:requestId'),
   });
 
-  private readonly requests = computed(() => {
-    const id = this.projectId();
-    return id === undefined ? undefined : this.store.releaseRequests()[id];
+  /** The requests' answer, once read; an empty one before. */
+  protected readonly answer = computed(() => {
+    const read = this.requests();
+    return (read.hasValue() ? read.value() : undefined) ?? { requests: [] };
   });
 
-  protected readonly pending = computed(() => this.requests()?.pending ?? []);
+  protected readonly pending = computed((): readonly ReleaseRequestEntry[] =>
+    (this.answer().requests ?? []).filter(isPendingRelease),
+  );
+
+  /** The menu was opened once: the active runs are read from then on. */
+  private readonly opened = signal(false);
+
+  /**
+   * Every queued or running CI run, once the menu opened; read again after a build event of a
+   * pending request's repository, once read.
+   */
+  private readonly active = qitsResource(ACTIVE_RUNS, () => (this.opened() ? {} : undefined), {
+    refreshOn: {
+      names: BUILD_EVENTS,
+      when: (event): boolean =>
+        this.active.hasValue() &&
+        buildOfRepository(
+          event,
+          this.pending().map((request) => request.repoId),
+        ),
+    },
+  });
 
   /**
    * The pending requests with their lifecycle line and what in them needs a person; the ones
    * needing someone first, the rest in the answer's order.
    */
   protected readonly rows = computed(() => {
-    const active = this.ci.active()?.runs;
+    const active = this.active.hasValue() ? this.active.value()?.runs : undefined;
     const rows = this.pending().map((request) => ({
       request,
       summary: lifecycleSummary(request),
@@ -203,48 +271,38 @@ export class ReleaseMenu {
     () => this.rows().filter((row) => row.attention.length).length,
   );
 
-  /** How many are pending, once fetched; undefined before the first opening. */
+  /** How many are pending, once fetched; undefined before. */
   protected readonly count = computed(() =>
-    this.requests()?.status === 'loaded' ? this.pending().length : undefined,
+    this.state() === 'loaded' ? this.pending().length : undefined,
   );
-
-  protected readonly state = computed((): LoadState => {
-    const status = this.requests()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
 
   protected chip(tone: ChipTone): string {
     return chipClass(tone);
   }
 
-  constructor() {
-    effect(() => {
-      const id = this.projectId();
-      if (id !== undefined) untracked(() => void this.store.loadReleaseRequests(id));
-    });
-    refreshOn({
-      names: RELEASE_REQUEST_EVENTS,
-      when: (event) => {
-        const id = this.projectId();
-        return id !== undefined && affectsReleaseRequests(event, id, this.pending());
-      },
-      refresh: () => {
-        const id = this.projectId();
-        if (id !== undefined) void this.store.refreshReleaseRequests(id);
-      },
-    });
-    this.ci.followActive(() => this.pending().map((request) => request.repoId), inject(DestroyRef));
-  }
-
   /**
    * On each opening: the targets for the runners and slots line and the active CI runs (each once,
-   * and again after a failure), and the open project's requests if nothing has yet (opening the
-   * menu after a failure).
+   * and again after a failure), and the open project's requests again after a failed read.
    */
   protected load(): void {
-    void this.targets.load();
-    void this.ci.loadActive();
-    const id = this.projectId();
-    if (id !== undefined) void this.store.loadReleaseRequests(id);
+    this.slots()?.load();
+    untracked(() => {
+      if (!this.opened()) this.opened.set(true);
+      else if (this.active.status() === 'error') this.active.reload();
+      const requests = this.requests();
+      if (requests.status() === 'error') requests.reload();
+    });
   }
 }
+
+/**
+ * The marks of a row's values computed from its request: the title from what it carries
+ * (`requestTitle`: its items, else its sources), the lifecycle line from its pipeline, gates and
+ * automations (`lifecycleSummary`).
+ */
+const MARKS = {
+  /** The badge counts the pending requests, or the ones needing a person (active runs aside). */
+  badge: { derived: ['requests'] },
+  title: { derived: ['items', 'sources'] },
+  lifecycle: { derived: ['pipeline', 'qualityGates', 'automations', 'state'] },
+} as const;

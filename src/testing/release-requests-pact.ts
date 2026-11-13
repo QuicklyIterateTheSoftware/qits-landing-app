@@ -6,9 +6,9 @@ import {
 } from '$core/projects/projects.consumes';
 
 /**
- * How the qits-projects pact holds `listProjectReleaseRequests` (qits-1075, qits-1673): what both
- * pact specs that bind it share, `projects.store.pact.spec.ts` (the release request pages) and
- * `projects.operations.pact.spec.ts` (`PROJECT_RELEASE_REQUESTS`, qits-2146). Each runs
+ * How the qits-projects pact holds `listProjectReleaseRequests` (qits-1075, qits-1673), as
+ * `projects.operations.pact.spec.ts` binds it (`PROJECT_RELEASE_REQUESTS`, qits-2146; the release
+ * request pages' part was `projects.store.pact.spec.ts`'s until `ProjectsStore` went). It runs
  * {@link openEndedReleaseRequests} on the pact it generated, before `assertPactPart`.
  */
 

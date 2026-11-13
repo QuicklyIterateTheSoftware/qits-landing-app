@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { QitsEntity, QitsField } from '@qits/angular';
 import type { CiRun } from '$core/ci/ci-runs.consumes';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import type { CommitBuild, ReleaseRequest } from '$core/release-requests/release-request.consumes';
@@ -29,11 +30,15 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
  * (older than the repository's newest runs, or in another repository) shows its id alone.
  *
  * Below the list, a link to all of the repository's runs in qits-ci.
+ *
+ * Marks (qits-2141): each row is a run (`qitsEntity` by its id), its values derived from the run as
+ * qits-ci lists it (`run.*`) or, for what it was for, from the request's phases, verdicts and
+ * automations; the footer's link names the request's repository.
  */
 @Component({
   selector: 'app-release-runs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, Spinner],
+  imports: [Chip, QitsEntity, QitsField, Spinner],
   host: { class: 'block' },
   template: `
     <section class="rounded-md border border-line bg-surface px-3 py-2">
@@ -41,27 +46,52 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
       <ui-spinner [state]="state()" class="min-h-8">
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
           @for (entry of entries(); track entry.id) {
-            <li class="flex flex-wrap items-baseline gap-2 text-sm">
+            <li
+              class="flex flex-wrap items-baseline gap-2 text-sm"
+              [qitsEntity]="entry"
+              entityKey="id"
+            >
               <ui-chip
                 [class.hidden]="!entry.run?.status"
                 [label]="(entry.run?.status ?? '').toLowerCase().replace('_', ' ')"
                 [tone]="tone(entry.run)"
+                [fieldOf]="entry"
+                [qitsField]="{ derived: ['run.status', 'run'] }"
               />
               @if (href(entry.id); as link) {
-                <a class="text-accent no-underline hover:underline" [href]="link">{{
-                  entry.label
-                }}</a>
+                <a
+                  class="text-accent no-underline hover:underline"
+                  [href]="link"
+                  [fieldOf]="entry"
+                  [qitsField]="marks.label"
+                  >{{ entry.label }}</a
+                >
               } @else {
-                <span>{{ entry.label }}</span>
+                <span [fieldOf]="entry" [qitsField]="marks.label">{{ entry.label }}</span>
               }
-              <span class="font-mono text-xs text-fg-muted">{{
-                entry.run?.branch ?? entry.id
-              }}</span>
+              <span
+                class="font-mono text-xs text-fg-muted"
+                [fieldOf]="entry"
+                [qitsField]="{ derived: ['run.branch', 'id'] }"
+                >{{ entry.run?.branch ?? entry.id }}</span
+              >
               @if (entry.run?.commitSha; as sha) {
-                <span class="font-mono text-xs text-fg-muted" [title]="sha">{{ short(sha) }}</span>
+                <span
+                  class="font-mono text-xs text-fg-muted"
+                  [title]="sha"
+                  [fieldOf]="entry"
+                  [qitsField]="{ derived: ['run.commitSha'] }"
+                  >{{ short(sha) }}</span
+                >
               }
               @if (entry.run?.createdAt; as at) {
-                <span class="text-xs text-fg-muted" [title]="instant(at)">{{ ago(at) }}</span>
+                <span
+                  class="text-xs text-fg-muted"
+                  [title]="instant(at)"
+                  [fieldOf]="entry"
+                  [qitsField]="{ derived: ['run.createdAt'] }"
+                  >{{ ago(at) }}</span
+                >
               }
             </li>
           }
@@ -75,7 +105,13 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
       </ui-spinner>
       @if (repositoryHref(); as link) {
         <p class="mt-2 mb-0 text-sm">
-          <a class="text-accent no-underline hover:underline" [href]="link"
+          <a
+            class="text-accent no-underline hover:underline"
+            [href]="link"
+            [qitsEntity]="request()"
+            entityKey="id"
+            [fieldOf]="request()"
+            [qitsField]="{ derived: ['repoName'] }"
             >All runs of {{ request().repoName }} in CI</a
           >
         </p>
@@ -94,6 +130,7 @@ export class ReleaseRuns {
   readonly state = input.required<LoadState>();
 
   protected readonly short = shortShaOrNone;
+  protected readonly marks = MARKS;
   protected readonly instant = formatInstant;
   protected readonly ago = (iso: string) => formatRelativeTime(iso);
 
@@ -116,3 +153,11 @@ export class ReleaseRuns {
     return origin && repoId ? `${origin}/?repo=${encodeURIComponent(repoId)}` : undefined;
   });
 }
+
+/**
+ * What a run is for (`requestRuns`): qits-ci's phase of the run, else the request's own name for it
+ * (a QA or Publish phase, a CI verdict's branch, an automation's label).
+ */
+const MARKS = {
+  label: { derived: ['run.phase', 'id'] },
+} as const;

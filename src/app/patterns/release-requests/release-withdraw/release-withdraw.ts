@@ -1,10 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { ProjectsStore } from '$core/projects/projects.store';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  Injector,
+  input,
+  signal,
+} from '@angular/core';
+import { qitsMutation } from '@qits/angular';
+import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { requestTitle, type AttributionFields } from '$core/projects/release-requests';
-import { SelectedProject } from '$core/projects/selected-project';
+import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import type { ReleaseRequest } from '$core/release-requests/release-request.consumes';
 import { describeRefusal, isChangeable } from '$core/release-requests/release-request-model';
-import { ReleaseRequestStore } from '$core/release-requests/release-request.store';
+import { WITHDRAW_RELEASE } from '$core/release-requests/release-request.operations';
+import {
+  addressOf,
+  changeOutcome,
+  withdrawParams,
+} from '$core/release-requests/release-request-writes';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -12,8 +26,10 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * Withdraw: calls a release request off (ported from qits-projects-frontend's release request
  * list). The first press shows an optional reason and asks "Confirm withdraw?"; the second sends
  * it. A blank reason leaves the service to name the caller. Drawn only while the request can still
- * be withdrawn (no tag cut yet); a refusal is said below the button. After a withdrawal the open
- * project's list of requests is read again.
+ * be withdrawn (no tag cut yet); a refusal is said below the button. It is sent through
+ * `qitsMutation(WITHDRAW_RELEASE)` (qits-2146); the answered request takes the shown one's place
+ * on the request's page (`OPEN_RELEASE_REQUEST`), and the open project's list of requests is read
+ * again (`ProjectReleaseRequests`).
  */
 @Component({
   selector: 'app-release-withdraw',
@@ -42,9 +58,12 @@ import { ActionButton } from '$ui/components/action-button/action-button';
   `,
 })
 export class ReleaseWithdraw {
-  private readonly store = inject(ReleaseRequestStore);
-  private readonly projects = inject(ProjectsStore);
-  private readonly selected = inject(SelectedProject);
+  private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
+  private readonly injector = inject(Injector);
+  /** A withdrawal reads the open project's requests again (looked up then: the shell's read). */
+  private readonly withdrawal = qitsMutation(WITHDRAW_RELEASE, {
+    affects: () => [this.injector.get(ProjectReleaseRequests).resource],
+  });
 
   readonly request = input.required<
     Pick<ReleaseRequest, 'id' | 'repoId' | 'state'> & AttributionFields
@@ -83,10 +102,9 @@ export class ReleaseWithdraw {
     this.pending.set(false);
     this.inFlight.set(true);
     this.failure.set(null);
-    const outcome = await this.store.withdraw(
-      request.repoId ?? '',
-      request.id ?? '',
-      this.reason(),
+    const outcome = await changeOutcome(
+      this.withdrawal,
+      withdrawParams(addressOf(request), this.reason()),
     );
     this.inFlight.set(false);
     this.reason.set('');
@@ -94,7 +112,6 @@ export class ReleaseWithdraw {
       this.failure.set(describeRefusal(outcome.status, outcome.message));
       return;
     }
-    const projectId = this.selected.project()?.id;
-    if (projectId) void this.projects.refreshReleaseRequests(projectId);
+    this.open?.put(outcome.request);
   }
 }

@@ -19,7 +19,7 @@ import { PROJECT_DETAIL, PROJECT_LIST, PROJECT_RELEASE_REQUESTS } from './projec
 /**
  * The project operations' part of qits-landing-app's pact with qits-projects-service
  * (`projects.operations.ts`, qits-2146), in `pacts/qits-landing-app_qits-projects-service.json`
- * beside `ProjectsStore`'s, `WorkStore`'s and the repository and work operations'
+ * beside `WorkStore`'s and the repository and work operations'
  * parts (see `src/testing/pact-part.ts`):
  *
  * - `list-projects` (`PROJECT_LIST`): the picker's and `SelectedProject`'s list, of one, two and no
@@ -27,10 +27,14 @@ import { PROJECT_DETAIL, PROJECT_LIST, PROJECT_RELEASE_REQUESTS } from './projec
  * - `open-project` (`PROJECT_DETAIL`): a project's page reading its project, and a project
  *   qits-projects does not know (a 404, binding the status only);
  * - `open-release-requests` (`PROJECT_RELEASE_REQUESTS`): the open project's release requests, in
- *   every state and none, as `ProjectReleaseRequests` reads them (the lightning menu, still on
- *   `ProjectsStore`, makes the same request).
+ *   every state and none, as `ProjectReleaseRequests` reads them for the shell and the lightning
+ *   menu;
+ * - `show-project-release-requests` (`PROJECT_RELEASE_REQUESTS`): the Release Requests page's
+ *   reading of the same answer, with each request's details: pending ones, a frozen request and the
+ *   one queued behind it, a request whose item names a work item, and none.
  *
- * Moved here from `projects.store.pact.spec.ts`, unchanged: the same descriptions, states,
+ * Moved here from `projects.store.pact.spec.ts` (the last part when `ProjectsStore` went, qits-2146),
+ * unchanged: the same descriptions, states,
  * requests and bound fields (each through `heldBy`, and the release requests opened up by
  * `openEndedReleaseRequests`, as there). Each interaction comes from the operation itself
  * (`OP.operationId`, `OP.consumes`; `OP.provider` checked against the spec's literal provider), and
@@ -42,7 +46,10 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const OPERATIONS: readonly OwnedOperation[] = [
   'listProjects',
   'getProject',
-  { operationId: 'listProjectReleaseRequests', interactions: ['open-release-requests'] },
+  {
+    operationId: 'listProjectReleaseRequests',
+    interactions: ['open-release-requests', 'show-project-release-requests'],
+  },
 ];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-projects-operations-pact-'));
@@ -167,6 +174,90 @@ describe('qits-landing-app → qits-projects-service pact: the project operation
       PROJECT_RELEASE_REQUESTS,
       'a project with no release requests',
       'open-release-requests',
+    ).executeTest(async (server) => {
+      const projectId = param(
+        'a project with no release requests',
+        'listProjectReleaseRequests',
+        'projectId',
+      );
+      const { data } = await at(server.url, () =>
+        PROJECT_RELEASE_REQUESTS.fetch({ path: { projectId } }),
+      );
+      expect(data?.requests).toEqual([]);
+    }));
+
+  it('show-project-release-requests: the page reads every request, with its details', () =>
+    given(
+      PROJECT_RELEASE_REQUESTS,
+      'a project with pending release requests',
+      'show-project-release-requests',
+    ).executeTest(async (server) => {
+      const projectId = param(
+        'a project with pending release requests',
+        'listProjectReleaseRequests',
+        'projectId',
+      );
+      const { data, error } = await at(server.url, () =>
+        PROJECT_RELEASE_REQUESTS.fetch({ path: { projectId } }),
+      );
+      expect(error).toBeUndefined();
+      const requests = data?.requests ?? [];
+      expect(requests.length).toBeGreaterThan(0);
+      expect(requests.every((r) => typeof r.updatedAt === 'string')).toBe(true);
+    }));
+
+  // Epic qits-1580, the soft feature freeze: a request frozen at its threshold and the one queued
+  // behind it, so the list's freeze and queue fields are bound in a state that sets them. Like the
+  // other list answers, the committed pact keeps one representative (`openEndedReleaseRequests`).
+  it('show-project-release-requests: a frozen request and the one queued behind it', () =>
+    given(
+      PROJECT_RELEASE_REQUESTS,
+      'a frozen release request with a queued next request',
+      'show-project-release-requests',
+    ).executeTest(async (server) => {
+      const op = masters.operation(
+        'a frozen release request with a queued next request',
+        'listProjectReleaseRequests',
+      );
+      const projectId = op.params['projectId'];
+      const { data } = await at(server.url, () =>
+        PROJECT_RELEASE_REQUESTS.fetch({ path: { projectId } }),
+      );
+      const requests = data?.requests ?? [];
+      const frozen = requests.find((request) => request.id === op.params['requestId']);
+      const queued = requests.find((request) => request.id === op.params['queuedRequestId']);
+      expect(frozen?.featureFreeze?.frozen).toBe(true);
+      expect(frozen?.queuedNext).toBe(queued?.id);
+      expect(queued?.queuedBehind).toBe(frozen?.id);
+      expect(queued?.queuedBehindQualifiedId).toBe(frozen?.qualifiedId);
+    }));
+
+  // An obsolete request's successor, carrying a work item (qits-2039): the page links it (epic
+  // qits-2000). An item's work item is read unbound (UNBOUND_RELEASE_REQUESTS), so the mock server
+  // does not answer it; the page's spec shows it from the recording.
+  it('show-project-release-requests: a request whose item names a work item', () =>
+    given(
+      PROJECT_RELEASE_REQUESTS,
+      'a repository with a tagged release whose request went obsolete mid-publish',
+      'show-project-release-requests',
+    ).executeTest(async (server) => {
+      const projectId = param(
+        'a repository with a tagged release whose request went obsolete mid-publish',
+        'listProjectReleaseRequests',
+        'projectId',
+      );
+      const { data, error } = await at(server.url, () =>
+        PROJECT_RELEASE_REQUESTS.fetch({ path: { projectId } }),
+      );
+      expect(error).toBeUndefined();
+      expect((data?.requests ?? []).some((request) => request.items?.length)).toBe(true);
+    }));
+
+  it('show-project-release-requests: a project without any shows none', () =>
+    given(
+      PROJECT_RELEASE_REQUESTS,
+      'a project with no release requests',
+      'show-project-release-requests',
     ).executeTest(async (server) => {
       const projectId = param(
         'a project with no release requests',

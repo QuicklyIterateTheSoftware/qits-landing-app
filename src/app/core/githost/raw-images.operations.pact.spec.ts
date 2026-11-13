@@ -10,12 +10,13 @@ import { provideHeyApiClient } from '../../api/githost/client/client.gen';
 import { addGoldenInteraction, exampleQuery } from '@qits/angular/testing';
 import { assertPactPart } from '../../../testing/pact-part';
 import { githostGoldenMasters as masters } from '../../../testing/golden-masters';
-import { GET_RAW } from './raw-images.consumes';
-import { RawImagesStore } from './raw-images.store';
+import { RAW_FILE, rawImageParams } from './raw-images.operations';
 
 /**
- * `RawImagesStore`'s part of qits-landing-app's pact with qits-githost-service (qits-734), in
- * `pacts/qits-landing-app_qits-githost-service.json` beside `loc.operations.pact.spec.ts`'s.
+ * `RAW_FILE`'s part of qits-landing-app's pact with qits-githost-service (qits-734), in
+ * `pacts/qits-landing-app_qits-githost-service.json` beside `loc.operations.pact.spec.ts`'s. Moved
+ * here from `RawImagesStore`'s pact spec when the store went (qits-2146), unchanged: the test runs
+ * the operation's own `fetch` with the params `RawImages` sends.
  *
  * One interaction: an image's bytes, from qits-githost's state `a repository with an image on
  * main` (a 1x1 PNG at `docs/screenshot.png`). The answer is no JSON, so it binds the status, the
@@ -31,7 +32,8 @@ const STATE = 'a repository with an image on main';
 let dir = '';
 let pact: PactV4;
 
-function storeAt(url: string) {
+/** Runs `call` with the client pointed at the mock server at `url`, in an injection context. */
+function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -40,15 +42,7 @@ function storeAt(url: string) {
     ],
   });
   githostClient.setConfig({ baseUrl: url });
-  return TestBed.inject(RawImagesStore);
-}
-
-/** Waits until the read under `key` has an answer. */
-async function answered(store: InstanceType<typeof RawImagesStore>, key: string) {
-  for (let i = 0; i < 100 && store.read(key)?.status === 'loading'; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 10));
-  }
-  return store.read(key);
+  return TestBed.runInInjectionContext(call);
 }
 
 describe('qits-landing-app → qits-githost-service pact: raw images', () => {
@@ -78,16 +72,17 @@ describe('qits-landing-app → qits-githost-service pact: raw images', () => {
     return addGoldenInteraction(pact, masters, {
       provider: PROVIDER,
       state: STATE,
-      operationId: 'getRaw',
+      operationId: RAW_FILE.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-changed-image' },
-      consumes: GET_RAW,
+      consumes: RAW_FILE.consumes,
       response: { contentType: 'image/png', body: png },
     }).executeTest(async (server) => {
-      const store = storeAt(server.url);
       const { rev, path } = exampleQuery(op);
-      const read = await answered(store, store.image(op.params['repositoryId'], rev, path));
-      expect(read?.status).toBe('loaded');
-      const blob = read?.status === 'loaded' ? read.blob : undefined;
+      const { data, error } = await at(server.url, () =>
+        RAW_FILE.fetch(rawImageParams(op.params['repositoryId'], rev, path)),
+      );
+      expect(error).toBeUndefined();
+      const blob = data instanceof Blob ? data : undefined;
       expect(blob?.type).toMatch(/^image\/png/);
       expect(blob?.size).toBe(png.length);
     });
