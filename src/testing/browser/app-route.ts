@@ -106,16 +106,22 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
  * `'unanswered'`, which leaves the request to the spec (`'refused'` answers 403 where named).
  */
 export interface FrameReads {
-  /** qits-projects' `listProjects` (`ProjectsStore`); default `'a project exists'`. */
+  /**
+   * qits-projects' `listProjects` (`SelectedProject`, once the URL names a project; the picker
+   * reads its own); default `'a project exists'`.
+   */
   readonly projects?: string;
   /**
-   * qits-projects' `listProjectReleaseRequests` of the open project (the lightning menu and the
-   * sidebar's Release Requests line); default `'a project with no release requests'`.
+   * qits-projects' `listProjectReleaseRequests` of the open project, every read of it answered
+   * alike: the lightning menu's (`ProjectsStore`) and the shell's (`ProjectReleaseRequests`: the
+   * sidebar's Release Requests line, the trail, the agents' waits; qits-2146); default
+   * `'a project with no release requests'`.
    */
   readonly releaseRequests?: string;
   /**
-   * qits-workspaces' `listAgents` of the open project's ACTIVE agents (the agents menu; the agent
-   * layout reads the same), or `'refused'` (403, the default: the menu shows its icon alone).
+   * qits-workspaces' `listAgents` of the open project's ACTIVE agents (`ProjectActiveAgents`: the
+   * agents menu and the trail; the agent layout reads the same), or `'refused'` (403, the default:
+   * the menu shows its icon alone).
    */
   readonly agents?: string;
   /**

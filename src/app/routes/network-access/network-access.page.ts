@@ -7,14 +7,33 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import type { PeerEntry } from '$core/network-access/peers.consumes';
 import {
+  QitsApiError,
+  QitsEntity,
+  QitsField,
+  qitsMutation,
+  qitsResource,
+  type QitsResourceRef,
+} from '@qits/angular';
+import {
+  AS_TEXT,
+  CONFIG_FORBIDDEN,
   filterPeers,
+  networkAccessRefusal,
   PEER_FILTERS,
-  PeersStore,
+  REVOKE_FORBIDDEN,
   type PeerFilter,
-} from '$core/network-access/peers.store';
+} from '$core/network-access/peers';
+import type { PeerEntry, PrivateEdgeEntry } from '$core/network-access/peers.consumes';
+import {
+  NODE_LIST,
+  PEER_CONFIG,
+  PEER_LIST,
+  PEER_REVOKE,
+  PRIVATE_EDGE,
+} from '$core/network-access/peers.operations';
 import { utcMinute } from '$core/projects/release-requests';
+import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { CopyText } from '$patterns/workspaces/copy-text/copy-text';
 import type { Action } from '$ui/components/action-button/action';
@@ -50,25 +69,40 @@ function statusTone(status: string | undefined): ChipTone {
   }
 }
 
+/** The private edge, as its read left it: `none` is the service's 404, no edge announced yet. */
+type PrivateEdgeRead =
+  | { readonly status: 'loading' | 'error' | 'none' }
+  | { readonly status: 'loaded'; readonly edge: PrivateEdgeEntry };
+
 /**
  * The Network access pane, at `/network-access` (epic qits-1977): qits-network-access' view of the
  * platform's private network, open to anyone signed in, with no project open.
  *
- * - The peers (`PeersStore.load`): name, kind, tunnel IP, owner (a DEVICE's user, a NODE's joined
- *   node), status and created, newest first. The filters All, Devices, Nodes and Revoked narrow
- *   the one list; Mine reads the visitor's own peers (`loadMine`, `owner=me`).
- * - Revoke on an ACTIVE row asks first ("Confirm revoke?"), then `PeersStore.revoke`, and reads the
- *   lists again; a refusal shows under the table in the service's terms (a 403: the visitor's
- *   credential may not revoke peers).
+ * It reads through `qitsResource` and writes through `qitsMutation` (qits-2146), over the
+ * operations in `peers.operations.ts`, in the browser only (the server render has no session to
+ * send, so every params stays `undefined` there):
+ *
+ * - The peers (`peers`, `PEER_LIST`): name, kind, tunnel IP, owner (a DEVICE's user, a NODE's
+ *   joined node, `nodes`, `NODE_LIST`), status and created, newest first. The filters All,
+ *   Devices, Nodes and Revoked narrow the one list; Mine reads the visitor's own peers (`mine`,
+ *   `PEER_LIST` with `owner=me`), from its first choosing on.
+ * - Revoke on an ACTIVE row asks first ("Confirm revoke?"), then `revoking` (`PEER_REVOKE`), which
+ *   reads the lists again; a refusal shows under the table in the service's terms (a 403: the
+ *   visitor's credential may not revoke peers).
  * - Download WireGuard config on an ACTIVE DEVICE row reads the peer's `wg-quick` text
- *   (`PeersStore.config`) and saves it as `<name>.conf`, the `<PRIVATE_KEY>` placeholder kept: the
- *   pane makes no keys and adds no devices.
- * - The private edge card: its endpoint, public key and announce time, or "No private edge has
- *   announced itself yet." on the service's 404.
+ *   (`PEER_CONFIG`'s `fetch`: a read on a press, not something the pane shows) and saves it as
+ *   `<name>.conf`, the `<PRIVATE_KEY>` placeholder kept: the pane makes no keys and adds no devices.
+ * - The private edge card (`edgeRead`, `PRIVATE_EDGE`): its endpoint, public key and announce time,
+ *   or "No private edge has announced itself yet." on the service's 404.
  * - Connect this machine: the copyable `qits network-access up`, then a Browsers step with the
  *   companion's copyable PAC URL (qits-network-access-service `proxy.go`'s `/proxy.pac`): it only
  *   routes once `up` is running on this machine, is set as the system's or browser's automatic
  *   proxy configuration URL, and leaves public apps working while the companion is stopped.
+ *
+ * What it shows carries the data marks (qits-2141): each row its peer (`qitsEntity` by `id`, its
+ * source the list the filter reads), the edge card its edge (by `publicKey`), each value its field
+ * or the fields it is derived from (`qitsField`). A NODE's owner joins `nodes` to the peer, which
+ * no mark can say: it is marked derived from the peer's own fields.
  *
  * Staleness (qits-1270): none yet. qits-network-access sends no domain event, so the pane reads
  * again only after its own revoke, and on Retry.
@@ -76,7 +110,16 @@ function statusTone(status: string | undefined): ChipTone {
 @Component({
   selector: 'app-network-access-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, Chip, CopyText, LoadFailure, PageLayoutComponent, Spinner],
+  imports: [
+    ActionButton,
+    Chip,
+    CopyText,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -121,13 +164,28 @@ function statusTone(status: string | undefined): ChipTone {
           @switch (edge().status) {
             @case ('loaded') {
               @if (edgeEntry(); as entry) {
-                <dl class="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 text-sm">
+                <dl
+                  class="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 text-sm"
+                  [qitsEntity]="entry"
+                  entityKey="publicKey"
+                  [entitySource]="edgeRead"
+                >
                   <dt class="text-fg-muted">Endpoint</dt>
-                  <dd class="m-0 font-mono">{{ entry.publicAddress }}:{{ entry.listenPort }}</dd>
+                  <dd
+                    class="m-0 font-mono"
+                    [fieldOf]="entry"
+                    [qitsField]="{ derived: ['publicAddress', 'listenPort'] }"
+                  >
+                    {{ entry.publicAddress }}:{{ entry.listenPort }}
+                  </dd>
                   <dt class="text-fg-muted">Public key</dt>
-                  <dd class="m-0 font-mono break-all">{{ entry.publicKey }}</dd>
+                  <dd class="m-0 font-mono break-all" [fieldOf]="entry" qitsField="publicKey">
+                    {{ entry.publicKey }}
+                  </dd>
                   <dt class="text-fg-muted">Announced</dt>
-                  <dd class="m-0">{{ when(entry.announcedAt) }}</dd>
+                  <dd class="m-0" [fieldOf]="entry" [qitsField]="{ derived: ['announcedAt'] }">
+                    {{ when(entry.announcedAt) }}
+                  </dd>
                 </dl>
               }
             }
@@ -179,24 +237,59 @@ function statusTone(status: string | undefined): ChipTone {
               </thead>
               <tbody>
                 @for (peer of shown(); track peer.id) {
-                  <tr class="border-b border-line-subtle align-top" [attr.data-peer]="peer.id">
-                    <td class="py-1.5 pr-3 font-medium text-fg">{{ peer.name }}</td>
-                    <td class="py-1.5 pr-3">{{ kindLabel(peer) }}</td>
-                    <td class="py-1.5 pr-3 font-mono">{{ peer.tunnelIp }}</td>
-                    <td class="py-1.5 pr-3">{{ owner(peer) }}</td>
-                    <td class="py-1.5 pr-3">
-                      <ui-chip [label]="statusLabel(peer)" [tone]="tone(peer)" />
+                  <tr
+                    class="border-b border-line-subtle align-top"
+                    [attr.data-peer]="peer.id"
+                    [qitsEntity]="peer"
+                    entityKey="id"
+                    [entitySource]="listRead()"
+                  >
+                    <td class="py-1.5 pr-3 font-medium text-fg" [fieldOf]="peer" qitsField="name">
+                      {{ peer.name }}
                     </td>
-                    <td class="py-1.5 pr-3 whitespace-nowrap text-fg-soft">
+                    <td class="py-1.5 pr-3" [fieldOf]="peer" [qitsField]="{ derived: ['kind'] }">
+                      {{ kindLabel(peer) }}
+                    </td>
+                    <td class="py-1.5 pr-3 font-mono" [fieldOf]="peer" qitsField="tunnelIp">
+                      {{ peer.tunnelIp }}
+                    </td>
+                    <td
+                      class="py-1.5 pr-3"
+                      [fieldOf]="peer"
+                      [qitsField]="{ derived: ['kind', 'ownerUserId', 'id', 'name'] }"
+                    >
+                      {{ owner(peer) }}
+                    </td>
+                    <td class="py-1.5 pr-3">
+                      <ui-chip
+                        [label]="statusLabel(peer)"
+                        [tone]="tone(peer)"
+                        [fieldOf]="peer"
+                        [qitsField]="{ derived: ['status'] }"
+                      />
+                    </td>
+                    <td
+                      class="py-1.5 pr-3 whitespace-nowrap text-fg-soft"
+                      [fieldOf]="peer"
+                      [qitsField]="{ derived: ['createdAt'] }"
+                    >
                       {{ when(peer.createdAt) }}
                     </td>
                     <td class="py-1.5">
                       <div class="flex flex-wrap justify-end gap-1">
                         @if (downloadable(peer)) {
-                          <ui-action-button [action]="downloadAction(peer)" />
+                          <ui-action-button
+                            [action]="downloadAction(peer)"
+                            [fieldOf]="peer"
+                            [qitsField]="{ derived: ['id', 'name'] }"
+                          />
                         }
                         @if (peer.status === 'ACTIVE') {
-                          <ui-action-button [action]="revokeAction(peer)" />
+                          <ui-action-button
+                            [action]="revokeAction(peer)"
+                            [fieldOf]="peer"
+                            [qitsField]="{ derived: ['id'] }"
+                          />
                           @if (confirming() === peer.id) {
                             <ui-action-button [action]="cancel" />
                           }
@@ -225,8 +318,9 @@ function statusTone(status: string | undefined): ChipTone {
   `,
 })
 export class NetworkAccessPage {
-  private readonly store = inject(PeersStore);
   private readonly document = inject(DOCUMENT);
+  /** No read in the server render: it has no session to send. */
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly connectCommand = CONNECT_COMMAND;
   protected readonly pacUrl = PAC_URL;
@@ -238,34 +332,60 @@ export class NetworkAccessPage {
   protected readonly pending = signal<string | null>(null);
   /** Why the last revoke or download was refused. */
   protected readonly failure = signal<string | null>(null);
+  /** Whether Mine was chosen once: its read starts then, and stays. */
+  private readonly mineAsked = signal(false);
 
-  protected readonly edge = this.store.edge;
-  protected readonly edgeEntry = computed(() => {
-    const edge = this.store.edge();
-    return edge.status === 'loaded' ? edge.edge : undefined;
-  });
+  /** Every peer. */
+  protected readonly peers = qitsResource(PEER_LIST, () => (this.browser ? {} : undefined));
 
-  private readonly list = computed(() =>
-    this.filter() === 'mine' ? this.store.mine() : this.store.all(),
+  /** The visitor's own peers (`owner=me`), once Mine was chosen. */
+  protected readonly mine = qitsResource(PEER_LIST, () =>
+    this.browser && this.mineAsked() ? { query: { owner: 'me' } } : undefined,
   );
 
-  protected readonly state = computed((): LoadState => {
-    const status = this.list().status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
+  /** The joined nodes, naming a NODE peer's target. */
+  protected readonly nodes = qitsResource(NODE_LIST, () => (this.browser ? {} : undefined));
+
+  /** The announced private edge; its 404 is "none announced yet". */
+  protected readonly edgeRead = qitsResource(PRIVATE_EDGE, () => (this.browser ? {} : undefined));
+
+  /** Revokes a peer, then reads the lists again. */
+  private readonly revoking = qitsMutation(PEER_REVOKE, {
+    affects: () => [this.peers, this.nodes, this.mine],
   });
 
-  protected readonly shown = computed(() => {
+  protected readonly edge = computed((): PrivateEdgeRead => {
+    const read = this.edgeRead;
+    if (read.status() === 'error') {
+      const error = read.error();
+      return { status: error instanceof QitsApiError && error.status === 404 ? 'none' : 'error' };
+    }
+    const edge = read.hasValue() ? read.value() : undefined;
+    return edge ? { status: 'loaded', edge } : { status: 'loading' };
+  });
+
+  protected readonly edgeEntry = computed(() =>
+    this.edgeRead.hasValue() ? this.edgeRead.value() : undefined,
+  );
+
+  /** The read the filter shows: Mine's own, else every peer. */
+  protected readonly listRead = computed((): QitsResourceRef<readonly PeerEntry[]> =>
+    this.filter() === 'mine' ? this.mine : this.peers,
+  );
+
+  protected readonly state = computed((): LoadState => loadState(this.listRead()));
+
+  protected readonly shown = computed((): readonly PeerEntry[] => {
     const filter = this.filter();
-    const peers = this.list().peers;
-    return filter === 'mine' ? peers : filterPeers(peers, filter);
+    if (filter === 'mine') return this.mine.hasValue() ? (this.mine.value() ?? []) : [];
+    return filterPeers(this.peers.hasValue() ? (this.peers.value() ?? []) : [], filter);
   });
 
   /** Each node's name, by the id of its peer. */
   private readonly nodeNames = computed(
     () =>
       new Map(
-        this.store
-          .nodes()
+        (this.nodes.hasValue() ? (this.nodes.value() ?? []) : [])
           .filter((node) => node.peer?.id)
           .map((node) => [node.peer?.id ?? '', node.name ?? '']),
       ),
@@ -279,11 +399,6 @@ export class NetworkAccessPage {
     callback: () => this.confirming.set(null),
   };
 
-  constructor() {
-    // In the browser only: the server render holds no token.
-    if (isPlatformBrowser(inject(PLATFORM_ID))) void this.store.load();
-  }
-
   protected filterLabel(filter: PeerFilter): string {
     return FILTER_LABELS[filter];
   }
@@ -291,7 +406,7 @@ export class NetworkAccessPage {
   protected choose(filter: PeerFilter): void {
     this.filter.set(filter);
     this.confirming.set(null);
-    if (filter === 'mine') void this.store.loadMine();
+    if (filter === 'mine') this.mineAsked.set(true);
   }
 
   protected kindLabel(peer: PeerEntry): string {
@@ -335,9 +450,16 @@ export class NetworkAccessPage {
     };
   }
 
+  /** Reads again what failed: Mine's list, or every peer, the nodes and the edge (not a 404). */
   protected retry(): void {
-    if (this.filter() === 'mine') void this.store.loadMine();
-    else void this.store.load();
+    const failed = (read: { status(): string }) => read.status() === 'error';
+    if (this.filter() === 'mine') {
+      if (failed(this.mine)) this.mine.reload();
+      return;
+    }
+    if (failed(this.peers)) this.peers.reload();
+    if (failed(this.nodes)) this.nodes.reload();
+    if (this.edge().status === 'error') this.edgeRead.reload();
   }
 
   private async revoke(peer: PeerEntry): Promise<void> {
@@ -347,12 +469,13 @@ export class NetworkAccessPage {
     this.failure.set(null);
     this.pending.set(id);
     try {
-      const outcome = await this.store.revoke(id);
-      if (!outcome.ok) {
-        this.failure.set(outcome.refusal);
-        return;
+      const peer = await this.revoking.run({ path: { peerId: id } });
+      // A 2xx that does not answer the peer REVOKED is refused all the same.
+      if (peer?.status !== 'REVOKED') {
+        this.failure.set(networkAccessRefusal(undefined, 200, REVOKE_FORBIDDEN));
       }
-      await this.store.reload();
+    } catch (error) {
+      this.failure.set(refusalOf(error, REVOKE_FORBIDDEN));
     } finally {
       this.pending.set(null);
     }
@@ -364,12 +487,16 @@ export class NetworkAccessPage {
     this.failure.set(null);
     this.pending.set(id);
     try {
-      const outcome = await this.store.config(id);
-      if (!outcome.ok) {
-        this.failure.set(outcome.refusal);
+      const { data, error, response } = await PEER_CONFIG.fetch({
+        path: { peerId: id },
+        ...AS_TEXT,
+      });
+      const text = data as unknown;
+      if (error !== undefined || typeof text !== 'string') {
+        this.failure.set(networkAccessRefusal(error, response?.status, CONFIG_FORBIDDEN));
         return;
       }
-      this.save(`${peer.name || 'qits'}.conf`, outcome.text);
+      this.save(`${peer.name || 'qits'}.conf`, text);
     } finally {
       this.pending.set(null);
     }
@@ -383,4 +510,11 @@ export class NetworkAccessPage {
     link.rel = 'noopener';
     link.click();
   }
+}
+
+/** Why a mutation was refused, for a person: its `QitsApiError`'s status and body, else unreachable. */
+function refusalOf(error: unknown, forbidden: string): string {
+  return error instanceof QitsApiError
+    ? networkAccessRefusal(error.error, error.status, forbidden)
+    : networkAccessRefusal(undefined, undefined, forbidden);
 }

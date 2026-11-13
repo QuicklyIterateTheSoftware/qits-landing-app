@@ -50,11 +50,13 @@ describe('NetworkAccessPage', () => {
   afterEach(() => http.verify());
 
   const element = () => fixture.nativeElement as HTMLElement;
+  // Not `whenStable()`: a resource whose request waits for the spec's answer is a pending task, so
+  // stability never comes while one is open (qits-2146). A few turns let the requests be built.
   const redraw = async () => {
-    await settle();
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
+    for (let turn = 0; turn < 3; turn++) {
+      await settle();
+      fixture.detectChanges();
+    }
   };
   const button = (label: string, within: ParentNode = element()) =>
     Array.from(within.querySelectorAll('button')).find((b) => b.textContent?.trim() === label);

@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../api/projects/client.gen';
@@ -12,7 +13,7 @@ import { client as maintenanceClient } from '../../api/maintenance/client.gen';
 import { client as eventsClient } from '../../api/events/client.gen';
 import { client as systemClient } from '../../api/system/client.gen';
 import { client as ciClient } from '../../api/ci/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { RECENT_EVENTS } from '$core/events/events.consumes';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { UPSTREAM_POOLS_URL } from '$patterns/maintenance/bumps-menu/bumps-menu';
@@ -116,6 +117,8 @@ describe('ShellLayout (screenshots)', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The shell's resources follow that stream, as `app.config.ts` provides it (qits-2146).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -126,15 +129,16 @@ describe('ShellLayout (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  /** The layout at the root, with no project open; the project list (the store's) answered. */
+  /**
+   * The layout at the root, with no project open: nothing is read (`SelectedProject` reads the
+   * project list once a URL names a project, qits-2146).
+   */
   async function render() {
     const fixture = TestBed.createComponent(ShellLayout);
     await TestBed.inject(Router).navigateByUrl('/');
     fixture.detectChanges();
     await settle();
-    http
-      .expectOne('/projects/api/projects')
-      .flush(await goldenMaster('a project exists', 'listProjects'));
+    http.expectNone('/projects/api/projects');
     await settle();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -205,9 +209,17 @@ describe('ShellLayout (screenshots)', () => {
     await settle();
     TestBed.tick();
     await settle();
-    http
-      .expectOne(`/projects/api/projects/${project.id}/release-requests`)
-      .flush(await goldenMaster(requests, 'listProjectReleaseRequests'));
+    // Read twice until the lightning menu moves over too (qits-2146): by `ProjectReleaseRequests`
+    // for the sidebar and the trail, and by `ProjectsStore` for the lightning menu.
+    const answer = await goldenMaster(requests, 'listProjectReleaseRequests');
+    for (let round = 0; round < 2; round++) {
+      for (const read of http.match(`/projects/api/projects/${project.id}/release-requests`)) {
+        read.flush(answer);
+      }
+      await settle();
+      TestBed.tick();
+      await settle();
+    }
     // The agents menu's read, refused: its own browser spec draws agents; here its badge stays
     // hidden and the bar shows only its icon.
     http

@@ -15,7 +15,6 @@ import { OpenIssues } from './open-issues';
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const OPEN_ISSUE = 'a project with an open issue';
-const PROJECT = 'a project exists';
 
 /**
  * Screenshots of the Desk's open issues (qits-1819), 40rem wide, on qits-projects' "a project with
@@ -64,8 +63,8 @@ describe('OpenIssues (screenshots)', () => {
     await fixture.whenStable();
     fixture.detectChanges();
     await settle();
-    // The project list `SelectedWork` reads, as recorded.
-    http.expectOne('/projects/api/projects').flush(await goldenMaster(PROJECT, 'listProjects'));
+    // No project list: `SelectedProject` reads it once a URL names a project (qits-2146).
+    http.expectNone('/projects/api/projects');
     http.expectOne(`/projects/api/work/${issue.qualifiedId}`).flush(issue);
     // The state records no thread for the issue: an error answer, which leaves the description
     // unread (the store reads the item and its thread together).
@@ -93,6 +92,9 @@ describe('OpenIssues (screenshots)', () => {
     const { locator, issue } = await shown();
     await userEvent.click(locator.getByRole('link', { name: issue.qualifiedId, exact: true }));
     await settle();
+    // The issue's URL names a project, so `SelectedProject` reads the project list (qits-2146);
+    // the stub page shows nothing of it, so it is left unanswered.
+    http.expectOne('/projects/api/projects');
     expect(TestBed.inject(Router).url).toBe(
       `/projects/contract-00000001/work/detail/${issue.qualifiedId}`,
     );

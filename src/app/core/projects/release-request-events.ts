@@ -1,5 +1,5 @@
-import { payloadProjectId, type DomainEvent } from '$core/events/domain-events';
-import { payloadField, payloadIds } from '$core/events/refresh-on';
+import type { DomainEvent } from '$core/events/domain-events';
+import { payloadField, payloadIds, type WithPayload } from '$core/events/refresh-on';
 import type { ReleaseRequestEntry } from './projects.consumes';
 
 /**
@@ -33,14 +33,14 @@ const DEPLOYMENT_EVENTS = new Set(['DeploymentActive', 'DeploymentFailed']);
  * deployment, and is ignored otherwise.
  */
 export function affectsReleaseRequests(
-  event: DomainEvent,
+  event: WithPayload,
   projectId: string,
   pending: readonly ReleaseRequestEntry[],
 ): boolean {
   if (DEPLOYMENT_EVENTS.has(event.name ?? '')) {
     return pending.some((request) => request.state === 'RELEASED');
   }
-  return payloadProjectId(event) === projectId;
+  return payloadField(event, 'projectId') === projectId;
 }
 
 /**

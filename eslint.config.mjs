@@ -38,27 +38,50 @@ export default tseslint.config(
   },
   ...climbBans(),
   ...stalenessBans(),
-  ...dataMarksPilot(),
+  ...dataMarks(),
 );
 
 /**
- * qits-2143: the Agents page is the pilot of reading through `qitsResource` (qits-2145) and of
- * marking what a page shows (qits-2141). The page reads no store that calls a client
- * (`qits/reads-through-resources`), and every API value it, its agent rows and their status lines
- * render sits under a `qitsField` inside a `qitsEntity` / `qitsEntityList`
- * (`qits/data-through-fields`, which needs typed linting to find the `input()`s holding API data).
- * Neither rule is on anywhere else yet: each route turns them on as it moves over.
+ * qits-2146: the routes move from signal stores to `qitsResource` / `qitsMutation` (qits-2145) and
+ * mark what they show (qits-2141), one group of routes at a time, after the Agents page's pilot
+ * (qits-2143). A moved file reads no store that calls a client (`qits/reads-through-resources`),
+ * and every API value a moved component renders sits under a `qitsField` inside a `qitsEntity` /
+ * `qitsEntityList` (`qits/data-through-fields`, which needs typed linting to find the `input()`s
+ * holding API data). Each group appends its pages, layouts, patterns and the core services it
+ * moved to the two lists below; when the last group has moved, both lists become `src/app/**\/*.ts`
+ * (the client set-up in `app.config*.ts` and `main*.ts` left out of the first) and this function
+ * is folded into the app-wide config.
  */
-function dataMarksPilot() {
-  const page = 'src/app/routes/projects/[[]slug]/agents/project-agents.page.ts';
+function dataMarks() {
+  /** Pages, layouts and patterns: both rules. */
+  const components = [
+    // qits-2143, the pilot: the Agents page and its rows.
+    'src/app/routes/projects/[[]slug]/agents/project-agents.page.ts',
+    'src/app/patterns/workspaces/agent-row/agent-row.ts',
+    'src/app/patterns/agents/agent-status/agent-status.ts',
+    // Group 1, the shell and the projects routes.
+    'src/app/layout/shell/shell.layout.ts',
+    'src/app/patterns/agents/agents-menu/agents-menu.ts',
+    'src/app/patterns/events/notifications-menu/notifications-menu.ts',
+    'src/app/patterns/maintenance/bumps-menu/bumps-menu.ts',
+    'src/app/routes/root.page.ts',
+    'src/app/routes/projects/project-picker.page.ts',
+    'src/app/routes/projects/[[]slug]/project.page.ts',
+    'src/app/routes/projects/[[]slug]/setup/project-setup.page.ts',
+    'src/app/routes/network-access/network-access.page.ts',
+  ];
+  /** The root services holding the resources those share: no store, no client. */
+  const services = [
+    // Group 1.
+    'src/app/core/projects/selected-project.ts',
+    'src/app/core/projects/project-release-requests.ts',
+    'src/app/core/projects/project-detail.ts',
+    'src/app/core/workspaces/project-active-agents.ts',
+  ];
   return [
-    { files: [page], rules: { 'qits/reads-through-resources': 'error' } },
+    { files: [...components, ...services], rules: { 'qits/reads-through-resources': 'error' } },
     {
-      files: [
-        page,
-        'src/app/patterns/workspaces/agent-row/agent-row.ts',
-        'src/app/patterns/agents/agent-status/agent-status.ts',
-      ],
+      files: components,
       languageOptions: {
         parser: tseslint.parser,
         parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },

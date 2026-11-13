@@ -1,10 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { page } from 'vitest/browser';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { BumpsMenu, UPSTREAM_POOLS_URL, type UpstreamPool } from './bumps-menu';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
@@ -50,6 +51,8 @@ describe('BumpsMenu (screenshots)', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The bumps' resource follows that stream, as `app.config.ts` provides it (qits-2146).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);

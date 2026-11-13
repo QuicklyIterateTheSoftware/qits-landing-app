@@ -12,6 +12,20 @@ export interface Crumb {
   readonly exit?: ExitOutcome;
   /** The exit's path params. */
   readonly params?: Readonly<Record<string, string | number>>;
+  /** Where a label that is data comes from (qits-2141), set on the crumb's item as is. */
+  readonly marks?: CrumbMarks;
+}
+
+/**
+ * The data marks of a crumb whose label is data (qits-2141): the `data-qits-source`,
+ * `data-qits-item`, `data-qits-field` and `data-qits-derived` attribute values its layout made of
+ * the read, the record and the field the label shows. The trail only sets them.
+ */
+export interface CrumbMarks {
+  readonly source: string;
+  readonly item: string | null;
+  readonly field?: string;
+  readonly derived?: string;
 }
 
 /**
@@ -70,7 +84,12 @@ export interface Crumb {
           </svg>
           <ol dropdown-panel class="m-0 list-none py-1 pl-0 text-sm">
             @for (row of path(); track $index; let last = $last) {
-              <li>
+              <li
+                [attr.data-qits-source]="row.marks?.source"
+                [attr.data-qits-item]="row.marks?.item"
+                [attr.data-qits-field]="row.marks?.field"
+                [attr.data-qits-derived]="row.marks?.derived"
+              >
                 @if (last || !row.exit) {
                   <span
                     class="block px-3 py-1.5 font-medium whitespace-normal break-words text-fg"
@@ -122,6 +141,10 @@ export interface Crumb {
               (index < crumbs().length - 2 ? 'hidden md:flex' : 'flex') +
               (index === crumbs().length - 1 ? ' max-md:-order-1' : ' shrink-[1000]')
             "
+            [attr.data-qits-source]="crumb.marks?.source"
+            [attr.data-qits-item]="crumb.marks?.item"
+            [attr.data-qits-field]="crumb.marks?.field"
+            [attr.data-qits-derived]="crumb.marks?.derived"
           >
             <!-- Below 768px nothing separates the "…" from the first crumb that shows. -->
             <span

@@ -2,7 +2,7 @@
  * What a project's agents need a person for, and what each of their waits waits on (epic qits-1681).
  * Pure: the caller hands in what the functions would otherwise inject — the project's slug, qits-ci's
  * page origin (`PlatformOrigins.page('ci')`), the project's release requests
- * (`ProjectsStore.releaseRequests()[projectId]`) and the open project's work (`SelectedWork`).
+ * (`ProjectReleaseRequests`) and the open project's work; `OpenProjectWaits` gathers them.
  *
  * The shapes are structural, so any cut of qits-workspaces' `AgentDto` and `WaitView`, and of
  * qits-projects' release requests and work entries, that holds these fields will do.

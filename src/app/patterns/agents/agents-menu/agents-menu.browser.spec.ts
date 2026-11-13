@@ -1,14 +1,17 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
+import { loadState } from '$core/resources/load-state';
+import { ProjectActiveAgents } from '$core/workspaces/project-active-agents';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { AgentsMenu } from './agents-menu';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
@@ -21,8 +24,10 @@ import { goldenMaster } from '../../../../testing/browser/golden-master';
  * format" ticket's agent waits on another item and its comments (not overdue, no badge). The open
  * project is qits-projects' recorded one ("a project exists", slug `contract-00000001`), which the
  * state's entity ids name (the two providers' frozen ids are unrelated). qits-ci's page origin
- * answers the run wait's link; no release request is loaded, so the request wait falls back to its
- * own state and no lifecycle line.
+ * answers the run wait's link; the project has no release requests ("a project with no release
+ * requests", `ProjectReleaseRequests`), so the request wait falls back to its own state and no
+ * lifecycle line. The menu is drawn as the shell draws it (`Shell`), handed `ProjectActiveAgents`'
+ * resource (qits-2146).
  *
  * And the golden master "a project with agents starting up" (qits-2007): one agent per start-up
  * phase (queued with no slot, provisioning its workspace, launching its session) and two READY,
@@ -42,6 +47,17 @@ const NEEDING_ATTENTION = 'a project with agents needing attention';
 const STARTING_UP = 'a project with agents starting up';
 const OVERDUE = 'a project with an agent overdue on a release request';
 const NOW = new Date('2026-01-01T00:04:00Z');
+
+/** The shell's part, laid out as nothing of its own: it hands the menu the open project's agents. */
+@Component({
+  imports: [AgentsMenu],
+  host: { class: 'contents' },
+  template: `<app-agents-menu [agents]="active.resource" [state]="state()" />`,
+})
+class Shell {
+  protected readonly active = inject(ProjectActiveAgents);
+  protected readonly state = computed(() => loadState(this.active.resource));
+}
 
 /** The routed page under the menu; it renders nothing. */
 @Component({ selector: 'app-test-page', template: `` })
@@ -79,6 +95,8 @@ describe('AgentsMenu (screenshots)', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        // The agents' and the release requests' resources follow that stream (qits-2146).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -89,13 +107,13 @@ describe('AgentsMenu (screenshots)', () => {
   /** The menu at the right of a narrow bar, room below it for the panel; nothing opened yet. */
   async function render() {
     await TestBed.inject(Router).navigateByUrl(`/projects/${slug}`);
-    const fixture = TestBed.createComponent(AgentsMenu);
+    const fixture = TestBed.createComponent(Shell);
     const element = fixture.nativeElement as HTMLElement;
     element.parentElement!.style.cssText =
       'display:flex; justify-content:flex-end; width:25rem; height:34rem; padding:0.5rem; align-items:flex-start';
     fixture.detectChanges();
     await settle();
-    // In the browser the store loads the project list on its own; answer it as recorded.
+    // In the browser `SelectedProject` reads the project list on its own; answer it as recorded.
     http
       .expectOne('/projects/api/projects')
       .flush(await goldenMaster('a project exists', 'listProjects'));
@@ -103,6 +121,11 @@ describe('AgentsMenu (screenshots)', () => {
     fixture.detectChanges();
     await settle();
     const agents = http.expectOne(`/workspaces/api/agents?projectId=${projectId}&state=ACTIVE`);
+    http
+      .expectOne(`/projects/api/projects/${projectId}/release-requests`)
+      .flush(
+        await goldenMaster('a project with no release requests', 'listProjectReleaseRequests'),
+      );
     return { fixture, frame: page.elementLocator(element.parentElement!), agents };
   }
 

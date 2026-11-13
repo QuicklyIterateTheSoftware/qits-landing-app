@@ -1,9 +1,10 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Subject } from 'rxjs';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { filter, Subject } from 'rxjs';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
@@ -11,9 +12,20 @@ import { provideTestPlatformOrigins } from '../../../../testing/platform-origins
 import { goldenMaster } from '../../../../testing/golden-masters';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
-import { ProjectsStore } from '$core/projects/projects.store';
 import { SelectedProject } from '$core/projects/selected-project';
+import { loadState } from '$core/resources/load-state';
+import { ProjectActiveAgents } from '$core/workspaces/project-active-agents';
 import { activityChip, AgentsMenu, clockTime } from './agents-menu';
+
+/** The shell's part: it hands the menu the open project's agents and how their read stands. */
+@Component({
+  imports: [AgentsMenu],
+  template: `<app-agents-menu [agents]="active.resource" [state]="state()" />`,
+})
+class Host {
+  protected readonly active = inject(ProjectActiveAgents);
+  protected readonly state = computed(() => loadState(this.active.resource));
+}
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -22,7 +34,8 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
  * `AgentsMenu` on inline agents: the pinned `@qits/workspaces-golden-masters` holds no waits or
  * attention yet (state `a project with agents needing attention` comes with its bump), so the
  * agents here are written out. The project and its release requests are qits-projects' recorded
- * ones.
+ * ones. The menu is drawn as the shell draws it (`Host`), handed `ProjectActiveAgents`' resource;
+ * the open project's release requests are `ProjectReleaseRequests`' (qits-2146).
  */
 describe('AgentsMenu', () => {
   let http: HttpTestingController;
@@ -31,6 +44,8 @@ describe('AgentsMenu', () => {
   const recorded = goldenMaster('a project exists', 'getProject').project;
   const slug = recorded.slug;
   const agentsUrl = `/workspaces/api/agents?projectId=${recorded.id}&state=ACTIVE`;
+  const requestsUrl = `/projects/api/projects/${recorded.id}/release-requests`;
+  const noRequests = { requests: [] };
   const requestsAnswer = goldenMaster(
     'a project with pending release requests',
     'listProjectReleaseRequests',
@@ -42,14 +57,20 @@ describe('AgentsMenu', () => {
     project.set(recorded);
     TestBed.configureTestingModule({
       providers: [
-        { provide: PLATFORM_ID, useValue: 'server' },
         provideRouter([{ path: '**', children: [] }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(workspacesClient),
         provideTestPlatformOrigins({}, { ci: 'https://ci.example' }),
-        { provide: DomainEvents, useValue: { on: () => events.asObservable() } },
+        {
+          provide: DomainEvents,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
+          },
+        },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         { provide: SelectedProject, useValue: { project, slug: signal(slug), url: signal('') } },
       ],
     });
@@ -73,11 +94,12 @@ describe('AgentsMenu', () => {
     ...extra,
   });
 
-  async function render(agents: readonly object[]) {
-    const fixture = TestBed.createComponent(AgentsMenu);
+  async function render(agents: readonly object[], requests: object = noRequests) {
+    const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
     await settle();
     http.expectOne(agentsUrl).flush({ agents });
+    http.expectOne(requestsUrl).flush(requests);
     await settle();
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
@@ -101,11 +123,13 @@ describe('AgentsMenu', () => {
 
   it('is hidden while no project is open, and reads nothing', async () => {
     project.set(undefined);
-    const fixture = TestBed.createComponent(AgentsMenu);
+    const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).classList.contains('hidden')).toBe(true);
+    const menu = (fixture.nativeElement as HTMLElement).querySelector('app-agents-menu')!;
+    expect(menu.classList.contains('hidden')).toBe(true);
     await settle();
     http.expectNone(agentsUrl);
+    http.expectNone(requestsUrl);
   });
 
   it('badges the agents needing a person in red', async () => {
@@ -149,6 +173,12 @@ describe('AgentsMenu', () => {
       [2, 3, 1, 4].map((n) => `/projects/${slug}/agents/agent-${n}`),
     );
     expect(links[0].textContent?.replace(/\s+/g, ' ').trim()).toBe(`${slug}-2 Item 2`);
+    // The data marks (qits-2141): the list names its read, each row its agent.
+    expect(panel.querySelector('ul')?.getAttribute('data-qits-source')).toBe(
+      'qits-workspaces-service#listAgents',
+    );
+    expect(links[0].closest('li')?.getAttribute('data-qits-item')).toBe('agentId=agent-2');
+    expect(links[0].querySelector('[data-qits-field="entityId"]')?.textContent).toBe(`${slug}-2`);
 
     links[0].click();
     fixture.detectChanges();
@@ -306,32 +336,35 @@ describe('AgentsMenu', () => {
   });
 
   it('gives each wait a line: a request with its state and lifecycle, a run, an item, comments, a label', async () => {
-    const store = TestBed.inject(ProjectsStore);
-    const loaded = store.loadReleaseRequests(recorded.id);
-    await settle();
-    http.expectOne(`/projects/api/projects/${recorded.id}/release-requests`).flush(requestsAnswer);
-    await loaded;
-    const { panel, open } = await render([
-      agent(1, {
-        activity: 'WAITING',
-        waits: [
-          {
-            id: 'rr',
-            subjectKind: 'RELEASE_REQUEST',
-            subjectQualifiedId: request.qualifiedId,
-          },
-          { id: 'run', subjectKind: 'CI_RUN', subjectId: 'abcdef1234567', subjectState: 'RUNNING' },
-          {
-            id: 'item',
-            subjectKind: 'WORK_ITEM',
-            subjectQualifiedId: `${slug}-9`,
-            subjectState: 'IMPLEMENTING',
-          },
-          { id: 'comments', subjectKind: 'COMMENTS', subjectQualifiedId: `${slug}-9` },
-          { id: 'other', subjectKind: 'OTHER', label: 'the desk' },
-        ],
-      }),
-    ]);
+    const { panel, open } = await render(
+      [
+        agent(1, {
+          activity: 'WAITING',
+          waits: [
+            {
+              id: 'rr',
+              subjectKind: 'RELEASE_REQUEST',
+              subjectQualifiedId: request.qualifiedId,
+            },
+            {
+              id: 'run',
+              subjectKind: 'CI_RUN',
+              subjectId: 'abcdef1234567',
+              subjectState: 'RUNNING',
+            },
+            {
+              id: 'item',
+              subjectKind: 'WORK_ITEM',
+              subjectQualifiedId: `${slug}-9`,
+              subjectState: 'IMPLEMENTING',
+            },
+            { id: 'comments', subjectKind: 'COMMENTS', subjectQualifiedId: `${slug}-9` },
+            { id: 'other', subjectKind: 'OTHER', label: 'the desk' },
+          ],
+        }),
+      ],
+      requestsAnswer,
+    );
     await open();
     const lines = Array.from(panel.querySelectorAll<HTMLElement>('[data-wait]'));
     expect(lines).toHaveLength(5);
