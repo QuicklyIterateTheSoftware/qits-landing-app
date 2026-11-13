@@ -109,15 +109,16 @@ export const INTERACTIONS = {
    */
   'show-project-loc': 'The project cards show how many lines of code each project has',
   /**
-   * `release-menu.ts`: the top bar's lightning menu, for the open project — fetched when the
-   * project opens, and again when domain events say its requests changed. The sidebar's Release
-   * Requests entry shows the newest request from the same request, `ProjectReleaseRequests`'
+   * `release-menu.ts`: the top bar's lightning menu, for the open project — read when the project
+   * opens, and again when domain events say its requests changed. The menu, the sidebar's Release
+   * Requests entry and the Release Requests page share the one request, `ProjectReleaseRequests`'
    * `PROJECT_RELEASE_REQUESTS` (qits-2146), whose operations pact spec binds it.
    */
   'open-release-requests': 'Opening the release menu lists the project’s pending release requests',
   /**
-   * `release-requests.page.ts`: the Release Requests page lists every request of the open project
-   * qits-projects answers (the open ones and the last finalized ones).
+   * `release-requests.page.ts` via `ProjectReleaseRequests` (`PROJECT_RELEASE_REQUESTS`,
+   * qits-2146): the Release Requests page lists every request of the open project qits-projects
+   * answers (the open ones and the last finalized ones).
    */
   'show-project-release-requests':
     'The Release Requests page lists the project’s open and recently finalized release requests',
@@ -128,64 +129,67 @@ export const INTERACTIONS = {
   'show-project-desk':
     'The Desk page lists the project’s delivery-desk trigger messages, newest first',
   /**
-   * `release-request.page.ts` via `ReleaseRequestStore`: a request's page reads the request, the
-   * commits its fold brought in, the CI verdicts on the fold and, once released, what it published.
+   * `release-request.page.ts` via `RELEASE_REQUEST`, `RELEASE_COMMITS`, `COMMIT_BUILDS`,
+   * `RELEASE_ARTIFACTS` and `APPROVAL_ELIGIBILITY` (qits-2146): a request's page reads the request,
+   * the commits its fold brought in, the CI verdicts on the fold, once released what it published,
+   * and what the viewer may approve.
    */
   'show-release-request': 'A release request’s page shows the request, its fold and its release',
   /**
-   * `release-request.page.ts` via `CiRunsStore`: a request's page reads its repository's newest CI
-   * runs, to link the runs of the request.
+   * `release-request.page.ts` via `REPOSITORY_RUNS` (qits-2146): a request's page reads its
+   * repository's newest CI runs, to link the runs of the request.
    */
   'show-release-request-runs': 'A release request’s page links the CI runs of the request',
   /**
-   * `release-menu.ts` via `CiRunsStore.loadActive`: the lightning menu reads every queued or running
-   * CI run, to mark each pending request that has one and link it.
+   * `release-menu.ts` via `ACTIVE_RUNS` (qits-2146): the lightning menu reads every queued or
+   * running CI run, to mark each pending request that has one and link it.
    */
   'show-release-request-active-runs': 'The lightning menu marks the requests with an active CI run',
   /**
-   * `commit-changes.ts`: a commit under "What this release folds in", opened: its changed files
-   * and one file's patch.
+   * `commit-changes.ts` via `COMMIT_CHANGES` and `COMMIT_FILE_DIFF` (qits-2146): a commit under
+   * "What this release folds in", opened: its changed files and one file's patch.
    */
   'show-commit-changes': 'Opening a commit on a release request shows the files it changed',
   /**
-   * `run-reports.ts` via `CiReportsStore`: the Overview of a release request shows the reports of
-   * its test run (and its release run): tests with the failing ones first, coverage, and the rest
-   * by their highlights.
+   * `run-reports.ts` via `RUN_REPORTS` and `RUN_REPORT` (qits-2146): the Overview of a release
+   * request shows the reports of its test run (and its release run): tests with the failing ones
+   * first, coverage, and the rest by their highlights.
    */
   'show-release-request-reports': 'A release request’s overview shows its test and release reports',
-  /** `release-sources.ts`: the priority select of a branch on a request's page. */
+  /** `release-lane-header.ts` via `SET_SOURCE_PRIORITY`: a branch's priority select. */
   'set-release-source-priority': 'Choosing a branch’s priority on a release request sets it',
-  /** `release-pipeline-panel.ts`: Approve on a request awaiting a person's approval. */
+  /** `release-approval.ts` via `APPROVE_RELEASE`: Approve on a request awaiting a person. */
   'approve-release-request': 'Approve on a release request signs its fold off',
-  /** `release-pipeline-panel.ts`: Decline on a request awaiting a person's approval. */
+  /** `release-approval.ts` via `DECLINE_RELEASE`: Decline on a request awaiting a person. */
   'decline-release-request': 'Decline on a release request refuses its fold',
-  /** `release-pipeline-panel.ts`: run a failed or stuck phase of the release pipeline again. */
+  /** `release-lifecycle.ts` via `RERUN_PHASE`: run a failed or stuck phase again. */
   'rerun-release-phase': 'Running a release pipeline phase again on a release request',
-  /** `release-automations.ts`: Re-run on one automation of a request. */
+  /** `release-automations.ts` via `RERUN_AUTOMATION`: Re-run on one automation. */
   'rerun-release-automation': 'Re-run on a release request’s automation dispatches it again',
-  /** `release-automations.ts`: waive the automations gate for the request's fold. */
+  /** `release-automations.ts` via `WAIVE_AUTOMATIONS`: waive the gate for the fold. */
   'waive-release-automations': 'Waiving a release request’s automations gate for its fold',
-  /** `release-request.page.ts`: Withdraw calls a release request off. */
+  /** `release-withdraw.ts` via `WITHDRAW_RELEASE`: Withdraw calls a release request off. */
   'withdraw-release-request': 'Withdraw on a release request calls it off',
   /**
-   * `release-lane-header.ts`: Move to next request on a source branch of a request (qits-1665)
+   * `release-lane-header.ts` via `MOVE_SOURCE`: Move to next request on a source branch (qits-1665)
    * takes it out of that request into the one queued after it, with a reason.
    */
   'move-release-request-source': 'Moving a source branch of a release request to the next request',
   /**
-   * `upstream-override.ts`: Override on an upstream request still holding a request's
-   * upstream-in-flight gate (epic qits-897) lets it start QA without waiting for that one.
+   * `upstream-override.ts` via `OVERRIDE_UPSTREAM`: Override on an upstream request still holding
+   * a request's upstream-in-flight gate (epic qits-897) lets it start QA without waiting for it.
    */
   'override-release-upstream':
     'Override on a release request’s upstream hold lets it start QA without that upstream',
   /**
-   * `release-request-changes.ts`: the Changes tab lists the fold's changed files and shows one
+   * `release-changes.ts` via `RELEASE_CHANGES`, `RELEASE_FILE_DIFF`, `SUBMODULE_CHANGES` and
+   * `SUBMODULE_FILE_DIFF` (qits-2146): the Changes tab lists the fold's changed files and shows one
    * file's diff; a submodule expands into its own commits and files.
    */
   'show-release-request-changes':
     'The Changes tab of a release request shows what its fold changed',
   /**
-   * `release-requests.page.ts`: a row of the Release Requests page opens the request (its name, an
+   * `release-request-row.ts`: a row of the Release Requests page opens the request (its name, an
    * item's text), the request it is queued behind, the check that needs a person (the request's
    * page at that check's anchor), or the work item an item names. Navigates only, and names no
    * pact (epic qits-2000).
@@ -299,8 +303,9 @@ export const INTERACTIONS = {
   'follow-work-item-agent':
     'A work item’s old agent address leads on to its active agent or to the item',
   /**
-   * `release-changes.ts` and `commit-changes.ts` via `RawImagesStore` (qits-734): a changed image,
-   * chosen on the Changes tab or in an opened commit, shows as the image before and after.
+   * `release-changes.ts` and `commit-changes.ts` via `RawImages` (`RAW_FILE`, qits-734,
+   * qits-2146): a changed image, chosen on the Changes tab or in an opened commit, shows as the
+   * image before and after.
    */
   'show-changed-image': 'Choosing a changed image on a release request shows it as an image',
   /**
@@ -313,7 +318,7 @@ export const INTERACTIONS = {
    * on its first opening.
    */
   'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
-  /** `runner-slots.ts` via `TargetsStore`: the lightning menu's runners and slots line, on opening. */
+  /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspacesStore`: the ACTIVE

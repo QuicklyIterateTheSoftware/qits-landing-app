@@ -68,7 +68,7 @@ open project's work again after `EntityTransitioned` naming it (`entities[].proj
 item page its own data when the event names the item (`entities[].entityId`), and again after
 `EntityCommented` naming it (`entityId`; qits-1660). A request's CI runs and
 each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) by `repoId` and
-`runId` (`CiRunsStore.follow`, `CiReportsStore.followRun`). `WorkspacesStore` follows
+`runId` (the resources' `refreshOn`: `buildOfRepository`, `buildOfRun`; qits-2146). `WorkspacesStore` follows
 qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
@@ -144,26 +144,27 @@ where the order is not the page's job (Acceptance, the Archive, the In Progress 
 list is there and `reorderDisabled`, and a spec host drawing one item alone gives itself
 `hostDirectives: [ReorderList]`.
 
-Users today: the lightning menu fetches the open project's release requests when the project opens
+Users today: the lightning menu shows the open project's release requests, read when the project opens
 and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that project
 (`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a
 wrapper's READY → RELEASED → FINALIZED sends; deployment events name no project, and count only
 while a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
 shell's own copy of the open project's requests (the sidebar's line, the trail, the agents' waits)
-is `ProjectReleaseRequests` (`core/projects/`, qits-2146), a `qitsResource` over the same request
-with the same events as its `refreshOn`; until the lightning menu moves over, the request is made
-twice. The notifications menu reads the newest events through its own `qitsResource` on its first
+is `ProjectReleaseRequests` (`core/projects/`, qits-2146), a `qitsResource` over that request with
+those events as its `refreshOn`; the shell hands it to the lightning menu, and the Release Requests
+page reads it too, so the request is made once. The notifications menu reads the newest events through its own `qitsResource` on its first
 opening and puts every new event at the top of its list once it is loaded. The bumps menu (the
 lighthouse, `patterns/maintenance/bumps-menu/`) reads qits-maintenance's pending bumps
 (`listPendingBumps`) through its own `qitsResource` on its first opening and again after
 `BUMP_EVENTS` (`ReleaseRequestStateChanged` among them), at most once a second.
-The lightning menu's top line (`patterns/system/runner-slots/`, `TargetsStore`) reads qits-system's
-targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
+The lightning menu's top line (`patterns/system/runner-slots/`, its own `qitsResource` over
+`TARGET_LIST`, qits-2146) reads qits-system's targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
 `TargetLoginChanged`). qits-system sends no event when a runner connects or drops. A person whose
 roles may not read the targets gets a refusal, and the line stays hidden.
 The lightning menu's active-run chips (`patterns/release-requests/active-runs/`, `activeRunsOf`)
-read qits-ci's active runs (`CiRunsStore.loadActive`, `/ci/api/runs/active`) on each opening until
-they load, and again after `BUILD_EVENTS` of a pending request's repository (`followActive`). The
+read qits-ci's active runs (the menu's `qitsResource` over `ACTIVE_RUNS`, `/ci/api/runs/active`) on
+each opening until they load, and again after `BUILD_EVENTS` of a pending request's repository
+(`buildOfRepository`). The
 release request page draws the same chips from its repository's runs.
 The agents menu (the robot beside the lightning, `patterns/agents/agents-menu/`; epic qits-1681)
 shows the open project's ACTIVE agents, read when the project opens and on each opening, and again
@@ -456,11 +457,11 @@ file in a folder of that provider's, and published as a jar the provider verifie
 
 | Provider                    | Store and pact spec                                                                          | Pact file                                                 | Golden masters                          |
 | --------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------- |
-| qits-projects-service       | `core/projects/projects.store*.ts`                                                           | `pacts/qits-landing-app_qits-projects-service.json`       | `@qits/projects-golden-masters`         |
-| qits-githost-service        | `core/loc/loc.operations*.ts`, `core/githost/raw-images.store*.ts`                           | `pacts/qits-landing-app_qits-githost-service.json`        | `@qits/githost-golden-masters`          |
+| qits-projects-service       | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                           | `pacts/qits-landing-app_qits-projects-service.json`       | `@qits/projects-golden-masters`         |
+| qits-githost-service        | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`        | `@qits/githost-golden-masters`          |
 | qits-workspaces-service     | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`     | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon       | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`       | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service         | `core/system/targets.store*.ts`                                                              | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
+| qits-system-service         | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
 | qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
 | qits-network-access-service | `core/network-access/peers.store*.ts`                                                        | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 
@@ -473,10 +474,11 @@ screenshot specs cover the same cases from the same golden masters.
 
 A changed image (png, jpg, jpeg, gif, webp; not SVG) on a release request's Changes tab or in an
 opened commit shows as the image, before and after (`ui-image-diff`, qits-734), instead of its text
-diff: `RawImagesStore` (`core/githost/`) reads qits-githost's `getRaw` through the generated client
+diff: `RawImages` (`core/githost/raw-images.ts`, a root service of `qitsResource`s over `RAW_FILE`,
+qits-2146) reads qits-githost's `getRaw` through the generated client
 as a Blob (so it carries the cookie or the dev bearer), at full commit shas: the fold's `base` and
 `mergedSha`, a pin's two shas in the sibling (`repositoryId`), a commit's `parent` and itself. Its
-pact interaction (`raw-images.store.pact.spec.ts`, state `a repository with an image on main`)
+pact interaction (`raw-images.operations.pact.spec.ts`, state `a repository with an image on main`)
 binds the status and an `image/png` body, not the bytes. Each githost pact spec owns its
 operations' part of the file (`assertPactPart`).
 
@@ -526,6 +528,18 @@ operations' part of the file (`assertPactPart`).
   inject. A pattern that shows a page's read takes the resource as an input (`app-container-actions`'
   `hosted`, `app-sign-in-notice`'s `report`). Reads made on a press rather than shown on arrival (a
   gitignored stub opened, an ignore file read when its list turns on) call the operation's `fetch`.
+  Group 5 (the release request routes) reads in the components over `release-request.operations.ts`,
+  `changes.operations.ts`, `ci.operations.ts`, `targets.operations.ts` and
+  `raw-images.operations.ts`. The request's page reads the request and every read after it itself,
+  addressed by primitive `computed`s so a refresh that keeps the fold reads nothing else again, and
+  provides itself as `OPEN_RELEASE_REQUEST`, whose `put` shows the request a pattern's
+  `qitsMutation` answered (`release-request-writes.ts` builds the writes' params and reads their
+  outcomes). The shell hands the lightning menu `ProjectReleaseRequests`' resource; the Release
+  Requests page reads it from the service and draws each row as `li[app-release-request-row]`, a
+  pattern whose input is the client's entry, so its marks are traced. A pin's expansion and a run's
+  full reports are a `ResourceFamily` in the component; changed images a root `RawImages`. Inside
+  an `@for` over a helper's rows, the rule reads each row as an entity root, so a mark over values a
+  helper computes is a class constant (`marks.x`), which the rule trusts.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in

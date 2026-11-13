@@ -114,6 +114,25 @@ function dataMarks() {
     'src/app/patterns/workspaces/sign-in-notice/sign-in-notice.ts',
     'src/app/patterns/workspaces/slot-status/slot-status.ts',
     'src/app/patterns/workspaces/starting-log/starting-log.ts',
+    // Group 5, the release request routes.
+    'src/app/routes/projects/[[]slug]/release-requests/release-requests.page.ts',
+    'src/app/routes/projects/[[]slug]/release-requests/[[]requestId]/release-request.page.ts',
+    'src/app/patterns/release-requests/active-runs/active-runs.ts',
+    'src/app/patterns/release-requests/approval-requirements/approval-requirements.ts',
+    'src/app/patterns/release-requests/commit-changes/commit-changes.ts',
+    'src/app/patterns/release-requests/release-approval/release-approval.ts',
+    'src/app/patterns/release-requests/release-automations/release-automations.ts',
+    'src/app/patterns/release-requests/release-changes/release-changes.ts',
+    'src/app/patterns/release-requests/release-conflict/release-conflict.ts',
+    'src/app/patterns/release-requests/release-lane-header/release-lane-header.ts',
+    'src/app/patterns/release-requests/release-lifecycle/release-lifecycle.ts',
+    'src/app/patterns/release-requests/release-menu/release-menu.ts',
+    'src/app/patterns/release-requests/release-request-row/release-request-row.ts',
+    'src/app/patterns/release-requests/release-runs/release-runs.ts',
+    'src/app/patterns/release-requests/release-withdraw/release-withdraw.ts',
+    'src/app/patterns/release-requests/run-reports/run-reports.ts',
+    'src/app/patterns/release-requests/upstream-override/upstream-override.ts',
+    'src/app/patterns/system/runner-slots/runner-slots.ts',
   ];
   /** The root services holding the resources those share: no store, no client. */
   const services = [
@@ -127,6 +146,8 @@ function dataMarks() {
     'src/app/core/ui-builder/contracts-catalog.ts',
     'src/app/core/ui-builder/routes-bundles.ts',
     'src/app/core/contracts/contracts-bundles.ts',
+    // Group 5.
+    'src/app/core/githost/raw-images.ts',
   ];
   return [
     { files: [...components, ...services], rules: { 'qits/reads-through-resources': 'error' } },
