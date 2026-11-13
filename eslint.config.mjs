@@ -94,6 +94,26 @@ function dataMarks() {
     'src/app/patterns/ideas/work-inspiration/work-inspiration.ts',
     'src/app/patterns/desk/open-issues/open-issues.ts',
     'src/app/patterns/desk/issue-description/issue-description.ts',
+    // Group 4, the agent and workspace routes.
+    'src/app/routes/projects/[[]slug]/agents/[[]agentId]/agent.layout.ts',
+    'src/app/routes/projects/[[]slug]/agents/[[]agentId]/chat/agent-chat.page.ts',
+    'src/app/routes/projects/[[]slug]/agents/[[]agentId]/files/agent-files.page.ts',
+    'src/app/routes/projects/[[]slug]/agents/[[]agentId]/terminal/agent-terminal.page.ts',
+    'src/app/routes/projects/[[]slug]/workspaces/[[]slotId]/workspace-slot.page.ts',
+    'src/app/patterns/workspaces/agent-discard/agent-discard.ts',
+    'src/app/patterns/workspaces/agent-run-actions/agent-run-actions.ts',
+    'src/app/patterns/workspaces/container-actions/container-actions.ts',
+    'src/app/patterns/workspaces/conversation/conversation.ts',
+    'src/app/patterns/workspaces/copy-text/copy-text.ts',
+    'src/app/patterns/workspaces/file-filter-dialog/file-filter-dialog.ts',
+    'src/app/patterns/workspaces/file-tree/file-tree.ts',
+    'src/app/patterns/workspaces/file-viewer/file-viewer.ts',
+    'src/app/patterns/workspaces/harness-setup/harness-setup.ts',
+    'src/app/patterns/workspaces/plugins-section/plugins-section.ts',
+    'src/app/patterns/workspaces/prompt-composer/prompt-composer.ts',
+    'src/app/patterns/workspaces/sign-in-notice/sign-in-notice.ts',
+    'src/app/patterns/workspaces/slot-status/slot-status.ts',
+    'src/app/patterns/workspaces/starting-log/starting-log.ts',
   ];
   /** The root services holding the resources those share: no store, no client. */
   const services = [

@@ -177,27 +177,31 @@ The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was 
 `projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
 `agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
 under a Workspaces heading with the Targets link; `agents/<agent id>` (`AgentLayout`) reads the
-agent by id (`AgentsStore.loadAgent`, `getAgent`, and its slot's start by the agent,
-`getAgentActiveProcess`), its waits and attention from the project's list, shows its item (linked),
-its verbs, a Workspace field (`ws-<slot id>` → `workspaces/<slot id>`) and the tabs (`AGENT_TABS`:
-`chat`, `files`, `terminal`, which resolve the agent by `:agentId` too). Redirects:
+agent by id through its own `qitsResource`s (qits-2146: `AGENT_DETAIL`, `getAgent`, and its slot's
+start by the agent, `AGENT_START`, `getAgentActiveProcess`), its waits and attention from the
+project's list (`ProjectActiveAgents`), shows its item (linked), its verbs, a Workspace field
+(`ws-<slot id>` → `workspaces/<slot id>`) and the tabs (`AGENT_TABS`: `chat`, `files`,
+`terminal`), which follow the layout's read through `OPEN_AGENT` (`core/workspaces/open-agent.ts`:
+the layout provides itself under it, so the agent is one request for the page and its tabs). Redirects:
 `workspaces` → `agents`; an item's old address `work/detail/<id>/agent[/<tab>]` (`WorkAgentLayout`,
 still where the Workspace links on cards and the item page lead, as they know no agent id) finds
-the item's ACTIVE agent (`AgentsStore.loadItem`) and replaces itself with its page on the same tab,
+the item's ACTIVE agent (`ITEM_AGENTS`, `listAgents?workId=`) and replaces itself with its page on the same tab,
 or with the item. `workspaces/<slot id>` stays, its agents linking `agents/<agent id>`.
 The Agents page is the pilot of reading through `qitsResource` and of the data marks (qits-2143,
 see "Reading through resources" below): it injects no store, and its staleness is its resources'
 `refreshOn` (the same events and narrowing as below; its doc comment has the mapping).
 The workspace pages (the Agents page's slots, a slot, an agent; epic qits-1230) read again after
 qits-workspaces' lifecycle events (`WORKSPACE_EVENTS`, `core/workspaces/workspace-events.ts`) that
-name their wrapper, slot, item or agent, at most once a second (`AgentsStore.follow`; the Agents
-page's resources narrow by the same `concerns`). A project's
-ACTIVE agents with their waits and attention (epic qits-1681, `AgentsStore.loadProjectAgents`,
+name their wrapper, slot, item or agent, at most once a second (each resource's `refreshOn`,
+narrowed by `concerns`; since qits-2146 every workspace page reads through `qitsResource` over
+`core/workspaces/*.operations.ts` and writes through `qitsMutation`, and no workspace store but
+`WorkspacesStore`, the work pages', is left). A project's
+ACTIVE agents with their waits and attention (epic qits-1681, `ProjectActiveAgents`,
 `listAgents?projectId=&state=ACTIVE`; the pure `core/workspaces/agent-attention.ts` turns a wait into
 its subject's line and an attention into its action) read again after `AGENT_STATUS_EVENTS` (the
 wait, activity and attention events, `AgentNudged` and `ACTIVE_AGENT_EVENTS`) whose `projectId` is
 the open project, or, for those naming no project, an agent or repository already listed
-(`AgentsStore.followProject`). A container
+(`aboutProjectAgents`). A container
 start's log is not a domain event: `ProcessLog` reads that one process's own stream on
 qits-workspaces' origin (`/workspaces/api/technical-processes/{id}/events`), through `EVENT_SOURCE`.
 
@@ -216,8 +220,8 @@ The slot's hint channel (`WorkspaceHints`, `/workspaces/api/workspaces/{id}/even
 REST door of qits-workspaces, not the container proxy. `agent-doors.spec.ts` beside the layout
 holds it: it walks the imports of every source under `routes/projects/[slug]/agents/[agentId]/`
 (the app's own, not `api/`) and fails on `workspaces/container`, `WorkspaceContainer`,
-`container-proxy` or `containerBase` in any of them, and it runs every store call the page makes and
-fails on any request not to the agent's doors. The container proxy's addresses live in
+`container-proxy` or `containerBase` in any of them, and it runs every operation the page calls,
+addressed as the page addresses it, and fails on any request not to the agent's doors. The container proxy's addresses live in
 `core/workspaces/container-proxy.ts`, which only the workspace page's code imports.
 
 An agent's terminal (`agents/<agent id>/terminal`, `AgentTerminalPage`) is a WebSocket, not a domain event:
@@ -233,11 +237,13 @@ workspace's page for the harness install.
 
 A slot's harness install is the container's, shared by every agent it hosts, so it is on the
 workspace page (`patterns/workspaces/harness-setup/`, epic qits-1667; it was the Terminal tab's):
-the sign-in notice (`AgentSignInStore`: the daemon's `availableAgents`, `authenticated: false`;
-Open the sign-in terminal is `openSignInTerminal`, whose command the screen attaches to until it
-ends, at `…/workspaces/container/<slot row id>/terminal/commands/<command id>`,
-`containerTerminalSocketUrl`) and the plugins on the shared agent home (`AgentPluginsStore`:
-`listPlugins`, `installPlugin`), through the container proxy.
+the sign-in notice (`HARNESS_REPORT`, the daemon's `availableAgents`, `authenticated: false`, read
+by the harness setup and handed to `app-sign-in-notice`; Open the sign-in terminal is
+`SIGN_IN_TERMINAL`, `openSignInTerminal`, whose command the screen attaches to until it ends, at
+`…/workspaces/container/<slot row id>/terminal/commands/<command id>`,
+`containerTerminalSocketUrl`) and the plugins on the shared agent home (`app-plugins-section`'s own
+`HOME_PLUGINS`, `listPlugins`, and `PLUGIN_INSTALL`, `installPlugin`), through the container proxy
+(`core/workspaces/agent-sign-in.operations.ts`, `agent-plugins.operations.ts`; qits-2146).
 
 The Repositories page's backup sign-in (qits-1268, from qits-projects-frontend's backup panel) is
 the same `TerminalSocket` and `ui-terminal-screen` on another socket: qits-projects'
@@ -254,30 +260,36 @@ timers, and qits-projects emits no event for a backup's outcome), so an "Auth ne
 an outcome on the next read. A refused sync is a quiet note under the terminal and nothing more.
 
 An agent's chat (`agents/<agent id>/chat`, `AgentChatPage`) shows the agent's transcript and a
-prompt box. The transcript is the agent proxy's `log` (`AgentChatStore.loadTranscript`, `GET
-…/workspaces/agent/<agent id>/log?channel=TRANSCRIPT`, the daemon's `getCommandLog` of the agent's
-command), read again every 3 s while the agent is RUNNING and once more when it stops; the lines
+prompt box. The transcript is the agent proxy's `log` (the tab's own `qitsResource` over
+`AGENT_TRANSCRIPT`, `GET …/workspaces/agent/<agent id>/log?channel=TRANSCRIPT`, the daemon's
+`getCommandLog` of the agent's command), read again (`reload()`) every 3 s while the agent is
+RUNNING and once more when it stops; the lines
 become items in `core/workspaces/chat-model.ts`, drawn by `patterns/workspaces/conversation/`. The
 live screen is the Terminal tab; Interrupt and Stop are the agent page's verbs (the old chat
 Terminate is gone). The agent's own chat socket (`agentChatSocketUrl`, `ChatSocket`: it replays the
 whole conversation on open and takes `{"type":"user","text":…}`) is kept in `core/`, but the tab
 does not open it: `getAgent` does not say whether a harness runs as a chat, and the service starts
 every agent in a terminal. `patterns/workspaces/prompt-composer/` keeps the prompt as the agent's
-draft on qits-workspaces (`AgentPromptStore`: `GET|PUT|DELETE /workspaces/api/agents/{id}/prompt-draft`,
-a 404 is no draft; saved 750 ms after typing stops), refines rough notes in the agent's container
-(`AgentChatStore.refine`, `POST …/workspaces/agent/<agent id>/prompt-refinements`, the daemon's
-`refinePrompt`) and sends the prompt to the agent by its id (`AgentPromptStore.prompt`, `POST
-/workspaces/api/agents/{id}/prompt`, `promptAgent`), which resumes a yielded or stopped agent to
+draft on qits-workspaces (`core/workspaces/agent-prompt.operations.ts`: `PROMPT_DRAFT` read through
+a `qitsResource`, `PROMPT_DRAFT_SAVE` and `PROMPT_DRAFT_DELETE` through `qitsMutation`, `GET|PUT|DELETE
+/workspaces/api/agents/{id}/prompt-draft`, a 404 is no draft; saved 750 ms after typing stops),
+refines rough notes in the agent's container (`PROMPT_REFINEMENT`, `POST …/workspaces/agent/<agent
+id>/prompt-refinements`, the daemon's `refinePrompt`) and sends the prompt to the agent by its id
+(`AGENT_PROMPT`, `POST /workspaces/api/agents/{id}/prompt`, `promptAgent`), which resumes a yielded or stopped agent to
 hear it. The tab also reads the slot's hint channel (`WorkspaceHints`,
 `/workspaces/api/workspaces/{id}/events` through `EVENT_SOURCE`): `prompt-draft` adopts another
-device's draft. There is no speech input. The chat store's pact spec makes its calls at the
-daemon's own address, where the agent proxy forwards them, and binds what the daemon answers there.
+device's draft (it reads the draft again). There is no speech input. The chat operations' pact
+spec makes their calls at the daemon's own address, where the agent proxy forwards them, and binds
+what the daemon answers there.
 
 An agent's files (`agents/<agent id>/files`, `AgentFilesPage`) are its worktree on the slot's daemon, through
-the agent proxy (`AgentFilesStore`: `listFiles`, `readFile`, `detect` at `…/workspaces/agent/<agent
-id>/files`, `/files/content`, `/detection`; its pact spec makes the same calls at the daemon's own
-address, where the service forwards them, and binds what the daemon answers there): the whole eager tree in one
-read, every gitignored directory as a dimmed stub opened one level per read, and the detection
+the agent proxy (`core/workspaces/agent-files.operations.ts`: `WORKTREE_FILES`, `WORKTREE_FILE`,
+`WORKTREE_DETECTION`, `listFiles`, `readFile`, `detect` at `…/workspaces/agent/<agent id>/files`,
+`/files/content`, `/detection`; their pact spec makes the same calls at the daemon's own address,
+where the service forwards them, and binds what the daemon answers there): the whole eager tree in
+one read (a `qitsResource`, as are the detection and the open file), every gitignored directory as
+a dimmed stub opened one level per press (`WORKTREE_FILES`' `fetch`, as an ignore file is read
+when its list is turned on), and the detection
 (frameworks, the source-to-test graph), applied only while its `generation` is the tree's. The open
 file is the URL's `path` (and `lines`, the anchored range). The tree model and the filters are pure
 functions in `core/workspaces/file-*.ts` (search and manual rules open the tree fully, a framework
@@ -289,19 +301,21 @@ viewer go to `PickedContext` (`core/workspaces/picked-context.ts`), which the Ch
 composer lists, inserts, saves in the draft (`{"text":…,"picked":[…]}`) and appends to what it
 sends when not pressed in.
 
-The workspace pages' writes (qits-1243) go through `ContainerActionsStore`
-(`core/workspaces/container-actions.store.ts`) and `AgentActionsStore`
-(`core/workspaces/agent-actions.store.ts`): a slot's container verbs on the slot's page only
-(`ContainerActionsStore`, `patterns/workspaces/container-actions/`: `ensure-`, `stop-`, `recreate-container`; Stop and
+The workspace pages' writes (qits-1243) go through `qitsMutation` (qits-2146) over
+`core/workspaces/container-actions.operations.ts` and `agent-actions.operations.ts`: a slot's
+container verbs on the slot's page only (`CONTAINER_ENSURE`, `CONTAINER_STOP`, `CONTAINER_RECREATE`,
+`patterns/workspaces/container-actions/`: `ensure-`, `stop-`, `recreate-container`; Stop and
 Recreate are confirmed naming the slot's agents, from `listWorkspaceAgents`, and afterwards name the
 agents the answer's `affectedAgentIds` lists), the agent's own verbs on the agent page
-(`AgentActionsStore`, `patterns/workspaces/agent-run-actions/`, epic qits-1667: Interrupt while RUNNING, Stop unless
+(`AGENT_INTERRUPT`, `AGENT_STOP`, `AGENT_RESTART`, `patterns/workspaces/agent-run-actions/`, epic
+qits-1667: Interrupt while RUNNING, Stop unless
 STOPPED and Restart while RUNNING, YIELDED or STOPPED, the last two confirmed; `interruptAgent`,
 `stopAgent`, `restartAgent`) and Discard on the agent page (`patterns/workspaces/agent-discard/`:
 confirmed, then `force` after the service's 409). A STOPPED agent says so wherever its status shows
 (`app-agent-status`, `runStateLabel`). A
-refusal is shown in the service's words: the store reads the error body's `message` and `code`
-(`consume`'s error paths, `REFUSAL`), and the pact binds them on each recorded refusal. After a
+refusal is shown in the service's words: each write reads the error body's `message` and `code`
+(its `errorConsumes`, `REFUSAL`; `runRefusal` in `core/workspaces/refusals.ts` reads them off the
+mutation's `QitsApiError`), and the pact binds them on each recorded refusal. After a
 write the page reads its data again. No recording holds a
 successful recreate or a forced discard, so their success paths are covered by plain specs only.
 
@@ -505,6 +519,13 @@ operations' part of the file (`assertPactPart`).
   issues over `work.operations.ts` (`OPEN_ISSUES`, each issue's `WORK_ITEM` in
   `app-issue-description`, writing through `ADD_WORK_COMMENT` and `MOVE_WORK`). A write's
   refusal is its `QitsApiError` (status and body) read by the domain's refusal helper.
+  Group 4 (the agent and workspace routes) reads in the components too, over
+  `core/workspaces/*.operations.ts`, one operations file (and pact spec) per former store. What a
+  layout and its child routes share lives as long as the layout, not in a root service: the agent
+  layout reads the agent and provides itself as `OPEN_AGENT`, which the Chat, Files and Terminal tabs
+  inject. A pattern that shows a page's read takes the resource as an input (`app-container-actions`'
+  `hosted`, `app-sign-in-notice`'s `report`). Reads made on a press rather than shown on arrival (a
+  gitignored stub opened, an ignore file read when its list turns on) call the operation's `fetch`.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in
