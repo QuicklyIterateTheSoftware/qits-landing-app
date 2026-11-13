@@ -999,6 +999,299 @@ describe('UiBuilderPage', () => {
     });
   });
 
+  describe('connectivity (qits-2153)', () => {
+    const SHOTS = ERROR_FREEZE.replace(/\/error\.html$/, '');
+    const fileOf = (name: string) => `${SHOTS}/offline-${name}.html`;
+    const PROJECTS = 'qits-projects-service';
+    const LIST = `${PROJECTS}#listProjects`;
+    const DETAIL = `${PROJECTS}#getProject`;
+    const STATE = 'a project exists';
+    const AGENTS = 'projects/:slug/agents';
+    const AGENTS_FILE =
+      'src/app/routes/projects/[slug]/agents/agents.page.browser.spec.ts/listed.html';
+
+    /** The OFFLINE state's connectivity: a cached list read and three queued mutations. */
+    const CONNECTIVITY = {
+      network: 'OFFLINE',
+      outbox: [
+        {
+          operation: `${PROJECTS}#renameProject`,
+          state: 'CONFLICT',
+          recordId: 'p1',
+          currentVersion: '2',
+        },
+        { operation: 'qits-notes-service#renameNote', state: 'PENDING', recordId: 'n2' },
+        { operation: 'qits-notes-service#archiveNote', state: 'FAILED', recordId: null },
+      ],
+      cacheResources: [LIST, DETAIL],
+      cached: [{ operation: LIST, cachedAt: '2026-01-01T00:00:00.000Z' }],
+      queueMutations: [`${PROJECTS}#renameProject`, 'qits-notes-service#renameNote'],
+    };
+
+    /**
+     * A hand-built offline bundle (`offline` unless `optedIn` is false): the repositories route has
+     * `loaded` (DATA, ONLINE), `error` (ERROR, no connectivity: ONLINE) and `cached` (DATA,
+     * OFFLINE: the list read from the cache, the project read live, the rename recorded); `agents`,
+     * a route of its own after it, has one ONLINE state only.
+     */
+    function offlineBundle(optedIn = true): RoutesManifest {
+      const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+      const online = {
+        network: 'ONLINE',
+        outbox: [],
+        cacheResources: [LIST],
+        cached: [],
+        queueMutations: [],
+      };
+      const freezes = [
+        { file: fileOf('loaded'), name: 'loaded', kind: 'DATA', connectivity: online },
+        { file: fileOf('error'), name: 'error', kind: 'ERROR' },
+        {
+          file: fileOf('cached'),
+          name: 'cached',
+          kind: 'DATA',
+          connectivity: CONNECTIVITY,
+          records: [
+            { provider: PROJECTS, state: STATE, operationId: 'listProjects' },
+            { provider: PROJECTS, state: STATE, operationId: 'getProject' },
+            { provider: PROJECTS, state: STATE, operationId: 'renameProject' },
+          ],
+          dataMarks: [
+            { source: LIST, item: null, field: null, derived: [] },
+            { source: LIST, item: 'id=p1', field: 'name', derived: [] },
+            { source: DETAIL, item: 'id=p1', field: 'description', derived: [] },
+          ],
+        },
+      ].map((freeze) => ({ records: [], route: REPOSITORIES, ...freeze }) as unknown as Freeze);
+      const agents: Freeze = { file: AGENTS_FILE, name: 'listed', route: AGENTS, records: [] };
+      return {
+        ...recorded,
+        routes: recorded.routes.map((root): ManifestRoute =>
+          root.path === ''
+            ? { ...root, children: [...(root.children ?? []), { path: AGENTS, fullPath: AGENTS }] }
+            : root,
+        ),
+        freezes: [...recorded.freezes.filter((f) => f.route !== REPOSITORIES), ...freezes, agents],
+        byRoute: { [REPOSITORIES]: freezes.map((f) => f.file), [AGENTS]: [AGENTS_FILE] },
+        ...(optedIn ? { offline: true as const } : {}),
+      };
+    }
+
+    const renderOffline = (query = '', optedIn = true) =>
+      render('qits-landing-app', undefined, undefined, query, offlineBundle(optedIn));
+
+    const tabs = (element: HTMLElement) =>
+      [...element.querySelectorAll('[aria-label="States"] [role="tab"]')].map((tab) =>
+        tab.firstChild?.textContent?.trim(),
+      );
+
+    const networkButton = (element: HTMLElement, label: string) =>
+      [...element.querySelectorAll<HTMLButtonElement>('[aria-label="Connectivity"] button')].find(
+        (b) => b.textContent?.trim() === label,
+      )!;
+
+    const networkPressed = (element: HTMLElement) =>
+      element
+        .querySelector('[aria-label="Connectivity"] [aria-pressed="true"]')
+        ?.textContent?.trim();
+
+    /** Draws the `cached` freeze's frame with `html`, an `about:srcdoc` document. */
+    function loadFrame(page: UiBuilderPage, html: string) {
+      const doc = document.implementation.createHTMLDocument('freeze');
+      doc.body.innerHTML = html;
+      Object.defineProperty(doc, 'URL', { configurable: true, value: 'about:srcdoc' });
+      (page as unknown as { frameLoaded(e: Event): void }).frameLoaded({
+        target: { contentDocument: doc },
+      } as unknown as Event);
+      return doc;
+    }
+
+    it('shows no switch for a bundle that did not opt in, and every state', async () => {
+      const { fixture, element } = await renderOffline('', false);
+      expect(element.querySelector('[aria-label="Connectivity"]')).toBeNull();
+      expect(tabs(element)).toEqual(['cached', 'loaded', 'error']);
+      await answerFreeze(fileOf('cached'), fixture);
+      // The switch is the opt-in's; a freeze's own outbox still shows.
+      expect(element.querySelector('[aria-label="Sync"]')).not.toBeNull();
+    });
+
+    it('shows no switch and no Sync panel for the recorded bundle', async () => {
+      const { fixture, element } = await render('qits-landing-app');
+      expect(element.querySelector('[aria-label="Connectivity"]')).toBeNull();
+      await answerFreeze(ERROR_FREEZE, fixture);
+      expect(element.querySelector('[aria-label="Sync"]')).toBeNull();
+      expect(element.querySelector('.cache-label, .cache-notice')).toBeNull();
+    });
+
+    it('switches between the Online and the Offline states beside the other switches, Online first', async () => {
+      const { fixture, element } = await renderOffline();
+      const group = element.querySelector('[aria-label="Connectivity"]')!;
+      expect([...group.querySelectorAll('button')].map((b) => b.textContent?.trim())).toEqual([
+        'Online',
+        'Offline',
+      ]);
+      expect(group.parentElement).toBe(element.querySelector('.switches'));
+      expect(networkPressed(element)).toBe('Online');
+      expect(tabs(element)).toEqual(['loaded', 'error']);
+      await answerFreeze(fileOf('loaded'), fixture);
+
+      networkButton(element, 'Offline').click();
+      await navigated(fixture);
+      expect(query()).toEqual({ network: 'offline' });
+      expect(networkPressed(element)).toBe('Offline');
+      expect(tabs(element)).toEqual(['cached']);
+      http.expectOne(fileUrl(fileOf('cached'))).flush('<p>cached</p>');
+      await navigated(fixture);
+
+      networkButton(element, 'Online').click();
+      await navigated(fixture);
+      expect(query()).toEqual({});
+      expect(networkPressed(element)).toBe('Online');
+      expect(tabs(element)).toEqual(['loaded', 'error']);
+
+      // A tab of the shown network keeps it, and Online leaves the URL without `network`.
+      element.querySelectorAll<HTMLButtonElement>('[aria-label="States"] [role="tab"]')[1].click();
+      await navigated(fixture);
+      expect(query()).toEqual({ state: 'error' });
+      http.expectOne(fileUrl(fileOf('error'))).flush('<p>error</p>');
+      await navigated(fixture);
+    });
+
+    it('opens on Offline, on its first state, for network=offline', async () => {
+      const { fixture, element } = await renderOffline('?network=offline');
+      expect(networkPressed(element)).toBe('Offline');
+      expect(tabs(element)).toEqual(['cached']);
+      expect(
+        element
+          .querySelector('[aria-label="States"] [aria-selected="true"]')
+          ?.firstChild?.textContent?.trim(),
+      ).toBe('cached');
+      await answerFreeze(fileOf('cached'), fixture);
+    });
+
+    it('sets the switch to Offline for an OFFLINE state the URL names', async () => {
+      const { fixture, element } = await renderOffline('?state=cached');
+      expect(networkPressed(element)).toBe('Offline');
+      expect(tabs(element)).toEqual(['cached']);
+      await answerFreeze(fileOf('cached'), fixture);
+    });
+
+    it('disables a network the route has no state on, and shows the other', async () => {
+      const { fixture, element } = await renderOffline('?network=offline');
+      await answerFreeze(fileOf('cached'), fixture);
+      expect(networkButton(element, 'Online').disabled).toBe(false);
+      [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+        .find((row) => row.textContent?.replace(/\s+/g, '') === 'agents1')!
+        .querySelector<HTMLButtonElement>('button.route')!
+        .click();
+      await navigated(fixture);
+      expect(query()).toEqual({ route: AGENTS, network: 'offline' });
+      expect(networkPressed(element)).toBe('Online');
+      const offline = networkButton(element, 'Offline');
+      expect(offline.disabled).toBe(true);
+      expect(offline.title).toBe('No state of this route was shot offline');
+      expect(tabs(element)).toEqual(['listed']);
+      http.expectOne(fileUrl(AGENTS_FILE)).flush('<p>agents</p>');
+      await navigated(fixture);
+    });
+
+    it('lists the outbox oldest first in a Sync section, a conflict with the server’s version', async () => {
+      const { fixture, element } = await renderOffline('?state=cached');
+      await answerFreeze(fileOf('cached'), fixture);
+      const sync = element.querySelector<HTMLElement>('[aria-label="Sync"]')!;
+      // Beside Selected data: above Calls and states, in the calls panel.
+      expect(sync.closest('aside')?.getAttribute('aria-label')).toBe('Calls');
+      const rows = [...sync.querySelectorAll<HTMLElement>('li.outbox-entry')];
+      expect(rows.map((row) => row.querySelector('.outbox-state')?.textContent?.trim())).toEqual([
+        'Conflict',
+        'Pending',
+        'Failed',
+      ]);
+      expect(
+        rows.map((row) =>
+          words(row.querySelector('.mutation .call-trigger') ?? row.querySelector('.mutation')!),
+        ),
+      ).toEqual([
+        `renameProject ${PROJECTS} · “${STATE}”`,
+        'renameNote qits-notes-service',
+        'archiveNote qits-notes-service',
+      ]);
+      // The recorded mutation is a call row, its popover linking its contract.
+      expect(rows[0].querySelector('app-call-details .call-trigger')).not.toBeNull();
+      const terms = rows.map((row) =>
+        [...row.querySelectorAll('dt')].map(
+          (dt) => `${dt.textContent?.trim()}: ${dt.nextElementSibling?.textContent?.trim()}`,
+        ),
+      );
+      expect(terms).toEqual([
+        ['Record: p1', 'Server version: 2'],
+        ['Record: n2'],
+        ['Record: none named'],
+      ]);
+
+      // An ONLINE freeze with an empty outbox has none.
+      networkButton(element, 'Online').click();
+      await navigated(fixture);
+      http.expectOne(fileUrl(fileOf('loaded'))).flush('<p>loaded</p>');
+      await navigated(fixture);
+      expect(element.querySelector('[aria-label="Sync"]')).toBeNull();
+    });
+
+    it('says a cached read’s marks are from cache, in Selected data and on its highlight, and no other’s', async () => {
+      const { fixture, element, page } = await renderOffline('?state=cached');
+      await answerFreeze(fileOf('cached'), fixture);
+      const doc = loadFrame(
+        page,
+        `<ul data-qits-source="${LIST}"><li data-qits-item="id=p1"><span data-qits-field="name">Qits</span></li></ul>
+         <div data-qits-source="${DETAIL}" data-qits-item="id=p1"><span data-qits-field="description">Live</span></div>`,
+      );
+      fixture.detectChanges();
+      const CACHE = 'from cache, as of 1 Jan 2026 00:00:00Z';
+      const row = (operationId: string) =>
+        [...element.querySelectorAll<HTMLElement>('li.call')].find(
+          (li) => li.querySelector('.call-trigger .font-mono')?.textContent?.trim() === operationId,
+        )!;
+
+      // The highlight toggles' tooltips, and the line above the frame while highlighted.
+      const list = row('listProjects').querySelector<HTMLButtonElement>('.call-data')!;
+      expect(list.title).toBe(`Highlight the data of listProjects · ${CACHE}`);
+      expect(row('getProject').querySelector<HTMLButtonElement>('.call-data')!.title).toBe(
+        'Highlight the data of getProject',
+      );
+      list.click();
+      fixture.detectChanges();
+      expect(element.querySelector('.cache-notice')?.textContent?.trim()).toBe(
+        `Highlighted data ${CACHE}`,
+      );
+      list.click();
+      fixture.detectChanges();
+      expect(element.querySelector('.cache-notice')).toBeNull();
+
+      // Each marked item's highlight button.
+      row('listProjects').querySelector<HTMLButtonElement>('.call-items-toggle')!.click();
+      row('getProject').querySelector<HTMLButtonElement>('.call-items-toggle')!.click();
+      fixture.detectChanges();
+      expect(row('listProjects').querySelector('.data-mark')?.getAttribute('title')).toBe(CACHE);
+      expect(row('getProject').querySelector('.data-mark')?.hasAttribute('title')).toBe(false);
+
+      // Selected data.
+      element.querySelector<HTMLButtonElement>('button.pick-data')!.click();
+      fixture.detectChanges();
+      const pick = (selector: string) => {
+        doc
+          .querySelector(selector)!
+          .dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        fixture.detectChanges();
+      };
+      pick('[data-qits-field="name"]');
+      const selected = () => element.querySelector('[aria-label="Selected data"]')!;
+      expect(selected().querySelector('.cache-label')?.textContent?.trim()).toBe(CACHE);
+      pick('[data-qits-field="description"]');
+      expect(selected().querySelector('.cache-label')).toBeNull();
+      expect(element.querySelector('.cache-notice')).toBeNull();
+    });
+  });
+
   it('says so when no frozen routes are published for the repository', async () => {
     const { harness, fixture } = await open('contract-frontend');
     http.expectOne(SITES_URL).flush(artifacts.body('a published docs site', 'listDocsSites'));
